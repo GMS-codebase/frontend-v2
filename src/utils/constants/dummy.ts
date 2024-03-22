@@ -2548,82 +2548,89 @@ export const tradesData = [
   },
 ];
 export const applicationData = [
-    {
-        type: "Oxygen cylinder gas",
-        number: "13",
-        trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
-    {
-        type: "Arc welding machine ",
-        number: "16",
-        trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
-    {
-        type: "Center punch and number punch",
-        number: "17",
-        trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
-    {
-        type: "DC & AC welding machine",
-        number: "22",
-        trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
+  {
+    type: "Oxygen cylinder gas",
+    number: "13",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
+  {
+    type: "Arc welding machine ",
+    number: "16",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
+  {
+    type: "Center punch and number punch",
+    number: "17",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
+  {
+    type: "DC & AC welding machine",
+    number: "22",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
 ];
 export const applicationDatas = [
-    {
-        trainingContent: "perform oxy acetylene welding ",
-        fromDate: "2024-12-12",
-        toDate: "0202-12-12",
-        numberOfHours: "129",
-        Trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
-    {
-        trainingContent: "perform SMAW welding ",
-        fromDate: "2024-12-12",
-        toDate: "212024-12-31",
-        numberOfHours: "120",
-        Trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
-    {
-        trainingContent: "perform pressure welding ",
-        fromDate: "2024-12-25",
-        toDate: "2024-02-12",
-        numberOfHours: "130",
-        Trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
-    {
-        trainingContent: "summagtive assement and training wrap up",
-        fromDate: "2024-12-22",
-        toDate: "2024-04-05",
-        numberOfHours: "120",
-        Trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
+  {
+    trainingContent: "perform oxy acetylene welding ",
+    fromDate: "2024-12-12",
+    toDate: "0202-12-12",
+    numberOfHours: "129",
+    Trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
+  {
+    trainingContent: "perform SMAW welding ",
+    fromDate: "2024-12-12",
+    toDate: "212024-12-31",
+    numberOfHours: "120",
+    Trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
+  {
+    trainingContent: "perform pressure welding ",
+    fromDate: "2024-12-25",
+    toDate: "2024-02-12",
+    numberOfHours: "130",
+    Trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
+  {
+    trainingContent: "summagtive assement and training wrap up",
+    fromDate: "2024-12-22",
+    toDate: "2024-04-05",
+    numberOfHours: "120",
+    Trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
 ];
 
 export const beneficiaryData = [
-    {
-        trade: "garment manufacturing",
-        number: "30",
-        education: "secondary and universities graduate",
-        trades: "garment manufacturing",
-    },
-]
-  
-export const technicalData = [
-    {
-        no: "5",
-        position: "TECHNICIANS ",
-        qualification: "A0 in mining ",
-        available: "To be hired",
-    },
-    {
-        no: "3",
-        position: "engineers",
-        qualification: "A0  IN ADVANCED TECHNOLOGY MINING ",
-        available: "Available",
-    },
+  {
+    trade: "garment manufacturing",
+    number: "30",
+    education: "secondary and universities graduate",
+    trades: "garment manufacturing",
+  },
 ];
 
+export const technicalData = [
+  {
+    no: "5",
+    position: "TECHNICIANS ",
+    qualification: "A0 in mining ",
+    available: "To be hired",
+  },
+  {
+    no: "3",
+    position: "engineers",
+    qualification: "A0  IN ADVANCED TECHNOLOGY MINING ",
+    available: "Available",
+  },
+];
 
 export const applicantsData = [
   {
@@ -4438,5 +4445,88 @@ export const meReports = [
     call: "Assess program sustainability",
     description:
       "Evaluate the sustainability of the program, including long-term viability and strategies for maintaining program success over time.",
+  },
+];
+
+export const applicantContacts = [
+  {
+    id: 1,
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    gender: "Male",
+    institution: "Tech University",
+    phoneNumber: "+1234567890",
+    position: "Software Engineer",
+  },
+  {
+    id: 2,
+    firstName: "Jane",
+    lastName: "Smith",
+    email: "jane.smith@example.com",
+    gender: "Female",
+    institution: "Creative Institute",
+    phoneNumber: "+1987654321",
+    position: "Graphic Designer",
+  },
+  {
+    id: 3,
+    firstName: "Michael",
+    lastName: "Johnson",
+    email: "michael.johnson@example.com",
+    gender: "Male",
+    institution: "Business College",
+    phoneNumber: "+1122334455",
+    position: "Marketing Manager",
+  },
+  {
+    id: 4,
+    firstName: "Emily",
+    lastName: "Davis",
+    email: "emily.davis@example.com",
+    gender: "Female",
+    institution: "Health Institute",
+    phoneNumber: "+2233445566",
+    position: "Nurse",
+  },
+  {
+    id: 5,
+    firstName: "David",
+    lastName: "Wilson",
+    email: "david.wilson@example.com",
+    gender: "Male",
+    institution: "Engineering Academy",
+    phoneNumber: "+3344556677",
+    position: "Civil Engineer",
+  },
+  {
+    id: 6,
+    firstName: "Sarah",
+    lastName: "Lee",
+    email: "sarah.lee@example.com",
+    gender: "Female",
+    institution: "Arts School",
+    phoneNumber: "+4455667788",
+    position: "Art Director",
+  },
+  {
+    id: 7,
+    firstName: "Chris",
+    lastName: "Brown",
+    email: "chris.brown@example.com",
+    gender: "Male",
+    institution: "Science Center",
+    phoneNumber: "+5566778899",
+    position: "Research Scientist",
+  },
+  {
+    id: 8,
+    firstName: "Anna",
+    lastName: "Williams",
+    email: "anna.williams@example.com",
+    gender: "Female",
+    institution: "Media University",
+    phoneNumber: "+6677889900",
+    position: "Journalist",
   },
 ];
