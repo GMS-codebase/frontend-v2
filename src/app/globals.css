@@ -2,65 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+::-webkit-scrollbar {
+  width: 12px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+::-webkit-scrollbar-thumb {
+  background-color: #888; 
+  border-radius: 6px; 
+  border: 3px solid #f1f1f1;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
-
-.m_5df29311,
-.m_fd1ab0aa {
-  padding: 0 !important;
-  background: transparent !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  overflow: hidden !important;
-}
-
-.m_df3ffa0f {
-  font-size: 1.125rem !important;
-  font-weight: 700 !important;
-  line-height: 1.25rem !important;
-}
-
-.m_8fdc1311 {
-  display: none !important;
-}
-.m_8fb7ebe7 {
-  background: transparent !important;
-  border: none !important;
-  font-family: "Urbanist" !important;
-}
-.m_b85f7144 {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.m_12051f6c {
-  font-size: 12px !important;
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }
