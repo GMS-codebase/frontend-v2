@@ -1,3 +1,5 @@
+
+"use client"
 import store from "@/store";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
@@ -9,7 +11,9 @@ export default function RootProvider({
 }>) {
   return (
     <MantineProvider>
-      <Provider store={store}>{children}</Provider>
+      <Provider store={store}>
+        {children}
+      </Provider>
       <Notifications />
     </MantineProvider>
   );
