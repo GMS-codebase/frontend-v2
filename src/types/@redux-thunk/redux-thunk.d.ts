@@ -1,1 +1,1 @@
-declare module "redux-thunk"
+declare module "redux-thunk";
