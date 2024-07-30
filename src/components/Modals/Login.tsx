@@ -13,16 +13,15 @@ const AuthenticationModal = ({
     // const [opened, { open, close }] = useDisclosure(true); // Open by default
 
     return (
-        <div className="p-50">
             <Modal
                 opened={opened}
                 onClose={close}
                 withCloseButton={false}
                 centered
-                className=" size-3 flex flex-col gap-4 "
+                className=" size-3 flex flex-col gap-4 rounded-full"
             >
                 {/* Close Icon */}
-                <div className="w-full h-full  flex flex-col gap-2 align-middle rounded-full bg-white">
+                <div className="w-full h-full  flex flex-col gap-2 align-middle rounded-full ">
                     <div className="absolute top-0 left-0 m-4 text-center mt-0">
                         <button
                             onClick={close}
@@ -32,7 +31,7 @@ const AuthenticationModal = ({
                         </button>
                     </div>
 
-                    <div className=" flex flex-col gap-2 text-center">
+                    <div className=" flex flex-col gap-2 text-center font-bold ">
                         <h2>Login</h2>
                         <p className="text-gray-600">
                             Provide your credentials to login.
@@ -75,7 +74,6 @@ const AuthenticationModal = ({
                     </div>
                 </div>
             </Modal>
-        </div>
     );
 };
 
