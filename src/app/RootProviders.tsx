@@ -1,6 +1,7 @@
+import store from "@/store";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
-
+import {Provider} from "react-redux";
 export default function RootProvider({
     children,
   }: Readonly<{
@@ -8,7 +9,9 @@ export default function RootProvider({
   }>) {
     return (
       <MantineProvider>
-        {children}
+        <Provider store={store}>
+            {children}
+        </Provider>
         <Notifications/>
       </MantineProvider>
     );
