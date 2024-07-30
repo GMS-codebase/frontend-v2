@@ -1,7 +1,9 @@
 "use client"
 import AuthenticationModal from "@/components/Modals/Login";
+import RegisterModal from "@/components/Modals/RegisterModal";
 import { useDisclosure } from "@mantine/hooks";
 import Image from "next/image";
+
 
 export default function Home() {
   const [isOpen, { open, close }] = useDisclosure(true);
