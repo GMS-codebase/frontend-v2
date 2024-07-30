@@ -1,13 +1,12 @@
-
-"use client"
+"use client";
 import store from "@/store";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { Provider } from "react-redux";
-import '@mantine/core/styles.css';
-import '@mantine/dates/styles.css';
-import '@mantine/dropzone/styles.css';
-import '@mantine/notifications/styles.css'
+import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
+import "@mantine/dropzone/styles.css";
+import "@mantine/notifications/styles.css";
 export default function RootProvider({
   children,
 }: Readonly<{
@@ -15,9 +14,7 @@ export default function RootProvider({
 }>) {
   return (
     <MantineProvider>
-      <Provider store={store}>
-        {children}
-      </Provider>
+      <Provider store={store}>{children}</Provider>
       <Notifications />
     </MantineProvider>
   );
