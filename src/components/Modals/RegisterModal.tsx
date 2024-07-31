@@ -51,7 +51,6 @@ const RegisterModal = ({
       onClose={closeRegister}
       closeOnClickOutside={false}
       withCloseButton={false}
-      className="rounded-3xl"
     >
       <div className="w-[550px] h-full relative bg-white rounded-3xl p-4 pt-10 pb-6 flex flex-col items-center">
         <button
@@ -175,7 +174,7 @@ const RegisterModal = ({
                         <MdPhoneAndroid color="#000" size={21}/>
                       </span>
                     </div>
-                    <div className="absolute inset-y-0 left-7 top-2 pl-3 flex items-center pointer-events-none py-1 h-8 bg-white">
+                    <div className="absolute inset-y-0 left-7 top-2 pl-3 flex items-center pointer-events-none py-1 h-3 bg-white">
                       <span className="text-gray-500 text-xs ">+250</span>
                     </div>
                     <input
