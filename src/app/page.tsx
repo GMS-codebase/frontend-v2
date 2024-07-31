@@ -20,9 +20,12 @@ function Page() {
     { id: 5, title: "Call for Proposal 5" },
   ];
   const [hasCalls, setHasCalls] = useState(true);
-  const [isOpenRegister, { open: openRegister, close: closeRegister }] = useDisclosure(false);
-  const [isOpenLogin, { open: openLogin, close: closeLogin }] = useDisclosure(false);
-  const [isOpenCall, { open: openCall, close: closeCall }] = useDisclosure(false);
+  const [isOpenRegister, { open: openRegister, close: closeRegister }] =
+    useDisclosure(false);
+  const [isOpenLogin, { open: openLogin, close: closeLogin }] =
+    useDisclosure(false);
+  const [isOpenCall, { open: openCall, close: closeCall }] =
+    useDisclosure(false);
 
   return (
     <div className="relative h-screen">
@@ -42,7 +45,10 @@ function Page() {
           <Image src={logo} alt="logo" width={400} height={400} />
         </div>
         <div className="flex gap-4 ml-auto">
-          <button className="py-2 px-4 lg:px-8 bg-white font-bold text-[#005DE9] rounded-full" onClick={openLogin}>
+          <button
+            className="py-2 px-4 lg:px-8 bg-white font-bold text-[#005DE9] rounded-full"
+            onClick={openLogin}
+          >
             Login
           </button>
           <button
@@ -59,18 +65,26 @@ function Page() {
           Welcome To SDF GRANT MANAGEMENT SYSTEM
         </h1>
         <h2 className="text-black w-[40%] text-md md:text-xl mt-4 font-normal">
-          Unfortunately there is no open call. Please subscribe to get notified when there is a new call.
+          Unfortunately there is no open call. Please subscribe to get notified
+          when there is a new call.
         </h2>
-        <div className="w-[80%] overflow-x-auto no-scrollbar m-10">
+        <div className="w-[80%] overflow-x-auto no-scrollbar m-10" style={{scrollbarWidth:'none'}}>
           <div className="flex space-x-4">
-            {hasCalls && randomCalls.map((call) => (
-              <div key={call.id} className="min-w-[300px] p-4 bg-white rounded-full flex justify-between items-center shadow-md">
-                <h3 className="font-bold text-black">{call.title}</h3>
-                <button className="bg-[#005DE9] bg-opacity-10 text-[#005DE9] font-bold rounded-full px-4 py-2" onClick={openCall}>
-                  View details
-                </button>
-              </div>
-            ))}
+            {hasCalls &&
+              randomCalls.map((call) => (
+                <div
+                  key={call.id}
+                  className="min-w-[300px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
+                >
+                  <h3 className="font-bold text-black">{call.title}</h3>
+                  <button
+                    className="bg-[#005DE9] bg-opacity-10 text-[#005DE9] font-bold rounded-full px-4 py-2"
+                    onClick={openCall}
+                  >
+                    View details
+                  </button>
+                </div>
+              ))}
           </div>
         </div>
 
@@ -88,7 +102,9 @@ function Page() {
       </div>
 
       <div className="absolute bottom-0 left-0 p-4 z-30">
-        <h2 className="text-black font-extrabold">© 2024 Rwanda TVET Board.</h2>
+        <h2 className="text-black font-extrabold">
+          © 2024 Rwanda TVET Board.
+        </h2>
       </div>
       <div className="absolute bottom-0 right-0 p-4 z-30">
         <button className="py-2 px-4 lg:px-8 bg-white font-bold text-[#005DE9] flex items-center rounded-full">
@@ -98,7 +114,7 @@ function Page() {
       </div>
       <AddCall isOpenAddCall={isOpenRegister} closeAddCall={closeRegister} />
       <LoginModal opened={isOpenLogin} close={closeLogin} />
-      <CallModal opened={isOpenCall} close={closeCall}/>
+      <CallModal opened={isOpenCall} close={closeCall} />
     </div>
   );
 }
