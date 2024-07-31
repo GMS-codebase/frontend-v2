@@ -1,11 +1,17 @@
-import React from "react";
+"use client"
+import React, { useState } from "react";
 import Image from "next/image";
 import bg from "../assets/Images/landing.jpg";
 import logo from "../assets/Images/logo.png";
 import { HiOutlineMail } from "react-icons/hi";
 import { IoDownloadOutline } from "react-icons/io5";
+import RegisterModal from "@/components/Modals/RegisterModal";
+import { useDisclosure } from "@mantine/hooks";
 
 function Page() {
+  const [isOpenRegister, {open:openRegister, close: closeRegister}] = useDisclosure(false);
+  const [isOpenLogin, {open: openLogin, close: closeLogin}] = useDisclosure(false);
+
   return (
     <div className="relative h-screen">
       <div className="absolute inset-0 bg-white opacity-60 z-10"></div>
@@ -24,10 +30,13 @@ function Page() {
           <Image src={logo} alt="logo" width={400} height={400} />
         </div>
         <div className="flex gap-4 ml-auto">
-          <button className="py-2 px-4 lg:px-8 bg-white font-bold text-[#005DE9] rounded-full">
+          <button className="py-2 px-4 lg:px-8 bg-white font-bold text-[#005DE9] rounded-full"  onClick={openLogin}>
             Login
           </button>
-          <button className="py-2 px-4 lg:px-8 text-white font-bold bg-[#005DE9] rounded-full">
+          <button
+            className="py-2 px-4 lg:px-8 text-white font-bold bg-[#005DE9] rounded-full"
+            onClick={openRegister}
+          >
             Register
           </button>
         </div>
@@ -40,9 +49,13 @@ function Page() {
         <h2 className="text-black text-md md:text-xl w-[90%] md:w-[75%] mt-4 font-normal">
           Unfortunately there is no open call. Please subscribe to get notified when there is a new call.
         </h2>
-        <div className="p-3 bg-white w-[80%] md:w-[60%] mt-5 rounded-full justify-center items-center flex">
+        <div className="p-3 bg-white w-[80%] md:w-[70%] mt-5 rounded-full justify-center items-center flex">
           <HiOutlineMail className="text-[#005DE9] ml-3 w-8 h-8" />
-          <input type="text" className="w-full ml-3 border-none text-black outline-none" placeholder="Type your email" />
+          <input
+            type="text"
+            className="w-full ml-3 border-none text-black bg-white outline-none"
+            placeholder="Type your email"
+          />
           <button className="bg-[#005DE9] bg-opacity-10 text-[#005DE9] font-bold rounded-full px-4 py-2">
             Subscribe
           </button>
@@ -58,8 +71,11 @@ function Page() {
           Download User Manual
         </button>
       </div>
+
+      <RegisterModal isOpenRegister={isOpenRegister} closeRegister={closeRegister }  />
     </div>
   );
 }
 
 export default Page;
+
