@@ -1,7 +1,7 @@
 const Page = () => {
   return (
     <div>
-      <h1>Admin Dashboard</h1>
+      <h1>Applications</h1>
     </div>
   );
 };

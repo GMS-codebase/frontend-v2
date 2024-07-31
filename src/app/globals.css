@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body{
+body {
   background-color: #fff;
 }
 .m_5df29311,
@@ -37,13 +37,24 @@ body{
   font-size: 12px !important;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+.sidebar-container::-webkit-scrollbar {
+  width: 6px;
+  background-color: transparent;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
-.no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+.sidebar-container::-webkit-scrollbar-thumb {
+  background: #005de917;
+  border-radius: 10px;
 }
+
+.side-section {
+  transition:
+    width 0.2s ease-in-out,
+    opacity 0.2s ease-in-out;
+}
+
+.pages-parent::-webkit-scrollbar {
+  width: 1px;
+  background: transparent;
+}
+
