@@ -38,10 +38,11 @@ body{
 }
 
 .sidebar-container::-webkit-scrollbar{
-  width: 4px;
+  width: 6px;
   background-color: transparent;
 }
 
 .sidebar-container::-webkit-scrollbar-thumb{
   background: #005DE917;
+  border-radius: 10px;
 }
