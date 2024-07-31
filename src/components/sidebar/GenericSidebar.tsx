@@ -30,7 +30,7 @@ const GenericSidebar = ({
         className={`flex ${isCompressed ? "flex-col gap-8" : "flex-row"} items-center justify-start pt-4 pl-4 gap-4 cursor-pointer mb-6 pb-10 relative`}
       >
         <Image src={logo} className="w-[117px] h-[72px]" alt="" />
-        <h1 className="text-2xl uppercase text-[#005DE9] font-bold">GMS</h1>
+        <h1 className="text-2xl uppercase text-primary font-bold">GMS</h1>
 
         <button
           onClick={toggle}
@@ -50,7 +50,7 @@ const GenericSidebar = ({
               <div key={index} className="mx-4">
                 <Link
                   href={route.path}
-                  className={`flex items-center justify-center gap-5 px-4 py-3 my-1 ${active === route.path ? "bg-[#005DE9] text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
+                  className={`flex items-center justify-center gap-5 px-4 py-3 my-1 ${active === route.path ? "bg-primary text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
                 >
                   <span
                     className={
@@ -69,7 +69,7 @@ const GenericSidebar = ({
               <div key={index} className="mx-4">
                 <Link
                   href={route.path}
-                  className={`flex items-center gap-5 px-4 py-3 my-1 pl-10 ${active === route.path ? "bg-[#005DE9] text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
+                  className={`flex items-center gap-5 px-4 py-3 my-1 pl-10 ${active === route.path ? "bg-primary text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
                 >
                   <span
                     className={
