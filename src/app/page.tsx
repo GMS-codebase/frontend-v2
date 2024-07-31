@@ -7,6 +7,7 @@ import { HiOutlineMail } from "react-icons/hi";
 import { IoDownloadOutline } from "react-icons/io5";
 import RegisterModal from "@/components/Modals/RegisterModal";
 import { useDisclosure } from "@mantine/hooks";
+import LoginModal from "@/components/Modals/Login";
 
 function Page() {
   const [isOpenRegister, {open:openRegister, close: closeRegister}] = useDisclosure(false);
@@ -73,6 +74,7 @@ function Page() {
       </div>
 
       <RegisterModal isOpenRegister={isOpenRegister} closeRegister={closeRegister }  />
+      <LoginModal opened={isOpenLogin} close={closeLogin} />
     </div>
   );
 }
