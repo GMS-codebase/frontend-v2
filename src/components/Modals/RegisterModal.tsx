@@ -191,8 +191,8 @@ const RegisterModal = ({
                         <MdPhoneAndroid color="#000" size={21}/>
                       </span>
                     </div>
-                    <div className="absolute inset-y-0 left-7 top-2 pl-3 flex items-center pointer-events-none py-1 h-3 bg-white">
-                      <span className="text-gray-500 text-xs ">+250</span>
+                    <div className="absolute left-7 top-1 pl-1 py-1 flex items-center pointer-events-none pr-2 rounded-md bg-white">
+                        <span className="text-gray-500 text-sm ml-2">+250</span>
                     </div>
                     <input
                       type="text"
@@ -200,7 +200,7 @@ const RegisterModal = ({
                       value={formData.phoneNumber}
                       onChange={handleChange}
                       placeholder="Type in your phone"
-                      className="block w-full pl-20 pr-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full pl-[6.5rem] pr-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       required
                     />
                   </div>
