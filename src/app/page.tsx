@@ -7,8 +7,8 @@ import { HiOutlineMail } from "react-icons/hi";
 import { IoDownloadOutline } from "react-icons/io5";
 import RegisterModal from "@/components/Modals/RegisterModal";
 import { useDisclosure } from "@mantine/hooks";
-import Image from "next/image";
-import TechInnov from "../components/Modals/techInnov"
+import LoginModal from "@/components/Modals/Login";
+import CallModal from "@/components/Modals/techInnov";
 
 function Page() {
   const randomCalls = [
@@ -21,9 +21,8 @@ function Page() {
   const [hasCalls, setHasCalls] = useState(true);
   const [isOpenRegister, { open: openRegister, close: closeRegister }] = useDisclosure(false);
   const [isOpenLogin, { open: openLogin, close: closeLogin }] = useDisclosure(false);
+  const [isOpenCall, { open: openCall, close: closeCall }] = useDisclosure(false);
 
-export default function Home() {
-  const [isOpen, { open, close }] = useDisclosure(true);
   return (
     <div className="relative h-screen">
       <div className="absolute inset-0 bg-white opacity-60 z-10"></div>
@@ -61,12 +60,12 @@ export default function Home() {
         <h2 className="text-black w-[40%] text-md md:text-xl mt-4 font-normal">
           Unfortunately there is no open call. Please subscribe to get notified when there is a new call.
         </h2>
-        <div className="w-[80%] overflow-x-scroll no-scrollbar my-10">
+        <div className="w-[80%] overflow-x-auto no-scrollbar m-10">
           <div className="flex space-x-4">
             {hasCalls && randomCalls.map((call) => (
               <div key={call.id} className="min-w-[300px] p-4 bg-white rounded-full flex justify-between items-center shadow-md">
                 <h3 className="font-bold text-black">{call.title}</h3>
-                <button className="bg-[#005DE9] bg-opacity-10 text-[#005DE9] font-bold rounded-full px-4 py-2">
+                <button className="bg-[#005DE9] bg-opacity-10 text-[#005DE9] font-bold rounded-full px-4 py-2" onClick={openCall}>
                   View details
                 </button>
               </div>
@@ -87,74 +86,8 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      <div className="absolute bottom-0 left-0 p-4 z-30">
+        <h2 className="text-black font-extrabold">© 2024 Rwanda TVET Board.</h2>
       </div>
       <div className="absolute bottom-0 right-0 p-4 z-30">
         <button className="py-2 px-4 lg:px-8 bg-white font-bold text-[#005DE9] flex items-center rounded-full">
@@ -162,9 +95,9 @@ export default function Home() {
           Download User Manual
         </button>
       </div>
-
       <RegisterModal isOpenRegister={isOpenRegister} closeRegister={closeRegister} />
       <LoginModal opened={isOpenLogin} close={closeLogin} />
+      <CallModal opened={isOpenCall} close={closeCall}/>
     </div>
   );
 }
