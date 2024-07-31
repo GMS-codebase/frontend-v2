@@ -7,85 +7,89 @@ import logo from "@/assets/Images/dashboard-logo.png";
 import { BiLogOut } from "react-icons/bi";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal } from "@mantine/core";
-import {ClipLoader} from "react-spinners"
+import { ClipLoader } from "react-spinners";
 import { useDispatch } from "react-redux";
 // import { LOGOUT_SUCCESS } from "@/actions/AuthActions";
 import { Route } from "@/types";
+import { ArrowLeft } from "solar-icon-set";
+import { PiCaretLeftBold } from "react-icons/pi";
+
 const GenericSidebar = ({
   routes,
-  children,
+  isCompressed,
+  toggle,
 }: {
   routes: Route[];
-  children: React.ReactNode;
+  isCompressed: boolean;
+  toggle: () => void;
 }) => {
   const active = usePathname();
-  const [isLogout, { open, close }] = useDisclosure(false);
-  const [opened, setOpened] = useState("");
-  const dispatch = useDispatch();
-  const navigate = useRouter();
-  const [redirecting, setRedirecting] = useState(false);
-  const handleLogout = () => {
-    setRedirecting(true);
-    // dispatch({ type: LOGOUT_SUCCESS });
-    navigate.push("/login");
-  };
   return (
-    <div className="w-full h-screen flex flex-col border-r border-r-[#EAEFF4]">
-      <div className="flex items-center justify-start pt-10 pl-14 gap-4 cursor-pointer mb-10">
-        <Image src={logo} className="w-14 h-14 rounded-full" alt="" />
-        {children}
-      </div>
-      <div className="w-full h-screen overflow-y-auto">
-        {routes.map((route, index) => {
-          return (
-            <div key={index} className="mx-3">
-              <Link
-                href={route.path}
-                className={`flex items-center gap-5 px-4 py-3 my-1 pl-10 ${active === route.path ? "bg-[#5D87FF] text-white" : "bg-white"} hover:bg-blue-200 cursor-pointer rounded-md`}
-              >
-                {route.icon}
-                <span
-                  className={`text-sm ${active === route.path ? "font-semibold text-white" : ""} hidden lg:inline`}
-                >
-                  {route.label}
-                </span>
-              </Link>
-            </div>
-          );
-        })}
+    <div className={`w-full h-full flex flex-col`}>
+      <div
+        className={`flex ${isCompressed ? "flex-col gap-8" : "flex-row"} items-center justify-start pt-4 pl-4 gap-4 cursor-pointer mb-6 pb-10 relative`}
+      >
+        <Image src={logo} className="w-[117px] h-[72px]" alt="" />
+        <h1 className="text-2xl uppercase text-[#005DE9] font-bold">GMS</h1>
+
         <button
-          onClick={open}
-          className="w-[94%] flex items-center gap-4 mx-auto px-4 py-3 mt-[10vh] pl-8 hover:bg-red-300 cursor-pointer text-sm rounded-md hover:text-white font-semibold mb-10"
+          onClick={toggle}
+          className={`absolute right-4 inset-y-0 ${isCompressed && "rotate-180 top-5"} flex items-center`}
         >
-          <BiLogOut size={25} />
-          Logout
+          <PiCaretLeftBold color="#0075FF" size={25} />
+          <span className="-ml-4">
+            <PiCaretLeftBold color="#0075FF" size={25} />
+          </span>
         </button>
       </div>
-      <Modal opened={isLogout} onClose={close} size={"md"}>
-        <h1 className="w-full flex justify-center text-lg font-semibold">
-          Are you sure you want to logout ?
-        </h1>
-        <div className="w-full flex items-center justify-between mt-10">
-          <button
-            onClick={close}
-            className="py-3 px-5 bg-neutral-200 font-semibold rounded-md"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleLogout}
-            className="py-3 px-5 bg-red-400 font-semibold rounded-md"
-          >
-            {redirecting ? (
-              <div className="w-full h-full flex items-center justify-center">
-                <ClipLoader size={20} color="white" />
+      <h1 className="text-lg text-neutral-400 p-3">Menu</h1>
+      <div className="w-full h-screen overflow-y-auto pb-[17vh] sidebar-container">
+        {routes.map((route, index) => {
+          if (isCompressed)
+            return (
+              <div key={index} className="mx-4">
+                <Link
+                  href={route.path}
+                  className={`flex items-center justify-center gap-5 px-4 py-3 my-1 ${active === route.path ? "bg-[#005DE9] text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
+                >
+                  <span
+                    className={
+                      active === route.path
+                        ? "text-white font-extrabold text-3xl"
+                        : "text-black font-extrabold text-3xl"
+                    }
+                  >
+                    {route.icon}
+                  </span>
+                </Link>
               </div>
-            ) : (
-              "Logout"
-            )}
-          </button>
-        </div>
-      </Modal>
+            );
+          else
+            return (
+              <div key={index} className="mx-4">
+                <Link
+                  href={route.path}
+                  className={`flex items-center gap-5 px-4 py-3 my-1 pl-10 ${active === route.path ? "bg-[#005DE9] text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
+                >
+                  <span
+                    className={
+                      active === route.path
+                        ? "text-white font-extrabold text-3xl"
+                        : "text-black font-extrabold text-3xl"
+                    }
+                  >
+                    {route.icon}
+                  </span>
+                  <span
+                    className={`text-lg ${active === route.path ? "font-semibold text-white" : ""} hidden lg:inline`}
+                  >
+                    {route.label}
+                  </span>
+                </Link>
+              </div>
+            );
+        })}
+      </div>
     </div>
   );
 };
