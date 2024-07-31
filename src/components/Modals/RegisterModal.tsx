@@ -7,6 +7,7 @@ import SideVector2 from "@/assets/Vectors/sidevector2.svg";
 import { BsPerson } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
 import { MdPhoneAndroid } from "react-icons/md";
+import LoginModal from "./Login";
 
 const RegisterModal = ({
   isOpenRegister,
@@ -44,7 +45,14 @@ const RegisterModal = ({
     console.log("Form Data: ", formData);
   };
 
+  const [isOpenLogin,setIsOpenLogin]=useState(false)
+  const handleOpenLogin = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    closeRegister();
+    setIsOpenLogin(true); 
+};
   return (
+    <>
     <Modal
       size={""}
       opened={isOpenRegister}
@@ -227,7 +235,7 @@ const RegisterModal = ({
                 </div>
                 <h1 className="w-full text-center text-[#000F2369] text-base font-medium mt-4">
                   Already have an account?{" "}
-                  <span className="text-base font-medium text-[#005DE9]">
+                  <span className="text-base font-medium cursor-pointer text-[#005DE9]" onClick={handleOpenLogin}>
                     Login
                   </span>
                 </h1>
@@ -309,7 +317,7 @@ const RegisterModal = ({
                 </div>
                 <h1 className="text-[#000F2369] text-base font-medium mt-4">
                   Already have an account?{" "}
-                  <span className="text-base font-medium text-[#005DE9]">
+                  <span className="text-base font-medium text-[#005DE9] cursor-pointer" onClick={handleOpenLogin}>
                     Login
                   </span>
                 </h1>
@@ -319,6 +327,13 @@ const RegisterModal = ({
         </div>
       </div>
     </Modal>
+     {isOpenLogin && (
+      <LoginModal
+          opened={isOpenLogin}
+          close={() => setIsOpenLogin(false)}
+      />
+  )}
+</>
   );
 };
 
