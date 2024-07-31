@@ -46,3 +46,9 @@ body{
   background: #005DE917;
   border-radius: 10px;
 }
+
+.side-section {
+  transition:
+    width 0.2s ease-in-out,
+    opacity 0.2s ease-in-out;
+}
