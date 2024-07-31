@@ -29,6 +29,7 @@
     "react-spinners": "^0.14.1",
     "redux": "^5.0.1",
     "redux-devtools-extension": "^2.13.9",
+    "solar-icon-set": "^1.0.0",
     "tabler-icons": "^1.35.0"
   },
   "devDependencies": {
