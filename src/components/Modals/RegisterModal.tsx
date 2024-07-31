@@ -8,6 +8,7 @@ import { BsPerson } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
 import { MdPhoneAndroid } from "react-icons/md";
 import LoginModal from "./Login";
+import SuccessModal from "./success";
 
 const RegisterModal = ({
   isOpenRegister,
@@ -46,11 +47,19 @@ const RegisterModal = ({
   };
 
   const [isOpenLogin,setIsOpenLogin]=useState(false)
+  const [isOpenSuccess,setIsOpenSuccess]=useState(false)
   const handleOpenLogin = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     closeRegister();
     setIsOpenLogin(true); 
 };
+
+  const handleOpenSuccess = (event:any) => {
+    event.preventDefault();
+    setIsOpenLogin(false);
+    closeRegister();
+    setIsOpenSuccess(true);
+  }
   return (
     <>
     <Modal
@@ -303,6 +312,7 @@ const RegisterModal = ({
                 <div className="w-full flex flex-col justify-center mt-4 gap-3">
                   <button
                     type="submit"
+                    onClick={handleOpenSuccess}
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
                     Sign Up
@@ -331,6 +341,12 @@ const RegisterModal = ({
       <LoginModal
           opened={isOpenLogin}
           close={() => setIsOpenLogin(false)}
+      />
+  )}
+    {isOpenSuccess && (
+      <SuccessModal
+          opened={isOpenSuccess}
+          close={() => setIsOpenSuccess(false)}
       />
   )}
 </>
