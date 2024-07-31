@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body{
+body {
   background-color: #fff;
 }
 .m_5df29311,
@@ -37,13 +37,13 @@ body{
   font-size: 12px !important;
 }
 
-.sidebar-container::-webkit-scrollbar{
+.sidebar-container::-webkit-scrollbar {
   width: 6px;
   background-color: transparent;
 }
 
-.sidebar-container::-webkit-scrollbar-thumb{
-  background: #005DE917;
+.sidebar-container::-webkit-scrollbar-thumb {
+  background: #005de917;
   border-radius: 10px;
 }
 
@@ -51,4 +51,9 @@ body{
   transition:
     width 0.2s ease-in-out,
     opacity 0.2s ease-in-out;
+}
+
+.pages-parent::-webkit-scrollbar {
+  width: 1px;
+  background: transparent;
 }

@@ -34,7 +34,6 @@ interface Props {
   loading?: boolean;
   loader?: React.ReactNode;
   limit?: number;
-  tableWidth?: string;
 }
 
 export function DataTable({
@@ -51,7 +50,6 @@ export function DataTable({
   loading,
   limit,
   loader,
-  tableWidth,
 }: Props) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -62,7 +60,7 @@ export function DataTable({
   const [rowSelection, setRowSelection] = React.useState({});
   const [{ pageIndex, pageSize }, setPagination] = React.useState({
     pageIndex: paginationProps?.paginateOpts.page ?? 0,
-    pageSize: paginationProps?.paginateOpts.limit ?? limit ?? 10,
+    pageSize: paginationProps?.paginateOpts.limit ?? limit ?? 8,
   });
 
   const pagination = React.useMemo(
@@ -73,35 +71,7 @@ export function DataTable({
     [pageIndex, pageSize],
   );
 
-  const newColumns: ColumnDef<any>[] = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <input
-          type="checkbox"
-          checked={table.getIsAllPageRowsSelected()}
-          onChange={(value) =>
-            table.toggleAllPageRowsSelected(!!value.target.checked)
-          }
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <input
-          type="checkbox"
-          className="mx-auto"
-          checked={row.getIsSelected()}
-          onChange={(value) => {
-            row.toggleSelected(!!value.target.checked);
-          }}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    ...columns,
-  ];
+  const newColumns: ColumnDef<any>[] = [...columns];
 
   const table = useReactTable({
     data,
@@ -167,18 +137,17 @@ export function DataTable({
           <div className={`w-full overflow-auto ${tableClass} data-table`}>
             <table
               style={{ minWidth: minW ?? 700 }}
-              className={`${tableWidth} table-row-spacing`}
+              className={`w-full table-row-spacing`}
             >
               <thead className="text-mainPurple">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <tr className="bg-[#E5E9FA]" key={headerGroup.id}>
+                  <tr className="bg-[#005DE914] text-xl" key={headerGroup.id}>
                     {headerGroup.headers.map((header, i) => (
                       <td
                         className={clsx(
-                          "p-2 font-semibold py-3 whitespace-nowrap",
-                          i === 0 && "rounded-l-xl pl-4",
-                          i === headerGroup.headers.length - 1 &&
-                            "rounded-r-xl pr-4",
+                          "p-2 font-medium py-5 whitespace-nowrap text-xl text-[#005DE9] ",
+                          i === 0 && "pl-4",
+                          i === headerGroup.headers.length - 1 && "pr-4",
                         )}
                         key={header.id}
                       >
@@ -197,20 +166,19 @@ export function DataTable({
                 {table?.getRowModel().rows?.length ? (
                   table?.getRowModel().rows.map((row, i) => (
                     <tr
-                      className={`rounded-md overflow-hidden ${i % 2 !== 0 ? "bg-[#F1F5FA]" : "bg-[#9CA1A710]"}`}
+                      className={`overflow-hidden text-base ${i % 2 === 0 ? "bg-[#FBFBFB]" : "bg-[#FFF]"}`}
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
                     >
                       {row.getVisibleCells().map((cell, i) => (
                         <td
                           className={clsx(
-                            "p-2 py-2 my-1 table-text",
+                            "p-2 py-3 my-1 table-text",
                             row.getIsSelected()
                               ? "bg-mainPurple font-semibold"
                               : "",
-                            i === 0 && "rounded-l-xl pl-4",
-                            i === row.getVisibleCells().length - 1 &&
-                              "rounded-r-xl pr-4",
+                            i === 0 && " pl-4",
+                            i === row.getVisibleCells().length - 1 && " pr-4",
                           )}
                           key={cell.id}
                         >
@@ -235,13 +203,7 @@ export function DataTable({
               </tbody>
             </table>
           </div>
-          <div className="flex items-center justify-end space-x-2 py-4">
-            <div className="flex-1 text-sm text-muted-foreground">
-              {table?.getFilteredSelectedRowModel().rows.length} of{" "}
-              {table?.getFilteredRowModel().rows.length} row(s) selected.
-            </div>
-          </div>
-          <div className="flex w-full justify-center">
+          <div className="flex w-full justify-between items-start flex-row-reverse px-10 mt-4">
             <Pagination
               total={
                 isPaginated
@@ -277,57 +239,10 @@ export function DataTable({
                 onPaginate(page - 1);
               }}
             />
-          </div>
-          <div className="flex sm:flex-row flex-col text-sm items-center mt-3 gap-2 justify-center">
-            <span className="flex items-center gap-1">
-              <div>Page</div>
-              <strong>
-                {isPaginated
-                  ? (paginationProps?.paginateOpts.page ?? 0) + 1
-                  : table?.getState().pagination.pageIndex + 1}
-                of{" "}
-                {isPaginated
-                  ? paginationProps?.paginateOpts.totalPages
-                  : table?.getPageCount()}
-              </strong>
-            </span>
-            <span className="flex items-center gap-1">
-              | Go to page:
-              <PaginationForm
-                pageIndex={
-                  isPaginated
-                    ? paginationProps?.paginateOpts.page ?? 0 + 1
-                    : table?.getState().pagination.pageIndex + 1
-                }
-                onPaginate={onPaginate}
-              />
-            </span>
-            <div className="flex items-center gap-x-2 py-[0.32rem] rounded-md border pl-2">
-              <span>Show</span>
-              <Select
-                size="xs"
-                placeholder="Pick Page Size"
-                data={[5, 10, 20, 30, 40, 50, 100, 200, 300, 400, 500].map(
-                  (val) => String(`${val}`),
-                )}
-                value={
-                  isPaginated
-                    ? String(paginationProps?.paginateOpts?.limit ?? 0)
-                    : table?.getState().pagination.pageSize.toString()
-                }
-                onChange={(value) => {
-                  const newValue = value?.replace("", "");
-                  if (!newValue) return;
-                  if (isPaginated) {
-                    paginationProps?.setPaginateOpts({
-                      ...paginationProps?.paginateOpts,
-                      limit: Number(newValue),
-                    });
-                    return;
-                  }
-                  table?.setPageSize(Number(newValue));
-                }}
-              />
+            <div className="flex md:flex-row flex-col text-sm items-center gap-2 justify-center">
+              <h1 className="text-lg font-medium text-[#B5B7C0]">
+                Showing data 1 to 8 of {table.getRowCount()} entries
+              </h1>
             </div>
           </div>
         </>

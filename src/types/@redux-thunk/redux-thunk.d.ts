@@ -1,2 +1,2 @@
 declare module "redux-thunk";
-declare module "@tabler/icons-react"
+declare module "@tabler/icons-react";
