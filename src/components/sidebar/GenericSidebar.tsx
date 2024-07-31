@@ -30,9 +30,11 @@ const GenericSidebar = ({
         <Image src={logo} className="w-[117px] h-[72px]" alt="" />
         <h1 className="text-2xl uppercase text-[#005DE9] font-bold">GMS</h1>
 
-        <button onClick={toggle} className={`absolute right-4 inset-y-0 ${isCompressed && "rotate-180 top-5"} flex items-center gap-1`}>
-          <PiCaretLeftBold color="#0075FF"/>
-          <PiCaretLeftBold color="#0075FF"/>
+        <button onClick={toggle} className={`absolute right-4 inset-y-0 ${isCompressed && "rotate-180 top-5"} flex items-center`}>
+          <PiCaretLeftBold color="#0075FF" size={25}/>
+          <span className="-ml-4">
+          <PiCaretLeftBold color="#0075FF" size={25}/>
+          </span>
         </button>
       </div>
       <h1 className="text-lg text-neutral-400 p-3">Menu</h1>
