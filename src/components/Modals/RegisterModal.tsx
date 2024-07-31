@@ -7,7 +7,9 @@ import SideVector2 from "@/assets/Vectors/sidevector2.svg";
 import { BsPerson } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
 import { MdPhoneAndroid } from "react-icons/md";
-import flag from "@/assets/Vectors/flag.svg"
+import LoginModal from "./Login";
+import SuccessModal from "./success";
+
 const RegisterModal = ({
   isOpenRegister,
   closeRegister,
@@ -44,7 +46,22 @@ const RegisterModal = ({
     console.log("Form Data: ", formData);
   };
 
+  const [isOpenLogin,setIsOpenLogin]=useState(false)
+  const [isOpenSuccess,setIsOpenSuccess]=useState(false)
+  const handleOpenLogin = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    closeRegister();
+    setIsOpenLogin(true); 
+};
+
+  const handleOpenSuccess = (event:any) => {
+    event.preventDefault();
+    setIsOpenLogin(false);
+    closeRegister();
+    setIsOpenSuccess(true);
+  }
   return (
+    <>
     <Modal
       size={""}
       opened={isOpenRegister}
@@ -175,7 +192,6 @@ const RegisterModal = ({
                       </span>
                     </div>
                     <div className="absolute left-7 top-1 pl-1 py-1 flex items-center pointer-events-none pr-2 rounded-md bg-white">
-                        <Image src={flag} alt="flag icon" width={10} height={10} className="w-4 h-4 rounded-md"/>
                         <span className="text-gray-500 text-sm ml-2">+250</span>
                     </div>
                     <input
@@ -228,7 +244,7 @@ const RegisterModal = ({
                 </div>
                 <h1 className="w-full text-center text-[#000F2369] text-base font-medium mt-4">
                   Already have an account?{" "}
-                  <span className="text-base font-medium text-[#005DE9]">
+                  <span className="text-base font-medium cursor-pointer text-[#005DE9]" onClick={handleOpenLogin}>
                     Login
                   </span>
                 </h1>
@@ -296,6 +312,7 @@ const RegisterModal = ({
                 <div className="w-full flex flex-col justify-center mt-4 gap-3">
                   <button
                     type="submit"
+                    onClick={handleOpenSuccess}
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
                     Sign Up
@@ -310,7 +327,7 @@ const RegisterModal = ({
                 </div>
                 <h1 className="text-[#000F2369] text-base font-medium mt-4">
                   Already have an account?{" "}
-                  <span className="text-base font-medium text-[#005DE9]">
+                  <span className="text-base font-medium text-[#005DE9] cursor-pointer" onClick={handleOpenLogin}>
                     Login
                   </span>
                 </h1>
@@ -320,6 +337,19 @@ const RegisterModal = ({
         </div>
       </div>
     </Modal>
+     {isOpenLogin && (
+      <LoginModal
+          opened={isOpenLogin}
+          close={() => setIsOpenLogin(false)}
+      />
+  )}
+    {isOpenSuccess && (
+      <SuccessModal
+          opened={isOpenSuccess}
+          close={() => setIsOpenSuccess(false)}
+      />
+  )}
+</>
   );
 };
 

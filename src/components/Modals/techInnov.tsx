@@ -3,7 +3,7 @@ import { Modal } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { FaClock, FaDownload } from "react-icons/fa";
 
-const SuccessModal = ({
+const CallModal = ({
     opened,
     close,
 }: {
@@ -80,4 +80,4 @@ const SuccessModal = ({
     );
 };
 
-export default SuccessModal;
+export default CallModal;
