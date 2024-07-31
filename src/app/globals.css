@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+<<<<<<< HEAD
 
 body {
   background-color: #fff;
@@ -12,6 +13,11 @@ body {
   }
 }
 
+=======
+body{
+  background-color: #fff;
+}
+>>>>>>> 055981480b294a7994d0b20a32e8b16d0cb3a844
 .m_5df29311,
 .m_fd1ab0aa {
   padding: 0 !important;
@@ -43,4 +49,13 @@ body {
 
 .m_12051f6c {
   font-size: 12px !important;
+}
+
+.sidebar-container::-webkit-scrollbar{
+  width: 4px;
+  background-color: transparent;
+}
+
+.sidebar-container::-webkit-scrollbar-thumb{
+  background: #005DE917;
 }

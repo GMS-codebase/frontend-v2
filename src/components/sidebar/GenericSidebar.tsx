@@ -13,39 +13,30 @@ import { useDispatch } from "react-redux";
 import { Route } from "@/types";
 const GenericSidebar = ({
   routes,
-  children,
 }: {
   routes: Route[];
-  children: React.ReactNode;
 }) => {
   const active = usePathname();
-  const [isLogout, { open, close }] = useDisclosure(false);
-  const [opened, setOpened] = useState("");
-  const dispatch = useDispatch();
-  const navigate = useRouter();
-  const [redirecting, setRedirecting] = useState(false);
-  const handleLogout = () => {
-    setRedirecting(true);
-    // dispatch({ type: LOGOUT_SUCCESS });
-    navigate.push("/login");
-  };
   return (
-    <div className="w-full h-screen flex flex-col border-r border-r-[#EAEFF4]">
-      <div className="flex items-center justify-start pt-10 pl-14 gap-4 cursor-pointer mb-10">
-        <Image src={logo} className="w-14 h-14 rounded-full" alt="" />
-        {children}
+    <div className="w-full h-full flex flex-col border-r border-r-[#EAEFF4] sidebar-container">
+      <div className="flex items-center justify-start pt-4 pl-4 gap-4 cursor-pointer mb-6">
+        <Image src={logo} className="w-[117px] h-[72px]" alt="" />
+        <h1 className="text-2xl uppercase text-[#005DE9] font-bold">GMS</h1>
       </div>
-      <div className="w-full h-screen overflow-y-auto">
+      <h1 className="text-lg text-neutral-400 p-3">Menu</h1>
+      <div className="w-full h-screen overflow-y-auto pb-[20vh]">
         {routes.map((route, index) => {
           return (
-            <div key={index} className="mx-3">
+            <div key={index} className="mx-4">
               <Link
                 href={route.path}
-                className={`flex items-center gap-5 px-4 py-3 my-1 pl-10 ${active === route.path ? "bg-[#5D87FF] text-white" : "bg-white"} hover:bg-blue-200 cursor-pointer rounded-md`}
+                className={`flex items-center gap-5 px-4 py-3 my-1 pl-10 ${active === route.path ? "bg-[#005DE9] text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
               >
+                <span className={active === route.path ? "text-white":"text-black"}>
                 {route.icon}
+                </span>
                 <span
-                  className={`text-sm ${active === route.path ? "font-semibold text-white" : ""} hidden lg:inline`}
+                  className={`text-lg ${active === route.path ? "font-semibold text-white" : ""} hidden lg:inline`}
                 >
                   {route.label}
                 </span>
@@ -53,39 +44,7 @@ const GenericSidebar = ({
             </div>
           );
         })}
-        <button
-          onClick={open}
-          className="w-[94%] flex items-center gap-4 mx-auto px-4 py-3 mt-[10vh] pl-8 hover:bg-red-300 cursor-pointer text-sm rounded-md hover:text-white font-semibold mb-10"
-        >
-          <BiLogOut size={25} />
-          Logout
-        </button>
       </div>
-      <Modal opened={isLogout} onClose={close} size={"md"}>
-        <h1 className="w-full flex justify-center text-lg font-semibold">
-          Are you sure you want to logout ?
-        </h1>
-        <div className="w-full flex items-center justify-between mt-10">
-          <button
-            onClick={close}
-            className="py-3 px-5 bg-neutral-200 font-semibold rounded-md"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleLogout}
-            className="py-3 px-5 bg-red-400 font-semibold rounded-md"
-          >
-            {redirecting ? (
-              <div className="w-full h-full flex items-center justify-center">
-                <ClipLoader size={20} color="white" />
-              </div>
-            ) : (
-              "Logout"
-            )}
-          </button>
-        </div>
-      </Modal>
     </div>
   );
 };
