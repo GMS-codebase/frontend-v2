@@ -9,6 +9,7 @@ import RegisterModal from "@/components/Modals/RegisterModal";
 import { useDisclosure } from "@mantine/hooks";
 import LoginModal from "@/components/Modals/Login";
 import CallModal from "@/components/Modals/techInnov";
+import AddCall from "@/components/Modals/AddCall";
 
 function Page() {
   const randomCalls = [
@@ -95,7 +96,7 @@ function Page() {
           Download User Manual
         </button>
       </div>
-      <RegisterModal isOpenRegister={isOpenRegister} closeRegister={closeRegister} />
+      <AddCall isOpenAddCall={isOpenRegister} closeAddCall={closeRegister} />
       <LoginModal opened={isOpenLogin} close={closeLogin} />
       <CallModal opened={isOpenCall} close={closeCall}/>
     </div>
