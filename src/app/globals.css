@@ -36,6 +36,10 @@ body {
 .m_fd1ab0aa {
   padding: 0 !important;
   background: transparent !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  overflow: hidden !important;
 }
 
 .m_df3ffa0f {
@@ -55,4 +59,8 @@ body {
 .m_b85f7144 {
   width: 100% !important;
   height: 100% !important;
+}
+
+.m_12051f6c {
+  font-size: 12px !important;
 }
