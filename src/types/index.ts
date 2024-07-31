@@ -1,5 +1,5 @@
 export type Route = {
-    label: string;
-    path: string;
-    icon: any;
-  };
+  label: string;
+  path: string;
+  icon: any;
+};
