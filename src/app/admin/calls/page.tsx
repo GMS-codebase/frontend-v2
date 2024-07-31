@@ -64,7 +64,7 @@ const Page = () => {
           />
         </div>
 
-        <button className="bg-[#005DE9] text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
+        <button className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
           <span className="text-2xl">
             <SolarAddFolderBold />
           </span>

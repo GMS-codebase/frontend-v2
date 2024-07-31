@@ -45,18 +45,17 @@ function Page() {
         </div>
         <div className="flex gap-4 ml-auto">
           <button
-            className="py-2 px-4 lg:px-8 bg-white font-bold text-[#005DE9] rounded-full"
+            className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
             onClick={openLogin}
           >
             Login
-          </Button>
-          <Button
-            variant="primary"
-            className="py-2 px-4 lg:px-8 text-white font-bold bg-[#005DE9] rounded-full"
+          </button>
+          <button
+            className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
             onClick={openRegister}
           >
             Register
-          </Button>
+          </button>
         </div>
       </div>
 
@@ -78,7 +77,7 @@ function Page() {
                 >
                   <h3 className="font-bold text-black">{call.title}</h3>
                   <button
-                    className="bg-[#005DE9] bg-opacity-10 text-[#005DE9] font-bold rounded-full px-4 py-2"
+                    className="bg-primary bg-opacity-10 text-primary font-bold rounded-full px-4 py-2"
                     onClick={openCall}
                   >
                     View details
@@ -89,13 +88,13 @@ function Page() {
         </div>
 
         <div className="p-3 w-[40%] md:w-[30%] bg-white mt-5 rounded-full justify-center items-center flex">
-          <HiOutlineMail className="text-[#005DE9] ml-3 w-8 h-8" />
+          <HiOutlineMail className="text-primary ml-3 w-8 h-8" />
           <input
             type="text"
             className="w-full ml-3 border-none text-black bg-white outline-none"
             placeholder="Type your email"
           />
-          <button className="bg-[#005DE9] bg-opacity-10 text-[#005DE9] font-bold rounded-full px-4 py-2">
+          <button className="bg-primary bg-opacity-10 text-primary font-bold rounded-full px-4 py-2">
             Subscribe
           </button>
         </div>
@@ -107,7 +106,7 @@ function Page() {
         </h2>
       </div>
       <div className="absolute bottom-0 right-0 p-4 z-30">
-        <button className="py-2 px-4 lg:px-8 bg-white font-bold text-[#005DE9] flex items-center rounded-full">
+        <button className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
           <IoDownloadOutline className="w-4 h-4 mx-2" />
           Download User Manual
         </button>
