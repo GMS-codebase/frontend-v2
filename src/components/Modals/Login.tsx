@@ -2,7 +2,7 @@
 import React from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal, Button } from "@mantine/core";
-import { IconX } from "@tabler/icons-react";
+import { IoMdClose } from "react-icons/io";
 import { FaTimes, FaEnvelope, FaLock } from "react-icons/fa";
 
 const LoginModal = ({
@@ -12,8 +12,6 @@ const LoginModal = ({
     opened: boolean;
     close: () => void;
 }) => {
-    // const [opened, { open, close }] = useDisclosure(true); // Open by default
-
     return (
         <Modal
             opened={opened}
@@ -29,7 +27,7 @@ const LoginModal = ({
                         onClick={close}
                         className="text-gray-500 hover:text-gray-700 focus:outline-none  "
                     >
-                        <IconX size={24} />
+                        <IoMdClose size={24} />
                     </button>
                 </div>
 
