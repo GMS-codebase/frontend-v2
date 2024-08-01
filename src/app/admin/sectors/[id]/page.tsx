@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { sectorsData as data } from "@/utils/constants/dummy";
-import SectorsActions from "../../../components/Actions/SectorsAction";
+import SingleSectorActions from "@/components/Actions/SingleSectorActions";
 import { CiSearch } from "react-icons/ci";
 
 const Page = () => {
@@ -23,7 +23,7 @@ const Page = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <SectorsActions/>
+      cell: ({ row }) => <SingleSectorActions/>
     },
   ];
   return (
