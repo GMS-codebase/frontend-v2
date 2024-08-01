@@ -145,7 +145,7 @@ export function DataTable({
                     {headerGroup.headers.map((header, i) => (
                       <td
                         className={clsx(
-                          "p-2 font-medium py-5 whitespace-nowrap text-xl text-[#005DE9] ",
+                          "p-2 font-medium py-5 whitespace-nowrap text-xl text-primary ",
                           i === 0 && "pl-4",
                           i === headerGroup.headers.length - 1 && "pr-4",
                         )}
