@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal } from "@mantine/core";
-import { IconX } from "@tabler/icons-react";
+import { IoMdClose } from "react-icons/io";
 import { FaClock, FaDownload } from "react-icons/fa";
 
 const CallModal = ({
@@ -25,7 +25,7 @@ const CallModal = ({
             onClick={close}
             className="text-gray-500 hover:text-gray-700 focus:outline-none"
           >
-            <IconX size={24} />
+            <IoMdClose size={24} />
           </button>
         </div>
 
@@ -52,7 +52,7 @@ const CallModal = ({
               <FaClock className="text-[#E97E00]" />
               <p className="text-[#E97E00]">12th July 2024 - 31st July 2024</p>
             </div>
-            <div className="flex items-center gap-2 text-primary bg-primary bg-opacity-10 cursor-pointer px-4 py-2 rounded-full font-bold ">
+            <div className="flex items-center gap-2 text-primary bg-[#005DE908] bg-opacity-10 cursor-pointer px-4 py-2 rounded-full font-bold ">
               <FaDownload className="text-primary" />
               <div>View application instructions</div>
             </div>

@@ -1,21 +1,21 @@
 import { Modal, Select, Stepper } from "@mantine/core";
 import Image from "next/image";
-import { SetStateAction, useState } from "react";
-import { IoMdClose, IoMdPerson } from "react-icons/io";
+import { useState } from "react";
+import { IoMdClose } from "react-icons/io";
 import SideVector1 from "@/assets/Vectors/sidevecto.svg";
 import SideVector2 from "@/assets/Vectors/sidevector2.svg";
 import { BsPerson } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
 import { MdPhoneAndroid } from "react-icons/md";
-import LoginModal from "./Login";
-import SuccessModal from "./success";
 
 const RegisterModal = ({
   isOpenRegister,
   closeRegister,
+  openLogin
 }: {
   isOpenRegister: boolean;
   closeRegister: () => void;
+  openLogin: () => void;
 }) => {
   const [active, setActive] = useState(0);
   const nextStep = () =>
@@ -48,11 +48,6 @@ const RegisterModal = ({
 
   const [isOpenLogin, setIsOpenLogin] = useState(false);
   const [isOpenSuccess, setIsOpenSuccess] = useState(false);
-  const handleOpenLogin = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-    closeRegister();
-    setIsOpenLogin(true);
-  };
 
   const handleOpenSuccess = (event: any) => {
     event.preventDefault();
@@ -246,7 +241,7 @@ const RegisterModal = ({
                     Already have an account?{" "}
                     <span
                       className="text-base font-medium cursor-pointer text-primary"
-                      onClick={handleOpenLogin}
+                      onClick={openLogin}
                     >
                       Login
                     </span>
@@ -339,7 +334,7 @@ const RegisterModal = ({
                     Already have an account?{" "}
                     <span
                       className="text-base font-medium text-primary cursor-pointer"
-                      onClick={handleOpenLogin}
+                      onClick={()=> {closeRegister();openLogin()}}
                     >
                       Login
                     </span>
@@ -350,15 +345,6 @@ const RegisterModal = ({
           </div>
         </div>
       </Modal>
-      {isOpenLogin && (
-        <LoginModal opened={isOpenLogin} close={() => setIsOpenLogin(false)} />
-      )}
-      {isOpenSuccess && (
-        <SuccessModal
-          opened={isOpenSuccess}
-          close={() => setIsOpenSuccess(false)}
-        />
-      )}
     </>
   );
 };

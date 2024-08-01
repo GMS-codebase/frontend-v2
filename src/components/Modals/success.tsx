@@ -1,7 +1,7 @@
 import React from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal, Button } from "@mantine/core";
-import { IconX } from "@tabler/icons-react";
+import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
 import Mail from "../../assets/Images/mail.png";
 
@@ -29,7 +29,7 @@ const SuccessModal = ({
             onClick={close}
             className="text-gray-500 hover:text-gray-700 focus:outline-none"
           >
-            <IconX size={24} />
+            <IoMdClose size={24} />
           </button>
         </div>
 
