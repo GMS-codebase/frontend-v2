@@ -2,11 +2,10 @@ import { useDisclosure } from "@mantine/hooks";
 ``;
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Menu, Button, Text, rem } from "@mantine/core";
-import { FiEye } from "react-icons/fi";
-import { CiEdit } from "react-icons/ci";
-import { RiDeleteBinLine } from "react-icons/ri";
+import Link from "next/link";
+import { VscEye } from "react-icons/vsc";
 
-const SingleSectorActions = () => {
+const CallsActions = () => {
   return (
     <div>
       <Menu shadow="lg" width={300}>
@@ -27,22 +26,13 @@ const SingleSectorActions = () => {
           </Menu.Label>
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
-            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-              <FiEye size={21} color="#576074" />
+            <Link
+              href={"/admin/applications/application"}
+              className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
+            >
+              <VscEye size={21} color="#576074" />
               View
-            </div>
-          </Menu.Item>
-          <Menu.Item>
-            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-              <CiEdit size={21} color="#576074" />
-              Edit Call
-            </div>
-          </Menu.Item>
-          <Menu.Item>
-            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-              <RiDeleteBinLine size={21} color="#576074" />
-              Remove
-            </div>
+            </Link>
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
@@ -50,4 +40,4 @@ const SingleSectorActions = () => {
   );
 };
 
-export default SingleSectorActions;
+export default CallsActions;
