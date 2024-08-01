@@ -2465,6 +2465,36 @@ export const callsData = [
   },
 ];
 
+export const sectorsData = [
+    {
+        name: "Transport &Logistics",
+        description:"Transport &Logistics",
+    },
+    {
+        name: "Construction Sector",
+        description:"Construction Sector",
+    },
+    {
+        name: "Hospitality & Tourism",
+        description:"Hospitality & Tourism",
+    },
+    {
+        name: "Energy Sector",
+        description:"Energy Sector",
+    },
+    {
+        name: "ICT & Digital Skills",
+        description:"ICT & Digital Skills",
+    },
+    {
+        name: "Manufacturing",
+        description:"Manufacturing",
+    },
+    {
+        name: "Mining",
+        description:"Mining",
+    },
+]
 export const tradesData = [
   {
     name: "Carpentry",

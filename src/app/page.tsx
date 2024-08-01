@@ -78,7 +78,7 @@ function Page() {
                 >
                   <h3 className="font-bold text-black">{call.title}</h3>
                   <button
-                    className="bg-primary bg-opacity-20 text-primary font-bold rounded-full px-4 py-2"
+                    className="bg-[#1F5DB014] bg-opacity-20 text-primary font-bold rounded-full px-4 py-2"
                     onClick={openCall}
                   >
                     View details
@@ -87,7 +87,6 @@ function Page() {
               ))}
           </div>
         </div>
-
         <div className="p-3 w-[40%] md:w-[30%] bg-white mt-5 rounded-full justify-center items-center flex">
           <HiOutlineMail className="text-primary ml-3 w-8 h-8" />
           <input
@@ -95,7 +94,7 @@ function Page() {
             className="w-full ml-3 border-none text-black bg-white outline-none"
             placeholder="Type your email"
           />
-          <button className="bg-primary bg-opacity-10 text-primary font-bold rounded-full px-4 py-2">
+          <button className="bg-[#1F5DB014] bg-opacity-10 text-primary font-bold rounded-full px-4 py-2">
             Subscribe
           </button>
         </div>
@@ -112,8 +111,8 @@ function Page() {
           Download User Manual
         </button>
       </div>
-      <RegisterModal isOpenRegister={isOpenRegister} closeRegister={closeRegister} />
-      <LoginModal opened={isOpenLogin} close={closeLogin} />
+      <RegisterModal isOpenRegister={isOpenRegister} closeRegister={closeRegister} openLogin={openLogin}/>
+      <LoginModal opened={isOpenLogin} close={closeLogin} openRegister={openRegister}/>
       <CallModal opened={isOpenCall} close={closeCall} />
     </div>
   );
