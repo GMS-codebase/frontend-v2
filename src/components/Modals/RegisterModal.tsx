@@ -245,7 +245,7 @@ const RegisterModal = ({
                   <h1 className="w-full text-center text-[#000F2369] text-base font-medium mt-4">
                     Already have an account?{" "}
                     <span
-                      className="text-base font-medium cursor-pointer text-[#005DE9]"
+                      className="text-base font-medium cursor-pointer text-primary"
                       onClick={handleOpenLogin}
                     >
                       Login
@@ -338,7 +338,7 @@ const RegisterModal = ({
                   <h1 className="text-[#000F2369] text-base font-medium mt-4">
                     Already have an account?{" "}
                     <span
-                      className="text-base font-medium text-[#005DE9] cursor-pointer"
+                      className="text-base font-medium text-primary cursor-pointer"
                       onClick={handleOpenLogin}
                     >
                       Login

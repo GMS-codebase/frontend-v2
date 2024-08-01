@@ -86,7 +86,7 @@ const LoginModal = ({
 
               <p>Forgot password?</p>
             </div>
-            <div className="border text-center bg-[#005DE9] rounded-2xl p-2 text-white font-semibold text-xl">
+            <div className="border text-center bg-primary rounded-2xl p-2 text-white font-semibold text-xl">
               <input type="submit" value="Login" />
             </div>
           </form>
@@ -95,7 +95,7 @@ const LoginModal = ({
               Don't have an account?{" "}
               <a
                 href="#"
-                className="font-bold text-[#005DE9]"
+                className="font-bold text-primary"
                 onClick={handleOpenRegister}
               >
                 Sign up
