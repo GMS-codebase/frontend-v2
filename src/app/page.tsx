@@ -9,6 +9,7 @@ import RegisterModal from "@/components/Modals/RegisterModal";
 import { useDisclosure } from "@mantine/hooks";
 import LoginModal from "@/components/Modals/Login";
 import CallModal from "@/components/Modals/techInnov";
+import AddCall from "@/components/Modals/AddCall";
 
 function Page() {
   const randomCalls = [
@@ -67,7 +68,7 @@ function Page() {
           Unfortunately there is no open call. Please subscribe to get notified
           when there is a new call.
         </h2>
-        <div className="w-[80%] overflow-x-auto no-scrollbar m-10">
+        <div className="w-[80%] overflow-x-auto no-scrollbar m-10" style={{scrollbarWidth:'none'}}>
           <div className="flex space-x-4">
             {hasCalls &&
               randomCalls.map((call) => (
@@ -111,10 +112,7 @@ function Page() {
           Download User Manual
         </button>
       </div>
-      <RegisterModal
-        isOpenRegister={isOpenRegister}
-        closeRegister={closeRegister}
-      />
+      <AddCall isOpenAddCall={isOpenRegister} closeAddCall={closeRegister} />
       <LoginModal opened={isOpenLogin} close={closeLogin} />
       <CallModal opened={isOpenCall} close={closeCall} />
     </div>
