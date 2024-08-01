@@ -4,33 +4,25 @@ import { SolarAddFolderBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
-import {callsData as data} from "@/utils/constants/dummy"
+import { tradesData as data } from "@/utils/constants/dummy";
+import { useDisclosure } from "@mantine/hooks";
 const Page = () => {
   const columns: ColumnDef<any>[] = [
     {
-      accessorKey: "title",
-      header: "Title",
-      cell: ({ row }) => <div>{row.original?.title}</div>,
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
     },
     {
-      accessorKey: "startDate",
-      header: "Start Date",
-      cell: ({ row }) => <div>{row.original?.startDate}</div>,
-    },
-    {
-      accessorKey: "endDate",
-      header: "End Date",
-      cell: ({ row }) => <div>{row.original?.endDate}</div>,
-    },
-    {
-      accessorKey: "appealDays",
-      header: "Appeal Days",
-      cell: ({ row }) => <div>{row.original?.appealDays}</div>,
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => <div>{row.original?.status}</div>,
+      accessorKey: "description",
+      header: "Description",
+      cell: ({ row }) => (
+        <div className="truncate">
+          {row.original?.description.length > 50
+            ? row.original?.description.slice(0, 50) + "..."
+            : row.original.description}
+        </div>
+      ),
     },
     {
       accessorKey: "actions",
@@ -50,6 +42,9 @@ const Page = () => {
       ),
     },
   ];
+  const [isOpenCreate, { open: openCreate, close: closeCreate }] =
+    useDisclosure(false);
+
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
@@ -68,7 +63,7 @@ const Page = () => {
           <span className="text-2xl">
             <SolarAddFolderBold />
           </span>
-          <h1 className="text-base font-medium text-white">New Call</h1>
+          <h1 className="text-base font-medium text-white">New Trade</h1>
         </button>
       </div>
 
