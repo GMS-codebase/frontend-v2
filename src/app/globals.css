@@ -1,23 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-<<<<<<< HEAD
-
-body {
-  background-color: #fff;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
-
-=======
 body{
   background-color: #fff;
 }
->>>>>>> 055981480b294a7994d0b20a32e8b16d0cb3a844
 .m_5df29311,
 .m_fd1ab0aa {
   padding: 0 !important;
@@ -58,4 +44,13 @@ body{
 
 .sidebar-container::-webkit-scrollbar-thumb{
   background: #005DE917;
+}
+/* Add this CSS to hide the scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
