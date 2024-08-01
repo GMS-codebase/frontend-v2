@@ -9,6 +9,8 @@ import RegisterModal from "@/components/Modals/RegisterModal";
 import { useDisclosure } from "@mantine/hooks";
 import LoginModal from "@/components/Modals/Login";
 
+
+
 function Page() {
     const [isOpenRegister, { open: openRegister, close: closeRegister }] =
         useDisclosure(false);
