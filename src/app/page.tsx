@@ -112,7 +112,7 @@ function Page() {
           Download User Manual
         </button>
       </div>
-      <AddCall isOpenAddCall={isOpenRegister} closeAddCall={closeRegister} />
+      <RegisterModal isOpenRegister={isOpenRegister} closeRegister={closeRegister} />
       <LoginModal opened={isOpenLogin} close={closeLogin} />
       <CallModal opened={isOpenCall} close={closeCall} />
     </div>
