@@ -1,9 +1,7 @@
 "use client";
-import { BiSearch } from "react-icons/bi";
 import { SolarAddSquareBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import { HiDotsHorizontal } from "react-icons/hi";
 import { sectorsData as data } from "@/utils/constants/dummy";
 import SectorsActions from "../../../components/Actions/SectorsAction";
 import { CiSearch } from "react-icons/ci";
@@ -18,12 +16,14 @@ const Page = () => {
     {
       accessorKey: "description",
       header: "Description",
-      cell: ({ row }) => <div>{row.original?.description}</div>,
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.description}</div>
+      ),
     },
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <SectorsActions/>
+      cell: ({ row }) => <SectorsActions />,
     },
   ];
   return (
