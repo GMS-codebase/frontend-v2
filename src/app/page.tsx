@@ -8,6 +8,7 @@ import { IoDownloadOutline } from "react-icons/io5";
 import RegisterModal from "@/components/Modals/RegisterModal";
 import { useDisclosure } from "@mantine/hooks";
 import LoginModal from "@/components/Modals/Login";
+import AddCall from "@/components/Modals/AddCall";
 
 
 
@@ -83,9 +84,9 @@ function Page() {
                 </button>
             </div>
 
-            <RegisterModal
-                isOpenRegister={isOpenRegister}
-                closeRegister={closeRegister}
+            <AddCall
+                isOpenAddCall={isOpenRegister}
+                closeAddCall={closeRegister}
             />
             <LoginModal opened={isOpenLogin} close={closeLogin} />
         </div>
