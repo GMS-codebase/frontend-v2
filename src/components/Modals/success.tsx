@@ -46,7 +46,7 @@ const SuccessModal = ({
         </div>
 
         <div
-          className="text-white bg-[#005DE9] rounded-2xl py-2 font-semibold text-xl text-center mt-2 cursor-pointer"
+          className="text-white bg-primary rounded-2xl py-2 font-semibold text-xl text-center mt-2 cursor-pointer"
           onClick={close}
         >
           Got it

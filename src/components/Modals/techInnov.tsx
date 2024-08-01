@@ -52,8 +52,8 @@ const CallModal = ({
               <FaClock className="text-[#E97E00]" />
               <p className="text-[#E97E00]">12th July 2024 - 31st July 2024</p>
             </div>
-            <div className="flex items-center gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 cursor-pointer px-4 py-2 rounded-full font-bold ">
-              <FaDownload className="text-[#005DE9]" />
+            <div className="flex items-center gap-2 text-primary bg-primary bg-opacity-10 cursor-pointer px-4 py-2 rounded-full font-bold ">
+              <FaDownload className="text-primary" />
               <div>View application instructions</div>
             </div>
           </div>
@@ -62,7 +62,7 @@ const CallModal = ({
               {" "}
               Back
             </div>
-            <div className="bg-[#005DE9] cursor-pointer text-white px-36 py-2 rounded-full font-bold">
+            <div className="bg-primary cursor-pointer text-white px-36 py-2 rounded-full font-bold">
               Apply
             </div>
           </div>
