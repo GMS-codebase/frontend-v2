@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
-import DonutChart from "../../../components/chart/DonutChart";
+import DonutChart from "../../../../components/chart/DonutChart";
 import {SolarPen2Bold,SolarAddFolderBold,SolarShieldWarningBold,SolarClockSquareBold,SolarBookmarkBold,SolarCalendarBold,SolarSubtitlesBold,SolarDownloadMinimalisticBold} from "@/components/core/icons";
-export default function Page() {
-    
+const Page = () => {
+    return(
         <div className="bg-white rounded-2xl p-10 ">
             <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-6  text-black">
@@ -117,5 +117,11 @@ export default function Page() {
                 </div>
             </div>
         </div>
+<<<<<<< HEAD:src/app/admin/callDetails/page.tsx
 
+=======
+    )
+>>>>>>> eb3372f1b0e738f69c8f75d7907aed0f60cd0c14:src/app/admin/calls/call/page.tsx
 }
+
+export default Page;
