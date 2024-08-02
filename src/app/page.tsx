@@ -68,7 +68,10 @@ function Page() {
           Unfortunately there is no open call. Please subscribe to get notified
           when there is a new call.
         </h2>
-        <div className="w-[80%] overflow-x-auto no-scrollbar m-10" style={{scrollbarWidth:'none'}}>
+        <div
+          className="w-[80%] overflow-x-auto no-scrollbar m-10"
+          style={{ scrollbarWidth: "none" }}
+        >
           <div className="flex space-x-4">
             {hasCalls &&
               randomCalls.map((call) => (
@@ -111,8 +114,16 @@ function Page() {
           Download User Manual
         </button>
       </div>
-      <RegisterModal isOpenRegister={isOpenRegister} closeRegister={closeRegister} openLogin={openLogin}/>
-      <LoginModal opened={isOpenLogin} close={closeLogin} openRegister={openRegister}/>
+      <RegisterModal
+        isOpenRegister={isOpenRegister}
+        closeRegister={closeRegister}
+        openLogin={openLogin}
+      />
+      <LoginModal
+        opened={isOpenLogin}
+        close={closeLogin}
+        openRegister={openRegister}
+      />
       <CallModal opened={isOpenCall} close={closeCall} />
     </div>
   );

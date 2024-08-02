@@ -8,11 +8,11 @@ import RegisterModal from "./RegisterModal";
 const LoginModal = ({
   opened,
   close,
-  openRegister
+  openRegister,
 }: {
   opened: boolean;
   close: () => void;
-  openRegister: ()=> void;
+  openRegister: () => void;
 }) => {
   const [isOpenRegister, setIsOpenRegister] = useState(false);
 
@@ -98,7 +98,10 @@ const LoginModal = ({
               <a
                 href="#"
                 className="font-bold text-primary"
-                onClick={()=> {close();openRegister();}}
+                onClick={() => {
+                  close();
+                  openRegister();
+                }}
               >
                 Sign up
               </a>
