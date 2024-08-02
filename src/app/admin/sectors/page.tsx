@@ -5,8 +5,11 @@ import { DataTable } from "@/components/core/data-table";
 import { sectorsData as data } from "@/utils/constants/dummy";
 import SectorsActions from "../../../components/Actions/SectorsAction";
 import { CiSearch } from "react-icons/ci";
+import AddSector from "@/components/Modals/AddSector";
+import { useDisclosure } from "@mantine/hooks";
 
 const Page = () => {
+  const [isAddSector, {open, close}] = useDisclosure(false);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -35,12 +38,12 @@ const Page = () => {
           </span>
           <input
             name="search"
-            className="w-full p-3 py-4 pl-12 text-base text-black rounded-full bg-[#005DE908] border-none outline-none"
+            className="w-full p-3 py-4 pl-12 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
             placeholder="Search"
           />
         </div>
 
-        <button className="bg-[#005DE9] text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
+        <button onClick={open} className="bg-[#005DE9] text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
           <span className="text-2xl">
             <SolarAddSquareBold />
           </span>
@@ -51,6 +54,7 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable columns={columns} data={data} />
       </div>
+      <AddSector isOpenAddSector={isAddSector} closeAddSector={close} />
     </div>
   );
 };
