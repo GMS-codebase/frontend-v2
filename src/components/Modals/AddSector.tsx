@@ -38,7 +38,7 @@ const AddSector = ({
         closeOnClickOutside={false}
         withCloseButton={false}
       >
-        <div className="w-[80vh] h-full relative bg-white rounded-3xl pt-10 pb-6 flex flex-col items-center">
+        <div className="w-[80vh] h-fit relative bg-white rounded-3xl pt-10 pb-6 flex flex-col items-center">
           <button
             className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
             onClick={closeAddSector}
@@ -51,7 +51,7 @@ const AddSector = ({
               Provide your sector details to create a new sector.
             </h2>
           </div>
-          <div className="w-4/5 flex flex-col items-center mt-4 overflow-hidden">
+          <div className="w-4/5 flex flex-col items-center mt-10 overflow-hidden">
             <form
                   onSubmit={handleSubmit}
                   className="w-full h-[60vh] overflow-y-auto flex flex-col gap-2 px-2"
@@ -60,7 +60,7 @@ const AddSector = ({
                     <div className="w-full">
                       <label
                         htmlFor="SectorTitle"
-                        className="block text-xs font-bold text-gray-700"
+                        className="block text-lg font-bold text-gray-700"
                       >
                         Title
                       </label>
@@ -74,7 +74,7 @@ const AddSector = ({
                           value={formData.title}
                           placeholder="Sector title"
                           onChange={handleChange}
-                          className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                          className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
                           required
                         />
                       </div>
@@ -84,13 +84,13 @@ const AddSector = ({
                   <div className="">
                     <label
                       htmlFor="description"
-                      className="block text-xs font-bold text-gray-700"
+                      className="block text-lg font-bold text-gray-700"
                     >
                       Description
                     </label>
                     <div className="w-full relative">
                       <span className="absolute left-2 top-[10px]">
-                        <Subtitles />
+                        <Subtitles/>
                       </span>
                       <input
                         type="text"
@@ -98,7 +98,7 @@ const AddSector = ({
                         value={formData.description}
                         placeholder="Add description"
                         onChange={handleChange}
-                        className="mt-1 block w-full h-full pl-8 px-3 pt-3 pb-8 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        className="mt-1 block w-full pb-28 pt-2 pl-8 px-3  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
                         required
                       />
                     </div>
@@ -108,13 +108,13 @@ const AddSector = ({
                     <button
                       type="button"
                       onClick={closeAddSector}
-                      className="w-full px-4 py-2 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                       Cancel
                     </button>
                     <button
                       type="button"
-                      className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                       Create
                     </button>

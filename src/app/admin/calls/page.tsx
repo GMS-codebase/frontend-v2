@@ -53,7 +53,7 @@ const Page = () => {
           </span>
           <input
             name="search"
-            className="w-full p-3 py-4 pl-12 text-base text-black rounded-full bg-[#005DE908] border-none outline-none"
+            className="w-full p-3 py-4 pl-12 text-base placeholder:text-black text-black rounded-full bg-[#005DE908] border-none outline-none"
             placeholder="Search"
           />
         </div>
