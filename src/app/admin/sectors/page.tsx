@@ -11,11 +11,11 @@ import { useState } from "react";
 import UpdateSector from "@/components/Modals/UpdateSector";
 
 const Page = () => {
-  const [isAddSector, {open, close}] = useDisclosure(false);
+  const [isAddSector, { open, close }] = useDisclosure(false);
   const [isSector, setIsSector] = useState({
     open: false,
     sector: null,
-  })
+  });
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -33,14 +33,14 @@ const Page = () => {
       accessorKey: "    ",
       header: "     ",
       id: "1",
-      cell: () => (
-        <div className="truncate">{""}</div>
-      ),
+      cell: () => <div className="truncate">{""}</div>,
     },
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <SectorsActions  sector={isSector.sector} setIsSector={setIsSector}/>,
+      cell: ({ row }) => (
+        <SectorsActions sector={isSector.sector} setIsSector={setIsSector} />
+      ),
     },
   ];
   return (
@@ -57,7 +57,10 @@ const Page = () => {
           />
         </div>
 
-        <button onClick={open} className="bg-[#005DE9] text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
+        <button
+          onClick={open}
+          className="bg-[#005DE9] text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+        >
           <span className="text-2xl">
             <SolarAddSquareBold />
           </span>
@@ -69,7 +72,11 @@ const Page = () => {
         <DataTable columns={columns} data={data} />
       </div>
       <AddSector isOpenAddSector={isAddSector} closeAddSector={close} />
-      <UpdateSector sector={isSector.sector} isOpenUpdateSector={isSector.open} closeUpdateSector={()=> setIsSector({open: false, sector: null})} />
+      <UpdateSector
+        sector={isSector.sector}
+        isOpenUpdateSector={isSector.open}
+        closeUpdateSector={() => setIsSector({ open: false, sector: null })}
+      />
     </div>
   );
 };

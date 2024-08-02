@@ -7,17 +7,13 @@ import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 import Link from "next/link";
 
-const SectorsActions = (
-
-  {
-    sector,
-    setIsSector
-  }:{
-    setIsSector: (sector: any)=> void;
-    sector: any;
-  }
-) => {
-
+const SectorsActions = ({
+  sector,
+  setIsSector,
+}: {
+  setIsSector: (sector: any) => void;
+  sector: any;
+}) => {
   console.log("sector update --> ", sector);
   return (
     <div className="">
@@ -48,10 +44,15 @@ const SectorsActions = (
             </Link>
           </Menu.Item>
           <Menu.Item>
-            <div onClick={()=> setIsSector({
-              open: true,
-              sector: sector
-            })} className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+            <div
+              onClick={() =>
+                setIsSector({
+                  open: true,
+                  sector: sector,
+                })
+              }
+              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+            >
               <CiEdit size={21} color="#576074" />
               Edit Sector
             </div>
