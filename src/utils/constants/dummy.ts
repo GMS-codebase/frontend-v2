@@ -2548,6 +2548,59 @@ export const tradesData = [
   },
 ];
 
+export const applicantsData = [
+  {
+    name: "Jean Bosco",
+    email: "jean.bosco@example.com",
+    phone: "+250789123456",
+  },
+  {
+    name: "Alice Uwamahoro",
+    email: "alice.uwamahoro@example.com",
+    phone: "+250783654789",
+  },
+  {
+    name: "Eric Ndayisaba",
+    email: "eric.ndayisaba@example.com",
+    phone: "+250722345678",
+  },
+  {
+    name: "Clementine Mukarugema",
+    email: "clementine.mukarugema@example.com",
+    phone: "+250788234567",
+  },
+  {
+    name: "David Kamanzi",
+    email: "david.kamanzi@example.com",
+    phone: "+250785678234",
+  },
+  {
+    name: "Esther Niyigena",
+    email: "esther.niyigena@example.com",
+    phone: "+250787234567",
+  },
+  {
+    name: "Patrick Munyaneza",
+    email: "patrick.munyaneza@example.com",
+    phone: "+250788765432",
+  },
+  {
+    name: "Marie Ange Umuhoza",
+    email: "marieange.umuhoza@example.com",
+    phone: "+250789876543",
+  },
+  {
+    name: "Claude Tuyisenge",
+    email: "claude.tuyisenge@example.com",
+    phone: "+250783456789",
+  },
+  {
+    name: "Olivia Uwase",
+    email: "olivia.uwase@example.com",
+    phone: "+250782345678",
+  },
+];
+
 export const applicationsData = [
   {
     applicationNumber:"GMS-APP-0001924",
