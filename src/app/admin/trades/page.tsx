@@ -6,7 +6,9 @@ import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { tradesData as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
+import AddTrade from "@/components/Modals/AddTrade";
 const Page = () => {
+  const [isOpenTrade, { open, close }] = useDisclosure(false);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -51,12 +53,12 @@ const Page = () => {
           </span>
           <input
             name="search"
-            className="w-full p-3 py-4 pl-10 text-base text-black rounded-full bg-[#005DE908] border-none outline-none"
+            className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
             placeholder="Search"
           />
         </div>
 
-        <button className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
+        <button onClick={open} className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
           <span className="text-2xl">
             <SolarAddFolderBold />
           </span>
@@ -67,6 +69,7 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable columns={columns} data={data} />
       </div>
+      <AddTrade isOpenAddTrade={isOpenTrade} closeAddTrade={close} />
     </div>
   );
 };

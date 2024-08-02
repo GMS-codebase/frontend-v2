@@ -1,24 +1,22 @@
 "use client";
 import React from "react";
-import DonutChart from "../../../../components/chart/DonutChart";
 import {
   SolarPen2Bold,
   SolarAddFolderBold,
-  SolarShieldWarningBold,
   SolarClockSquareBold,
   SolarBookmarkBold,
-  SolarCalendarBold,
-  SolarSubtitlesBold,
-  SolarDownloadMinimalisticBold,
 } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { BiSearch } from "react-icons/bi";
 import { DataTable } from "@/components/core/data-table";
 import { tradesData as data } from "@/utils/constants/dummy";
 import { CiSearch } from "react-icons/ci";
+import AddSector from "@/components/Modals/AddSector";
+import { useDisclosure } from "@mantine/hooks";
+import AddSectorTrade from "@/components/Modals/AddSectorTrade";
 
 const Page = () => {
+  const [isAddSector, {open, close}] = useDisclosure(false);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -103,12 +101,12 @@ const Page = () => {
                 </span>
                 <input
                   name="search"
-                  className="w-full p-3 py-4 pl-10 text-base text-black rounded-full bg-[#005DE908] border-none outline-none"
+                  className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
                   placeholder="Search"
                 />
               </div>
 
-              <button className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
+              <button onClick={open} className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
                 <span className="text-2xl">
                   <SolarAddFolderBold />
                 </span>
@@ -122,6 +120,7 @@ const Page = () => {
             </div>
           </div>
         </div>
+        <AddSectorTrade isOpenAddSectorTrade={isAddSector} closeAddSectorTrade={close} />
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ import Link from "next/link";
 const CallsActions = () => {
   return (
     <div>
-      <Menu shadow="lg" width={300}>
+      <Menu shadow="lg" width={200}>
         <Menu.Target>
           <button
             style={{

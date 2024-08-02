@@ -7,9 +7,15 @@ import SectorsActions from "../../../components/Actions/SectorsAction";
 import { CiSearch } from "react-icons/ci";
 import AddSector from "@/components/Modals/AddSector";
 import { useDisclosure } from "@mantine/hooks";
+import { useState } from "react";
+import UpdateSector from "@/components/Modals/UpdateSector";
 
 const Page = () => {
   const [isAddSector, {open, close}] = useDisclosure(false);
+  const [isSector, setIsSector] = useState({
+    open: false,
+    sector: null,
+  })
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -24,9 +30,17 @@ const Page = () => {
       ),
     },
     {
+      accessorKey: "    ",
+      header: "     ",
+      id: "1",
+      cell: () => (
+        <div className="truncate">{""}</div>
+      ),
+    },
+    {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <SectorsActions />,
+      cell: ({ row }) => <SectorsActions  sector={isSector.sector} setIsSector={setIsSector}/>,
     },
   ];
   return (
@@ -55,6 +69,7 @@ const Page = () => {
         <DataTable columns={columns} data={data} />
       </div>
       <AddSector isOpenAddSector={isAddSector} closeAddSector={close} />
+      <UpdateSector sector={isSector.sector} isOpenUpdateSector={isSector.open} closeUpdateSector={()=> setIsSector({open: false, sector: null})} />
     </div>
   );
 };
