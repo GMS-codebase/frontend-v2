@@ -38,7 +38,7 @@ const AddSector = ({
         closeOnClickOutside={false}
         withCloseButton={false}
       >
-        <div className="w-[80vh] h-fit relative bg-white rounded-3xl pt-10 pb-6 flex flex-col items-center">
+        <div className="w-[80vh] h-[500px] relative bg-white rounded-3xl pt-10 pb-6 flex flex-col items-center">
           <button
             className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
             onClick={closeAddSector}
