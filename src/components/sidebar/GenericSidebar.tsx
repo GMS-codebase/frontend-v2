@@ -24,7 +24,7 @@ const GenericSidebar = ({
   toggle: () => void;
 }) => {
   const active = usePathname();
-    const isActiveLink = (path: string, index: number) => {
+  const isActiveLink = (path: string, index: number) => {
     if (index === 0) return active === path;
     return active.startsWith(path);
   };

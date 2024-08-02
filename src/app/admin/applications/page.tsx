@@ -27,7 +27,11 @@ const Page = () => {
     {
       accessorKey: "window",
       header: "Window",
-      cell: ({ row }) => <div>WINDOW {row.original?.window.number} : {row.original?.window.name}</div>,
+      cell: ({ row }) => (
+        <div>
+          WINDOW {row.original?.window.number} : {row.original?.window.name}
+        </div>
+      ),
     },
     {
       accessorKey: "sector",
@@ -48,23 +52,27 @@ const Page = () => {
 
   const FilterDropDown = ({
     placeholderText,
-    data
+    data,
   }: {
     placeholderText: string;
-    data: any[]
-  })=>{
-    return(
-        <Select data={data} placeholder={placeholderText} defaultValue={placeholderText} className="w-full px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
-        />
-    )
-  }
+    data: any[];
+  }) => {
+    return (
+      <Select
+        data={data}
+        placeholder={placeholderText}
+        defaultValue={placeholderText}
+        className="w-full px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
+      />
+    );
+  };
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
         <div className="relative w-[20rem]">
           <span className="absolute top-4 left-4">
-            <CiSearch size={25} color=""/>
+            <CiSearch size={25} color="" />
           </span>
           <input
             name="search"
@@ -73,18 +81,39 @@ const Page = () => {
           />
         </div>
         <div className="flex items-center gap-3">
-        <div className="w-44">
-          <FilterDropDown placeholderText="Filter By Date" data={["1 - 25 / July/2024","26 - 19 / August/2024"]}/>
-        </div>
-        <div className="w-44">
-          <FilterDropDown placeholderText="Filter By Window" data={["Window 1: Apprenticeship and Internships"]}/>
-        </div>
-        <div className="w-44">
-          <FilterDropDown placeholderText="Filter By Sector" data={["ICT & Innovations"]}/>
-        </div>
-        <div className="w-44">
-          <FilterDropDown placeholderText="Filter By Ditrict" data={["Kicukiro","Musanze","Nyagatare","Muhanga","Nyarugenge","Kamonyi","Nyanza","Gasabo"]}/>
-        </div>
+          <div className="w-44">
+            <FilterDropDown
+              placeholderText="Filter By Date"
+              data={["1 - 25 / July/2024", "26 - 19 / August/2024"]}
+            />
+          </div>
+          <div className="w-44">
+            <FilterDropDown
+              placeholderText="Filter By Window"
+              data={["Window 1: Apprenticeship and Internships"]}
+            />
+          </div>
+          <div className="w-44">
+            <FilterDropDown
+              placeholderText="Filter By Sector"
+              data={["ICT & Innovations"]}
+            />
+          </div>
+          <div className="w-44">
+            <FilterDropDown
+              placeholderText="Filter By Ditrict"
+              data={[
+                "Kicukiro",
+                "Musanze",
+                "Nyagatare",
+                "Muhanga",
+                "Nyarugenge",
+                "Kamonyi",
+                "Nyanza",
+                "Gasabo",
+              ]}
+            />
+          </div>
         </div>
       </div>
 

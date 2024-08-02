@@ -16,7 +16,7 @@ import { useDisclosure } from "@mantine/hooks";
 import AddSectorTrade from "@/components/Modals/AddSectorTrade";
 
 const Page = () => {
-  const [isAddSector, {open, close}] = useDisclosure(false);
+  const [isAddSector, { open, close }] = useDisclosure(false);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -95,32 +95,40 @@ const Page = () => {
                 <div>Trades</div>
               </div>
               <div className="flex gap-3 items-center">
-              <div className="relative w-[25rem]">
-                <span className="absolute top-4 left-2">
-                  <CiSearch size={25} />
-                </span>
-                <input
-                  name="search"
-                  className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
-                  placeholder="Search"
-                />
-              </div>
+                <div className="relative w-[25rem]">
+                  <span className="absolute top-4 left-2">
+                    <CiSearch size={25} />
+                  </span>
+                  <input
+                    name="search"
+                    className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
+                    placeholder="Search"
+                  />
+                </div>
 
-              <button onClick={open} className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
-                <span className="text-2xl">
-                  <SolarAddFolderBold />
-                </span>
-                <h1 className="text-base font-medium text-white">New Sector Trade</h1>
-              </button>
+                <button
+                  onClick={open}
+                  className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+                >
+                  <span className="text-2xl">
+                    <SolarAddFolderBold />
+                  </span>
+                  <h1 className="text-base font-medium text-white">
+                    New Sector Trade
+                  </h1>
+                </button>
               </div>
             </div>
 
             <div className="w-full h-full">
-              <DataTable columns={columns} data={data.slice(0,5)} />
+              <DataTable columns={columns} data={data.slice(0, 5)} />
             </div>
           </div>
         </div>
-        <AddSectorTrade isOpenAddSectorTrade={isAddSector} closeAddSectorTrade={close} />
+        <AddSectorTrade
+          isOpenAddSectorTrade={isAddSector}
+          closeAddSectorTrade={close}
+        />
       </div>
     </div>
   );
