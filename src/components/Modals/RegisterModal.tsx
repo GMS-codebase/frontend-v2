@@ -11,7 +11,7 @@ import { MdPhoneAndroid } from "react-icons/md";
 const RegisterModal = ({
   isOpenRegister,
   closeRegister,
-  openLogin
+  openLogin,
 }: {
   isOpenRegister: boolean;
   closeRegister: () => void;
@@ -241,7 +241,10 @@ const RegisterModal = ({
                     Already have an account?{" "}
                     <span
                       className="text-base font-medium cursor-pointer text-primary"
-                      onClick={openLogin}
+                      onClick={() => {
+                        closeRegister();
+                        openLogin();
+                      }}
                     >
                       Login
                     </span>
@@ -334,7 +337,10 @@ const RegisterModal = ({
                     Already have an account?{" "}
                     <span
                       className="text-base font-medium text-primary cursor-pointer"
-                      onClick={()=> {closeRegister();openLogin()}}
+                      onClick={() => {
+                        closeRegister();
+                        openLogin();
+                      }}
                     >
                       Login
                     </span>

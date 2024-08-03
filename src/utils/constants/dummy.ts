@@ -2600,3 +2600,236 @@ export const applicantsData = [
     phone: "+250782345678",
   },
 ];
+
+export const applicationsData = [
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+];
