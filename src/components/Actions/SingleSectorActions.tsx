@@ -6,7 +6,6 @@ import { FiEye } from "react-icons/fi";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 
-
 const SingleSectorActions = () => {
   return (
     <div>
@@ -23,28 +22,28 @@ const SingleSectorActions = () => {
           </button>
         </Menu.Target>
         <Menu.Dropdown>
-            <Menu.Label>
-                <h1 className="text-lg">Actions</h1>
-            </Menu.Label>
-            <Menu.Divider />
-            <Menu.Item className="bg-[#F0F0F0]">
-                <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-                <FiEye size={21} color="#576074"/>
-                View
-                </div>
-            </Menu.Item>
-            <Menu.Item>
-                <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-                    <CiEdit size={21} color="#576074"/>
-                    Edit Call
-                </div>
-            </Menu.Item>
-            <Menu.Item>
-                <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-                    <RiDeleteBinLine size={21} color="#576074"/>
-                Remove
-                </div>
-            </Menu.Item>
+          <Menu.Label>
+            <h1 className="text-lg">Actions</h1>
+          </Menu.Label>
+          <Menu.Divider />
+          <Menu.Item className="bg-[#F0F0F0]">
+            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+              <FiEye size={21} color="#576074" />
+              View
+            </div>
+          </Menu.Item>
+          <Menu.Item>
+            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+              <CiEdit size={21} color="#576074" />
+              Edit Call
+            </div>
+          </Menu.Item>
+          <Menu.Item>
+            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+              <RiDeleteBinLine size={21} color="#576074" />
+              Remove
+            </div>
+          </Menu.Item>
         </Menu.Dropdown>
       </Menu>
     </div>

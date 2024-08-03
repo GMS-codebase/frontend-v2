@@ -24,6 +24,10 @@ const GenericSidebar = ({
   toggle: () => void;
 }) => {
   const active = usePathname();
+  const isActiveLink = (path: string, index: number) => {
+    if (index === 0) return active === path;
+    return active.startsWith(path);
+  };
   return (
     <div className={`w-full h-full flex flex-col`}>
       <div
@@ -44,17 +48,17 @@ const GenericSidebar = ({
       </div>
       <h1 className="text-lg text-neutral-400 p-3">Menu</h1>
       <div className="w-full h-screen overflow-y-auto pb-[17vh] sidebar-container">
-        {routes.map((route, index) => {
+        {routes.map((route, index: any) => {
           if (isCompressed)
             return (
               <div key={index} className="mx-4">
                 <Link
                   href={route.path}
-                  className={`flex items-center justify-center gap-5 px-4 py-3 my-1 ${active === route.path ? "bg-primary text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
+                  className={`flex items-center justify-center gap-5 px-4 py-3 my-1 ${isActiveLink(route.path, index) ? "bg-primary text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
                 >
                   <span
                     className={
-                      active === route.path
+                      isActiveLink(route.path, index)
                         ? "text-white font-extrabold text-3xl"
                         : "text-black font-extrabold text-3xl"
                     }
@@ -69,11 +73,11 @@ const GenericSidebar = ({
               <div key={index} className="mx-4">
                 <Link
                   href={route.path}
-                  className={`flex items-center gap-5 px-4 py-3 my-1 pl-10 ${active === route.path ? "bg-primary text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
+                  className={`flex items-center gap-5 px-4 py-3 my-1 pl-10 ${isActiveLink(route.path, index) ? "bg-primary text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
                 >
                   <span
                     className={
-                      active === route.path
+                      isActiveLink(route.path, index)
                         ? "text-white font-extrabold text-3xl"
                         : "text-black font-extrabold text-3xl"
                     }
@@ -81,7 +85,7 @@ const GenericSidebar = ({
                     {route.icon}
                   </span>
                   <span
-                    className={`text-lg ${active === route.path ? "font-semibold text-white" : ""} hidden lg:inline`}
+                    className={`text-lg ${isActiveLink(route.path, index) ? "font-semibold text-white" : ""} hidden lg:inline`}
                   >
                     {route.label}
                   </span>

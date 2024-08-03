@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 
-const ErrorPage = () => {
+const NotFound = () => {
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="bg-white p-10 shadow-lg rounded-lg text-center">
@@ -22,4 +22,4 @@ const ErrorPage = () => {
   );
 };
 
-export default ErrorPage;
+export default NotFound;
