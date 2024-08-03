@@ -7,8 +7,11 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { callsData as data } from "@/utils/constants/dummy";
 import CallsActions from "./CallsAction";
 import { CiSearch } from "react-icons/ci";
+import { useDisclosure } from "@mantine/hooks";
+import AddCall from "@/components/Modals/AddCall";
 
 const Page = () => {
+  const [isOpenCall, { open, close }] = useDisclosure(false);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "title",
@@ -38,7 +41,7 @@ const Page = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions/>,
+      cell: ({ row }) => <CallsActions />,
     },
   ];
   return (
@@ -50,12 +53,15 @@ const Page = () => {
           </span>
           <input
             name="search"
-            className="w-full p-3 py-4 pl-12 text-base text-black rounded-full bg-[#005DE908] border-none outline-none"
+            className="w-full p-3 py-4 pl-12 text-base placeholder:text-black text-black rounded-full bg-[#005DE908] border-none outline-none"
             placeholder="Search"
           />
         </div>
 
-        <button className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
+        <button
+          onClick={open}
+          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+        >
           <span className="text-2xl">
             <SolarAddFolderBold />
           </span>
@@ -66,6 +72,7 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable columns={columns} data={data} />
       </div>
+      <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
     </div>
   );
 };

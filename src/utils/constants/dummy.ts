@@ -2466,35 +2466,35 @@ export const callsData = [
 ];
 
 export const sectorsData = [
-    {
-        name: "Transport &Logistics",
-        description:"Transport &Logistics",
-    },
-    {
-        name: "Construction Sector",
-        description:"Construction Sector",
-    },
-    {
-        name: "Hospitality & Tourism",
-        description:"Hospitality & Tourism",
-    },
-    {
-        name: "Energy Sector",
-        description:"Energy Sector",
-    },
-    {
-        name: "ICT & Digital Skills",
-        description:"ICT & Digital Skills",
-    },
-    {
-        name: "Manufacturing",
-        description:"Manufacturing",
-    },
-    {
-        name: "Mining",
-        description:"Mining",
-    },
-]
+  {
+    name: "Transport &Logistics",
+    description: "Transport &Logistics",
+  },
+  {
+    name: "Construction Sector",
+    description: "Construction Sector",
+  },
+  {
+    name: "Hospitality & Tourism",
+    description: "Hospitality & Tourism",
+  },
+  {
+    name: "Energy Sector",
+    description: "Energy Sector",
+  },
+  {
+    name: "ICT & Digital Skills",
+    description: "ICT & Digital Skills",
+  },
+  {
+    name: "Manufacturing",
+    description: "Manufacturing",
+  },
+  {
+    name: "Mining",
+    description: "Mining",
+  },
+];
 export const tradesData = [
   {
     name: "Carpentry",
@@ -2545,5 +2545,291 @@ export const tradesData = [
     name: "Roofing",
     description:
       "Roofing involves installing and repairing roofs on homes and buildings. Roofers work with various materials, such as shingles, tiles, and metal, to ensure roofs are durable and weather-resistant.",
+  },
+];
+
+export const applicantsData = [
+  {
+    name: "Jean Bosco",
+    email: "jean.bosco@example.com",
+    phone: "+250789123456",
+  },
+  {
+    name: "Alice Uwamahoro",
+    email: "alice.uwamahoro@example.com",
+    phone: "+250783654789",
+  },
+  {
+    name: "Eric Ndayisaba",
+    email: "eric.ndayisaba@example.com",
+    phone: "+250722345678",
+  },
+  {
+    name: "Clementine Mukarugema",
+    email: "clementine.mukarugema@example.com",
+    phone: "+250788234567",
+  },
+  {
+    name: "David Kamanzi",
+    email: "david.kamanzi@example.com",
+    phone: "+250785678234",
+  },
+  {
+    name: "Esther Niyigena",
+    email: "esther.niyigena@example.com",
+    phone: "+250787234567",
+  },
+  {
+    name: "Patrick Munyaneza",
+    email: "patrick.munyaneza@example.com",
+    phone: "+250788765432",
+  },
+  {
+    name: "Marie Ange Umuhoza",
+    email: "marieange.umuhoza@example.com",
+    phone: "+250789876543",
+  },
+  {
+    name: "Claude Tuyisenge",
+    email: "claude.tuyisenge@example.com",
+    phone: "+250783456789",
+  },
+  {
+    name: "Olivia Uwase",
+    email: "olivia.uwase@example.com",
+    phone: "+250782345678",
+  },
+];
+
+export const applicationsData = [
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    stage: "DueDiligency",
   },
 ];
