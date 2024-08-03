@@ -9,7 +9,7 @@ import RegisterModal from "@/components/Modals/RegisterModal";
 import { useDisclosure } from "@mantine/hooks";
 import LoginModal from "@/components/Modals/Login";
 import CallModal from "@/components/Modals/techInnov";
-import AddCall from "@/components/Modals/AddCall";
+import { SolarFolder2Bold } from "@/components/core/icons";
 
 function Page() {
   const randomCalls = [
@@ -28,7 +28,7 @@ function Page() {
     useDisclosure(false);
 
   return (
-    <div className="relative h-screen">
+    <div className="relative h-screen overflow-hidden">
       <div className="absolute inset-0 bg-white opacity-60 z-10"></div>
       <div className="image">
         <Image
@@ -74,8 +74,9 @@ function Page() {
               randomCalls.map((call) => (
                 <div
                   key={call.id}
-                  className="min-w-[300px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
+                  className="min-w-[350px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
                 >
+                  <SolarFolder2Bold className="w-8 h-8 text-[#005DE9]"/>
                   <h3 className="font-bold text-black">{call.title}</h3>
                   <button
                     className="bg-[#1F5DB014] bg-opacity-20 text-primary font-bold rounded-full px-4 py-2"
