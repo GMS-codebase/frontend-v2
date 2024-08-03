@@ -1,6 +1,5 @@
 "use client";
 import { BiSearch } from "react-icons/bi";
-import { SolarAddFolderBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
