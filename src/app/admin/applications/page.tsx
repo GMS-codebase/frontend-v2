@@ -62,7 +62,7 @@ const Page = () => {
         data={data}
         placeholder={placeholderText}
         defaultValue={placeholderText}
-        className="w-full px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
+        className="w-full px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
       />
     );
   };
