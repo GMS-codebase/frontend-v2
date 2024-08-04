@@ -56,67 +56,70 @@ const AddSectorTrade = ({
               onSubmit={handleSubmit}
               className="w-full h-[60vh] overflow-y-auto flex flex-col gap-5 px-2"
             >
-                <div className="w-full">
-                  <label
-                    htmlFor="trade"
-                    className="block text-base font-medium text-black"
-                  >
-                    Select Trade
-                  </label>
-                  <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                    <span className="absolute left-2 top-3 text-black text-lg">
-                      <SolarSuitcaseLinear/>
-                    </span>
-                    <Select
-                      name="trade"
-                      // value={formData.position}
-                      onChange={(value: any) =>
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          position: value,
-                        }))
-                      }
-                      data={[
-                        { value: "ICT & Digital Skills", label: "ICT & Digital Skills" },
-                      ]}
-                      placeholder="Type in or select trade"
-                      required
-                    />
-                  </div>
+              <div className="w-full">
+                <label
+                  htmlFor="trade"
+                  className="block text-base font-medium text-black"
+                >
+                  Select Trade
+                </label>
+                <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                  <span className="absolute left-2 top-3 text-black text-lg">
+                    <SolarSuitcaseLinear />
+                  </span>
+                  <Select
+                    name="trade"
+                    // value={formData.position}
+                    onChange={(value: any) =>
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        position: value,
+                      }))
+                    }
+                    data={[
+                      {
+                        value: "ICT & Digital Skills",
+                        label: "ICT & Digital Skills",
+                      },
+                    ]}
+                    placeholder="Type in or select trade"
+                    required
+                  />
                 </div>
-                <div className="w-full">
-                  <label
-                    htmlFor="window"
-                    className="block text-base font-medium text-black"
-                  >
-                    Select Window
-                  </label>
-                  <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                    <span className="absolute left-2 top-3 text-black text-lg">
-                      <SolarWindowFrameLinear/>
-                    </span>
-                    <Select
-                      name="window"
-                      // value={formData.position}
-                      onChange={(value: any) =>
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          position: value,
-                        }))
-                      }
-                      data={[
-                        { value: "window 1", label: "window 1" },
-                        { value: "window 2", label: "window 2" },
-                        {
-                          value: "window 3",
-                          label: "window 4",
-                        },
-                      ]}
-                      placeholder="Type in or select window"
-                      required
-                    />
-                  </div>
+              </div>
+              <div className="w-full">
+                <label
+                  htmlFor="window"
+                  className="block text-base font-medium text-black"
+                >
+                  Select Window
+                </label>
+                <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                  <span className="absolute left-2 top-3 text-black text-lg">
+                    <SolarWindowFrameLinear />
+                  </span>
+                  <Select
+                    name="window"
+                    // value={formData.position}
+                    onChange={(value: any) =>
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        position: value,
+                      }))
+                    }
+                    data={[
+                      { value: "window 1", label: "window 1" },
+                      { value: "window 2", label: "window 2" },
+                      {
+                        value: "window 3",
+                        label: "window 4",
+                      },
+                    ]}
+                    placeholder="Type in or select window"
+                    required
+                  />
                 </div>
+              </div>
 
               <div className="w-full flex justify-center mt-4 space-x-4">
                 <button
