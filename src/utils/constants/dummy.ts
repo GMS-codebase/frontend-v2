@@ -3987,7 +3987,7 @@ export const employee = [
     nationalId: "123456789012345",
     title: "ICT & Digital Skills Specialist",
   },
-]
+];
 export const applicationsData = [
   {
     applicationNumber: "GMS-APP-0001924",
