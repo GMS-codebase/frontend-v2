@@ -14,9 +14,13 @@ import { CiSearch } from "react-icons/ci";
 import AddSector from "@/components/Modals/AddSector";
 import { useDisclosure } from "@mantine/hooks";
 import AddSectorTrade from "@/components/Modals/AddSectorTrade";
+import UpdateSector from "@/components/Modals/UpdateSector";
 
 const Page = () => {
   const [isAddSector, { open, close }] = useDisclosure(false);
+  const [isUpdateSector, { open: openUpdate, close: closeUpdate }] =
+    useDisclosure(false);
+
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -58,12 +62,15 @@ const Page = () => {
         <div className="flex flex-col gap-6  text-black">
           <div className="flex justify-between px-10">
             <div className="text-xl font-bold">Sector Info</div>
-            <div className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center">
+            <button
+              onClick={openUpdate}
+              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
+            >
               <span>
                 <SolarPen2Bold />
               </span>
               <div>Edit Sector</div>
-            </div>
+            </button>
           </div>
           <div className="flex justify-between w-3/5  font-semibold px-10">
             <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
@@ -128,6 +135,11 @@ const Page = () => {
         <AddSectorTrade
           isOpenAddSectorTrade={isAddSector}
           closeAddSectorTrade={close}
+        />
+        <UpdateSector
+          sector={{}}
+          isOpenUpdateSector={isUpdateSector}
+          closeUpdateSector={closeUpdate}
         />
       </div>
     </div>
