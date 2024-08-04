@@ -7,6 +7,7 @@ import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/dropzone/styles.css";
 import "@mantine/notifications/styles.css";
+import { Next13ProgressBar } from "next13-progressbar";
 export default function RootProvider({
   children,
 }: Readonly<{
@@ -16,6 +17,12 @@ export default function RootProvider({
     <MantineProvider>
       <Provider store={store}>{children}</Provider>
       <Notifications />
+      <Next13ProgressBar
+        height="4px"
+        color="#005DE9F2"
+        options={{ showSpinner: true }}
+        showOnShallow
+      />
     </MantineProvider>
   );
 }

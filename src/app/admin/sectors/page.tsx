@@ -33,7 +33,7 @@ const Page = () => {
       accessorKey: "    ",
       header: "     ",
       id: "1",
-      cell: () => <div className="truncate">{""}</div>,
+      cell: () => <div className="">{""}</div>,
     },
     {
       accessorKey: "actions",
