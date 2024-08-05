@@ -95,7 +95,7 @@ const Page = () => {
             </div>
             <div className="flex gap-2 p-5">
                 <div className="flex bg-white rounded-2xl w-[70%] gap-4">
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-4 w-full">
                         <div className="font-semibold text-2xl">
                             Questions and answers
                         </div>
