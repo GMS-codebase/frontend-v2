@@ -11,7 +11,9 @@ const config: Config = {
       colors: {
         primary: "#005DE9F2",
         danger: "#C20000F2",
-        myText:"#000F23"
+        primaryText: "#000F23",
+        secondaryText: "#233041",
+        background: "#005DE905",
       },
     },
   },

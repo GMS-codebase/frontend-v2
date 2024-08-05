@@ -1,16 +1,18 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { useState } from "react";
 import { Modal } from "@mantine/core";
-import { IconX } from "@tabler/icons-react";
+import { IoMdClose } from "react-icons/io";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import RegisterModal from "./RegisterModal";
 
 const LoginModal = ({
   opened,
   close,
+  openRegister
 }: {
   opened: boolean;
   close: () => void;
+  openRegister: ()=> void;
 }) => {
   const [isOpenRegister, setIsOpenRegister] = useState(false);
 
@@ -36,7 +38,7 @@ const LoginModal = ({
               onClick={close}
               className="text-gray-500 hover:text-gray-700 focus:outline-none"
             >
-              <IconX size={24} />
+              <IoMdClose size={24} />
             </button>
           </div>
 
@@ -96,7 +98,7 @@ const LoginModal = ({
               <a
                 href="#"
                 className="font-bold text-primary"
-                onClick={handleOpenRegister}
+                onClick={()=> {close();openRegister();}}
               >
                 Sign up
               </a>
@@ -104,12 +106,6 @@ const LoginModal = ({
           </div>
         </div>
       </Modal>
-      {isOpenRegister && (
-        <RegisterModal
-          isOpenRegister={isOpenRegister}
-          closeRegister={() => setIsOpenRegister(false)}
-        />
-      )}
     </>
   );
 };
