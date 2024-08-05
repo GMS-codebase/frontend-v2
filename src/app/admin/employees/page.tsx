@@ -10,13 +10,15 @@ import { employee } from "@/utils/constants/dummy";
 import AddEmployee from "@/components/Modals/AddEmployee";
 import UpdateEmployee from "@/components/Modals/UpdateEmployee";
 import { useState } from "react";
+import DeleteEmployee from "@/components/Modals/DeleteEmployee";
 
 const Page = () => {
   const [isOpenAddEmployee, { open, close }] = useDisclosure(false);
-  const [isUpdateEmployee, setIsUpdateEmployee] = useState({
-    open: false,
+  const [isOpenEmployee, setIsOpenEmployee] = useState({
+    openUpdate: false,
+    openDelete: false,
     employee: null,
-  })
+  });
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -46,7 +48,12 @@ const Page = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <Actions employee={isUpdateEmployee.employee} setIsEmployee={setIsUpdateEmployee}/>,
+      cell: ({ row }) => (
+        <Actions
+          employee={isOpenEmployee.employee}
+          setIsEmployee={setIsOpenEmployee}
+        />
+      ),
     },
   ];
   return (
@@ -82,8 +89,24 @@ const Page = () => {
         closeAddEmployee={close}
       />
       <UpdateEmployee
-        isOpenUpdateEmployee={isUpdateEmployee.open}
-        closeUpdateEmployee={()=> setIsUpdateEmployee({open: false, employee: null})}
+        isOpenUpdateEmployee={isOpenEmployee.openUpdate}
+        closeUpdateEmployee={() =>
+          setIsOpenEmployee({
+            openUpdate: false,
+            employee: null,
+            openDelete: false,
+          })
+        }
+      />
+      <DeleteEmployee
+        isOpenDeleteEmployee={isOpenEmployee.openDelete}
+        closeDeleteEmployee={() =>
+          setIsOpenEmployee({
+            openDelete: false,
+            employee: null,
+            openUpdate: false,
+          })
+        }
       />
     </div>
   );

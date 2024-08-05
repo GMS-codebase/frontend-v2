@@ -123,7 +123,7 @@ const Page = () => {
       </div>
 
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} tableWidth={"102vw"}/>
+        <DataTable columns={columns} data={data} tableWidth={"102vw"} />
       </div>
       <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
     </div>
