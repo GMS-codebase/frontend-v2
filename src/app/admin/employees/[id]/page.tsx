@@ -5,23 +5,19 @@ import {
   SolarAddSquareBold,
   SolarBookmarkBold,
   SolarCalendarBold,
-  SolarClockSquareBold,
-  SolarDownloadMinimalisticBold,
   SolarPen2Bold,
   SolarShieldUserOutline,
   SolarShieldWarningBold,
-  SolarSubtitlesBold,
   SolarTrashBinTrashOutline,
 } from "@/components/core/icons";
 import AssignStage from "@/components/Modals/AssignStage";
+import MakeManager from "@/components/Modals/MakeManager";
+import RemoveFromStage from "@/components/Modals/RemoveFromStage";
+import UpdateEmployee from "@/components/Modals/UpdateEmployee";
 import { Menu } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import Link from "next/link";
 import { useState } from "react";
-import { CiEdit } from "react-icons/ci";
-import { FiEye } from "react-icons/fi";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { RiDeleteBinLine } from "react-icons/ri";
 const assignedStages = [
   {
     name: "Evaluation",
@@ -37,7 +33,7 @@ const assignedStages = [
   },
 ];
 
-const AssignedStage = ({ stage, open }: { stage: any, open: ()=> void }) => {
+const AssignedStage = ({ stage, open }: { stage: any, open: (prop: any) => void }) => {
   return (
     <div className="w-full flex justify-between items-center bg-[#000F230A] p-3 rounded-xl">
       <h1 className="font-bold text-lg">{stage.name}</h1>
@@ -60,7 +56,11 @@ const AssignedStage = ({ stage, open }: { stage: any, open: ()=> void }) => {
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
             <button
-              onClick={open}
+              onClick={()=> open({
+                openDelete: false,
+                openMakeManager: true,
+                level: stage.name
+              })}
               className="w-full py-1 flex text-sm items-center gap-3 text-[#576074]"
             >
               <span className="text-lg">
@@ -70,12 +70,18 @@ const AssignedStage = ({ stage, open }: { stage: any, open: ()=> void }) => {
             </button>
           </Menu.Item>
           <Menu.Item>
-            <div className="w-full py-1 flex text-sm items-center gap-3 text-[#576074]">
+            <button
+            onClick={()=> open({
+                openDelete: true,
+                openMakeManager: false,
+                level: stage.name
+              })}
+            className="w-full py-1 flex text-sm items-center gap-3 text-[#576074]">
               <span className="text-lg">
                 <SolarTrashBinTrashOutline />
               </span>
               Remove Stage
-            </div>
+            </button>
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
@@ -84,16 +90,18 @@ const AssignedStage = ({ stage, open }: { stage: any, open: ()=> void }) => {
 };
 const EmployeeDetails = () => {
     const [isAssignStage, {open,close}] = useDisclosure(false);
+    const [isUpdate, setIsUpdate] = useState(false);
     const [isOpenStage, setIsOpenStage] = useState({
         openDelete: false,
-        openMakeManager: false
+        openMakeManager: false,
+        level: ""
     })
   return (
     <div className="w-full h-full flex items-start justify-between">
       <div className="w-[60%] flex flex-col gap-6  text-black bg-white p-3 py-5 rounded-2xl">
         <div className="flex justify-between">
           <div className="text-xl font-bold">Employee Info</div>
-          <button className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center">
+          <button onClick={()=> setIsUpdate(true)} className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center">
             <span>
               <SolarPen2Bold />
             </span>
@@ -157,12 +165,20 @@ const EmployeeDetails = () => {
         </div>
         <div className="flex flex-col gap-3 mt-5">
           {assignedStages.map((stage: any, index: number) => {
-            return <AssignedStage open={open} key={index} stage={stage} />;
+            return <AssignedStage open={setIsOpenStage} key={index} stage={stage} />;
           })}
         </div>
       </div>
 
+      <UpdateEmployee
+        isOpenUpdateEmployee={isUpdate}
+        closeUpdateEmployee={() =>
+          setIsUpdate(false)
+        }
+      />
       <AssignStage isAssignStage={isAssignStage} closeAssignStage={close}/>
+      <MakeManager isOpenMakeManager={isOpenStage.openMakeManager} closeMakeManager={()=> setIsOpenStage({openDelete: false, openMakeManager: false, level: ""})} level={isOpenStage.level}/>
+      <RemoveFromStage isOpen={isOpenStage.openDelete} closeRemoveEmployee={()=> setIsOpenStage({openDelete: false, openMakeManager: false, level: ""})}/>
     </div>
   );
 };
