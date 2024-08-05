@@ -22,30 +22,30 @@ const Page = () => {
     return (
         <div className="flex flex-col gap-6 p-8 rounded-3xl">
             <div className="bg-white rounded-2xl gap-6 p-5">
-                <div className="flex justify-between items-center ">
+                <div className="flex justify-between items-center">
                     <h2 className="text-black font-semibold">Legal status</h2>
-                    <div className="flex justify-between items-center gap-2  px-4 py-2   bg-[#005DE9] rounded-full text-white  w-fit">
+                    <div className="flex justify-between items-center gap-2 px-4 py-2 bg-[#005DE9] rounded-full text-white w-fit">
                         <span>i</span>
                         <div>Export Applicant Details</div>
                     </div>
                 </div>
 
                 <div className="flex justify-between items-center mt-5">
-                    <div className="flex flex-col justify-start items-start gap-6 font-semibold ">
+                    <div className="flex flex-col justify-start items-start gap-6 font-semibold">
                         <div className="flex gap-6 justify-start items-start">
-                            <p className="   bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full flex gap-2 justify-start items-start">
+                            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
                                 Application number
                             </p>
                             <p>GMS-APP-000896</p>
                         </div>
                         <div className="flex gap-6 justify-start items-start font-semibold">
-                            <p className=" bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full flex gap-2justify-start items-start ">
+                            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
                                 Finished answering
                             </p>
                             <p>YES</p>
                         </div>
                         <div className="flex gap-6 justify-start items-start">
-                            <p className=" bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full flex gap-2justify-start items-start">
+                            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
                                 Submitted
                             </p>
                             <p>YES</p>
@@ -53,19 +53,19 @@ const Page = () => {
                     </div>
                     <div className="flex flex-col justify-start items-start gap-6 font-semibold">
                         <div className="flex gap-6 justify-start items-start">
-                            <p className=" bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full">
+                            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                                 Call
                             </p>
                             <p>SDF CALL 5 FOR GRANT PROPOSALS</p>
                         </div>
                         <div className="flex gap-6 justify-start items-start">
-                            <p className=" bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full">
+                            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                                 Window
                             </p>
                             <p>Window 1: Rapid response training</p>
                         </div>
                         <div className="flex gap-6 justify-start items-start">
-                            <p className=" bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full">
+                            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                                 Application submission deadline
                             </p>
                             <p>2022/02.18 02:00:00</p>
@@ -73,9 +73,9 @@ const Page = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-6 mt-6 ">
+                <div className="flex flex-col gap-6 mt-6">
                     <div className="flex flex-col gap-4 font-semibold">
-                        <h2 className=" bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full flex gap-2 justify-start items-start w-fit">
+                        <h2 className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start w-fit">
                             Description
                         </h2>
                         <div>
@@ -87,19 +87,19 @@ const Page = () => {
                         </div>
                     </div>
 
-                    <div className="flex px-4 py-2 gap-2  bg-[#005DE9] rounded-full text-white  items-center justify-start w-fit">
+                    <div className="flex px-4 py-2 gap-2 bg-[#005DE9] rounded-full text-white items-center justify-start w-fit">
                         <span>i</span>
                         <div className="">Apply for Appeal</div>
                     </div>
                 </div>
             </div>
             <div className="flex gap-2 p-5">
-                <div className="flex  bg-white rounded-2xl w-[70%] gap-4 ">
+                <div className="flex bg-white rounded-2xl w-[70%] gap-4">
                     <div className="flex flex-col gap-4">
-                        <div className="font-semibold text-2xl ">
+                        <div className="font-semibold text-2xl">
                             Questions and answers
                         </div>
-                        <div className="flex ">
+                        <div className="flex">
                             <div
                                 onClick={() => setCurrentComponent("Project")}
                                 className={`cursor-pointer w-1/2 ${
@@ -126,24 +126,24 @@ const Page = () => {
                         <div className="mt-4 w-full">{renderComponent()}</div>
                     </div>
                 </div>
-                <div className="flex flex-col  bg-white w-[30%] rounded-2xl p-5 gap-4">
+                <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
                     <h2 className="font-bold">Decision</h2>
-                    <div className="flex flex-col gap-2 ">
+                    <div className="flex flex-col gap-2">
                         <h3 className="font-semibold">Evaluation Stage</h3>
                         <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
                             Proposal Approved
                         </div>
-                        <div className="flex gap-2 items-center justify-center  bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
+                        <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
                             <span>i</span>
                             <p>details</p>
                         </div>
                     </div>
-                    <div className="flex flex-col gap-2 ">
+                    <div className="flex flex-col gap-2">
                         <h3 className="font-bold">DueDiligency Stage</h3>
                         <div className="font-medium bg-[#C50000] bg-opacity-10 text-[#C50000] w-fit justify-start items-center rounded-full px-4 py-2">
                             Proposal Rejected
                         </div>
-                        <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full ">
+                        <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
                             <span>i</span>
                             <p>details</p>
                         </div>
