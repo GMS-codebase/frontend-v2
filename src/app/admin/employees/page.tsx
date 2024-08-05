@@ -2,14 +2,21 @@
 import { SolarUserPlusBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import CallsActions from "./CallsAction";
+import Actions from "./EmployeeAction";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
 import AddCall from "@/components/Modals/AddCall";
 import { employee } from "@/utils/constants/dummy";
+import AddEmployee from "@/components/Modals/AddEmployee";
+import UpdateEmployee from "@/components/Modals/UpdateEmployee";
+import { useState } from "react";
 
 const Page = () => {
-  const [isOpenCall, { open, close }] = useDisclosure(false);
+  const [isOpenAddEmployee, { open, close }] = useDisclosure(false);
+  const [isUpdateEmployee, setIsUpdateEmployee] = useState({
+    open: false,
+    employee: null,
+  })
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -39,7 +46,7 @@ const Page = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions />,
+      cell: ({ row }) => <Actions employee={isUpdateEmployee.employee} setIsEmployee={setIsUpdateEmployee}/>,
     },
   ];
   return (
@@ -70,7 +77,14 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable columns={columns} data={employee} />
       </div>
-      <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
+      <AddEmployee
+        isOpenAddEmployee={isOpenAddEmployee}
+        closeAddEmployee={close}
+      />
+      <UpdateEmployee
+        isOpenUpdateEmployee={isUpdateEmployee.open}
+        closeUpdateEmployee={()=> setIsUpdateEmployee({open: false, employee: null})}
+      />
     </div>
   );
 };
