@@ -2,7 +2,7 @@
 import React from "react";
 import DonutChart from "../../../../components/chart/DonutChart";
 import {SolarPen2Bold,SolarAddFolderBold,SolarShieldWarningBold,SolarClockSquareBold,SolarBookmarkBold,SolarCalendarBold,SolarSubtitlesBold,SolarDownloadMinimalisticBold} from "@/components/core/icons";
-import ApplicantTable from "./indexTable";
+import ApplicantTable from "./IndexTable";
 const Page = () => {
     return(
         <div className="">
@@ -144,7 +144,7 @@ const Page = () => {
                     </div>
                 </div>
             </div>
-   <ApplicantTable/>
+   <ApplicantTable/> 
         </div>
     )
 }
