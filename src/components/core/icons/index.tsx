@@ -427,6 +427,7 @@ export function SolarAddFolderBold(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+
 export function SolarUploadBold(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
