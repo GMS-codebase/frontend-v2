@@ -138,8 +138,8 @@ export function DataTable({
         <>
           <div className={`w-full overflow-auto ${tableClass} data-table`}>
             <table
-              style={{ minWidth: minW ?? 700 }}
-              className={`w-full table-row-spacing`}
+              // style={{ minWidth: minW ?? 700 }}
+              className={`${tableWidth ? `w-[${tableWidth}]` : "w-full"} table-row-spacing`}
             >
               <thead className="text-mainPurple">
                 {table.getHeaderGroups().map((headerGroup) => (
