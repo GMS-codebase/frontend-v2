@@ -32,19 +32,27 @@ const Page = () => {
           </h2>
           <div className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl  text-primary">
             <span className="text-base">Culinary Programs</span>
-            <span className="text-base  bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">32</span>
+            <span className="text-base  bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+              32
+            </span>
           </div>
           <div className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl  text-primary mt-2">
             <span className="text-base">Tech Innovators</span>
-            <span className="text-base  bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">14</span>
+            <span className="text-base  bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+              14
+            </span>
           </div>
           <div className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl  text-primary mt-2">
             <span className="text-base">Masonry Internships</span>
-            <span className="text-base  bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">20</span>
+            <span className="text-base  bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+              20
+            </span>
           </div>
           <div className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl  text-primary mt-2">
             <span className="text-base">Culinary Workshops</span>
-            <span className="text-base  bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">8</span>
+            <span className="text-base  bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+              8
+            </span>
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl">
