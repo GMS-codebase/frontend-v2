@@ -1,44 +1,29 @@
 "use client";
 import { BiSearch } from "react-icons/bi";
-import { SolarAddFolderBold } from "@/components/core/icons";
+import { SolarAddSquareBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { callsData as data } from "@/utils/constants/dummy";
-import CallsActions from "./CallsAction";
+import { sectorsData as data } from "@/utils/constants/dummy";
+import SingleSectorActions from "@/components/Actions/SingleSectorActions";
 import { CiSearch } from "react-icons/ci";
 
 const Page = () => {
   const columns: ColumnDef<any>[] = [
     {
-      accessorKey: "title",
-      header: "Title",
-      cell: ({ row }) => <div>{row.original?.title}</div>,
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => <div>{row.original?.name}</div>,
     },
     {
-      accessorKey: "startDate",
-      header: "Start Date",
-      cell: ({ row }) => <div>{row.original?.startDate}</div>,
-    },
-    {
-      accessorKey: "endDate",
-      header: "End Date",
-      cell: ({ row }) => <div>{row.original?.endDate}</div>,
-    },
-    {
-      accessorKey: "appealDays",
-      header: "Appeal Days",
-      cell: ({ row }) => <div>{row.original?.appealDays}</div>,
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => <div>{row.original?.status}</div>,
+      accessorKey: "description",
+      header: "Description",
+      cell: ({ row }) => <div>{row.original?.description}</div>,
     },
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions/>,
+      cell: ({ row }) => <SingleSectorActions/>
     },
   ];
   return (
@@ -55,11 +40,11 @@ const Page = () => {
           />
         </div>
 
-        <button className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
+        <button className="bg-[#005DE9] text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
           <span className="text-2xl">
-            <SolarAddFolderBold />
+            <SolarAddSquareBold />
           </span>
-          <h1 className="text-base font-medium text-white">New Call</h1>
+          <h1 className="text-base font-medium text-white">New Sector</h1>
         </button>
       </div>
 

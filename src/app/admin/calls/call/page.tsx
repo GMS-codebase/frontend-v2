@@ -117,11 +117,7 @@ const Page = () => {
                 </div>
             </div>
         </div>
-<<<<<<< HEAD:src/app/admin/callDetails/page.tsx
-
-=======
     )
->>>>>>> eb3372f1b0e738f69c8f75d7907aed0f60cd0c14:src/app/admin/calls/call/page.tsx
 }
 
 export default Page;
