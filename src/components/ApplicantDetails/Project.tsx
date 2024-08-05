@@ -111,7 +111,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
                       attach the recommendation from PSF
                   </div>
                   <div
-                      className="flex gap-2 text-white cursor-pointer bg-blue-700 items-center justify-center rounded-full"
+                      className="flex gap-2 text-white cursor-pointer bg-blue-700 items-center justify-center rounded-full px-2 py-2"
                       // onClick={handleDownload}
                   >
                       <span>
@@ -211,7 +211,7 @@ const Project2: React.FC<ProjectStepProps> = ({ handleNext, handlePrevious }) =>
                 offered.
             </p>
             <div className="w-full h-full">
-                <DataTable tableClass="w-[650px] text-sm" columns={columns} data={datas} />
+                <DataTable tableClass="w-[800px] text-sm" columns={columns} data={datas} />
             </div>
             <div className="flex gap-4">
                 <button
@@ -279,7 +279,7 @@ const Project3: React.FC<ProjectStepProps> = ({
                         (training manual) of the proposed training.
                     </p>
                     <div
-                        className="flex gap-2 text-white cursor-pointer bg-blue-700"
+                        className="flex gap-2 text-white cursor-pointer bg-blue-700 "
                         onClick={handleDownload}
                     >
                         <span>
@@ -357,28 +357,34 @@ const Project4:React.FC<ProjectStepProps> = ({
       ];
     
     return (
-    <div className="flex flex-col gap-4">
-        <h1>Training Equipment</h1>
-        <div>List down the equipment required to conduct this training.</div>
-        <div className="w-full h-full">
-            <DataTable columns={columns} data={data} />
+        <div className="flex flex-col gap-4">
+            <h1>Training Equipment</h1>
+            <div>
+                List down the equipment required to conduct this training.
+            </div>
+            <div className="w-full h-full">
+                <DataTable
+                    tableClass="w-[800px] text-sm"
+                    columns={columns}
+                    data={data}
+                />
+            </div>
+            <div className="flex gap-4">
+                <button
+                    className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
+                    onClick={handlePrevious}
+                >
+                    <span>Prev</span>
+                </button>
+                <button
+                    className="flex gap-2 bg-blue-500 text-white px-4 py-2 rounded-md"
+                    onClick={handleNext}
+                >
+                    <span>Next</span>
+                </button>
+            </div>
         </div>
-        <div className="flex gap-4">
-            <button
-                className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
-                onClick={handlePrevious}
-            >
-                <span>Prev</span>
-            </button>
-            <button
-                className="flex gap-2 bg-blue-500 text-white px-4 py-2 rounded-md"
-                onClick={handleNext}
-            >
-                <span>Next</span>
-            </button>
-        </div>
-    </div>
-);
+    );
 };
 
 const Project5: React.FC<ProjectStepProps> = ({
@@ -488,10 +494,13 @@ const Project5: React.FC<ProjectStepProps> = ({
                         <TextArea />
                     </div>
                 </div>
-
             </div>
             <div className="w-full h-full">
-                <DataTable columns={columns} data={bdata} />
+                <DataTable
+                    tableClass="w-[800px] text-sm"
+                    columns={columns}
+                    data={bdata}
+                />
             </div>
             <div className="flex gap-4">
                 <button

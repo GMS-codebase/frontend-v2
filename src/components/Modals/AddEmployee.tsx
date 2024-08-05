@@ -6,40 +6,45 @@ import { SolarUploadBold } from "../core/icons";
 import { CalendarMinimalistic } from "solar-icon-set";
 import { ShieldWarning } from "solar-icon-set";
 
-const AddCall = ({ isOpenAddCall, closeAddCall }: {
+const AddEmployee = ({
+  isOpenAddCall,
+  closeAddCall,
+}: {
   isOpenAddCall: boolean;
   closeAddCall: () => void;
 }) => {
-    const [active, setActive] = useState(0);
-    const [formData, setFormData] = useState({
-        callTitle: "",
-        description: "",
-        startDate: "",
-        endDate: "",
-        appealDays: "",
-        institutionName: "",
-        windows: "",
-        sectors: "",
-    });
+  const [active, setActive] = useState(0);
+  const nextStep = () =>
+    setActive((current) => (current < 3 ? current + 1 : current));
+  const prevStep = () =>
+    setActive((current) => (current > 0 ? current - 1 : current));
+  const [formData, setFormData] = useState({
+    callTitle: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    appealDays: "",
+    institutionName: "",
+    windows: "",
+    sectors: "",
+  });
 
-    const nextStep = () =>
-        setActive((current) => (current < 3 ? current + 1 : current));
-    const prevStep = () =>
-        setActive((current) => (current > 0 ? current - 1 : current));
+  const handleChange = (e: { target: { name: any; value: any } }) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
-    const handleChange = (e: any) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
-    throw new Error("Function not implemented.");
-  }
+  const handleSubmit = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    // Handle form submission logic here
+    console.log("Form Data: ", formData);
+  };
 
   return (
+    <>
       <Modal
         size={""}
         opened={isOpenAddCall}
@@ -54,103 +59,101 @@ const AddCall = ({ isOpenAddCall, closeAddCall }: {
           >
             <IoMdClose size={25} color={"#000"} />
           </button>
-                <div className="w-full flex flex-col items-center">
-                    <h1 className="text-2xl font-extrabold">Create Call</h1>
-                    <h2 className="text-[#000F2369] text-lg font-medium">
-                        Provide your call details to create a new call.
-                    </h2>
-                </div>
-                <div className="w-4/5 flex flex-col items-center mt-4 overflow-hidden">
-                    <Stepper
-                        active={active}
-                        onStepClick={setActive}
-                        className="w-full"
+          <div className="w-full flex flex-col items-center">
+            <h1 className="text-2xl font-extrabold">Create Employee</h1>
+            <h2 className="text-[#000F2369] text-lg font-medium">
+              Provide your call details to create a new call.
+            </h2>
+          </div>
+          <div className="w-4/5 flex flex-col items-center mt-4 overflow-hidden">
+            <Stepper active={active} onStepClick={setActive} className="w-full">
+              <Stepper.Step
+                label="Call detail"
+                description=""
+                className="text-xs"
+              >
+                <form
+                  onSubmit={handleSubmit}
+                  className="w-full h-[60vh] overflow-y-auto flex flex-col gap-2 px-2"
+                >
+                  <div className="w-full flex justify-between gap-3">
+                    <div className="w-full">
+                      <label
+                        htmlFor="callTitle"
+                        className="block text-xs font-bold text-gray-700"
+                      >
+                        Title
+                      </label>
+                      <div className="w-full relative">
+                        <span className="absolute left-2 top-[10px]">
+                          <Folder2 />
+                        </span>
+                        <input
+                          type="text"
+                          name="callTitle"
+                          value={formData.callTitle}
+                          placeholder="Call title"
+                          onChange={handleChange}
+                          className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="">
+                    <label
+                      htmlFor="description"
+                      className="block text-xs font-bold text-gray-700"
                     >
-                        <Stepper.Step label="Call detail" className="text-xs">
-                            <form
-                                // onSubmit={handleSubmit}
-                                className="w-full h-[60vh] overflow-y-auto flex flex-col gap-2 px-2"
-                            >
-                                <div className="w-full flex justify-between gap-3">
-                                    <div className="w-full">
-                                        <label
-                                            htmlFor="callTitle"
-                                            className="block text-xs font-bold text-gray-700"
-                                        >
-                                            Title
-                                        </label>
-                                        <div className="w-full relative">
-                                            <span className="absolute left-2 top-[10px]">
-                                                <Folder2 />
-                                            </span>
-                                            <input
-                                                type="text"
-                                                name="callTitle"
-                                                value={formData.callTitle}
-                                                placeholder="Call title"
-                                                onChange={handleChange}
-                                                className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                                required
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
+                      Description
+                    </label>
+                    <div className="w-full relative">
+                      <span className="absolute left-2 top-[10px]">
+                        <Subtitles />
+                      </span>
+                      <input
+                        type="text"
+                        name="description"
+                        value={formData.description}
+                        placeholder="Add description"
+                        onChange={handleChange}
+                        className="mt-1 block w-full h-full pl-8 px-3 pt-3 pb-8 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        required
+                      />
+                    </div>
+                  </div>
 
-                                <div className="">
-                                    <label
-                                        htmlFor="description"
-                                        className="block text-xs font-bold text-gray-700"
-                                    >
-                                        Description
-                                    </label>
-                                    <div className="w-full relative">
-                                        <span className="absolute left-2 top-[10px]">
-                                            <Subtitles />
-                                        </span>
-                                        <input
-                                            type="text"
-                                            name="description"
-                                            value={formData.description}
-                                            placeholder="Add description"
-                                            onChange={handleChange}
-                                            className="mt-1 block w-full h-full pl-8 px-3 pt-3 pb-8 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="">
-                                    <label
-                                        htmlFor="fileUpload"
-                                        className="block text-xs font-bold text-gray-700"
-                                    >
-                                        Attachment
-                                    </label>
-                                    <div className="relative mt-1 flex flex-col items-center justify-center w-full h-[15vh] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                        <label
-                                            htmlFor="file-upload"
-                                            className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
-                                        >
-                                            <SolarUploadBold className="text-blue-500 text-3xl" />
-                                            <div className="text-center">
-                                                <p className="text-sm text-gray-500">
-                                                    Upload file
-                                                </p>
-                                                <p className="text-xs text-gray-400">
-                                                    or drag and drop
-                                                </p>
-                                            </div>
-                                        </label>
-                                        <input
-                                            id="file-upload"
-                                            type="file"
-                                            style={{ display: "none" }}
-                                            onChange={handleChange}
-                                            className="content-none"
-                                            required
-                                        />
-                                    </div>
-                                </div>
+                  <div className="">
+                    <label
+                      htmlFor="fileUpload"
+                      className="block text-xs font-bold text-gray-700"
+                    >
+                      Attachment
+                    </label>
+                    <div className="relative mt-1 flex flex-col items-center justify-center w-full h-[15vh] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                      <label
+                        htmlFor="file-upload"
+                        className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+                      >
+                        <SolarUploadBold className="text-blue-500 text-3xl" />
+                        <div className="text-center">
+                          <p className="text-sm text-gray-500">Upload file</p>
+                          <p className="text-xs text-gray-400">
+                            or drag and drop
+                          </p>
+                        </div>
+                      </label>
+                      <input
+                        id="file-upload"
+                        type="file"
+                        style={{ display: "none" }}
+                        onChange={handleChange}
+                        className="content-none"
+                        required
+                      />
+                    </div>
+                  </div>
 
                   <div className="w-full flex justify-center mt-4 space-x-4">
                     <button
@@ -266,7 +269,7 @@ const AddCall = ({ isOpenAddCall, closeAddCall }: {
                 className="text-xs"
               >
                 <form
-                  // onSubmit={handleSubmit}
+                  onSubmit={handleSubmit}
                   className="mt-4 w-full h-[70%] overflow-y-auto flex flex-col gap-2 px-2"
                 >
                   <div className="w-full">
@@ -354,7 +357,8 @@ const AddCall = ({ isOpenAddCall, closeAddCall }: {
           </div>
         </div>
       </Modal>
+    </>
   );
 };
 
-export default AddCall;
+export default AddEmployee;

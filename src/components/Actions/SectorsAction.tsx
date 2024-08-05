@@ -5,11 +5,18 @@ import { Menu, Button, Text, rem } from "@mantine/core";
 import { FiEye } from "react-icons/fi";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
+import Link from "next/link";
 
-
-const SectorsActions = () => {
+const SectorsActions = ({
+  sector,
+  setIsSector,
+}: {
+  setIsSector: (sector: any) => void;
+  sector: any;
+}) => {
+  console.log("sector update --> ", sector);
   return (
-    <div>
+    <div className="">
       <Menu shadow="lg" width={300}>
         <Menu.Target>
           <button
@@ -23,28 +30,39 @@ const SectorsActions = () => {
           </button>
         </Menu.Target>
         <Menu.Dropdown>
-            <Menu.Label>
-                <h1 className="text-lg">Actions</h1>
-            </Menu.Label>
-            <Menu.Divider />
-            <Menu.Item className="bg-[#F0F0F0]">
-                <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-                <FiEye size={21} color="#576074"/>
-                View
-                </div>
-            </Menu.Item>
-            <Menu.Item>
-                <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-                    <CiEdit size={21} color="#576074"/>
-                    Edit Call
-                </div>
-            </Menu.Item>
-            <Menu.Item>
-                <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-                    <RiDeleteBinLine size={21} color="#576074"/>
-                Remove
-                </div>
-            </Menu.Item>
+          <Menu.Label>
+            <h1 className="text-lg">Actions</h1>
+          </Menu.Label>
+          <Menu.Divider />
+          <Menu.Item className="bg-[#F0F0F0]">
+            <Link
+              href={"/admin/sectors/sector"}
+              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+            >
+              <FiEye size={21} color="#576074" />
+              View
+            </Link>
+          </Menu.Item>
+          <Menu.Item>
+            <div
+              onClick={() =>
+                setIsSector({
+                  open: true,
+                  sector: sector,
+                })
+              }
+              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+            >
+              <CiEdit size={21} color="#576074" />
+              Edit Sector
+            </div>
+          </Menu.Item>
+          <Menu.Item>
+            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+              <RiDeleteBinLine size={21} color="#576074" />
+              Remove
+            </div>
+          </Menu.Item>
         </Menu.Dropdown>
       </Menu>
     </div>

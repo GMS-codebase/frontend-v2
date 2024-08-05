@@ -15,6 +15,9 @@ const config: Config = {
         secondaryText: "#233041",
         background: "#005DE905",
       },
+      fontSize: {
+        xxs: "0.635rem",
+      },
     },
   },
   plugins: [],
