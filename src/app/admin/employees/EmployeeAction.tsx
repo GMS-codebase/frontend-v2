@@ -14,7 +14,6 @@ const EmployeeActions = ({
   setIsEmployee: (employee: any) => void;
   employee: any;
 }) => {
-  console.log("sector update --> ", employee);
   return (
     <div className="">
       <Menu shadow="lg" width={300}>
@@ -36,7 +35,7 @@ const EmployeeActions = ({
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
             <Link
-              href={"/admin/sectors/sector"}
+              href={"/admin/employees/employee"}
               className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
             >
               <FiEye size={21} color="#576074" />
@@ -47,7 +46,8 @@ const EmployeeActions = ({
             <div
               onClick={() =>
                 setIsEmployee({
-                  open: true,
+                  openUpdate: true,
+                  openDelete: false,
                   employee: employee,
                 })
               }
@@ -58,7 +58,16 @@ const EmployeeActions = ({
             </div>
           </Menu.Item>
           <Menu.Item>
-            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+            <div
+              onClick={() =>
+                setIsEmployee({
+                  openDelete: true,
+                  openUpdate: false,
+                  employee: employee,
+                })
+              }
+              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+            >
               <RiDeleteBinLine size={21} color="#576074" />
               Remove
             </div>

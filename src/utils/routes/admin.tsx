@@ -1,7 +1,6 @@
 "use client";
 import * as Icons from "@/components/core/icons";
 import { Route } from "@/types";
-import * as SolarIcons from "solar-icon-set";
 
 const adminRoutes: Route[] = [
   {

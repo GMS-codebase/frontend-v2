@@ -87,15 +87,25 @@ const UpdateEmployee = ({
 
         <div className="w-4/5 flex flex-col items-center mt-4 overflow-hidden">
           <div className="w-full flex items-center">
-            <div onClick={()=> setSelectedInfo("contact")} className={`w-1/2 flex justify-end rounded-l-full ${selectedInfo === "contact" ? "bg-[#005DE90A]" : ""}`}>
-                <button className={`py-4 text-base w-[90%] font-medium ${selectedInfo === "contact" ? "border-b-2 border-[#005DE9] text-[#005DE9]" : ""}`}>
+            <div
+              onClick={() => setSelectedInfo("contact")}
+              className={`w-1/2 flex justify-end rounded-l-full ${selectedInfo === "contact" ? "bg-[#005DE90A]" : ""}`}
+            >
+              <button
+                className={`py-4 text-base w-[90%] font-medium ${selectedInfo === "contact" ? "border-b-2 border-[#005DE9] text-[#005DE9]" : ""}`}
+              >
                 Contact Person
-                </button>  
+              </button>
             </div>
-            <div onClick={()=> setSelectedInfo("employment")} className={`w-1/2 flex justify-start rounded-r-full ${selectedInfo === "employment" ? "bg-[#005DE90A]" : ""}`}>
-                <button className={`py-4 text-base w-[90%]  font-medium ${selectedInfo === "employment" ? "border-b-2 border-[#005DE9] text-[#005DE9]" : ""}`}>
+            <div
+              onClick={() => setSelectedInfo("employment")}
+              className={`w-1/2 flex justify-start rounded-r-full ${selectedInfo === "employment" ? "bg-[#005DE90A]" : ""}`}
+            >
+              <button
+                className={`py-4 text-base w-[90%]  font-medium ${selectedInfo === "employment" ? "border-b-2 border-[#005DE9] text-[#005DE9]" : ""}`}
+              >
                 Employment Details
-                </button>
+              </button>
             </div>
           </div>
           {selectedInfo === "contact" && (
