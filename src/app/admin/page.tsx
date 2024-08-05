@@ -1,6 +1,9 @@
+"use client";
+import React from "react";
 import CustomBarChart from "@/components/core/charts/CustomBarChart";
 import { SolarCalendarBold } from "@/components/core/icons";
 import { Select } from "@mantine/core";
+import DashboardLineChart from "@/components/core/charts/DashboardLineChart"; // Import the line chart component
 
 const weeklyData = [
   { day: "Mon", value: 50 },
@@ -11,6 +14,19 @@ const weeklyData = [
   { day: "Sat", value: 40 },
   { day: "Sun", value: 30 },
 ];
+
+const lineChartData = {
+  labels: ["2017", "2018", "2019", "2020", "2021", "2022", "2023"],
+  datasets: [
+    {
+      label: "Graduates",
+      data: [110, 50, 80, 200, 50, 30, 350],
+      borderColor: "#005DE9",
+      backgroundColor: "#005DE9",
+      fill: true,
+    },
+  ],
+};
 
 const Page = () => {
   return (
@@ -25,7 +41,6 @@ const Page = () => {
         </button>
       </div>
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* First Box */}
         <div className="bg-white p-6 rounded-2xl">
           <h2 className="text-lg font-semibold mb-4">
             Applicants per Priority Sector
@@ -80,9 +95,13 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <p>Overview</p>
+      <p className="my-3">Overview</p>
       <div className="flex items-center gap-2">
-        <div className="w-3/5"></div>
+        <div className="w-3/5 bg-white rounded-2xl shadow p-3">
+          <p className="text-xl font-medium">SDP Graduates Per year</p>
+          {/* Insert the DashboardLineChart component here */}
+          <DashboardLineChart data={lineChartData} />
+        </div>
         <div className="w-2/5 bg-white rounded-2xl shadow p-3">
           <div className="flex items-center justify-between">
             <p>Applicants rate analysis</p>
