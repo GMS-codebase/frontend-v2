@@ -25,10 +25,10 @@ const IndicativeBudget = () => {
          URL.revokeObjectURL(url); // Clean up the URL object
      };
     return (
-        <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1">
-                <h2>Budget Summary</h2>
-                <p>
+        <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+                <h2 className="font-bold">Budget Summary</h2>
+                <p className="font-light ">
                     List the most important activities you are soliciting
                     funding for and the indicative budget for each activity. On
                     rare case, add detailed justification in attachment if the
@@ -36,8 +36,8 @@ const IndicativeBudget = () => {
                     accordingly.
                 </p>
                 <div
-                    className="flex gap-2 text-white cursor-pointer bg-blue-700"
-                    onClick={handleDownload}
+                    className="flex gap-2 text-white cursor-pointer bg-blue-700 items-center justify-center px-2 py-2 rounded-full "
+                    // onClick={handleDownload}
                 >
                     <span>
                         <SolarDownloadMinimalisticBold />
@@ -45,12 +45,16 @@ const IndicativeBudget = () => {
                     <p>Download</p>
                 </div>
             </div>
-            <div className="flex flex-col gap-1">
-                <p>
+            <div className="flex flex-col gap-2">
+                <h2 className="font-bold">
+                    Required contribution from the applicant(for non-government
+                    applicant)
+                </h2>
+                <p className="font-light">
                     Justify how the institution will contribute to facilitate
                     the training.
                 </p>
-                <div>
+                <div className="text-gray-400  ">
                     <TextArea
                         readOnly
                         defaultText="(GMDC) GENERATION  MINING DEVELOPMENT COMPANY Ltd will contribute to facilitate the training in many ways as follows;

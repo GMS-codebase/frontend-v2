@@ -33,7 +33,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
           <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-2">
                   <h3 className="font-normal">Title of Application</h3>
-                  <p className="font-extralight">
+                  <p className="font-light">
                       Please in one sentence describe what is the focus of the
                       application.
                   </p>
@@ -56,7 +56,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
                   <h3 className="font-normal">
                       Project Activities and Outcome
                   </h3>
-                  <p className="font-extralight">
+                  <p className="font-light">
                       Outline the planned activities to be supported by SDF; The
                       skills problem you want to solve, the outcome/results and
                       Justify why you need the grant to solve it. Explain why
@@ -81,7 +81,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
                   <h3 className="font-normal">
                       Information about the institution to host beneficiaries.
                   </h3>
-                  <div className="font-extralight">
+                  <div className="font-light">
                       Specify the economic sector and main business products of
                       the company that will host apprentices/ interns or RPL or
                       skills upgrading
@@ -94,7 +94,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
                   </div>
               </div>
               <div className="flex flex-col gap-2">
-                  <h3 className="font-extralight">Comment</h3>
+                  <h3 className="font-light">Comment</h3>
                   <div>
                       <TextArea />
                   </div>
@@ -106,12 +106,12 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
                       Information about the institution to host beneficiaries -
                       (Continued)
                   </h3>
-                  <div className="font-extralight text-black">
+                  <div className="font-light text-black">
                       The applying company/industry to host apprentices should
                       attach the recommendation from PSF
                   </div>
                   <div
-                      className="flex gap-2 text-white cursor-pointer bg-blue-700 items-center justify-center px-2 py-3 rounded-full "
+                      className="flex gap-2 text-white cursor-pointer bg-blue-700 items-center justify-center px-2 py-2 rounded-full "
                       // onClick={handleDownload}
                   >
                       <span>
