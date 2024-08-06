@@ -32,7 +32,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
       <div className="flex flex-col gap-4 ">
           <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-2">
-                  <h3 className="font-normal">Title of Application</h3>
+                  <h3 className="font-semibold">Title of Application</h3>
                   <p className="font-light">
                       Please in one sentence describe what is the focus of the
                       application.
@@ -53,7 +53,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
           </div>
           <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-2">
-                  <h3 className="font-normal">
+                  <h3 className="font-semibold">
                       Project Activities and Outcome
                   </h3>
                   <p className="font-light">
@@ -78,7 +78,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
           </div>
           <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-2">
-                  <h3 className="font-normal">
+                  <h3 className="font-semibold">
                       Information about the institution to host beneficiaries.
                   </h3>
                   <div className="font-light">
@@ -102,7 +102,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
           </div>
           <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-2">
-                  <h3 className="font-normal">
+                  <h3 className="font-semibold">
                       Information about the institution to host beneficiaries -
                       (Continued)
                   </h3>
@@ -139,7 +139,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
                   onClick={handleNext}
               >
                   <p>Next</p>
-                  <span>i</span>
+                  <span></span>
               </button>
           </div>
       </div>
@@ -323,7 +323,7 @@ const Project4:React.FC<ProjectStepProps> = ({
       const columns: ColumnDef<any>[] = [
           {
               accessorKey: "type",
-              header: "Type of equipment available for the proposed training. Please indicate for which module/course it will be used ",
+              header: "Type of equipment available for the proposed training. ",
               cell: ({ row }) => (
                   <div className="truncate">
                       {row.original?.type.length > 50
