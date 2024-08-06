@@ -2,7 +2,11 @@
 import React, { useState } from "react";
 import Project from "@/components/ApplicantDetails/Project";
 import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
-
+import {
+    SolarFileBold,
+    SolarFolder2Bold,
+    SolarEyeLinear,
+} from "@/components/core/icons";
 const Page = () => {
     const [currentComponent, setCurrentComponent] = useState<
         "Project" | "IndicativeBudget"
@@ -25,7 +29,9 @@ const Page = () => {
                 <div className="flex justify-between items-center">
                     <h2 className="text-black font-semibold">Legal status</h2>
                     <div className="flex justify-between items-center gap-2 px-4 py-2 bg-[#005DE9] rounded-full text-white w-fit">
-                        <span>i</span>
+                        <span>
+                            <SolarFileBold />
+                        </span>
                         <div>Export Applicant Details</div>
                     </div>
                 </div>
@@ -88,18 +94,20 @@ const Page = () => {
                     </div>
 
                     <div className="flex px-4 py-2 gap-2 bg-[#005DE9] rounded-full text-white items-center justify-start w-fit">
-                        <span>i</span>
+                        <span>
+                            <SolarFolder2Bold />
+                        </span>
                         <div className="">Apply for Appeal</div>
                     </div>
                 </div>
             </div>
             <div className="flex gap-2 p-5">
                 <div className="flex bg-white rounded-2xl w-[70%] gap-4">
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-4 w-full">
                         <div className="font-semibold text-2xl">
                             Questions and answers
                         </div>
-                        <div className="flex">
+                        <div className="flex font-semibold">
                             <div
                                 onClick={() => setCurrentComponent("Project")}
                                 className={`cursor-pointer w-1/2 ${
@@ -116,7 +124,7 @@ const Page = () => {
                                 }
                                 className={`cursor-pointer w-1/2 ${
                                     currentComponent === "IndicativeBudget"
-                                        ? "bg-[#005DE9] bg-opacity-10"
+                                        ? "bg-[#C50000] bg-opacity-10"
                                         : ""
                                 } h-16 flex items-center justify-center`}
                             >
@@ -134,7 +142,9 @@ const Page = () => {
                             Proposal Approved
                         </div>
                         <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
-                            <span>i</span>
+                            <span>
+                                <SolarEyeLinear />
+                            </span>
                             <p>details</p>
                         </div>
                     </div>
@@ -144,7 +154,9 @@ const Page = () => {
                             Proposal Rejected
                         </div>
                         <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
-                            <span>i</span>
+                            <span>
+                                <SolarEyeLinear />
+                            </span>
                             <p>details</p>
                         </div>
                     </div>
