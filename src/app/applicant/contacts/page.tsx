@@ -65,7 +65,7 @@ const Page = () => {
           <span className="text-2xl">
             <SolarAddFolderBold />
           </span>
-          <h1 className="text-base font-medium text-white">New Contract</h1>
+          <h1 className="text-base font-medium text-white">New Contact</h1>
         </button>
       </div>
 
