@@ -4,6 +4,7 @@ import { Modal } from "@mantine/core";
 import { IoMdClose } from "react-icons/io";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import RegisterModal from "./RegisterModal";
+import { useRouter } from "next13-progressbar";
 
 const LoginModal = ({
   opened,
@@ -15,12 +16,17 @@ const LoginModal = ({
   openRegister: () => void;
 }) => {
   const [isOpenRegister, setIsOpenRegister] = useState(false);
-
+  const navigate = useRouter();
   const handleOpenRegister = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     close();
     setIsOpenRegister(true);
   };
+
+  const handleSubmit = (e: any)=>{
+    e.preventDefault();
+    navigate.push("/admin");
+  }
 
   return (
     <>
@@ -47,7 +53,7 @@ const LoginModal = ({
             <p className="text-gray-600">Provide your credentials to login.</p>
           </div>
 
-          <form className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <label htmlFor="email" className="font-semibold">
                 Email
