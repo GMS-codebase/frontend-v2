@@ -80,8 +80,9 @@ function Page() {
               randomCalls.map((call) => (
                 <div
                   key={call.id}
-                  className="min-w-[300px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
+                  className="min-w-[350px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
                 >
+                  <SolarFolder2Bold className="w-8 h-8 text-[#005DE9]"/>
                   <h3 className="font-bold text-black">{call.title}</h3>
                   <button
                     className="bg-[#1F5DB014] text-primary font-bold rounded-full px-4 py-2"
