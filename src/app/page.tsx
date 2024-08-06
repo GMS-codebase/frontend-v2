@@ -10,6 +10,7 @@ import { useDisclosure } from "@mantine/hooks";
 import LoginModal from "@/components/Modals/Login";
 import CallModal from "@/components/Modals/techInnov";
 import AddCall from "@/components/Modals/AddCall";
+import SuccessModal from "@/components/Modals/ApplicantSuccess";
 
 function Page() {
   const randomCalls = [
@@ -23,6 +24,8 @@ function Page() {
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
   const [isOpenLogin, { open: openLogin, close: closeLogin }] =
+    useDisclosure(false);
+  const [isOpenSuccess, { open: openSuccess, close: closeSuccess }] =
     useDisclosure(false);
   const [isOpenCall, { open: openCall, close: closeCall }] =
     useDisclosure(false);
@@ -115,6 +118,7 @@ function Page() {
         </button>
       </div>
       <RegisterModal
+        openSuccess={openSuccess}
         isOpenRegister={isOpenRegister}
         closeRegister={closeRegister}
         openLogin={openLogin}
@@ -124,6 +128,7 @@ function Page() {
         close={closeLogin}
         openRegister={openRegister}
       />
+      <SuccessModal opened={isOpenSuccess} close={closeSuccess}/>
       <CallModal opened={isOpenCall} close={closeCall} />
     </div>
   );
