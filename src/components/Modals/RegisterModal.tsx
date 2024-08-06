@@ -12,10 +12,12 @@ const RegisterModal = ({
   isOpenRegister,
   closeRegister,
   openLogin,
+  openSuccess
 }: {
   isOpenRegister: boolean;
   closeRegister: () => void;
   openLogin: () => void;
+  openSuccess: ()=> void;
 }) => {
   const [active, setActive] = useState(0);
   const nextStep = () =>
@@ -44,16 +46,6 @@ const RegisterModal = ({
     e.preventDefault();
     // Handle form submission logic here
     console.log("Form Data: ", formData);
-  };
-
-  const [isOpenLogin, setIsOpenLogin] = useState(false);
-  const [isOpenSuccess, setIsOpenSuccess] = useState(false);
-
-  const handleOpenSuccess = (event: any) => {
-    event.preventDefault();
-    setIsOpenLogin(false);
-    closeRegister();
-    setIsOpenSuccess(true);
   };
   return (
     <>
@@ -320,7 +312,7 @@ const RegisterModal = ({
                   <div className="w-full flex flex-col justify-center mt-4 gap-3">
                     <button
                       type="submit"
-                      onClick={handleOpenSuccess}
+                      onClick={openSuccess}
                       className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                       Sign Up

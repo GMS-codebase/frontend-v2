@@ -21,7 +21,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 interface DashboardLineChartProps {
@@ -54,7 +54,7 @@ const DashboardLineChart: React.FC<DashboardLineChartProps> = ({ data }) => {
       },
       y: {
         grid: {
-          borderDash: [], 
+          borderDash: [],
           color: "#C9CBCD",
         },
       },
@@ -62,7 +62,7 @@ const DashboardLineChart: React.FC<DashboardLineChartProps> = ({ data }) => {
     elements: {
       line: {
         tension: 0.5,
-        borderWidth: 0
+        borderWidth: 0,
       },
       point: {
         radius: 0,
@@ -74,24 +74,24 @@ const DashboardLineChart: React.FC<DashboardLineChartProps> = ({ data }) => {
     ...data,
     datasets: data.datasets.map((dataset) => ({
       ...dataset,
-      fill: true, 
+      fill: true,
       backgroundColor: (context: any) => {
         const chart = context.chart;
         const { ctx, chartArea } = chart;
 
         if (!chartArea) {
-          return null; 
+          return null;
         }
 
         const gradientBg = ctx.createLinearGradient(
           0,
           chartArea.top,
           0,
-          chartArea.bottom
+          chartArea.bottom,
         );
-        gradientBg.addColorStop(0.5, "rgba(0, 123, 255, 1)"); 
-        gradientBg.addColorStop(0, "rgba(0, 123, 255, 1)"); 
-        gradientBg.addColorStop(1, "rgba(0, 123, 255, 0)"); 
+        gradientBg.addColorStop(0.5, "rgba(0, 123, 255, 1)");
+        gradientBg.addColorStop(0, "rgba(0, 123, 255, 1)");
+        gradientBg.addColorStop(1, "rgba(0, 123, 255, 0)");
 
         return gradientBg;
       },

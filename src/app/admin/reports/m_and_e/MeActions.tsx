@@ -1,4 +1,3 @@
-
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Menu, Button, Text, rem } from "@mantine/core";
 import { FiEye } from "react-icons/fi";
@@ -42,9 +41,7 @@ const MeActions = () => {
             </div>
           </Menu.Item>
           <Menu.Item>
-            <div
-              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-            >
+            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
               <RiDeleteBinLine size={21} color="#576074" />
               Remove
             </div>

@@ -1,7 +1,6 @@
 "use client";
 import * as Icons from "@/components/core/icons";
 import { Route } from "@/types";
-import * as SolarIcons from "solar-icon-set";
 
 const adminRoutes: Route[] = [
   {
@@ -13,6 +12,11 @@ const adminRoutes: Route[] = [
     label: "Calls",
     path: "/admin/calls",
     icon: <Icons.SolarFolder2Bold />,
+  },
+  {
+    label: "Windows",
+    path: "/admin/windows",
+    icon: <Icons.SolarWindowFrameBold />,
   },
   {
     label: "Sectors",
