@@ -2548,82 +2548,89 @@ export const tradesData = [
   },
 ];
 export const applicationData = [
-    {
-        type: "Oxygen cylinder gas",
-        number: "13",
-        trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
-    {
-        type: "Arc welding machine ",
-        number: "16",
-        trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
-    {
-        type: "Center punch and number punch",
-        number: "17",
-        trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
-    {
-        type: "DC & AC welding machine",
-        number: "22",
-        trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
+  {
+    type: "Oxygen cylinder gas",
+    number: "13",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
+  {
+    type: "Arc welding machine ",
+    number: "16",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
+  {
+    type: "Center punch and number punch",
+    number: "17",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
+  {
+    type: "DC & AC welding machine",
+    number: "22",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
 ];
 export const applicationDatas = [
-    {
-        trainingContent: "perform oxy acetylene welding ",
-        fromDate: "2024-12-12",
-        toDate: "0202-12-12",
-        numberOfHours: "129",
-        Trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
-    {
-        trainingContent: "perform SMAW welding ",
-        fromDate: "2024-12-12",
-        toDate: "212024-12-31",
-        numberOfHours: "120",
-        Trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
-    {
-        trainingContent: "perform pressure welding ",
-        fromDate: "2024-12-25",
-        toDate: "2024-02-12",
-        numberOfHours: "130",
-        Trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
-    {
-        trainingContent: "summagtive assement and training wrap up",
-        fromDate: "2024-12-22",
-        toDate: "2024-04-05",
-        numberOfHours: "120",
-        Trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
-    },
+  {
+    trainingContent: "perform oxy acetylene welding ",
+    fromDate: "2024-12-12",
+    toDate: "0202-12-12",
+    numberOfHours: "129",
+    Trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
+  {
+    trainingContent: "perform SMAW welding ",
+    fromDate: "2024-12-12",
+    toDate: "212024-12-31",
+    numberOfHours: "120",
+    Trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
+  {
+    trainingContent: "perform pressure welding ",
+    fromDate: "2024-12-25",
+    toDate: "2024-02-12",
+    numberOfHours: "130",
+    Trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
+  {
+    trainingContent: "summagtive assement and training wrap up",
+    fromDate: "2024-12-22",
+    toDate: "2024-04-05",
+    numberOfHours: "120",
+    Trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+  },
 ];
 
 export const beneficiaryData = [
-    {
-        trade: "garment manufacturing",
-        number: "30",
-        education: "secondary and universities graduate",
-        trades: "garment manufacturing",
-    },
-]
-  
-export const technicalData = [
-    {
-        no: "5",
-        position: "TECHNICIANS ",
-        qualification: "A0 in mining ",
-        available: "To be hired",
-    },
-    {
-        no: "3",
-        position: "engineers",
-        qualification: "A0  IN ADVANCED TECHNOLOGY MINING ",
-        available: "Available",
-    },
+  {
+    trade: "garment manufacturing",
+    number: "30",
+    education: "secondary and universities graduate",
+    trades: "garment manufacturing",
+  },
 ];
 
+export const technicalData = [
+  {
+    no: "5",
+    position: "TECHNICIANS ",
+    qualification: "A0 in mining ",
+    available: "To be hired",
+  },
+  {
+    no: "3",
+    position: "engineers",
+    qualification: "A0  IN ADVANCED TECHNOLOGY MINING ",
+    available: "Available",
+  },
+];
 
 export const applicantsData = [
   {

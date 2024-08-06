@@ -9,9 +9,17 @@ import CallsActions from "./CallsAction";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
 import AddCall from "@/components/Modals/AddCall";
+import { useState } from "react";
+import UpdateCall from "@/components/Modals/UpdateCall";
+import DeleteCall from "@/components/Modals/DeleteCall";
 
 const Page = () => {
-  const [isOpenCall, { open, close }] = useDisclosure(false);
+  const [isOpen, { open, close }] = useDisclosure(false);
+  const [isOpenCall, setIsOpenCall] = useState({
+    openUpdate: false,
+    openDelete: false,
+    call: null,
+  });
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "title",
@@ -41,7 +49,9 @@ const Page = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions />,
+      cell: ({ row }) => (
+        <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />
+      ),
     },
   ];
   return (
@@ -72,7 +82,27 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable columns={columns} data={data} />
       </div>
-      <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
+      <AddCall isOpenAddCall={isOpen} closeAddCall={close} />
+      <UpdateCall
+        isOpenUpdateCall={isOpenCall.openUpdate}
+        closeUpdateCall={() =>
+          setIsOpenCall({
+            openUpdate: false,
+            call: null,
+            openDelete: false,
+          })
+        }
+      />
+      <DeleteCall
+        isOpenDeleteCall={isOpenCall.openDelete}
+        closeDeleteCall={() =>
+          setIsOpenCall({
+            openDelete: false,
+            call: null,
+            openUpdate: false,
+          })
+        }
+      />
     </div>
   );
 };

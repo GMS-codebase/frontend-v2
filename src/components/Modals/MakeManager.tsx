@@ -17,7 +17,7 @@ type FormData = {
 const MakeManager = ({
   isOpenMakeManager,
   closeMakeManager,
-  level
+  level,
 }: {
   isOpenMakeManager: boolean;
   closeMakeManager: () => void;
@@ -56,10 +56,10 @@ const MakeManager = ({
           <div className="w-full flex flex-col items-center">
             <Image src={managerSvg} alt="vector" width={200} height={50} />
             <h1 className="text-2xl font-extrabold text-center mt-4">
-            Are you sure you want to make this employee {level} manager
+              Are you sure you want to make this employee {level} manager
             </h1>
             <h2 className="text-[#000F2369] text-lg font-medium text-center mt-4">
-            This employee will be able to manage the {level} staff.
+              This employee will be able to manage the {level} staff.
             </h2>
           </div>
           <div className="w-full flex justify-center mt-4 space-x-4 p-6">
