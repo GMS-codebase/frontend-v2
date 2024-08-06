@@ -14,6 +14,16 @@ const adminRoutes: Route[] = [
     icon: <Icons.SolarFolder2Bold />,
   },
   {
+    label: "Windows",
+    path: "/admin/windows",
+    icon: <Icons.SolarWindowFrameBold />,
+  },
+  {
+    label: "Sub-windows",
+    path: "/admin/sub-windows",
+    icon: <Icons.SolarFolder2Bold />,
+  },
+  {
     label: "Sectors",
     path: "/admin/sectors",
     icon: <Icons.SolarBenzeneRingBold />,

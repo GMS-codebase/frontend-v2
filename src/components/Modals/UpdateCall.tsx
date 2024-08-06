@@ -72,7 +72,7 @@ const UpdateCall = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-full h-fit relative bg-white rounded-3xl p-4 pt-10 pb-4 flex flex-col items-center">
+      <div className="w-full h-fit relative bg-white rounded-3xl p-4 pt-10 pb-10 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeUpdateCall}
@@ -124,7 +124,7 @@ const UpdateCall = ({
           {selectedInfo === "call" && (
             <form
               // onSubmit={handleSubmit}
-              className="w-full h-[60vh] overflow-y-auto flex flex-col gap-2"
+              className="w-full overflow-y-auto flex flex-col gap-2"
             >
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
@@ -216,7 +216,7 @@ const UpdateCall = ({
                   type="button"
                   className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                  Next
+                  Save
                 </button>
               </div>
             </form>
@@ -300,14 +300,14 @@ const UpdateCall = ({
                   type="button"
                   className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                  Next
+                  Save
                 </button>
               </div>
             </form>
           )}
           {selectedInfo === "category" && (
             <form
-              // onSubmit={handleSubmit}
+              onSubmit={handleSubmit}
               className="mt-4 w-full h-[70%] overflow-y-auto flex flex-col gap-2"
             >
               <div className="w-full">
@@ -385,7 +385,7 @@ const UpdateCall = ({
                     type="submit"
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                    Next
+                    Save
                   </button>
                 </div>
               </div>
