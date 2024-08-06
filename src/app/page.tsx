@@ -9,8 +9,8 @@ import RegisterModal from "@/components/Modals/RegisterModal";
 import { useDisclosure } from "@mantine/hooks";
 import LoginModal from "@/components/Modals/Login";
 import CallModal from "@/components/Modals/techInnov";
-import AddCall from "@/components/Modals/AddCall";
-import SuccessModal from "@/components/Modals/ApplicantSuccess";
+import SuccessModal from "@/components/Modals/success";
+import { SolarFolder2Bold } from "@/components/core/icons";
 import { SolarFolder2Bold } from "@/components/core/icons";
 
 function Page() {
