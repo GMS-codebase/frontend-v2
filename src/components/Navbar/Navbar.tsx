@@ -2,6 +2,7 @@
 import * as Icons from "@/components/core/icons";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+// import getCookie
 
 const Navbar = () => {
   const [pageName, setPageName] = useState(localStorage.getItem("breadcrumb") || "");
