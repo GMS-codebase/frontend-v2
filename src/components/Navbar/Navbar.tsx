@@ -2,14 +2,15 @@
 import * as Icons from "@/components/core/icons";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-// import getCookie
+import {getCookie} from "cookies-next"
 
 const Navbar = () => {
-  const [pageName, setPageName] = useState(localStorage.getItem("breadcrumb") || "");
+  // const [pageName, setPageName] = useState(localStorage.getItem("breadcrumb") || "");
+  const [pageName, setPageName] = useState(getCookie("breadcrumb") || "");
   const active = usePathname();
   useEffect(() => {
     const handleStorageChange = () => {
-      setPageName(localStorage.getItem("breadcrumb") || "");
+      setPageName(getCookie("breadcrumb") || "");
     };
     handleStorageChange()
     window.addEventListener("storage", handleStorageChange);
