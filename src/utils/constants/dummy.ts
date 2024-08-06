@@ -2611,10 +2611,16 @@ export const beneficiaryData = [
   
 export const technicalData = [
     {
-        no: "garment manufacturing",
-        position: "30",
-        qualification: "secondary and universities graduate",
-        available: "garment manufacturing",
+        no: "5",
+        position: "TECHNICIANS ",
+        qualification: "A0 in mining ",
+        available: "To be hired",
+    },
+    {
+        no: "3",
+        position: "engineers",
+        qualification: "A0  IN ADVANCED TECHNOLOGY MINING ",
+        available: "Available",
     },
 ];
 
