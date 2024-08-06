@@ -49,7 +49,7 @@ const Page = () => {
                     First name
                   </label>
                   <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
+                    <span className="absolute left-2 top-[20px]">
                       <BsPerson />
                     </span>
                     <input
