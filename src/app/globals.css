@@ -60,3 +60,11 @@ body {
   width: 1px;
   background: transparent;
 }
+
+.data-table::-webkit-scrollbar-track {
+  background: transparent;
+}
+.data-table::-webkit-scrollbar {
+  height: 5px;
+  margin-top: 4px;
+}
