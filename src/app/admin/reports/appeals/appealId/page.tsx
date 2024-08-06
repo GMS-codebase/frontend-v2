@@ -30,7 +30,7 @@ const Page = () => {
                     <h2 className="text-black font-semibold">Legal status</h2>
                     <div className="flex justify-between items-center gap-2 px-4 py-2 bg-[#005DE9] rounded-full text-white w-fit">
                         <span>
-                           <SolarFileBold/> 
+                            <SolarFileBold />
                         </span>
                         <div>Export Applicant Details</div>
                     </div>
@@ -94,7 +94,9 @@ const Page = () => {
                     </div>
 
                     <div className="flex px-4 py-2 gap-2 bg-[#005DE9] rounded-full text-white items-center justify-start w-fit">
-                        <span>< SolarFolder2Bold/></span>
+                        <span>
+                            <SolarFolder2Bold />
+                        </span>
                         <div className="">Apply for Appeal</div>
                     </div>
                 </div>
@@ -140,7 +142,9 @@ const Page = () => {
                             Proposal Approved
                         </div>
                         <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
-                            <span><SolarEyeLinear/></span>
+                            <span>
+                                <SolarEyeLinear />
+                            </span>
                             <p>details</p>
                         </div>
                     </div>
@@ -150,7 +154,9 @@ const Page = () => {
                             Proposal Rejected
                         </div>
                         <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
-                            <span><SolarEyeLinear/></span>
+                            <span>
+                                <SolarEyeLinear />
+                            </span>
                             <p>details</p>
                         </div>
                     </div>
