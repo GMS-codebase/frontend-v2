@@ -9,7 +9,11 @@ import { applicationsData as data } from "@/utils/constants/dummy";
 
 const ApplicantTable = () => {
   const [activeTable, setActiveTable] = useState("contacts");
-
+  const [isOpenCall, setIsOpenCall] = useState({
+    openUpdate: false,
+    openDelete: false,
+    call: null,
+  });
   const contactColumns: ColumnDef<any>[] = [
     {
       accessorKey: "firstName",
@@ -44,7 +48,7 @@ const ApplicantTable = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions />,
+      cell: ({ row }) => <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />,
     },
   ];
 
@@ -81,7 +85,7 @@ const ApplicantTable = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions />,
+      cell: ({ row }) => <CallsActions call={isOpenCall.call} setIsCall={setIsOpenCall}/>,
     },
   ];
 
