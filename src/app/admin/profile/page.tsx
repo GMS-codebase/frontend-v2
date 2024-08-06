@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState } from "react";
 import * as Icons from "@/components/core/icons";
 import { SolarUploadBold } from "@/components/core/icons";
@@ -12,40 +12,53 @@ const Page = () => {
   const [activeSection, setActiveSection] = useState("contact");
 
   return (
-    <div className="w-full">
-      <div className="w-full h-[180px] bg-[#000F23] rounded-md"></div>
-      <button className="absolute top-64 mt-3 bg-white left-[30rem] text-3xl text-primary p-4 rounded-full">
-        <Icons.SolarUserBold className="w-[100px] h-[100px]" />
-      </button>
-      <div className="ml-64 mt-3">
-        <h1 className="text-2xl">ISHEMA HUGUES</h1>
-        <h1 className="font-bold text-primary">Admin</h1>
+    <div className="w-full bg-white rounded-2xl ">
+      <div className="w-full h-[180px] bg-[#000F23] rounded-t-2xl relative mb-20">
+        <div className="absolute top-[60%] left-[4%] ">
+          <div className="flex items-end gap-3">
+            <button className=" mt-3 bg-white  text-3xl text-primary p-4 rounded-full">
+              <Icons.SolarUserBold className="w-[100px] h-[100px]" />
+            </button>
+            <div className="">
+              <h1 className="text-2xl">ISHEMA HUGUES</h1>
+              <h1 className="font-bold text-primary">Admin</h1>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="w-full flex gap-4">
-        <div className="w-[50%]">
-          <div className="flex gap-2 mb-10 mt-5">
+
+      <div className="w-full flex gap-4  p-5">
+        <div className="w-[60%]">
+          <div className="flex  mb-10 mt-5">
             <button
-              className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 ${
-                activeSection === "contact" ? "bg-[#005DE9] border-b-[#005DE9] text-[#005DE9] bg-opacity-50" : "bg-[#005DE9] bg-opacity-50"
+              className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 rounded-l-2xl ${
+                activeSection === "contact"
+                  ? "bg-[#005DE90A] border-b-[#005DE9] text-[#005DE9]"
+                  : "bg-[#000F2303]  text-black"
               }`}
               onClick={() => setActiveSection("contact")}
             >
-              <h1 className="text-base font-medium text-white">Contact Person</h1>
+              <h1 className="text-base font-medium ">Contact Person</h1>
             </button>
             <button
-              className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 ${
-                activeSection === "employment" ? "bg-[#005DE9] border-b-[#005DE9] text-[#005DE9] bg-opacity-50" : "bg-[#005DE9] bg-opacity-50"
+              className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 rounded-r-2xl ${
+                activeSection === "employment"
+                  ? "bg-[#005DE90A] border-b-[#005DE9] text-[#005DE9] "
+                  : "bg-[#000F2303]  text-black"
               }`}
               onClick={() => setActiveSection("employment")}
             >
-              <h1 className="text-base font-medium text-white">Employment details</h1>
+              <h1 className="text-base font-medium ">Employment details</h1>
             </button>
           </div>
           {activeSection === "contact" ? (
             <div>
-              <div className="w-full flex justify-between gap-3">
+              <div className="w-full flex justify-between gap-3 my-2">
                 <div className="w-full">
-                  <label htmlFor="firstName" className="block text-xs font-bold text-gray-700">
+                  <label
+                    htmlFor="firstName"
+                    className="block text-xs font-bold text-gray-700"
+                  >
                     First name
                   </label>
                   <div className="w-full relative">
@@ -62,7 +75,10 @@ const Page = () => {
                   </div>
                 </div>
                 <div className="w-full">
-                  <label htmlFor="lastName" className="block text-xs font-bold text-gray-700">
+                  <label
+                    htmlFor="lastName"
+                    className="block text-xs font-bold text-gray-700"
+                  >
                     Last Name
                   </label>
                   <div className="w-full relative">
@@ -80,8 +96,11 @@ const Page = () => {
                 </div>
               </div>
 
-              <div className="w-full">
-                <label htmlFor="email" className="block text-xs font-bold text-gray-700">
+              <div className="w-full my-2">
+                <label
+                  htmlFor="email"
+                  className="block text-xs font-bold text-gray-700"
+                >
                   Email
                 </label>
                 <div className="w-full relative">
@@ -98,8 +117,11 @@ const Page = () => {
                 </div>
               </div>
 
-              <div className="w-full">
-                <label htmlFor="phoneNumber" className="block text-xs font-bold text-gray-700">
+              <div className="w-full my-2">
+                <label
+                  htmlFor="phoneNumber"
+                  className="block text-xs font-bold text-gray-700"
+                >
                   Phone Number
                 </label>
                 <div className="relative mt-1 rounded-full">
@@ -122,7 +144,10 @@ const Page = () => {
               </div>
 
               <div className="w-full">
-                <label htmlFor="gender" className="block text-xs font-bold text-gray-700">
+                <label
+                  htmlFor="gender"
+                  className="block text-xs font-bold text-gray-700"
+                >
                   Gender
                 </label>
                 <Select
@@ -142,7 +167,10 @@ const Page = () => {
             <div>
               {/* Employment details form fields go here */}
               <div className="w-full">
-                <label htmlFor="position" className="block text-xs font-bold text-gray-700">
+                <label
+                  htmlFor="position"
+                  className="block text-xs font-bold text-gray-700"
+                >
                   Position
                 </label>
                 <input
@@ -155,7 +183,10 @@ const Page = () => {
               </div>
 
               <div className="w-full mt-4">
-                <label htmlFor="department" className="block text-xs font-bold text-gray-700">
+                <label
+                  htmlFor="department"
+                  className="block text-xs font-bold text-gray-700"
+                >
                   Department
                 </label>
                 <input
@@ -170,27 +201,45 @@ const Page = () => {
           )}
 
           <div className="w-full gap-2 flex justify-center mt-4">
-            <button type="submit" className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            <button
+              type="submit"
+              className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
               Cancel
             </button>
-            <button type="submit" className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            <button
+              type="submit"
+              className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
               Save
             </button>
           </div>
         </div>
-        <div className="w-[50%]">
-          <label htmlFor="fileUpload" className="block text-xs font-bold text-gray-700">
+        <div className="w-[50%] p-5">
+          <label
+            htmlFor="fileUpload"
+            className="block text-xs font-bold text-gray-700"
+          >
             Attachment
           </label>
           <div className="relative mt-1 flex flex-col items-center justify-center w-full h-[90%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-            <label htmlFor="file-upload" className="flex flex-col items-center justify-center space-y-2 cursor-pointer">
-              <Icons.MingcuteUpload3Fill className="text-blue-500 text-5xl bg-[#005DE9] bg-opacity-50 rounded-full p-2" />
+            <label
+              htmlFor="file-upload"
+              className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+            >
+              <Icons.MingcuteUpload3Fill className="text-[#005DE9]  w-32 h-32 bg-[#005DE924] bg-opacity-50 rounded-full p-5 " />
               <div className="text-center">
                 <p className="text-lg text-gray-500">Upload file</p>
                 <p className="text-lg text-gray-400">or drag and drop</p>
               </div>
             </label>
-            <input id="file-upload" type="file" style={{ display: "none" }} className="content-none" required />
+            <input
+              id="file-upload"
+              type="file"
+              style={{ display: "none" }}
+              className="content-none"
+              required
+            />
           </div>
         </div>
       </div>
@@ -199,4 +248,3 @@ const Page = () => {
 };
 
 export default Page;
-
