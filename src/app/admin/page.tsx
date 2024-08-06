@@ -3,7 +3,9 @@ import React from "react";
 import CustomBarChart from "@/components/core/charts/CustomBarChart";
 import { SolarCalendarBold } from "@/components/core/icons";
 import { Select } from "@mantine/core";
+import dashVector from "@/assets/Vectors/dashVector.png";
 import DashboardLineChart from "@/components/core/charts/DashboardLineChart"; // Import the line chart component
+import Image from "next/image";
 
 const weeklyData = [
   { day: "Mon", value: 50 },
@@ -70,12 +72,17 @@ const Page = () => {
             </span>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-2xl">
-          <h2 className="text-lg font-semibold mb-4">Selected Applications</h2>
-          <p className="text-primary text-6xl font-extrabold">13’032</p>
+        <div className="bg-white p-6 rounded-2xl relative">
+          <h2 className="text-lg font-semibold mb-8">Selected Applications</h2>
+          <p className="text-primary text-7xl font-extrabold">13’032</p>
+          <Image
+            src={dashVector}
+            alt=""
+            className="absolute right-0 bottom-0 rounded-b-2xl"
+          />
         </div>
         <div className="bg-white p-6 rounded-2xl">
-          <h2 className="text-lg font-semibold mb-4">Total Applications</h2>
+          <h2 className="text-lg font-semibold mb-8">Total Applications</h2>
           <div className="flex items-center gap-3">
             <p className="text-primary text-8xl font-extrabold">23k</p>
             <div className="text-primary text-sm space-y-2">
