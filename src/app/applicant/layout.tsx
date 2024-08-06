@@ -2,10 +2,9 @@
 import Navbar from "@/components/Navbar/Navbar";
 import GenericSidebar from "@/components/sidebar/GenericSidebar";
 import applicantRoutes from "@/utils/routes/applicant";
-import { useDisclosure } from "@mantine/hooks";
 import React, { useState } from "react";
 
-export default function ApplicantLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
