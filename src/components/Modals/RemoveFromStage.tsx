@@ -1,8 +1,8 @@
 import { Modal } from "@mantine/core";
 import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
-import SideVector1 from "@/assets/Vectors/redSidevector.svg";
-import SideVector2 from "@/assets/Vectors/redSidevector2.svg";
+import SideVector1 from "@/assets/Vectors/redSideVector.svg";
+import SideVector2 from "@/assets/Vectors/redSideVector2.svg";
 import deleteSvg from "@/assets/Vectors/delete.svg";
 type FormData = {
   firstName: string;
