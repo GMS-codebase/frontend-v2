@@ -1,28 +1,14 @@
 "use client";
-<<<<<<< HEAD
-import React from "react";
-
-export default function AdminLayout({
-=======
 import Navbar from "@/components/Navbar/Navbar";
 import GenericSidebar from "@/components/sidebar/GenericSidebar";
 import applicantRoutes from "@/utils/routes/applicant";
-import { useDisclosure } from "@mantine/hooks";
 import React, { useState } from "react";
 
-export default function ApplicantLayout({
->>>>>>> cc1ef01ab75b571b369cb7c9b0634ccfedd8f04d
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-<<<<<<< HEAD
-  return (
-    <div className="w-screen h-screen flex justify-between bg-background p-3 overflow-hidden">
-        <div className="h-[95%] overflow-y-auto pt-8 pages-parent">
-          {children}
-        </div>
-=======
   const [isCompresed, setIsCompressed] = useState(false);
   return (
     <div className="w-screen h-screen flex justify-between bg-background p-3 overflow-hidden">
@@ -47,7 +33,6 @@ export default function ApplicantLayout({
           {children}
         </div>
       </div>
->>>>>>> cc1ef01ab75b571b369cb7c9b0634ccfedd8f04d
     </div>
   );
 }
