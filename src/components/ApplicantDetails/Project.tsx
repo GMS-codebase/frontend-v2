@@ -33,7 +33,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
           <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-2">
                   <h3 className="font-normal">Title of Application</h3>
-                  <p className="font-extralight">
+                  <p className="font-light">
                       Please in one sentence describe what is the focus of the
                       application.
                   </p>
@@ -56,7 +56,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
                   <h3 className="font-normal">
                       Project Activities and Outcome
                   </h3>
-                  <p className="font-extralight">
+                  <p className="font-light">
                       Outline the planned activities to be supported by SDF; The
                       skills problem you want to solve, the outcome/results and
                       Justify why you need the grant to solve it. Explain why
@@ -81,7 +81,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
                   <h3 className="font-normal">
                       Information about the institution to host beneficiaries.
                   </h3>
-                  <div>
+                  <div className="font-light">
                       Specify the economic sector and main business products of
                       the company that will host apprentices/ interns or RPL or
                       skills upgrading
@@ -94,7 +94,7 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
                   </div>
               </div>
               <div className="flex flex-col gap-2">
-                  <h3 className="font-extralight">Comment</h3>
+                  <h3 className="font-light">Comment</h3>
                   <div>
                       <TextArea />
                   </div>
@@ -102,16 +102,16 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
           </div>
           <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-2">
-                  <h3>
+                  <h3 className="font-normal">
                       Information about the institution to host beneficiaries -
                       (Continued)
                   </h3>
-                  <div>
+                  <div className="font-light text-black">
                       The applying company/industry to host apprentices should
                       attach the recommendation from PSF
                   </div>
                   <div
-                      className="flex gap-2 text-white cursor-pointer bg-blue-700 items-center justify-center rounded-full px-2 py-2"
+                      className="flex gap-2 text-white cursor-pointer bg-blue-700 items-center justify-center px-2 py-2 rounded-full "
                       // onClick={handleDownload}
                   >
                       <span>
@@ -128,7 +128,10 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
               </div>
           </div>
           <div className="flex gap-4">
-              <button className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md ">
+              <button
+                  className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md cursor-not-allowed"
+                  disabled
+              >
                   <span>Prev</span>
               </button>
               <button
@@ -202,16 +205,16 @@ const Project2: React.FC<ProjectStepProps> = ({ handleNext, handlePrevious }) =>
         },
     ];
   return (
-     <div className="w-full">
-            <div>Training Delivery Process</div>
-            <p>
+     <div className="w-full flex flex-col gap-4">
+            <div className="font-semibold">Training Delivery Process</div>
+            <p className="font-normal">
                 Keep in mind that the training period for window 1 should be
                 ranging from a few days to 6 months, estimate the training
                 duration with respect to the training content/modules to be
                 offered.
             </p>
             <div className="w-full h-full">
-                <DataTable tableClass="w-[800px] text-sm" columns={columns} data={datas} />
+                <DataTable tableClass="w-[795px] text-sm" columns={columns} data={datas} />
             </div>
             <div className="flex gap-4">
                 <button
@@ -259,27 +262,24 @@ const Project3: React.FC<ProjectStepProps> = ({
     };
 
     return (
-        <div className="flex flex-col">
-            <div>
-                <div>Training Delivery Process-(Continued)</div>
+        <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2 ">
+                <div className="fornt-semibold">Training Delivery Process-(Continued)</div>
                 <p>Total Number of Hours.</p>
-                <div>
-                    <TextArea
-                        readOnly
-                        defaultText="COFOPRO is a private company limited by individual shares aimed to develop made in Rwanda garment manufacturing at a fair and affordable prices on the Rwandan market and also aimed to expand our garment manufacturing by exporting our products. we also give out training to skills upgrading for works and other peoples who have knowledge in tailoring, we also give training on the use of modern tailoring equipment. in modern tailoring we have a problem on professionals skills works as"
-                    />
+                <div className="flex items-center justify-start  font-normal">
+                    <TextArea readOnly defaultText="144" />
                 </div>
             </div>
             <div>
-                <div>
+                <div className="flex flex-col gap-2">
                     {" "}
-                    <div>Training Delivery Process-(Continued)</div>
-                    <p>
+                    <div className="font-semibold">Training Delivery Process-(Continued)</div>
+                    <p className="font-normal">
                         Please attach a detailed description of the content
                         (training manual) of the proposed training.
                     </p>
                     <div
-                        className="flex gap-2 text-white cursor-pointer bg-blue-700 "
+                        className="flex gap-2 text-white cursor-pointer bg-blue-700 rounded-full py-2 px-2 items-center justify-center"
                         onClick={handleDownload}
                     >
                         <span>
@@ -289,9 +289,9 @@ const Project3: React.FC<ProjectStepProps> = ({
                     </div>
                 </div>
             </div>
-            <div>
-                <div>Training Delivery Process - (Continued)</div>
-                <div>Add a comment related to the training process if any.</div>
+            <div className="flex flex-col gap-2">
+                <div className="font-semibold">Training Delivery Process - (Continued)</div>
+                <div className="font-normal">Add a comment related to the training process if any.</div>
                 <div>
                     <TextArea
                         readOnly
@@ -358,13 +358,13 @@ const Project4:React.FC<ProjectStepProps> = ({
     
     return (
         <div className="flex flex-col gap-4">
-            <h1>Training Equipment</h1>
-            <div>
+            <h1 className="font-semibold text-2xl mt-4">Training Equipment</h1>
+            <div className="font-normal mt-2 text-xl">
                 List down the equipment required to conduct this training.
             </div>
             <div className="w-full h-full">
                 <DataTable
-                    tableClass="w-[800px] text-sm"
+                    tableClass="w-[795px] text-sm"
                     columns={columns}
                     data={data}
                 />
@@ -465,39 +465,21 @@ const Project5: React.FC<ProjectStepProps> = ({
     
     return (
         <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1">
-                <h1>Training Equipment</h1>
-                <div>
-                    Please attach the proof of ownership if the equipment is
-                    owned by your institution.
-                </div>
-                <div
-                    className="flex gap-2 text-white cursor-pointer bg-blue-700"
-                    onClick={handleDownload}
-                >
-                    <span>
-                        <SolarDownloadMinimalisticBold />
-                    </span>
-                    <p>Download</p>
-                </div>
-            </div>
 
-            <div>
-                <h1>Training Equipment</h1>
-                <div>
-                    Please attach the proof of ownership if the equipment is
-                    owned by your institution.
+            <div className="flex flex-col gap-2">
+                <h1 className="font-semibold">Recruitment of beneficiaries.</h1>
+                <div className="text-black font-md ">
+                    Indicate the number of Beneficiaries getting the
+                    Apprenticeships and Internships from the project for a
+                    period of six (6) months and the number of Beneficiaries for
+                    RPL and Skills upgrading from the project for a period
+                    ranging from few days to 6 months.
                 </div>
-                <div className="flex flex-col gap-2">
-                    <h3>Comment</h3>
-                    <div>
-                        <TextArea />
-                    </div>
-                </div>
+              
             </div>
             <div className="w-full h-full">
                 <DataTable
-                    tableClass="w-[800px] text-sm"
+                    tableClass="w-[795px] text-sm"
                     columns={columns}
                     data={bdata}
                 />
@@ -525,12 +507,12 @@ const Project5: React.FC<ProjectStepProps> = ({
       handlePrevious,
   }) => {
       return (
-          <div>
-              <h2>Total number of trainees.</h2>
-              <div>
-                  <TextArea readOnly defaultText="250" />
+          <div className="flex flex-col gap-2 w-full">
+              <h2 className="font-semibold">Total number of trainees.</h2>
+              <div className="w-full flex justify-start items-center">
+                  <TextArea readOnly defaultText="250"/>
               </div>
-              <div className="flex gap-4">
+              <div className="flex gap-4 w-full">
                   <button
                       className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
                       onClick={handlePrevious}
@@ -547,6 +529,92 @@ const Project5: React.FC<ProjectStepProps> = ({
           </div>
       );
 };
+
+const Project7: React.FC<ProjectStepProps> = ({
+    handleNext,
+    handlePrevious,
+}) => {
+    const columns: ColumnDef<any>[] = [
+        {
+            accessorKey: "no",
+            header: "No",
+            cell: ({ row }) => (
+                <div className="truncate">
+                    {row.original?.no.length > 50
+                        ? row.original?.no.slice(0, 50) + "..."
+                        : row.original.no}
+                </div>
+            ),
+        },
+        {
+            accessorKey: "position",
+            header: "POSITION",
+            cell: ({ row }) => (
+                <div className="truncate">
+                    {row.original?.position.length > 50
+                        ? row.original?.position.slice(0, 50) + "..."
+                        : row.original.position}
+                </div>
+            ),
+        },
+        {
+            accessorKey: "qualification",
+            header: "Qualification ",
+            cell: ({ row }) => (
+                <div className="truncate">
+                    {row.original?.qualification.length > 50
+                        ? row.original?.qualification.slice(0, 50) + "..."
+                        : row.original.qualification}
+                </div>
+            ),
+        },
+        {
+            accessorKey: "available",
+            header: "Available or to be hired",
+            cell: ({ row }) => (
+                <div className="truncate">
+                    {row.original?.available.length > 50
+                        ? row.original?.available.slice(0, 50) + "..."
+                        : row.original.available}
+                </div>
+            ),
+        },
+    ];
+    return (
+        <div className="w-full flex flex-col gap-4">
+            <div className="font-semibold">Technical Staff</div>
+            <p className="font-normal">
+                Identify the technical staff (instructors) required to train the
+                trades you are applying for.
+            </p>
+            <div className="w-full h-full">
+                <DataTable
+                    tableClass="w-[780px] text-sm"
+                    columns={columns}
+                    data={tdata}
+                />
+            </div>
+            <div className="flex gap-4">
+                <button
+                    className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
+                    onClick={handlePrevious}
+                >
+                    <span>Prev</span>
+                </button>
+                <button
+                    className="flex gap-2 bg-blue-500 text-white px-4 py-2 rounded-md cursor-not-allowed"
+                    disabled
+                    onClick={handleNext}
+                >
+                    <span>Next</span>
+                </button>
+            </div>
+        </div>
+    );
+};
+
+
+
   
 
 
@@ -602,7 +670,13 @@ const Project: React.FC = () => {
                     handlePrevious={handlePrevious}
                 />
             );
-        
+        case 7:
+            return (
+                <Project7
+                    handleNext={handleNext}
+                    handlePrevious={handlePrevious}
+                />
+            );
 
         // Add more cases for Project3, Project4, etc.
         default:
