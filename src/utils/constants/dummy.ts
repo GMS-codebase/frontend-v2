@@ -2547,6 +2547,77 @@ export const tradesData = [
       "Roofing involves installing and repairing roofs on homes and buildings. Roofers work with various materials, such as shingles, tiles, and metal, to ensure roofs are durable and weather-resistant.",
   },
 ];
+export const applicationData = [
+    {
+        type: "Oxygen cylinder gas",
+        number: "13",
+        trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    },
+    {
+        type: "Arc welding machine ",
+        number: "16",
+        trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    },
+    {
+        type: "Center punch and number punch",
+        number: "17",
+        trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    },
+    {
+        type: "DC & AC welding machine",
+        number: "22",
+        trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    },
+];
+export const applicationDatas = [
+    {
+        trainingContent: "perform oxy acetylene welding ",
+        fromDate: "2024-12-12",
+        toDate: "0202-12-12",
+        numberOfHours: "129",
+        Trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    },
+    {
+        trainingContent: "perform SMAW welding ",
+        fromDate: "2024-12-12",
+        toDate: "212024-12-31",
+        numberOfHours: "120",
+        Trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    },
+    {
+        trainingContent: "perform pressure welding ",
+        fromDate: "2024-12-25",
+        toDate: "2024-02-12",
+        numberOfHours: "130",
+        Trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    },
+    {
+        trainingContent: "summagtive assement and training wrap up",
+        fromDate: "2024-12-22",
+        toDate: "2024-04-05",
+        numberOfHours: "120",
+        Trade: "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    },
+];
+
+export const beneficiaryData = [
+    {
+        trade: "garment manufacturing",
+        number: "30",
+        education: "secondary and universities graduate",
+        trades: "garment manufacturing",
+    },
+]
+  
+export const technicalData = [
+    {
+        no: "garment manufacturing",
+        position: "30",
+        qualification: "secondary and universities graduate",
+        available: "garment manufacturing",
+    },
+];
+
 
 export const applicantsData = [
   {
@@ -4218,5 +4289,148 @@ export const applicationsData = [
     },
     sector: "Manufacturing",
     stage: "DueDiligency",
+  },
+];
+
+export const meReports = [
+  {
+    id: 1,
+    title: "Quarterly Program Impact Assessment",
+    call: "Assess the impact of program interventions",
+    description:
+      "Evaluate the effectiveness of program activities implemented in the quarter, focusing on outcomes and impact on target communities.",
+  },
+  {
+    id: 2,
+    title: "Annual Financial Audit",
+    call: "Review financial performance and compliance",
+    description:
+      "Conduct a comprehensive financial audit of the year's expenditures and ensure compliance with budgetary and financial regulations.",
+  },
+  {
+    id: 3,
+    title: "Project Implementation Review",
+    call: "Assess the progress of project implementation",
+    description:
+      "Review the progress of ongoing projects, including timelines, deliverables, and any issues affecting project implementation.",
+  },
+  {
+    id: 4,
+    title: "Beneficiary Satisfaction Survey",
+    call: "Assess beneficiary satisfaction levels",
+    description:
+      "Conduct a survey to measure the satisfaction levels of beneficiaries with the services provided, identifying areas for improvement.",
+  },
+  {
+    id: 5,
+    title: "Mid-Year Outcome Evaluation",
+    call: "Evaluate mid-year program outcomes",
+    description:
+      "Review and evaluate the outcomes of program activities conducted in the first half of the year, focusing on effectiveness and efficiency.",
+  },
+  {
+    id: 6,
+    title: "Annual Strategic Plan Review",
+    call: "Assess progress against strategic goals",
+    description:
+      "Evaluate the progress of the strategic plan for the year, assessing achievements and identifying any gaps or areas needing adjustment.",
+  },
+  {
+    id: 7,
+    title: "Impact Assessment of New Initiative",
+    call: "Assess the impact of new initiatives",
+    description:
+      "Analyze the impact of new initiatives launched in the past quarter, focusing on their effectiveness and integration with existing programs.",
+  },
+  {
+    id: 8,
+    title: "Operational Efficiency Review",
+    call: "Review operational processes for efficiency",
+    description:
+      "Examine operational processes to identify inefficiencies and recommend improvements to enhance overall program delivery.",
+  },
+  {
+    id: 9,
+    title: "Stakeholder Engagement Report",
+    call: "Report on stakeholder engagement activities",
+    description:
+      "Document the activities and outcomes of stakeholder engagement efforts, including feedback and recommendations for future engagement.",
+  },
+  {
+    id: 10,
+    title: "Compliance Audit Report",
+    call: "Audit compliance with regulatory standards",
+    description:
+      "Review and audit compliance with relevant regulatory standards and guidelines, ensuring that all practices meet required standards.",
+  },
+  {
+    id: 11,
+    title: "Program Effectiveness Review",
+    call: "Assess the effectiveness of ongoing programs",
+    description:
+      "Evaluate the effectiveness of ongoing programs in achieving their objectives and providing value to the target population.",
+  },
+  {
+    id: 12,
+    title: "Risk Management Evaluation",
+    call: "Evaluate risk management strategies",
+    description:
+      "Review and evaluate the effectiveness of risk management strategies and their impact on program success and stability.",
+  },
+  {
+    id: 13,
+    title: "Annual Performance Review",
+    call: "Review performance against annual targets",
+    description:
+      "Assess performance against annual targets and objectives, identifying successes and areas needing improvement.",
+  },
+  {
+    id: 14,
+    title: "Community Feedback Analysis",
+    call: "Analyze community feedback",
+    description:
+      "Analyze feedback collected from community members to identify key issues and areas for improvement in program delivery.",
+  },
+  {
+    id: 15,
+    title: "Resource Allocation Assessment",
+    call: "Assess resource allocation effectiveness",
+    description:
+      "Review the allocation of resources to various programs to ensure they are being used effectively and efficiently.",
+  },
+  {
+    id: 16,
+    title: "Beneficiary Needs Assessment",
+    call: "Assess beneficiary needs",
+    description:
+      "Conduct an assessment to identify the current needs of beneficiaries and how well the program meets those needs.",
+  },
+  {
+    id: 17,
+    title: "Program Impact Metrics Report",
+    call: "Report on program impact metrics",
+    description:
+      "Document and analyze key impact metrics to evaluate the overall success and impact of the program.",
+  },
+  {
+    id: 18,
+    title: "Donor Fund Utilization Review",
+    call: "Review utilization of donor funds",
+    description:
+      "Examine how donor funds have been utilized throughout the year, ensuring proper use and alignment with donor expectations.",
+  },
+  {
+    id: 19,
+    title: "Strategic Partnerships Evaluation",
+    call: "Evaluate strategic partnerships",
+    description:
+      "Assess the effectiveness and outcomes of strategic partnerships formed throughout the year, including contributions to program success.",
+  },
+  {
+    id: 20,
+    title: "Program Sustainability Assessment",
+    call: "Assess program sustainability",
+    description:
+      "Evaluate the sustainability of the program, including long-term viability and strategies for maintaining program success over time.",
   },
 ];
