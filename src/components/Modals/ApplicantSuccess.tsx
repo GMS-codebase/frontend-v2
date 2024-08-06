@@ -5,7 +5,7 @@ import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
 import Woman from "../../assets/Images/woman.png";
 
-const SuccessModal = ({
+const ApplicantSuccess = ({
     opened,
     close,
 }: {
@@ -57,4 +57,4 @@ const SuccessModal = ({
     );
 };
 
-export default SuccessModal;
+export default ApplicantSuccess;
