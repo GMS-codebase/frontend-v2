@@ -7,7 +7,11 @@ import SideVector2 from "@/assets/Vectors/sidevector2.svg";
 import { BsPerson } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
 import { MdPhoneAndroid } from "react-icons/md";
-import { PhGenderIntersex, SolarSuitcaseLinear, SolarUserCircleOutline } from "../core/icons";
+import {
+  PhGenderIntersex,
+  SolarSuitcaseLinear,
+  SolarUserCircleOutline,
+} from "../core/icons";
 type FormData = {
   firstName: string;
   lastName: string;
@@ -19,10 +23,10 @@ type FormData = {
 };
 const AssignStage = ({
   isAssignStage,
-  closeAssignStage
+  closeAssignStage,
 }: {
-    isAssignStage: boolean;
-    closeAssignStage: () => void;
+  isAssignStage: boolean;
+  closeAssignStage: () => void;
 }) => {
   const [formData, setFormData] = useState<FormData>({
     firstName: "",

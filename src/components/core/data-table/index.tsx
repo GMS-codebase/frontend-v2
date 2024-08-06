@@ -112,173 +112,142 @@ export function DataTable({
   };
 
   return (
-      <div className="w-full text-sm">
-          {renderCustomElement && renderCustomElement(table)}
-          <div className="flex w-full justify-between gap-x-2">
-              {searchElement ? (
-                  searchElement
-              ) : searchKey ? (
-                  <div className="flex w-full items-center py-4">
-                      <Input
-                          type="text"
-                          placeholder={`Search ...`}
-                          value={table.getState().globalFilter ?? ""}
-                          onChange={(event) =>
-                              table.setGlobalFilter(event.target.value)
-                          }
-                          className="lg:max-w-xs max-w-[16em] w-full rounded-md duration-300"
-                      />
-                  </div>
-              ) : (
-                  <div></div>
-              )}
-              {actionElement && actionElement}
+    <div className="w-full text-sm">
+      {renderCustomElement && renderCustomElement(table)}
+      <div className="flex w-full justify-between gap-x-2">
+        {searchElement ? (
+          searchElement
+        ) : searchKey ? (
+          <div className="flex w-full items-center py-4">
+            <Input
+              type="text"
+              placeholder={`Search ...`}
+              value={table.getState().globalFilter ?? ""}
+              onChange={(event) => table.setGlobalFilter(event.target.value)}
+              className="lg:max-w-xs max-w-[16em] w-full rounded-md duration-300"
+            />
           </div>
-          {loading ? (
-              loader ?? <TableSkeleton columns={columns} />
-          ) : (
-              <>
-                  <div
-                      className={`${tableClass} w-full overflow-auto data-table`}
-                  >
-                      <table
-                          className={`w-full table-row-spacing`}
-                      >
-                          <thead className="text-mainPurple">
-                              {table.getHeaderGroups().map((headerGroup) => (
-                                  <tr
-                                      className="bg-[#005DE914] text-xl"
-                                      key={headerGroup.id}
-                                  >
-                                      {headerGroup.headers.map((header, i) => (
-                                          <td
-                                              className={clsx(
-                                                  "p-2 font-medium py-5 whitespace-nowrap text-xl text-primary ",
-                                                  i === 0 && "pl-4",
-                                                  i ===
-                                                      headerGroup.headers
-                                                          .length -
-                                                          1 && "pr-4"
-                                              )}
-                                              key={header.id}
-                                          >
-                                              {header.isPlaceholder
-                                                  ? null
-                                                  : flexRender(
-                                                        header.column.columnDef
-                                                            .header,
-                                                        header.getContext()
-                                                    )}
-                                          </td>
-                                      ))}
-                                  </tr>
-                              ))}
-                          </thead>
-                          <tbody>
-                              {table?.getRowModel().rows?.length ? (
-                                  table?.getRowModel().rows.map((row, i) => (
-                                      <tr
-                                          className={`overflow-hidden text-base ${
-                                              i % 2 === 0
-                                                  ? "bg-[#FBFBFB]"
-                                                  : "bg-[#FFF]"
-                                          }`}
-                                          key={row.id}
-                                          data-state={
-                                              row.getIsSelected() && "selected"
-                                          }
-                                      >
-                                          {row
-                                              .getVisibleCells()
-                                              .map((cell, i) => (
-                                                  <td
-                                                      className={clsx(
-                                                          "p-2 py-3 my-1 table-text",
-                                                          row.getIsSelected()
-                                                              ? "bg-mainPurple font-semibold"
-                                                              : "",
-                                                          i === 0 && " pl-4",
-                                                          i ===
-                                                              row.getVisibleCells()
-                                                                  .length -
-                                                                  1 && " pr-4"
-                                                      )}
-                                                      key={cell.id}
-                                                  >
-                                                      {flexRender(
-                                                          cell.column.columnDef
-                                                              .cell,
-                                                          cell.getContext()
-                                                      )}
-                                                  </td>
-                                              ))}
-                                      </tr>
-                                  ))
-                              ) : (
-                                  <tr>
-                                      <td
-                                          colSpan={columns.length + 2}
-                                          className="h-24 text-center text-gray-700 text-sm"
-                                      >
-                                          {noDataMessage ??
-                                              "No Data So far ..."}
-                                      </td>
-                                  </tr>
-                              )}
-                          </tbody>
-                      </table>
-                  </div>
-                  <div className="flex w-full justify-between items-start flex-row-reverse px-10 mt-4">
-                      <Pagination
-                          total={
-                              isPaginated
-                                  ? paginationProps?.paginateOpts?.totalPages ??
-                                    1
-                                  : table?.getPageCount()
-                          }
-                          onNextPage={() => {
-                              if (isPaginated) {
-                                  paginationProps?.setPaginateOpts({
-                                      ...paginationProps?.paginateOpts,
-                                      page:
-                                          (paginationProps?.paginateOpts
-                                              ?.page ?? 0) + 1,
-                                  });
-                                  return;
-                              }
-                              table?.nextPage();
-                          }}
-                          value={
-                              isPaginated
-                                  ? (paginationProps?.paginateOpts?.page ?? 0) +
-                                    1
-                                  : table?.getState().pagination.pageIndex + 1
-                          }
-                          onPreviousPage={() => {
-                              if (isPaginated) {
-                                  paginationProps?.setPaginateOpts({
-                                      ...paginationProps?.paginateOpts,
-                                      page:
-                                          (paginationProps?.paginateOpts
-                                              ?.page ?? 0) - 1,
-                                  });
-                                  return;
-                              }
-                              table?.previousPage();
-                          }}
-                          onChange={(page) => {
-                              onPaginate(page - 1);
-                          }}
-                      />
-                      <div className="flex md:flex-row flex-col text-sm items-center gap-2 justify-center">
-                          <h1 className="text-lg font-medium text-[#B5B7C0]">
-                              Showing data 1 to 8 of {table.getRowCount()}{" "}
-                              entries
-                          </h1>
-                      </div>
-                  </div>
-              </>
-          )}
+        ) : (
+          <div></div>
+        )}
+        {actionElement && actionElement}
       </div>
+      {loading ? (
+        loader ?? <TableSkeleton columns={columns} />
+      ) : (
+        <>
+          <div className={`${tableClass} w-full overflow-auto data-table`}>
+            <table className={`w-full table-row-spacing`}>
+              <thead className="text-mainPurple">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr className="bg-[#005DE914] text-xl" key={headerGroup.id}>
+                    {headerGroup.headers.map((header, i) => (
+                      <td
+                        className={clsx(
+                          "p-2 font-medium py-5 whitespace-nowrap text-xl text-primary ",
+                          i === 0 && "pl-4",
+                          i === headerGroup.headers.length - 1 && "pr-4",
+                        )}
+                        key={header.id}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {table?.getRowModel().rows?.length ? (
+                  table?.getRowModel().rows.map((row, i) => (
+                    <tr
+                      className={`overflow-hidden text-base ${
+                        i % 2 === 0 ? "bg-[#FBFBFB]" : "bg-[#FFF]"
+                      }`}
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                      {row.getVisibleCells().map((cell, i) => (
+                        <td
+                          className={clsx(
+                            "p-2 py-3 my-1 table-text",
+                            row.getIsSelected()
+                              ? "bg-mainPurple font-semibold"
+                              : "",
+                            i === 0 && " pl-4",
+                            i === row.getVisibleCells().length - 1 && " pr-4",
+                          )}
+                          key={cell.id}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={columns.length + 2}
+                      className="h-24 text-center text-gray-700 text-sm"
+                    >
+                      {noDataMessage ?? "No Data So far ..."}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex w-full justify-between items-start flex-row-reverse px-10 mt-4">
+            <Pagination
+              total={
+                isPaginated
+                  ? paginationProps?.paginateOpts?.totalPages ?? 1
+                  : table?.getPageCount()
+              }
+              onNextPage={() => {
+                if (isPaginated) {
+                  paginationProps?.setPaginateOpts({
+                    ...paginationProps?.paginateOpts,
+                    page: (paginationProps?.paginateOpts?.page ?? 0) + 1,
+                  });
+                  return;
+                }
+                table?.nextPage();
+              }}
+              value={
+                isPaginated
+                  ? (paginationProps?.paginateOpts?.page ?? 0) + 1
+                  : table?.getState().pagination.pageIndex + 1
+              }
+              onPreviousPage={() => {
+                if (isPaginated) {
+                  paginationProps?.setPaginateOpts({
+                    ...paginationProps?.paginateOpts,
+                    page: (paginationProps?.paginateOpts?.page ?? 0) - 1,
+                  });
+                  return;
+                }
+                table?.previousPage();
+              }}
+              onChange={(page) => {
+                onPaginate(page - 1);
+              }}
+            />
+            <div className="flex md:flex-row flex-col text-sm items-center gap-2 justify-center">
+              <h1 className="text-lg font-medium text-[#B5B7C0]">
+                Showing data 1 to 8 of {table.getRowCount()} entries
+              </h1>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
   );
 }

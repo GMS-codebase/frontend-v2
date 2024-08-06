@@ -1,8 +1,21 @@
-import React from 'react';
-import type { SVGProps } from 'react';
+import React from "react";
+import type { SVGProps } from "react";
 
 export function SolarUserCircleOutline(props: SVGProps<SVGSVGElement>) {
-	return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><g fill="currentColor" fillRule="evenodd" clipRule="evenodd"><path d="M8.25 9a3.75 3.75 0 1 1 7.5 0a3.75 3.75 0 0 1-7.5 0M12 6.75a2.25 2.25 0 1 0 0 4.5a2.25 2.25 0 0 0 0-4.5"></path><path d="M1.25 12C1.25 6.063 6.063 1.25 12 1.25S22.75 6.063 22.75 12S17.937 22.75 12 22.75S1.25 17.937 1.25 12M12 2.75a9.25 9.25 0 0 0-6.558 15.773c.18-.973.535-1.89 1.246-2.628C7.753 14.791 9.454 14.25 12 14.25s4.247.541 5.311 1.645c.712.738 1.066 1.656 1.247 2.629A9.25 9.25 0 0 0 12 2.75m5.194 16.905c-.102-1.212-.365-2.1-.962-2.719c-.65-.673-1.853-1.186-4.232-1.186s-3.582.513-4.232 1.186c-.597.62-.86 1.507-.962 2.72A9.2 9.2 0 0 0 12 21.25a9.2 9.2 0 0 0 5.194-1.595"></path></g></svg>);
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
+        <path d="M8.25 9a3.75 3.75 0 1 1 7.5 0a3.75 3.75 0 0 1-7.5 0M12 6.75a2.25 2.25 0 1 0 0 4.5a2.25 2.25 0 0 0 0-4.5"></path>
+        <path d="M1.25 12C1.25 6.063 6.063 1.25 12 1.25S22.75 6.063 22.75 12S17.937 22.75 12 22.75S1.25 17.937 1.25 12M12 2.75a9.25 9.25 0 0 0-6.558 15.773c.18-.973.535-1.89 1.246-2.628C7.753 14.791 9.454 14.25 12 14.25s4.247.541 5.311 1.645c.712.738 1.066 1.656 1.247 2.629A9.25 9.25 0 0 0 12 2.75m5.194 16.905c-.102-1.212-.365-2.1-.962-2.719c-.65-.673-1.853-1.186-4.232-1.186s-3.582.513-4.232 1.186c-.597.62-.86 1.507-.962 2.72A9.2 9.2 0 0 0 12 21.25a9.2 9.2 0 0 0 5.194-1.595"></path>
+      </g>
+    </svg>
+  );
 }
 export function SolarTrashBinTrashOutline(props: SVGProps<SVGSVGElement>) {
   return (
@@ -488,7 +501,6 @@ export function SolarAddFolderBold(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-
 export function SolarUploadBold(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -632,18 +644,18 @@ export function SolarClockSquareBold(props: SVGProps<SVGSVGElement>) {
 }
 
 export function SolarEyeLinear(props: SVGProps<SVGSVGElement>) {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="1em"
-            height="1em"
-            viewBox="0 0 24 24"
-            {...props}
-        >
-            <g fill="none" stroke="currentColor" strokeWidth={1.5}>
-                <path d="M3.275 15.296C2.425 14.192 2 13.639 2 12c0-1.64.425-2.191 1.275-3.296C4.972 6.5 7.818 4 12 4s7.028 2.5 8.725 4.704C21.575 9.81 22 10.361 22 12c0 1.64-.425 2.191-1.275 3.296C19.028 17.5 16.182 20 12 20s-7.028-2.5-8.725-4.704Z"></path>
-                <path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0Z"></path>
-            </g>
-        </svg>
-    );
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <g fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <path d="M3.275 15.296C2.425 14.192 2 13.639 2 12c0-1.64.425-2.191 1.275-3.296C4.972 6.5 7.818 4 12 4s7.028 2.5 8.725 4.704C21.575 9.81 22 10.361 22 12c0 1.64-.425 2.191-1.275 3.296C19.028 17.5 16.182 20 12 20s-7.028-2.5-8.725-4.704Z"></path>
+        <path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0Z"></path>
+      </g>
+    </svg>
+  );
 }
