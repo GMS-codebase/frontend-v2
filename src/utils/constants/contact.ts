@@ -1,0 +1,330 @@
+export const Contact =[
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+    {
+        firstName: "INGENZI KABARORE COOPERATIVE",
+        lastName: "INGENZI KABARORE COOPERATIVE",
+        mobile1: "+250788675434",
+        mobile2: "+250788978675",
+        gender: "MALE",
+        email:"theonestensengimana29@gmail.com"
+      },
+]

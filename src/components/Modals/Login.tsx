@@ -22,10 +22,6 @@ const LoginModal = ({
     close();
     setIsOpenRegister(true);
   };
-    const handleLogin = () => {
-    router.push('../../app/admin/page.tsx');
-  };
-
 
   return (
       <div>
@@ -93,19 +89,15 @@ const LoginModal = ({
                                       className="w-full bg-gray-100 p-4 py-2 rounded-xl pl-8"
                                       required
                                   />
-                              </div>
-                              <div>
-                                  <span></span>
-                              </div>
+                </div>
+                <div><span></span></div>
                           </div>
 
                           <p>Forgot password?</p>
                       </div>
-                      <div
-                          className="border text-center bg-primary rounded-2xl p-2 text-white font-semibold text-xl"
-                          onClick={handleLogin}
-                      >
+                      <div className="border text-center bg-primary rounded-2xl p-2 text-white font-semibold text-xl">
                           <input type="submit" value="Login" />
+                          router.push('../../app/admin')
                       </div>
                   </form>
                   <div>

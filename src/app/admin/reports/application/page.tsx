@@ -20,8 +20,13 @@ const Page = () => {
       cell: ({ row }) => <div>{row.original?.applicationNumber}</div>,
     },
     {
-      accessorKey: "applicantName",
-      header: "Applicant Name",
+      accessorKey: "companyName",
+      header: "Company Name",
+      cell: ({ row }) => <div>{row.original?.applicantName}</div>,
+    },
+    {
+      accessorKey: "legalStatus",
+      header: "Legal Status",
       cell: ({ row }) => <div>{row.original?.applicantName}</div>,
     },
     {
@@ -34,14 +39,14 @@ const Page = () => {
       ),
     },
     {
-      accessorKey: "sector",
-      header: "Sector",
-      cell: ({ row }) => <div>{row.original?.sector}</div>,
+      accessorKey: "subWindow",
+      header: "Sub Window",
+      cell: ({ row }) => <div>{row.original?.stage}</div>,
     },
     {
-      accessorKey: "stage",
-      header: "Stage",
-      cell: ({ row }) => <div>{row.original?.stage}</div>,
+      accessorKey: "sectors",
+      header: "Sectors",
+      cell: ({ row }) => <div>{row.original?.sector}</div>,
     },
     {
       accessorKey: "actions",
@@ -118,7 +123,7 @@ const Page = () => {
       </div>
 
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns} data={data} tableWidth={"102vw"} />
       </div>
       <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
     </div>
