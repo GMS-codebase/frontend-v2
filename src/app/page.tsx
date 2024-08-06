@@ -10,55 +10,58 @@ import { useDisclosure } from "@mantine/hooks";
 import LoginModal from "@/components/Modals/Login";
 import CallModal from "@/components/Modals/techInnov";
 import AddCall from "@/components/Modals/AddCall";
+import SuccessModal from "@/components/Modals/ApplicantSuccess";
 
 function Page() {
-    const randomCalls = [
-        { id: 1, title: "Call for Proposal 1" },
-        { id: 2, title: "Call for Proposal 2" },
-        { id: 3, title: "Call for Proposal 3" },
-        { id: 4, title: "Call for Proposal 4" },
-        { id: 5, title: "Call for Proposal 5" },
-    ];
-    const [hasCalls, setHasCalls] = useState(true);
-    const [isOpenRegister, { open: openRegister, close: closeRegister }] =
-        useDisclosure(false);
-    const [isOpenLogin, { open: openLogin, close: closeLogin }] =
-        useDisclosure(false);
-    const [isOpenCall, { open: openCall, close: closeCall }] =
-        useDisclosure(false);
+  const randomCalls = [
+    { id: 1, title: "Call for Proposal 1" },
+    { id: 2, title: "Call for Proposal 2" },
+    { id: 3, title: "Call for Proposal 3" },
+    { id: 4, title: "Call for Proposal 4" },
+    { id: 5, title: "Call for Proposal 5" },
+  ];
+  const [hasCalls, setHasCalls] = useState(true);
+  const [isOpenRegister, { open: openRegister, close: closeRegister }] =
+    useDisclosure(false);
+  const [isOpenLogin, { open: openLogin, close: closeLogin }] =
+    useDisclosure(false);
+  const [isOpenSuccess, { open: openSuccess, close: closeSuccess }] =
+    useDisclosure(false);
+  const [isOpenCall, { open: openCall, close: closeCall }] =
+    useDisclosure(false);
 
-    return (
-        <div className="relative h-screen">
-            <div className="absolute inset-0 bg-white opacity-60 z-10"></div>
-            <div className="image">
-                <Image
-                    src={bg}
-                    alt="home"
-                    layout="fill"
-                    objectFit="cover"
-                    objectPosition="center"
-                    className="opacity-90"
-                />
-            </div>
-            <div className="absolute top-0 left-0 w-full px-[5vw] py-6 flex items-center justify-between z-20">
-                <div>
-                    <Image src={logo} alt="logo" width={360} height={360} />
-                </div>
-                <div className="flex gap-4 ml-auto">
-                    <button
-                        className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
-                        onClick={openLogin}
-                    >
-                        Login
-                    </button>
-                    <button
-                        className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
-                        onClick={openRegister}
-                    >
-                        Register
-                    </button>
-                </div>
-            </div>
+  return (
+    <div className="relative h-screen">
+      <div className="absolute inset-0 bg-white opacity-60 z-10"></div>
+      <div className="image">
+        <Image
+          src={bg}
+          alt="home"
+          layout="fill"
+          objectFit="cover"
+          objectPosition="center"
+          className="opacity-90"
+        />
+      </div>
+      <div className="absolute top-0 left-0 w-full px-[5vw] py-6 flex items-center justify-between z-20">
+        <div>
+          <Image src={logo} alt="logo" width={360} height={360} />
+        </div>
+        <div className="flex gap-4 ml-auto">
+          <button
+            className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
+            onClick={openLogin}
+          >
+            Login
+          </button>
+          <button
+            className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
+            onClick={openRegister}
+          >
+            Register
+          </button>
+        </div>
+      </div>
 
       <div className="absolute flex justify-center flex-col items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-30 w-full">
         <h1 className="font-extrabold text-black text-2xl w-[50%] md:text-4xl">
@@ -77,11 +80,12 @@ function Page() {
               randomCalls.map((call) => (
                 <div
                   key={call.id}
-                  className="min-w-[300px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
+                  className="min-w-[350px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
                 >
+                  <SolarFolder2Bold className="w-8 h-8 text-[#005DE9]"/>
                   <h3 className="font-bold text-black">{call.title}</h3>
                   <button
-                    className="bg-primary bg-opacity-20 text-primary font-bold rounded-full px-4 py-2"
+                    className="bg-[#1F5DB014] text-primary font-bold rounded-full px-4 py-2"
                     onClick={openCall}
                   >
                     View details
@@ -115,6 +119,7 @@ function Page() {
         </button>
       </div>
       <RegisterModal
+        openSuccess={openSuccess}
         isOpenRegister={isOpenRegister}
         closeRegister={closeRegister}
         openLogin={openLogin}
@@ -124,6 +129,7 @@ function Page() {
         close={closeLogin}
         openRegister={openRegister}
       />
+      <SuccessModal opened={isOpenSuccess} close={closeSuccess}/>
       <CallModal opened={isOpenCall} close={closeCall} />
     </div>
   );
