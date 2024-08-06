@@ -24,6 +24,7 @@
     "chart.js": "^4.4.3",
     "chartjs-plugin-datalabels": "^2.2.0",
     "clsx": "^2.1.1",
+    "cookies-next": "^4.2.1",
     "dayjs": "^1.11.12",
     "next": "14.2.5",
     "next13-progressbar": "^1.2.1",

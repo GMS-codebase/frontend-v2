@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { Route } from "@/types";
 import { ArrowLeft } from "solar-icon-set";
 import { PiCaretLeftBold } from "react-icons/pi";
+import { setCookie } from "cookies-next";
 
 const GenericSidebar = ({
   routes,
@@ -53,7 +54,7 @@ const GenericSidebar = ({
             return (
               <div key={index} className="mx-4">
                 <Link
-                  onClick={()=> localStorage.setItem("breadcrumb", route.label)}
+                  onClick={()=> setCookie("breadcrumb", route.label)}
                   href={route.path}
                   className={`flex items-center justify-center gap-5 px-4 py-3 my-1 ${isActiveLink(route.path, index) ? "bg-primary text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
                 >
@@ -73,7 +74,7 @@ const GenericSidebar = ({
             return (
               <div key={index} className="mx-4">
                 <Link
-                  onClick={()=> localStorage.setItem("breadcrumb", route.label)}
+                  onClick={()=> setCookie("breadcrumb", route.label)}
                   href={route.path}
                   className={`flex items-center gap-5 px-4 py-3 my-1 pl-10 ${isActiveLink(route.path, index) ? "bg-primary text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
                 >
