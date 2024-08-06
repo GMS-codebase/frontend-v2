@@ -84,7 +84,7 @@ function Page() {
                 >
                   <h3 className="font-bold text-black">{call.title}</h3>
                   <button
-                    className="bg-primary bg-opacity-20 text-primary font-bold rounded-full px-4 py-2"
+                    className="bg-[#1F5DB014] text-primary font-bold rounded-full px-4 py-2"
                     onClick={openCall}
                   >
                     View details
