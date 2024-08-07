@@ -1,10 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import * as Icons from "@/components/core/icons";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {getCookie} from "cookies-next"
+import { useDispatch } from "react-redux";
+import { getWindows } from "@/utils/funcs";
 
 const Navbar = () => {
+  const dispatch = useDispatch();
   // const [pageName, setPageName] = useState(localStorage.getItem("breadcrumb") || "");
   const [pageName, setPageName] = useState(getCookie("breadcrumb") || "");
   const active = usePathname();
@@ -19,6 +23,9 @@ const Navbar = () => {
     };
   }, [active]);
 
+  useEffect(()=>{
+    getWindows(dispatch);
+  },[])
   return (
     <div className="w-full flex items-center justify-between py-6 bg-white rounded-2xl px-5">
       <h1 className="text-xl font-extrabold text-primary">{pageName}</h1>
