@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 5400",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -21,6 +21,7 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@tabler/icons-react": "^3.11.0",
     "@tanstack/react-table": "^8.19.3",
+    "axios": "^1.7.3",
     "chart.js": "^4.4.3",
     "chartjs-plugin-datalabels": "^2.2.0",
     "clsx": "^2.1.1",
