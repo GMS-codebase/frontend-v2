@@ -12,9 +12,12 @@ import AddCall from "@/components/Modals/AddCall";
 import { useState } from "react";
 import UpdateCall from "@/components/Modals/UpdateCall";
 import DeleteCall from "@/components/Modals/DeleteCall";
-
+import { useSelector } from "react-redux";
+import TableSkeleton from "@/components/core/data-table/TableSkeleton";
+import {format} from "date-fns";
 const Page = () => {
   const [isOpen, { open, close }] = useDisclosure(false);
+  const calls = useSelector((state: any)=> state.calls)
   const [isOpenCall, setIsOpenCall] = useState({
     openUpdate: false,
     openDelete: false,
@@ -29,12 +32,12 @@ const Page = () => {
     {
       accessorKey: "startDate",
       header: "Start Date",
-      cell: ({ row }) => <div>{row.original?.startDate}</div>,
+      cell: ({ row }) => <div>{format(row.original?.startDate, "dd MMMM yyyy")}</div>,
     },
     {
       accessorKey: "endDate",
       header: "End Date",
-      cell: ({ row }) => <div>{row.original?.endDate}</div>,
+      cell: ({ row }) => <div>{format(row.original?.endDate, "dd MMMM yyyy")}</div>,
     },
     {
       accessorKey: "appealDays",
@@ -50,7 +53,7 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />
+        <CallsActions setIsCall={setIsOpenCall} call={row.original} />
       ),
     },
   ];
@@ -80,7 +83,7 @@ const Page = () => {
       </div>
 
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} />
+        {calls.loading ? <TableSkeleton columns={columns}/> : <DataTable columns={columns} data={calls?.calls} noDataMessage="No Calls Created Yet"/>}
       </div>
       <AddCall isOpenAddCall={isOpen} closeAddCall={close} />
       <UpdateCall

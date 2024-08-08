@@ -16,7 +16,7 @@ export default function RootProvider({
   return (
     <MantineProvider>
       <Provider store={store}>{children}</Provider>
-      <Notifications />
+      <Notifications position="top-right"/>
       <Next13ProgressBar
         height="4px"
         color="#005DE9F2"
