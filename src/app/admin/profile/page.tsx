@@ -10,7 +10,6 @@ import { MdPhoneAndroid } from "react-icons/md";
 import { Upload } from "solar-icon-set";
 const Page = () => {
   const [activeSection, setActiveSection] = useState("contact");
-
   return (
     <div className="w-full bg-white rounded-2xl ">
       <div className="w-full h-[180px] bg-[#000F23] rounded-t-2xl relative mb-20">
@@ -227,7 +226,7 @@ const Page = () => {
               htmlFor="file-upload"
               className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
             >
-              <Icons.MingcuteUpload3Fill className="text-[#005DE9]  w-32 h-32 bg-[#005DE924] bg-opacity-50 rounded-full p-5 " />
+              {/* <Icons.MingcuteUpload3Fill className="text-[#005DE9]  w-32 h-32 bg-[#005DE924] bg-opacity-50 rounded-full p-5 " /> */}
               <div className="text-center">
                 <p className="text-lg text-gray-500">Upload file</p>
                 <p className="text-lg text-gray-400">or drag and drop</p>

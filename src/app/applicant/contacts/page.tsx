@@ -4,27 +4,40 @@ import { SolarAddFolderBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { tradesData as data } from "@/utils/constants/dummy";
+import { applicantContacts as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
 import AddTrade from "@/components/Modals/AddTrade";
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
   const columns: ColumnDef<any>[] = [
     {
-      accessorKey: "name",
-      header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
+      accessorKey: "firstName",
+      header: "First Name",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.firstName}</div>
+      ),
     },
     {
-      accessorKey: "description",
-      header: "Description",
+      accessorKey: "lastName",
+      header: "Last Name",
+      cell: ({ row }) => <div className="w-full">{row.original?.lastName}</div>,
+    },
+    {
+      accessorKey: "phone",
+      header: "Phone Number",
       cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.description.length > 50
-            ? row.original?.description.slice(0, 50) + "..."
-            : row.original.description}
-        </div>
+        <div className="w-full">{row.original?.phoneNumber}</div>
       ),
+    },
+    {
+      accessorKey: "gender",
+      header: "Gender",
+      cell: ({ row }) => <div className="w-full">{row.original?.gender}</div>,
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+      cell: ({ row }) => <div className="w-full">{row.original?.email}</div>,
     },
     {
       accessorKey: "actions",
