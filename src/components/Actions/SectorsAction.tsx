@@ -1,5 +1,4 @@
 import { useDisclosure } from "@mantine/hooks";
-``;
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Menu, Button, Text, rem } from "@mantine/core";
 import { FiEye } from "react-icons/fi";
@@ -55,6 +54,12 @@ const SectorsActions = ({
             >
               <CiEdit size={21} color="#576074" />
               Edit Sector
+            </div>
+          </Menu.Item>
+          <Menu.Item>
+            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+              <RiDeleteBinLine size={21} color="#576074" />
+              Acivate
             </div>
           </Menu.Item>
           <Menu.Item>

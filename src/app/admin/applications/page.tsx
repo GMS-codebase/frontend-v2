@@ -39,6 +39,11 @@ const Page = () => {
       cell: ({ row }) => <div>{row.original?.sector}</div>,
     },
     {
+      accessorKey: "trade",
+      header: "Trade",
+      cell: ({ row }) => <div>{row.original?.trade}</div>,
+    },
+    {
       accessorKey: "stage",
       header: "Stage",
       cell: ({ row }) => <div>{row.original?.stage}</div>,
@@ -95,6 +100,25 @@ const Page = () => {
           </div>
           <div className="w-44">
             <FilterDropDown
+              placeholderText="Filter By Call"
+              data={["Call for apprentices"]}
+            />
+          </div>
+          <div className="w-44">
+            <FilterDropDown
+              placeholderText="Filter By Subwindow"
+              data={["Apprentishp and internship"]}
+            />
+          </div>
+          <div className="w-44">
+            <FilterDropDown
+              placeholderText="Filter By trade"
+              data={["MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+]}
+            />
+          </div>
+          <div className="w-44">
+            <FilterDropDown
               placeholderText="Filter By Sector"
               data={["ICT & Innovations"]}
             />
@@ -118,7 +142,7 @@ const Page = () => {
       </div>
 
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns} data={data}/>
       </div>
       <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
     </div>
