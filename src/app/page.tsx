@@ -1,16 +1,18 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import bg from "../assets/Images/landing.jpg";
 import logo from "../assets/Images/logo.png";
 import { HiOutlineMail } from "react-icons/hi";
 import { IoDownloadOutline } from "react-icons/io5";
-import RegisterModal from "@/components/Modals/RegisterModal";
+import RegisterModal from "@/components/Modals/auth/RegisterModal";
 import { useDisclosure } from "@mantine/hooks";
-import LoginModal from "@/components/Modals/Login";
+import LoginModal from "@/components/Modals/auth/Login";
 import CallModal from "@/components/Modals/techInnov";
 import SuccessModal from "@/components/Modals/success";
+import SetPasswordModal from "@/components/Modals/auth/SetPasswordModal";
 import { SolarFolder2Bold } from "@/components/core/icons";
+import { useSearchParams } from "next/navigation";
 
 function Page() {
   const randomCalls = [
@@ -20,6 +22,7 @@ function Page() {
     { id: 4, title: "Call for Proposal 4" },
     { id: 5, title: "Call for Proposal 5" },
   ];
+
   const [hasCalls, setHasCalls] = useState(true);
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
@@ -29,6 +32,19 @@ function Page() {
     useDisclosure(false);
   const [isOpenCall, { open: openCall, close: closeCall }] =
     useDisclosure(false);
+  const [
+    isOpenSetPassword,
+    { open: openSetPassword, close: closeSetPassword },
+  ] = useDisclosure(false);
+
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+
+  useEffect(() => {
+    if (token) {
+      openSetPassword();
+    }
+  }, [token, openSetPassword]);
 
   return (
     <div className="relative h-screen">
@@ -82,7 +98,7 @@ function Page() {
                   key={call.id}
                   className="min-w-[350px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
                 >
-                  <SolarFolder2Bold className="w-8 h-8 text-[#005DE9]"/>
+                  <SolarFolder2Bold className="w-8 h-8 text-[#005DE9]" />
                   <h3 className="font-bold text-black">{call.title}</h3>
                   <button
                     className="bg-[#1F5DB014] text-primary font-bold rounded-full px-4 py-2"
@@ -108,9 +124,7 @@ function Page() {
       </div>
 
       <div className="absolute bottom-0 left-0 p-4 z-30">
-        <h2 className="text-black font-extrabold">
-          © 2024 Rwanda TVET Board.
-        </h2>
+        <h2 className="text-black font-extrabold">© 2024 Rwanda TVET Board.</h2>
       </div>
       <div className="absolute bottom-0 right-0 p-4 z-30">
         <button className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
@@ -122,15 +136,21 @@ function Page() {
         openSuccess={openSuccess}
         isOpenRegister={isOpenRegister}
         closeRegister={closeRegister}
-        openLogin={openLogin}
+        openLogin={openRegister}
       />
       <LoginModal
         opened={isOpenLogin}
         close={closeLogin}
-        openRegister={openRegister}
+        openRegister={openLogin}
       />
-      <SuccessModal opened={isOpenSuccess} close={closeSuccess}/>
+      <SuccessModal opened={isOpenSuccess} close={closeSuccess} />
       <CallModal opened={isOpenCall} close={closeCall} />
+      <SetPasswordModal
+        opened={isOpenSetPassword}
+        close={closeSetPassword}
+        token={token as string}
+        openLogin={openLogin}
+      />
     </div>
   );
 }
