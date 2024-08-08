@@ -7,13 +7,16 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { tradesData as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
 import AddTrade from "@/components/Modals/AddTrade";
+import { useSelector } from "react-redux";
+import { ClipLoader } from "react-spinners";
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
+  const trades = useSelector((state: any)=> state.trades);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
+      cell: ({ row }) => <div className="w-full">{row.original?.title}</div>,
     },
     {
       accessorKey: "description",
@@ -69,9 +72,15 @@ const Page = () => {
         </button>
       </div>
 
+      {trades.loading ? (
+        <div className="w-full flex items-center justify-center gap-4 font-bold">
+          <h1>Loading Trades</h1>
+          <ClipLoader size={20} color="black"/>
+        </div>
+      ) : 
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} />
-      </div>
+        <DataTable columns={columns} data={trades.trades ?? []} />
+      </div>}
       <AddTrade isOpenAddTrade={isOpenTrade} closeAddTrade={close} />
     </div>
   );

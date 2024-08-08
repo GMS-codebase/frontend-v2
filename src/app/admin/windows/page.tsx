@@ -11,6 +11,7 @@ import WindowsActions from "./WindowAction";
 import DeleteWindow from "@/components/Modals/DeleteWindow";
 import { useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
+import { Window } from "@/types";
 const windows = [
   {
     name: "Window 1: Rapid Response Training",
@@ -32,7 +33,11 @@ const windows = [
 const Page = () => {
   const [isAddWindow, { open, close }] = useDisclosure(false);
   const windows = useSelector((state: any)=> state.windows);
-  const [isWindow, setIsWindow] = useState({
+  const [isWindow, setIsWindow] = useState<{
+    openDelete:  boolean,
+    openUpdate: boolean,
+    window: Window | null,
+  }>({
     openDelete: false,
     openUpdate: false,
     window: null,
@@ -94,7 +99,12 @@ const Page = () => {
           <h1>Loading Windows </h1>
           <ClipLoader size={20} color="black"/>
         </div>
-      ): 
+      ):
+      windows.error ? (
+        <div className="w-full flex justify-center items-center">
+          <h1 className="text-red-500 font-bold">{windows.error}</h1>
+        </div>
+      ) :
       <div className="w-full h-full">
         <DataTable columns={columns} data={windows.windows} />
       </div>
@@ -106,7 +116,9 @@ const Page = () => {
         closeUpdateWindow={() => setIsWindow({ openDelete: false, openUpdate: false,  window: null })}
       />
       <DeleteWindow
+        id={isWindow.window?.uuid ?? ""}
         isOpenDeleteWindow={isWindow.openDelete}
+
         closeDeleteWindow={() => setIsWindow({ openDelete: false, openUpdate: false,  window: null })}
       />
     </div>

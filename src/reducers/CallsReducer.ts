@@ -1,15 +1,15 @@
 import { 
-  ADD_WINDOW_SUCCESS, 
-  GET_WINDOWS_ERROR, 
-  GET_WINDOWS_SUCCESS, 
-  GET_WINDOWS_LOADING, 
-  UPDATE_WINDOW_SUCCESS, 
-  DELETE_WINDOW_SUCCESS 
-} from "@/actions/WindowsActions";
+  ADD_CALL_SUCCESS, 
+  GET_CALLS_ERROR, 
+  GET_CALLS_SUCCESS, 
+  GET_CALLS_LOADING, 
+  UPDATE_CALL_SUCCESS, 
+  DELETE_CALL_SUCCESS 
+} from "@/actions/CallsActions";
 import { Window } from "@/types";
 
 const initialState = {
-  windows: [],
+  calls: [],
   error: null,
   isError: false,
   loading: false
@@ -20,48 +20,48 @@ type Action = {
   payload: any;
 };
 
-export default function WindowsReducer(state = initialState, action: Action) {
+export default function CallsReducer(state = initialState, action: Action) {
   switch (action.type) {
-    case GET_WINDOWS_LOADING:
+    case GET_CALLS_LOADING:
       return {
         ...state,
         loading: true
       };
-    case GET_WINDOWS_SUCCESS:
+    case GET_CALLS_SUCCESS:
       return {
         ...state,
         loading: false,
-        windows: action.payload
+        calls: action.payload
       };
-    case GET_WINDOWS_ERROR:
+    case GET_CALLS_ERROR:
       return {
         ...state,
         isError: true,
         loading: false,
         error: action.payload
       };
-    case ADD_WINDOW_SUCCESS:
+    case ADD_CALL_SUCCESS:
       return {
         ...state,
-        windows: [...state.windows, action.payload],
+        calls: [...state.calls, action.payload],
         error: null,
         isError: false,
         loading: false
       };
-    case UPDATE_WINDOW_SUCCESS:
+    case UPDATE_CALL_SUCCESS:
       return {
         ...state,
-        windows: state.windows.map((window: Window) => 
-          window.uuid === action.payload.id ? { ...window, ...action.payload.data } : window
+        calls: state.calls.map((call: any) => 
+          call.uuid === action.payload.id ? { ...call, ...action.payload.data } : call
         ),
         error: null,
         isError: false,
         loading: false
       };
-    case DELETE_WINDOW_SUCCESS:
+    case DELETE_CALL_SUCCESS:
       return {
         ...state,
-        windows: state.windows.filter((window: Window) => window.uuid !== action.payload.id),
+        calls: state.calls.filter((call: any) => call.uuid !== action.payload.id),
         error: null,
         isError: false,
         loading: false

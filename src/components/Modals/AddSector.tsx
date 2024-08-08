@@ -1,6 +1,10 @@
+import { ADD_SECTOR_SUCCESS } from "@/actions/SectorsActions";
+import { AxiosAPI } from "@/utils/funcs";
 import { Modal } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { useDispatch } from "react-redux";
 import { Folder2, Subtitles } from "solar-icon-set";
 
 const AddSector = ({
@@ -10,8 +14,9 @@ const AddSector = ({
   isOpenAddSector: boolean;
   closeAddSector: () => void;
 }) => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    title: "",
+    name: "",
     description: "",
   });
 
@@ -25,8 +30,30 @@ const AddSector = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log("Form Data: ", formData);
+    AxiosAPI.post("/Sectors", formData)
+      .then((res)=>{
+        notifications.show({
+          message: "Sector is created successfully",
+          color: "blue"
+        })
+        dispatch({
+          type: ADD_SECTOR_SUCCESS,
+          payload: res.data?.data
+        })
+        setFormData({
+          name: "",
+          description: "",
+        })
+        closeAddSector();
+      })
+      .catch((err)=>{
+        console.log(err.response);
+        if(err.response) 
+          notifications.show({
+            message: err.response?.data?.message ?? "Failed to create sector!",
+            color: "red"
+          })
+      })
   };
 
   return (
@@ -59,7 +86,7 @@ const AddSector = ({
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
                   <label
-                    htmlFor="SectorTitle"
+                    htmlFor="title"
                     className="block text-lg font-bold text-gray-700"
                   >
                     Title
@@ -70,8 +97,8 @@ const AddSector = ({
                     </span>
                     <input
                       type="text"
-                      name="SectorTitle"
-                      value={formData.title}
+                      name="name"
+                      value={formData.name}
                       placeholder="Sector title"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
@@ -113,7 +140,7 @@ const AddSector = ({
                   Cancel
                 </button>
                 <button
-                  type="button"
+                  type="submit"
                   className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Create

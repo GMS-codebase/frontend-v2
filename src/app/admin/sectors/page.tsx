@@ -9,9 +9,12 @@ import AddSector from "@/components/Modals/AddSector";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 import UpdateSector from "@/components/Modals/UpdateSector";
+import { useSelector } from "react-redux";
+import { ClipLoader } from "react-spinners";
 
 const Page = () => {
   const [isAddSector, { open, close }] = useDisclosure(false);
+  const sectors = useSelector((state: any)=> state.sectors);
   const [isSector, setIsSector] = useState({
     open: false,
     sector: null,
@@ -39,7 +42,7 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <SectorsActions sector={isSector.sector} setIsSector={setIsSector} />
+        <SectorsActions sector={row.original} setIsSector={setIsSector} />
       ),
     },
   ];
@@ -68,9 +71,15 @@ const Page = () => {
         </button>
       </div>
 
+      {sectors.loading ? (
+        <div className="w-full flex items-center justify-center gap-4 font-bold">
+          <h1>Loading Sectors</h1>
+          <ClipLoader size={20} color="black"/>
+        </div>
+      ) : 
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} />
-      </div>
+        <DataTable columns={columns} data={sectors.sectors ?? []} />
+      </div>}
       <AddSector isOpenAddSector={isAddSector} closeAddSector={close} />
       <UpdateSector
         sector={isSector.sector}

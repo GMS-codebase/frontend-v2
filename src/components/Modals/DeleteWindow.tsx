@@ -1,10 +1,14 @@
 import { Checkbox, Modal, Select, Stepper } from "@mantine/core";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import SideVector1 from "@/assets/Vectors/redSideVector.svg";
 import SideVector2 from "@/assets/Vectors/redSideVector2.svg";
 import deleteSvg from "@/assets/Vectors/delete.svg";
+import { AxiosAPI } from "@/utils/funcs";
+import { notifications } from "@mantine/notifications";
+import { useDispatch } from "react-redux";
+import { DELETE_WINDOW_SUCCESS, UPDATE_WINDOW_SUCCESS } from "@/actions/WindowsActions";
 type FormData = {
   firstName: string;
   lastName: string;
@@ -17,10 +21,39 @@ type FormData = {
 const DeleteWindow = ({
   isOpenDeleteWindow,
   closeDeleteWindow,
+  id
 }: {
   isOpenDeleteWindow: boolean;
   closeDeleteWindow: () => void;
+  id: string;
 }) => {
+  const dispatch = useDispatch();
+  const [deleteId, setDeleteId] = useState(id);
+  useEffect(()=>{
+    setDeleteId(id);
+  },[id])
+  const onDelete = ()=>{
+    AxiosAPI.delete(`/window/${deleteId}`)
+    .then(()=>{
+      notifications.show({
+        message: "Window is deleted successfully",
+        color: "blue"
+      })
+      dispatch({
+        type: DELETE_WINDOW_SUCCESS,
+        payload: {
+          id
+        }
+      })
+      closeDeleteWindow();
+    })
+    .catch((err)=>{
+      notifications.show({
+        message: err.response?.data?.message ?? "Failed to deleted window!",
+        color: "red"
+      })
+    })
+  }
   return (
     <Modal
       size={""}
@@ -69,6 +102,7 @@ const DeleteWindow = ({
               Cancel
             </button>
             <button
+              onClick={onDelete}
               type="button"
               className="w-full px-4 py-3 bg-[#C50D0DF2] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
             >
