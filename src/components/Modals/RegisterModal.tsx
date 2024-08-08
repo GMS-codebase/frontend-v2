@@ -312,7 +312,10 @@ const RegisterModal = ({
                   <div className="w-full flex flex-col justify-center mt-4 gap-3">
                     <button
                       type="submit"
-                      onClick={openSuccess}
+                      onClick={()=>{
+                        closeRegister();
+                        openSuccess()
+                      }}
                       className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                       Sign Up
