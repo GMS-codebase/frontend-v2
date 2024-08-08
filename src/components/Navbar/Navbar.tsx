@@ -5,11 +5,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {getCookie} from "cookies-next"
 import { useDispatch } from "react-redux";
-import { getWindows } from "@/utils/funcs";
+import { getCalls, getSectors, getTrades, getWindows } from "@/utils/funcs";
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  // const [pageName, setPageName] = useState(localStorage.getItem("breadcrumb") || "");
   const [pageName, setPageName] = useState(getCookie("breadcrumb") || "");
   const active = usePathname();
   useEffect(() => {
@@ -25,6 +24,10 @@ const Navbar = () => {
 
   useEffect(()=>{
     getWindows(dispatch);
+    getSectors(dispatch);
+    getTrades(dispatch);
+    getCalls(dispatch);
+
   },[])
   return (
     <div className="w-full flex items-center justify-between py-6 bg-white rounded-2xl px-5">

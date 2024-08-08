@@ -1,8 +1,12 @@
+import { UPDATE_WINDOW_SUCCESS } from "@/actions/WindowsActions";
+import { Window } from "@/types";
+import { AxiosAPI } from "@/utils/funcs";
 import { Modal } from "@mantine/core";
-import { useState } from "react";
+import { notifications } from "@mantine/notifications";
+import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { useDispatch } from "react-redux";
 import { Folder2, Subtitles } from "solar-icon-set";
-
 const UpdateWindow = ({
   isOpenUpdateWindow,
   closeUpdateWindow,
@@ -10,12 +14,23 @@ const UpdateWindow = ({
 }: {
   isOpenUpdateWindow: boolean;
   closeUpdateWindow: () => void;
-  Window: any;
+  Window: Window | null;
 }) => {
+
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
+    title: Window?.title,
+    description: Window?.description,
   });
+
+  useEffect(()=>{
+    if(Window){
+      setFormData({
+        title: Window?.title,
+        description: Window?.description,
+      })
+    }
+  },[Window])
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
@@ -27,7 +42,31 @@ const UpdateWindow = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log("Form Data: ", formData);
+    AxiosAPI.patch(`/window/${Window?.uuid}`, formData)
+      .then((res)=>{
+        notifications.show({
+          message: "Window is updated successfully",
+          color: "blue"
+        })
+        dispatch({
+          type: UPDATE_WINDOW_SUCCESS,
+          payload: {
+            data: res.data?.data?.data,
+            id: Window?.uuid
+          }
+        })
+        setFormData({
+          title: "",
+          description: "",
+        })
+        closeUpdateWindow();
+      })
+      .catch((err)=>{
+        notifications.show({
+          message: err.response?.data?.message ?? "Failed to update window!",
+          color: "red"
+        })
+      })
   };
 
   return (
@@ -59,7 +98,7 @@ const UpdateWindow = ({
             <div className="w-full flex justify-between gap-3">
               <div className="w-full">
                 <label
-                  htmlFor="WindowTitle"
+                  htmlFor="title"
                   className="block text-lg font-bold text-gray-700"
                 >
                   Title
@@ -70,7 +109,7 @@ const UpdateWindow = ({
                   </span>
                   <input
                     type="text"
-                    name="WindowTitle"
+                    name="title"
                     value={formData.title}
                     placeholder="Window title"
                     onChange={handleChange}
@@ -113,10 +152,10 @@ const UpdateWindow = ({
                 Cancel
               </button>
               <button
-                type="button"
+                type="submit"
                 className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
-                Create
+                Save
               </button>
             </div>
           </form>

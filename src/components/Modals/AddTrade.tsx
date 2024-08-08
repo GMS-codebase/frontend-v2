@@ -1,6 +1,10 @@
+import { ADD_TRADE_SUCCESS } from "@/actions/TradesActions";
+import { AxiosAPI } from "@/utils/funcs";
 import { Modal } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { useDispatch } from "react-redux";
 import { Folder2, Subtitles } from "solar-icon-set";
 
 const AddTrade = ({
@@ -14,7 +18,7 @@ const AddTrade = ({
     title: "",
     description: "",
   });
-
+  const dispatch = useDispatch();
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -25,8 +29,29 @@ const AddTrade = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log("Form Data: ", formData);
+    AxiosAPI.post("/trade", formData)
+      .then((res)=>{
+        notifications.show({
+          message: "Trade is created successfully",
+          color: "blue"
+        })
+        dispatch({
+          type: ADD_TRADE_SUCCESS,
+          payload: res.data?.data
+        })
+        setFormData({
+          title: "",
+          description: "",
+        })
+        closeAddTrade();
+      })
+      .catch((err)=>{
+        if(err.response)
+          notifications.show({
+            message: err.response?.data?.message ?? "Failed to create trade!",
+            color: "red"
+          })
+      })
   };
 
   return (
@@ -70,7 +95,7 @@ const AddTrade = ({
                     </span>
                     <input
                       type="text"
-                      name="TradeTitle"
+                      name="title"
                       value={formData.title}
                       placeholder="Trade title"
                       onChange={handleChange}
@@ -113,7 +138,7 @@ const AddTrade = ({
                   Cancel
                 </button>
                 <button
-                  type="button"
+                  type="submit"
                   className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Create

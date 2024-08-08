@@ -14,12 +14,16 @@ import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
 import AddWindowSubwindow from "@/components/Modals/AddWindowSubwindow";
 import UpdateWindow from "@/components/Modals/UpdateWindow";
+import { useSelector } from "react-redux";
+import { useParams } from "next/navigation";
 
 const Page = () => {
   const [isAddWindow, { open, close }] = useDisclosure(false);
+  const {id:windowId} = useParams();
   const [isUpdateWindow, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
-
+  const windows = useSelector((state: any)=> state.windows);
+  const window = windows.windows?.filter((window: any) => window.uuid === windowId)
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -85,10 +89,15 @@ const Page = () => {
               <div>Description</div>
             </div>
           </div>
-          <div className="flex gap-2 px-10">
+          <div className="flex justify-between items-center w-3/5  font-semibold px-10">
             <div className="flex flex-col gap-6 justify-start items-start ">
               <h1 className="font-bold text-xl">
-                Window 2: Rapid Response Training
+                {window[0]?.title}
+              </h1>
+            </div>
+            <div className="flex flex-col gap-6 justify-start items-start ">
+              <h1 className="font-medium text-base text-gray-500">
+                {window[0]?.description}
               </h1>
             </div>
           </div>
@@ -127,7 +136,7 @@ const Page = () => {
             </div>
 
             <div className="w-full h-full">
-              <DataTable columns={columns} data={data.slice(0, 5)} />
+              <DataTable columns={columns} data={window[0]?.subWindows ?? []} noDataMessage={`No Sub Windows Created For ${window[0]?.title}`}/>
             </div>
           </div>
         </div>
@@ -136,7 +145,7 @@ const Page = () => {
           closeAddWindowSubwindow={close}
         />
         <UpdateWindow
-          Window={{}}
+          Window={window}
           isOpenUpdateWindow={isUpdateWindow}
           closeUpdateWindow={closeUpdate}
         />
