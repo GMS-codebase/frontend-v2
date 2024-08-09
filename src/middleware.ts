@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import { Role } from "./types/base.type";
 
 const roles = ["ADMIN", "APPLICANT", "EMPLOYEE"];
-const whitelist = ["/redirect", "/public"];
+const whitelist = ["/","/redirect", "/public"];
 function getRolePath(role: Role): string {
   switch (role) {
     case "APPLICANT":
@@ -39,7 +39,6 @@ export function middleware(request: NextRequest) {
   }
   try {
     const decoded: any = jwtDecode(token.value);
-    console.log(decoded);
     const isExpired = decoded.exp * 1000 < Date.now();
     if (isExpired && !whitelist.includes(request.nextUrl.pathname)) {
       request.cookies.delete("token");
@@ -47,16 +46,14 @@ export function middleware(request: NextRequest) {
     }
     const role = decoded?.role;
     const nextUrl = getRolePath(role ?? "");
-    console.log(nextUrl);
     if (whitelist.includes(request.nextUrl.pathname)) {
-      console.log("Hello");
       return NextResponse.redirect(new URL(nextUrl, request.url));
     }
-    // if (request.nextUrl.pathname === "/") {
-    //   return NextResponse.redirect(new URL(nextUrl, request.url));
-    // }
+    if (request.nextUrl.pathname === "/") {
+        console.log("The next url is /")
+      return NextResponse.redirect(new URL(nextUrl, request.url));
+    }
     const roleInRoute = request.nextUrl.pathname.split("/")[1].toUpperCase();
-    console.log(roleInRoute);
     if (roles.includes(roleInRoute as Role) && role !== roleInRoute) {
         console.log(nextUrl)
       return NextResponse.redirect(new URL(nextUrl, request.url));

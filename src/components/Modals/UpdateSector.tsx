@@ -1,5 +1,5 @@
 import { UPDATE_SECTOR_SUCCESS } from "@/actions/SectorsActions";
-import { AxiosAPI } from "@/utils/funcs";
+import { authorizedApi } from "@/utils/api";
 import { Modal } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
@@ -36,7 +36,7 @@ const UpdateSector = ({
   };
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    AxiosAPI.put(`/Sectors/${sector?.uuid}`, formData)
+    authorizedApi.put(`/Sectors/${sector?.uuid}`, formData)
       .then((res)=>{
         notifications.show({
           message: "Sector is updated successfully",

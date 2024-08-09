@@ -67,7 +67,7 @@ const SetPasswordModal = ({
     <Modal
       size=""
       opened={opened}
-      onClose={close}
+      onClose={closeSetPassword}
       withCloseButton={false}
       centered
     >

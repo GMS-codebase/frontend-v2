@@ -7,9 +7,9 @@ import { CalendarMinimalistic } from "solar-icon-set";
 import { ShieldWarning } from "solar-icon-set";
 import axios from "axios";
 import { notifications } from "@mantine/notifications";
-import { AxiosAPI } from "@/utils/funcs";
 import { SolarCheckCircleBold } from "../core/icons";
 import { useSelector } from "react-redux";
+import { authorizedApi } from "@/utils/api";
 type FormData = {
     title: string;
     description: string;
@@ -85,7 +85,7 @@ const AddCall = ({
 
     console.log("form data --> ",formData, selectedSelectors, selectedWindows);
 
-    AxiosAPI.post("/call/create", submitData)
+    authorizedApi.post("/call/create", submitData)
       .then((res) => {
         console.log(res.data);
         notifications.show({
