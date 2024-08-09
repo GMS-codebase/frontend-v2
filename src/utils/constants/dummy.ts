@@ -2464,7 +2464,428 @@ export const callsData = [
     status: "CLOSED",
   },
 ];
-
+export const calls = [
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+    {
+        title: "SDF CALL 5 FOR GRANT PROPOSALS",
+        description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+    },
+];
 export const sectorsData = [
   {
     name: "Transport &Logistics",
