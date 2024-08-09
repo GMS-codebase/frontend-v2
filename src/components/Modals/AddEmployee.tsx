@@ -8,6 +8,7 @@ import { BsPerson } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
 import { MdPhoneAndroid } from "react-icons/md";
 import { PhGenderIntersex, SolarSuitcaseLinear } from "../core/icons";
+
 type FormData = {
   firstName: string;
   lastName: string;
@@ -16,7 +17,9 @@ type FormData = {
   gender: string;
   position: string;
   isInternal: undefined | boolean;
+  companyName: string;
 };
+
 const AddEmployee = ({
   isOpenAddEmployee,
   closeAddEmployee,
@@ -35,6 +38,7 @@ const AddEmployee = ({
     gender: "",
     position: "",
     isInternal: undefined,
+    companyName: "",
   });
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
@@ -60,6 +64,7 @@ const AddEmployee = ({
     closeAddEmployee();
     setIsOpenSuccess(true);
   };
+
   return (
     <Modal
       size={""}
@@ -296,6 +301,7 @@ const AddEmployee = ({
                     />
                   </div>
                 </div>
+
                 <div className="w-full">
                   <label
                     htmlFor="position"
@@ -307,19 +313,39 @@ const AddEmployee = ({
                     <Checkbox
                       label="Yes"
                       checked={formData.isInternal}
-                      onChange={(e: any) =>
+                      onChange={() =>
                         setFormData({ ...formData, isInternal: true })
                       }
                     />
                     <Checkbox
                       label="No"
-                      checked={formData.isInternal == false}
-                      onChange={(e: any) =>
+                      checked={formData.isInternal === false}
+                      onChange={() =>
                         setFormData({ ...formData, isInternal: false })
                       }
                     />
                   </div>
                 </div>
+
+                {!formData.isInternal && (
+                  <div className="w-full mt-4">
+                    <label
+                      htmlFor="companyName"
+                      className="block text-base font-medium text-black"
+                    >
+                      Company Name
+                    </label>
+                    <input
+                      type="text"
+                      name="companyName"
+                      value={formData.companyName}
+                      onChange={handleChange}
+                      placeholder="Enter the company name"
+                      className="mt-1 block w-full pl-4 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      required={!formData.isInternal}
+                    />
+                  </div>
+                )}
 
                 <div className="w-full flex justify-center mt-4 space-x-4">
                   <button

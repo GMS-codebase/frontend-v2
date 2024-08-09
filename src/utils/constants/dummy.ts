@@ -4584,3 +4584,19 @@ export const applicantContacts = [
     position: "Journalist",
   },
 ];
+
+
+export const callData = [
+    {
+        number: "GMS-APP-0001924",
+        window: "WINDOW 3 : Apprenticeships and Internships",
+        sector: "Manufacturing",
+        currentStage: "DueDiligency",
+    },
+    {
+        number: "GMS-APP-0001924",
+        window: "WINDOW 3 : Apprenticeships and Internships",
+        sector: "Manufacturing",
+        currentStage: "DueDiligency",
+    },
+];
