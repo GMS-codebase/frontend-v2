@@ -28,6 +28,7 @@
     "cookies-next": "^4.2.1",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.12",
+    "jwt-decode": "^4.0.0",
     "next": "14.2.5",
     "next13-progressbar": "^1.2.1",
     "react": "^18",
