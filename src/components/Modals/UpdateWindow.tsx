@@ -1,6 +1,6 @@
 import { UPDATE_WINDOW_SUCCESS } from "@/actions/WindowsActions";
 import { Window } from "@/types";
-import { AxiosAPI } from "@/utils/funcs";
+import { authorizedApi } from "@/utils/api";
 import { Modal } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
@@ -42,7 +42,7 @@ const UpdateWindow = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    AxiosAPI.patch(`/window/${Window?.uuid}`, formData)
+    authorizedApi.patch(`/window/${Window?.uuid}`, formData)
       .then((res)=>{
         notifications.show({
           message: "Window is updated successfully",

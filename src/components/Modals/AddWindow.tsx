@@ -1,5 +1,5 @@
 import { ADD_WINDOW_SUCCESS } from "@/actions/WindowsActions";
-import { AxiosAPI } from "@/utils/funcs";
+import { authorizedApi } from "@/utils/api";
 import { Modal } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
@@ -30,7 +30,7 @@ const AddWindow = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    AxiosAPI.post("/window/create", formData)
+    authorizedApi.post("/window/create", formData)
       .then((res)=>{
         notifications.show({
           message: "Window is created successfully",

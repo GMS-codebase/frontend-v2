@@ -16,7 +16,7 @@ import AddWindowSubwindow from "@/components/Modals/AddWindowSubwindow";
 import UpdateWindow from "@/components/Modals/UpdateWindow";
 import { useSelector } from "react-redux";
 import { useParams } from "next/navigation";
-import { AxiosAPI } from "@/utils/funcs";
+import { authorizedApi } from "@/utils/api";
 
 const Page = () => {
   const [isAddWindow, { open, close }] = useDisclosure(false);
@@ -25,9 +25,8 @@ const Page = () => {
   const {id:windowId} = useParams();
   const [isUpdateWindow, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
-  const windows = useSelector((state: any)=> state.windows);
   useEffect(()=>{
-    AxiosAPI.get(`/window/${windowId}`)
+    authorizedApi.get(`/window/${windowId}`)
       .then((res)=>{
         console.log(res.data.data);
         setWindow(res.data?.data?.data);
