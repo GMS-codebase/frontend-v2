@@ -5,9 +5,9 @@ import { FaClock, FaDownload } from "react-icons/fa";
 import Image from "next/image";
 import Books from "../../assets/Images/books.png";
 
-const CallModal = ({
-  opened,
-  close,
+const ApplicantDenial = ({
+    opened,
+    close,
 }: {
   opened: boolean;
   close: () => void;
@@ -58,4 +58,4 @@ const CallModal = ({
   );
 };
 
-export default CallModal;
+export default ApplicantDenial;
