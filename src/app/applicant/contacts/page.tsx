@@ -7,8 +7,9 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { applicantContacts as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
 import AddTrade from "@/components/Modals/AddTrade";
+import AddEditContact from "@/components/Modals/applicantContacts/AddEditContact";
 const Page = () => {
-  const [isOpenTrade, { open, close }] = useDisclosure(false);
+  const [isOpenAddEditContact, { open, close }] = useDisclosure(false);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "firstName",
@@ -85,7 +86,10 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable columns={columns} data={data} />
       </div>
-      <AddTrade isOpenAddTrade={isOpenTrade} closeAddTrade={close} />
+      <AddEditContact
+        isOpenAddEditContact={isOpenAddEditContact}
+        closeAddEditContact={close}
+      />
     </div>
   );
 };

@@ -11,9 +11,6 @@ import LoginModal from "@/components/Modals/Login";
 import CallModal from "@/components/Modals/techInnov";
 import SuccessModal from "@/components/Modals/success";
 import { SolarFolder2Bold } from "@/components/core/icons";
-
-
-
 function Page() {
   const randomCalls = [
     { id: 1, title: "Call for Proposal 1" },
