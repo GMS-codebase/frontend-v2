@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   SolarPen2Bold,
   SolarAddFolderBold,
@@ -16,28 +16,42 @@ import AddWindowSubwindow from "@/components/Modals/AddWindowSubwindow";
 import UpdateWindow from "@/components/Modals/UpdateWindow";
 import { useSelector } from "react-redux";
 import { useParams } from "next/navigation";
+import { AxiosAPI } from "@/utils/funcs";
 
 const Page = () => {
   const [isAddWindow, { open, close }] = useDisclosure(false);
+  const [window, setWindow] = useState<any>({});
+  const [subWindows, setSubWindows] = useState([]);
   const {id:windowId} = useParams();
   const [isUpdateWindow, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
   const windows = useSelector((state: any)=> state.windows);
-  const window = windows.windows?.filter((window: any) => window.uuid === windowId)
+  useEffect(()=>{
+    AxiosAPI.get(`/window/${windowId}`)
+      .then((res)=>{
+        console.log(res.data.data);
+        setWindow(res.data?.data?.data);
+        setSubWindows(res.data?.data?.data?.subWindows);
+      })
+      .catch((err)=>{
+        console.log(err);
+      })
+  },[windowId])
+  // const window = windows.windows?.filter((window: any) => window.uuid === windowId)
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
+      cell: ({ row }) => <div className="w-full">{row.original?.title}</div>,
     },
     {
       accessorKey: "description",
       header: "Description",
       cell: ({ row }) => (
         <div className="truncate">
-          {row.original?.description.length > 50
-            ? row.original?.description.slice(0, 50) + "..."
-            : row.original.description}
+          {row.original?.description?.length > 50
+            ? row.original?.description?.slice(0, 50) + "..."
+            : row.original?.description}
         </div>
       ),
     },
@@ -92,12 +106,12 @@ const Page = () => {
           <div className="flex justify-between items-center w-3/5  font-semibold px-10">
             <div className="flex flex-col gap-6 justify-start items-start ">
               <h1 className="font-bold text-xl">
-                {window[0]?.title}
+                {window?.title}
               </h1>
             </div>
             <div className="flex flex-col gap-6 justify-start items-start ">
               <h1 className="font-medium text-base text-gray-500">
-                {window[0]?.description}
+                {window?.description}
               </h1>
             </div>
           </div>
@@ -136,11 +150,12 @@ const Page = () => {
             </div>
 
             <div className="w-full h-full">
-              <DataTable columns={columns} data={window[0]?.subWindows ?? []} noDataMessage={`No Sub Windows Created For ${window[0]?.title}`}/>
+              <DataTable columns={columns} data={subWindows ?? []} noDataMessage={`No Sub Windows Created For ${window?.title}`}/>
             </div>
           </div>
         </div>
         <AddWindowSubwindow
+          setSubWindows={setSubWindows}
           isOpenAddWindowSubwindow={isAddWindow}
           closeAddWindowSubwindow={close}
         />
