@@ -1,0 +1,74 @@
+"use client";
+import React, { useState } from "react";
+import Project7 from "@/components/ApplicantDetails/Project7";
+import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
+
+
+
+// const [active, setActive] = useState(0);
+// const prevStep = () =>
+//     setActive((current) => (current > 0 ? current - 1 : current));
+const Page = () => {
+    const [currentComponent, setCurrentComponent] = useState<
+        "Project" | "IndicativeBudget"
+    >("Project");
+
+    const renderComponent = () => {
+        switch (currentComponent) {
+            case "Project":
+                return <Project7 />;
+            case "IndicativeBudget":
+                return <IndicativeBudget />;
+            default:
+                return null;
+        }
+    };
+    return (
+        <div>
+            <div className="flex flex-col gap-4 w-full">
+                <div className="font-semibold text-2xl">
+                    Questions and answers
+                </div>
+                <div className="flex font-semibold">
+                    <div
+                        onClick={() => setCurrentComponent("Project")}
+                        className={`cursor-pointer w-1/2 ${
+                            currentComponent === "Project"
+                                ? "bg-[#005DE9] bg-opacity-10"
+                                : ""
+                        } h-16 flex items-center justify-center`}
+                    >
+                        Project Funding Application
+                    </div>
+                    <div
+                        onClick={() => setCurrentComponent("IndicativeBudget")}
+                        className={`cursor-pointer w-1/2 ${
+                            currentComponent === "IndicativeBudget"
+                                ? "bg-[#C50000] bg-opacity-10"
+                                : ""
+                        } h-16 flex items-center justify-center`}
+                    >
+                        Indicative Budget
+                    </div>
+                </div>
+                <div className="mt-4 w-full">{renderComponent()}</div>
+                <div className="w-full flex justify-center mt-4 space-x-4">
+                    <button
+                        type="button"
+                        // onClick={prevStep}
+                        className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                        send Application
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+export default Page;
