@@ -9,7 +9,6 @@ import {
   SolarLetterLinear,
   SolarLockKeyholeMinimalisticOutline,
 } from "../../core/icons";
-import { notifications } from "@mantine/notifications";
 
 const LoginModal = ({
   opened,
@@ -35,7 +34,7 @@ const LoginModal = ({
             navigate.push("/admin");
             break;
           case "APPLICANT":
-            navigate.push("/applicant");
+            navigate.push("/applicant/contacts");
             break;
           default:
             navigate.push("/");

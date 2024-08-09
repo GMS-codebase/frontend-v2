@@ -1,5 +1,5 @@
 import { ADD_SECTOR_SUCCESS } from "@/actions/SectorsActions";
-import { AxiosAPI } from "@/utils/funcs";
+import { authorizedApi } from "@/utils/api";
 import { Modal } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
@@ -30,7 +30,7 @@ const AddSector = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    AxiosAPI.post("/Sectors", formData)
+    authorizedApi.post("/Sectors", formData)
       .then((res)=>{
         notifications.show({
           message: "Sector is created successfully",

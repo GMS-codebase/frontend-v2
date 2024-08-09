@@ -47,37 +47,37 @@ function Page() {
   }, [token, openSetPassword]);
 
   return (
-    <div className="relative h-screen">
-      <div className="absolute inset-0 bg-white opacity-60 z-10"></div>
-      <div className="image">
-        <Image
-          src={bg}
-          alt="home"
-          layout="fill"
-          objectFit="cover"
-          objectPosition="center"
-          className="opacity-90"
-        />
-      </div>
-      <div className="absolute top-0 left-0 w-full px-[5vw] py-6 flex items-center justify-between z-20">
-        <div>
-          <Image src={logo} alt="logo" width={360} height={360} />
-        </div>
-        <div className="flex gap-4 ml-auto">
-          <button
-            className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
-            onClick={openLogin}
-          >
-            Login
-          </button>
-          <button
-            className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
-            onClick={openRegister}
-          >
-            Register
-          </button>
-        </div>
-      </div>
+      <div className="relative h-screen">
+          <div className="absolute inset-0 bg-white opacity-60 z-10"></div>
+          <div className="image">
+              <Image
+                  src={bg}
+                  alt="home"
+                  layout="fill"
+                  objectFit="cover"
+                  objectPosition="center"
+                  className="opacity-90"
+              />
+          </div>
+          <div className="absolute top-0 left-0 w-full px-[5vw] py-6 flex items-center justify-between z-20">
+              <div>
+                  <Image src={logo} alt="logo" width={360} height={360} />
+              </div>
+              <div className="flex gap-4 ml-auto">
+                  <button
+                      className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
+                      onClick={openLogin}
+                  >
+                      Login
+                  </button>
+                  <button
+                      className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
+                      onClick={openRegister}
+                  >
+                      Register
+                  </button>
+              </div>
+          </div>
 
       <div className="absolute flex justify-center flex-col items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-30 w-full">
         <h1 className="font-extrabold text-black text-2xl w-[50%] md:text-4xl">
@@ -109,6 +109,19 @@ function Page() {
                 </div>
               ))}
           </div>
+        </div>
+        <div className="p-3 w-[40%] md:w-[30%] bg-white mt-5 rounded-full justify-center items-center flex">
+          <HiOutlineMail className="text-primary ml-3 w-8 h-8" />
+          <input
+            type="text"
+            className="w-full ml-3 border-none text-black bg-white outline-none"
+            placeholder="Type your email"
+          />
+          <button className="bg-[#1F5DB014] bg-opacity-10 text-primary font-bold rounded-full px-4 py-2">
+            Subscribe
+          </button>
+        </div>
+      </div>
 
       <div className="absolute bottom-0 left-0 p-4 z-30">
         <h2 className="text-black font-extrabold">© 2024 Rwanda TVET Board.</h2>
@@ -138,8 +151,6 @@ function Page() {
         token={token as string}
         openLogin={openLogin}
       />
-    </div>
-    </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { ADD_TRADE_SUCCESS } from "@/actions/TradesActions";
-import { AxiosAPI } from "@/utils/funcs";
+import { authorizedApi } from "@/utils/api";
 import { Modal } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
@@ -29,7 +29,7 @@ const AddTrade = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    AxiosAPI.post("/trade", formData)
+    authorizedApi.post("/trade", formData)
       .then((res)=>{
         notifications.show({
           message: "Trade is created successfully",

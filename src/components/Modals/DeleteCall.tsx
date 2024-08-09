@@ -5,10 +5,10 @@ import { IoMdClose } from "react-icons/io";
 import SideVector1 from "@/assets/Vectors/redSideVector.svg";
 import SideVector2 from "@/assets/Vectors/redSideVector2.svg";
 import deleteSvg from "@/assets/Vectors/delete.svg";
-import { AxiosAPI } from "@/utils/funcs";
 import { useDispatch } from "react-redux";
 import { notifications } from "@mantine/notifications";
 import { DELETE_CALL_SUCCESS } from "@/actions/CallsActions";
+import { authorizedApi } from "@/utils/api";
 type FormData = {
   firstName: string;
   lastName: string;
@@ -33,7 +33,7 @@ const DeleteCall = ({
     setDeleteId(id);
   },[id])
   const onDelete = ()=>{
-    AxiosAPI.delete(`/call/${deleteId}`)
+    authorizedApi.delete(`/call/${deleteId}`)
     .then(()=>{
       notifications.show({
         message: "Window is deleted successfully",

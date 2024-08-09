@@ -6,11 +6,11 @@ import { SolarAddSquareBold, SolarSuitcaseLinear, SolarUploadBold, SolarWindowFr
 import { CalendarMinimalistic } from "solar-icon-set";
 import { ShieldWarning } from "solar-icon-set";
 import { useDispatch, useSelector } from "react-redux";
-import { AxiosAPI } from "@/utils/funcs";
 import { notifications } from "@mantine/notifications";
 import { useParams, useRouter } from "next/navigation";
 import { useDisclosure } from "@mantine/hooks";
 import AddSector from "./AddSector";
+import { authorizedApi } from "@/utils/api";
 
 const AddWindowSubwindow = ({
   isOpenAddWindowSubwindow,
@@ -49,7 +49,7 @@ const AddWindowSubwindow = ({
 
   function handleSubmit() {
     console.log("Form Data: ", formData);
-    AxiosAPI.post(`/sub-window/create/${windowId}`, {
+    authorizedApi.post(`/sub-window/create/${windowId}`, {
       title: formData.title,
       description: formData.description,
       sectors: selectedSelectors
