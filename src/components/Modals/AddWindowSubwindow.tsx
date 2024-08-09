@@ -1,31 +1,39 @@
 import { Modal, MultiSelect, Select, Stepper } from "@mantine/core";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { Folder2, Subtitles } from "solar-icon-set";
-import { SolarSuitcaseLinear, SolarUploadBold, SolarWindowFrameLinear } from "../core/icons";
+import { SolarAddSquareBold, SolarSuitcaseLinear, SolarUploadBold, SolarWindowFrameLinear } from "../core/icons";
 import { CalendarMinimalistic } from "solar-icon-set";
 import { ShieldWarning } from "solar-icon-set";
 import { useDispatch, useSelector } from "react-redux";
 import { AxiosAPI } from "@/utils/funcs";
 import { notifications } from "@mantine/notifications";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useDisclosure } from "@mantine/hooks";
+import AddSector from "./AddSector";
 
 const AddWindowSubwindow = ({
   isOpenAddWindowSubwindow,
-  closeAddWindowSubwindow
+  closeAddWindowSubwindow,
+  setSubWindows
+
 }: {
   isOpenAddWindowSubwindow: boolean;
   closeAddWindowSubwindow: () => void;
+  setSubWindows: (p: any)=> void;
+
 }) => {
   const {id: windowId} = useParams();
   const dispatch = useDispatch();
   const [active, setActive] = useState(0);
+  const [isAddSector, { open, close }] = useDisclosure(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     sectors: []
   });
   const [selectedSelectors, setSelectedSelectors] = useState<any>([]);
+  const router = useRouter();
   const nextStep = () =>
     setActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>
@@ -39,8 +47,7 @@ const AddWindowSubwindow = ({
     }));
   };
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
-    event.preventDefault();
+  function handleSubmit() {
     console.log("Form Data: ", formData);
     AxiosAPI.post(`/sub-window/create/${windowId}`, {
       title: formData.title,
@@ -52,11 +59,13 @@ const AddWindowSubwindow = ({
           message: "Sub window is created successfully",
           color: "blue"
         })
+        setSubWindows((prevState: any) => ([...prevState, res.data.data.data]));
         setFormData({
           title: "",
           description: "",
           sectors: []
         })
+        router.refresh();
         closeAddWindowSubwindow();
       })
       .catch((err)=>{
@@ -70,6 +79,7 @@ const AddWindowSubwindow = ({
   const MultiSelectData = sectors?.sectors?.map((sector: any)=> {
   return {value: sector.uuid, label: sector.name}
   })
+  useEffect(()=>{},[sectors?.sectors])
 
   return (
     <Modal
@@ -92,7 +102,7 @@ const AddWindowSubwindow = ({
             Provide the Sub-window details to create a new sub-window.
           </h2>
         </div>
-        <form onSubmit={handleSubmit} className="w-[90%] flex flex-col items-center mt-4 overflow-hidden">
+        <div className="w-[90%] flex flex-col items-center mt-4 overflow-hidden">
           <Stepper active={active} onStepClick={setActive} className="w-full">
             <Stepper.Step label="Sub-window details" className="text-xs">
             <div
@@ -186,14 +196,26 @@ const AddWindowSubwindow = ({
                   </span>
                   <MultiSelect
                     name="sectors"
-                    // value={formData.position}
+                    disabled={!MultiSelectData}
                     onChange={setSelectedSelectors}
-                    data={MultiSelectData}
+                    data={MultiSelectData ? MultiSelectData : [{value: "NO SECTOR", label: "No Sectors Created!"}]}
                     placeholder="Select or type in a sector"
                     required
                   />
                 </div>
               </div>
+              {!MultiSelectData && (
+                <button
+                type="button"
+                onClick={open}
+                className="bg-[#005DE9] text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+              >
+                <span className="text-2xl">
+                  <SolarAddSquareBold />
+                </span>
+                <h1 className="text-base font-medium text-white">Add Sectors</h1>
+              </button>
+              )}
               <div className="w-full flex justify-center mt-4 space-x-4">
                 <button
                   type="button"
@@ -203,7 +225,7 @@ const AddWindowSubwindow = ({
                   Cancel
                 </button>
                 <button
-                  type="submit"
+                  onClick={handleSubmit}
                   className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Save
@@ -212,8 +234,9 @@ const AddWindowSubwindow = ({
             </div>
             </Stepper.Step>
           </Stepper>
-        </form>
+        </div>
       </div>
+      <AddSector isOpenAddSector={isAddSector} closeAddSector={close} />
     </Modal>
   );
 };

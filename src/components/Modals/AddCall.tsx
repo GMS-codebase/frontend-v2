@@ -69,8 +69,7 @@ const AddCall = ({
     }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = () => {
     setFormData({...formData, sectors: selectedSelectors, windows: selectedWindows})
     const submitData = new FormData();
     submitData.append("title", formData.title);
@@ -125,7 +124,7 @@ const AddCall = ({
             Provide your call details to create a new call.
           </h2>
         </div>
-        <form onSubmit={handleSubmit} className="w-4/5 flex flex-col items-center mt-4 overflow-hidden">
+        <div className="w-4/5 flex flex-col items-center mt-4 overflow-hidden">
           <Stepper active={active} onStepClick={setActive} className="w-full">
             <Stepper.Step label="Call detail" className="text-xs">
               <div className="w-full overflow-y-auto flex flex-col gap-2 px-2">
@@ -360,7 +359,7 @@ const AddCall = ({
                     Back
                   </button>
                   <button
-                    type="submit"
+                    onClick={handleSubmit}
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
                     Create Call
@@ -369,7 +368,7 @@ const AddCall = ({
               </div>
             </Stepper.Step>
           </Stepper>
-        </form>
+        </div>
       </div>
     </Modal>
   );

@@ -1,10 +1,14 @@
 import { Checkbox, Modal, Select, Stepper } from "@mantine/core";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import SideVector1 from "@/assets/Vectors/redSideVector.svg";
 import SideVector2 from "@/assets/Vectors/redSideVector2.svg";
 import deleteSvg from "@/assets/Vectors/delete.svg";
+import { AxiosAPI } from "@/utils/funcs";
+import { useDispatch } from "react-redux";
+import { notifications } from "@mantine/notifications";
+import { DELETE_CALL_SUCCESS } from "@/actions/CallsActions";
 type FormData = {
   firstName: string;
   lastName: string;
@@ -17,10 +21,39 @@ type FormData = {
 const DeleteCall = ({
   isOpenDeleteCall,
   closeDeleteCall,
+  id
 }: {
   isOpenDeleteCall: boolean;
   closeDeleteCall: () => void;
+  id: string;
 }) => {
+  const dispatch = useDispatch();
+  const [deleteId, setDeleteId] = useState(id);
+  useEffect(()=>{
+    setDeleteId(id);
+  },[id])
+  const onDelete = ()=>{
+    AxiosAPI.delete(`/call/${deleteId}`)
+    .then(()=>{
+      notifications.show({
+        message: "Window is deleted successfully",
+        color: "blue"
+      })
+      dispatch({
+        type: DELETE_CALL_SUCCESS,
+        payload: {
+          id
+        }
+      })
+      closeDeleteCall();
+    })
+    .catch((err)=>{
+      notifications.show({
+        message: err.response?.data?.message ?? "Failed to deleted call!",
+        color: "red"
+      })
+    })
+  }
   return (
     <Modal
       size={""}

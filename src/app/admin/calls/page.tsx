@@ -18,7 +18,7 @@ import {format} from "date-fns";
 const Page = () => {
   const [isOpen, { open, close }] = useDisclosure(false);
   const calls = useSelector((state: any)=> state.calls)
-  const [isOpenCall, setIsOpenCall] = useState({
+  const [isOpenCall, setIsOpenCall] = useState<any>({
     openUpdate: false,
     openDelete: false,
     call: null,
@@ -97,6 +97,7 @@ const Page = () => {
         }
       />
       <DeleteCall
+        id={isOpenCall?.call?.id ?? ""}
         isOpenDeleteCall={isOpenCall.openDelete}
         closeDeleteCall={() =>
           setIsOpenCall({
