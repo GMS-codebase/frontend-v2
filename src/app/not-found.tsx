@@ -9,7 +9,7 @@ const NotFound = ()=> {
             <div className="w-full h-full flex flex-col  align-middle rounded-3xl bg-white p-8 relative">
                 <div>
                     <div className="flex flex-col text-center  w-full h-full font-bold mb-4 justify-center items-center ">
-                        <Image src={img} alt="hello" className="h- w-[70%]" />
+                        <Image src={img} alt="hello" className="w-[70%]" />
                     </div>
                     <div className="flex flex-col justify-center items-center text-center gap-2">
                         <h3 className="font-bold w-[90%] text-3xl">
