@@ -13,9 +13,11 @@ import { useDispatch } from "react-redux";
 const RegisterModal = ({
     isOpenAddEmployee,
     closeAddEmployee,
+    refetch
   }: {
     isOpenAddEmployee: boolean;
     closeAddEmployee: () => void;
+    refetch: ()=> void;
   }) => {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -134,6 +136,7 @@ const RegisterModal = ({
           type: ADD_EMPLOYEE_SUCCESS,
           payload: res.data?.data?.data
         })
+        refetch();
         closeAddEmployee();
       })
       .catch((err)=>{
