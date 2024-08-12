@@ -251,7 +251,7 @@ const Page = () => {
             <span>
               <Icons.SolarFileBold />
             </span>
-            <div>Download business certificate</div>
+            <div>Download business certificate`</div>
           </div>
         </div>
 
