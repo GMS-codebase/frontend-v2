@@ -14,6 +14,7 @@ const WindowsActions = ({
   setIsWindow: (Window: any) => void;
   Window: any;
 }) => {
+
   return (
     <div className="">
       <Menu shadow="lg" width={300}>
@@ -35,7 +36,7 @@ const WindowsActions = ({
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
             <Link
-              href={"/admin/windows/window"}
+              href={`/admin/windows/${Window.uuid}`}
               className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
             >
               <FiEye size={21} color="#576074" />
@@ -48,7 +49,7 @@ const WindowsActions = ({
                 setIsWindow({
                   openDelete: false,
                   openUpdate: true,
-                  Window: Window,
+                  window: Window,
                 })
               }
               className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
@@ -62,7 +63,7 @@ const WindowsActions = ({
                 setIsWindow({
                   openDelete: true,
                   openUpdate: false,
-                  Window: Window,
+                  window: Window,
                 })
               } className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
               <RiDeleteBinLine size={21} color="#576074" />
