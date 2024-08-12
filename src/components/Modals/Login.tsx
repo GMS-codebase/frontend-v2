@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Modal } from "@mantine/core";
 import { IoMdClose } from "react-icons/io";
 import { FaEnvelope, FaLock } from "react-icons/fa";
-import RegisterModal from "./RegisterModal";
 import { useRouter } from "next13-progressbar";
 import Image from "next/image";
 import {
