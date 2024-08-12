@@ -9,6 +9,9 @@ import { useState } from "react";
 import UpdateWindow from "@/components/Modals/UpdateWindow";
 import WindowsActions from "./WindowAction";
 import DeleteWindow from "@/components/Modals/DeleteWindow";
+import { useSelector } from "react-redux";
+import { ClipLoader } from "react-spinners";
+import { Window } from "@/types";
 const windows = [
   {
     name: "Window 1: Rapid Response Training",
@@ -29,7 +32,12 @@ const windows = [
 ]
 const Page = () => {
   const [isAddWindow, { open, close }] = useDisclosure(false);
-  const [isWindow, setIsWindow] = useState({
+  const windows = useSelector((state: any)=> state.windows);
+  const [isWindow, setIsWindow] = useState<{
+    openDelete:  boolean,
+    openUpdate: boolean,
+    window: Window | null,
+  }>({
     openDelete: false,
     openUpdate: false,
     window: null,
@@ -38,7 +46,7 @@ const Page = () => {
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div>{row.original?.name}</div>,
+      cell: ({ row }) => <div>{row.original?.title}</div>,
     },
     {
       accessorKey: "description",
@@ -86,9 +94,21 @@ const Page = () => {
         </button>
       </div>
 
+      {windows.loading ? (
+        <div className="w-full flex items-center justify-center gap-4 mt-10">
+          <h1>Loading Windows </h1>
+          <ClipLoader size={20} color="black"/>
+        </div>
+      ):
+      windows.error ? (
+        <div className="w-full flex justify-center items-center">
+          <h1 className="text-red-500 font-bold">{windows.error}</h1>
+        </div>
+      ) :
       <div className="w-full h-full">
-        <DataTable columns={columns} data={windows} />
+        <DataTable columns={columns} data={windows.windows} />
       </div>
+      }
       <AddWindow isOpenAddWindow={isAddWindow} closeAddWindow={close} />
       <UpdateWindow
         Window={isWindow.window}
@@ -96,7 +116,9 @@ const Page = () => {
         closeUpdateWindow={() => setIsWindow({ openDelete: false, openUpdate: false,  window: null })}
       />
       <DeleteWindow
+        id={isWindow.window?.uuid ?? ""}
         isOpenDeleteWindow={isWindow.openDelete}
+
         closeDeleteWindow={() => setIsWindow({ openDelete: false, openUpdate: false,  window: null })}
       />
     </div>
