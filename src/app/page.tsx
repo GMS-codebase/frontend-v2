@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import bg from "../assets/Images/landing.jpg";
 import logo from "../assets/Images/logo.png";
@@ -155,4 +155,10 @@ function Page() {
   );
 }
 
-export default Page;
+export default function DefaultPage(){
+  return(
+    <Suspense>
+      <Page />
+    </Suspense>
+  )
+};

@@ -30,11 +30,11 @@ class AuthService {
       setCookie("token", response.data.data.data);
       const tokenData: { role: string } = jwtDecode(response.data.data.data);
       push(tokenData.role);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error)
       notifications.show({
         title: "Error Logging In ",
-        message: "There was an error logging in",
+        message: error?.response?.data?.message,
         color: "red",
       });
     }

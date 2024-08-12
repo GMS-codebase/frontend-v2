@@ -5,7 +5,7 @@ import { Route } from "@/types";
 const applicantRoutes: Route[] = [
   {
     label: "Contacts",
-    path: "/applicant/contacts  ",
+    path: "/applicant/contacts",
     icon: <Icons.SolarUsersGroupTwoRoundedBold />,
   },
   {
