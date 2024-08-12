@@ -11,9 +11,10 @@ import AddEmployee from "@/components/Modals/AddEmployee";
 import UpdateEmployee from "@/components/Modals/UpdateEmployee";
 import { useState } from "react";
 import DeleteEmployee from "@/components/Modals/DeleteEmployee";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
+import { getEmployees } from "@/utils/funcs";
 
 const Page = () => {
   const [isOpenAddEmployee, { open, close }] = useDisclosure(false);
@@ -60,6 +61,7 @@ const Page = () => {
       ),
     },
   ];
+  const dispatch = useDispatch();
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
@@ -102,6 +104,7 @@ const Page = () => {
       <AddEmployee
         isOpenAddEmployee={isOpenAddEmployee}
         closeAddEmployee={close}
+        refetch={()=> getEmployees(dispatch)}
       />
       <UpdateEmployee
         isOpenUpdateEmployee={isOpenEmployee.openUpdate}
