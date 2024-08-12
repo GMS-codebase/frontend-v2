@@ -1,6 +1,10 @@
+import { ADD_WINDOW_SUCCESS } from "@/actions/WindowsActions";
+import { authorizedApi } from "@/utils/api";
 import { Modal } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
 import { Folder2, Subtitles } from "solar-icon-set";
 
 const AddWindow = ({
@@ -10,6 +14,7 @@ const AddWindow = ({
   isOpenAddWindow: boolean;
   closeAddWindow: () => void;
 }) => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -25,8 +30,28 @@ const AddWindow = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log("Form Data: ", formData);
+    authorizedApi.post("/window/create", formData)
+      .then((res)=>{
+        notifications.show({
+          message: "Window is created successfully",
+          color: "blue"
+        })
+        dispatch({
+          type: ADD_WINDOW_SUCCESS,
+          payload: res.data?.data?.data
+        })
+        setFormData({
+          title: "",
+          description: "",
+        })
+        closeAddWindow();
+      })
+      .catch((err)=>{
+        notifications.show({
+          message: err.response?.data?.message ?? "Failed to create window!",
+          color: "red"
+        })
+      })
   };
 
   return (
@@ -70,7 +95,7 @@ const AddWindow = ({
                     </span>
                     <input
                       type="text"
-                      name="WindowTitle"
+                      name="title"
                       value={formData.title}
                       placeholder="Window title"
                       onChange={handleChange}
@@ -113,7 +138,7 @@ const AddWindow = ({
                   Cancel
                 </button>
                 <button
-                  type="button"
+                  type="submit"
                   className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Create
