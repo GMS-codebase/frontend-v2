@@ -9,7 +9,6 @@ import {
   SolarLetterLinear,
   SolarLockKeyholeMinimalisticOutline,
 } from "../../core/icons";
-import { notifications } from "@mantine/notifications";
 
 const LoginModal = ({
   opened,

@@ -5,7 +5,6 @@ import { FaClock, FaDownload } from "react-icons/fa";
 import Image from "next/image";
 import Books from "../../assets/Images/books.png";
 
-
 const ApplicantDenial = ({
     opened,
     close,
