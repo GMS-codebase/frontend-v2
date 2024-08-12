@@ -30,28 +30,29 @@ const AddWindow = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    authorizedApi.post("/window/create", formData)
-      .then((res)=>{
+    authorizedApi
+      .post("/window/create", formData)
+      .then((res) => {
         notifications.show({
           message: "Window is created successfully",
-          color: "blue"
-        })
+          color: "blue",
+        });
         dispatch({
           type: ADD_WINDOW_SUCCESS,
-          payload: res.data?.data?.data
-        })
+          payload: res.data?.data?.data,
+        });
         setFormData({
           title: "",
           description: "",
-        })
+        });
         closeAddWindow();
       })
-      .catch((err)=>{
+      .catch((err) => {
         notifications.show({
           message: err.response?.data?.message ?? "Failed to create window!",
-          color: "red"
-        })
-      })
+          color: "red",
+        });
+      });
   };
 
   return (

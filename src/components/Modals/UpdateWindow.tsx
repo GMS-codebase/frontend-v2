@@ -16,21 +16,20 @@ const UpdateWindow = ({
   closeUpdateWindow: () => void;
   Window: Window | null;
 }) => {
-
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     title: Window?.title,
     description: Window?.description,
   });
 
-  useEffect(()=>{
-    if(Window){
+  useEffect(() => {
+    if (Window) {
       setFormData({
         title: Window?.title,
         description: Window?.description,
-      })
+      });
     }
-  },[Window])
+  }, [Window]);
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
@@ -42,31 +41,32 @@ const UpdateWindow = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    authorizedApi.patch(`/window/${Window?.uuid}`, formData)
-      .then((res)=>{
+    authorizedApi
+      .patch(`/window/${Window?.uuid}`, formData)
+      .then((res) => {
         notifications.show({
           message: "Window is updated successfully",
-          color: "blue"
-        })
+          color: "blue",
+        });
         dispatch({
           type: UPDATE_WINDOW_SUCCESS,
           payload: {
             data: res.data?.data?.data,
-            id: Window?.uuid
-          }
-        })
+            id: Window?.uuid,
+          },
+        });
         setFormData({
           title: "",
           description: "",
-        })
+        });
         closeUpdateWindow();
       })
-      .catch((err)=>{
+      .catch((err) => {
         notifications.show({
           message: err.response?.data?.message ?? "Failed to update window!",
-          color: "red"
-        })
-      })
+          color: "red",
+        });
+      });
   };
 
   return (

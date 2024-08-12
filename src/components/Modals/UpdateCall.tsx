@@ -83,7 +83,7 @@ const UpdateCall = ({
           <div className="w-[43%] flex flex-col items-start">
             <h1 className="text-2xl font-extrabold">Edit Call</h1>
             <h2 className="text-[#000F2369] text-lg font-medium w-4/5">
-                Provide new call details to edit a this call.
+              Provide new call details to edit a this call.
             </h2>
           </div>
           <div className="w-[55%] flex items-center">

@@ -30,30 +30,31 @@ const AddSector = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    authorizedApi.post("/Sectors", formData)
-      .then((res)=>{
+    authorizedApi
+      .post("/Sectors", formData)
+      .then((res) => {
         notifications.show({
           message: "Sector is created successfully",
-          color: "blue"
-        })
+          color: "blue",
+        });
         dispatch({
           type: ADD_SECTOR_SUCCESS,
-          payload: res.data?.data
-        })
+          payload: res.data?.data,
+        });
         setFormData({
           name: "",
           description: "",
-        })
+        });
         closeAddSector();
       })
-      .catch((err)=>{
+      .catch((err) => {
         console.log(err.response);
-        if(err.response) 
+        if (err.response)
           notifications.show({
             message: err.response?.data?.message ?? "Failed to create sector!",
-            color: "red"
-          })
-      })
+            color: "red",
+          });
+      });
   };
 
   return (

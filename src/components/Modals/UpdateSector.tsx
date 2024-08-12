@@ -21,12 +21,12 @@ const UpdateSector = ({
     name: sector?.name ?? "",
     description: sector?.description ?? "",
   });
-  useEffect(()=>{
+  useEffect(() => {
     setFormData({
       name: sector?.name ?? "",
       description: sector?.description ?? "",
     });
-  },[sector])
+  }, [sector]);
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -36,31 +36,32 @@ const UpdateSector = ({
   };
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    authorizedApi.put(`/Sectors/${sector?.uuid}`, formData)
-      .then((res)=>{
+    authorizedApi
+      .put(`/Sectors/${sector?.uuid}`, formData)
+      .then((res) => {
         notifications.show({
           message: "Sector is updated successfully",
-          color: "blue"
-        })
+          color: "blue",
+        });
         dispatch({
           type: UPDATE_SECTOR_SUCCESS,
           payload: {
             data: res.data?.data,
-            id: sector?.uuid
-          }
-        })
+            id: sector?.uuid,
+          },
+        });
         setFormData({
           name: "",
           description: "",
-        })
+        });
         closeUpdateSector();
       })
-      .catch((err)=>{
+      .catch((err) => {
         notifications.show({
           message: err.response?.data?.message ?? "Failed to update sector!",
-          color: "red"
-        })
-      })
+          color: "red",
+        });
+      });
   };
 
   return (

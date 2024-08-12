@@ -28,7 +28,7 @@ const LoginModal = ({
         password: values.password,
       },
       (role: string) => {
-        console.log(role)
+        console.log(role);
         switch (role) {
           case "ADMIN":
             navigate.push("/admin");
@@ -39,7 +39,7 @@ const LoginModal = ({
           default:
             navigate.push("/");
         }
-      }
+      },
     );
     setLoading(false);
   };
@@ -61,7 +61,7 @@ const LoginModal = ({
       password: (value) =>
         value
           ? /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{};':"\\|,.<>/?]).{8,}$/.test(
-              value
+              value,
             )
             ? null
             : "Password must be at least 8 characters long, contain letters, numbers, and symbols"
@@ -170,7 +170,6 @@ const LoginModal = ({
           <p className="text-center text-primaryText  text-lg">
             Don&apos;t have an account?{" "}
             <a
-              href="#"
               className="font-bold text-primary"
               onClick={() => {
                 close();

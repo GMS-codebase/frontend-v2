@@ -58,7 +58,7 @@ const SetPasswordModal = ({
       () => {
         closeSetPassword();
         openLogin();
-      }
+      },
     );
     setLoading(false);
   };
@@ -80,7 +80,7 @@ const SetPasswordModal = ({
         <Image
           src={require("@/assets/Vectors/sidevector2.svg")}
           alt=""
-          className="absolute left-0 top-[10%] w-8" 
+          className="absolute left-0 top-[10%] w-8"
         />
         <button
           onClick={() => closeSetPassword()}

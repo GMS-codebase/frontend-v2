@@ -15,8 +15,8 @@ import { useSelector } from "react-redux";
 import { useParams } from "next/navigation";
 import { format } from "date-fns";
 const Page = () => {
-  const {id: callId} = useParams();
-  const calls = useSelector((state: any)=> state.calls);
+  const { id: callId } = useParams();
+  const calls = useSelector((state: any) => state.calls);
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
   return (
     <div className="bg-white rounded-2xl p-10 ">
@@ -47,9 +47,7 @@ const Page = () => {
           </div>
           <div className="flex gap-2 ">
             <div className="flex flex-col gap-6 justify-start items-start ">
-              <h1 className="font-bold text-xl">
-                {call?.title}
-              </h1>
+              <h1 className="font-bold text-xl">{call?.title}</h1>
               <div className="flex gap-4 rounded-2xl items-center justify-center ">
                 <div className="flex gap-2  bg-gray-400 bg-opacity-10 rounded-full px-4  py-2 items-center justify-center font-semibold">
                   <span>

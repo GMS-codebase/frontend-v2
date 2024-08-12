@@ -3,9 +3,18 @@
 import * as Icons from "@/components/core/icons";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import {getCookie} from "cookies-next"
+import { getCookie } from "cookies-next";
 import { useDispatch, useSelector } from "react-redux";
-import { getApplicants, getApplications, getCalls, getEmployees, getMyProfile, getSectors, getTrades, getWindows } from "@/utils/funcs";
+import {
+  getApplicants,
+  getApplications,
+  getCalls,
+  getEmployees,
+  getMyProfile,
+  getSectors,
+  getTrades,
+  getWindows,
+} from "@/utils/funcs";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -15,14 +24,14 @@ const Navbar = () => {
     const handleStorageChange = () => {
       setPageName(getCookie("breadcrumb") || "");
     };
-    handleStorageChange()
+    handleStorageChange();
     window.addEventListener("storage", handleStorageChange);
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
   }, [active]);
 
-  useEffect(()=>{
+  useEffect(() => {
     getWindows(dispatch);
     getSectors(dispatch);
     getTrades(dispatch);
@@ -31,9 +40,9 @@ const Navbar = () => {
     getEmployees(dispatch);
     getMyProfile(dispatch);
     // getApplications(dispatch);
-  },[])
+  }, []);
 
-  const {userProfile} = useSelector((state: any)=> state.auth);
+  const { userProfile } = useSelector((state: any) => state.auth);
   return (
     <div className="w-full flex items-center justify-between py-6 bg-white rounded-2xl px-5">
       <h1 className="text-xl font-extrabold text-primary">{pageName}</h1>
@@ -41,7 +50,9 @@ const Navbar = () => {
         <button className="text-3xl text-primary bg-background p-3 rounded-full">
           <Icons.SolarUserBold />
         </button>
-        <h1 className="text-xl font-medium">{userProfile?.firstname + " " + userProfile?.lastname}</h1>
+        <h1 className="text-xl font-medium">
+          {userProfile?.firstname + " " + userProfile?.lastname}
+        </h1>
       </div>
     </div>
   );

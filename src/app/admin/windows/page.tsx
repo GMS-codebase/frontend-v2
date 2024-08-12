@@ -15,28 +15,28 @@ import { Window } from "@/types";
 const windows = [
   {
     name: "Window 1: Rapid Response Training",
-    description: "Short-term training of potential employees for investors"
+    description: "Short-term training of potential employees for investors",
   },
   {
     name: "Window 2: Rapid Response Training",
-    description: "Short-term training of potential employees for investors"
+    description: "Short-term training of potential employees for investors",
   },
   {
     name: "Window 3: Rapid Response Training",
-    description: "Short-term training of potential employees for investors"
+    description: "Short-term training of potential employees for investors",
   },
   {
     name: "Window 4: Rapid Response Training",
-    description: "Short-term training of potential employees for investors"
+    description: "Short-term training of potential employees for investors",
   },
-]
+];
 const Page = () => {
   const [isAddWindow, { open, close }] = useDisclosure(false);
-  const windows = useSelector((state: any)=> state.windows);
+  const windows = useSelector((state: any) => state.windows);
   const [isWindow, setIsWindow] = useState<{
-    openDelete:  boolean,
-    openUpdate: boolean,
-    window: Window | null,
+    openDelete: boolean;
+    openUpdate: boolean;
+    window: Window | null;
   }>({
     openDelete: false,
     openUpdate: false,
@@ -97,29 +97,31 @@ const Page = () => {
       {windows.loading ? (
         <div className="w-full flex items-center justify-center gap-4 mt-10">
           <h1>Loading Windows </h1>
-          <ClipLoader size={20} color="black"/>
+          <ClipLoader size={20} color="black" />
         </div>
-      ):
-      windows.error ? (
+      ) : windows.error ? (
         <div className="w-full flex justify-center items-center">
           <h1 className="text-red-500 font-bold">{windows.error}</h1>
         </div>
-      ) :
-      <div className="w-full h-full">
-        <DataTable columns={columns} data={windows.windows} />
-      </div>
-      }
+      ) : (
+        <div className="w-full h-full">
+          <DataTable columns={columns} data={windows.windows} />
+        </div>
+      )}
       <AddWindow isOpenAddWindow={isAddWindow} closeAddWindow={close} />
       <UpdateWindow
         Window={isWindow.window}
         isOpenUpdateWindow={isWindow.openUpdate}
-        closeUpdateWindow={() => setIsWindow({ openDelete: false, openUpdate: false,  window: null })}
+        closeUpdateWindow={() =>
+          setIsWindow({ openDelete: false, openUpdate: false, window: null })
+        }
       />
       <DeleteWindow
         id={isWindow.window?.uuid ?? ""}
         isOpenDeleteWindow={isWindow.openDelete}
-
-        closeDeleteWindow={() => setIsWindow({ openDelete: false, openUpdate: false,  window: null })}
+        closeDeleteWindow={() =>
+          setIsWindow({ openDelete: false, openUpdate: false, window: null })
+        }
       />
     </div>
   );
