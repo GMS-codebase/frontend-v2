@@ -1,4 +1,9 @@
-import { LOGIN, LOGOUT, SET_PERMISSIONS,SET_USER_PROFILE } from "@/actions/AuthActions";
+import {
+  LOGIN,
+  LOGOUT,
+  SET_PERMISSIONS,
+  SET_USER_PROFILE,
+} from "@/actions/AuthActions";
 import { deleteCookie, setCookie } from "cookies-next";
 
 const initialState = {

@@ -18,7 +18,7 @@ import { getEmployees } from "@/utils/funcs";
 
 const Page = () => {
   const [isOpenAddEmployee, { open, close }] = useDisclosure(false);
-  const employees = useSelector((state: any)=> state.employees);
+  const employees = useSelector((state: any) => state.employees);
   const [isOpenEmployee, setIsOpenEmployee] = useState({
     openUpdate: false,
     openDelete: false,
@@ -89,22 +89,21 @@ const Page = () => {
 
       {employees.loading ? (
         <div className="w-full h-full">
-          <TableSkeleton columns={columns}/>
+          <TableSkeleton columns={columns} />
         </div>
-      ):
-      employees.error ? (
+      ) : employees.error ? (
         <div className="w-full flex justify-center items-center">
           <h1 className="text-red-500 font-bold">{employees.error}</h1>
         </div>
-      ) :
-      <div className="w-full h-full">
-        <DataTable columns={columns} data={employees.employees} />
-      </div>
-      }
+      ) : (
+        <div className="w-full h-full">
+          <DataTable columns={columns} data={employees.employees} />
+        </div>
+      )}
       <AddEmployee
         isOpenAddEmployee={isOpenAddEmployee}
         closeAddEmployee={close}
-        refetch={()=> getEmployees(dispatch)}
+        refetch={() => getEmployees(dispatch)}
       />
       <UpdateEmployee
         isOpenUpdateEmployee={isOpenEmployee.openUpdate}

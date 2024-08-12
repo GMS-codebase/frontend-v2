@@ -1,10 +1,10 @@
-import { 
-  ADD_SECTOR_SUCCESS, 
-  GET_SECTORS_ERROR, 
-  GET_SECTORS_SUCCESS, 
-  GET_SECTORS_LOADING, 
-  UPDATE_SECTOR_SUCCESS, 
-  DELETE_SECTOR_SUCCESS 
+import {
+  ADD_SECTOR_SUCCESS,
+  GET_SECTORS_ERROR,
+  GET_SECTORS_SUCCESS,
+  GET_SECTORS_LOADING,
+  UPDATE_SECTOR_SUCCESS,
+  DELETE_SECTOR_SUCCESS,
 } from "@/actions/SectorsActions";
 import { Sector } from "@/types";
 
@@ -12,7 +12,7 @@ const initialState = {
   sectors: [],
   error: null,
   isError: false,
-  loading: false
+  loading: false,
 };
 
 type Action = {
@@ -25,20 +25,20 @@ export default function SectorsReducer(state = initialState, action: Action) {
     case GET_SECTORS_LOADING:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case GET_SECTORS_SUCCESS:
       return {
         ...state,
         loading: false,
-        sectors: action.payload
+        sectors: action.payload,
       };
     case GET_SECTORS_ERROR:
       return {
         ...state,
         isError: true,
         loading: false,
-        error: action.payload
+        error: action.payload,
       };
     case ADD_SECTOR_SUCCESS:
       return {
@@ -46,25 +46,29 @@ export default function SectorsReducer(state = initialState, action: Action) {
         sectors: [...state.sectors, action.payload],
         error: null,
         isError: false,
-        loading: false
+        loading: false,
       };
     case UPDATE_SECTOR_SUCCESS:
       return {
         ...state,
-        sectors: state.sectors.map((sector: Sector) => 
-          sector.uuid === action.payload.id ? { ...sector, ...action.payload.data } : sector
+        sectors: state.sectors.map((sector: Sector) =>
+          sector.uuid === action.payload.id
+            ? { ...sector, ...action.payload.data }
+            : sector,
         ),
         error: null,
         isError: false,
-        loading: false
+        loading: false,
       };
     case DELETE_SECTOR_SUCCESS:
       return {
         ...state,
-        sectors: state.sectors.filter((sector: Sector) => sector.uuid !== action.payload.id),
+        sectors: state.sectors.filter(
+          (sector: Sector) => sector.uuid !== action.payload.id,
+        ),
         error: null,
         isError: false,
-        loading: false
+        loading: false,
       };
     default:
       return state;

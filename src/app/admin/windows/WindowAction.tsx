@@ -14,7 +14,6 @@ const WindowsActions = ({
   setIsWindow: (Window: any) => void;
   Window: any;
 }) => {
-
   return (
     <div className="">
       <Menu shadow="lg" width={300}>
@@ -59,13 +58,16 @@ const WindowsActions = ({
             </div>
           </Menu.Item>
           <Menu.Item>
-            <div onClick={() =>
+            <div
+              onClick={() =>
                 setIsWindow({
                   openDelete: true,
                   openUpdate: false,
                   window: Window,
                 })
-              } className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+              }
+              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+            >
               <RiDeleteBinLine size={21} color="#576074" />
               Remove
             </div>

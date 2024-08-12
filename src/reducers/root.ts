@@ -13,7 +13,7 @@ const rootReducer = combineReducers({
   trades: TradesReducer,
   calls: CallsReducer,
   applicants: ApplicantsReducer,
-  employees: EmployeesReducer
+  employees: EmployeesReducer,
 });
 
 export default rootReducer;

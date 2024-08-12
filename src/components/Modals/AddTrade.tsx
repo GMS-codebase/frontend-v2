@@ -29,29 +29,30 @@ const AddTrade = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    authorizedApi.post("/trade", formData)
-      .then((res)=>{
+    authorizedApi
+      .post("/trade", formData)
+      .then((res) => {
         notifications.show({
           message: "Trade is created successfully",
-          color: "blue"
-        })
+          color: "blue",
+        });
         dispatch({
           type: ADD_TRADE_SUCCESS,
-          payload: res.data?.data
-        })
+          payload: res.data?.data,
+        });
         setFormData({
           title: "",
           description: "",
-        })
+        });
         closeAddTrade();
       })
-      .catch((err)=>{
-        if(err.response)
+      .catch((err) => {
+        if (err.response)
           notifications.show({
             message: err.response?.data?.message ?? "Failed to create trade!",
-            color: "red"
-          })
-      })
+            color: "red",
+          });
+      });
   };
 
   return (

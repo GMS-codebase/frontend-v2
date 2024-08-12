@@ -6,8 +6,8 @@ import Image from "next/image";
 import Books from "../../assets/Images/books.png";
 
 const ApplicantDenial = ({
-    opened,
-    close,
+  opened,
+  close,
 }: {
   opened: boolean;
   close: () => void;

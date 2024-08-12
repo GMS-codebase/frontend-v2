@@ -22,20 +22,21 @@ const Page = () => {
   const [isAddWindow, { open, close }] = useDisclosure(false);
   const [window, setWindow] = useState<any>({});
   const [subWindows, setSubWindows] = useState([]);
-  const {id:windowId} = useParams();
+  const { id: windowId } = useParams();
   const [isUpdateWindow, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
-  useEffect(()=>{
-    authorizedApi.get(`/window/${windowId}`)
-      .then((res)=>{
+  useEffect(() => {
+    authorizedApi
+      .get(`/window/${windowId}`)
+      .then((res) => {
         console.log(res.data.data);
         setWindow(res.data?.data?.data);
         setSubWindows(res.data?.data?.data?.subWindows);
       })
-      .catch((err)=>{
+      .catch((err) => {
         console.log(err);
-      })
-  },[windowId])
+      });
+  }, [windowId]);
   // const window = windows.windows?.filter((window: any) => window.uuid === windowId)
   const columns: ColumnDef<any>[] = [
     {
@@ -104,9 +105,7 @@ const Page = () => {
           </div>
           <div className="flex justify-between items-center w-3/5  font-semibold px-10">
             <div className="flex flex-col gap-6 justify-start items-start ">
-              <h1 className="font-bold text-xl">
-                {window?.title}
-              </h1>
+              <h1 className="font-bold text-xl">{window?.title}</h1>
             </div>
             <div className="flex flex-col gap-6 justify-start items-start ">
               <h1 className="font-medium text-base text-gray-500">
@@ -149,7 +148,11 @@ const Page = () => {
             </div>
 
             <div className="w-full h-full">
-              <DataTable columns={columns} data={subWindows ?? []} noDataMessage={`No Sub Windows Created For ${window?.title}`}/>
+              <DataTable
+                columns={columns}
+                data={subWindows ?? []}
+                noDataMessage={`No Sub Windows Created For ${window?.title}`}
+              />
             </div>
           </div>
         </div>

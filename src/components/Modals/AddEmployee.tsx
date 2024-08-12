@@ -5,20 +5,26 @@ import { IoMdClose } from "react-icons/io";
 import SideVector1 from "@/assets/Vectors/sidevecto.svg";
 import SideVector2 from "@/assets/Vectors/sidevector2.svg";
 import { notifications } from "@mantine/notifications";
-import { PhGenderIntersex, SolarIphoneLinear, SolarLetterLinear, SolarSuitcaseLinear, SolarUserBroken } from "../core/icons";
+import {
+  PhGenderIntersex,
+  SolarIphoneLinear,
+  SolarLetterLinear,
+  SolarSuitcaseLinear,
+  SolarUserBroken,
+} from "../core/icons";
 import { authorizedApi } from "@/utils/api";
 import { ADD_EMPLOYEE_SUCCESS } from "@/actions/EmployeesActions";
 import { useDispatch } from "react-redux";
 
 const RegisterModal = ({
-    isOpenAddEmployee,
-    closeAddEmployee,
-    refetch
-  }: {
-    isOpenAddEmployee: boolean;
-    closeAddEmployee: () => void;
-    refetch: ()=> void;
-  }) => {
+  isOpenAddEmployee,
+  closeAddEmployee,
+  refetch,
+}: {
+  isOpenAddEmployee: boolean;
+  closeAddEmployee: () => void;
+  refetch: () => void;
+}) => {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -31,7 +37,7 @@ const RegisterModal = ({
     position: "",
     name: "",
     isInternal: false,
-    nationalId: ""
+    nationalId: "",
   });
   const [errors, setErrors] = useState({
     firstname: "",
@@ -43,7 +49,7 @@ const RegisterModal = ({
     position: "",
     name: "",
     isInternal: false,
-    nationalId: ""
+    nationalId: "",
   });
 
   const validateStep1 = () => {
@@ -117,7 +123,7 @@ const RegisterModal = ({
       [name]: "",
     }));
   };
-  
+
   const dispatch = useDispatch();
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -125,26 +131,31 @@ const RegisterModal = ({
       setActive((current) => (current < 1 ? current + 1 : current));
     } else if (active === 1 && validateStep2()) {
       setLoading(true);
-      setFormData({...formData, name: formData.firstname + " " + formData.lastname})
-      authorizedApi.post("/employee/create", formData)
-      .then((res)=>{
-        notifications.show({
-          message: "Employee is created successfully",
-          color: "blue"
+      setFormData({
+        ...formData,
+        name: formData.firstname + " " + formData.lastname,
+      });
+      authorizedApi
+        .post("/employee/create", formData)
+        .then((res) => {
+          notifications.show({
+            message: "Employee is created successfully",
+            color: "blue",
+          });
+          dispatch({
+            type: ADD_EMPLOYEE_SUCCESS,
+            payload: res.data?.data?.data,
+          });
+          refetch();
+          closeAddEmployee();
         })
-        dispatch({
-          type: ADD_EMPLOYEE_SUCCESS,
-          payload: res.data?.data?.data
-        })
-        refetch();
-        closeAddEmployee();
-      })
-      .catch((err)=>{
-        notifications.show({
-          message: err.response?.data?.message ?? "Failed to create employee!",
-          color: "red"
-        })
-      })
+        .catch((err) => {
+          notifications.show({
+            message:
+              err.response?.data?.message ?? "Failed to create employee!",
+            color: "red",
+          });
+        });
       setLoading(false);
     }
   };
@@ -178,12 +189,12 @@ const RegisterModal = ({
           width={100}
           height={50}
         />
-          <div className="w-full flex flex-col items-center">
-           <h1 className="text-2xl font-extrabold">Create employee</h1>
-           <h2 className="text-[#000F2369] text-lg font-medium">
-             Provide employee details to register the employee.
-           </h2>
-         </div>
+        <div className="w-full flex flex-col items-center">
+          <h1 className="text-2xl font-extrabold">Create employee</h1>
+          <h2 className="text-[#000F2369] text-lg font-medium">
+            Provide employee details to register the employee.
+          </h2>
+        </div>
 
         <div className="w-full px-10  flex flex-col items-center mt-4 overflow-hidden ">
           <Stepper active={active} onStepClick={setActive} className="w-full">
@@ -207,7 +218,7 @@ const RegisterModal = ({
                       </label>
                       <div className="w-full relative">
                         <span className="absolute left-2 top-1/2 -translate-y-1/2">
-                          <SolarUserBroken/>
+                          <SolarUserBroken />
                         </span>
                         <input
                           type="text"
@@ -230,7 +241,7 @@ const RegisterModal = ({
                       </label>
                       <div className="w-full relative">
                         <span className="absolute left-2 top-1/2 -translate-y-1/2">
-                          <SolarUserBroken/>
+                          <SolarUserBroken />
                         </span>
                         <input
                           type="text"
@@ -280,16 +291,13 @@ const RegisterModal = ({
                 </div>
 
                 <div className="">
-                  <label
-                    htmlFor="phone"
-                    className="block text-xs font-bold"
-                  >
+                  <label htmlFor="phone" className="block text-xs font-bold">
                     Phone Number
                   </label>
                   <div className="relative mt-1 rounded-full">
                     <div className="absolute  left-2 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
                       <span className="">
-                        <SolarIphoneLinear/>
+                        <SolarIphoneLinear />
                       </span>
                     </div>
                     <div className="absolute left-8 top-2 pl-1 py-1 flex items-center pointer-events-none pr-2 rounded-md bg-white">
@@ -312,43 +320,43 @@ const RegisterModal = ({
                 </div>
 
                 <div className="w-full">
-                <label
-                  htmlFor="gender"
-                  className="block text-base font-medium text-black"
-                >
-                  Gender
-                </label>
-                <div className="mt-1 pl-4 relative block w-full py-1 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                  <span className="absolute left-2 top-3 text-lg">
-                    <PhGenderIntersex />
-                  </span>
-                  <Select
-                    name="gender"
-                    value={formData.gender}
-                    onChange={(value: any) =>
-                      setFormData((prevData) => ({
-                        ...prevData,
-                        gender: value,
-                      }))
-                    }
-                    data={[
-                      { value: "male", label: "Male" },
-                      { value: "female", label: "Female" },
-                      { value: "other", label: "Other" },
-                    ]}
-                    placeholder="Select your gender"
-                    required
-                  />
+                  <label
+                    htmlFor="gender"
+                    className="block text-base font-medium text-black"
+                  >
+                    Gender
+                  </label>
+                  <div className="mt-1 pl-4 relative block w-full py-1 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <span className="absolute left-2 top-3 text-lg">
+                      <PhGenderIntersex />
+                    </span>
+                    <Select
+                      name="gender"
+                      value={formData.gender}
+                      onChange={(value: any) =>
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          gender: value,
+                        }))
+                      }
+                      data={[
+                        { value: "male", label: "Male" },
+                        { value: "female", label: "Female" },
+                        { value: "other", label: "Other" },
+                      ]}
+                      placeholder="Select your gender"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
 
                 <div className="w-full flex justify-center mt-4 space-x-4">
                   <button
-                      type="button"
-                      onClick={closeAddEmployee}
-                      className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    >
-                      Cancel
+                    type="button"
+                    onClick={closeAddEmployee}
+                    className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    Cancel
                   </button>
                   <button
                     type="submit"
