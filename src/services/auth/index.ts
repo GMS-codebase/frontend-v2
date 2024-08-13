@@ -15,7 +15,7 @@ class AuthService {
     } catch (error: any) {
       console.log(error);
       notifications.show({
-        title: error.response.data.message
+        title: error.response.message
           ? error.response.data.message
           : "Error Signing Up In",
         message: "There was an error singinup in",

@@ -1,7 +1,7 @@
 "use client";
 import Navbar from "@/components/Navbar/Navbar";
 import GenericSidebar from "@/components/sidebar/GenericSidebar";
-import adminRoutes from "@/utils/routes/admin";
+import employeeRoutes from "@/utils/routes/employee";
 import { useDisclosure } from "@mantine/hooks";
 import React, { useState } from "react";
 
@@ -17,7 +17,7 @@ export default function AdminLayout({
         className={`${isCompresed ? "w-[6%]" : "w-[23%]"} h-[99%] bg-white rounded-2xl side-section`}
       >
         <GenericSidebar
-          routes={adminRoutes}
+          routes={employeeRoutes}
           isCompressed={isCompresed}
           toggle={() => setIsCompressed(!isCompresed)}
         />

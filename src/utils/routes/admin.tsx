@@ -44,16 +44,6 @@ const adminRoutes: Route[] = [
     icon: <Icons.SolarDocumentBold />,
   },
   {
-    label: "Appeals Reports",
-    path: "/admin/reports/appeals",
-    icon: <Icons.SolarShieldWarningBold />,
-  },
-  {
-    label: "Submission Reports",
-    path: "/admin/reports/submission",
-    icon: <Icons.SolarPaperclipRounded2Bold />,
-  },
-  {
     label: "Notifications",
     path: "/admin/notifications",
     icon: <Icons.SolarBellBold />,
