@@ -42,7 +42,8 @@ const Navbar = () => {
     // getApplications(dispatch);
   }, []);
 
-  const { userProfile } = useSelector((state: any) => state.auth);
+  const auth = useSelector((state: any) => state.auth);
+  console.log(auth);
   return (
     <div className="w-full flex items-center justify-between py-6 bg-white rounded-2xl px-5">
       <h1 className="text-xl font-extrabold text-primary">{pageName}</h1>
@@ -51,7 +52,7 @@ const Navbar = () => {
           <Icons.SolarUserBold />
         </button>
         <h1 className="text-xl font-medium">
-          {userProfile?.firstname + " " + userProfile?.lastname}
+          {/* {userProfile?.firstname + " " + userProfile?.lastname} */}
         </h1>
       </div>
     </div>

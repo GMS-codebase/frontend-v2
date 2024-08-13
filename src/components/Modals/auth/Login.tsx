@@ -169,15 +169,15 @@ const LoginModal = ({
         <div>
           <p className="text-center text-primaryText  text-lg">
             Don&apos;t have an account?{" "}
-            <a
-              className="font-bold text-primary"
+            <span
+              className="font-bold text-primary cursor-pointer"
               onClick={() => {
                 close();
                 openRegister();
               }}
             >
               Sign up
-            </a>
+            </span>
           </p>
         </div>
       </div>

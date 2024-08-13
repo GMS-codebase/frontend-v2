@@ -47,6 +47,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/auth/me")
     .then((res) => {
+      console.log(res.data.data);
       dispatch({ type: SET_USER_PROFILE, payload: res.data.data.message }); //Todo: change this only when the BEs change the response schema
     })
     .catch((err) => {
