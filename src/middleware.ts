@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
-import { Role } from "./types/base.type";
+import { Role } from "@/types/base.type";
 
 const roles = ["ADMIN", "APPLICANT", "EMPLOYEE"];
 const whitelist = ["/", "/redirect", "/public"];

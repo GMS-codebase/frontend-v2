@@ -428,6 +428,7 @@ const RegisterModal = ({
                     <p className="text-red-500 text-xs">{errors.position}</p>
                   )}
                 </div>
+
                 <div className="w-full">
                   <label
                     htmlFor="position"
@@ -439,19 +440,39 @@ const RegisterModal = ({
                     <Checkbox
                       label="Yes"
                       checked={formData.isInternal}
-                      onChange={(e: any) =>
+                      onChange={() =>
                         setFormData({ ...formData, isInternal: true })
                       }
                     />
                     <Checkbox
                       label="No"
-                      checked={formData.isInternal == false}
-                      onChange={(e: any) =>
+                      checked={formData.isInternal === false}
+                      onChange={() =>
                         setFormData({ ...formData, isInternal: false })
                       }
                     />
                   </div>
                 </div>
+
+                {!formData.isInternal && (
+                  <div className="w-full mt-4">
+                    <label
+                      htmlFor="companyName"
+                      className="block text-base font-medium text-black"
+                    >
+                      Institution Name
+                    </label>
+                    <input
+                      type="text"
+                      name="companyName"
+                      value={formData.institution}
+                      onChange={handleChange}
+                      placeholder="Enter the institution name"
+                      className="mt-1 block w-full pl-4 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      required={!formData.isInternal}
+                    />
+                  </div>
+                )}
 
                 <div className="w-full flex justify-center mt-4 space-x-4">
                   <button
