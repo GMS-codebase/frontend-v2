@@ -1,6 +1,6 @@
 "use client";
 import { BiSearch } from "react-icons/bi";
-import { SolarAddFolderBold } from "@/components/core/icons";
+import { SolarAddFolderBold, SolarFileBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
@@ -10,10 +10,14 @@ import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
 import AddCall from "@/components/Modals/AddCall";
 import { Select } from "@mantine/core";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useRef } from "react";
 
 const Page = () => {
   const [isOpenCall, { open, close }] = useDisclosure(false);
-  const columns: ColumnDef<any>[] = [
+  const filtersContainerRef = useRef<HTMLDivElement>(null);
+
+   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "applicationNumber",
       header: "Application Number",
@@ -49,27 +53,40 @@ const Page = () => {
       cell: ({ row }) => <div>{row.original?.sector}</div>,
     },
     {
+      accessorKey: "trade",
+      header: "Trade",
+      cell: ({ row }) => <div>{row.original?.trade}</div>,
+    },
+    {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => <CallsActions />,
     },
   ];
-
   const FilterDropDown = ({
     placeholderText,
     data,
   }: {
     placeholderText: string;
     data: any[];
-  }) => {
-    return (
-      <Select
-        data={data}
-        placeholder={placeholderText}
-        defaultValue={placeholderText}
-        className="w-full px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
-      />
-    );
+  }) => (
+    <Select
+      data={data}
+      placeholder={placeholderText}
+      defaultValue={placeholderText}
+      className="w-full px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
+    />
+  );
+
+  const handleScroll = (direction: "left" | "right") => {
+    if (filtersContainerRef.current) {
+      const scrollAmount = 100; 
+      if (direction === "left") {
+        filtersContainerRef.current.scrollLeft -= scrollAmount;
+      } else {
+        filtersContainerRef.current.scrollLeft += scrollAmount;
+      }
+    }
   };
 
   return (
@@ -85,45 +102,85 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-        <div className="flex items-center gap-3">
-          <div className="w-44">
-            <FilterDropDown
-              placeholderText="Filter By Date"
-              data={["1 - 25 / July/2024", "26 - 19 / August/2024"]}
-            />
+
+        <div className="flex items-center">
+          <button
+            onClick={() => handleScroll("left")}
+            className="p-2 bg-white shadow-lg rounded-full mr-2"
+          >
+            <FiChevronLeft size={25} />
+          </button>
+
+          <div
+            ref={filtersContainerRef}
+            className="flex items-center gap-3 overflow-x-hidden scrollbar-hide"
+            style={{ scrollBehavior: "smooth", maxWidth: "calc(4 * 11rem)" }}
+          >
+            <div className="w-44 flex-shrink-0">
+              <FilterDropDown
+                placeholderText="Filter By stage"
+                data={["Duediligence"]}
+              />
+            </div>
+            <div className="w-44 flex-shrink-0">
+              <FilterDropDown
+                placeholderText="Filter By Window"
+                data={["Window 1: Apprenticeship and Internships"]}
+              />
+            </div>
+            <div className="w-44 flex-shrink-0">
+              <FilterDropDown
+                placeholderText="Filter By Subwindow"
+                data={["Rapid apprentices"]}
+              />
+            </div>
+            <div className="w-44 flex-shrink-0">
+              <FilterDropDown
+                placeholderText="Filter By Sector"
+                data={["ICT & Innovations"]}
+              />
+            </div>
+            <div className="w-44 flex-shrink-0">
+              <FilterDropDown
+                placeholderText="Filter By trade"
+                data={["Agriculture"]}
+              />
+            </div>
+            <div className="w-44 flex-shrink-0">
+              <FilterDropDown
+                placeholderText="Filter By District"
+                data={[
+                  "Kicukiro",
+                  "Musanze",
+                  "Nyagatare",
+                  "Muhanga",
+                  "Nyarugenge",
+                  "Kamonyi",
+                  "Nyanza",
+                  "Gasabo",
+                ]}
+              />
+            </div> 
           </div>
-          <div className="w-44">
-            <FilterDropDown
-              placeholderText="Filter By Window"
-              data={["Window 1: Apprenticeship and Internships"]}
-            />
-          </div>
-          <div className="w-44">
-            <FilterDropDown
-              placeholderText="Filter By Sector"
-              data={["ICT & Innovations"]}
-            />
-          </div>
-          <div className="w-44">
-            <FilterDropDown
-              placeholderText="Filter By Ditrict"
-              data={[
-                "Kicukiro",
-                "Musanze",
-                "Nyagatare",
-                "Muhanga",
-                "Nyarugenge",
-                "Kamonyi",
-                "Nyanza",
-                "Gasabo",
-              ]}
-            />
-          </div>
+
+          <button
+            onClick={() => handleScroll("right")}
+            className="p-2 bg-white shadow-lg rounded-full ml-2"
+          >
+            <FiChevronRight size={25} />
+          </button>
         </div>
       </div>
 
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} tableWidth={"102vw"} />
+        <DataTable columns={columns} data={data} tableWidth={1800} buttonElement={
+           <div className="flex mb-3 justify-between text-center items-center gap-2 px-4 py-2 bg-[#005DE9] rounded-full text-white">
+            <span>
+              <SolarFileBold />
+            </span>
+            <div>Export Report</div>
+          </div>
+        }/>
       </div>
       <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
     </div>
