@@ -13,11 +13,6 @@ const Page = () => {
       cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
     },
     {
-      accessorKey: "institution",
-      header: "Institution Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.institution}</div>,
-    },
-    {
       accessorKey: "email",
       header: "Email",
       cell: ({ row }) => <div className="w-full">{row.original?.email}</div>,
