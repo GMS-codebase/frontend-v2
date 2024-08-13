@@ -138,12 +138,12 @@ function Page() {
         openSuccess={openSuccess}
         isOpenRegister={isOpenRegister}
         closeRegister={closeRegister}
-        openLogin={openRegister}
+        openLogin={openLogin}
       />
       <LoginModal
         opened={isOpenLogin}
         close={closeLogin}
-        openRegister={openLogin}
+        openRegister={openRegister}
       />
       <SuccessModal opened={isOpenSuccess} close={closeSuccess} />
       <CallModal opened={isOpenCall} close={closeCall} />
