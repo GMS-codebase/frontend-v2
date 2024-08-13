@@ -2,42 +2,37 @@
 import * as Icons from "@/components/core/icons";
 import { Route } from "@/types";
 
-const employeeRoutes: Route[] = [
+const externalUserRoutes: Route[] = [
     {
         label: "Dashboard",
-        path: "/employee",
+        path: "/externalUser",
         icon: <Icons.SolarPieChart2Bold />,
     },
     {
-        label: "Applicants",
-        path: "/employee/applicants",
-        icon: <Icons.SolarUsersGroupTwoRoundedBold />,
-    },
-    {
         label: "Applications",
-        path: "/employee/applications",
+        path: "/externalUser/applications",
         icon: <Icons.SolarFolderWithFilesBold />,
     },
     {
         label: "Application Reports",
-        path: "/employee/reports/application",
+        path: "/externalUser/reports/application",
         icon: <Icons.SolarDocumentBold />,
     },
     {
         label: "Reports",
-        path: "/employee/reports/reports",
+        path: "/externalUser/reports/reports",
         icon: <Icons.SolarDocumentsBold />,
     },
     {
         label: "M&E Reports",
-        path: "/employee/reports/m_and_e",
+        path: "/externalUser/reports/m_and_e",
         icon: <Icons.SolarFileBold />,
     },
     {
         label: "Profile",
-        path: "/employee/profile",
+        path: "/externalUser/profile",
         icon: <Icons.SolarUserCircleBold />,
     },
 ];
 
-export default employeeRoutes;
+export default externalUserRoutes;

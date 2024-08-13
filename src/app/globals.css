@@ -68,3 +68,20 @@ body {
   height: 5px;
   margin-top: 4px;
 }
+
+.calls-list-cont::-webkit-scrollbar{
+  background: #000F230D;
+}
+.calls-list-cont::-webkit-scrollbar-thumb{
+  background: #000F23;
+  border-radius: 10px;
+}
+
+.chart-container {
+  border-radius: 16px; /* Adjust the radius as needed */
+  overflow: hidden; /* This ensures the chart respects the border radius */
+}
+
+canvas[role="img"] {
+  font-family: "Urbanist", sans-serif !important;
+}
