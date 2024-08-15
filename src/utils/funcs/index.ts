@@ -18,6 +18,26 @@ import {
   GET_WINDOWS_LOADING,
   GET_WINDOWS_SUCCESS,
 } from "@/actions/WindowsActions";
+import {
+  GET_CALLS_ERROR,
+  GET_CALLS_LOADING,
+  GET_CALLS_SUCCESS,
+} from "@/actions/CallsActions";
+import {
+  GET_SECTORS_ERROR,
+  GET_SECTORS_LOADING,
+  GET_SECTORS_SUCCESS,
+} from "@/actions/SectorsActions";
+import {
+  GET_TRADES_ERROR,
+  GET_TRADES_LOADING,
+  GET_TRADES_SUCCESS,
+} from "@/actions/TradesActions";
+import {
+  GET_WINDOWS_ERROR,
+  GET_WINDOWS_LOADING,
+  GET_WINDOWS_SUCCESS,
+} from "@/actions/WindowsActions";
 import { Dispatch, UnknownAction } from "redux";
 import { authorizedApi } from "../api";
 import {

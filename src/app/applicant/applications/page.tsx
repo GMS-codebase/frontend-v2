@@ -62,6 +62,10 @@ const Page = () => {
     <div className="w-full  flex flex-col gap-4">
       <div className="font-bold text-2xl w-full">Open calls</div>
       {/* <div>
+  return (
+    <div className="w-full  flex flex-col gap-4">
+      <div className="font-bold text-2xl w-full">Open calls</div>
+      {/* <div>
                 {calls.map((call, index) => {
                     return <Calls key={index} call={call} />;
                 })}

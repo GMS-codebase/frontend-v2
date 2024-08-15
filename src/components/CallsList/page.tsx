@@ -6,6 +6,7 @@ import { SolarAltArrowRightOutline } from "@/components/core/icons/index";
 
 const CallCard = ({
   call,
+  call,
 }: {
   call: {
     title: string;
@@ -31,6 +32,8 @@ const CallCard = ({
 };
 
 type Call = {
+  title: string;
+  description: string;
   title: string;
   description: string;
 };

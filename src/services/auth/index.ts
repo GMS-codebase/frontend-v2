@@ -15,7 +15,7 @@ class AuthService {
     } catch (error: any) {
       console.log(error);
       notifications.show({
-        title: error.response.data.message
+        title: error.response.message
           ? error.response.data.message
           : "Error Signing Up In",
         message: "There was an error singinup in",
@@ -31,7 +31,7 @@ class AuthService {
       const tokenData: { role: string } = jwtDecode(response.data.data.data);
       push(tokenData.role);
     } catch (error: any) {
-      console.log(error)
+      console.log(error);
       notifications.show({
         title: "Error Logging In ",
         message: error?.response?.data?.message,
@@ -43,12 +43,12 @@ class AuthService {
   async setPassword(
     data: SetPasswordForm,
     token: string,
-    callback?: () => void
+    callback?: () => void,
   ) {
     try {
       const response = await unauthorizedApi.post(
         `/auth/set-password?token=${token}`,
-        data
+        data,
       );
       setCookie("token", response.data.token);
       callback && callback();
