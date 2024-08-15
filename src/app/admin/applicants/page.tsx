@@ -5,12 +5,18 @@ import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { applicantsData as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
+import { useSelector } from "react-redux";
 const Page = () => {
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
       header: "Name",
       cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
+    },
+    {
+      accessorKey: "institution",
+      header: "Institution Name",
+      cell: ({ row }) => <div className="w-full">{row.original?.institution}</div>,
     },
     {
       accessorKey: "email",
@@ -40,8 +46,7 @@ const Page = () => {
       ),
     },
   ];
-  const [isOpenCreate, { open: openCreate, close: closeCreate }] =
-    useDisclosure(false);
+  const applicants = useSelector((state: any) => state.applicants);
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
@@ -58,7 +63,7 @@ const Page = () => {
         </div>
       </div>
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns} data={applicants?.applicants ?? []} />
       </div>
     </div>
   );

@@ -1,18 +1,18 @@
-import { 
-  ADD_WINDOW_SUCCESS, 
-  GET_WINDOWS_ERROR, 
-  GET_WINDOWS_SUCCESS, 
-  GET_WINDOWS_LOADING, 
-  UPDATE_WINDOW_SUCCESS, 
-  DELETE_WINDOW_SUCCESS 
-} from "@/actions/WindowsActions";
+import {
+  ADD_APPLICANT_SUCCESS,
+  GET_APPLICANTS_ERROR,
+  GET_APPLICANTS_SUCCESS,
+  GET_APPLICANTS_LOADING,
+  UPDATE_APPLICANT_SUCCESS,
+  DELETE_APPLICANT_SUCCESS,
+} from "@/actions/ApplicantsActions";
 import { Window } from "@/types";
 
 const initialState = {
-  windows: [],
+  applicants: [],
   error: null,
   isError: false,
-  loading: false
+  loading: false,
 };
 
 type Action = {
@@ -20,51 +20,58 @@ type Action = {
   payload: any;
 };
 
-export default function WindowsReducer(state = initialState, action: Action) {
+export default function ApplicantsReducer(
+  state = initialState,
+  action: Action,
+) {
   switch (action.type) {
-    case GET_WINDOWS_LOADING:
+    case GET_APPLICANTS_LOADING:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
-    case GET_WINDOWS_SUCCESS:
+    case GET_APPLICANTS_SUCCESS:
       return {
         ...state,
         loading: false,
-        windows: action.payload
+        applicants: action.payload,
       };
-    case GET_WINDOWS_ERROR:
+    case GET_APPLICANTS_ERROR:
       return {
         ...state,
         isError: true,
         loading: false,
-        error: action.payload
+        error: action.payload,
       };
-    case ADD_WINDOW_SUCCESS:
+    case ADD_APPLICANT_SUCCESS:
       return {
         ...state,
-        windows: [...state.windows, action.payload],
+        applicants: [...state.applicants, action.payload],
         error: null,
         isError: false,
-        loading: false
+        loading: false,
       };
-    case UPDATE_WINDOW_SUCCESS:
+    case UPDATE_APPLICANT_SUCCESS:
       return {
         ...state,
-        windows: state.windows.map((window: Window) => 
-          window.uuid === action.payload.id ? { ...window, ...action.payload.data } : window
+        applicants: state.applicants.map((applicant: Window) =>
+          applicant.uuid === action.payload.id
+            ? { ...applicant, ...action.payload.data }
+            : applicant,
         ),
         error: null,
         isError: false,
-        loading: false
+        loading: false,
       };
-    case DELETE_WINDOW_SUCCESS:
+    case DELETE_APPLICANT_SUCCESS:
       return {
         ...state,
-        windows: state.windows.filter((window: Window) => window.uuid !== action.payload.id),
+        applicants: state.applicants.filter(
+          (applicant: Window) => applicant.uuid !== action.payload.id,
+        ),
         error: null,
         isError: false,
-        loading: false
+        loading: false,
       };
     default:
       return state;

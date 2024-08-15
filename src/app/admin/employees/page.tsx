@@ -11,9 +11,14 @@ import AddEmployee from "@/components/Modals/AddEmployee";
 import UpdateEmployee from "@/components/Modals/UpdateEmployee";
 import { useState } from "react";
 import DeleteEmployee from "@/components/Modals/DeleteEmployee";
+import { useDispatch, useSelector } from "react-redux";
+import { ClipLoader } from "react-spinners";
+import TableSkeleton from "@/components/core/data-table/TableSkeleton";
+import { getEmployees } from "@/utils/funcs";
 
 const Page = () => {
   const [isOpenAddEmployee, { open, close }] = useDisclosure(false);
+  const employees = useSelector((state: any) => state.employees);
   const [isOpenEmployee, setIsOpenEmployee] = useState({
     openUpdate: false,
     openDelete: false,
@@ -56,6 +61,7 @@ const Page = () => {
       ),
     },
   ];
+  const dispatch = useDispatch();
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
@@ -81,12 +87,23 @@ const Page = () => {
         </button>
       </div>
 
-      <div className="w-full h-full">
-        <DataTable columns={columns} data={employee} />
-      </div>
+      {employees?.loading ? (
+        <div className="w-full h-full">
+          <TableSkeleton columns={columns} />
+        </div>
+      ) : employees?.error ? (
+        <div className="w-full flex justify-center items-center">
+          <h1 className="text-red-500 font-bold">{employees.error}</h1>
+        </div>
+      ) : (
+        <div className="w-full h-full">
+          <DataTable columns={columns} data={employees?.employees ?? []} />
+        </div>
+      )}
       <AddEmployee
         isOpenAddEmployee={isOpenAddEmployee}
         closeAddEmployee={close}
+        refetch={() => getEmployees(dispatch)}
       />
       <UpdateEmployee
         isOpenUpdateEmployee={isOpenEmployee.openUpdate}

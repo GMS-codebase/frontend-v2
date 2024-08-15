@@ -21,7 +21,7 @@ type FormData = {
 const DeleteCall = ({
   isOpenDeleteCall,
   closeDeleteCall,
-  id
+  id,
 }: {
   isOpenDeleteCall: boolean;
   closeDeleteCall: () => void;
@@ -29,31 +29,32 @@ const DeleteCall = ({
 }) => {
   const dispatch = useDispatch();
   const [deleteId, setDeleteId] = useState(id);
-  useEffect(()=>{
+  useEffect(() => {
     setDeleteId(id);
-  },[id])
-  const onDelete = ()=>{
-    authorizedApi.delete(`/call/${deleteId}`)
-    .then(()=>{
-      notifications.show({
-        message: "Window is deleted successfully",
-        color: "blue"
+  }, [id]);
+  const onDelete = () => {
+    authorizedApi
+      .delete(`/call/${deleteId}`)
+      .then(() => {
+        notifications.show({
+          message: "Window is deleted successfully",
+          color: "blue",
+        });
+        dispatch({
+          type: DELETE_CALL_SUCCESS,
+          payload: {
+            id,
+          },
+        });
+        closeDeleteCall();
       })
-      dispatch({
-        type: DELETE_CALL_SUCCESS,
-        payload: {
-          id
-        }
-      })
-      closeDeleteCall();
-    })
-    .catch((err)=>{
-      notifications.show({
-        message: err.response?.data?.message ?? "Failed to deleted call!",
-        color: "red"
-      })
-    })
-  }
+      .catch((err) => {
+        notifications.show({
+          message: err.response?.data?.message ?? "Failed to deleted call!",
+          color: "red",
+        });
+      });
+  };
   return (
     <Modal
       size={""}

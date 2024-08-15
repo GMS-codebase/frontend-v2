@@ -8,6 +8,7 @@ import AddCall from "@/components/Modals/AddCall";
 import { Select } from "@mantine/core";
 import { HiDotsHorizontal } from "react-icons/hi";
 import MeActions from "./MeActions";
+import { SolarFileBold } from "@/components/core/icons";
 
 const Page = () => {
   const [isOpenCall, { open, close }] = useDisclosure(false);
@@ -72,6 +73,12 @@ const Page = () => {
           />
         </div>
         <div className="flex items-center gap-3">
+          <div className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white">
+            <span>
+              <SolarFileBold />
+            </span>
+            <div>Export Report</div>
+          </div>
           <div className="w-44">
             <FilterDropDown
               placeholderText="Filter By Call"

@@ -62,13 +62,6 @@ const AddCall = ({
     }));
   };
 
-  const handleSelectChange = (name: string, value: any) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
   const handleSubmit = () => {
     setFormData({
       ...formData,

@@ -29,12 +29,13 @@ interface Props {
   actionElement?: React.ReactNode;
   minW?: string;
   tableClass?: string;
+   buttonElement?: React.ReactNode;
   renderCustomElement?: (table: Table<any>) => React.ReactNode;
   noDataMessage?: React.ReactNode;
   loading?: boolean;
   loader?: React.ReactNode;
   limit?: number;
-  tableWidth?: string;
+  tableWidth?: string | number;
 }
 
 export function DataTable({
@@ -45,6 +46,7 @@ export function DataTable({
   paginationProps,
   actionElement,
   minW,
+   buttonElement,
   tableClass,
   renderCustomElement,
   noDataMessage,
@@ -75,7 +77,7 @@ export function DataTable({
 
   const newColumns: ColumnDef<any>[] = [...columns];
 
-  const table = useReactTable({
+  const table = useReactTable({ 
     data,
     columns: newColumns,
     onSortingChange: setSorting,
@@ -131,6 +133,7 @@ export function DataTable({
           <div></div>
         )}
         {actionElement && actionElement}
+          {buttonElement && buttonElement}
       </div>
       {loading ? (
         loader ?? (
@@ -176,7 +179,7 @@ export function DataTable({
       ) : (
         <>
           <div className={`${tableClass} w-full overflow-auto data-table`}>
-            <table className={`w-full table-row-spacing`}>
+            <table className={`table-row-spacing`} style={{width: tableWidth ?? "100%"}}>
               <thead className="text-mainPurple">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr className="bg-[#005DE914] text-xl" key={headerGroup.id}>
