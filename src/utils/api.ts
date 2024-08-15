@@ -3,7 +3,7 @@ import { getCookie } from "cookies-next";
 const api = process.env.NEXT_PUBLIC_BACKEND_API;
 
 function getAccessTokenFromLocalStorage(): string | undefined {
-  return getCookie("accessToken");
+  return getCookie("token");
 }
 
 export const authorizedApi: AxiosInstance = axios.create({

@@ -5,10 +5,13 @@ import { IoMdClose } from "react-icons/io";
 import SideVector1 from "@/assets/Vectors/redSideVector.svg";
 import SideVector2 from "@/assets/Vectors/redSideVector2.svg";
 import deleteSvg from "@/assets/Vectors/delete.svg";
-import { AxiosAPI } from "@/utils/funcs";
+import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { useDispatch } from "react-redux";
-import { DELETE_WINDOW_SUCCESS, UPDATE_WINDOW_SUCCESS } from "@/actions/WindowsActions";
+import {
+  DELETE_WINDOW_SUCCESS,
+  UPDATE_WINDOW_SUCCESS,
+} from "@/actions/WindowsActions";
 type FormData = {
   firstName: string;
   lastName: string;
@@ -21,7 +24,7 @@ type FormData = {
 const DeleteWindow = ({
   isOpenDeleteWindow,
   closeDeleteWindow,
-  id
+  id,
 }: {
   isOpenDeleteWindow: boolean;
   closeDeleteWindow: () => void;
@@ -29,31 +32,32 @@ const DeleteWindow = ({
 }) => {
   const dispatch = useDispatch();
   const [deleteId, setDeleteId] = useState(id);
-  useEffect(()=>{
+  useEffect(() => {
     setDeleteId(id);
-  },[id])
-  const onDelete = ()=>{
-    AxiosAPI.delete(`/window/${deleteId}`)
-    .then(()=>{
-      notifications.show({
-        message: "Window is deleted successfully",
-        color: "blue"
+  }, [id]);
+  const onDelete = () => {
+    authorizedApi
+      .delete(`/window/${deleteId}`)
+      .then(() => {
+        notifications.show({
+          message: "Window is deleted successfully",
+          color: "blue",
+        });
+        dispatch({
+          type: DELETE_WINDOW_SUCCESS,
+          payload: {
+            id,
+          },
+        });
+        closeDeleteWindow();
       })
-      dispatch({
-        type: DELETE_WINDOW_SUCCESS,
-        payload: {
-          id
-        }
-      })
-      closeDeleteWindow();
-    })
-    .catch((err)=>{
-      notifications.show({
-        message: err.response?.data?.message ?? "Failed to deleted window!",
-        color: "red"
-      })
-    })
-  }
+      .catch((err) => {
+        notifications.show({
+          message: err.response?.data?.message ?? "Failed to deleted window!",
+          color: "red",
+        });
+      });
+  };
   return (
     <Modal
       size={""}

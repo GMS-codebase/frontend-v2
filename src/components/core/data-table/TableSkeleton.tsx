@@ -21,7 +21,7 @@ const TableSkeleton: FC<Props> = ({ columns }) => {
               key={i}
               className="p-3 font-semibold whitespace-nowrap border-[#F7F8FD] border-y-[5px] "
             >
-              <Skeleton height={30} />
+              {column.header}
             </th>
           ))}
         </tr>
