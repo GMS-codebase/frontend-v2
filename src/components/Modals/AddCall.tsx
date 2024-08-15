@@ -11,15 +11,15 @@ import { SolarCheckCircleBold } from "../core/icons";
 import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 type FormData = {
-    title: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-    appealDays: string;
-    windows: any;
-    sectors: any;
-    attachment: File | null;
-}
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  appealDays: string;
+  windows: any;
+  sectors: any;
+  attachment: File | null;
+};
 const AddCall = ({
   isOpenAddCall,
   closeAddCall,
@@ -32,12 +32,12 @@ const AddCall = ({
   const windows = useSelector((state: any) => state.windows);
   const [selectedSelectors, setSelectedSelectors] = useState<any>([]);
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
-  const MultiWindowData = windows?.windows?.map((window: any)=> {
-  return {value: window.uuid, label: window.title}
-  })
-  const MultiSectorData = sectors?.sectors?.map((sector: any)=> {
-  return {value: sector.uuid, label: sector.name}
-  })
+  const MultiWindowData = windows?.windows?.map((window: any) => {
+    return { value: window.uuid, label: window.title };
+  });
+  const MultiSectorData = sectors?.sectors?.map((sector: any) => {
+    return { value: sector.uuid, label: sector.name };
+  });
   const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
@@ -70,22 +70,24 @@ const AddCall = ({
   };
 
   const handleSubmit = () => {
-    setFormData({...formData, sectors: selectedSelectors, windows: selectedWindows})
+    setFormData({
+      ...formData,
+      sectors: selectedSelectors,
+      windows: selectedWindows,
+    });
     const submitData = new FormData();
     submitData.append("title", formData.title);
     submitData.append("description", formData.description);
     submitData.append("appealDays", formData.appealDays);
     submitData.append("applicationStartDate", formData.startDate);
     submitData.append("applicationEndDate", formData.endDate);
-    submitData.append("windows", JSON.stringify(selectedWindows));
-    submitData.append("sectors", JSON.stringify(selectedSelectors));
+    submitData.append("window", JSON.stringify(selectedWindows));
+    submitData.append("sector", JSON.stringify(selectedSelectors));
     if (formData.attachment) {
       submitData.append("attachment", formData.attachment);
     }
-
-    console.log("form data --> ",formData, selectedSelectors, selectedWindows);
-
-    authorizedApi.post("/call/create", submitData)
+    authorizedApi
+      .post("/call/create", submitData)
       .then((res) => {
         console.log(res.data);
         notifications.show({
@@ -130,7 +132,10 @@ const AddCall = ({
               <div className="w-full overflow-y-auto flex flex-col gap-2 px-2">
                 <div className="w-full flex justify-between gap-3">
                   <div className="w-full">
-                    <label htmlFor="callTitle" className="block text-xs font-bold text-gray-700">
+                    <label
+                      htmlFor="callTitle"
+                      className="block text-xs font-bold text-gray-700"
+                    >
                       Title
                     </label>
                     <div className="w-full relative">
@@ -151,7 +156,10 @@ const AddCall = ({
                 </div>
 
                 <div className="">
-                  <label htmlFor="description" className="block text-xs font-bold text-gray-700">
+                  <label
+                    htmlFor="description"
+                    className="block text-xs font-bold text-gray-700"
+                  >
                     Description
                   </label>
                   <div className="w-full relative">
@@ -171,28 +179,42 @@ const AddCall = ({
                 </div>
 
                 <div className="">
-                  <label htmlFor="attachment" className="block text-xs font-bold text-gray-700">
+                  <label
+                    htmlFor="attachment"
+                    className="block text-xs font-bold text-gray-700"
+                  >
                     Attachment
                   </label>
                   <div className="relative mt-1 flex flex-col items-center justify-center w-full h-[15vh] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                    <label htmlFor="attachment" className="flex flex-col items-center justify-center space-y-2 cursor-pointer">
-                    {!formData.attachment ? (
-                      <>
-                      <SolarUploadBold className="text-blue-500 text-3xl" />
-                      <div className="text-center">
-                        <p className="text-sm text-gray-500">Upload file</p>
-                        <p className="text-xs text-gray-400">or drag and drop</p>
-                      </div>
-                      </>
-                    ): <>
-                      <span>
-                      <SolarCheckCircleBold/>
-                      </span>
-                      <div className="text-center">
-                        <p className="text-sm text-gray-500">File Uploaded</p>
-                        <p className="text-xs text-gray-400">{formData?.attachment?.name}</p>
-                      </div>
-                    </>}
+                    <label
+                      htmlFor="attachment"
+                      className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+                    >
+                      {!formData.attachment ? (
+                        <>
+                          <SolarUploadBold className="text-blue-500 text-3xl" />
+                          <div className="text-center">
+                            <p className="text-sm text-gray-500">Upload file</p>
+                            <p className="text-xs text-gray-400">
+                              or drag and drop
+                            </p>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <span>
+                            <SolarCheckCircleBold />
+                          </span>
+                          <div className="text-center">
+                            <p className="text-sm text-gray-500">
+                              File Uploaded
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              {formData?.attachment?.name}
+                            </p>
+                          </div>
+                        </>
+                      )}
                     </label>
                     <input
                       id="attachment"
@@ -225,11 +247,18 @@ const AddCall = ({
               </div>
             </Stepper.Step>
 
-            <Stepper.Step label="Timeline Details" description="" className="text-xs">
+            <Stepper.Step
+              label="Timeline Details"
+              description=""
+              className="text-xs"
+            >
               <div className="mt-4 w-full overflow-y-auto flex flex-col gap-2 px-2">
                 <div className="w-full flex space-x-4">
                   <div className="w-1/2">
-                    <label htmlFor="startDate" className="block text-xs font-bold text-gray-700">
+                    <label
+                      htmlFor="startDate"
+                      className="block text-xs font-bold text-gray-700"
+                    >
                       Start Date
                     </label>
                     <div className="w-full relative">
@@ -248,7 +277,10 @@ const AddCall = ({
                   </div>
 
                   <div className="w-1/2">
-                    <label htmlFor="endDate" className="block text-xs font-bold text-gray-700">
+                    <label
+                      htmlFor="endDate"
+                      className="block text-xs font-bold text-gray-700"
+                    >
                       End Date
                     </label>
                     <div className="w-full relative">
@@ -268,7 +300,10 @@ const AddCall = ({
                 </div>
 
                 <div className="w-full">
-                  <label htmlFor="appealDays" className="block text-xs font-bold text-gray-700">
+                  <label
+                    htmlFor="appealDays"
+                    className="block text-xs font-bold text-gray-700"
+                  >
                     Appeal Days
                   </label>
                   <div className="w-full relative">
@@ -306,48 +341,58 @@ const AddCall = ({
               </div>
             </Stepper.Step>
 
-            <Stepper.Step label="Select options" description="" className="text-xs">
+            <Stepper.Step
+              label="Select options"
+              description=""
+              className="text-xs"
+            >
               <div className="mt-4 w-full overflow-y-auto flex flex-col gap-2 px-2">
                 <div className="">
-                  <label htmlFor="windows" className="block text-xs font-bold text-gray-700">
+                  <label
+                    htmlFor="windows"
+                    className="block text-xs font-bold text-gray-700"
+                  >
                     Select windows
                   </label>
                   <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                  <span className="absolute left-2 top-3 text-black text-lg">
-                    <SolarSuitcaseLinear />
-                  </span>
-                  <MultiSelect
-                    name="windows"
-                    // value={formData.position}
-                    onChange={setSelectedWindows}
-                    data={MultiWindowData}
-                    placeholder="Select or type in a window"
-                    required
-                  />
-                </div>
+                    <span className="absolute left-2 top-3 text-black text-lg">
+                      <SolarSuitcaseLinear />
+                    </span>
+                    <MultiSelect
+                      name="windows"
+                      // value={formData.position}
+                      onChange={setSelectedWindows}
+                      data={MultiWindowData}
+                      placeholder="Select or type in a window"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div className="">
-                  <label htmlFor="sectors" className="block text-xs font-bold text-gray-700">
+                  <label
+                    htmlFor="sectors"
+                    className="block text-xs font-bold text-gray-700"
+                  >
                     Select sectors
                   </label>
                   <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                  <span className="absolute left-2 top-3 text-black text-lg">
-                    <SolarSuitcaseLinear />
-                  </span>
-                  <MultiSelect
-                    name="sectors"
-                    // value={formData.position}
-                    onChange={setSelectedSelectors}
-                    data={MultiSectorData}
-                    placeholder="Select or type in a sector"
-                    required
-                  />
-                  {/* <span className="absolute right-2 top-3 text-black text-lg">
+                    <span className="absolute left-2 top-3 text-black text-lg">
+                      <SolarSuitcaseLinear />
+                    </span>
+                    <MultiSelect
+                      name="sectors"
+                      // value={formData.position}
+                      onChange={setSelectedSelectors}
+                      data={MultiSectorData}
+                      placeholder="Select or type in a sector"
+                      required
+                    />
+                    {/* <span className="absolute right-2 top-3 text-black text-lg">
                     <SolarSuitcaseLinear />
                     Add
                   </span> */}
-                </div>
+                  </div>
                 </div>
 
                 <div className="w-full flex justify-center mt-4 space-x-4">
