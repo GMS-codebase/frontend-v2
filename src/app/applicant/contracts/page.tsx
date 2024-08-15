@@ -7,8 +7,10 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { tradesData as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
 import AddTrade from "@/components/Modals/AddTrade";
+import { useSelector } from "react-redux";
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
+  const contracts = useSelector((state: any) => state.contract);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -65,12 +67,17 @@ const Page = () => {
           <span className="text-2xl">
             <SolarAddFolderBold />
           </span>
-          <h1 className="text-base font-medium text-white">New Contract</h1>
+          <h1 className="text-base font-medium text-white">Export as Excel</h1>
         </button>
       </div>
 
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} />
+        <DataTable
+          columns={columns}
+          data={contracts?.contracts || []}
+          loading={contracts?.loading}
+          noDataMessage={"No Contracts Made Yet"}
+        />
       </div>
       <AddTrade isOpenAddTrade={isOpenTrade} closeAddTrade={close} />
     </div>
