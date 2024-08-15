@@ -12,6 +12,7 @@ import { ClipLoader } from "react-spinners";
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
   const trades = useSelector((state: any) => state.trades);
+  const trades = useSelector((state: any) => state.trades);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",

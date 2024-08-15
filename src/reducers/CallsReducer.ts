@@ -1,10 +1,10 @@
-import { 
-  ADD_CALL_SUCCESS, 
-  GET_CALLS_ERROR, 
-  GET_CALLS_SUCCESS, 
-  GET_CALLS_LOADING, 
-  UPDATE_CALL_SUCCESS, 
-  DELETE_CALL_SUCCESS 
+import {
+  ADD_CALL_SUCCESS,
+  GET_CALLS_ERROR,
+  GET_CALLS_SUCCESS,
+  GET_CALLS_LOADING,
+  UPDATE_CALL_SUCCESS,
+  DELETE_CALL_SUCCESS,
 } from "@/actions/CallsActions";
 import { Window } from "@/types";
 
@@ -12,7 +12,7 @@ const initialState = {
   calls: [],
   error: null,
   isError: false,
-  loading: false
+  loading: false,
 };
 
 type Action = {
@@ -25,20 +25,20 @@ export default function CallsReducer(state = initialState, action: Action) {
     case GET_CALLS_LOADING:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case GET_CALLS_SUCCESS:
       return {
         ...state,
         loading: false,
-        calls: action.payload
+        calls: action.payload,
       };
     case GET_CALLS_ERROR:
       return {
         ...state,
         isError: true,
         loading: false,
-        error: action.payload
+        error: action.payload,
       };
     case ADD_CALL_SUCCESS:
       return {
@@ -46,25 +46,29 @@ export default function CallsReducer(state = initialState, action: Action) {
         calls: [...state.calls, action.payload],
         error: null,
         isError: false,
-        loading: false
+        loading: false,
       };
     case UPDATE_CALL_SUCCESS:
       return {
         ...state,
-        calls: state.calls.map((call: any) => 
-          call.uuid === action.payload.id ? { ...call, ...action.payload.data } : call
+        calls: state.calls.map((call: any) =>
+          call.uuid === action.payload.id
+            ? { ...call, ...action.payload.data }
+            : call,
         ),
         error: null,
         isError: false,
-        loading: false
+        loading: false,
       };
     case DELETE_CALL_SUCCESS:
       return {
         ...state,
-        calls: state.calls.filter((call: any) => call.uuid !== action.payload.id),
+        calls: state.calls.filter(
+          (call: any) => call.uuid !== action.payload.id,
+        ),
         error: null,
         isError: false,
-        loading: false
+        loading: false,
       };
     default:
       return state;

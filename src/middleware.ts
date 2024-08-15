@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
-import { Role } from "./types/base.type";
+import { Role } from "@/types/base.type";
 
 const roles = ["ADMIN", "APPLICANT", "EMPLOYEE"];
-const whitelist = ["/","/redirect", "/public"];
+const whitelist = ["/", "/redirect", "/public"];
 function getRolePath(role: Role): string {
   switch (role) {
     case "APPLICANT":
@@ -50,12 +50,12 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL(nextUrl, request.url));
     }
     if (request.nextUrl.pathname === "/") {
-        console.log("The next url is /")
+      console.log("The next url is /");
       return NextResponse.redirect(new URL(nextUrl, request.url));
     }
     const roleInRoute = request.nextUrl.pathname.split("/")[1].toUpperCase();
     if (roles.includes(roleInRoute as Role) && role !== roleInRoute) {
-        console.log(nextUrl)
+      console.log(nextUrl);
       return NextResponse.redirect(new URL(nextUrl, request.url));
     }
     return NextResponse.next();

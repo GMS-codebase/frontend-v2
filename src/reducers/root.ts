@@ -5,13 +5,17 @@ import SectorsReducer from "./SectorsReducer";
 import TradesReducer from "./TradesReducer";
 import CallsReducer from "./CallsReducer";
 import ApplicationsReducer from "./ApplicationsReducer";
+import ApplicantsReducer from "./ApplicantsReducer";
+import EmployeesReducer from "./EmployeesReducer";
 const rootReducer = combineReducers({
   auth: authReducer,
   windows: WindowsReducer,
   sectors: SectorsReducer,
   trades: TradesReducer,
   calls: CallsReducer,
-  applications: ApplicationsReducer,
+  applications: ApplicationsReducer,,
+  applicants: ApplicantsReducer,
+  employees: EmployeesReducer,
 });
 
 export default rootReducer;
