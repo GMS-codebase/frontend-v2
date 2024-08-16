@@ -19,6 +19,7 @@ import { getEmployees } from "@/utils/funcs";
 const Page = () => {
   const [isOpenAddEmployee, { open, close }] = useDisclosure(false);
   const employees = useSelector((state: any) => state.employees);
+  console.log(employees);
   const [isOpenEmployee, setIsOpenEmployee] = useState({
     openUpdate: false,
     openDelete: false,
@@ -55,7 +56,7 @@ const Page = () => {
       header: "Actions",
       cell: ({ row }) => (
         <Actions
-          employee={isOpenEmployee.employee}
+          employee={row.original}
           setIsEmployee={setIsOpenEmployee}
         />
       ),
