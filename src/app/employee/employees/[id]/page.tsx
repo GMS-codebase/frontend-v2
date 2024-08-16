@@ -16,8 +16,10 @@ import RemoveFromStage from "@/components/Modals/RemoveFromStage";
 import UpdateEmployee from "@/components/Modals/UpdateEmployee";
 import { Menu } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { HiDotsHorizontal } from "react-icons/hi";
+import { useSelector } from "react-redux";
 const assignedStages = [
   {
     name: "Evaluation",
@@ -40,6 +42,10 @@ const AssignedStage = ({
   stage: any;
   open: (prop: any) => void;
 }) => {
+  const {employees} = useSelector((state: any)=> state.employees);
+  const employee = employees.find((employee: any) => employee.uuid === employee.uuid);
+  console.log(employees);
+  console.log("employee", employee);
   return (
     <div className="w-full flex justify-between items-center bg-[#000F230A] p-3 rounded-xl">
       <h1 className="font-bold text-lg">{stage.name}</h1>
@@ -107,6 +113,9 @@ const EmployeeDetails = () => {
     openMakeManager: false,
     level: "",
   });
+  const {employees} = useSelector((state: any)=> state.employees);
+  const {id: employeeId} = useParams()
+  const employee = employees.filter((employee: any) => employee.uuid === employeeId);
   return (
     <div className="w-full h-full flex items-start justify-between">
       <div className="w-[60%] flex flex-col gap-6  text-black bg-white p-3 py-5 rounded-2xl">
@@ -193,7 +202,7 @@ const EmployeeDetails = () => {
         isOpenUpdateEmployee={isUpdate}
         closeUpdateEmployee={() => setIsUpdate(false)}
       />
-      <AssignStage isAssignStage={isAssignStage} closeAssignStage={close} />
+      <AssignStage employee={employee} isAssignStage={isAssignStage} closeAssignStage={close} />
       <MakeManager
         isOpenMakeManager={isOpenStage.openMakeManager}
         closeMakeManager={() =>
