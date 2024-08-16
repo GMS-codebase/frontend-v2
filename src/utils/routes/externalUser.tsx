@@ -13,21 +13,7 @@ const externalUserRoutes: Route[] = [
         path: "/externalUser/applications",
         icon: <Icons.SolarFolderWithFilesBold />,
     },
-    {
-        label: "Application Reports",
-        path: "/externalUser/reports/application",
-        icon: <Icons.SolarDocumentBold />,
-    },
-    {
-        label: "Reports",
-        path: "/externalUser/reports/reports",
-        icon: <Icons.SolarDocumentsBold />,
-    },
-    {
-        label: "M&E Reports",
-        path: "/externalUser/reports/m_and_e",
-        icon: <Icons.SolarFileBold />,
-    },
+    
     {
         label: "Profile",
         path: "/externalUser/profile",
