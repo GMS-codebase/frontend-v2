@@ -39,7 +39,7 @@ const AssignedStage = ({
 }) => {
   return (
     <div className="w-full flex justify-between items-center bg-[#000F230A] p-3 rounded-xl">
-      <h1 className="font-bold text-lg">{stage.name}</h1>
+      <h1 className="font-bold text-lg">{stage.stage}</h1>
       <Menu shadow="lg" width={250}>
         <Menu.Target>
           <button
@@ -183,7 +183,7 @@ const EmployeeDetails = () => {
           </button>
         </div>
         <div className="flex flex-col gap-3 mt-5">
-          {assignedStages.map((stage: any, index: number) => {
+          {employee[0]?.emp_stages?.map((stage: any, index: number) => {
             return (
               <AssignedStage open={setIsOpenStage} key={index} stage={stage} />
             );
