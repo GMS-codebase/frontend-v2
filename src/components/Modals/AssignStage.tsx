@@ -54,22 +54,18 @@ const AssignStage = ({
   const handleSubmit = (e: { preventDefault: () => void }) => {
     setLoading(true);
     e.preventDefault();
-    console.log("Form Data: ", {
-      emp_id: employee[0]?.uuid,
-      emp_stage: stage
-    });
-
     authorizedApi.post("/admin/employee/assign/stage", {
       emp_id: employee[0]?.uuid,
       emp_stage: stage,
-      sectorId: sectorId,
+      sectorIds: sectorId,
     })
     .then((res)=>{
       console.log(res.data);
       notifications.show({
-        message: "",
+        message: "Stage assigned successfully",
         color:"blue"
       })
+      closeAssignStage();
     })
     .catch((err)=>{
       console.log(err.response);
@@ -138,7 +134,7 @@ const AssignStage = ({
                   onChange={(value: any) =>setStage(value)}
                   data={[
                     { value: "Evaluation", label: "Evaluation" },
-                    { value: "DueDiligence", label: "DueDiligence" },
+                    { value: "DueDiligency", label: "DueDiligency" },
                     { value: "SDFSecretariate", label: "SDFSecretariate" },
                   ]}
                   placeholder="Select stage"
