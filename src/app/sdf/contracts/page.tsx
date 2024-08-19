@@ -1,0 +1,70 @@
+"use client";
+import { BiSearch } from "react-icons/bi";
+import { SolarAddFolderBold } from "@/components/core/icons";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "@/components/core/data-table";
+import { HiDotsHorizontal } from "react-icons/hi";
+import { tradesData as data } from "@/utils/constants/dummy";
+import { useDisclosure } from "@mantine/hooks";
+import AddTrade from "@/components/Modals/AddTrade";
+const Page = () => {
+  const [isOpenTrade, { open, close }] = useDisclosure(false);
+  const columns: ColumnDef<any>[] = [
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => <div className="w-full">{row.original?.title}</div>,
+    },
+    {
+      accessorKey: "description",
+      header: "Description",
+      cell: ({ row }) => (
+        <div className="truncate">
+          {row.original?.description.length > 50
+            ? row.original?.description.slice(0, 50) + "..."
+            : row.original.description}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <div>
+          <button
+            style={{
+              background:
+                "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+            }}
+            className="p-3 rounded-full border text-white hover:bg-red-100"
+          >
+            <HiDotsHorizontal size={25} color="white" />
+          </button>
+        </div>
+      ),
+    },
+  ];
+  return (
+    <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
+      <div className="w-full flex justify-between items-center p-4">
+        <div className="relative w-[25rem]">
+          <span className="absolute top-4 left-2">
+            <BiSearch size={25} />
+          </span>
+          <input
+            name="search"
+            className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
+            placeholder="Search"
+          />
+        </div>
+
+      </div>
+
+      <div className="w-full h-full">
+        <DataTable columns={columns} data={data} />
+      </div>
+      <AddTrade isOpenAddTrade={isOpenTrade} closeAddTrade={close} />
+    </div>
+  );
+};
+export default Page;
