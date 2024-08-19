@@ -31,6 +31,7 @@ import {
   GET_EMPLOYEES_LOADING,
   GET_EMPLOYEES_SUCCESS,
 } from "@/actions/EmployeesActions";
+import { GET_APPLICATIONS_ERROR, GET_APPLICATIONS_LOADING, GET_APPLICATIONS_SUCCESS } from "@/actions/ApplicationsActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -118,13 +119,13 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplications = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_TRADES_LOADING });
+  dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
     .get("/application")
     .then((res) => {
-      dispatch({ type: GET_TRADES_SUCCESS, payload: res.data.data });
+      dispatch({ type: GET_APPLICATIONS_SUCCESS, payload: res.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_TRADES_ERROR, payload: err.response.data.error });
+      dispatch({ type: GET_APPLICATIONS_ERROR, payload: err.response.data.error });
     });
 };
