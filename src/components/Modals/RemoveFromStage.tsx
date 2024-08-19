@@ -14,9 +14,11 @@ type FormData = {
   isInternal: undefined | boolean;
 };
 const RemoveFromStage = ({
+  employee,
   isOpen,
   closeRemoveEmployee,
 }: {
+  employee: any;
   isOpen: boolean;
   closeRemoveEmployee: () => void;
 }) => {
