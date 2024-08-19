@@ -9,9 +9,11 @@ import { Select } from "@mantine/core";
 import { HiDotsHorizontal } from "react-icons/hi";
 import MeActions from "./MeActions";
 import { SolarFileBold } from "@/components/core/icons";
+import AddReportModal from "@/components/Modals/AddReportModalsProps";
 
 const Page = () => {
-  const [isOpenCall, { open, close }] = useDisclosure(false);
+ const [isOpenReportModal, { open:openReport, close:closeReport}] = useDisclosure(false);
+  const [isOpenCall, { open:openCall, close:closeCall }] = useDisclosure(false);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "title",
@@ -60,39 +62,48 @@ const Page = () => {
   };
 
   return (
-    <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[20rem]">
-          <span className="absolute top-4 left-4">
-            <CiSearch size={25} color="" />
-          </span>
-          <input
-            name="search"
-            className="w-full p-3 py-4 pl-12 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
-            placeholder="Search"
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white">
-            <span>
-              <SolarFileBold />
-            </span>
-            <div>Export Report</div>
+      <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
+          <div className="w-full flex justify-between items-center p-4">
+              <div className="relative w-[20rem]">
+                  <span className="absolute top-4 left-4">
+                      <CiSearch size={25} color="" />
+                  </span>
+                  <input
+                      name="search"
+                      className="w-full p-3 py-4 pl-12 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
+                      placeholder="Search"
+                  />
+              </div>
+              <div className="flex items-center gap-3">
+                  <div className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white">
+                      <span>
+                          <SolarFileBold />
+                      </span>
+                      <div>Export Report</div>
+                  </div>
+                  <div className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white" onClick={openReport}>
+                      <span>
+                          <SolarFileBold />
+                      </span>
+                      <div>Add new Report</div>
+                  </div>
+                  <div className="w-44">
+                      <FilterDropDown
+                          placeholderText="Filter By Call"
+                          data={Array.from(
+                              new Set(data.map((item) => item.call))
+                          )}
+                      />
+                  </div>
+              </div>
           </div>
-          <div className="w-44">
-            <FilterDropDown
-              placeholderText="Filter By Call"
-              data={Array.from(new Set(data.map((item) => item.call)))}
-            />
-          </div>
-        </div>
-      </div>
 
-      <div className="w-full h-full">
-        <DataTable columns={columns} data={data} />
+          <div className="w-full h-full">
+              <DataTable columns={columns} data={data} />
+          </div>
+            <AddReportModal isOpen={isOpenReportModal} onClose={closeReport} />
+          <AddCall isOpenAddCall={isOpenCall} closeAddCall={closeCall} />
       </div>
-      <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
-    </div>
   );
 };
 export default Page;
