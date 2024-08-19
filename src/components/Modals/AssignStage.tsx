@@ -1,6 +1,6 @@
 import { Checkbox, Modal, MultiSelect, Select, Stepper } from "@mantine/core";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import SideVector1 from "@/assets/Vectors/sidevecto.svg";
 import SideVector2 from "@/assets/Vectors/sidevector2.svg";
@@ -15,7 +15,8 @@ import {
 import { authorizedApi } from "@/utils/api";
 import { ClipLoader } from "react-spinners";
 import { notifications } from "@mantine/notifications";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getEmployees } from "@/utils/funcs";
 type FormData = {
   firstName: string;
   lastName: string;
@@ -47,10 +48,14 @@ const AssignStage = ({
   const [stage, setStage] = useState("");
   const [sectorId, setSectorId] = useState<any>("");
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const [reload, setReload] = useState(false);
   const {sectors} = useSelector((state: any)=> state.sectors);
   const MultiSelectSectors = sectors.map((sector: any)=> {
     return {value: sector.uuid, label: sector.name};
   })
+  useEffect(()=>{
+  },[reload])
   const handleSubmit = (e: { preventDefault: () => void }) => {
     setLoading(true);
     e.preventDefault();
@@ -60,11 +65,13 @@ const AssignStage = ({
       sectorIds: sectorId,
     })
     .then((res)=>{
+      getEmployees(dispatch);
       console.log(res.data);
       notifications.show({
         message: "Stage assigned successfully",
         color:"blue"
       })
+      setReload(!reload);
       closeAssignStage();
     })
     .catch((err)=>{
