@@ -60,11 +60,7 @@ const LoginModal = ({
           : "Email is required",
       password: (value) =>
         value
-          ? /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{};':"\\|,.<>/?]).{8,}$/.test(
-              value,
-            )
             ? null
-            : "Password must be at least 8 characters long, contain letters, numbers, and symbols"
           : "Password is required",
     },
   });

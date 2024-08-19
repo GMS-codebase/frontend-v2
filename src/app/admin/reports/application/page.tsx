@@ -124,6 +124,12 @@ const Page = () => {
             </div>
             <div className="w-44 flex-shrink-0">
               <FilterDropDown
+                placeholderText="Filter By call"
+                data={["Call for apprentship"]}
+              />
+            </div>
+            <div className="w-44 flex-shrink-0">
+              <FilterDropDown
                 placeholderText="Filter By Window"
                 data={["Window 1: Apprenticeship and Internships"]}
               />
