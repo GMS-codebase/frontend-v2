@@ -39,7 +39,7 @@ const Navbar = () => {
     getApplicants(dispatch);
     getEmployees(dispatch);
     getMyProfile(dispatch);
-    // getApplications(dispatch);
+    getApplications(dispatch);
   }, []);
 
   const auth = useSelector((state: any) => state.auth);

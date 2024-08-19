@@ -12,6 +12,8 @@ import AddCall from "@/components/Modals/AddCall";
 import { Select } from "@mantine/core";
 import { useRef } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useSelector } from "react-redux";
+import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 
 const Page = () => {
   const [isOpenCall, { open, close }] = useDisclosure(false);
@@ -33,7 +35,7 @@ const Page = () => {
       header: "Window",
       cell: ({ row }) => (
         <div>
-          WINDOW {row.original?.window.number} : {row.original?.window.name}
+          WINDOW {row.original?.window?.number} : {row.original?.window?.name}
         </div>
       ),
     },
@@ -86,6 +88,8 @@ const Page = () => {
       }
     }
   };
+
+  const applications = useSelector((state: any) => state.applications);
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
@@ -170,7 +174,7 @@ const Page = () => {
       </div>
 
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} tableWidth={1800}/>
+        {applications?.loading ? <TableSkeleton columns={columns}/>: applications.applications?.length === 0 ? <h1>No Applications Found!</h1>: <DataTable columns={columns} data={applications?.applications ?? []} tableWidth={1800}/>}
       </div>
       <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
     </div>
