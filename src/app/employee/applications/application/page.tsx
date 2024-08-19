@@ -2,11 +2,14 @@
 import React, { useState } from "react";
 import Project from "@/components/ApplicantDetails/Project";
 import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
+import DueDetails from "@/components/Modals/Duediligency";
+import EvalDetails from "@/components/Modals/evalDetails";
 import {
     SolarFileBold,
     SolarFolder2Bold,
     SolarEyeLinear,
 } from "@/components/core/icons";
+import { useDisclosure } from "@mantine/hooks";
 const Page = () => {
     const [currentComponent, setCurrentComponent] = useState<
         "Project" | "IndicativeBudget"
@@ -22,6 +25,10 @@ const Page = () => {
                 return null;
         }
     };
+      const [isOpenEvalDetail, { open: openEval, close: closeEval }] =
+    useDisclosure(false);
+    const [isOpenDuediligenceDetail, { open: openDuediligence, close: closeDuediligence }] =
+    useDisclosure(false);
 
     return (
         <div className="flex flex-col gap-6 p-8 rounded-3xl">
@@ -138,30 +145,26 @@ const Page = () => {
                     <h2 className="font-bold">Decision</h2>
                     <div className="flex flex-col gap-2">
                         <h3 className="font-semibold">Evaluation Stage</h3>
-                        <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                            Proposal Approved
+                        <div className="font-medium bg-gray-500 bg-opacity-10 text-black w-fit justify-start items-center rounded-full px-4 py-2">
+                           Pending
                         </div>
-                        <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
-                            <span>
-                                <SolarEyeLinear />
-                            </span>
-                            <p>details</p>
+                        <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full" onClick={openEval}>
+                            <p>Make decision</p>
                         </div>
                     </div>
                     <div className="flex flex-col gap-2">
                         <h3 className="font-bold">DueDiligency Stage</h3>
-                        <div className="font-medium bg-[#C50000] bg-opacity-10 text-[#C50000] w-fit justify-start items-center rounded-full px-4 py-2">
-                            Proposal Rejected
+                        <div className="font-medium bg-gray-500 bg-opacity-10 text-black w-fit justify-start items-center rounded-full px-4 py-2">
+                            Pending
                         </div>
-                        <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
-                            <span>
-                                <SolarEyeLinear />
-                            </span>
-                            <p>details</p>
+                        <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full" onClick={openDuediligence}>
+                            <p>Make decision</p>
                         </div>
                     </div>
                 </div>
             </div>
+            <EvalDetails isOpenAddEval={isOpenEvalDetail} closeAddEval={closeEval}/>
+            <DueDetails isOpenAddDue={isOpenDuediligenceDetail} closeAddDue={closeDuediligence}/>
         </div>
     );
 };
