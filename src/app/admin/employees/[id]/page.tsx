@@ -197,6 +197,7 @@ const EmployeeDetails = () => {
       />
       <AssignStage employee={employee} isAssignStage={isAssignStage} closeAssignStage={close} />
       <MakeManager
+        employee={employee}
         isOpenMakeManager={isOpenStage.openMakeManager}
         closeMakeManager={() =>
           setIsOpenStage({
@@ -208,6 +209,7 @@ const EmployeeDetails = () => {
         level={isOpenStage.level}
       />
       <RemoveFromStage
+        employee={employee}
         isOpen={isOpenStage.openDelete}
         closeRemoveEmployee={() =>
           setIsOpenStage({
