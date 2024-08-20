@@ -40,6 +40,7 @@ export default function authReducer(state = initialState, action: Action) {
     case LOGOUT:
       deleteCookie("auth_token");
       deleteCookie("auth_USER");
+      deleteCookie("token");
       return initialState;
     case SET_PERMISSIONS:
       return {
