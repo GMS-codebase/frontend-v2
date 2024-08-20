@@ -1,8 +1,6 @@
 "use client";
 import React from "react";
-import {
-  SolarPen2Bold
-} from "@/components/core/icons";
+import { SolarPen2Bold } from "@/components/core/icons";
 import ApplicantTable from "./IndexTable";
 const Page = () => {
   return (

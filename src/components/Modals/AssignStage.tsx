@@ -50,38 +50,38 @@ const AssignStage = ({
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [reload, setReload] = useState(false);
-  const {sectors} = useSelector((state: any)=> state.sectors);
-  const MultiSelectSectors = sectors.map((sector: any)=> {
-    return {value: sector.uuid, label: sector.name};
-  })
-  useEffect(()=>{
-  },[reload])
+  const { sectors } = useSelector((state: any) => state.sectors);
+  const MultiSelectSectors = sectors.map((sector: any) => {
+    return { value: sector.uuid, label: sector.name };
+  });
+  useEffect(() => {}, [reload]);
   const handleSubmit = (e: { preventDefault: () => void }) => {
     setLoading(true);
     e.preventDefault();
-    authorizedApi.post("/admin/employee/assign/stage", {
-      emp_id: employee[0]?.uuid,
-      emp_stage: stage,
-      sectorIds: sectorId,
-    })
-    .then((res)=>{
-      getEmployees(dispatch);
-      console.log(res.data);
-      notifications.show({
-        message: "Stage assigned successfully",
-        color:"blue"
+    authorizedApi
+      .post("/admin/employee/assign/stage", {
+        emp_id: employee[0]?.uuid,
+        emp_stage: stage,
+        sectorIds: sectorId,
       })
-      setReload(!reload);
-      closeAssignStage();
-    })
-    .catch((err)=>{
-      console.log(err.response);
-      notifications.show({
-        message: err.response?.data?.message,
-        color:"red"
+      .then((res) => {
+        getEmployees(dispatch);
+        console.log(res.data);
+        notifications.show({
+          message: "Stage assigned successfully",
+          color: "blue",
+        });
+        setReload(!reload);
+        closeAssignStage();
       })
-    })
-    .finally(()=> setLoading(false));
+      .catch((err) => {
+        console.log(err.response);
+        notifications.show({
+          message: err.response?.data?.message,
+          color: "red",
+        });
+      })
+      .finally(() => setLoading(false));
   };
   return (
     <Modal
@@ -138,7 +138,7 @@ const AssignStage = ({
                 <Select
                   name="position"
                   value={stage}
-                  onChange={(value: any) =>setStage(value)}
+                  onChange={(value: any) => setStage(value)}
                   data={[
                     { value: "Evaluation", label: "Evaluation" },
                     { value: "DueDiligency", label: "DueDiligency" },
@@ -152,35 +152,35 @@ const AssignStage = ({
             </div>
 
             <div className="w-full">
-                  <label
-                    htmlFor="trade"
-                    className="block text-base font-medium text-black"
-                  >
-                    Sectors
-                  </label>
-                  <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                    <span className="absolute left-2 top-3 text-black text-lg">
-                      <SolarSuitcaseLinear />
-                    </span>
-                    <MultiSelect
-                      name="sectors"
-                      disabled={!MultiSelectSectors}
-                      onChange={setSectorId}
-                      data={
-                        MultiSelectSectors
-                          ? MultiSelectSectors
-                          : [
-                              {
-                                value: "NO SECTOR",
-                                label: "No Sectors Created!",
-                              },
-                            ]
-                      }
-                      placeholder="Select or type in a sector"
-                      required
-                    />
-                  </div>
-                </div>
+              <label
+                htmlFor="trade"
+                className="block text-base font-medium text-black"
+              >
+                Sectors
+              </label>
+              <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <span className="absolute left-2 top-3 text-black text-lg">
+                  <SolarSuitcaseLinear />
+                </span>
+                <MultiSelect
+                  name="sectors"
+                  disabled={!MultiSelectSectors}
+                  onChange={setSectorId}
+                  data={
+                    MultiSelectSectors
+                      ? MultiSelectSectors
+                      : [
+                          {
+                            value: "NO SECTOR",
+                            label: "No Sectors Created!",
+                          },
+                        ]
+                  }
+                  placeholder="Select or type in a sector"
+                  required
+                />
+              </div>
+            </div>
 
             <div className="w-full flex justify-center mt-10 space-x-4 pb-2">
               <button
@@ -194,7 +194,7 @@ const AssignStage = ({
                 type="submit"
                 className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
-                {loading ? <ClipLoader color="white" size={23}/> : "Assign"}
+                {loading ? <ClipLoader color="white" size={23} /> : "Assign"}
               </button>
             </div>
           </form>

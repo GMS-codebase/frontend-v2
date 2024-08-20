@@ -38,7 +38,7 @@ const ContactModal = ({
         </div>
         <div className="flex flex-col justify-center items-center text-center gap-4">
           <h3 className="font-bold w-[90%] text-2xl">
-            For other sectors contact 
+            For other sectors contact
           </h3>
           <div className="text-gray-500  w-[70%]">
             <p>+250788435520</p>

@@ -26,10 +26,12 @@ const Page = () => {
     }
   };
 
-    const [isOpenEvalDetail, { open: openEval, close: closeEval }] =
+  const [isOpenEvalDetail, { open: openEval, close: closeEval }] =
     useDisclosure(false);
-    const [isOpenDuediligenceDetail, { open: openDuediligence, close: closeDuediligence }] =
-    useDisclosure(false);
+  const [
+    isOpenDuediligenceDetail,
+    { open: openDuediligence, close: closeDuediligence },
+  ] = useDisclosure(false);
 
   return (
     <div className="flex flex-col gap-6 p-8 rounded-3xl">
@@ -144,7 +146,10 @@ const Page = () => {
             <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
               Proposal Approved
             </div>
-            <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full" onClick={openEval}>
+            <div
+              className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full"
+              onClick={openEval}
+            >
               <span>
                 <SolarEyeLinear />
               </span>
@@ -156,7 +161,10 @@ const Page = () => {
             <div className="font-medium bg-[#C50000] bg-opacity-10 text-[#C50000] w-fit justify-start items-center rounded-full px-4 py-2">
               Proposal Rejected
             </div>
-            <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full" onClick={openDuediligence}>
+            <div
+              className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full"
+              onClick={openDuediligence}
+            >
               <span>
                 <SolarEyeLinear />
               </span>
@@ -165,8 +173,11 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <DecisionDetailModal opened={isOpenEvalDetail} close={closeEval}/>
-      <DueDiligenceModal opened={isOpenDuediligenceDetail} close={closeDuediligence}/>
+      <DecisionDetailModal opened={isOpenEvalDetail} close={closeEval} />
+      <DueDiligenceModal
+        opened={isOpenDuediligenceDetail}
+        close={closeDuediligence}
+      />
     </div>
   );
 };
