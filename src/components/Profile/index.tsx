@@ -1,18 +1,22 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Icons from "@/components/core/icons";
 import { SolarUploadBold } from "@/components/core/icons";
-import { Select } from "@mantine/core";
+import { Select, Skeleton } from "@mantine/core";
 import Image from "next/image";
 import { BsPerson } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
 import { MdPhoneAndroid } from "react-icons/md";
 import { Upload } from "solar-icon-set";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
+import { LOGOUT } from "@/actions/AuthActions";
+import { GET_PROFILE_ERROR } from "@/actions/ProfileActions";
+import { useRouter } from "next/navigation";
+import { deleteCookie } from "cookies-next";
+import { notifications } from "@mantine/notifications";
 const Profile = () => {
   const profile = useSelector((state: any) => state.profile);
-  console.log(profile);
   const [activeSection, setActiveSection] = useState("contact");
   const [formData, setFormData] = useState({
     firstName: profile?.profile?.firstname,
@@ -23,16 +27,53 @@ const Profile = () => {
     position: profile?.profile?.position,
     institution: profile?.profile?.institution,
   })
+  useEffect(()=>{
+    setFormData({
+        firstName: profile?.profile?.firstname,
+        lastName: profile?.profile?.lastname,
+        email: profile?.profile?.email,
+        phoneNumber: profile?.profile?.phoneNumber,
+        gender: profile?.profile?.gender,
+        position: profile?.profile?.position,
+        institution: profile?.profile?.institution,
+    })
+  },[profile])
+  const dispatch = useDispatch();
+  const navigate = useRouter();
+  const [loading, setLoading] = useState(false);
+  const handleLogout = ()=>{
+    dispatch({type: LOGOUT});
+    dispatch({type: GET_PROFILE_ERROR})
+    setLoading(true);
+    navigate.push("/");
+    notifications.show({
+        message: "Logged Out Successfully!",
+        color: "blue",
+        duration:6000
+    })
+  }
   return (
     <div className="w-full bg-white rounded-2xl ">
       {profile?.loading ? (
-        <div className="w-full h-full flex items-center justify-center">
-          <ClipLoader size={23} color="black" />
+        <div className="w-full h-[105vh] p-5">
+        <Skeleton height={180} radius="xl" className="mb-4" />
+        <div className="w-full mt-20 flex gap-4">
+          <div className="w-[60%]">
+            <Skeleton height={50} radius="xl" className="mb-5" />
+            <Skeleton height={30} radius="xl" className="mb-2" />
+            <Skeleton height={30} radius="xl" className="mb-2" />
+            <Skeleton height={30} radius="xl" className="mb-2" />
+            <Skeleton height={50} radius="xl" className="mt-4" />
+          </div>
+          <div className="w-[50%] px-5">
+            <Skeleton height="100%" radius="xl" />
+          </div>
         </div>
+      </div>
       ) : (
         <>
           <div className="w-full h-[180px] bg-[#000F23] rounded-t-2xl relative mb-20">
-            <div className="absolute top-[60%] left-[4%] ">
+            <div className="absolute top-[60%] left-[4%]">
               <div className="flex items-end gap-3">
                 <button className=" mt-3 bg-white  text-3xl text-primary p-4 rounded-full">
                   <Icons.SolarUserBold className="w-[100px] h-[100px]" />
@@ -49,7 +90,7 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="w-full flex gap-4  p-5">
+          <div className="w-full flex gap-4 p-5">
             <div className="w-[60%]">
               <div className="flex  mb-10 mt-5">
                 <button
@@ -271,6 +312,15 @@ const Profile = () => {
                 />
               </div>
             </div>
+          </div>
+          <div className="w-full flex justify-end px-10">
+                <button
+                    onClick={handleLogout}
+                  type="button"
+                  className="w-[43%] px-4 py-2 bg-red-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  {loading ? <ClipLoader size={20} color="white"/> : "Logout"}
+                </button>
           </div>
         </>
       )}

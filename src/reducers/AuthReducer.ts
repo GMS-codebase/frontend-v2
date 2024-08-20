@@ -38,8 +38,8 @@ export default function authReducer(state = initialState, action: Action) {
         userProfile: action.payload,
       };
     case LOGOUT:
-      deleteCookie("token");
-      window.location.reload();
+      deleteCookie("auth_token");
+      deleteCookie("auth_USER");
       return initialState;
     case SET_PERMISSIONS:
       return {
