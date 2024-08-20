@@ -57,7 +57,6 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-
       </div>
 
       <div className="w-full h-full">

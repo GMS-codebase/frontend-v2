@@ -11,7 +11,7 @@ const DueDiligenceModal = ({
   close: () => void;
 }) => {
   const [text, setText] = useState(
-    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era."
+    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era.",
   );
 
   return (
@@ -21,10 +21,13 @@ const DueDiligenceModal = ({
       onClose={close}
       withCloseButton={false}
       centered
-      className="overflow-y-auto" 
-      style={{ maxHeight: '90vh' }} 
+      className="overflow-y-auto"
+      style={{ maxHeight: "90vh" }}
     >
-      <div className="overflow-y-auto flex flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative" style={{ maxHeight: '80vh' }}>
+      <div
+        className="overflow-y-auto flex flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative"
+        style={{ maxHeight: "80vh" }}
+      >
         <div className="absolute right-3 m-4 text-center mt-0">
           <button
             onClick={close}

@@ -104,9 +104,11 @@ const EmployeeDetails = () => {
     openMakeManager: false,
     level: "",
   });
-  const {employees} = useSelector((state: any)=> state.employees);
-  const {id: employeeId} = useParams()
-  const employee = employees.filter((employee: any) => employee.uuid === employeeId);
+  const { employees } = useSelector((state: any) => state.employees);
+  const { id: employeeId } = useParams();
+  const employee = employees.filter(
+    (employee: any) => employee.uuid === employeeId,
+  );
   console.log(employees);
   console.log("employee", employee);
   return (
@@ -195,7 +197,11 @@ const EmployeeDetails = () => {
         isOpenUpdateEmployee={isUpdate}
         closeUpdateEmployee={() => setIsUpdate(false)}
       />
-      <AssignStage employee={employee} isAssignStage={isAssignStage} closeAssignStage={close} />
+      <AssignStage
+        employee={employee}
+        isAssignStage={isAssignStage}
+        closeAssignStage={close}
+      />
       <MakeManager
         employee={employee}
         isOpenMakeManager={isOpenStage.openMakeManager}

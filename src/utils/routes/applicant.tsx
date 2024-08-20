@@ -1,7 +1,7 @@
 "use client";
 import * as Icons from "@/components/core/icons";
 import { Route } from "@/types";
-import { PeopleNearby } from 'solar-icon-set';
+import { PeopleNearby } from "solar-icon-set";
 
 const applicantRoutes: Route[] = [
   {

@@ -17,7 +17,9 @@ const Page = () => {
     {
       accessorKey: "institution",
       header: "Institution Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.institution}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.institution}</div>
+      ),
     },
     {
       accessorKey: "email",
@@ -64,7 +66,13 @@ const Page = () => {
         </div>
       </div>
       <div className="w-full h-full">
-        {applicants?.loading ? <TableSkeleton columns={columns}/>: applicants.applicants?.length === 0 ? <h1>No Applicants Found!</h1>: <DataTable columns={columns} data={applicants?.applicants ?? []} />}
+        {applicants?.loading ? (
+          <TableSkeleton columns={columns} />
+        ) : applicants.applicants?.length === 0 ? (
+          <h1>No Applicants Found!</h1>
+        ) : (
+          <DataTable columns={columns} data={applicants?.applicants ?? []} />
+        )}
       </div>
     </div>
   );

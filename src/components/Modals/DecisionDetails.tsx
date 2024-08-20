@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { ChangeEvent, useState } from "react";
 import { Modal, Button } from "@mantine/core";
@@ -12,7 +12,7 @@ const DecisionDetailModal = ({
   close: () => void;
 }) => {
   const [text, setText] = useState(
-    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era."
+    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era.",
   );
 
   return (
