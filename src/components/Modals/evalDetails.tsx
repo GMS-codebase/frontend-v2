@@ -6,7 +6,7 @@ import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { Folder2, Subtitles } from "solar-icon-set";
-import {SolarDocumentsLinear} from "@/components/core/icons/index"
+import {SolarDocumentBold} from "@/components/core/icons/index"
 
 const EvalDetails = ({
     isOpenAddEval,
@@ -96,7 +96,7 @@ const EvalDetails = ({
                                     </label>
                                     <div className="w-full relative">
                                         <span className="absolute left-2 top-[10px]">
-                                            <SolarDocumentsLinear/>
+                                            <SolarDocumentBold/>
                                         </span>
                                         <select
                                             name="title"
