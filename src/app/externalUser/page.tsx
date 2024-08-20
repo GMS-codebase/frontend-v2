@@ -105,7 +105,7 @@ const Page = () => {
       <p className="my-3">Overview</p>
       <div className="flex items-center gap-2">
         <div className="w-3/5 bg-white rounded-2xl shadow p-3">
-          <p className="text-xl font-medium">SDP Graduates Per year</p>
+          <p className="text-xl font-medium">SDF Graduates Per year</p>
           {/* Insert the DashboardLineChart component here */}
           <DashboardLineChart data={lineChartData} />
         </div>
