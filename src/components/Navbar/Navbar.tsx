@@ -46,8 +46,7 @@ const Navbar = () => {
     getProfile(dispatch);
   }, []);
 
-  const auth = useSelector((state: any) => state.auth);
-  console.log(auth);
+  const {profile} = useSelector((state: any) => state.profile);
   return (
     <div className="w-full flex items-center justify-between py-6 bg-white rounded-2xl px-5">
       <h1 className="text-xl font-extrabold text-primary">{pageName}</h1>
@@ -56,7 +55,7 @@ const Navbar = () => {
           <Icons.SolarUserBold />
         </button>
         <h1 className="text-xl font-medium">
-          {/* {userProfile?.firstname + " " + userProfile?.lastname} */}
+          {profile?.firstname ?? ""}
         </h1>
       </div>
     </div>
