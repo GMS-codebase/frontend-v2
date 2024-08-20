@@ -2,7 +2,7 @@
 import { SolarAddSquareBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import { sectorsData as data } from "@/utils/constants/dummy";
+import { sectorsData as data, sectorsData } from "@/utils/constants/dummy";
 import SectorsActions from "../../../components/Actions/SectorsAction";
 import { CiSearch } from "react-icons/ci";
 import AddSector from "@/components/Modals/AddSector";
@@ -78,7 +78,7 @@ const Page = () => {
         </div>
       ) : (
         <div className="w-full h-full">
-          <DataTable columns={columns} data={sectors.sectors ?? []} />
+          <DataTable columns={columns} data={sectorsData ?? []} />
         </div>
       )}
       <AddSector isOpenAddSector={isAddSector} closeAddSector={close} />
