@@ -17,7 +17,7 @@ import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 
 const Page = () => {
   const [isOpenCall, { open, close }] = useDisclosure(false);
-   const filtersContainerRef = useRef<HTMLDivElement>(null);
+  const filtersContainerRef = useRef<HTMLDivElement>(null);
 
   const columns: ColumnDef<any>[] = [
     {
@@ -80,7 +80,7 @@ const Page = () => {
 
   const handleScroll = (direction: "left" | "right") => {
     if (filtersContainerRef.current) {
-      const scrollAmount = 100; 
+      const scrollAmount = 100;
       if (direction === "left") {
         filtersContainerRef.current.scrollLeft -= scrollAmount;
       } else {
@@ -161,7 +161,7 @@ const Page = () => {
                   "Gasabo",
                 ]}
               />
-            </div> 
+            </div>
           </div>
 
           <button
@@ -174,7 +174,17 @@ const Page = () => {
       </div>
 
       <div className="w-full h-full">
-        {applications?.loading ? <TableSkeleton columns={columns}/>: applications.applications?.length === 0 ? <h1>No Applications Found!</h1>: <DataTable columns={columns} data={applications?.applications ?? []} tableWidth={1800}/>}
+        {applications?.loading ? (
+          <TableSkeleton columns={columns} />
+        ) : applications.applications?.length === 0 ? (
+          <h1>No Applications Found!</h1>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={applications?.applications ?? []}
+            tableWidth={1800}
+          />
+        )}
       </div>
       <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
     </div>

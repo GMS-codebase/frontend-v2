@@ -71,11 +71,11 @@ body {
   margin-top: 4px;
 }
 
-.calls-list-cont::-webkit-scrollbar{
-  background: #000F230D;
+.calls-list-cont::-webkit-scrollbar {
+  background: #000f230d;
 }
-.calls-list-cont::-webkit-scrollbar-thumb{
-  background: #000F23;
+.calls-list-cont::-webkit-scrollbar-thumb {
+  background: #000f23;
   border-radius: 10px;
 }
 
@@ -87,6 +87,6 @@ body {
 canvas[role="img"] {
   font-family: "Urbanist", sans-serif !important;
 }
-.m_60c222c7{
+.m_60c222c7 {
   align-items: center !important;
 }

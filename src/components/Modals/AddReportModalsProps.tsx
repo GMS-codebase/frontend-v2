@@ -1,8 +1,18 @@
 import { useState } from "react";
-import { Modal, TextInput, Textarea, Button, FileInput } from "@mantine/core";
+import {
+  Modal,
+  TextInput,
+  Textarea,
+  Button,
+  FileInput,
+  Select,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IoMdClose } from "react-icons/io";
 import { CalendarMinimalistic, Upload } from "solar-icon-set";
+import { useDispatch, useSelector } from "react-redux";
+import { authorizedApi } from "@/utils/api";
+import { notifications } from "@mantine/notifications";
 
 interface AddReportModalProps {
   isOpen: boolean;
@@ -12,11 +22,12 @@ interface AddReportModalProps {
 const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
   const form = useForm({
     initialValues: {
-      name: "",
+      title: "",
+      call: "",
       description: "",
-      file: null,
-      startDate: "",
-      endDate: "",
+      report: "",
+      start_date: "",
+      end_date: "",
     },
   });
 
@@ -24,12 +35,41 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
     const { name, value, files } = e.target;
     form.setFieldValue(name, files ? files[0] : value);
   };
-
+  const dispatch = useDispatch();
   const handleSubmit = (values: any) => {
-    // console.log("Form submitted:", values);
-    onClose(); // Close the modal after submission
+    console.log(form.values);
+    authorizedApi
+      .post("/report", form.values)
+      .then((res) => {
+        console.log(res);
+        notifications.show({
+          message: "M&E report created successfully",
+          color: "blue",
+        });
+        form.setValues({
+          title: "",
+          call: "",
+          description: "",
+          report: "",
+          start_date: "",
+          end_date: "",
+        });
+        onClose();
+      })
+      .catch((err) => {
+        console.log(err.response);
+        if (err.response)
+          notifications.show({
+            message: err.response?.data?.message ?? "Failed to create report!",
+            color: "red",
+          });
+      });
   };
-
+  const calls = useSelector((state: any) => state.calls);
+  const callsSelector = calls?.calls?.map((call: any) => {
+    return { value: call?.uuid, label: call?.title };
+  });
+  console.log(calls);
   return (
     <div>
       <Modal
@@ -38,8 +78,9 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
         onClose={onClose}
         withCloseButton={false}
         centered
+        closeOnClickOutside={false}
       >
-        <div className="w-[40vw] h-[80vh] flex flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative">
+        <div className="w-[40vw] h-[800px] flex flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative overflow-y-auto">
           <div className="absolute top-3 right-3 m-4 text-center mt-0">
             <button
               onClick={onClose}
@@ -50,7 +91,9 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
           </div>
 
           <div className="flex flex-col gap-2 text-center font-bold mb-4">
-            <h2 className="text-2xl font-bold text-primaryText">Add new report</h2>
+            <h2 className="text-2xl font-bold text-primaryText">
+              Add new report
+            </h2>
           </div>
 
           <form
@@ -59,17 +102,17 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
           >
             <div className="flex flex-col gap-2">
               <label htmlFor="name" className="font-semibold">
-                Report name
+                Report title
               </label>
               <div className="relative w-full">
                 <input
                   type="text"
                   id="name"
-                  placeholder="Type in report name"
-                  name="name"
-                  value={form.values.name}
+                  placeholder="Type in report title"
+                  name="title"
+                  value={form.values.title}
                   onChange={handleChange}
-                  className="w-full bg-gray-100 p-4 py-2 rounded-xl pl-8 outline-primary transition-all duration-150"
+                  className="w-full bg-gray-100 p-4 py-2 rounded-xl pl-4 outline-primary transition-all duration-150"
                   required
                 />
               </div>
@@ -94,6 +137,22 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
               </div>
             </div>
 
+            <div className="flex flex-col gap-2">
+              <label htmlFor="call" className="font-semibold">
+                Call
+              </label>
+              <div className="relative w-full">
+                <Select
+                  data={callsSelector}
+                  className="w-full bg-gray-100 p-4 py-2 rounded-xl pl-2 outline-primary transition-all duration-150"
+                  onChange={(e: any) =>
+                    form.setValues({ ...form.values, call: e.value })
+                  }
+                  value={form.values.call}
+                />
+              </div>
+            </div>
+
             <div className="w-full flex space-x-4">
               <div className="w-1/2">
                 <label
@@ -108,8 +167,8 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
                   </span>
                   <input
                     type="date"
-                    name="startDate"
-                    value={form.values.startDate}
+                    name="start_date"
+                    value={form.values.start_date}
                     onChange={handleChange}
                     className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     required
@@ -130,8 +189,8 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
                   </span>
                   <input
                     type="date"
-                    name="endDate"
-                    value={form.values.endDate}
+                    name="end_date"
+                    value={form.values.end_date}
                     onChange={handleChange}
                     className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     required
@@ -147,31 +206,35 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
               >
                 Attachment
               </label>
-              <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <div className="flex mt-1 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <label
                   htmlFor="file-upload"
-                  className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+                  className="flex flex-col items-center justify-center space-y-2 cursor-pointer w-full h-full p-4"
                 >
                   <Upload className="text-[#005DE9] w-64 h-64 " />
                   <div className="text-center">
                     <p className="text-md text-gray-500">Upload file</p>
                     <p className="text-md text-gray-400">or drag and drop</p>
                   </div>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    name="report"
+                    onChange={handleChange}
+                    style={{ display: "none" }}
+                    required
+                  />
                 </label>
-                <input
-                  id="file-upload"
-                  type="file"
-                  name="file"
-                  onChange={handleChange}
-                  style={{ display: "none" }}
-                  required
-                />
               </div>
             </div>
 
-            <div className="border mt-4 text-center bg-primary rounded-full p-2 text-white font-semibold text-xl">
-              <input type="submit" value="Add new report" />
-            </div>
+            {/* <div className="border mt-4 text-center bg-primary rounded-full p-2 text-white font-semibold text-xl"> */}
+            <input
+              type="submit"
+              value="Add new report"
+              className="border mt-4 text-center bg-primary rounded-full p-2 text-white font-semibold text-xl"
+            />
+            {/* </div> */}
           </form>
         </div>
       </Modal>

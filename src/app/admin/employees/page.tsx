@@ -55,10 +55,7 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <Actions
-          employee={row.original}
-          setIsEmployee={setIsOpenEmployee}
-        />
+        <Actions employee={row.original} setIsEmployee={setIsOpenEmployee} />
       ),
     },
   ];

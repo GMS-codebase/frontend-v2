@@ -10,7 +10,9 @@ import {
   getApplications,
   getCalls,
   getEmployees,
+  getMEReports,
   getMyProfile,
+  getProfile,
   getSectors,
   getTrades,
   getWindows,
@@ -40,6 +42,8 @@ const Navbar = () => {
     getEmployees(dispatch);
     getMyProfile(dispatch);
     getApplications(dispatch);
+    getMEReports(dispatch);
+    getProfile(dispatch);
   }, []);
 
   const auth = useSelector((state: any) => state.auth);

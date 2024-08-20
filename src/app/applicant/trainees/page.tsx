@@ -7,7 +7,6 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { applicantContacts as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
 
-
 const Page = () => {
   const [isOpenAddEditContact, { open, close }] = useDisclosure(false);
   const columns: ColumnDef<any>[] = [
