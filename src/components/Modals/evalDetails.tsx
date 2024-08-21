@@ -6,57 +6,55 @@ import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { Folder2, Subtitles } from "solar-icon-set";
-import { SolarDocumentBold } from "@/components/core/icons/index";
+import {SolarDocumentBold} from "@/components/core/icons/index"
 
 const EvalDetails = ({
-    isOpenAddEval,
-    closeAddEval,
+  isOpenAddEval,
+  closeAddEval,
 }: {
-    isOpenAddEval: boolean;
-    closeAddEval: () => void;
+  isOpenAddEval: boolean;
+  closeAddEval: () => void;
 }) => {
-    const dispatch = useDispatch();
-    const [formData, setFormData] = useState({
-        title: "",
-        description: "",
-    });
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+  });
 
-    const handleChange = (e: { target: { name: any; value: any } }) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
+  const handleChange = (e: { target: { name: any; value: any } }) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
-    const handleSubmit = (e: { preventDefault: () => void }) => {
-        e.preventDefault();
-        authorizedApi
-            .post("/window/create", formData)
-            .then((res) => {
-                notifications.show({
-                    message: "Window is created successfully",
-                    color: "blue",
-                });
-                dispatch({
-                    type: ADD_WINDOW_SUCCESS,
-                    payload: res.data?.data?.data,
-                });
-                setFormData({
-                    title: "",
-                    description: "",
-                });
-                closeAddEval();
-            })
-            .catch((err) => {
-                notifications.show({
-                    message:
-                        err.response?.data?.message ??
-                        "Failed to create window!",
-                    color: "red",
-                });
-            });
-    };
+  const handleSubmit = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    authorizedApi
+      .post("/window/create", formData)
+      .then((res) => {
+        notifications.show({
+          message: "Window is created successfully",
+          color: "blue",
+        });
+        dispatch({
+          type: ADD_WINDOW_SUCCESS,
+          payload: res.data?.data?.data,
+        });
+        setFormData({
+          title: "",
+          description: "",
+        });
+        closeAddEval();
+      })
+      .catch((err) => {
+        notifications.show({
+          message: err.response?.data?.message ?? "Failed to create window!",
+          color: "red",
+        });
+      });
+  };
 
     return (
         <>
@@ -96,7 +94,7 @@ const EvalDetails = ({
                                     </label>
                                     <div className="w-full relative">
                                         <span className="absolute left-2 top-[10px]">
-                                            <SolarDocumentBold />
+                                            <SolarDocumentBold/>
                                         </span>
                                         <select
                                             name="title"
@@ -122,47 +120,47 @@ const EvalDetails = ({
                                 </div>
                             </div>
 
-                            <div className="">
-                                <label
-                                    htmlFor="description"
-                                    className="block text-sm  text-gray-700"
-                                >
-                                    Comment
-                                </label>
-                                <div className="w-full relative">
-                                    <input
-                                        type="text"
-                                        name="description"
-                                        value={formData.description}
-                                        placeholder="provide a commet"
-                                        onChange={handleChange}
-                                        className="mt-1 block te w-full pb-28 pt-2 pl-8 px-6  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="w-full flex justify-center mt-4 space-x-4">
-                                <button
-                                    type="button"
-                                    onClick={closeAddEval}
-                                    className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                >
-                                    Make Decision
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+              <div className="">
+                <label
+                  htmlFor="description"
+                  className="block text-sm  text-gray-700"
+                >
+                  Comment
+                </label>
+                <div className="w-full relative">
+                  <input
+                    type="text"
+                    name="description"
+                    value={formData.description}
+                    placeholder="provide a commet"
+                    onChange={handleChange}
+                    className="mt-1 block te w-full pb-28 pt-2 pl-8 px-6  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
+                    required
+                  />
                 </div>
-            </Modal>
-        </>
-    );
+              </div>
+
+              <div className="w-full flex justify-center mt-4 space-x-4">
+                <button
+                  type="button"
+                  onClick={closeAddEval}
+                  className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Make Decision
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </Modal>
+    </>
+  );
 };
 
 export default EvalDetails;

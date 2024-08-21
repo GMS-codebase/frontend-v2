@@ -39,7 +39,7 @@ const AssignedStage = ({
 }) => {
   return (
     <div className="w-full flex justify-between items-center bg-[#000F230A] p-3 rounded-xl">
-      <h1 className="font-bold text-lg">{stage.name}</h1>
+      <h1 className="font-bold text-lg">{stage.stage}</h1>
       <Menu shadow="lg" width={250}>
         <Menu.Target>
           <button
@@ -104,9 +104,11 @@ const EmployeeDetails = () => {
     openMakeManager: false,
     level: "",
   });
-  const {employees} = useSelector((state: any)=> state.employees);
-  const {id: employeeId} = useParams()
-  const employee = employees.filter((employee: any) => employee.uuid === employeeId);
+  const { employees } = useSelector((state: any) => state.employees);
+  const { id: employeeId } = useParams();
+  const employee = employees.filter(
+    (employee: any) => employee.uuid === employeeId,
+  );
   console.log(employees);
   console.log("employee", employee);
   return (
@@ -183,7 +185,7 @@ const EmployeeDetails = () => {
           </button>
         </div>
         <div className="flex flex-col gap-3 mt-5">
-          {assignedStages.map((stage: any, index: number) => {
+          {employee[0]?.emp_stages?.map((stage: any, index: number) => {
             return (
               <AssignedStage open={setIsOpenStage} key={index} stage={stage} />
             );
@@ -195,8 +197,13 @@ const EmployeeDetails = () => {
         isOpenUpdateEmployee={isUpdate}
         closeUpdateEmployee={() => setIsUpdate(false)}
       />
-      <AssignStage employee={employee} isAssignStage={isAssignStage} closeAssignStage={close} />
+      <AssignStage
+        employee={employee}
+        isAssignStage={isAssignStage}
+        closeAssignStage={close}
+      />
       <MakeManager
+        employee={employee}
         isOpenMakeManager={isOpenStage.openMakeManager}
         closeMakeManager={() =>
           setIsOpenStage({
@@ -208,6 +215,7 @@ const EmployeeDetails = () => {
         level={isOpenStage.level}
       />
       <RemoveFromStage
+        employee={employee}
         isOpen={isOpenStage.openDelete}
         closeRemoveEmployee={() =>
           setIsOpenStage({

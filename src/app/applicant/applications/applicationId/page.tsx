@@ -18,12 +18,12 @@ const Page = () => {
         <div className="flex flex-col gap-6  text-black">
           <div className="flex justify-between">
             <div className="text-xl font-bold">Call Info</div>
-             <div className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center">
-            <span>
-              <SolarDownloadMinimalisticBold />
-            </span>
-            <p>View application instructions</p>
-          </div>
+            <div className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center">
+              <span>
+                <SolarDownloadMinimalisticBold />
+              </span>
+              <p>View application instructions</p>
+            </div>
           </div>
           <div className="flex justify-between w-3/5  font-semibold ">
             <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
