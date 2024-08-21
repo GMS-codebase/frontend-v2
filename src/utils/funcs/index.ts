@@ -48,7 +48,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     .get("/auth/me")
     .then((res) => {
       console.log(res.data.data);
-      dispatch({ type: SET_USER_PROFILE, payload: res.data.data.message }); //Todo: change this only when the BEs change the response schema
+      dispatch({ type: SET_USER_PROFILE, payload: res.data.data.data });
     })
     .catch((err) => {
       dispatch({ type: GET_SECTORS_ERROR, payload: err.response.data.error });
@@ -93,7 +93,8 @@ export const getEmployees = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/employee/all")
     .then((res) => {
-      dispatch({ type: GET_EMPLOYEES_SUCCESS, payload: res.data.data.message }); //Todo: change this only when the BEs change the response schema
+
+      dispatch({ type: GET_EMPLOYEES_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
       dispatch({ type: GET_EMPLOYEES_ERROR, payload: err.response.data.error });
@@ -106,8 +107,8 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
     .then((res) => {
       dispatch({
         type: GET_APPLICANTS_SUCCESS,
-        payload: res.data.data.message,
-      }); //Todo: change this only when the BEs change the response schema
+        payload: res.data.data.data,
+      });
     })
     .catch((err) => {
       dispatch({
