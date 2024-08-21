@@ -7,12 +7,12 @@ import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 import Link from "next/link";
 
-const EmployeeActions = ({
-  employee,
-  setIsEmployee,
+const CallsActions = ({
+  call,
+  setIsCall,
 }: {
-  setIsEmployee: (employee: any) => void;
-  employee: any;
+  setIsCall: (employee: any) => void;
+  call: any;
 }) => {
   return (
     <div className="">
@@ -35,7 +35,7 @@ const EmployeeActions = ({
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
             <Link
-              href={`/admin/employees/${employee.uuid}`}
+              href={`/admin/calls/${call?.uuid}`}
               className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
             >
               <FiEye size={21} color="#576074" />
@@ -45,10 +45,10 @@ const EmployeeActions = ({
           <Menu.Item>
             <div
               onClick={() =>
-                setIsEmployee({
+                setIsCall({
                   openUpdate: true,
                   openDelete: false,
-                  employee: employee,
+                  call: call,
                 })
               }
               className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
@@ -60,10 +60,10 @@ const EmployeeActions = ({
           <Menu.Item>
             <div
               onClick={() =>
-                setIsEmployee({
+                setIsCall({
                   openDelete: true,
                   openUpdate: false,
-                  employee: employee,
+                  call: call,
                 })
               }
               className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
@@ -78,4 +78,4 @@ const EmployeeActions = ({
   );
 };
 
-export default EmployeeActions;
+export default CallsActions;
