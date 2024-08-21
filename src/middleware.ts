@@ -30,39 +30,39 @@ export const checkToken = (token: string) => {
 };
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("token");
-  if (whitelist.includes(request.nextUrl.pathname) && !token) {
+  // const token = request.cookies.get("token");
+  // if (whitelist.includes(request.nextUrl.pathname) && !token) {
+  //   return NextResponse.next();
+  // }
+  // if (!token) {
+  //   return NextResponse.redirect(new URL("/", request.url));
+  // }
+  // try {
+  //   const decoded: any = jwtDecode(token.value);
+  //   const isExpired = decoded.exp * 1000 < Date.now();
+  //   if (isExpired && !whitelist.includes(request.nextUrl.pathname)) {
+  //     request.cookies.delete("token");
+  //     return NextResponse.redirect(new URL("/", request.url));
+  //   }
+  //   const role = decoded?.role;
+  //   const nextUrl = getRolePath(role ?? "");
+  //   if (whitelist.includes(request.nextUrl.pathname)) {
+  //     return NextResponse.redirect(new URL(nextUrl, request.url));
+  //   }
+  //   if (request.nextUrl.pathname === "/") {
+  //     console.log("The next url is /");
+  //     return NextResponse.redirect(new URL(nextUrl, request.url));
+  //   }
+  //   const roleInRoute = request.nextUrl.pathname.split("/")[1].toUpperCase();
+  //   if (roles.includes(roleInRoute as Role) && role !== roleInRoute) {
+  //     console.log(nextUrl);
+  //     return NextResponse.redirect(new URL(nextUrl, request.url));
+  //   }
     return NextResponse.next();
-  }
-  if (!token) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-  try {
-    const decoded: any = jwtDecode(token.value);
-    const isExpired = decoded.exp * 1000 < Date.now();
-    if (isExpired && !whitelist.includes(request.nextUrl.pathname)) {
-      request.cookies.delete("token");
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-    const role = decoded?.role;
-    const nextUrl = getRolePath(role ?? "");
-    if (whitelist.includes(request.nextUrl.pathname)) {
-      return NextResponse.redirect(new URL(nextUrl, request.url));
-    }
-    if (request.nextUrl.pathname === "/") {
-      console.log("The next url is /");
-      return NextResponse.redirect(new URL(nextUrl, request.url));
-    }
-    const roleInRoute = request.nextUrl.pathname.split("/")[1].toUpperCase();
-    if (roles.includes(roleInRoute as Role) && role !== roleInRoute) {
-      console.log(nextUrl);
-      return NextResponse.redirect(new URL(nextUrl, request.url));
-    }
-    return NextResponse.next();
-  } catch (error) {
-    request.cookies.delete("token");
-    return NextResponse.redirect(new URL("/", request.url));
-  }
+  // } catch (error) {
+  //   request.cookies.delete("token");
+  //   return NextResponse.redirect(new URL("/", request.url));
+  // }
 }
 
 export const config = {
