@@ -123,7 +123,7 @@ const AddContract = ({
               { value: "octave", label: "Iradukunda Octave" },
           
             ]}
-            placeholder="Select file"
+            placeholder="Select applicant name"
             required
           />
         </div>
