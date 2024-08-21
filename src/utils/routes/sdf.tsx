@@ -10,14 +10,14 @@ const sdfRoutes: Route[] = [
   },
   {
     label: "M&E Reports",
-    path: "/admin/reports/m_and_e",
+    path: "/sdf/reports/m_and_e",
     icon: <Icons.SolarFileBold />,
   },
   {
     label: "Profile",
     path: "/sdf/profile",
-    icon: <Icons.SolarUserCircleBold />,
-  },
+    icon: <Icons.SolarUserCircleBold />
+  }
 ];
 
 export default sdfRoutes;
