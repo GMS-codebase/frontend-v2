@@ -1,6 +1,7 @@
 "use client";
 import * as Icons from "@/components/core/icons";
 import { Route } from "@/types";
+import { PeopleNearby } from "solar-icon-set";
 
 const applicantRoutes: Route[] = [
   {
@@ -17,6 +18,11 @@ const applicantRoutes: Route[] = [
     label: "Applicant Contracts",
     path: "/applicant/contracts",
     icon: <Icons.SolarDocumentBold />,
+  },
+  {
+    label: "Trainees",
+    path: "/applicant/trainees",
+    icon: <Icons.SolarUsersGroupTwoRoundedBold />,
   },
   {
     label: "Profile",

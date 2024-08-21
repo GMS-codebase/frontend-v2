@@ -31,6 +31,21 @@ import {
   GET_EMPLOYEES_LOADING,
   GET_EMPLOYEES_SUCCESS,
 } from "@/actions/EmployeesActions";
+import {
+  GET_APPLICATIONS_ERROR,
+  GET_APPLICATIONS_LOADING,
+  GET_APPLICATIONS_SUCCESS,
+} from "@/actions/ApplicationsActions";
+import {
+  GET_MEREPORTS_ERROR,
+  GET_MEREPORTS_LOADING,
+  GET_MEREPORTS_SUCCESS,
+} from "@/actions/MEReportsActions";
+import {
+  GET_PROFILE_ERROR,
+  GET_PROFILE_LOADING,
+  GET_PROFILE_SUCCESS,
+} from "@/actions/ProfileActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -93,7 +108,6 @@ export const getEmployees = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/employee/all")
     .then((res) => {
-
       dispatch({ type: GET_EMPLOYEES_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
@@ -118,13 +132,44 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplications = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_TRADES_LOADING });
+  dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
     .get("/application")
     .then((res) => {
-      dispatch({ type: GET_TRADES_SUCCESS, payload: res.data.data });
+      dispatch({ type: GET_APPLICATIONS_SUCCESS, payload: res.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_TRADES_ERROR, payload: err.response.data.error });
+      dispatch({
+        type: GET_APPLICATIONS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getMEReports = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_MEREPORTS_LOADING });
+  authorizedApi
+    .get("/report")
+    .then((res) => {
+      dispatch({ type: GET_MEREPORTS_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MEREPORTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_PROFILE_LOADING });
+  authorizedApi
+    .get("/auth/me")
+    .then((res) => {
+      dispatch({ type: GET_PROFILE_SUCCESS, payload: res.data?.data?.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_PROFILE_ERROR,
+        payload: err.response.data.error ?? "Network Error",
+      });
     });
 };

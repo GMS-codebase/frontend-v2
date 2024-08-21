@@ -1,16 +1,6 @@
 "use client";
 import React from "react";
-import DonutChart from "../../../../components/chart/DonutChart";
-import {
-  SolarPen2Bold,
-  SolarAddFolderBold,
-  SolarShieldWarningBold,
-  SolarClockSquareBold,
-  SolarBookmarkBold,
-  SolarCalendarBold,
-  SolarSubtitlesBold,
-  SolarDownloadMinimalisticBold,
-} from "@/components/core/icons";
+import { SolarPen2Bold } from "@/components/core/icons";
 import ApplicantTable from "./IndexTable";
 const Page = () => {
   return (
