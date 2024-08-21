@@ -75,25 +75,27 @@ const Page = () => {
                   />
               </div>
               <div className="flex items-center gap-3">
-                  <div className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white">
-                      <span>
-                          <SolarFileBold />
-                      </span>
-                      <div>Export Report</div>
-                  </div>
-                  <div className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white" onClick={openReport}>
-                      <span>
-                          <SolarFileBold />
-                      </span>
-                      <div>Add new Report</div>
-                  </div>
-                  <div className="w-44">
+                      <div className="w-44">
                       <FilterDropDown
                           placeholderText="Filter By Call"
                           data={Array.from(
                               new Set(data.map((item) => item.call))
                           )}
                       />
+                  </div>
+             
+                  <div className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white" onClick={openReport}>
+                      <span>
+                          <SolarFileBold />
+                      </span>
+                      <div>Add new Report</div>
+                  </div>
+            
+                       <div className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white">
+                      <span>
+                          <SolarFileBold />
+                      </span>
+                      <div>Export Report</div>
                   </div>
               </div>
           </div>

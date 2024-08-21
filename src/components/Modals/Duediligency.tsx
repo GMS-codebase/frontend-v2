@@ -6,8 +6,8 @@ import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { SolarUploadBold } from "../core/icons";
-import { SolarDocumentsLinear } from "@/components/core/icons/index";
-import TextAreas from "../ApplicantDetails/TextAreas";
+import { SolarDocumentBold } from "@/components/core/icons/index";
+import TextArea from "../ApplicantDetails/TextArea";
 
 const DueDetails = ({
     isOpenAddDue,
@@ -95,7 +95,7 @@ const DueDetails = ({
                                 </label>
                                 <div className="w-full relative">
                                     <span className="absolute left-2 top-[10px]">
-                                        <SolarDocumentsLinear />
+                                        <SolarDocumentBold/>
                                     </span>
                                     <select
                                         name="title"
@@ -157,7 +157,7 @@ const DueDetails = ({
                                 Finance info
                             </h3>
                             <div className="text-gray-400">
-                                <TextAreas />
+                                <TextArea />
                             </div>
                         </div>
                         <div className="flex flex-col ">
@@ -165,13 +165,13 @@ const DueDetails = ({
                                 OHS Information
                             </h3>
                             <div className="text-gray-400">
-                                <TextAreas />
+                                <TextArea />
                             </div>
                         </div>
                         <div className="flex flex-col ">
                             <h3 className="font-semibold text-sm">Equipment</h3>
                             <div className="text-gray-400">
-                                <TextAreas />
+                                <TextArea />
                             </div>
                         </div>
                         <div className="flex flex-col ">
@@ -179,7 +179,7 @@ const DueDetails = ({
                                 Work Place
                             </h3>
                             <div className="font-semibold text-sm">
-                                <TextAreas />
+                                <TextArea />
                             </div>
                         </div>
                         <div className="flex flex-col ">
@@ -187,13 +187,13 @@ const DueDetails = ({
                                 OHS Information
                             </h3>
                             <div className="font-semibold text-sm">
-                                <TextAreas />
+                                <TextArea />
                             </div>
                         </div>
                         <div className="flex flex-col">
                             <h3 className="font-semibold text-sm">Comment</h3>
                             <div className="text-gray-400">
-                                <TextAreas />
+                                <TextArea />
                             </div>
                         </div>
 
