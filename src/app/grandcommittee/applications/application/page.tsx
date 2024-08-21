@@ -8,16 +8,22 @@ import {
     SolarFolder2Bold,
     SolarEyeLinear,
 } from "@/components/core/icons";
-import EvalDetails from "@/components/Modals/evalDetails"; // Import EvalDetails
+import DecisionDetails from "@/components/Modals/DecisionDetails"; // Corrected import
+import DueDetails from "@/components/Modals/DueDiigence"; // Corrected import path and typo
 
 const Page = () => {
     const [currentComponent, setCurrentComponent] = useState<
         "Project" | "IndicativeBudget"
     >("Project");
 
-    const [isOpenAddEval, setIsOpenAddEval] = useState(false); // Modal state
-    const openAddEval = () => setIsOpenAddEval(true); // Function to open modal
-    const closeAddEval = () => setIsOpenAddEval(false); // Function to close modal
+    const [isOpenAddDue, setIsOpenAddDue] = useState(false); // Updated naming consistency
+    const [isOpenAddEval, setIsOpenAddEval] = useState(false);
+
+    const openAddDue = () => setIsOpenAddDue(true);
+    const closeAddDue = () => setIsOpenAddDue(false);
+
+    const openAddEval = () => setIsOpenAddEval(true);
+    const closeAddEval = () => setIsOpenAddEval(false);
 
     const renderComponent = () => {
         switch (currentComponent) {
@@ -65,7 +71,7 @@ const Page = () => {
                         </div>
                     </div>
                     <div className="flex flex-col justify-start items-start gap-6 font-semibold">
-                        <div className="flex gap-6justify-center items-center">
+                        <div className="flex gap-6 justify-center items-center">
                             <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                                 Call
                             </p>
@@ -77,7 +83,7 @@ const Page = () => {
                             </p>
                             <p>Window 1: Rapid response training</p>
                         </div>
-                        <div className="flex  justify-center items-center gap-6">
+                        <div className="flex justify-center items-center gap-6">
                             <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                                 Application submission deadline
                             </p>
@@ -109,7 +115,7 @@ const Page = () => {
                 </div>
             </div>
             <div className="flex gap-2">
-                <div className="flex bg-white rounded-2xl w-[70%] gap-4  p-5">
+                <div className="flex bg-white rounded-2xl w-[70%] gap-4 p-5">
                     <div className="flex flex-col gap-4 w-full">
                         <div className="font-semibold text-2xl">
                             Questions and answers
@@ -142,38 +148,61 @@ const Page = () => {
                     </div>
                 </div>
                 <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
-                    <h2 className="font-bold">Decision</h2>
-                    <div className="flex flex-col gap-2">
-                        <h3 className="font-semibold">Evaluation Stage</h3>
-                        <div className="font-medium bg-slate-400 bg-opacity-10 text-black w-fit justify-start items-center rounded-full px-4 py-2">
-                            Pending
-                        </div>
-                        <div
-                            onClick={openAddEval} // Open modal on click
-                            className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
-                        >
-                            <p>Make a decision</p>
+                    <div>
+                        <h2 className="font-bold">Decision</h2>
+                        <div className="flex flex-col gap-2">
+                            <h3 className="font-semibold">Evaluation Stage</h3>
+                            <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
+                                Proposal Approved
+                            </div>
+                            <div
+                                onClick={openAddEval} // Open modal on click
+                                className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                            >
+                                <span>
+                                    <SolarEyeLinear />
+                                </span>
+                                <p>details</p>
+                            </div>
+                            <div className="flex gap-2 items-center justify-center bg-[#E90000] bg-opacity-15 text-[#E90000] rounded-full px-2 py-2 w-full">
+                                <span className="text-[#E90000] ">
+                                    <IoMdClose size={25} color={"#000"} />
+                                </span>
+                                <p>Revert decision</p>
+                            </div>
                         </div>
                     </div>
+
                     <div className="flex flex-col gap-2">
-                        <h3 className="font-bold">DueDiligency Stage</h3>
-                        <div className="font-medium bg-slate-400 bg-opacity-10 text-black w-fit justify-start items-center rounded-full px-4 py-2">
-                            Pending
+                        <h3 className="font-bold">DueDiligence Stage</h3>{" "}
+                        {/* Updated Stage name */}
+                        <div
+                            className="font-medium bg-[#C50000]  text-white w-fit justify-start items-center rounded-full px-4 py-2"
+                        >
+                            Proposal Rejected
                         </div>
                         <div
-                            onClick={openAddEval} // Open modal on click
-                            className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                            className="font-medium bg-[#005DE9]  text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                            onClick={openAddDue} // Open due diligence modal
                         >
-                            <p>Make a decision</p>
+                            <span>
+                                <SolarEyeLinear />
+                            </span>
+                            <p>details</p>
+                        </div>
+                        <div className="flex gap-2 items-center justify-center bg-[#E90000] bg-opacity-15 text-[#E90000] rounded-full px-2 py-2 w-full">
+                            <span className="text-[#E90000] ">
+                                <IoMdClose size={25} color={"#000"} />
+                            </span>
+                            <p>Revert decision</p>
                         </div>
                     </div>
                 </div>
             </div>
-
-            {/* Include EvalDetails modal */}
-            <EvalDetails
-                isOpenAddEval={isOpenAddEval}
-                closeAddEval={closeAddEval}
+            <DueDetails opened={isOpenAddDue} close={closeAddDue} />
+            <DecisionDetails
+                opened={isOpenAddEval}
+                close={closeAddEval}
             />
         </div>
     );

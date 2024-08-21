@@ -16,33 +16,66 @@ import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 import { getEmployees } from "@/utils/funcs";
 
 const Page = () => {
-    const [
-        isOpenAddEmployee,
-        { open: openAddEmployee, close: closeAddEmployee },
-    ] = useDisclosure(false);
-    const [isOpenAddRole, { open: openAddRole, close: closeAddRole }] =
-        useDisclosure(false); // Manage the state for the NewRoleModal
-    const employees = useSelector((state: any) => state.employees);
-    const [isOpenEmployee, setIsOpenEmployee] = useState({
-        openUpdate: false,
-        openDelete: false,
-        employee: null,
-    });
-    const dispatch = useDispatch();
-
-    const columns: ColumnDef<any>[] = [
-        // ... (other columns)
-        {
-            accessorKey: "actions",
-            header: "Actions",
-            cell: ({ row }) => (
-                <Actions
-                    employee={isOpenEmployee.employee}
-                    setIsEmployee={setIsOpenEmployee}
-                />
-            ),
-        },
-    ];
+  const [isOpenAddEmployee, { open:openAddEmployee, close:closeAddEmployee }] = useDisclosure(false);
+  const [isOpenAddRole, { open:openAddRole, close:closeAddRole }] = useDisclosure(false);
+  const employees = useSelector((state: any) => state.employees);
+  console.log(employees);
+  const [isOpenEmployee, setIsOpenEmployee] = useState({
+    openUpdate: false,
+    openDelete: false,
+    employee: null,
+  });
+  const columns: ColumnDef<any>[] = [
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => <div>{row.original?.name}</div>,
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+      cell: ({ row }) => <div>{row.original?.email}</div>,
+    },
+    {
+      accessorKey: "phone",
+      header: "Phone",
+      cell: ({ row }) => <div>{row.original?.phone}</div>,
+    },
+    {
+      accessorKey: "nationalId",
+      header: "National Id",
+      cell: ({ row }) => <div>{row.original?.nationalId}</div>,
+    },
+    {
+      accessorKey: "title",
+      header: "Title",
+      cell: ({ row }) => <div>{row.original?.title}</div>,
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <Actions
+          employee={row.original}
+          setIsEmployee={setIsOpenEmployee}
+        />
+      ),
+    },
+  ];
+  const dispatch = useDispatch();
+  return (
+    <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
+      <div className="w-full flex justify-between items-center p-4">
+        <div className="relative w-[25rem]">
+          <span className="absolute top-4 left-4">
+            <CiSearch size={25} />
+          </span>
+          <input
+            name="search"
+            className="w-full p-3 py-4 pl-12 text-base placeholder:text-black text-black rounded-full bg-[#005DE908] border-none outline-none"
+            placeholder="Search"
+          />
+        </div>
 
     return (
         <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
@@ -127,7 +160,9 @@ const Page = () => {
             />
             <NewRoleModal isOpen={isOpenAddRole} onClose={closeAddRole} />
         </div>
+      </div>
+      </div>
     );
-};
+}
 
 export default Page;

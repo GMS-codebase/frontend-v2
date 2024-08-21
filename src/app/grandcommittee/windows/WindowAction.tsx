@@ -7,12 +7,12 @@ import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 import Link from "next/link";
 
-const EmployeeActions = ({
-  employee,
-  setIsEmployee,
+const WindowsActions = ({
+  Window,
+  setIsWindow,
 }: {
-  setIsEmployee: (employee: any) => void;
-  employee: any;
+  setIsWindow: (Window: any) => void;
+  Window: any;
 }) => {
   return (
     <div className="">
@@ -35,7 +35,7 @@ const EmployeeActions = ({
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
             <Link
-              href={`/admin/employees/${employee.uuid}`}
+              href={`/admin/windows/${Window.uuid}`}
               className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
             >
               <FiEye size={21} color="#576074" />
@@ -45,25 +45,25 @@ const EmployeeActions = ({
           <Menu.Item>
             <div
               onClick={() =>
-                setIsEmployee({
-                  openUpdate: true,
+                setIsWindow({
                   openDelete: false,
-                  employee: employee,
+                  openUpdate: true,
+                  window: Window,
                 })
               }
               className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
             >
               <CiEdit size={21} color="#576074" />
-              Edit
+              Edit Window
             </div>
           </Menu.Item>
           <Menu.Item>
             <div
               onClick={() =>
-                setIsEmployee({
+                setIsWindow({
                   openDelete: true,
                   openUpdate: false,
-                  employee: employee,
+                  window: Window,
                 })
               }
               className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
@@ -78,4 +78,4 @@ const EmployeeActions = ({
   );
 };
 
-export default EmployeeActions;
+export default WindowsActions;
