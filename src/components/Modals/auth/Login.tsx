@@ -58,10 +58,7 @@ const LoginModal = ({
             ? null
             : "Invalid email"
           : "Email is required",
-      password: (value) =>
-        value
-          ? null
-          : "Password is required",
+      password: (value) => (value ? null : "Password is required"),
     },
   });
 
