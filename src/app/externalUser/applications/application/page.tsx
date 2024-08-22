@@ -7,7 +7,6 @@ import EvalDetails from "@/components/Modals/evalDetails";
 import {
   SolarFileBold,
   SolarFolder2Bold,
-  SolarEyeLinear,
 } from "@/components/core/icons";
 import { useDisclosure } from "@mantine/hooks";
 const Page = () => {
