@@ -1,36 +1,32 @@
 import { Checkbox, Modal, Select, Stepper } from "@mantine/core";
 import Image from "next/image";
-import {useState } from "react";
+import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import SideVector1 from "@/assets/Vectors/sidevecto.svg";
 import SideVector2 from "@/assets/Vectors/sidevector2.svg";
-import {User} from "solar-icon-set";
-import {Upload} from "solar-icon-set";
-import {
-  CalendarMinimalistic,
-  Folder2,
-  ShieldWarning,
-} from "solar-icon-set";
+import { User } from "solar-icon-set";
+import { Upload } from "solar-icon-set";
+import { CalendarMinimalistic, Folder2, ShieldWarning } from "solar-icon-set";
 
 type FormData = {
-  TIN: string;
-  regNo: string;
-  year: string;
-  date: string;
-  business: string;
-  position: string;
-  isInternal: boolean | undefined;
-  email:string,
-  box:string,
-  phone:string,
-  bank:string,
-  employee:string,
-  address:string,
-  district:string,
-  province:string,
-  sector:string,
-  cell:string,
-  village:string,
+  tin: string;
+  year_of_placement: string;
+  business_type: number;
+  reg_no_or_school_code: string;
+  reg_date: string;
+  is_private: boolean;
+  employee_number: number;
+  bank_name: string;
+  bank_account: string;
+  business_phone: string;
+  email: string;
+  po_box: string;
+  business_address: string;
+  province: string;
+  district: string;
+  sector: string;
+  cell: string;
+  village: string;
 };
 
 const CompleteProfile = ({
@@ -40,49 +36,102 @@ const CompleteProfile = ({
   isOpenCompleteProfile: boolean;
   closeCompleteProfile: () => void;
 }) => {
-
-const [active, setActive] = useState(0);
+  const [active, setActive] = useState(0);
+  const [selectedInfo, setSelectedInfo] = useState("call");
   const [formData, setFormData] = useState<FormData>({
-    TIN: "",
-    regNo: "",
-    year: "",
-    date: "",
-    business: "",
-    position: "",
-    isInternal: undefined,
-    email:"",
-    box:"",
-    phone:'',
-    bank:"",
-    employee:"",
-    address:"",
-    sector:"",
-    cell:"",
-    province:"",
-    district:"",
-    village:"",
+    tin: "",
+    year_of_placement: "",
+    business_type: 0,
+    reg_no_or_school_code: "",
+    reg_date: "",
+    is_private: false,
+    employee_number: 0,
+    bank_name: "",
+    bank_account: "",
+    business_phone: "",
+    email: "",
+    po_box: "",
+    business_address: "",
+    province: "",
+    district: "",
+    sector: "",
+    cell: "",
+    village: "",
   });
-  const nextStep = () =>
-    setActive((current) => (current < 3 ? current + 1 : current));
-  const prevStep = () =>
+
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const validate = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (selectedInfo === "calls") {
+      if (!formData.tin) newErrors.tin = "TIN is required.";
+      if (!formData.year_of_placement)
+        newErrors.year_of_placement = "Year of placement is required.";
+      if (!formData.reg_no_or_school_code)
+        newErrors.reg_no_or_school_code =
+          "Registration number or school code is required.";
+      if (!formData.reg_date)
+        newErrors.reg_date = "Registration date is required.";
+      if (formData.is_private === undefined)
+        newErrors.is_private = "Private status is required.";
+      if (!formData.business_type)
+        newErrors.business_type = "Business type is required.";
+    } else if (selectedInfo === "category") {
+      if (!formData.sector) newErrors.sector = "Sector is required.";
+      if (!formData.province) newErrors.province = "Province is required.";
+      if (!formData.district) newErrors.district = "District is required.";
+      if (!formData.cell) newErrors.cell = "Cell is required.";
+      if (!formData.village) newErrors.village = "Village is required.";
+    } else if (selectedInfo === "timeline") {
+      if (!formData.employee_number)
+        newErrors.employee_number = "Employee number is required.";
+      if (!formData.business_phone)
+        newErrors.business_phone = "Business phone is required.";
+      if (!formData.po_box) newErrors.po_box = "PO Box is required.";
+      if (!formData.business_address)
+        newErrors.business_address = "Business address is required.";
+      if (!formData.bank_account)
+        newErrors.bank_account = "Bank account is required.";
+      if (!formData.bank_name) newErrors.bank_name = "Bank name is required.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validate()) {
+      setActive((current) => (current < 3 ? current + 1 : current));
+    }
+  };
+
+  const handlePrev = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
-  
- const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-  };
 
+    if (errors[name]) {
+      setErrors((prevErrors) => {
+        const updatedErrors = { ...prevErrors };
+        delete updatedErrors[name];
+        return updatedErrors;
+      });
+    }
+  };
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log("Form Data: ", formData);
+    if (validate()) {
+      console.log("Form Data: ", formData);
+    }
   };
-
-  const [selectedInfo, setSelectedInfo] = useState("call");
   return (
     <Modal
       size={"xl"}
@@ -102,36 +151,54 @@ const [active, setActive] = useState(0);
           <div className="w-[43%] flex flex-col items-start">
             <h1 className="text-2xl font-extrabold">Complete your profile</h1>
             <h2 className="text-[#000F2369] text-lg font-medium w-4/5">
-                Provide the below details to complete.
+              Provide the below details to complete.
             </h2>
           </div>
           <div className="w-[55%] flex items-center">
             <div
               onClick={() => setSelectedInfo("call")}
-              className={`w-1/3 flex justify-end ${selectedInfo === "call" ? "bg-[#005DE90A]" : ""}`}
+              className={`w-1/3 flex justify-end ${
+                selectedInfo === "call" ? "bg-[#005DE90A]" : ""
+              }`}
             >
               <button
-                className={`py-2 transition-all duration-300 text-xs w-full font-medium ${selectedInfo === "call" ? "border-b-2 border-[#005DE9] text-[#005DE9]" : ""}`}
+                className={`py-2 transition-all duration-300 text-xs w-full font-medium ${
+                  selectedInfo === "call"
+                    ? "border-b-2 border-[#005DE9] text-[#005DE9]"
+                    : ""
+                }`}
               >
                 Call Details
               </button>
             </div>
             <div
               onClick={() => setSelectedInfo("timeline")}
-              className={`w-1/3 flex justify-end ${selectedInfo === "timeline" ? "bg-[#005DE90A]" : ""}`}
+              className={`w-1/3 flex justify-end ${
+                selectedInfo === "timeline" ? "bg-[#005DE90A]" : ""
+              }`}
             >
               <button
-                className={`py-2 transition-all duration-200 text-xs w-full font-medium ${selectedInfo === "timeline" ? "border-b-2 border-[#005DE9] text-[#005DE9]" : ""}`}
+                className={`py-2 transition-all duration-200 text-xs w-full font-medium ${
+                  selectedInfo === "timeline"
+                    ? "border-b-2 border-[#005DE9] text-[#005DE9]"
+                    : ""
+                }`}
               >
                 Timeline Details
               </button>
             </div>
             <div
               onClick={() => setSelectedInfo("category")}
-              className={`w-1/3 flex justify-start ${selectedInfo === "category" ? "bg-[#005DE90A]" : ""}`}
+              className={`w-1/3 flex justify-start ${
+                selectedInfo === "category" ? "bg-[#005DE90A]" : ""
+              }`}
             >
               <button
-                className={`py-2 transition-all duration-300 text-xs w-full  font-medium ${selectedInfo === "category" ? "border-b-2 border-[#005DE9] text-[#005DE9]" : ""}`}
+                className={`py-2 transition-all duration-300 text-xs w-full  font-medium ${
+                  selectedInfo === "category"
+                    ? "border-b-2 border-[#005DE9] text-[#005DE9]"
+                    : ""
+                }`}
               >
                 Category Details
               </button>
@@ -141,10 +208,7 @@ const [active, setActive] = useState(0);
 
         <div className="w-11/12 flex flex-col items-center mt-4 overflow-hidden">
           {selectedInfo === "call" && (
-            <form
-              // onSubmit={handleSubmit}
-              className="w-full overflow-y-auto flex flex-col gap-2"
-            >
+            <div className="w-full overflow-y-auto flex flex-col gap-2">
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
                   <label
@@ -160,13 +224,16 @@ const [active, setActive] = useState(0);
                     <input
                       type="text"
                       name="TIN"
-                      value={formData.TIN}
+                      value={formData.tin}
                       placeholder="Call title"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       required
                     />
                   </div>
+                  {errors.tin && (
+                    <p className="text-red-500 text-sm">{errors.tin}</p>
+                  )}
                 </div>
                 <div className="w-full">
                   <label
@@ -182,7 +249,7 @@ const [active, setActive] = useState(0);
                     <input
                       type="number"
                       name="regNo"
-                      value={formData.regNo}
+                      value={formData.reg_no_or_school_code}
                       placeholder="Registration number"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -206,7 +273,7 @@ const [active, setActive] = useState(0);
                     <input
                       type="number"
                       name="year"
-                      value={formData.year}
+                      value={formData.year_of_placement}
                       placeholder="year of establishment"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -228,7 +295,7 @@ const [active, setActive] = useState(0);
                     <input
                       type="text"
                       name="TIN"
-                      value={formData.date}
+                      value={formData.reg_date}
                       placeholder="Registration Date"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -243,7 +310,7 @@ const [active, setActive] = useState(0);
                     htmlFor="TIN"
                     className="block text-xs font-bold text-gray-700"
                   >
-                  Business Type
+                    Business Type
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -252,90 +319,90 @@ const [active, setActive] = useState(0);
                     <input
                       type="text"
                       name="business"
-                      value={formData.business}
+                      value={formData.business_type}
                       placeholder="Type the business type"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       required
                     />
-                       <div className="w-full mt-5">
+                    <div className="w-full mt-5">
+                      <label
+                        htmlFor="position"
+                        className="block text-xs font-bold text-gray-700"
+                      >
+                        Is Internal
+                      </label>
+                      <div className="mt-1 pl-1 flex flex-col gap-2">
+                        <Checkbox
+                          label="Yes"
+                          checked={formData.is_private}
+                          onChange={(e: any) =>
+                            setFormData({ ...formData, is_private: true })
+                          }
+                        />
+                        <Checkbox
+                          label="No"
+                          checked={formData.is_private == false}
+                          onChange={(e: any) =>
+                            setFormData({ ...formData, is_private: false })
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full ">
                   <label
-                    htmlFor="position"
+                    htmlFor="fileUpload"
                     className="block text-xs font-bold text-gray-700"
                   >
-                    Is Internal
+                    Attachment
                   </label>
-                  <div className="mt-1 pl-1 flex flex-col gap-2">
-                    <Checkbox
-                      label="Yes"
-                      checked={formData.isInternal}
-                      onChange={(e: any) =>
-                        setFormData({ ...formData, isInternal: true })
-                      }
-                    />
-                    <Checkbox
-                      label="No"
-                      checked={formData.isInternal == false}
-                      onChange={(e: any) =>
-                        setFormData({ ...formData,isInternal:false})
-                      }
+                  <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <label
+                      htmlFor="file-upload"
+                      className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+                    >
+                      <Upload className="text-[#005DE9] w-64 h-64 " />
+                      <div className="text-center">
+                        <p className="text-md text-gray-500">Upload file</p>
+                        <p className="text-md text-gray-400">
+                          or drag and drop
+                        </p>
+                      </div>
+                    </label>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      style={{ display: "none" }}
+                      className="content-none"
+                      required
                     />
                   </div>
                 </div>
-                  </div>
-                </div>
-                  <div className="w-full ">
-          <label
-            htmlFor="fileUpload"
-            className="block text-xs font-bold text-gray-700"
-          >
-            Attachment
-          </label>
-          <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-            <label
-              htmlFor="file-upload"
-              className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
-            >
-              <Upload className="text-[#005DE9] w-64 h-64 " />
-              <div className="text-center">
-                <p className="text-md text-gray-500">Upload file</p>
-                <p className="text-md text-gray-400">or drag and drop</p>
               </div>
-            </label>
-            <input
-              id="file-upload"
-              type="file"
-              style={{ display: "none" }}
-              className="content-none"
-              required
-            />
-          </div>
-        </div>
-              </div>
-
-           
-             
+              <p className="text-red-500 text-sm">Hello</p>
 
               <div className="w-full flex justify-center mt-10 space-x-4">
                 <button
                   type="button"
-                  onClick={prevStep}
+                  onClick={handlePrev}
                   className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={nextStep}
+                  onClick={handleNext}
                   type="button"
                   className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                  Save
+                  Next
                 </button>
               </div>
-            </form>
+            </div>
           )}
           {selectedInfo === "timeline" && (
-           <form
+            <div
               // onSubmit={handleSubmit}
               className="w-full overflow-y-auto flex flex-col gap-2"
             >
@@ -354,7 +421,7 @@ const [active, setActive] = useState(0);
                     <input
                       type="text"
                       name="employee"
-                      value={formData.employee}
+                      value={formData.employee_number}
                       placeholder="Call title"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -367,7 +434,7 @@ const [active, setActive] = useState(0);
                     htmlFor="bank"
                     className="block text-xs font-bold text-gray-700"
                   >
-                  Bank Name
+                    Bank Name
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -376,7 +443,7 @@ const [active, setActive] = useState(0);
                     <input
                       type="text"
                       name="bank"
-                      value={formData.bank}
+                      value={formData.bank_account}
                       placeholder="Bank number"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -400,7 +467,7 @@ const [active, setActive] = useState(0);
                     <input
                       type="number"
                       name="year"
-                      value={formData.year}
+                      value={formData.year_of_placement}
                       placeholder="year of establishment"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -413,7 +480,7 @@ const [active, setActive] = useState(0);
                     htmlFor="phone"
                     className="block text-xs font-bold text-gray-700"
                   >
-                 Phone
+                    Phone
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -422,7 +489,7 @@ const [active, setActive] = useState(0);
                     <input
                       type="number"
                       name="phone"
-                      value={formData.phone}
+                      value={formData.business_phone}
                       placeholder="Phone number"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -437,7 +504,7 @@ const [active, setActive] = useState(0);
                     htmlFor="email"
                     className="block text-xs font-bold text-gray-700"
                   >
-                 Email
+                    Email
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -459,16 +526,17 @@ const [active, setActive] = useState(0);
                     htmlFor="box"
                     className="block text-xs font-bold text-gray-700"
                   >
-                 PO box
+                    PO box
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
                       <Folder2 />
                     </span>
+                    a
                     <input
                       type="text"
                       name="box"
-                      value={formData.box}
+                      value={formData.po_box}
                       placeholder="PO box"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -476,53 +544,51 @@ const [active, setActive] = useState(0);
                     />
                   </div>
                 </div>
-          
               </div>
 
-             <div className="w-full">
-                  <label
-                    htmlFor="address"
-                    className="block text-xs font-bold text-gray-700"
-                  >
-                 Address
-                  </label>
-                  <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <Folder2 />
-                    </span>
-                    <input
-                      type="address"
-                      name="address"
-                      value={formData.address}
-                      placeholder="Address"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
-                    />
-                  </div>
+              <div className="w-full">
+                <label
+                  htmlFor="address"
+                  className="block text-xs font-bold text-gray-700"
+                >
+                  Address
+                </label>
+                <div className="w-full relative">
+                  <span className="absolute left-2 top-[10px]">
+                    <Folder2 />
+                  </span>
+                  <input
+                    type="address"
+                    name="address"
+                    value={formData.business_address}
+                    placeholder="Address"
+                    onChange={handleChange}
+                    className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    required
+                  />
                 </div>
-             
+              </div>
 
               <div className="w-full flex justify-center mt-10 space-x-4">
                 <button
                   type="button"
-                  onClick={prevStep}
+                  onClick={handlePrev}
                   className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={nextStep}
+                  onClick={handleNext}
                   type="button"
                   className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                  Save
+                  Next
                 </button>
               </div>
-            </form>
+            </div>
           )}
           {selectedInfo === "category" && (
-             <form
+            <form
               // onSubmit={handleSubmit}
               className="w-full overflow-y-auto flex flex-col gap-2"
             >
@@ -532,7 +598,7 @@ const [active, setActive] = useState(0);
                     htmlFor="province"
                     className="block text-xs font-bold text-gray-700"
                   >
-                  Province
+                    Province
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -554,7 +620,7 @@ const [active, setActive] = useState(0);
                     htmlFor="district"
                     className="block text-xs font-bold text-gray-700"
                   >
-                  District
+                    District
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -578,7 +644,7 @@ const [active, setActive] = useState(0);
                     htmlFor="sector"
                     className="block text-xs font-bold text-gray-700"
                   >
-                   Sector
+                    Sector
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -600,7 +666,7 @@ const [active, setActive] = useState(0);
                     htmlFor="cell"
                     className="block text-xs font-bold text-gray-700"
                   >
-                 Cell
+                    Cell
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -618,42 +684,40 @@ const [active, setActive] = useState(0);
                   </div>
                 </div>
               </div>
-             
 
-             <div className="w-full">
-                  <label
-                    htmlFor="address"
-                    className="block text-xs font-bold text-gray-700"
-                  >
-                 Village
-                  </label>
-                  <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <Folder2 />
-                    </span>
-                    <input
-                      type="village"
-                      name="village"
-                      value={formData.village}
-                      placeholder="Village"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
-                    />
-                  </div>
+              <div className="w-full">
+                <label
+                  htmlFor="address"
+                  className="block text-xs font-bold text-gray-700"
+                >
+                  Village
+                </label>
+                <div className="w-full relative">
+                  <span className="absolute left-2 top-[10px]">
+                    <Folder2 />
+                  </span>
+                  <input
+                    type="village"
+                    name="village"
+                    value={formData.village}
+                    placeholder="Village"
+                    onChange={handleChange}
+                    className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    required
+                  />
                 </div>
-             
+              </div>
 
               <div className="w-full flex justify-center mt-10 space-x-4">
                 <button
                   type="button"
-                  onClick={prevStep}
+                  onClick={handlePrev}
                   className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={nextStep}
+                  onClick={handleNext}
                   type="button"
                   className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >

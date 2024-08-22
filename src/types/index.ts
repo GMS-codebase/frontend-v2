@@ -28,3 +28,8 @@ export type Contract = {
   uuid: string;
   contractNumber: number;
 };
+
+
+export type Contact = {
+  uuid: string;
+};

@@ -3,12 +3,13 @@ import { useSelector } from "react-redux";
 import { Skeleton } from "@mantine/core";
 import DonutChart from "../chart/DonutChart";
 import { SolarAltArrowRightOutline } from "@/components/core/icons/index";
+import Link from "next/link";
 
 const CallCard = ({
   call,
-  call,
 }: {
   call: {
+    uuid: string;
     title: string;
     description: string;
   };
@@ -20,9 +21,11 @@ const CallCard = ({
         <div className="font-medium flex justify-evenly items-start">
           {call.description}
         </div>
-        <div className="flex gap-2 p-2 bg-[#005DE9] font-normal rounded-full text-white px-4 py-2 items-center justify-start w-fit">
-          View details
-        </div>
+        <Link href={`/applicant/applications/${call.uuid}`}>
+          <div className="flex gap-2 p-2 bg-[#005DE9] font-normal rounded-full text-white px-4 py-2 items-center justify-start w-fit">
+            View details
+          </div>
+        </Link>
       </div>
       <div className="w-[40%] text-[6px] font-bold">
         <DonutChart />
@@ -32,8 +35,6 @@ const CallCard = ({
 };
 
 type Call = {
-  title: string;
-  description: string;
   title: string;
   description: string;
 };
@@ -87,9 +88,10 @@ const CallsList = () => {
             <Skeleton height={150} width={600} radius="xl" />
           </>
         ) : (
-          calls.calls.map((call: any, index: any) => (
-            <CallCard key={index} call={call} />
-          ))
+          calls.calls.map((call: any, index: any) => {
+            console.log(call);
+            return <CallCard key={index} call={call} />;
+          })
         )}
       </div>
       {isScrollable &&
