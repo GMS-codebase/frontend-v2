@@ -13,6 +13,7 @@ import { CalendarMinimalistic, Upload } from "solar-icon-set";
 import { useDispatch, useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
+import { ADD_MEREPORT_SUCCESS } from "@/actions/MEReportsActions";
 
 interface AddReportModalProps {
   isOpen: boolean;
@@ -20,7 +21,8 @@ interface AddReportModalProps {
 }
 
 const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
-  const form = useForm({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const form = useForm<any>({
     initialValues: {
       title: "",
       call: "",
@@ -31,45 +33,65 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
     },
   });
 
-  const handleChange = (e: any) => {
-    const { name, value, files } = e.target;
-    form.setFieldValue(name, files ? files[0] : value);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    form.setFieldValue(name, value);
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    if (file) {
+      form.setFieldValue("report", file);
+    }
+  };
+
   const dispatch = useDispatch();
-  const handleSubmit = (values: any) => {
-    console.log(form.values);
-    authorizedApi
-      .post("/report", form.values)
-      .then((res) => {
-        console.log(res);
-        notifications.show({
-          message: "M&E report created successfully",
-          color: "blue",
-        });
-        form.setValues({
-          title: "",
-          call: "",
-          description: "",
-          report: "",
-          start_date: "",
-          end_date: "",
-        });
-        onClose();
-      })
-      .catch((err) => {
-        console.log(err.response);
-        if (err.response)
-          notifications.show({
-            message: err.response?.data?.message ?? "Failed to create report!",
-            color: "red",
-          });
+
+  const handleSubmit = async (values: any) => {
+    setIsSubmitting(true);
+    console.log(form.values.report);
+    const submitForm = new FormData();
+    submitForm.append("title", form.values.title);
+    submitForm.append("call", form.values.call);
+    submitForm.append("description", form.values.description);
+    if (form.values.report) {
+      submitForm.append("report", form.values.report);
+    }
+    submitForm.append("start_date", form.values.start_date);
+    submitForm.append("end_date", form.values.end_date);
+
+    try {
+      const res = await authorizedApi.post("/report", submitForm, 
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+      dispatch({type: ADD_MEREPORT_SUCCESS, payload: res.data.data});
+      notifications.show({
+        message: "M&E report created successfully",
+        color: "blue",
       });
+      form.reset();
+      onClose();
+    } catch (err: any) {
+      notifications.show({
+        message: err.response?.data?.message ?? "Failed to create report!",
+        color: "red",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
   const calls = useSelector((state: any) => state.calls);
   const callsSelector = calls?.calls?.map((call: any) => {
     return { value: call?.uuid, label: call?.title };
   });
-  console.log(calls);
+
   return (
     <div>
       <Modal
@@ -145,8 +167,8 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
                 <Select
                   data={callsSelector}
                   className="w-full bg-gray-100 p-4 py-2 rounded-xl pl-2 outline-primary transition-all duration-150"
-                  onChange={(e: any) =>
-                    form.setValues({ ...form.values, call: e.value })
+                  onChange={(value: any) =>
+                    form.setFieldValue("call", value)
                   }
                   value={form.values.call}
                 />
@@ -220,7 +242,7 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
                     id="file-upload"
                     type="file"
                     name="report"
-                    onChange={handleChange}
+                    onChange={handleFileChange}
                     style={{ display: "none" }}
                     required
                   />
@@ -228,13 +250,13 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
               </div>
             </div>
 
-            {/* <div className="border mt-4 text-center bg-primary rounded-full p-2 text-white font-semibold text-xl"> */}
-            <input
+            <Button
               type="submit"
-              value="Add new report"
               className="border mt-4 text-center bg-primary rounded-full p-2 text-white font-semibold text-xl"
-            />
-            {/* </div> */}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Add new report"}
+            </Button>
           </form>
         </div>
       </Modal>
