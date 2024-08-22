@@ -123,11 +123,10 @@ const Page = () => {
                         <div className="flex font-semibold">
                             <div
                                 onClick={() => setCurrentComponent("Project")}
-                                className={`cursor-pointer w-1/2 ${
-                                    currentComponent === "Project"
+                                className={`cursor-pointer w-1/2 ${currentComponent === "Project"
                                         ? "bg-[#005DE9] bg-opacity-10"
                                         : ""
-                                } h-16 flex items-center justify-center`}
+                                    } h-16 flex items-center justify-center`}
                             >
                                 Project Funding Application
                             </div>
@@ -135,11 +134,10 @@ const Page = () => {
                                 onClick={() =>
                                     setCurrentComponent("IndicativeBudget")
                                 }
-                                className={`cursor-pointer w-1/2 ${
-                                    currentComponent === "IndicativeBudget"
+                                className={`cursor-pointer w-1/2 ${currentComponent === "IndicativeBudget"
                                         ? "bg-[#C50000] bg-opacity-10"
                                         : ""
-                                } h-16 flex items-center justify-center`}
+                                    } h-16 flex items-center justify-center`}
                             >
                                 Indicative Budget
                             </div>
