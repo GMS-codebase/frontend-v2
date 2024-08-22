@@ -9,13 +9,17 @@ import { SolarUploadBold } from "../core/icons";
 import { SolarDocumentsBold } from "@/components/core/icons/index";
 import TextArea from "../ApplicantDetails/TextArea";
 
+interface DueDiligencyProps {
+    isOpenAddDue: boolean;
+    closeAddDue: () => void;
+    onMakeDecision: () => void;
+}
+
 const DueDetails = ({
     isOpenAddDue,
     closeAddDue,
-}: {
-    isOpenAddDue: boolean;
-    closeAddDue: () => void;
-}) => {
+    onMakeDecision,
+}: DueDiligencyProps) => {
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
         title: "",

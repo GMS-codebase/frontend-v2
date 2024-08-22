@@ -35,6 +35,7 @@ const Page = () => {
                 return null;
         }
     };
+    
 
     return (
         <div className="flex flex-col gap-6 p-8 rounded-3xl">
@@ -170,15 +171,19 @@ const Page = () => {
                                 </span>
                                 <p>Revert decision</p>
                             </div>
+                            <div
+                                
+                                className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                            >
+                                <p>Make a decision</p>
+                            </div>
                         </div>
                     </div>
 
                     <div className="flex flex-col gap-2">
                         <h3 className="font-bold">DueDiligence Stage</h3>{" "}
                         {/* Updated Stage name */}
-                        <div
-                            className="font-medium bg-[#C50000]  text-white w-fit justify-start items-center rounded-full px-4 py-2"
-                        >
+                        <div className="font-medium bg-[#C50000]  text-white w-fit justify-start items-center rounded-full px-4 py-2">
                             Proposal Rejected
                         </div>
                         <div
@@ -196,14 +201,17 @@ const Page = () => {
                             </span>
                             <p>Revert decision</p>
                         </div>
+                        <div
+                            // Show buttons on click
+                            className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                        >
+                            <p>Make a decision</p>
+                        </div>
                     </div>
                 </div>
             </div>
             <DueDetails opened={isOpenAddDue} close={closeAddDue} />
-            <DecisionDetails
-                opened={isOpenAddEval}
-                close={closeAddEval}
-            />
+            <DecisionDetails opened={isOpenAddEval} close={closeAddEval} />
         </div>
     );
 };
