@@ -10,6 +10,8 @@ import {
   getApplications,
   getCalls,
   getEmployees,
+  getMyApplicantProfile,
+  getMyContacts,
   getMyProfile,
   getSectors,
   getTrades,
@@ -20,6 +22,8 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const [pageName, setPageName] = useState(getCookie("breadcrumb") || "");
   const active = usePathname();
+  const auth = useSelector((state: any) => state.auth);
+
   useEffect(() => {
     const handleStorageChange = () => {
       setPageName(getCookie("breadcrumb") || "");
@@ -32,18 +36,27 @@ const Navbar = () => {
   }, [active]);
 
   useEffect(() => {
-    getWindows(dispatch);
-    getSectors(dispatch);
-    getTrades(dispatch);
-    getCalls(dispatch);
-    getApplicants(dispatch);
-    getEmployees(dispatch);
-    getMyProfile(dispatch);
-    // getApplications(dispatch);
-  }, []);
+    const role = active.startsWith("/admin")
+      ? "ADMIN"
+      : active.startsWith("/applicant")
+      ? "APPLICANT"
+      : null;
 
-  const auth = useSelector((state: any) => state.auth);
-  console.log(auth);
+    if (role === "ADMIN") {
+      getWindows(dispatch);
+      getSectors(dispatch);
+      getTrades(dispatch);
+      getApplicants(dispatch);
+      getEmployees(dispatch);
+      getApplications(dispatch);
+    } else if (role === "APPLICANT") {
+      getMyContacts(dispatch);
+      getMyApplicantProfile(dispatch);
+    }
+    getMyProfile(dispatch);
+    getCalls(dispatch);
+  }, [active]);
+
   return (
     <div className="w-full flex items-center justify-between py-6 bg-white rounded-2xl px-5">
       <h1 className="text-xl font-extrabold text-primary">{pageName}</h1>
@@ -52,7 +65,7 @@ const Navbar = () => {
           <Icons.SolarUserBold />
         </button>
         <h1 className="text-xl font-medium">
-          {/* {userProfile?.firstname + " " + userProfile?.lastname} */}
+          {auth?.user?.firstname + " " + auth?.user?.lastname}
         </h1>
       </div>
     </div>

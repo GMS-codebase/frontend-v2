@@ -71,7 +71,6 @@ export const questions = {
                 input: "contributionFromApplicant",
             },
         ],
-
         subwindow_2: [
             {
                 title: "Title of the project",
@@ -266,7 +265,6 @@ export const questions = {
                 input: "contributionFromApplicant",
             },
         ],
-
         subwindow_2: [
             {
                 title: "Title of the project",
@@ -365,7 +363,6 @@ export const questions = {
                 input: "contributionFromApplicant",
             },
         ],
-
         subwindow_3: [
             {
                 title: "Title of the project",
@@ -464,7 +461,6 @@ export const questions = {
             },
         ],
     },
-
     window_3: {
         subwindow_1: [
             {
@@ -563,7 +559,6 @@ export const questions = {
                 input: "contributionFromApplicant",
             },
         ],
-
         subwindow_2: [
             {
                 title: "Title of the project",
@@ -645,7 +640,6 @@ export const questions = {
                 input: "contributionFromApplicant",
             },
         ],
-
         subwindow_3: [
             {
                 title: "Title of the project",
@@ -745,11 +739,8 @@ export const questions = {
                 input: "contributionFromApplicant",
             },
         ],
-
     },
-
     window_4: [
-
             {
                 title: "Title of the project",
                 description: "Please provide the name/title of your project.",
@@ -840,7 +831,6 @@ export const questions = {
                     "Provide proof of ownership/renting of training premises",
                 input: "contributionFromApplicant",
             },
-
             {
                 title: "Contribution from the applicant ",
                 description:

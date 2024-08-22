@@ -18,26 +18,6 @@ import {
   GET_WINDOWS_LOADING,
   GET_WINDOWS_SUCCESS,
 } from "@/actions/WindowsActions";
-import {
-  GET_CALLS_ERROR,
-  GET_CALLS_LOADING,
-  GET_CALLS_SUCCESS,
-} from "@/actions/CallsActions";
-import {
-  GET_SECTORS_ERROR,
-  GET_SECTORS_LOADING,
-  GET_SECTORS_SUCCESS,
-} from "@/actions/SectorsActions";
-import {
-  GET_TRADES_ERROR,
-  GET_TRADES_LOADING,
-  GET_TRADES_SUCCESS,
-} from "@/actions/TradesActions";
-import {
-  GET_WINDOWS_ERROR,
-  GET_WINDOWS_LOADING,
-  GET_WINDOWS_SUCCESS,
-} from "@/actions/WindowsActions";
 import { Dispatch, UnknownAction } from "redux";
 import { authorizedApi } from "../api";
 import {
@@ -48,7 +28,27 @@ import {
   GET_MY_APPLICATIONS_LOADING,
   GET_MY_APPLICATIONS_SUCCESS,
 } from "@/actions/ApplicationsActions";
-import { GET_MY_CONTRACTS_ERROR, GET_MY_CONTRACTS_LOADING, GET_MY_CONTRACTS_SUCCESS } from "@/actions/ContractActions";
+import {
+  GET_MY_CONTRACTS_ERROR,
+  GET_MY_CONTRACTS_LOADING,
+  GET_MY_CONTRACTS_SUCCESS,
+} from "@/actions/ContractActions";
+import {
+  GET_EMPLOYEES_ERROR,
+  GET_EMPLOYEES_LOADING,
+  GET_EMPLOYEES_SUCCESS,
+} from "@/actions/EmployeesActions";
+import {
+  SET_USER_PROFILE,
+  SET_USER_ERROR,
+  SET_APPLICANT_ERROR,
+  SET_APPLICANT_PROFILE,
+} from "@/actions/AuthActions";
+import {
+  GET_MY_CONTACTS_ERROR,
+  GET_MY_CONTACTS_LOADING,
+  GET_MY_CONTACTS_SUCCESS,
+} from "@/actions/ContactsActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -58,6 +58,31 @@ export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
     })
     .catch((err) => {
       dispatch({ type: GET_WINDOWS_ERROR, payload: err.response.data.error });
+    });
+};
+export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
+  authorizedApi
+    .get("/auth/me")
+    .then((res) => {
+      console.log("getting my profile");
+      console.log(res.data.data);
+      dispatch({ type: SET_USER_PROFILE, payload: res.data.data }); //Todo: change this only when the BEs change the response schema
+    })
+    .catch((err) => {
+      dispatch({ type: SET_USER_ERROR, payload: err.response.data.error });
+    });
+};
+
+export const getMyApplicantProfile = async (
+  dispatch: Dispatch<UnknownAction>
+) => {
+  authorizedApi
+    .get("/applicant/me")
+    .then((res) => {
+      dispatch({ type: SET_APPLICANT_PROFILE, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({ type: SET_APPLICANT_ERROR, payload: err.response.data.error });
     });
 };
 
@@ -135,6 +160,21 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 
+export const getMyContacts = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_MY_CONTACTS_LOADING });
+  authorizedApi
+    .get("/contacts/mine")
+    .then((res) => {
+      dispatch({ type: GET_MY_CONTACTS_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+
 export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_CONTRACTS_LOADING });
   authorizedApi
@@ -147,5 +187,17 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
         type: GET_MY_CONTRACTS_ERROR,
         payload: err.response.data.error,
       });
+    });
+};
+
+export const getEmployees = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_EMPLOYEES_LOADING });
+  authorizedApi
+    .get("/employee/all")
+    .then((res) => {
+      dispatch({ type: GET_EMPLOYEES_SUCCESS, payload: res.data.data.message }); //Todo: change this only when the BEs change the response schema
+    })
+    .catch((err) => {
+      dispatch({ type: GET_EMPLOYEES_ERROR, payload: err.response.data.error });
     });
 };

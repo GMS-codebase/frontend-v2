@@ -1,6 +1,7 @@
 import {
   LOGIN,
   LOGOUT,
+  SET_APPLICANT_PROFILE,
   SET_PERMISSIONS,
   SET_USER_PROFILE,
 } from "@/actions/AuthActions";
@@ -14,6 +15,7 @@ const initialState = {
   permissions: [],
   auth_expire_time: {},
   token_expire_time: null,
+  applicantProfile: null,
 };
 
 type Action = {
@@ -36,6 +38,11 @@ export default function authReducer(state = initialState, action: Action) {
       return {
         ...state,
         userProfile: action.payload,
+      };
+    case SET_APPLICANT_PROFILE:
+      return {
+        ...state,
+        applicantProfile: action.payload,
       };
     case LOGOUT:
       deleteCookie("token");
