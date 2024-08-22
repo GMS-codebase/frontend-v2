@@ -4,7 +4,6 @@ import { SolarAddFolderBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { tradesData as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
 import AddTrade from "@/components/Modals/AddTrade";
 import { useSelector } from "react-redux";
