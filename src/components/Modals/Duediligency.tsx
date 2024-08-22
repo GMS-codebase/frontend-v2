@@ -9,54 +9,60 @@ import { SolarUploadBold } from "../core/icons";
 import { SolarDocumentsBold } from "@/components/core/icons/index";
 import TextArea from "../ApplicantDetails/TextArea";
 
+interface DueDiligencyProps {
+    isOpenAddDue: boolean;
+    closeAddDue: () => void;
+    onMakeDecision: () => void;
+}
+
 const DueDetails = ({
-  isOpenAddDue,
-  closeAddDue,
-}: {
-  isOpenAddDue: boolean;
-  closeAddDue: () => void;
-}) => {
-  const dispatch = useDispatch();
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-  });
+    isOpenAddDue,
+    closeAddDue,
+    onMakeDecision,
+}: DueDiligencyProps) => {
+    const dispatch = useDispatch();
+    const [formData, setFormData] = useState({
+        title: "",
+        description: "",
+    });
 
-  const handleChange = (e: { target: { name: string; value: string } }) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+    const handleChange = (e: { target: { name: string; value: string } }) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    authorizedApi
-      .post("/window/create", formData)
-      .then((res) => {
-        notifications.show({
-          message: "Window is created successfully",
-          color: "blue",
-        });
-        dispatch({
-          type: ADD_WINDOW_SUCCESS,
-          payload: res.data?.data?.data,
-        });
-        setFormData({
-          title: "",
-          description: "",
-        });
-        closeAddDue();
-      })
-      .catch((err) => {
-        console.error(err); // Log error for debugging
-        notifications.show({
-          message: err.response?.data?.message ?? "Failed to create window!",
-          color: "red",
-        });
-      });
-  };
+    const handleSubmit = (e: { preventDefault: () => void }) => {
+        e.preventDefault();
+        authorizedApi
+            .post("/window/create", formData)
+            .then((res) => {
+                notifications.show({
+                    message: "Window is created successfully",
+                    color: "blue",
+                });
+                dispatch({
+                    type: ADD_WINDOW_SUCCESS,
+                    payload: res.data?.data?.data,
+                });
+                setFormData({
+                    title: "",
+                    description: "",
+                });
+                closeAddDue();
+            })
+            .catch((err) => {
+                console.error(err); // Log error for debugging
+                notifications.show({
+                    message:
+                        err.response?.data?.message ??
+                        "Failed to create window!",
+                    color: "red",
+                });
+            });
+    };
 
     return (
         <Modal
@@ -119,37 +125,36 @@ const DueDetails = ({
                             </div>
                         </div>
 
-                       
-                            <div className="flex flex-col ">
-                                <h3 className="font-semibold text-sm">
-                                    attachment
-                                </h3>
+                        <div className="flex flex-col ">
+                            <h3 className="font-semibold text-sm">
+                                attachment
+                            </h3>
 
-                                <div className="relative mt-1 flex flex-col items-center justify-center w-full h-[15vh] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                    <label
-                                        htmlFor="file-upload"
-                                        className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
-                                    >
-                                        <SolarUploadBold className="text-blue-500 text-3xl" />
-                                        <div className="text-center">
-                                            <p className="text-sm text-gray-500">
-                                                Upload file
-                                            </p>
-                                            <p className="text-xs text-gray-400">
-                                                or drag and drop
-                                            </p>
-                                        </div>
-                                    </label>
-                                    <input
-                                        id="file-upload"
-                                        type="file"
-                                        style={{ display: "none" }}
-                                        className="content-none"
-                                        required
-                                    />
-                                </div>
+                            <div className="relative mt-1 flex flex-col items-center justify-center w-full h-[15vh] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                <label
+                                    htmlFor="file-upload"
+                                    className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+                                >
+                                    <SolarUploadBold className="text-blue-500 text-3xl" />
+                                    <div className="text-center">
+                                        <p className="text-sm text-gray-500">
+                                            Upload file
+                                        </p>
+                                        <p className="text-xs text-gray-400">
+                                            or drag and drop
+                                        </p>
+                                    </div>
+                                </label>
+                                <input
+                                    id="file-upload"
+                                    type="file"
+                                    style={{ display: "none" }}
+                                    className="content-none"
+                                    required
+                                />
                             </div>
-                        
+                        </div>
+
                         <div className="flex flex-col ">
                             <h3 className="font-semibold text-sm">
                                 Finance info
@@ -195,26 +200,26 @@ const DueDetails = ({
                             </div>
                         </div>
 
-            <div className="w-full flex justify-center mt-4 space-x-4">
-              <button
-                type="button"
-                onClick={closeAddDue}
-                className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-                Make Decision
-              </button>
+                        <div className="w-full flex justify-center mt-4 space-x-4">
+                            <button
+                                type="button"
+                                onClick={closeAddDue}
+                                className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            >
+                                Make Decision
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-          </form>
-        </div>
-      </div>
-    </Modal>
-  );
+        </Modal>
+    );
 };
 
 export default DueDetails;
