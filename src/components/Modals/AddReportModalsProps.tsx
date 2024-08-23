@@ -34,7 +34,7 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     form.setFieldValue(name, value);
@@ -63,14 +63,12 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
     submitForm.append("end_date", form.values.end_date);
 
     try {
-      const res = await authorizedApi.post("/report", submitForm, 
-        {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        }
-      );
-      dispatch({type: ADD_MEREPORT_SUCCESS, payload: res.data.data});
+      const res = await authorizedApi.post("/report", submitForm, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      dispatch({ type: ADD_MEREPORT_SUCCESS, payload: res.data.data });
       notifications.show({
         message: "M&E report created successfully",
         color: "blue",
@@ -167,9 +165,7 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
                 <Select
                   data={callsSelector}
                   className="w-full bg-gray-100 p-4 py-2 rounded-xl pl-2 outline-primary transition-all duration-150"
-                  onChange={(value: any) =>
-                    form.setFieldValue("call", value)
-                  }
+                  onChange={(value: any) => form.setFieldValue("call", value)}
                   value={form.values.call}
                 />
               </div>
