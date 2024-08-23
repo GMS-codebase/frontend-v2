@@ -457,14 +457,14 @@ const RegisterModal = ({
                 {!formData.isInternal && (
                   <div className="w-full mt-4">
                     <label
-                      htmlFor="companyName"
+                      htmlFor="institution"
                       className="block text-base font-medium text-black"
                     >
                       Institution Name
                     </label>
                     <input
                       type="text"
-                      name="companyName"
+                      name="institution"
                       value={formData.institution}
                       onChange={handleChange}
                       placeholder="Enter the institution name"

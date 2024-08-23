@@ -1,5 +1,5 @@
-"use client"
-import React,{useState} from "react";
+"use client";
+import React, { useState } from "react";
 import { Select } from "@mantine/core";
 import { ChangeEvent } from "react";
 import { TableData } from "@mantine/core";
@@ -11,7 +11,7 @@ import { CiSearch } from "react-icons/ci";
 
 const Page = () => {
   const [text, setText] = useState("");
-    const columns: ColumnDef<any>[] = [
+  const columns: ColumnDef<any>[] = [
     {
       accessorKey: "applicationNumber",
       header: "Application Number",
@@ -31,20 +31,23 @@ const Page = () => {
         </div>
       ),
     },
-        {
+    {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions setIsCall={function (employee: any): void {
-        throw new Error("Function not implemented.");
-      } } call={undefined} />,
+      cell: ({ row }) => (
+        <CallsActions
+          setIsCall={function (employee: any): void {
+            throw new Error("Function not implemented.");
+          }}
+          call={undefined}
+        />
+      ),
     },
-  
-
   ];
-    const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setText(event.target.value);
   };
-   const FilterDropDown = ({
+  const FilterDropDown = ({
     placeholderText,
     data,
   }: {
@@ -62,9 +65,9 @@ const Page = () => {
   };
   return (
     <div>
-    <div className="w-full flex justify-between items-center p-4">
+      <div className="w-full flex justify-between items-center p-4">
         <div className="relative w-[20rem]">
-       <h1 className="text-2xl font-bold">Send Notifications</h1>
+          <h1 className="text-2xl font-bold">Send Notifications</h1>
         </div>
         <div className="flex items-center gap-3">
           <div className="w-44">
@@ -88,32 +91,30 @@ const Page = () => {
           <div className="w-44">
             <FilterDropDown
               placeholderText="Filter By Stage"
-              data={[
-                "Duediligence",
-              ]}
+              data={["Duediligence"]}
             />
           </div>
         </div>
       </div>
-     <div className="p-4 mt-5 w-full">
-       <label className="block text-sm text-gray-600" htmlFor="textarea">
-         Comment:
-       </label>
-      <textarea
-        id="textarea"
-        name="textarea"
-        value={text}
-        onChange={handleChange}
-        rows={4}
-        className="mt-2 p-2 w-full border border-primary rounded-md shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-white"
-      />
-       <button
-              type="submit"
-              className="w-full px-4 py-2 mt-5 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              Send notification
-            </button>
-    </div>
+      <div className="p-4 mt-5 w-full">
+        <label className="block text-sm text-gray-600" htmlFor="textarea">
+          Comment:
+        </label>
+        <textarea
+          id="textarea"
+          name="textarea"
+          value={text}
+          onChange={handleChange}
+          rows={4}
+          className="mt-2 p-2 w-full border border-primary rounded-md shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-white"
+        />
+        <button
+          type="submit"
+          className="w-full px-4 py-2 mt-5 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          Send notification
+        </button>
+      </div>
       <div className="relative  w-full my-5 flex justify-between">
         <h1 className="font-bold text-xl">Concerned Applicants</h1>
         <div className="relative  w-[20rem]">
@@ -126,9 +127,9 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-        </div>
+      </div>
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data}/>
+        <DataTable columns={columns} data={data} />
       </div>
     </div>
   );

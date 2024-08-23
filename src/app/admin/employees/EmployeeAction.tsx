@@ -35,7 +35,7 @@ const EmployeeActions = ({
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
             <Link
-              href={"/admin/employees/employee"}
+              href={`/admin/employees/${employee.uuid}`}
               className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
             >
               <FiEye size={21} color="#576074" />

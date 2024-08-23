@@ -8,6 +8,9 @@ import ApplicationsReducer from "./ApplicationsReducer";
 import ApplicantsReducer from "./ApplicantsReducer";
 import EmployeesReducer from "./EmployeesReducer";
 import ContactsReducer from "./ContactsReducer";
+import ApplicationsReducer from "./ApplicationsReducer";
+import MEReportsReducer from "./MEReportsReducer";
+import ProfileReducer from "./ProfileReducer";
 const rootReducer = combineReducers({
   contacts: ContactsReducer,
   auth: authReducer,
@@ -18,6 +21,9 @@ const rootReducer = combineReducers({
   applications: ApplicationsReducer,
   applicants: ApplicantsReducer,
   employees: EmployeesReducer,
+  applications: ApplicationsReducer,
+  mereports: MEReportsReducer,
+  profile: ProfileReducer,
 });
 
 export default rootReducer;
