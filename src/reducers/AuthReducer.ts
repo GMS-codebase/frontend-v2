@@ -45,8 +45,9 @@ export default function authReducer(state = initialState, action: Action) {
         applicantProfile: action.payload,
       };
     case LOGOUT:
+      deleteCookie("auth_token");
+      deleteCookie("auth_USER");
       deleteCookie("token");
-      window.location.reload();
       return initialState;
     case SET_PERMISSIONS:
       return {

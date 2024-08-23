@@ -14,7 +14,7 @@ const Page = () => {
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
+      cell: ({ row }) => <div className="w-full">{row.original?.title}</div>,
     },
     {
       accessorKey: "description",

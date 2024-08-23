@@ -15,7 +15,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const Page = () => {
   const [isOpenCall, { open, close }] = useDisclosure(false);
-   const filtersContainerRef = useRef<HTMLDivElement>(null);
+  const filtersContainerRef = useRef<HTMLDivElement>(null);
 
   const columns: ColumnDef<any>[] = [
     {
@@ -78,7 +78,7 @@ const Page = () => {
 
   const handleScroll = (direction: "left" | "right") => {
     if (filtersContainerRef.current) {
-      const scrollAmount = 100; 
+      const scrollAmount = 100;
       if (direction === "left") {
         filtersContainerRef.current.scrollLeft -= scrollAmount;
       } else {
@@ -157,7 +157,7 @@ const Page = () => {
                   "Gasabo",
                 ]}
               />
-            </div> 
+            </div>
           </div>
 
           <button
@@ -170,7 +170,7 @@ const Page = () => {
       </div>
 
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} tableWidth={1800}/>
+        <DataTable columns={columns} data={data} tableWidth={1800} />
       </div>
       <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
     </div>

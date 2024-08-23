@@ -15,10 +15,12 @@ type FormData = {
   isInternal: undefined | boolean;
 };
 const MakeManager = ({
+  employee,
   isOpenMakeManager,
   closeMakeManager,
   level,
 }: {
+  employee: any;
   isOpenMakeManager: boolean;
   closeMakeManager: () => void;
   level: string;
