@@ -50,11 +50,6 @@ import {
   GET_MY_CONTACTS_SUCCESS,
 } from "@/actions/ContactsActions";
 import {
-  GET_APPLICATIONS_ERROR,
-  GET_APPLICATIONS_LOADING,
-  GET_APPLICATIONS_SUCCESS,
-} from "@/actions/ApplicationsActions";
-import {
   GET_MEREPORTS_ERROR,
   GET_MEREPORTS_LOADING,
   GET_MEREPORTS_SUCCESS,
@@ -87,7 +82,6 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: SET_USER_ERROR, payload: err.response.data.error });
     });
 };
-
 export const getMyApplicantProfile = async (
   dispatch: Dispatch<UnknownAction>
 ) => {
@@ -100,7 +94,6 @@ export const getMyApplicantProfile = async (
       dispatch({ type: SET_APPLICANT_ERROR, payload: err.response.data.error });
     });
 };
-
 export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_SECTORS_LOADING });
   authorizedApi
@@ -159,7 +152,6 @@ export const getApplications = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
-
 export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_APPLICATIONS_LOADING });
   authorizedApi
@@ -174,7 +166,6 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
-
 export const getMyContacts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_CONTACTS_LOADING });
   authorizedApi
@@ -189,7 +180,6 @@ export const getMyContacts = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
-
 export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_CONTRACTS_LOADING });
   authorizedApi
@@ -204,7 +194,6 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
-
 export const getEmployees = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_EMPLOYEES_LOADING });
   authorizedApi
@@ -214,37 +203,6 @@ export const getEmployees = async (dispatch: Dispatch<UnknownAction>) => {
     })
     .catch((err) => {
       dispatch({ type: GET_EMPLOYEES_ERROR, payload: err.response.data.error });
-    });
-};
-export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_APPLICANTS_LOADING });
-  authorizedApi
-    .get("/applicant/all")
-    .then((res) => {
-      dispatch({
-        type: GET_APPLICANTS_SUCCESS,
-        payload: res.data.data.data,
-      });
-    })
-    .catch((err) => {
-      dispatch({
-        type: GET_APPLICANTS_ERROR,
-        payload: err.response.data.error,
-      });
-    });
-};
-export const getApplications = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_APPLICATIONS_LOADING });
-  authorizedApi
-    .get("/application")
-    .then((res) => {
-      dispatch({ type: GET_APPLICATIONS_SUCCESS, payload: res.data.data });
-    })
-    .catch((err) => {
-      dispatch({
-        type: GET_APPLICATIONS_ERROR,
-        payload: err.response.data.error,
-      });
     });
 };
 export const getMEReports = async (dispatch: Dispatch<UnknownAction>) => {
@@ -261,7 +219,7 @@ export const getMEReports = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
-export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
+export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {  
   dispatch({ type: GET_PROFILE_LOADING });
   authorizedApi
     .get("/auth/me")
