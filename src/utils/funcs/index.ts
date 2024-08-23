@@ -49,6 +49,21 @@ import {
   GET_MY_CONTACTS_LOADING,
   GET_MY_CONTACTS_SUCCESS,
 } from "@/actions/ContactsActions";
+import {
+  GET_APPLICATIONS_ERROR,
+  GET_APPLICATIONS_LOADING,
+  GET_APPLICATIONS_SUCCESS,
+} from "@/actions/ApplicationsActions";
+import {
+  GET_MEREPORTS_ERROR,
+  GET_MEREPORTS_LOADING,
+  GET_MEREPORTS_SUCCESS,
+} from "@/actions/MEReportsActions";
+import {
+  GET_PROFILE_ERROR,
+  GET_PROFILE_LOADING,
+  GET_PROFILE_SUCCESS,
+} from "@/actions/ProfileActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -195,9 +210,68 @@ export const getEmployees = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/employee/all")
     .then((res) => {
-      dispatch({ type: GET_EMPLOYEES_SUCCESS, payload: res.data.data.message }); //Todo: change this only when the BEs change the response schema
+      dispatch({ type: GET_EMPLOYEES_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
       dispatch({ type: GET_EMPLOYEES_ERROR, payload: err.response.data.error });
+    });
+};
+export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_APPLICANTS_LOADING });
+  authorizedApi
+    .get("/applicant/all")
+    .then((res) => {
+      dispatch({
+        type: GET_APPLICANTS_SUCCESS,
+        payload: res.data.data.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_APPLICANTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getApplications = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_APPLICATIONS_LOADING });
+  authorizedApi
+    .get("/application")
+    .then((res) => {
+      dispatch({ type: GET_APPLICATIONS_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_APPLICATIONS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getMEReports = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_MEREPORTS_LOADING });
+  authorizedApi
+    .get("/report")
+    .then((res) => {
+      dispatch({ type: GET_MEREPORTS_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MEREPORTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_PROFILE_LOADING });
+  authorizedApi
+    .get("/auth/me")
+    .then((res) => {
+      dispatch({ type: GET_PROFILE_SUCCESS, payload: res.data?.data?.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_PROFILE_ERROR,
+        payload: err.response.data.error ?? "Network Error",
+      });
     });
 };

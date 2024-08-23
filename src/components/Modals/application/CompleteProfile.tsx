@@ -1,9 +1,13 @@
 import { Checkbox, Modal, Select, Stepper } from "@mantine/core";
 import Image from "next/image";
 import { useState } from "react";
+import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import SideVector1 from "@/assets/Vectors/sidevecto.svg";
 import SideVector2 from "@/assets/Vectors/sidevector2.svg";
+import { User } from "solar-icon-set";
+import { Upload } from "solar-icon-set";
+import { CalendarMinimalistic, Folder2, ShieldWarning } from "solar-icon-set";
 import { User } from "solar-icon-set";
 import { Upload } from "solar-icon-set";
 import { CalendarMinimalistic, Folder2, ShieldWarning } from "solar-icon-set";
@@ -151,6 +155,7 @@ const CompleteProfile = ({
           <div className="w-[43%] flex flex-col items-start">
             <h1 className="text-2xl font-extrabold">Complete your profile</h1>
             <h2 className="text-[#000F2369] text-lg font-medium w-4/5">
+              Provide the below details to complete.
               Provide the below details to complete.
             </h2>
           </div>
@@ -311,6 +316,7 @@ const CompleteProfile = ({
                     className="block text-xs font-bold text-gray-700"
                   >
                     Business Type
+                    Business Type
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -349,6 +355,35 @@ const CompleteProfile = ({
                         />
                       </div>
                     </div>
+                  </div>
+                </div>
+                <div className="w-full ">
+                  <label
+                    htmlFor="fileUpload"
+                    className="block text-xs font-bold text-gray-700"
+                  >
+                    Attachment
+                  </label>
+                  <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <label
+                      htmlFor="file-upload"
+                      className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+                    >
+                      <Upload className="text-[#005DE9] w-64 h-64 " />
+                      <div className="text-center">
+                        <p className="text-md text-gray-500">Upload file</p>
+                        <p className="text-md text-gray-400">
+                          or drag and drop
+                        </p>
+                      </div>
+                    </label>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      style={{ display: "none" }}
+                      className="content-none"
+                      required
+                    />
                   </div>
                 </div>
                 <div className="w-full ">
@@ -435,6 +470,7 @@ const CompleteProfile = ({
                     className="block text-xs font-bold text-gray-700"
                   >
                     Bank Name
+                    Bank Name
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -481,6 +517,7 @@ const CompleteProfile = ({
                     className="block text-xs font-bold text-gray-700"
                   >
                     Phone
+                    Phone
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -505,6 +542,7 @@ const CompleteProfile = ({
                     className="block text-xs font-bold text-gray-700"
                   >
                     Email
+                    Email
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -526,6 +564,7 @@ const CompleteProfile = ({
                     htmlFor="box"
                     className="block text-xs font-bold text-gray-700"
                   >
+                    PO box
                     PO box
                   </label>
                   <div className="w-full relative">
@@ -589,6 +628,7 @@ const CompleteProfile = ({
           )}
           {selectedInfo === "category" && (
             <form
+            <form
               // onSubmit={handleSubmit}
               className="w-full overflow-y-auto flex flex-col gap-2"
             >
@@ -598,6 +638,7 @@ const CompleteProfile = ({
                     htmlFor="province"
                     className="block text-xs font-bold text-gray-700"
                   >
+                    Province
                     Province
                   </label>
                   <div className="w-full relative">
@@ -620,6 +661,7 @@ const CompleteProfile = ({
                     htmlFor="district"
                     className="block text-xs font-bold text-gray-700"
                   >
+                    District
                     District
                   </label>
                   <div className="w-full relative">
@@ -645,6 +687,7 @@ const CompleteProfile = ({
                     className="block text-xs font-bold text-gray-700"
                   >
                     Sector
+                    Sector
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -667,6 +710,7 @@ const CompleteProfile = ({
                     className="block text-xs font-bold text-gray-700"
                   >
                     Cell
+                    Cell
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -685,6 +729,28 @@ const CompleteProfile = ({
                 </div>
               </div>
 
+              <div className="w-full">
+                <label
+                  htmlFor="address"
+                  className="block text-xs font-bold text-gray-700"
+                >
+                  Village
+                </label>
+                <div className="w-full relative">
+                  <span className="absolute left-2 top-[10px]">
+                    <Folder2 />
+                  </span>
+                  <input
+                    type="village"
+                    name="village"
+                    value={formData.village}
+                    placeholder="Village"
+                    onChange={handleChange}
+                    className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    required
+                  />
+                </div>
+              </div>
               <div className="w-full">
                 <label
                   htmlFor="address"

@@ -5,20 +5,21 @@ import { DataTable } from "@/components/core/data-table";
 import Actions from "./EmployeeAction";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
-import { employee } from "@/utils/constants/dummy";
 import AddEmployee from "@/components/Modals/AddEmployee";
 import UpdateEmployee from "@/components/Modals/UpdateEmployee";
-import { useState } from "react";
 import DeleteEmployee from "@/components/Modals/DeleteEmployee";
+import NewRoleModal from "@/components/Modals/newRole"; // Import the NewRoleModal component
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 import { getEmployees } from "@/utils/funcs";
 
 const Page = () => {
-  const [isOpenAddEmployee, { open, close }] = useDisclosure(false);
+  const [isOpenAddEmployee, { open:openAddEmployee, close:closeAddEmployee }] = useDisclosure(false);
+  const [isOpenAddRole, { open:openAddRole, close:closeAddRole }] = useDisclosure(false);
   const employees = useSelector((state: any) => state.employees);
+  console.log(employees);
   const [isOpenEmployee, setIsOpenEmployee] = useState({
     openUpdate: false,
     openDelete: false,
@@ -54,10 +55,7 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <Actions
-          employee={isOpenEmployee.employee}
-          setIsEmployee={setIsOpenEmployee}
-        />
+        <Actions employee={row.original} setIsEmployee={setIsOpenEmployee} />
       ),
     },
   ];
@@ -76,56 +74,93 @@ const Page = () => {
           />
         </div>
 
-        <button
-          onClick={open}
-          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-        >
-          <span className="text-2xl">
-            <SolarUserPlusBold />
-          </span>
-          <h1 className="text-base font-medium text-white">New Employee</h1>
-        </button>
-      </div>
+    return (
+        <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
+            <div className="w-full flex justify-between items-center p-4">
+                <div className="relative w-[25rem]">
+                    <span className="absolute top-4 left-4">
+                        <CiSearch size={25} />
+                    </span>
+                    <input
+                        name="search"
+                        className="w-full p-3 py-4 pl-12 text-base placeholder:text-black text-black rounded-full bg-[#005DE908] border-none outline-none"
+                        placeholder="Search"
+                    />
+                </div>
 
-      {employees?.loading ? (
-        <div className="w-full h-full">
-          <TableSkeleton columns={columns} />
+                <button
+                    onClick={openAddEmployee}
+                    className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+                >
+                    <span className="text-2xl">
+                        <SolarUserPlusBold />
+                    </span>
+                    <h1 className="text-base font-medium text-white">
+                        New Employee
+                    </h1>
+                </button>
+                <button
+                    onClick={openAddRole}
+                    className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+                >
+                    <span className="text-2xl">
+                        <SolarUserPlusBold />
+                    </span>
+                    <h1 className="text-base font-medium text-white">
+                        Add another role
+                    </h1>
+                </button>
+            </div>
+
+            {employees?.loading ? (
+                <div className="w-full h-full">
+                    <TableSkeleton columns={columns} />
+                </div>
+            ) : employees?.error ? (
+                <div className="w-full flex justify-center items-center">
+                    <h1 className="text-red-500 font-bold">
+                        {employees.error}
+                    </h1>
+                </div>
+            ) : (
+                <div className="w-full h-full">
+                    <DataTable
+                        columns={columns}
+                        data={employees?.employees ?? []}
+                    />
+                </div>
+            )}
+            <AddEmployee
+                isOpenAddEmployee={isOpenAddEmployee}
+                closeAddEmployee={closeAddEmployee}
+                refetch={() => getEmployees(dispatch)}
+            />
+            <UpdateEmployee
+                isOpenUpdateEmployee={isOpenEmployee.openUpdate}
+                closeUpdateEmployee={() =>
+                    setIsOpenEmployee({
+                        openUpdate: false,
+                        employee: null,
+                        openDelete: false,
+                    })
+                }
+            />
+            <DeleteEmployee
+                isOpenDeleteEmployee={isOpenEmployee.openDelete}
+                closeDeleteEmployee={() =>
+                    setIsOpenEmployee({
+                        openDelete: false,
+                        employee: null,
+                        openUpdate: false,
+                    })
+                }
+            />
+            <NewRoleModal isOpen={isOpenAddRole} onClose={closeAddRole} />
         </div>
-      ) : employees?.error ? (
-        <div className="w-full flex justify-center items-center">
-          <h1 className="text-red-500 font-bold">{employees.error}</h1>
-        </div>
-      ) : (
-        <div className="w-full h-full">
-          <DataTable columns={columns} data={employees?.employees ?? []} />
-        </div>
-      )}
-      <AddEmployee
-        isOpenAddEmployee={isOpenAddEmployee}
-        closeAddEmployee={close}
-        refetch={() => getEmployees(dispatch)}
-      />
-      <UpdateEmployee
-        isOpenUpdateEmployee={isOpenEmployee.openUpdate}
-        closeUpdateEmployee={() =>
-          setIsOpenEmployee({
-            openUpdate: false,
-            employee: null,
-            openDelete: false,
-          })
-        }
-      />
-      <DeleteEmployee
-        isOpenDeleteEmployee={isOpenEmployee.openDelete}
-        closeDeleteEmployee={() =>
-          setIsOpenEmployee({
-            openDelete: false,
-            employee: null,
-            openUpdate: false,
-          })
-        }
-      />
-    </div>
-  );
-};
+      </div>
+      </div>
+    );
+}
+
 export default Page;
+

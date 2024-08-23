@@ -22,7 +22,6 @@ function Page() {
       <div className="flex flex-col items-center justify-center w-full h-full">
         <Image src={logo} alt="Logo" className="w-[400px] h-auto" />
         <div className="w-[40vw] h-[70vh] flex-col gap-4 rounded-2xl bg-white p-10 relative flex items-center justify-center">
-          
           <Image
             src={side}
             alt=""
@@ -97,7 +96,9 @@ function Page() {
         </div>
       </div>
       <div className="absolute bottom-0 left-0 p-4 z-30">
-        <h2 className="text-black font-extrabold">© 2024 Rwanda TVET Board.</h2>
+        <h2 className="text-black font-extrabold">
+          © 2024 Rwanda TVET Board.
+        </h2>
       </div>
       <div className="absolute bottom-0 right-0 p-4 z-30">
         <button className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
