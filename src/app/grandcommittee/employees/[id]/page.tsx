@@ -42,8 +42,10 @@ const AssignedStage = ({
   stage: any;
   open: (prop: any) => void;
 }) => {
-  const {employees} = useSelector((state: any)=> state.employees);
-  const employee = employees.find((employee: any) => employee.uuid === employee.uuid);
+  const { employees } = useSelector((state: any) => state.employees);
+  const employee = employees.find(
+    (employee: any) => employee.uuid === employee.uuid,
+  );
   console.log(employees);
   console.log("employee", employee);
   return (
@@ -113,9 +115,11 @@ const EmployeeDetails = () => {
     openMakeManager: false,
     level: "",
   });
-  const {employees} = useSelector((state: any)=> state.employees);
-  const {id: employeeId} = useParams()
-  const employee = employees.filter((employee: any) => employee.uuid === employeeId);
+  const { employees } = useSelector((state: any) => state.employees);
+  const { id: employeeId } = useParams();
+  const employee = employees.filter(
+    (employee: any) => employee.uuid === employeeId,
+  );
   return (
     <div className="w-full h-full flex items-start justify-between">
       <div className="w-[60%] flex flex-col gap-6  text-black bg-white p-3 py-5 rounded-2xl">
@@ -202,7 +206,11 @@ const EmployeeDetails = () => {
         isOpenUpdateEmployee={isUpdate}
         closeUpdateEmployee={() => setIsUpdate(false)}
       />
-      <AssignStage employee={employee} isAssignStage={isAssignStage} closeAssignStage={close} />
+      <AssignStage
+        employee={employee}
+        isAssignStage={isAssignStage}
+        closeAssignStage={close}
+      />
       <MakeManager
         employee={employee}
         isOpenMakeManager={isOpenStage.openMakeManager}

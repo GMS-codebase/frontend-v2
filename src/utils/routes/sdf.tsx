@@ -16,8 +16,8 @@ const sdfRoutes: Route[] = [
   {
     label: "Profile",
     path: "/sdf/profile",
-    icon: <Icons.SolarUserCircleBold />
-  }
+    icon: <Icons.SolarUserCircleBold />,
+  },
 ];
 
 export default sdfRoutes;
