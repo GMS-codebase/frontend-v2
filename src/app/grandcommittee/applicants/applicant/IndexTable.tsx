@@ -48,7 +48,9 @@ const ApplicantTable = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />,
+      cell: ({ row }) => (
+        <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />
+      ),
     },
   ];
 
@@ -85,11 +87,13 @@ const ApplicantTable = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions call={isOpenCall.call} setIsCall={setIsOpenCall}/>,
+      cell: ({ row }) => (
+        <CallsActions call={isOpenCall.call} setIsCall={setIsOpenCall} />
+      ),
     },
   ];
 
-  const handleTableChange = (table:any) => {
+  const handleTableChange = (table: any) => {
     setActiveTable(table);
   };
 
@@ -109,16 +113,20 @@ const ApplicantTable = () => {
         <div className="flex gap-2">
           <button
             onClick={() => handleTableChange("contacts")}
-       className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 ${
-                activeTable === "contacts" ? "bg-[#005DE9] border-b-[#005DE9] text-[#005DE9] bg-opacity-50" : "bg-[#005DE9] bg-opacity-50"
-              }`}
+            className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 ${
+              activeTable === "contacts"
+                ? "bg-[#005DE9] border-b-[#005DE9] text-[#005DE9] bg-opacity-50"
+                : "bg-[#005DE9] bg-opacity-50"
+            }`}
           >
             <h1 className="text-base font-medium text-white">Contacts</h1>
           </button>
           <button
             onClick={() => handleTableChange("applications")}
             className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 ${
-              activeTable === "applications" ? "bg-[#005DE9] border-b-[#005DE9] text-[#005DE9] bg-opacity-50" : "bg-[#005DE9] bg-opacity-50"
+              activeTable === "applications"
+                ? "bg-[#005DE9] border-b-[#005DE9] text-[#005DE9] bg-opacity-50"
+                : "bg-[#005DE9] bg-opacity-50"
             }`}
           >
             <h1 className="text-base font-medium text-white">Applications</h1>
@@ -126,12 +134,15 @@ const ApplicantTable = () => {
         </div>
       </div>
       <div className="w-full h-full">
-        {activeTable === "contacts" && <DataTable columns={contactColumns} data={contactData} />}
-        {activeTable === "applications" && <DataTable columns={applicationColumns} data={data} />}
+        {activeTable === "contacts" && (
+          <DataTable columns={contactColumns} data={contactData} />
+        )}
+        {activeTable === "applications" && (
+          <DataTable columns={applicationColumns} data={data} />
+        )}
       </div>
     </div>
   );
 };
 
 export default ApplicantTable;
-
