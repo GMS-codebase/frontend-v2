@@ -17,6 +17,7 @@ const AddTrade = ({
   const [formData, setFormData] = useState({
     title: "",
     description: "",
+    shortname: "",
   });
   const dispatch = useDispatch();
   const handleChange = (e: { target: { name: any; value: any } }) => {
@@ -29,6 +30,7 @@ const AddTrade = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    console.log(formData);
     authorizedApi
       .post("/trade", formData)
       .then((res) => {
@@ -43,6 +45,7 @@ const AddTrade = ({
         setFormData({
           title: "",
           description: "",
+          shortname: "",
         });
         closeAddTrade();
       })
@@ -99,6 +102,30 @@ const AddTrade = ({
                       name="title"
                       value={formData.title}
                       placeholder="Trade title"
+                      onChange={handleChange}
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="w-full flex justify-between gap-3">
+                <div className="w-full">
+                  <label
+                    htmlFor="TradeShortname"
+                    className="block text-lg font-bold text-gray-700"
+                  >
+                    Shortname
+                  </label>
+                  <div className="w-full relative">
+                    <span className="absolute left-2 top-[10px]">
+                      <Folder2 />
+                    </span>
+                    <input
+                      type="text"
+                      name="shortname"
+                      value={formData.shortname}
+                      placeholder="Trade Shortname"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
                       required
