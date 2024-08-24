@@ -47,7 +47,6 @@ const Navbar = () => {
     if (role === "ADMIN") {
       getWindows(dispatch);
       getSectors(dispatch);
-      getTrades(dispatch);
       getApplicants(dispatch);
       getEmployees(dispatch);
       getApplications(dispatch);
@@ -55,6 +54,7 @@ const Navbar = () => {
       getMyContacts(dispatch);
       getMyApplicantProfile(dispatch);
     }
+    getTrades(dispatch);
     getCalls(dispatch);
     getMyProfile(dispatch);
     getApplications(dispatch);

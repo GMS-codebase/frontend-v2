@@ -142,7 +142,7 @@ const CompleteProfile = ({
       }
       authorizedApi
         .put("/applicant/update/profile", submitData)
-        .then((res) => {
+        .then((_res) => {
           notifications.show({
             message: "Profile updated successfully!",
             color: "green",

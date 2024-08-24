@@ -64,6 +64,7 @@ export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/window/all")
     .then((res) => {
+      console.log(res.data.data.data);
       dispatch({ type: GET_WINDOWS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
@@ -110,6 +111,7 @@ export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/trade")
     .then((res) => {
+      console.log(res.data);
       dispatch({ type: GET_TRADES_SUCCESS, payload: res.data.data });
     })
     .catch((err) => {
@@ -219,7 +221,7 @@ export const getMEReports = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
-export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {  
+export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_PROFILE_LOADING });
   authorizedApi
     .get("/auth/me")
