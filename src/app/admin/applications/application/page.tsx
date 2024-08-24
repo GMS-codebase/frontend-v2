@@ -7,39 +7,14 @@ import {
   SolarFolder2Bold,
   SolarEyeLinear,
 } from "@/components/core/icons";
-<<<<<<< HEAD
 import EvalDetails from "@/components/Modals/evalDetails"; // Import EvalDetails
 
 import { useDisclosure } from "@mantine/hooks";
-=======
->>>>>>> 772a2217f9555c2defadc15851d63be0c27900e7
 const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
 
-<<<<<<< HEAD
-    const [isOpenAddEval, setIsOpenAddEval] = useState(false); // Modal state
-    const openAddEval = () => setIsOpenAddEval(true); // Function to open modal
-    const closeAddEval = () => setIsOpenAddEval(false); // Function to close modal
-
-    const renderComponent = () => {
-        switch (currentComponent) {
-            case "Project":
-                return <Project />;
-            case "IndicativeBudget":
-                return <IndicativeBudget />;
-            default:
-                return null;
-        }
-    };
-  const [isOpenEvalDetail, { open: openEval, close: closeEval }] =
-    useDisclosure(false);
-  const [
-    isOpenDuediligenceDetail,
-    { open: openDuediligence, close: closeDuediligence },
-  ] = useDisclosure(false);
-=======
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":
@@ -50,7 +25,6 @@ const Page = () => {
         return null;
     }
   };
->>>>>>> 772a2217f9555c2defadc15851d63be0c27900e7
 
   return (
     <div className="flex flex-col gap-6 p-8 rounded-3xl">
@@ -128,10 +102,6 @@ const Page = () => {
             <div className="">Apply for Appeal</div>
           </div>
         </div>
-<<<<<<< HEAD
-    );
-=======
->>>>>>> 772a2217f9555c2defadc15851d63be0c27900e7
       </div>
       <div className="flex gap-2">
         <div className="flex bg-white rounded-2xl w-[70%] gap-4  p-5">

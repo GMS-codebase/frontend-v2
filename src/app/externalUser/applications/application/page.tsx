@@ -162,11 +162,11 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <EvalDetails isOpenAddEval={isOpenEvalDetail} closeAddEval={closeEval} />
+      {/* <EvalDetails isOpenAddEval={isOpenEvalDetail} closeAddEval={closeEval} />
       <DueDetails
         isOpenAddDue={isOpenDuediligenceDetail}
         closeAddDue={closeDuediligence}
-      />
+      /> */}
     </div>
   );
 };

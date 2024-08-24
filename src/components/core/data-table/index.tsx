@@ -57,7 +57,7 @@ export function DataTable({
 }: Props) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -72,7 +72,7 @@ export function DataTable({
       pageIndex,
       pageSize,
     }),
-    [pageIndex, pageSize]
+    [pageIndex, pageSize],
   );
 
   const newColumns: ColumnDef<any>[] = [...columns];
@@ -136,7 +136,7 @@ export function DataTable({
         {buttonElement && buttonElement}
       </div>
       {loading ? (
-        loader ?? (
+        (loader ?? (
           <div className={`${tableClass} w-full overflow-auto data-table`}>
             <table className={`w-full table-row-spacing`}>
               <thead className="text-mainPurple">
@@ -147,7 +147,7 @@ export function DataTable({
                         className={clsx(
                           "p-2 font-medium py-5 whitespace-nowrap text-xl text-primary ",
                           i === 0 && "pl-4",
-                          i === headerGroup.headers.length - 1 && "pr-4"
+                          i === headerGroup.headers.length - 1 && "pr-4",
                         )}
                         key={header.id}
                       >
@@ -155,7 +155,7 @@ export function DataTable({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </td>
                     ))}
@@ -166,7 +166,7 @@ export function DataTable({
                 {[...Array(10)].map((_, index) => (
                   <tr key={index} className="">
                     {columns.map((column, i) => (
-                      <td key={i} className="px-4 py-5" >
+                      <td key={i} className="px-4 py-5">
                         <Skeleton height={20} />
                       </td>
                     ))}
@@ -175,7 +175,7 @@ export function DataTable({
               </tbody>
             </table>
           </div>
-        )
+        ))
       ) : (
         <>
           <div className={`${tableClass} w-full overflow-auto data-table`}>
@@ -191,7 +191,7 @@ export function DataTable({
                         className={clsx(
                           "p-2 font-medium py-5 whitespace-nowrap text-xl text-primary ",
                           i === 0 && "pl-4",
-                          i === headerGroup.headers.length - 1 && "pr-4"
+                          i === headerGroup.headers.length - 1 && "pr-4",
                         )}
                         key={header.id}
                       >
@@ -199,7 +199,7 @@ export function DataTable({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </td>
                     ))}
@@ -224,13 +224,13 @@ export function DataTable({
                               ? "bg-mainPurple font-semibold"
                               : "",
                             i === 0 && " pl-4",
-                            i === row.getVisibleCells().length - 1 && " pr-4"
+                            i === row.getVisibleCells().length - 1 && " pr-4",
                           )}
                           key={cell.id}
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext()
+                            cell.getContext(),
                           )}
                         </td>
                       ))}

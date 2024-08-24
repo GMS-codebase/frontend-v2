@@ -26,7 +26,7 @@ type Action = {
 
 export default function ApplicationsReducer(
   state = initialState,
-  action: Action
+  action: Action,
 ) {
   switch (action.type) {
     case GET_APPLICATIONS_LOADING:
@@ -74,7 +74,7 @@ export default function ApplicationsReducer(
         applications: state.applications.map((application: Application) =>
           application.uuid === action.payload.id
             ? { ...application, ...action.payload.data }
-            : application
+            : application,
         ),
         error: null,
         isError: false,
@@ -85,7 +85,7 @@ export default function ApplicationsReducer(
       return {
         ...state,
         applications: state.applications.filter(
-          (application: Application) => application.uuid !== action.payload.id
+          (application: Application) => application.uuid !== action.payload.id,
         ),
         error: null,
         isError: false,
