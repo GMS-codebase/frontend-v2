@@ -12,24 +12,6 @@ import DeleteWindow from "@/components/Modals/DeleteWindow";
 import { useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
 import { Window } from "@/types";
-const windows = [
-  {
-    name: "Window 1: Rapid Response Training",
-    description: "Short-term training of potential employees for investors",
-  },
-  {
-    name: "Window 2: Rapid Response Training",
-    description: "Short-term training of potential employees for investors",
-  },
-  {
-    name: "Window 3: Rapid Response Training",
-    description: "Short-term training of potential employees for investors",
-  },
-  {
-    name: "Window 4: Rapid Response Training",
-    description: "Short-term training of potential employees for investors",
-  },
-];
 const Page = () => {
   const [isAddWindow, { open, close }] = useDisclosure(false);
   const windows = useSelector((state: any) => state.windows);
@@ -93,21 +75,13 @@ const Page = () => {
           <h1 className="text-base font-medium text-white">New Window</h1>
         </button>
       </div>
-
-      {windows.loading ? (
-        <div className="w-full flex items-center justify-center gap-4 mt-10">
-          <h1>Loading Windows </h1>
-          <ClipLoader size={20} color="black" />
-        </div>
-      ) : windows.error ? (
-        <div className="w-full flex justify-center items-center">
-          <h1 className="text-red-500 font-bold">{windows.error}</h1>
-        </div>
-      ) : (
-        <div className="w-full h-full">
-          <DataTable columns={columns} data={windows.windows} />
-        </div>
-      )}
+      <div className="w-full h-full">
+        <DataTable
+          columns={columns}
+          data={windows.windows}
+          loading={windows.loading}
+        />
+      </div>
       <AddWindow isOpenAddWindow={isAddWindow} closeAddWindow={close} />
       <UpdateWindow
         Window={isWindow.window}

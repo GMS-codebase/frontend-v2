@@ -12,6 +12,7 @@ import { ClipLoader } from "react-spinners";
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
   const trades = useSelector((state: any) => state.trades);
+  const trades = useSelector((state: any) => state.trades);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -71,17 +72,13 @@ const Page = () => {
           <h1 className="text-base font-medium text-white">New Trade</h1>
         </button>
       </div>
-
-      {trades.loading ? (
-        <div className="w-full flex items-center justify-center gap-4 font-bold">
-          <h1>Loading Trades</h1>
-          <ClipLoader size={20} color="black" />
-        </div>
-      ) : (
-        <div className="w-full h-full">
-          <DataTable columns={columns} data={trades.trades ?? []} />
-        </div>
-      )}
+      <div className="w-full h-full">
+        <DataTable
+          columns={columns}
+          data={trades.trades ?? []}
+          loading={trades.loading}
+        />
+      </div>
       <AddTrade isOpenAddTrade={isOpenTrade} closeAddTrade={close} />
     </div>
   );

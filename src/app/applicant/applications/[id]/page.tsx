@@ -11,7 +11,33 @@ import {
   SolarSubtitlesBold,
   SolarDownloadMinimalisticBold,
 } from "@/components/core/icons";
+import { useParams } from "next/navigation";
+import { useSelector } from "react-redux";
+import { format } from "date-fns";
+import CompleteProfile from "@/components/Modals/application/CompleteProfile";
+import { useDisclosure } from "@mantine/hooks";
+import AddEditContact from "@/components/Modals/applicantContacts/AddEditContact";
 const Page = () => {
+  const { id: callId } = useParams();
+  const calls = useSelector((state: any) => state.calls);
+  const profile = useSelector((state: any) => state.auth);
+  const contacts = useSelector((state: any) => state.auth);
+  const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
+  const [
+    isOpenCreateProfile,
+    { open: openAddProfile, close: closeAddProfile },
+  ] = useDisclosure(false);
+  const [isOpenAddContact, { open: openAddContact, close: closeAddContact }] =
+    useDisclosure(false);
+  const handleApply = () => {
+    openAddProfile();
+    // if (!profile.applicantProfile || !profile.applicantProfile.business_name) {
+    //   openAddProfile();
+    // }
+    // if (!contacts.myContacts || contacts.myContacts.length === 0) {
+    //   openAddContact();
+    // }
+  };
   return (
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">
@@ -41,9 +67,7 @@ const Page = () => {
           </div>
           <div className="flex gap-2 ">
             <div className="flex flex-col gap-6 justify-start items-start ">
-              <h1 className="font-bold text-xl">
-                SDF CALL 5 FOR GRANT PROPOSALS
-              </h1>
+              <h1 className="font-bold text-xl">{call?.title}</h1>
               <div className="flex gap-4 rounded-2xl items-center justify-center ">
                 <div className="flex gap-2  bg-gray-400 bg-opacity-10 rounded-full px-4  py-2 items-center justify-center font-semibold">
                   <span>
@@ -51,7 +75,7 @@ const Page = () => {
                   </span>
                   <div>Appeal Days</div>
                 </div>
-                <div className="text-xl font-bold">4 Days</div>
+                <div className="text-xl font-bold">{call?.appealDays} Days</div>
               </div>
               <div className="flex gap-4 items-center justify-center ">
                 <div className="flex  gap-2  bg-gray-400 rounded-full bg-opacity-10 px-4  py-2 font-semibold items-center justify-center">
@@ -60,31 +84,31 @@ const Page = () => {
                   </span>
                   <div>Status</div>
                 </div>
-                <div className="text-xl font-bold">Open</div>
+                <div className="text-xl font-bold">{call?.status}</div>
               </div>
             </div>
             <div className="flex  mr-10">
               <div className="flex  ">
                 <DonutChart />
               </div>
-              <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4 py-2 rounded-3xl items-center justify-center font-semibold gap-2">
-                <div className="flex gap-2 items-center justify-center">
+              <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4   rounded-3xl items-center justify-center font-semibold gap-2">
+                <div className="flex gap-2 items-center  w-full ">
                   <span className="text-[#005DE9]">
                     <SolarCalendarBold />
                   </span>
                   <div>
-                    <p>start date</p>
-                    <p>2022/02/04 02:00:00</p>
+                    <p>Start date</p>
+                    <p>{call && format(call?.startDate, "dd MMMM yyyy")}</p>
                   </div>
                 </div>
 
-                <div className="flex flex-row gap-2 items-center justify-center">
+                <div className="flex flex-row gap-2 items-center  w-full ">
                   <span className="text-[#005DE9]">
                     <SolarCalendarBold />
                   </span>
                   <div>
                     <p>End Date</p>
-                    <p>2022/02/12 02:00:00</p>
+                    <p>{call && format(call?.endDate, "dd MMMM yyyy")}</p>
                   </div>
                 </div>
               </div>
@@ -99,26 +123,25 @@ const Page = () => {
             </div>
 
             <div className=" font-semibold text-gray-400">
-              Lorem ipsum dolor sit amet consectetur. Cursus odio imperdiet nibh
-              ornare ac molestie. Dignissim sapien molestie adipiscing augue
-              vitae. Scelerisque morbi volutpat tellus ipsum et suspendisse
-              velit mattis. Eu aliquam arcu quisque sit.Lorem ipsum dolor sit
-              amet consectetur. Cursus odio imperdiet nibh ornare ac molestie.
-              Dignissim sapien molestie adipiscing augue vitae. Scelerisque
-              morbi volutpat tellus ipsum et suspendisse velit mattis. Eu
-              aliquam arcu quisque sit.Lorem ipsum dolor sit amet consectetur.
-              Cursus odio imperdiet nibh ornare ac molestie. Dignissim sapien
-              molestie adipiscing augue vitae. Scelerisque morbi volutpat tellus
-              ipsum et suspendisse velit mattis. Eu aliquam arcu quisque
-              sit.ipsum et suspendisse velit mattis. Eu aliquam arcu quisque
-              sit.
+              {call?.description}
             </div>
           </div>
-          <div className="flex gap-2 text-white bg-[#005DE9] px-4 py-2 rounded-full  w-full font-bold items-center justify-center">
+          <div
+            onClick={handleApply}
+            className="flex gap-2 text-white bg-[#005DE9] px-4 py-2 rounded-full  w-full font-bold items-center justify-center cursor-pointer"
+          >
             <p>Apply</p>
           </div>
         </div>
       </div>
+      <CompleteProfile
+        closeCompleteProfile={closeAddProfile}
+        isOpenCompleteProfile={isOpenCreateProfile}
+      />
+      <AddEditContact
+        isOpenAddEditContact={isOpenAddContact}
+        closeAddEditContact={closeAddContact}
+      />
     </div>
   );
 };

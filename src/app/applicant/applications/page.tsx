@@ -7,7 +7,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { callData as data } from "@/utils/constants/dummy";
 import { CiSearch } from "react-icons/ci";
-import { calls as callsData } from "@/utils/constants/dummy";
+import { useSelector } from "react-redux";
+import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 const Page = () => {
   const columns: ColumnDef<any>[] = [
     {
@@ -55,7 +56,12 @@ const Page = () => {
       ),
     },
   ];
+  const myApplications = useSelector((state: any) => state.applications);
 
+  return (
+    <div className="w-full  flex flex-col gap-4">
+      <div className="font-bold text-2xl w-full">Open calls</div>
+      {/* <div>
   return (
     <div className="w-full  flex flex-col gap-4">
       <div className="font-bold text-2xl w-full">Open calls</div>
@@ -64,13 +70,8 @@ const Page = () => {
                     return <Calls key={index} call={call} />;
                 })}
             </div> */}
-      <div className="w-full relative">
-        <CallsList
-          calls={callsData}
-          cardWidth="100%" // Example: setting custom card width
-          scrollAmount={1500} // Example: setting custom scroll amount
-          showArrows={true} // Example: showing arrows
-        />
+      <div className="w-full ">
+        <CallsList />
       </div>
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
@@ -94,7 +95,12 @@ const Page = () => {
           </div>
         </div>
         <div className="w-full h-full">
-          <DataTable columns={columns} data={data.slice(0, 5)} />
+          <DataTable
+            columns={columns}
+            data={myApplications.myApplications}
+            loading={myApplications.loading}
+            noDataMessage={"You haven't made any applications yet"}
+          />
         </div>
       </div>
     </div>

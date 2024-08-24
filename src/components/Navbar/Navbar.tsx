@@ -10,6 +10,8 @@ import {
   getApplications,
   getCalls,
   getEmployees,
+  getMyApplicantProfile,
+  getMyContacts,
   getMEReports,
   getMyProfile,
   getProfile,
@@ -23,6 +25,8 @@ const Navbar = () => {
   const [pageName, setPageName] = useState(getCookie("breadcrumb") || "");
    
   const active = usePathname();
+  const auth = useSelector((state: any) => state.auth);
+
   useEffect(() => {
     const handleStorageChange = () => {
       setPageName(getCookie("breadcrumb") || "");
@@ -35,12 +39,24 @@ const Navbar = () => {
   }, [active]);
 
   useEffect(() => {
-    getWindows(dispatch);
-    getSectors(dispatch);
-    getTrades(dispatch);
+    const role = active.startsWith("/admin")
+      ? "ADMIN"
+      : active.startsWith("/applicant")
+      ? "APPLICANT"
+      : null;
+
+    if (role === "ADMIN") {
+      getWindows(dispatch);
+      getSectors(dispatch);
+      getTrades(dispatch);
+      getApplicants(dispatch);
+      getEmployees(dispatch);
+      getApplications(dispatch);
+    } else if (role === "APPLICANT") {
+      getMyContacts(dispatch);
+      getMyApplicantProfile(dispatch);
+    }
     getCalls(dispatch);
-    getApplicants(dispatch);
-    getEmployees(dispatch);
     getMyProfile(dispatch);
     getApplications(dispatch);
     getMEReports(dispatch);
