@@ -2,6 +2,11 @@
 import React, { useState } from "react";
 import Project7 from "@/components/ApplicantDetails/Project7";
 import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
+import Questions from "@/components/Application/Questions";
+import {
+  indicativeBudgetQuestions,
+  questions,
+} from "@/utils/constants/questions";
 
 // const [active, setActive] = useState(0);
 // const prevStep = () =>
@@ -10,20 +15,42 @@ const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
+  const [data, setData] = useState<{ [key: string]: any }>();
 
   const renderComponent = () => {
+    const filterQuestionsBySubWindows = (
+      subWindows: { window: string; subWindow: string }[]
+    ) => {
+      return subWindows.map(({ window, subWindow }) => {
+        //@ts-ignore
+        return questions[window as any]?.[subWindow] || [];
+      });
+    };
+
+    const filteredQuestions = filterQuestionsBySubWindows([
+      { window: "window_1", subWindow: "subwindow_1" },
+      { window: "window_2", subWindow: "subwindow_1" },
+    ]);
+
     switch (currentComponent) {
       case "Project":
-        return <Project7 />;
+        return (
+          <Questions questions={filteredQuestions} setQuestionsData={setData} />
+        );
       case "IndicativeBudget":
-        return <IndicativeBudget />;
+        return (
+          <Questions
+            questions={[indicativeBudgetQuestions as any]}
+            setQuestionsData={setData}
+          />
+        );
       default:
         return null;
     }
   };
   return (
     <div>
-      <div className="flex flex-col gap-4 w-full">
+      <div className="flex flex-col gap-4 w-full bg-white p-4 rounded-2xl ">
         <div className="font-semibold text-2xl">Questions and answers</div>
         <div className="flex font-semibold">
           <div
@@ -45,7 +72,7 @@ const Page = () => {
             Indicative Budget
           </div>
         </div>
-        <div className="mt-4 w-full">{renderComponent()}</div>
+        <div className="w-full">{renderComponent()}</div>
         <div className="w-full flex justify-center mt-4 space-x-4">
           <button
             type="button"
