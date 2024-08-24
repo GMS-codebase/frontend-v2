@@ -21,6 +21,7 @@ import {
 const Navbar = () => {
   const dispatch = useDispatch();
   const [pageName, setPageName] = useState(getCookie("breadcrumb") || "");
+   
   const active = usePathname();
   useEffect(() => {
     const handleStorageChange = () => {
