@@ -4,11 +4,7 @@ import Project from "@/components/ApplicantDetails/Project";
 import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
 import DueDetails from "@/components/Modals/Duediligency";
 import EvalDetails from "@/components/Modals/evalDetails";
-import {
-  SolarFileBold,
-  SolarFolder2Bold,
-  SolarEyeLinear,
-} from "@/components/core/icons";
+import { SolarFileBold, SolarFolder2Bold } from "@/components/core/icons";
 import { useDisclosure } from "@mantine/hooks";
 const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
@@ -166,11 +162,11 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <EvalDetails isOpenAddEval={isOpenEvalDetail} closeAddEval={closeEval} />
+      {/* <EvalDetails isOpenAddEval={isOpenEvalDetail} closeAddEval={closeEval} />
       <DueDetails
         isOpenAddDue={isOpenDuediligenceDetail}
         closeAddDue={closeDuediligence}
-      />
+      /> */}
     </div>
   );
 };

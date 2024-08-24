@@ -99,7 +99,7 @@ const Page = () => {
           <span className="text-2xl">
             <FileDownload />
           </span>
-          <h1 className="text-base font-medium text-white">New Employee</h1>
+          <h1 className="text-base font-medium text-white">Export Report</h1>
         </button>
       </div>
     </div>

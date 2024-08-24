@@ -12,9 +12,14 @@ import AddCall from "@/components/Modals/AddCall";
 import { Select } from "@mantine/core";
 import { useRef } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useSelector } from "react-redux";
 
 const Page = () => {
   const [isOpenCall, { open, close }] = useDisclosure(false);
+  const { applications, loading } = useSelector(
+    (state: any) => state.applications,
+  );
+  console.log(applications, loading);
   const filtersContainerRef = useRef<HTMLDivElement>(null);
 
   const columns: ColumnDef<any>[] = [
@@ -33,7 +38,7 @@ const Page = () => {
       header: "Window",
       cell: ({ row }) => (
         <div>
-          WINDOW {row.original?.window.number} : {row.original?.window.name}
+          WINDOW {row.original?.window?.number} : {row.original?.window?.name}
         </div>
       ),
     },
@@ -50,12 +55,12 @@ const Page = () => {
     {
       accessorKey: "stage",
       header: "Stage",
-      cell: ({ row }) => <div>{row.original?.stage}</div>,
+      cell: ({ row }) => <div>{row.original?.currentStage}</div>,
     },
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions />,
+      cell: ({ row }) => <CallsActions application={row.original} />,
     },
   ];
 
@@ -170,7 +175,7 @@ const Page = () => {
       </div>
 
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} tableWidth={1800} />
+        <DataTable columns={columns} data={applications} tableWidth={1800} />
       </div>
       <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
     </div>

@@ -59,10 +59,7 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <Actions
-          contact={row.original}
-          setIsContact={setIsOpenContact}
-        />
+        <Actions contact={row.original} setIsContact={setIsOpenContact} />
       ),
     },
   ];

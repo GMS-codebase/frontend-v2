@@ -7,15 +7,96 @@ import {
   SolarFolder2Bold,
   SolarEyeLinear,
 } from "@/components/core/icons";
+import { useParams } from "next/navigation";
+import { useSelector } from "react-redux";
+import { Comments } from "@/types";
+
+/*
+applicationNumber
+: 
+"GMS-APP-0454909"
+budget
+: 
+{uuid: 'b04382d9-a91e-4efc-b6a5-5ca707b4018a', deletedStatus: false, doneAt: '2024-08-16T12:16:37.534Z', lastUpdatedAt: '2024-08-16T12:16:37.534Z', doneBy: null, …}
+currentStage
+: 
+"EVALUATION"
+deletedStatus
+: 
+false
+description
+: 
+"This is a sample application description."
+doneAt
+: 
+"2024-08-16T12:14:14.918Z"
+doneBy
+: 
+null
+finishedAnswering
+: 
+true
+lastUpdatedAt
+: 
+"2024-08-16T12:16:37.562Z"
+lastUpdatedBy
+: 
+null
+projectFunding
+: 
+{uuid: '51b6a010-74e1-49c6-8992-32660795b563', deletedStatus: false, doneAt: '2024-08-16T12:16:37.539Z', lastUpdatedAt: '2024-08-16T12:16:37.539Z', doneBy: null, …}
+status
+: 
+"PENDING"
+uuid
+: 
+"28f17e79-a876-4971-adb9-3f1daaf72352"
+*/
 const Page = () => {
+  const { id } = useParams();
+  console.log(id);
+  const applications = useSelector((state: any) => state.applications);
+  const application = applications?.applications?.filter(
+    (application: any) => application.uuid === id,
+  )[0];
+  console.log(application);
+
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
-
+  const [commentsData, setCommentsData] = useState<Comments>({
+    titleComment: "",
+    activitiesComment: "",
+    readinessExecuteComment: "",
+    roleComment: "",
+    institutionComment: "",
+    trainingManualComment: "",
+    trainingEquipmentComment: "",
+    identificationEmployeeComment: "",
+    staffComment: "",
+    sustainabilityComment: "",
+    previousFinancialReportComment: "",
+    trainingPremisesComment: "",
+    contributionFromApplicantComment: "",
+    recruitmentTrainerComment: "",
+    MOUsAttachmentComment: "",
+    identificationMemberComment: "",
+    assessmentEquipmentComment: "",
+    recruitmentCandidatesNumberComment: "",
+    assessorsAndFacilitatorsComment: "",
+    budgetAttachmentComment: "",
+    contributionComment: "",
+  });
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":
-        return <Project />;
+        return (
+          <Project
+            data={application?.projectFunding}
+            setComments={setCommentsData}
+            commentsData={commentsData}
+          />
+        );
       case "IndicativeBudget":
         return <IndicativeBudget />;
       default:
@@ -42,13 +123,13 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
                 Application number
               </p>
-              <p>GMS-APP-000896</p>
+              <p>{application?.applicationNumber}</p>
             </div>
             <div className="flex gap-6 justify-start items-start font-semibold">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
                 Finished answering
               </p>
-              <p>YES</p>
+              <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
             </div>
             <div className="flex gap-6 justify-start items-start">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
@@ -84,12 +165,7 @@ const Page = () => {
             <h2 className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start w-fit">
               Description
             </h2>
-            <div>
-              We are offering an MBA in ICT to upgrade the existing labour
-              force. This programme aims to assist the actual labour force to
-              succeed in the actual disruptive change by being sufficiently
-              equipped to meet the challenge of digitalization.
-            </div>
+            <div>{application?.description}</div>
           </div>
 
           <div className="flex px-4 py-2 gap-2 bg-[#005DE9] rounded-full text-white items-center justify-start w-fit">
@@ -101,7 +177,7 @@ const Page = () => {
         </div>
       </div>
       <div className="flex gap-2 p-5">
-        <div className="flex bg-white rounded-2xl w-[70%] gap-4">
+        <div className="flex bg-white rounded-2xl w-[70%] gap-4 p-5">
           <div className="flex flex-col gap-4 w-full">
             <div className="font-semibold text-2xl">Questions and answers</div>
             <div className="flex font-semibold">
