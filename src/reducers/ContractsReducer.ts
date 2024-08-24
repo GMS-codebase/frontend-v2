@@ -58,7 +58,7 @@ export default function ContractsReducer(state = initialState, action: Action) {
         contracts: state.contracts.map((contract: Contract) =>
           contract.uuid === action.payload.id
             ? { ...contract, ...action.payload.data }
-            : contract
+            : contract,
         ),
         error: null,
         isError: false,
@@ -69,7 +69,7 @@ export default function ContractsReducer(state = initialState, action: Action) {
       return {
         ...state,
         contracts: state.contracts.filter(
-          (contract: Contract) => contract.uuid !== action.payload.id
+          (contract: Contract) => contract.uuid !== action.payload.id,
         ),
         error: null,
         isError: false,

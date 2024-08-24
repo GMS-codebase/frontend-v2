@@ -71,7 +71,7 @@ export default function ContactsReducer(state = initialState, action: Action) {
         contacts: state.contacts.map((application: Contact) =>
           application.uuid === action.payload.id
             ? { ...application, ...action.payload.data }
-            : application
+            : application,
         ),
         error: null,
         isError: false,
@@ -82,7 +82,7 @@ export default function ContactsReducer(state = initialState, action: Action) {
       return {
         ...state,
         contacts: state.contacts.filter(
-          (application: Contact) => application.uuid !== action.payload.id
+          (application: Contact) => application.uuid !== action.payload.id,
         ),
         error: null,
         isError: false,
