@@ -16,12 +16,12 @@ const TableSkeleton: FC<Props> = ({ columns }) => {
           <th className="p-2 border-[#F7F8FD] border-y-[5px] w-[30px] rounded-l-xl">
             <Skeleton height={30} width={30} />
           </th>
-          {columns.map((column, i) => (
+          {columns?.map((column: any, i) => (
             <th
               key={i}
               className="p-3 font-semibold whitespace-nowrap border-[#F7F8FD] border-y-[5px] "
             >
-              {column.header}
+              {column?.header}
             </th>
           ))}
         </tr>

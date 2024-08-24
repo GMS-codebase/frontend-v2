@@ -10,7 +10,11 @@ import { Folder2, Subtitles } from "solar-icon-set";
 const AddSector = ({
   isOpenAddSector,
   closeAddSector,
+  isOpenAddSector,
+  closeAddSector,
 }: {
+  isOpenAddSector: boolean;
+  closeAddSector: () => void;
   isOpenAddSector: boolean;
   closeAddSector: () => void;
 }) => {
@@ -21,6 +25,13 @@ const AddSector = ({
     shortname: "",
   });
 
+  const handleChange = (e: { target: { name: any; value: any } }) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -157,7 +168,50 @@ const AddSector = ({
                   />
                 </div>
               </div>
+              <div className="">
+                <label
+                  htmlFor="description"
+                  className="block text-lg font-bold text-gray-700"
+                >
+                  Description
+                </label>
+                <div className="w-full relative">
+                  <span className="absolute left-2 top-[10px]">
+                    <Subtitles />
+                  </span>
+                  <input
+                    type="text"
+                    name="description"
+                    value={formData.description}
+                    placeholder="Add description"
+                    onChange={handleChange}
+                    className="mt-1 block w-full pb-28 pt-2 pl-8 px-3  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
+                    required
+                  />
+                </div>
+              </div>
 
+              <div className="w-full flex justify-center mt-4 space-x-4">
+                <button
+                  type="button"
+                  onClick={closeAddSector}
+                  className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Create
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </Modal>
+    </>
+  );
               <div className="w-full flex justify-center mt-4 space-x-4">
                 <button
                   type="button"

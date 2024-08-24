@@ -4,7 +4,13 @@ import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useDispatch } from "react-redux";
-import { FileDownload, Folder2, Subtitles, Upload, UserCircle } from "solar-icon-set";
+import {
+  FileDownload,
+  Folder2,
+  Subtitles,
+  Upload,
+  UserCircle,
+} from "solar-icon-set";
 
 const AddContract = ({
   isOpenAddContract,
@@ -15,7 +21,7 @@ const AddContract = ({
 }) => {
   const [formData, setFormData] = useState({
     applicant: "",
-    title:"",
+    title: "",
     file: "",
   });
   const dispatch = useDispatch();
@@ -39,7 +45,7 @@ const AddContract = ({
         setFormData({
           applicant: "",
           file: "",
-          title:"",
+          title: "",
         });
         closeAddContract();
       })
@@ -80,8 +86,7 @@ const AddContract = ({
               onSubmit={handleSubmit}
               className="w-full h-[60vh] overflow-y-auto flex flex-col gap-2 px-2"
             >
-
-                  <div className="w-full flex justify-between gap-3">
+              <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
                   <label
                     htmlFor="TradeTitle"
@@ -105,57 +110,56 @@ const AddContract = ({
                   </div>
                 </div>
               </div>
-                 <div className="">
-        <label
-          htmlFor="applicant"
-          className="block text-md font-bold text-gray-700"
-        >
-          Select  Applicant name
-        </label>
-        <div className="mt-1 py-1 pl-8 relative block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-          <span className="absolute left-4 top-[5px]">
-            <UserCircle className="w-10 h-10 mt-2" />
-          </span>
-          <Select
-            name="applicant"
-            data={[
-              { value: "leslie", label: "Uhiriwe Anne Leslie" },
-              { value: "octave", label: "Iradukunda Octave" },
-          
-            ]}
-            placeholder="Select applicant name"
-            required
-          />
-        </div>
-      </div>
-
-                       <div className="w-full my-5">
-          <label
-            htmlFor="fileUpload"
-            className="block text-md font-bold text-gray-700"
-          >
-            Attachment
-          </label>
-          <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-            <label
-              htmlFor="file-upload"
-              className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
-            >
-              <Upload className="text-[#005DE9] w-64 h-64 " />
-              <div className="text-center">
-                <p className="text-md text-gray-500">Upload file</p>
-                <p className="text-md text-gray-400">or drag and drop</p>
+              <div className="">
+                <label
+                  htmlFor="applicant"
+                  className="block text-md font-bold text-gray-700"
+                >
+                  Select Applicant name
+                </label>
+                <div className="mt-1 py-1 pl-8 relative block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                  <span className="absolute left-4 top-[5px]">
+                    <UserCircle className="w-10 h-10 mt-2" />
+                  </span>
+                  <Select
+                    name="applicant"
+                    data={[
+                      { value: "leslie", label: "Uhiriwe Anne Leslie" },
+                      { value: "octave", label: "Iradukunda Octave" },
+                    ]}
+                    placeholder="Select applicant name"
+                    required
+                  />
+                </div>
               </div>
-            </label>
-            <input
-              id="file-upload"
-              type="file"
-              style={{ display: "none" }}
-              className="content-none"
-              required
-            />
-          </div>
-        </div>
+
+              <div className="w-full my-5">
+                <label
+                  htmlFor="fileUpload"
+                  className="block text-md font-bold text-gray-700"
+                >
+                  Attachment
+                </label>
+                <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                  <label
+                    htmlFor="file-upload"
+                    className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+                  >
+                    <Upload className="text-[#005DE9] w-64 h-64 " />
+                    <div className="text-center">
+                      <p className="text-md text-gray-500">Upload file</p>
+                      <p className="text-md text-gray-400">or drag and drop</p>
+                    </div>
+                  </label>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    style={{ display: "none" }}
+                    className="content-none"
+                    required
+                  />
+                </div>
+              </div>
 
               <div className="w-full flex justify-center mt-4 space-x-4">
                 <button
