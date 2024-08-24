@@ -19,3 +19,17 @@ export type Sector = {
   description: string;
   uuid: string;
 };
+
+export type Application = {
+  uuid: string;
+};
+
+export type Contract = {
+  uuid: string;
+  contractNumber: number;
+};
+
+
+export type Contact = {
+  uuid: string;
+};
