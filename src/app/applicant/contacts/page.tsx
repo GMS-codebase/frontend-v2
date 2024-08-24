@@ -8,8 +8,18 @@ import { applicantContacts as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
 import AddTrade from "@/components/Modals/AddTrade";
 import AddEditContact from "@/components/Modals/applicantContacts/AddEditContact";
+import { useSelector } from "react-redux";
+import Actions from "./ContactsAction";
+import { useState } from "react";
+import DeleteContact from "@/components/Modals/applicantContacts/DeleteContact";
 const Page = () => {
   const [isOpenAddEditContact, { open, close }] = useDisclosure(false);
+  const contacts = useSelector((state: any) => state.contacts);
+  const [isOpenContact, setIsOpenContact] = useState({
+    openUpdate: false,
+    openDelete: false,
+    contact: null,
+  });
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "firstName",
@@ -26,8 +36,13 @@ const Page = () => {
     {
       accessorKey: "phone",
       header: "Phone Number",
+      cell: ({ row }) => <div className="w-full">{row.original?.mobile}</div>,
+    },
+    {
+      accessorKey: "phone",
+      header: "Phone Number 2",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.phoneNumber}</div>
+        <div className="w-full">{row.original?.mobile1 || "-"}</div>
       ),
     },
     {
@@ -44,17 +59,7 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <div>
-          <button
-            style={{
-              background:
-                "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-            }}
-            className="p-3 rounded-full border text-white hover:bg-red-100"
-          >
-            <HiDotsHorizontal size={25} color="white" />
-          </button>
-        </div>
+        <Actions contact={row.original} setIsContact={setIsOpenContact} />
       ),
     },
   ];
@@ -84,11 +89,27 @@ const Page = () => {
       </div>
 
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} />
+        <DataTable
+          columns={columns}
+          data={contacts?.myContacts}
+          loading={contacts?.loading}
+          noDataMessage={"You do not have any contacts yet"}
+        />
       </div>
       <AddEditContact
         isOpenAddEditContact={isOpenAddEditContact}
         closeAddEditContact={close}
+      />
+      <DeleteContact
+        isOpenDeleteContact={isOpenContact.openDelete}
+        contact={isOpenContact.contact}
+        closeDeleteContact={() =>
+          setIsOpenContact({
+            openDelete: false,
+            contact: null,
+            openUpdate: false,
+          })
+        }
       />
     </div>
   );

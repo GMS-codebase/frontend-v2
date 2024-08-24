@@ -1,5 +1,5 @@
 import { Modal, MultiSelect, Select, Stepper } from "@mantine/core";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
 import { Folder2, Subtitles } from "solar-icon-set";
 import { SolarSuitcaseLinear, SolarUploadBold } from "../core/icons";
@@ -10,6 +10,7 @@ import { notifications } from "@mantine/notifications";
 import { SolarCheckCircleBold } from "../core/icons";
 import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
+
 type FormData = {
   title: string;
   description: string;
@@ -18,8 +19,10 @@ type FormData = {
   appealDays: string;
   windows: any;
   sectors: any;
+  subWindows: any;
   attachment: File | null;
 };
+
 const AddCall = ({
   isOpenAddCall,
   closeAddCall,
@@ -30,14 +33,10 @@ const AddCall = ({
   const [active, setActive] = useState(0);
   const sectors = useSelector((state: any) => state.sectors);
   const windows = useSelector((state: any) => state.windows);
-  const [selectedSelectors, setSelectedSelectors] = useState<any>([]);
+  console.log(windows);
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
-  const MultiWindowData = windows?.windows?.map((window: any) => {
-    return { value: window.uuid, label: window.title };
-  });
-  const MultiSectorData = sectors?.sectors?.map((sector: any) => {
-    return { value: sector.uuid, label: sector.name };
-  });
+  const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
+  const [selectedSelectors, setSelectedSelectors] = useState<any>([]);
   const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
@@ -45,9 +44,41 @@ const AddCall = ({
     endDate: "",
     appealDays: "",
     windows: [],
+    subWindows: [],
     sectors: [],
     attachment: null,
   });
+
+  const MultiWindowData = windows?.windows?.map((window: any) => ({
+    value: window.uuid,
+    label: window.title,
+  }));
+
+  const getSubWindowsData = () => {
+    const subWindowData = windows?.windows?.filter((window: any) =>
+      selectedWindows.includes(window.uuid)
+    ).flatMap((window: any) => window.subWindows?.map((subWindow: any) => ({
+      value: subWindow.uuid,
+      label: subWindow.title,
+    }))) || [];
+    console.log(subWindowData);
+    return subWindowData;
+  };
+
+  const getSectorData = () => {
+    const sectorData = windows?.windows?.flatMap((window: any) =>
+      window.subWindows?.filter((subWindow: any) =>
+        selectedSubWindows.includes(subWindow.uuid)
+      ).flatMap((subWindow: any) => subWindow.sectors?.map((sector: any) => ({
+        value: sector.uuid,
+        label: sector.title,
+      }))) || []
+    );
+    return sectorData;
+  };
+
+  const MultiSubWindowData = getSubWindowsData();
+  const MultiSectorData = getSectorData();
 
   const nextStep = () =>
     setActive((current) => (current < 3 ? current + 1 : current));
@@ -74,14 +105,12 @@ const AddCall = ({
     submitData.append("appealDays", formData.appealDays);
     submitData.append("applicationStartDate", formData.startDate);
     submitData.append("applicationEndDate", formData.endDate);
-    submitData.append("windows", JSON.stringify(selectedWindows));
-    submitData.append("sectors", JSON.stringify(selectedSelectors));
+    submitData.append("window", JSON.stringify(selectedWindows));
+    submitData.append("sector", JSON.stringify(selectedSelectors));
+    submitData.append("subWindow", JSON.stringify(selectedSubWindows));
     if (formData.attachment) {
       submitData.append("attachment", formData.attachment);
     }
-
-    console.log("form data --> ", formData, selectedSelectors, selectedWindows);
-
     authorizedApi
       .post("/call/create", submitData)
       .then((res) => {
@@ -116,19 +145,19 @@ const AddCall = ({
         >
           <IoMdClose size={25} color={"#000"} />
         </button>
-        <div className="w-full flex flex-col items-center">
+        <div className="w-full flex flex-col items-center ">
           <h1 className="text-2xl font-extrabold">Create Call</h1>
           <h2 className="text-[#000F2369] text-lg font-medium">
             Provide your call details to create a new call.
           </h2>
         </div>
-        <div className="w-4/5 flex flex-col items-center mt-4 overflow-hidden">
+        <div className="w-full flex flex-col items-center mt-4 overflow-hidden px-[5%]">
           <Stepper active={active} onStepClick={setActive} className="w-full">
-            <Stepper.Step label="Call detail" className="text-xs">
-              <div className="w-full overflow-y-auto flex flex-col gap-2 px-2">
-                <div className="w-full flex justify-between gap-3">
-                  <div className="w-full">
-                    <label
+          <Stepper.Step label="Call detail" className="text-xs">
+               <div className="w-full overflow-y-auto flex flex-col gap-2 px-2">
+                 <div className="w-full flex justify-between gap-3">
+                   <div className="w-full">
+                     <label
                       htmlFor="callTitle"
                       className="block text-xs font-bold text-gray-700"
                     >
@@ -337,17 +366,10 @@ const AddCall = ({
               </div>
             </Stepper.Step>
 
-            <Stepper.Step
-              label="Select options"
-              description=""
-              className="text-xs"
-            >
+            <Stepper.Step label="Select options" description="" className="text-xs">
               <div className="mt-4 w-full overflow-y-auto flex flex-col gap-2 px-2">
                 <div className="">
-                  <label
-                    htmlFor="windows"
-                    className="block text-xs font-bold text-gray-700"
-                  >
+                  <label htmlFor="windows" className="block text-xs font-bold text-gray-700">
                     Select windows
                   </label>
                   <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
@@ -356,8 +378,11 @@ const AddCall = ({
                     </span>
                     <MultiSelect
                       name="windows"
-                      // value={formData.position}
-                      onChange={setSelectedWindows}
+                      onChange={(value) => {
+                        setSelectedWindows(value);
+                        setSelectedSubWindows([]);
+                        setSelectedSelectors([]);
+                      }}
                       data={MultiWindowData}
                       placeholder="Select or type in a window"
                       required
@@ -366,10 +391,28 @@ const AddCall = ({
                 </div>
 
                 <div className="">
-                  <label
-                    htmlFor="sectors"
-                    className="block text-xs font-bold text-gray-700"
-                  >
+                  <label htmlFor="subWindows" className="block text-xs font-bold text-gray-700">
+                    Select sub-windows
+                  </label>
+                  <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <span className="absolute left-2 top-3 text-black text-lg">
+                      <SolarSuitcaseLinear />
+                    </span>
+                    <MultiSelect
+                      name="subWindows"
+                      onChange={(value) => {
+                        setSelectedSubWindows(value);
+                        setSelectedSelectors([]);
+                      }}
+                      data={MultiSubWindowData}
+                      placeholder="Select or type in a sub-window"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="">
+                  <label htmlFor="sectors" className="block text-xs font-bold text-gray-700">
                     Select sectors
                   </label>
                   <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
@@ -378,19 +421,13 @@ const AddCall = ({
                     </span>
                     <MultiSelect
                       name="sectors"
-                      // value={formData.position}
                       onChange={setSelectedSelectors}
                       data={MultiSectorData}
                       placeholder="Select or type in a sector"
                       required
                     />
-                    {/* <span className="absolute right-2 top-3 text-black text-lg">
-                    <SolarSuitcaseLinear />
-                    Add
-                  </span> */}
                   </div>
                 </div>
-
                 <div className="w-full flex justify-center mt-4 space-x-4">
                   <button
                     type="button"

@@ -1,6 +1,7 @@
 import React from "react";
 import { SolarDownloadMinimalisticBold } from "@/components/core/icons";
 import TextArea from "@/components/ApplicantDetails/TextArea";
+import NextPrevButtons from "../core/NextPrevButtons";
 const IndicativeBudget = () => {
   const handleDownload = () => {
     const data = `
@@ -70,19 +71,11 @@ On daily basis the institution will follow these steps to ensure smooth running 
           />
         </div>
       </div>
-      <div className="flex gap-4">
-        <button
-          className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
-          disabled
-        >
-          <span>i</span>
-          <p>Previous</p>
-        </button>
-        <button className="flex gap-2 cursor-not-allowed" disabled>
-          <p>Next</p>
-          <span>i</span>
-        </button>
-      </div>
+      <NextPrevButtons
+        isFirst={true}
+        handleNext={() => {}}
+        handlePrev={() => {}}
+      />
     </div>
   );
 };

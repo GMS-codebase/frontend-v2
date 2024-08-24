@@ -1,7 +1,7 @@
 "use client";
 
 import { PaginationState } from "@/types/data-table.type";
-import { Input, Pagination, Select } from "@mantine/core";
+import { Input, Pagination, Select, Skeleton } from "@mantine/core";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -136,7 +136,46 @@ export function DataTable({
         {buttonElement && buttonElement}
       </div>
       {loading ? (
-        (loader ?? <TableSkeleton columns={columns} />)
+        (loader ?? (
+          <div className={`${tableClass} w-full overflow-auto data-table`}>
+            <table className={`w-full table-row-spacing`}>
+              <thead className="text-mainPurple">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr className="bg-[#005DE914] text-xl" key={headerGroup.id}>
+                    {headerGroup.headers.map((header, i) => (
+                      <td
+                        className={clsx(
+                          "p-2 font-medium py-5 whitespace-nowrap text-xl text-primary ",
+                          i === 0 && "pl-4",
+                          i === headerGroup.headers.length - 1 && "pr-4",
+                        )}
+                        key={header.id}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {[...Array(10)].map((_, index) => (
+                  <tr key={index} className="">
+                    {columns.map((column, i) => (
+                      <td key={i} className="px-4 py-5">
+                        <Skeleton height={20} />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))
       ) : (
         <>
           <div className={`${tableClass} w-full overflow-auto data-table`}>

@@ -16,18 +16,18 @@ const EvalDetails = ({
     onMakeDecision,
     openEditModal,
 }: EvalDetailsProps) => {
-    const [formData, setFormData] = useState({
-        title: "",
-        description: "",
-    });
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+  });
 
-    const handleChange = (e: { target: { name: any; value: any } }) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
+  const handleChange = (e: { target: { name: any; value: any } }) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
     const handleSubmit = (e: { preventDefault: () => void }) => {
         e.preventDefault();
@@ -101,46 +101,46 @@ const EvalDetails = ({
                             </div>
                         </div>
 
-                        <div className="">
-                            <label
-                                htmlFor="description"
-                                className="block text-sm text-gray-700"
-                            >
-                                Comment
-                            </label>
-                            <div className="w-full relative">
-                                <input
-                                    type="text"
-                                    name="description"
-                                    value={formData.description}
-                                    placeholder="Provide a comment"
-                                    onChange={handleChange}
-                                    className="mt-1 block w-full pb-28 pt-2 pl-8 px-6 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="w-full flex justify-center mt-4 space-x-4">
-                            <button
-                                type="button"
-                                onClick={closeAddEval}
-                                className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            >
-                                Make Decision
-                            </button>
-                        </div>
-                    </form>
-                </div>
+            <div className="">
+              <label
+                htmlFor="description"
+                className="block text-sm text-gray-700"
+              >
+                Comment
+              </label>
+              <div className="w-full relative">
+                <input
+                  type="text"
+                  name="description"
+                  value={formData.description}
+                  placeholder="Provide a comment"
+                  onChange={handleChange}
+                  className="mt-1 block w-full pb-28 pt-2 pl-8 px-6 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
+                  required
+                />
+              </div>
             </div>
-        </Modal>
-    );
+
+            <div className="w-full flex justify-center mt-4 space-x-4">
+              <button
+                type="button"
+                onClick={closeAddEval}
+                className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Make Decision
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Modal>
+  );
 };
 
 export default EvalDetails;

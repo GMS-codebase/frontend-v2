@@ -87,15 +87,12 @@ const Page = () => {
       </div>
 
       <div className="w-full h-full">
-        {calls.loading ? (
-          <TableSkeleton columns={columns} />
-        ) : (
-          <DataTable
-            columns={columns}
-            data={calls?.calls}
-            noDataMessage="No Calls Created Yet"
-          />
-        )}
+        <DataTable
+          columns={columns}
+          data={calls?.calls}
+          noDataMessage="No Calls Created Yet"
+          loading={calls.loading}
+        />
       </div>
       <AddCall isOpenAddCall={isOpen} closeAddCall={close} />
       <UpdateCall
