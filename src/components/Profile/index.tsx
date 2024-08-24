@@ -26,50 +26,50 @@ const Profile = () => {
     gender: profile?.profile?.gender,
     position: profile?.profile?.position,
     institution: profile?.profile?.institution,
-  })
-  useEffect(()=>{
+  });
+  useEffect(() => {
     setFormData({
-        firstName: profile?.profile?.firstname,
-        lastName: profile?.profile?.lastname,
-        email: profile?.profile?.email,
-        phoneNumber: profile?.profile?.phoneNumber,
-        gender: profile?.profile?.gender,
-        position: profile?.profile?.position,
-        institution: profile?.profile?.institution,
-    })
-  },[profile])
+      firstName: profile?.profile?.firstname,
+      lastName: profile?.profile?.lastname,
+      email: profile?.profile?.email,
+      phoneNumber: profile?.profile?.phoneNumber,
+      gender: profile?.profile?.gender,
+      position: profile?.profile?.position,
+      institution: profile?.profile?.institution,
+    });
+  }, [profile]);
   const dispatch = useDispatch();
   const navigate = useRouter();
   const [loading, setLoading] = useState(false);
-  const handleLogout = ()=>{
-    dispatch({type: LOGOUT});
-    dispatch({type: GET_PROFILE_ERROR})
+  const handleLogout = () => {
+    dispatch({ type: LOGOUT });
+    dispatch({ type: GET_PROFILE_ERROR });
     setLoading(true);
     navigate.push("/");
     notifications.show({
-        message: "Logged Out Successfully!",
-        color: "blue",
-        duration:6000
-    })
-  }
+      message: "Logged Out Successfully!",
+      color: "blue",
+      duration: 6000,
+    });
+  };
   return (
     <div className="w-full bg-white rounded-2xl ">
       {profile?.loading ? (
         <div className="w-full h-[105vh] p-5">
-        <Skeleton height={180} radius="xl" className="mb-4" />
-        <div className="w-full mt-20 flex gap-4">
-          <div className="w-[60%]">
-            <Skeleton height={50} radius="xl" className="mb-5" />
-            <Skeleton height={30} radius="xl" className="mb-2" />
-            <Skeleton height={30} radius="xl" className="mb-2" />
-            <Skeleton height={30} radius="xl" className="mb-2" />
-            <Skeleton height={50} radius="xl" className="mt-4" />
-          </div>
-          <div className="w-[50%] px-5">
-            <Skeleton height="100%" radius="xl" />
+          <Skeleton height={180} radius="xl" className="mb-4" />
+          <div className="w-full mt-20 flex gap-4">
+            <div className="w-[60%]">
+              <Skeleton height={50} radius="xl" className="mb-5" />
+              <Skeleton height={30} radius="xl" className="mb-2" />
+              <Skeleton height={30} radius="xl" className="mb-2" />
+              <Skeleton height={30} radius="xl" className="mb-2" />
+              <Skeleton height={50} radius="xl" className="mt-4" />
+            </div>
+            <div className="w-[50%] px-5">
+              <Skeleton height="100%" radius="xl" />
+            </div>
           </div>
         </div>
-      </div>
       ) : (
         <>
           <div className="w-full h-[180px] bg-[#000F23] rounded-t-2xl relative mb-20">
@@ -79,9 +79,7 @@ const Profile = () => {
                   <Icons.SolarUserBold className="w-[100px] h-[100px]" />
                 </button>
                 <div className="">
-                  <h1 className="text-2xl">
-                    {profile?.profile?.firstname}
-                  </h1>
+                  <h1 className="text-2xl">{profile?.profile?.firstname}</h1>
                   <h1 className="font-bold text-primary">
                     {profile?.profile?.role}
                   </h1>
@@ -314,13 +312,13 @@ const Profile = () => {
             </div>
           </div>
           <div className="w-full flex justify-end px-10">
-                <button
-                    onClick={handleLogout}
-                  type="button"
-                  className="w-[43%] px-4 py-2 bg-red-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                >
-                  {loading ? <ClipLoader size={20} color="white"/> : "Logout"}
-                </button>
+            <button
+              onClick={handleLogout}
+              type="button"
+              className="w-[43%] px-4 py-2 bg-red-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            >
+              {loading ? <ClipLoader size={20} color="white" /> : "Logout"}
+            </button>
           </div>
         </>
       )}
