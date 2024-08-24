@@ -74,14 +74,11 @@ const AddCall = ({
     submitData.append("appealDays", formData.appealDays);
     submitData.append("applicationStartDate", formData.startDate);
     submitData.append("applicationEndDate", formData.endDate);
-    submitData.append("windows", JSON.stringify(selectedWindows));
-    submitData.append("sectors", JSON.stringify(selectedSelectors));
+    submitData.append("window", JSON.stringify(selectedWindows));
+    submitData.append("sector", JSON.stringify(selectedSelectors));
     if (formData.attachment) {
       submitData.append("attachment", formData.attachment);
     }
-
-    console.log("form data --> ", formData, selectedSelectors, selectedWindows);
-
     authorizedApi
       .post("/call/create", submitData)
       .then((res) => {
