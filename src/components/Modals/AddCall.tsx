@@ -32,10 +32,14 @@ const AddCall = ({
   const windows = useSelector((state: any) => state.windows);
   const [selectedSelectors, setSelectedSelectors] = useState<any>([]);
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
+  const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const MultiWindowData = windows?.windows?.map((window: any) => {
     return { value: window.uuid, label: window.title };
   });
   const MultiSectorData = sectors?.sectors?.map((sector: any) => {
+    return { value: sector.uuid, label: sector.name };
+  });
+  const MultiSubWindowData = sectors?.sectors?.map((sector: any) => {
     return { value: sector.uuid, label: sector.name };
   });
   const [formData, setFormData] = useState<FormData>({
@@ -213,6 +217,7 @@ const AddCall = ({
                       id="attachment"
                       type="file"
                       name="attachment"
+                      accept=".pdf"
                       onChange={handleChange}
                       style={{ display: "none" }}
                       className="content-none"
@@ -357,6 +362,27 @@ const AddCall = ({
                       onChange={setSelectedWindows}
                       data={MultiWindowData}
                       placeholder="Select or type in a window"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="">
+                  <label
+                    htmlFor="subwindows"
+                    className="block text-xs font-bold text-gray-700"
+                  >
+                    Select subwindows
+                  </label>
+                  <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <span className="absolute left-2 top-3 text-black text-lg">
+                      <SolarSuitcaseLinear />
+                    </span>
+                    <MultiSelect
+                      name="subwindows"
+                      // value={formData.position}
+                      onChange={setSelectedSubWindows}
+                      data={MultiSubWindowData}
+                      placeholder="Select or type in a subwindows"
                       required
                     />
                   </div>
