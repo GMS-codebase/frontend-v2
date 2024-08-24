@@ -245,6 +245,7 @@ const AddCall = ({
                       id="attachment"
                       type="file"
                       name="attachment"
+                      accept=".pdf"
                       onChange={handleChange}
                       style={{ display: "none" }}
                       className="content-none"

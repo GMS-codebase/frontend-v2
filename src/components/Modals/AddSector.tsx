@@ -18,6 +18,7 @@ const AddSector = ({
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    shortname: "",
   });
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
@@ -44,6 +45,7 @@ const AddSector = ({
         setFormData({
           name: "",
           description: "",
+          shortname: "",
         });
         closeAddSector();
       })
@@ -66,7 +68,7 @@ const AddSector = ({
         closeOnClickOutside={false}
         withCloseButton={false}
       >
-        <div className="w-[80vw] h-[500px] relative bg-white rounded-3xl pt-10 pb-6 flex flex-col items-center">
+        <div className="w-[40vw] max-h-[90vh] relative bg-white rounded-3xl pt-10 pb-6 flex flex-col items-center">
           <button
             className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
             onClick={closeAddSector}
@@ -108,7 +110,53 @@ const AddSector = ({
                   </div>
                 </div>
               </div>
+              <div className="w-full flex justify-between gap-3">
+                <div className="w-full">
+                  <label
+                    htmlFor="title"
+                    className="block text-lg font-bold text-gray-700"
+                  >
+                    Short name
+                  </label>
+                  <div className="w-full relative">
+                    <span className="absolute left-2 top-[10px]">
+                      <Folder2 />
+                    </span>
+                    <input
+                      type="text"
+                      name="shortname"
+                      value={formData.shortname}
+                      placeholder="Sector short name"
+                      onChange={handleChange}
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
 
+              <div className="">
+                <label
+                  htmlFor="description"
+                  className="block text-lg font-bold text-gray-700"
+                >
+                  Description
+                </label>
+                <div className="w-full relative">
+                  <span className="absolute left-2 top-[10px]">
+                    <Subtitles />
+                  </span>
+                  <input
+                    type="text"
+                    name="description"
+                    value={formData.description}
+                    placeholder="Add description"
+                    onChange={handleChange}
+                    className="mt-1 block w-full pb-28 pt-2 pl-8 px-3  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
+                    required
+                  />
+                </div>
+              </div>
               <div className="">
                 <label
                   htmlFor="description"
