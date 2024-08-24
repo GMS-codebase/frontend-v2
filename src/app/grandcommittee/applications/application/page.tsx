@@ -171,12 +171,7 @@ const Page = () => {
                                 </span>
                                 <p>Revert decision</p>
                             </div>
-                            <div
-                                
-                                className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
-                            >
-                                <p>Make a decision</p>
-                            </div>
+                           
                         </div>
                     </div>
 
@@ -201,12 +196,7 @@ const Page = () => {
                             </span>
                             <p>Revert decision</p>
                         </div>
-                        <div
-                            // Show buttons on click
-                            className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
-                        >
-                            <p>Make a decision</p>
-                        </div>
+                      
                     </div>
                 </div>
             </div>
