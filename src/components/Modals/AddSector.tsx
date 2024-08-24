@@ -10,11 +10,7 @@ import { Folder2, Subtitles } from "solar-icon-set";
 const AddSector = ({
   isOpenAddSector,
   closeAddSector,
-  isOpenAddSector,
-  closeAddSector,
 }: {
-  isOpenAddSector: boolean;
-  closeAddSector: () => void;
   isOpenAddSector: boolean;
   closeAddSector: () => void;
 }) => {
@@ -25,13 +21,6 @@ const AddSector = ({
     shortname: "",
   });
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -191,27 +180,6 @@ const AddSector = ({
                 </div>
               </div>
 
-              <div className="w-full flex justify-center mt-4 space-x-4">
-                <button
-                  type="button"
-                  onClick={closeAddSector}
-                  className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Create
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </Modal>
-    </>
-  );
               <div className="w-full flex justify-center mt-4 space-x-4">
                 <button
                   type="button"
