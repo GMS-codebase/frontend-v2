@@ -9,9 +9,9 @@ import DecisionDetails from "@/components/Modals/DecisionDetails";
 import DueDetails from "@/components/Modals/DueDiigence";
 
 const Page = () => {
-    const [currentComponent, setCurrentComponent] = useState<
-        "Project" | "IndicativeBudget"
-    >("Project");
+  const [currentComponent, setCurrentComponent] = useState<
+    "Project" | "IndicativeBudget"
+  >("Project");
 
     const [isOpenAddDue, setIsOpenAddDue] = useState(false);
     const [isOpenAddEval, setIsOpenAddEval] = useState(false);
@@ -25,8 +25,8 @@ const Page = () => {
 
     const [isEditing, setIsEditing] = useState(false);
 
-    const openAddDue = () => setIsOpenAddDue(true);
-    const closeAddDue = () => setIsOpenAddDue(false);
+  const openAddDue = () => setIsOpenAddDue(true);
+  const closeAddDue = () => setIsOpenAddDue(false);
 
     const openAddEval = () => setIsOpenAddEval(true);
     const closeAddEval = () => setIsOpenAddEval(false);
@@ -56,7 +56,31 @@ const Page = () => {
     const renderComponent = () => {
         switch (currentComponent) {
             case "Project":
-                return <Project />;
+                return <Project data={undefined} setComments={function (value: any): void {
+                  throw new Error("Function not implemented.");
+                } } commentsData={{
+                  titleComment: "",
+                  activitiesComment: "",
+                  readinessExecuteComment: "",
+                  roleComment: "",
+                  institutionComment: "",
+                  trainingManualComment: "",
+                  trainingEquipmentComment: "",
+                  identificationEmployeeComment: "",
+                  staffComment: "",
+                  sustainabilityComment: "",
+                  previousFinancialReportComment: "",
+                  trainingPremisesComment: "",
+                  contributionFromApplicantComment: "",
+                  recruitmentTrainerComment: "",
+                  MOUsAttachmentComment: "",
+                  identificationMemberComment: "",
+                  assessmentEquipmentComment: "",
+                  recruitmentCandidatesNumberComment: "",
+                  assessorsAndFacilitatorsComment: "",
+                  budgetAttachmentComment: "",
+                  contributionComment: ""
+                }}/>;
             case "IndicativeBudget":
                 return <IndicativeBudget />;
             default:

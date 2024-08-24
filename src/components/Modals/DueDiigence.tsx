@@ -11,15 +11,15 @@ const DueDiligenceModal = ({
 }: {
     opened: boolean;
     close: () => void;
-    isEditing: boolean; // Flag for edit mode
-    onSaveComment: (updatedText: string) => void; // Callback for saving
+    isEditing?: boolean; // Flag for edit mode
+    onSaveComment?: (updatedText: string) => void; // Callback for saving
 }) => {
-    const [text, setText] = useState(
-        "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era."
-    );
+  const [text, setText] = useState(
+    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era.",
+  );
 
     const handleSave = () => {
-        onSaveComment(text); // Save the updated comment
+       onSaveComment &&   onSaveComment(text); // Save the updated comment
     };
 
     return (

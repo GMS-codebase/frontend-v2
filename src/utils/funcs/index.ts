@@ -21,21 +21,34 @@ import {
 import { Dispatch, UnknownAction } from "redux";
 import { authorizedApi } from "../api";
 import {
-  GET_APPLICANTS_ERROR,
-  GET_APPLICANTS_LOADING,
-  GET_APPLICANTS_SUCCESS,
-} from "@/actions/ApplicantsActions";
-import { SET_USER_PROFILE } from "@/actions/AuthActions";
+  GET_APPLICATIONS_ERROR,
+  GET_APPLICATIONS_LOADING,
+  GET_APPLICATIONS_SUCCESS,
+  GET_MY_APPLICATIONS_ERROR,
+  GET_MY_APPLICATIONS_LOADING,
+  GET_MY_APPLICATIONS_SUCCESS,
+} from "@/actions/ApplicationsActions";
+import {
+  GET_MY_CONTRACTS_ERROR,
+  GET_MY_CONTRACTS_LOADING,
+  GET_MY_CONTRACTS_SUCCESS,
+} from "@/actions/ContractActions";
 import {
   GET_EMPLOYEES_ERROR,
   GET_EMPLOYEES_LOADING,
   GET_EMPLOYEES_SUCCESS,
 } from "@/actions/EmployeesActions";
 import {
-  GET_APPLICATIONS_ERROR,
-  GET_APPLICATIONS_LOADING,
-  GET_APPLICATIONS_SUCCESS,
-} from "@/actions/ApplicationsActions";
+  SET_USER_PROFILE,
+  SET_USER_ERROR,
+  SET_APPLICANT_ERROR,
+  SET_APPLICANT_PROFILE,
+} from "@/actions/AuthActions";
+import {
+  GET_MY_CONTACTS_ERROR,
+  GET_MY_CONTACTS_LOADING,
+  GET_MY_CONTACTS_SUCCESS,
+} from "@/actions/ContactsActions";
 import {
   GET_MEREPORTS_ERROR,
   GET_MEREPORTS_LOADING,
@@ -57,19 +70,30 @@ export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_WINDOWS_ERROR, payload: err.response.data.error });
     });
 };
-
 export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/auth/me")
     .then((res) => {
+      console.log("getting my profile");
       console.log(res.data.data);
-      dispatch({ type: SET_USER_PROFILE, payload: res.data.data.data });
+      dispatch({ type: SET_USER_PROFILE, payload: res.data.data }); //Todo: change this only when the BEs change the response schema
     })
     .catch((err) => {
-      dispatch({ type: GET_SECTORS_ERROR, payload: err.response.data.error });
+      dispatch({ type: SET_USER_ERROR, payload: err.response.data.error });
     });
 };
-
+export const getMyApplicantProfile = async (
+  dispatch: Dispatch<UnknownAction>,
+) => {
+  authorizedApi
+    .get("/applicant/me")
+    .then((res) => {
+      dispatch({ type: SET_APPLICANT_PROFILE, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({ type: SET_APPLICANT_ERROR, payload: err.response.data.error });
+    });
+};
 export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_SECTORS_LOADING });
   authorizedApi
@@ -103,6 +127,73 @@ export const getCalls = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_CALLS_ERROR, payload: err.response.data.error });
     });
 };
+export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_TRADES_LOADING });
+  authorizedApi
+    .get("/applicant")
+    .then((res) => {
+      dispatch({ type: GET_TRADES_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_TRADES_ERROR, payload: err.response.data.error });
+    });
+};
+export const getApplications = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_APPLICATIONS_LOADING });
+  authorizedApi
+    .get("/application/all")
+    .then((res) => {
+      dispatch({ type: GET_APPLICATIONS_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_APPLICATIONS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_MY_APPLICATIONS_LOADING });
+  authorizedApi
+    .get("/application/all-application")
+    .then((res) => {
+      dispatch({ type: GET_MY_APPLICATIONS_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_APPLICATIONS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getMyContacts = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_MY_CONTACTS_LOADING });
+  authorizedApi
+    .get("/contacts/mine")
+    .then((res) => {
+      dispatch({ type: GET_MY_CONTACTS_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_MY_CONTRACTS_LOADING });
+  authorizedApi
+    .get("/application/all-application")
+    .then((res) => {
+      dispatch({ type: GET_MY_CONTRACTS_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTRACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
 export const getEmployees = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_EMPLOYEES_LOADING });
   authorizedApi
@@ -112,37 +203,6 @@ export const getEmployees = async (dispatch: Dispatch<UnknownAction>) => {
     })
     .catch((err) => {
       dispatch({ type: GET_EMPLOYEES_ERROR, payload: err.response.data.error });
-    });
-};
-export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_APPLICANTS_LOADING });
-  authorizedApi
-    .get("/applicant/all")
-    .then((res) => {
-      dispatch({
-        type: GET_APPLICANTS_SUCCESS,
-        payload: res.data.data.data,
-      });
-    })
-    .catch((err) => {
-      dispatch({
-        type: GET_APPLICANTS_ERROR,
-        payload: err.response.data.error,
-      });
-    });
-};
-export const getApplications = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_APPLICATIONS_LOADING });
-  authorizedApi
-    .get("/application")
-    .then((res) => {
-      dispatch({ type: GET_APPLICATIONS_SUCCESS, payload: res.data.data });
-    })
-    .catch((err) => {
-      dispatch({
-        type: GET_APPLICATIONS_ERROR,
-        payload: err.response.data.error,
-      });
     });
 };
 export const getMEReports = async (dispatch: Dispatch<UnknownAction>) => {

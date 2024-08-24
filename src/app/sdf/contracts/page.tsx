@@ -7,7 +7,7 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { tradesData as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
 import AddContract from "@/components/Modals/AddContract";
-import Contracts from "@/components/contracts/contracts"
+import Contracts from "@/components/contracts/contracts";
 
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
@@ -59,7 +59,7 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-  <button
+        <button
           onClick={open}
           className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
         >
@@ -71,7 +71,7 @@ const Page = () => {
       </div>
 
       <div className="w-full h-full">
-       <Contracts/>
+        <Contracts />
       </div>
       <AddContract isOpenAddContract={isOpenTrade} closeAddContract={close} />
     </div>

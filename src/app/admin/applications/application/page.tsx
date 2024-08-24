@@ -7,6 +7,9 @@ import {
   SolarFolder2Bold,
   SolarEyeLinear,
 } from "@/components/core/icons";
+import EvalDetails from "@/components/Modals/evalDetails"; // Import EvalDetails
+
+import { useDisclosure } from "@mantine/hooks";
 const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
