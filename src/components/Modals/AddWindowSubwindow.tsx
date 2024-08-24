@@ -42,6 +42,8 @@ const AddWindowSubwindow = ({
   const prevStep = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
 
+
+
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -84,7 +86,6 @@ const AddWindowSubwindow = ({
   const MultiSelectData = sectors?.sectors?.map((sector: any) => {
     return { value: sector.uuid, label: sector.name };
   });
-  useEffect(() => {}, [sectors?.sectors]);
 
   return (
     <Modal

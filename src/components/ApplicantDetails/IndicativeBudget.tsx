@@ -3,28 +3,6 @@ import { SolarDownloadMinimalisticBold } from "@/components/core/icons";
 import TextArea from "@/components/ApplicantDetails/TextArea";
 import NextPrevButtons from "../core/NextPrevButtons";
 const IndicativeBudget = () => {
-  const handleDownload = () => {
-    const data = `
-            Title of Application:
-            The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era.
-            
-            Project Activities and Outcome:
-            COFOPRO is a private company limited by individual shares aimed to develop made in Rwanda garment manufacturing at a fair and affordable prices on the Rwandan market and also aimed to expand our garment manufacturing by exporting our products. we also give out training to skills upgrading for works and other peoples who have knowledge in tailoring, we also give training on the use of modern tailoring equipment. in modern tailoring we have a problem on professionals skills works as
-            
-            Information about the institution to host beneficiaries:
-            We are a domestic garment company which sew all kind of men clothes which are: suites, shirts, trousers and different kind of uniforms and we also deal with women clothes excluding underwear.
-            
-            Information about the institution to host beneficiaries - (Continued):
-            The applying company/industry to host apprentices should attach the recommendation from PSF
-        `;
-    const blob = new Blob([data], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "Applicant_Details.txt";
-    link.click();
-    URL.revokeObjectURL(url); // Clean up the URL object
-  };
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">

@@ -71,16 +71,13 @@ const Page = () => {
         </button>
       </div>
 
-      {sectors.loading ? (
-        <div className="w-full flex items-center justify-center gap-4 font-bold">
-          <h1>Loading Sectors</h1>
-          <ClipLoader size={20} color="black" />
-        </div>
-      ) : (
-        <div className="w-full h-full">
-          <DataTable columns={columns} data={sectorsData ?? []} />
-        </div>
-      )}
+      <div className="w-full h-full">
+        <DataTable
+          columns={columns}
+          data={sectors.sectors ?? []}
+          loading={sectors.loading} 
+        />
+      </div>
       <AddSector isOpenAddSector={isAddSector} closeAddSector={close} />
       <UpdateSector
         sector={isSector.sector}

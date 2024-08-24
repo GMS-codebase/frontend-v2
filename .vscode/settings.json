@@ -5,6 +5,7 @@
     "firstname",
     "lastname",
     "phonenumber",
+    "subwindows",
     "tabler"
   ]
 }
