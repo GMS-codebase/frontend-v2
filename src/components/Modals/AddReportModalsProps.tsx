@@ -246,13 +246,13 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
               </div>
             </div>
 
-            <Button
+            <button
               type="submit"
               className="border mt-4 text-center bg-primary rounded-full p-2 text-white font-semibold text-xl"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Submitting..." : "Add new report"}
-            </Button>
+            </button>
           </form>
         </div>
       </Modal>

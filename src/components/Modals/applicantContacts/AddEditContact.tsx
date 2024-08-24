@@ -115,7 +115,7 @@ const AddEditContact = ({
         if (defaultData) {
           res = await authorizedApi.put(
             `/contacts/${defaultData.id}`,
-            formData
+            formData,
           );
         } else {
           res = await authorizedApi.post("/contacts", formData);

@@ -13,7 +13,7 @@ interface NewRoleModalProps {
 }
 
 const NewRoleModal = ({ isOpen, onClose }: NewRoleModalProps) => {
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const form = useForm<any>({
     initialValues: {
       title: "",
@@ -27,11 +27,12 @@ const NewRoleModal = ({ isOpen, onClose }: NewRoleModalProps) => {
     try {
       const response = await authorizedApi.post(
         "/admin/create-dynamic-user",
-        form.values
+        form.values,
       );
       console.log("Form submitted:", response.data);
       notifications.show({
-        message: "User created successfully! Email Is sent to the user for more steps",
+        message:
+          "User created successfully! Email Is sent to the user for more steps",
         color: "blue",
       });
       onClose();
@@ -41,14 +42,18 @@ const NewRoleModal = ({ isOpen, onClose }: NewRoleModalProps) => {
         message: err.response?.data?.message ?? "Failed to create user!",
         color: "red",
       });
-    }
-    finally{
-        setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Modal size={"lg"} withCloseButton={false} opened={isOpen} onClose={onClose}>
+    <Modal
+      size={"lg"}
+      withCloseButton={false}
+      opened={isOpen}
+      onClose={onClose}
+    >
       <div className="w-full h-fit relative bg-white rounded-3xl pt-10 pb-6 px-6 flex flex-col items-center">
         <button
           className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
@@ -69,7 +74,10 @@ const NewRoleModal = ({ isOpen, onClose }: NewRoleModalProps) => {
           >
             <div className="w-full flex justify-between gap-3">
               <div className="w-full">
-                <label htmlFor="title" className="block text-lg font-bold text-gray-700">
+                <label
+                  htmlFor="title"
+                  className="block text-lg font-bold text-gray-700"
+                >
                   Title
                 </label>
                 <div className="w-full relative">
@@ -87,7 +95,10 @@ const NewRoleModal = ({ isOpen, onClose }: NewRoleModalProps) => {
               </div>
             </div>
             <div className="">
-              <label htmlFor="email" className="block text-lg font-bold text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-lg font-bold text-gray-700"
+              >
                 Email
               </label>
               <div className="w-full relative">
@@ -103,7 +114,10 @@ const NewRoleModal = ({ isOpen, onClose }: NewRoleModalProps) => {
                 />
               </div>
             </div>
-            <label htmlFor="tabs" className="block text-lg font-bold text-gray-700">
+            <label
+              htmlFor="tabs"
+              className="block text-lg font-bold text-gray-700"
+            >
               Assign Tabs
             </label>
             <div>
@@ -112,7 +126,10 @@ const NewRoleModal = ({ isOpen, onClose }: NewRoleModalProps) => {
                 data={[
                   { value: "Trades", label: "Trades" },
                   { value: "Applicants", label: "Applicants" },
-                  { value: "Application Reports", label: "Application Reports" },
+                  {
+                    value: "Application Reports",
+                    label: "Application Reports",
+                  },
                   { value: "Notifications", label: "Notifications" },
                   { value: "Employees", label: "Employees" },
                   { value: "Reports", label: "Reports" },
@@ -129,7 +146,7 @@ const NewRoleModal = ({ isOpen, onClose }: NewRoleModalProps) => {
               type="submit"
               className="mt-4 bg-primary text-white py-3 px-4 rounded-full"
             >
-              {loading ? <ClipLoader size={20} color="white"/> : "Submit"}
+              {loading ? <ClipLoader size={20} color="white" /> : "Submit"}
             </button>
           </form>
         </div>
