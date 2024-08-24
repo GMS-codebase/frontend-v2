@@ -141,7 +141,11 @@ const CompleteProfile = ({
         submitData.append("certificate", certificate);
       }
       authorizedApi
-        .put("/applicant/update/profile", submitData)
+        .put("/applicant/update/profile", submitData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
         .then((_res) => {
           notifications.show({
             message: "Profile updated successfully!",
