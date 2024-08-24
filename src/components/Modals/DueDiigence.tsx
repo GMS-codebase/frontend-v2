@@ -6,13 +6,21 @@ import { SolarFileBold } from "../core/icons";
 const DueDiligenceModal = ({
     opened,
     close,
+    isEditing, // Add isEditing prop
+    onSaveComment, // Add callback for saving comments
 }: {
     opened: boolean;
     close: () => void;
+    isEditing: boolean; // Flag for edit mode
+    onSaveComment: (updatedText: string) => void; // Callback for saving
 }) => {
     const [text, setText] = useState(
         "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era."
     );
+
+    const handleSave = () => {
+        onSaveComment(text); // Save the updated comment
+    };
 
     return (
         <Modal
@@ -191,11 +199,25 @@ const DueDiligenceModal = ({
                         id="textarea"
                         name="textarea"
                         value={text}
-                        readOnly
+                        onChange={(e) => setText(e.target.value)}
+                        readOnly={!isEditing}
                         rows={4}
-                        className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
+                        className={`mt-2 p-2 w-full border border-primary rounded-xl shadow-sm ${
+                            isEditing ? "bg-white" : "bg-gray-100"
+                        }`}
                     />
                 </div>
+
+                {isEditing && (
+                    <div className="flex justify-end gap-4 mt-4">
+                        <button
+                            onClick={handleSave}
+                            className="bg-blue-500 text-white px-4 py-2 rounded-full"
+                        >
+                            Save
+                        </button>
+                    </div>
+                )}
             </div>
         </Modal>
     );
