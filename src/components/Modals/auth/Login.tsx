@@ -29,12 +29,24 @@ const LoginModal = ({
       },
       (role: string) => {
         console.log(role);
-        switch (role) {
-          case "ADMIN":
+        switch (role?.toLowerCase()) {
+          case "admin":
             navigate.push("/admin");
             break;
-          case "APPLICANT":
+          case "dynamic":
+            navigate.push("/dynamic");
+            break;
+          case "employee":
+            navigate.push("/employee");
+            break;
+          case "applicant":
             navigate.push("/applicant/contacts");
+            break;
+          case "grant":
+            navigate.push("/grant");
+            break;
+          case "sdf":
+            navigate.push("/sdf/contracts");
             break;
           default:
             navigate.push("/");

@@ -23,6 +23,7 @@ import {
 const Navbar = () => {
   const dispatch = useDispatch();
   const [pageName, setPageName] = useState(getCookie("breadcrumb") || "");
+
   const active = usePathname();
   const auth = useSelector((state: any) => state.auth);
 
@@ -41,8 +42,8 @@ const Navbar = () => {
     const role = active.startsWith("/admin")
       ? "ADMIN"
       : active.startsWith("/applicant")
-      ? "APPLICANT"
-      : null;
+        ? "APPLICANT"
+        : null;
 
     if (role === "ADMIN") {
       getWindows(dispatch);

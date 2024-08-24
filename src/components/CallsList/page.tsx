@@ -48,7 +48,7 @@ const CallsList = () => {
     const checkScrollable = () => {
       if (scrollRef.current) {
         setIsScrollable(
-          scrollRef.current.scrollWidth > scrollRef.current.clientWidth
+          scrollRef.current.scrollWidth > scrollRef.current.clientWidth,
         );
       }
     };

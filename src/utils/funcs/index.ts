@@ -84,7 +84,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -143,9 +143,9 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
 export const getApplications = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
-    .get("/application")
+    .get("/application/all")
     .then((res) => {
-      dispatch({ type: GET_APPLICATIONS_SUCCESS, payload: res.data.data });
+      dispatch({ type: GET_APPLICATIONS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
       dispatch({
