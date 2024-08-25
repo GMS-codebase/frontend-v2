@@ -75,7 +75,7 @@ const Page = () => {
         <DataTable
           columns={columns}
           data={sectors.sectors ?? []}
-          loading={sectors.loading} 
+          loading={sectors.loading}
         />
       </div>
       <AddSector isOpenAddSector={isAddSector} closeAddSector={close} />
