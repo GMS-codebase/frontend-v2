@@ -59,7 +59,7 @@ const Questions: React.FC<QuestionsProps> = ({
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setInputs({ ...inputs, [name]: value });
@@ -75,7 +75,7 @@ const Questions: React.FC<QuestionsProps> = ({
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    inputName: string
+    inputName: string,
   ) => {
     const uploadedFile = e.target.files ? e.target.files[0] : null;
     setFiles({ ...files, [inputName]: uploadedFile });
@@ -201,7 +201,7 @@ const Questions: React.FC<QuestionsProps> = ({
         if (question.selector.toLowerCase() === "trades") {
           options = tradesData.trades?.map((trade: any) =>
             //@ts-ignore
-            question.getOptions(trade)
+            question.getOptions(trade),
           );
         }
       }

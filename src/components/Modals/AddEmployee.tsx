@@ -38,6 +38,7 @@ const RegisterModal = ({
     name: "",
     isInternal: false,
     nationalId: "",
+    employeeRole: "EMPLOYEE"
   });
   const [errors, setErrors] = useState({
     firstname: "",
@@ -50,6 +51,7 @@ const RegisterModal = ({
     name: "",
     isInternal: false,
     nationalId: "",
+    employeeRole: ""
   });
 
   const validateStep1 = () => {
@@ -109,9 +111,6 @@ const RegisterModal = ({
     return valid;
   };
 
-  const prevStep = () =>
-    setActive((current) => (current > 0 ? current - 1 : current));
-
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -136,7 +135,7 @@ const RegisterModal = ({
         name: formData.firstname + " " + formData.lastname,
       });
       authorizedApi
-        .post("/employee/create", formData)
+        .post("/employees/create", formData)
         .then((res) => {
           notifications.show({
             message: "Employee is created successfully",
@@ -428,7 +427,6 @@ const RegisterModal = ({
                     <p className="text-red-500 text-xs">{errors.position}</p>
                   )}
                 </div>
-
                 <div className="w-full">
                   <label
                     htmlFor="position"
@@ -453,7 +451,39 @@ const RegisterModal = ({
                     />
                   </div>
                 </div>
-
+                {formData.isInternal && (
+                  <div className="w-full">
+                    <label
+                      htmlFor="position"
+                      className="block text-base font-medium text-black"
+                    >
+                      Employee Role
+                    </label>
+                    <div className="mt-1 pl-1 flex flex-col gap-2">
+                      <Checkbox
+                        label="Employee"
+                        checked={formData.employeeRole === "EMPLOYEE"}
+                        onChange={() =>
+                          setFormData({ ...formData, employeeRole: "EMPLOYEE" })
+                        }
+                      />
+                      <Checkbox
+                        label="SDF Secretariate"
+                        checked={formData.employeeRole === "SDF_SECRETARIATE"}
+                        onChange={() =>
+                          setFormData({ ...formData, employeeRole: "SDF_SECRETARIATE" })
+                        }
+                      />
+                      <Checkbox
+                        label="Grant Committee"
+                        checked={formData.employeeRole === "GRANT_COMMITTEE"}
+                        onChange={() =>
+                          setFormData({ ...formData, employeeRole: "GRANT_COMMITTEE" })
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
                 {!formData.isInternal && (
                   <div className="w-full mt-4">
                     <label
