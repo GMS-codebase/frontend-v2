@@ -19,7 +19,7 @@ const Page = () => {
 
   const renderComponent = () => {
     const filterQuestionsBySubWindows = (
-      subWindows: { window: string; subWindow: string }[]
+      subWindows: { window: string; subWindow: string }[],
     ) => {
       return subWindows.map(({ window, subWindow }) => {
         //@ts-ignore

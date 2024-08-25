@@ -199,7 +199,7 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
 export const getEmployees = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_EMPLOYEES_LOADING });
   authorizedApi
-    .get("/employee/all")
+    .get("/employees/all")
     .then((res) => {
       dispatch({ type: GET_EMPLOYEES_SUCCESS, payload: res.data.data.data });
     })

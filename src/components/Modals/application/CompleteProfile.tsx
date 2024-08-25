@@ -143,8 +143,8 @@ const CompleteProfile = ({
       authorizedApi
         .put("/applicant/update/profile", submitData, {
           headers: {
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         })
         .then((_res) => {
           notifications.show({
