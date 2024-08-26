@@ -36,18 +36,19 @@ const Page = () => {
   ] = useDisclosure(false);
   const router = useRouter();
   const handleApply = () => {
-    if (!profile.applicantProfile || !profile.applicantProfile.business_name) {
-      openAddProfile();
-    } else if (
-      !contacts.loading &&
-      (!contacts.myContacts || contacts.myContacts.length === 0)
-    ) {
-      openAddContact();
-    } else {
-      console.log("Here");
-      // router.push(`/applicant/applications/${callId}/apply`);
-      openCreateApplication();
-    }
+    // if (!profile.applicantProfile || !profile.applicantProfile.business_name) {
+    //   openAddProfile();
+    // } else if (
+    //   !contacts.loading &&
+    //   (!contacts.myContacts || contacts.myContacts.length === 0)
+    // ) {
+    //   openAddContact();
+    // } else {
+    //   console.log("Here");
+    //   // router.push(`/applicant/applications/${callId}/apply`);
+      
+    // }
+    openCreateApplication();
   };
   return (
     <div className="bg-white rounded-2xl p-10 ">
