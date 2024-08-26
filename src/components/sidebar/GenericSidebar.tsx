@@ -6,7 +6,7 @@ import Image from "next/image";
 import logo from "@/assets/Images/dashboard-logo.png";
 import { BiLogOut } from "react-icons/bi";
 import { useDisclosure } from "@mantine/hooks";
-import { Modal } from "@mantine/core";
+import { Modal, Skeleton } from "@mantine/core";
 import { ClipLoader } from "react-spinners";
 import { useDispatch } from "react-redux";
 // import { LOGOUT_SUCCESS } from "@/actions/AuthActions";
@@ -19,10 +19,14 @@ const GenericSidebar = ({
   routes,
   isCompressed,
   toggle,
+  isDynamic,
+  loading,
 }: {
   routes: Route[];
   isCompressed: boolean;
   toggle: () => void;
+  isDynamic?: boolean;
+  loading?: boolean;
 }) => {
   const active = usePathname();
   const isActiveLink = (path: string, index: number) => {
@@ -49,53 +53,65 @@ const GenericSidebar = ({
       </div>
       <h1 className="text-lg text-neutral-400 p-3">Menu</h1>
       <div className="w-full h-screen overflow-y-auto pb-[17vh] sidebar-container">
-        {routes.map((route, index: any) => {
-          if (isCompressed)
-            return (
-              <div key={index} className="mx-4">
-                <Link
-                  onClick={() => setCookie("breadcrumb", route.label)}
-                  href={route.path}
-                  className={`flex items-center justify-center gap-5 px-4 py-3 my-1 ${isActiveLink(route.path, index) ? "bg-primary text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
-                >
-                  <span
-                    className={
-                      isActiveLink(route.path, index)
-                        ? "text-white font-extrabold text-3xl"
-                        : "text-black font-extrabold text-3xl"
-                    }
+        {isDynamic && loading ? (
+          <div className="w-full flex flex-col gap-3">
+            <Skeleton width={"100%"} height={100}/>
+            <Skeleton width={"100%"} height={100}/>
+            <Skeleton width={"100%"} height={100}/>
+            <Skeleton width={"100%"} height={100}/>
+            <Skeleton width={"100%"} height={100}/>
+            <Skeleton width={"100%"} height={100}/>
+            <Skeleton width={"100%"} height={100}/>
+          </div>
+        ) : (
+          routes.map((route, index: any) => {
+            if (isCompressed)
+              return (
+                <div key={index} className="mx-4">
+                  <Link
+                    onClick={() => setCookie("breadcrumb", route.label)}
+                    href={route.path}
+                    className={`flex items-center justify-center gap-5 px-4 py-3 my-1 ${isActiveLink(route.path, index) ? "bg-primary text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
                   >
-                    {route.icon}
-                  </span>
-                </Link>
-              </div>
-            );
-          else
-            return (
-              <div key={index} className="mx-4">
-                <Link
-                  onClick={() => setCookie("breadcrumb", route.label)}
-                  href={route.path}
-                  className={`flex items-center gap-5 px-4 py-3 my-1 pl-10 ${isActiveLink(route.path, index) ? "bg-primary text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
-                >
-                  <span
-                    className={
-                      isActiveLink(route.path, index)
-                        ? "text-white font-extrabold text-3xl"
-                        : "text-black font-extrabold text-3xl"
-                    }
+                    <span
+                      className={
+                        isActiveLink(route.path, index)
+                          ? "text-white font-extrabold text-3xl"
+                          : "text-black font-extrabold text-3xl"
+                      }
+                    >
+                      {route.icon}
+                    </span>
+                  </Link>
+                </div>
+              );
+            else
+              return (
+                <div key={index} className="mx-4">
+                  <Link
+                    onClick={() => setCookie("breadcrumb", route.label)}
+                    href={route.path}
+                    className={`flex items-center gap-5 px-4 py-3 my-1 pl-10 ${isActiveLink(route.path, index) ? "bg-primary text-white" : "bg-white hover:bg-blue-200"}  cursor-pointer rounded-full`}
                   >
-                    {route.icon}
-                  </span>
-                  <span
-                    className={`text-lg ${isActiveLink(route.path, index) ? "font-semibold text-white" : ""} hidden lg:inline`}
-                  >
-                    {route.label}
-                  </span>
-                </Link>
-              </div>
-            );
-        })}
+                    <span
+                      className={
+                        isActiveLink(route.path, index)
+                          ? "text-white font-extrabold text-3xl"
+                          : "text-black font-extrabold text-3xl"
+                      }
+                    >
+                      {route.icon}
+                    </span>
+                    <span
+                      className={`text-lg ${isActiveLink(route.path, index) ? "font-semibold text-white" : ""} hidden lg:inline`}
+                    >
+                      {route.label}
+                    </span>
+                  </Link>
+                </div>
+              );
+          })
+        )}
       </div>
     </div>
   );
