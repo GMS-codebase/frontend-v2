@@ -35,6 +35,12 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     nameOfEquipment: "",
     numberOfEquipment: "",
   });
+  const [staffInputs, setStaffInputs] = useState({
+    number: "",
+    position: "",
+    available: "",
+    qualification: "",
+  });
 
   const handleInputChange = (inputName: string, value: any) => {
     setData((prev: any) => ({
@@ -372,6 +378,73 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
                 onChange={(e) => handleFileChange(e, "trainingManual")}
               />
             </div>
+          </div>
+          <div className="p-4 bg-white rounded-lg ">
+            <h3 className="text-lg font-bold">Training Delivery Process</h3>
+            <p className="text-sm text-gray-600">
+              Estimate the training duration with respect to the training
+              content/modules to be offered.
+            </p>
+            <div className="space-y-4">
+              <div className="grid grid-cols-3 gap-2">
+                <Select
+                  name="trade"
+                  value={trainingProcessInputs.trade}
+                  onChange={(selectedOption) =>
+                    setTrainingProcessInputs((prev) => ({
+                      ...prev,
+                      trade: selectedOption || "",
+                    }))
+                  }
+                  data={trades}
+                  className="mt-1 block w-full  pl-5  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Select Trade"
+                />
+                <input
+                  type="text"
+                  placeholder="Name of Staff"
+                  value={staffInputs.number}
+                  onChange={(e) =>
+                    setTrainingProcessInputs((prev) => ({
+                      ...prev,
+                      moduleName: e.target.value,
+                    }))
+                  }
+                  className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={addTrainingProcess}
+                  className="mt-2 p-2 bg-primary text-white px-20 rounded-full"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+            {data.trainingProcess?.length &&
+              data.trainingProcess?.length > 0 && (
+                <table className="w-full mt-4 border-collapse border border-gray-200">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border p-2">Name</th>
+                      <th className="border p-2">Position</th>
+                      <th className="border p-2">Qualification</th>
+                      <th className="border p-2">Available</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(data.staffs || []).map((item, index) => (
+                      <tr key={index}>
+                        <td className="border p-2">{item.number}</td>
+                        <td className="border p-2">{item.position}</td>
+                        <td className="border p-2">{item.qualification}</td>
+                        <td className="border p-2">{item.available}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
           </div>
         </>
       )}
