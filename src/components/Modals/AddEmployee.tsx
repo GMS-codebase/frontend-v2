@@ -126,6 +126,7 @@ const RegisterModal = ({
   const dispatch = useDispatch();
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    console.log(formData);
     if (active === 0 && validateStep1()) {
       setActive((current) => (current < 1 ? current + 1 : current));
     } else if (active === 1 && validateStep2()) {
