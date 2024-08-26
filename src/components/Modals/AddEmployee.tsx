@@ -38,7 +38,7 @@ const RegisterModal = ({
     name: "",
     isInternal: false,
     nationalId: "",
-    employeeRole: "EMPLOYEE"
+    employeeRole: "EMPLOYEE",
   });
   const [errors, setErrors] = useState({
     firstname: "",
@@ -51,7 +51,7 @@ const RegisterModal = ({
     name: "",
     isInternal: false,
     nationalId: "",
-    employeeRole: ""
+    employeeRole: "",
   });
 
   const validateStep1 = () => {
@@ -472,14 +472,20 @@ const RegisterModal = ({
                         label="SDF Secretariate"
                         checked={formData.employeeRole === "SDF_SECRETARIATE"}
                         onChange={() =>
-                          setFormData({ ...formData, employeeRole: "SDF_SECRETARIATE" })
+                          setFormData({
+                            ...formData,
+                            employeeRole: "SDF_SECRETARIATE",
+                          })
                         }
                       />
                       <Checkbox
                         label="Grant Committee"
                         checked={formData.employeeRole === "GRANT_COMMITTEE"}
                         onChange={() =>
-                          setFormData({ ...formData, employeeRole: "GRANT_COMMITTEE" })
+                          setFormData({
+                            ...formData,
+                            employeeRole: "GRANT_COMMITTEE",
+                          })
                         }
                       />
                     </div>
