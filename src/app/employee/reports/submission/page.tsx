@@ -46,7 +46,7 @@ const Page = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions application={row.original}/>,
+      cell: ({ row }) => <CallsActions application={row.original} />,
     },
   ];
 
