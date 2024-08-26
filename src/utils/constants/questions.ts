@@ -25,14 +25,14 @@ export const questions = {
         title: "Role of other involved training providers",
         description:
           "Explain the role of any other involved training provider in the project, if any. Indicate the training provider you would like to partner with if any.",
-        input: "roleAttachment",
-        type: "file",
+        input: "role",
+        type: "textarea",
       },
       {
         title: "Training Delivery Process",
         description:
           "Estimate the training duration with respect to the training content/modules to be offered. [Trade/Name of Module/From/To/Number of Hours]",
-        input: "trainingDeliveryProcess",
+        input: "trainingProcess",
         type: "arrayOfObjects",
         dto: {
           trade: {
@@ -48,6 +48,13 @@ export const questions = {
           toDate: { type: "date", label: "To Date" },
           numberOfHours: { type: "number", label: "Number of Hours" },
         },
+      },
+      {
+        title: "Training Manual",
+        description:
+          "[Please attach a detailed description of the content (training manual) of the proposed training",
+        input: "identificationEmployee",
+        type: "file",
       },
       {
         title: "Training Equipment",
@@ -69,18 +76,44 @@ export const questions = {
         },
       },
       {
+        title: "Training Equipment - (Continued) ",
+        description:
+          "Please attach the proof of ownership (Notarized list of equipment, Original Invoices (EBM for locally purchased equipment).",
+        input: "trainingEquipmentProofOwnership",
+        type: "file",
+      },
+      {
+        title: "Training Equipment - (Continued) ",
+        description: "Add a comment related to the training equipment if any",
+        input: "trainingEquipmentComment",
+        type: "textarea",
+      },
+      {
         title: "Identification of employees in need of skills upgrading",
         description:
           "List down the number of employees you need to train and their background qualification for a period ranging from a few days to 3 months.",
         input: "identificationEmployee",
-        type: "textarea",
+        type: "number",
       },
       {
         title: "Technical Staff",
         description:
-          "Identify the technical staff (instructors) required to train the trades you are applying for.",
-        input: " staffAttachment",
-        type: "file",
+          "Identify the technical staff (instructors) required to train the trades you are applying for",
+        input: "trainingPremisesAttachment",
+        type: "arrayOfObjects",
+        dto: {
+          name: { type: "text", label: "Name of Equipment" },
+          position: { type: "number", label: "Number" },
+          qualification: { type: "text", label: "Related Trade" },
+          availability: {
+            type: "select",
+            label: "Related Trade",
+            option: [
+              { label: "Available", value: "available" },
+              { label: "Not Available", value: "notavailable" },
+            ],
+          },
+        },
       },
       {
         title: "Sustainability",
@@ -135,8 +168,8 @@ export const questions = {
           "Explain the role of any other involved training provider in the project, if any.",
         description:
           "(Indicate the training provider you would like to partner with if any.)",
-        input: "roleAttachment",
-        type: "file",
+        input: "role",
+        type: "textareaarea",
       },
       {
         title: "Training Delivery Process",
@@ -145,13 +178,12 @@ export const questions = {
         input: "trainingManualAttachment",
         type: "file",
       },
-
       {
         title: "Training Delivery Process - (Continued)",
         description:
           "[Please attach a detailed description of the content (training manual) of the proposed training",
-        input: "identificationEmployee",
-        type: "textarea",
+        input: "trainingManualAttachment",
+        type: "file",
       },
       {
         title: "Training Equipment",
@@ -169,13 +201,13 @@ export const questions = {
         title: "Training Equipment - (Continued) ",
         description:
           "Please attach the proof of ownership (Notarized list of equipment, Original Invoices (EBM for locally purchased equipment).",
-        input: " staffAttachment",
+        input: "trainingEquipmentProofOwnership",
         type: "file",
       },
       {
         title: "Training Equipment - (Continued) ",
         description: "Add a comment related to the training equipment if any",
-        input: "sustainability",
+        input: "trainingEquipmentComment",
         type: "textarea",
       },
       {
@@ -183,45 +215,50 @@ export const questions = {
         description:
           "List down the number of trainees you need to train and their background qualification for a period ranging from few days to 6 months",
         input: "recruitmentTrainerNumber",
-        type: "number",
+        type: "arrayOfObjects",
       },
       {
         title: "Technical Staff",
         description:
           "Identify the technical staff (instructors) required to train the trades you are applying for",
         input: "trainingPremisesAttachment",
-        type: "file",
+        type: "arrayOfObjects",
+        dto: {
+          name: { type: "text", label: "Name of Equipment" },
+          position: { type: "number", label: "Number" },
+          qualification: { type: "text", label: "Related Trade" },
+          availability: {
+            type: "select",
+            label: "Related Trade",
+            option: [
+              { label: "Available", value: "available" },
+              { label: "Not Available", value: "notavailable" },
+            ],
+          },
+        },
       },
       {
         title: "Sustainability",
         description:
           "How will your project (the planned training activity) continue after this funding",
-        input: "contributionFromApplicant",
+        input: "sustainability",
         type: "textarea",
       },
       {
-        title: "Budget Summary ",
-        description:
-          "List the most important activities you are soliciting funding for and the indicative budget for each activity",
-        input: "contributionFromApplicant",
-        type: "textarea",
+        title: "Provide the financial report of the previous year ",
+        description: "",
+        input: "financialReport",
+        type: "file",
+      },
+      {
+        title: "Provide the proof of ownership/renting of training premises ",
+        description: "",
+        input: "trainingPremises",
+        type: "file",
       },
       {
         title:
-          "Provide at least 2 MoUs with the companies/industries to host the trainees during the internship ",
-        description: "",
-        input: "contributionFromApplicant",
-        type: "textarea",
-      },
-      {
-        title: "Provide the proof of ownership/renting of training premises ",
-        description: "",
-        input: "contributionFromApplicant",
-        type: "textarea",
-      },
-
-      {
-        title: "Provide the proof of ownership/renting of training premises ",
+          "Justify how your institution will contribute to  facilitate the training. ",
         description: "",
         input: "contributionFromApplicant",
         type: "textarea",
@@ -255,19 +292,32 @@ export const questions = {
           "Explain the role of any other involved training provider in the project, if any.",
         description:
           "(Indicate the training provider you would like to partner with if any.)",
-        input: "roleAttachment",
-        type: "file",
+        input: "role",
+        type: "textarea",
       },
       {
         title: "Training Delivery Process",
         description:
-          "Keep in mind that the training period for window 1 should be ranging from few days to 6 months, estimate the training duration with respect to the training content/modules to be offered.) [Trade/Name of Module/From/To/Number of Hours",
-        input: "trainingManualAttachment",
-        type: "file",
+          "Estimate the training duration with respect to the training content/modules to be offered. [Trade/Name of Module/From/To/Number of Hours]",
+        input: "trainingProcess",
+        type: "arrayOfObjects",
+        dto: {
+          trade: {
+            type: "text",
+            label: "Trade",
+            selector: "trades",
+            getOptions: (t: any) => {
+              return { label: t.name, value: t.uuid };
+            },
+          },
+          moduleName: { type: "text", label: "Name of Module" },
+          fromDate: { type: "date", label: "From Date" },
+          toDate: { type: "date", label: "To Date" },
+          numberOfHours: { type: "number", label: "Number of Hours" },
+        },
       },
-
       {
-        title: "Training Delivery Process - (Continued)",
+        title: "Training Manual",
         description:
           "[Please attach a detailed description of the content (training manual) of the proposed training",
         input: "identificationEmployee",
@@ -289,13 +339,13 @@ export const questions = {
         title: "Training Equipment - (Continued) ",
         description:
           "Please attach the proof of ownership (Notarized list of equipment, Original Invoices (EBM for locally purchased equipment).",
-        input: " staffAttachment",
+        input: "trainingEquipmentProofOwnership",
         type: "file",
       },
       {
         title: "Training Equipment - (Continued) ",
         description: "Add a comment related to the training equipment if any",
-        input: "sustainability",
+        input: "trainingEquipmentComment",
         type: "textarea",
       },
       {
@@ -310,34 +360,46 @@ export const questions = {
         description:
           "Identify the technical staff (instructors) required to train the trades you are applying for",
         input: "trainingPremisesAttachment",
-        type: "file",
+        type: "arrayOfObjects",
+        dto: {
+          name: { type: "text", label: "Name of Equipment" },
+          position: { type: "number", label: "Number" },
+          qualification: { type: "text", label: "Related Trade" },
+          availability: {
+            type: "select",
+            label: "Related Trade",
+            option: [
+              { label: "Available", value: "available" },
+              { label: "Not Available", value: "notavailable" },
+            ],
+          },
+        },
       },
       {
         title: "Sustainability",
         description:
-          "How will your project (the planned training activity) continue after this funding",
-        input: "contributionFromApplicant",
+          "How will your project (the planned training activity) continue after this funding?",
+        input: "sustainability",
         type: "textarea",
       },
       {
-        title: "Budget Summary ",
-        description:
-          "List the most important activities you are soliciting funding for and the indicative budget for each activity",
-        input: "contributionFromApplicant",
-        type: "textarea",
-      },
-      {
-        title:
-          "Provide at least 2 MoUs with the companies/industries to host the trainees during the internship ",
+        title: "Provide the financial report of the previous financial year",
         description: "",
-        input: "contributionFromApplicant",
-        type: "textarea",
-      },
-      {
-        title: "Provide the proof of ownership/renting of training premises ",
-        description: "",
-        input: "contributionFromApplicant",
+        input: "previousFinancialReportAttachment",
         type: "file",
+      },
+      {
+        title: "Provide the proof of ownership/renting of training premises",
+        description: "",
+        input: "trainingPremisesAttachment",
+        type: "file",
+      },
+      {
+        title: "Contribution from the applicant",
+        description:
+          "Justify how your institution will contribute to facilitate the training.",
+        input: "contributionFromApplicant",
+        type: "textarea",
       },
     ],
     subwindow_2: [
@@ -366,42 +428,60 @@ export const questions = {
           "Explain the role of any other involved training provider in the project, if any.",
         description:
           "(Indicate the training provider you would like to partner with if any.)",
-        input: "roleAttachment",
-        type: "file",
-      },
-      {
-        title: "assessment and certification Process",
-        description:
-          "Keep in mind that the assessment, certification and reporting period for RPL for one cohort should be ranging from few days to 3 months, estimate the assessment duration with respect to the competencies to be assessed d.) [Trade/Name of Module/From/To/Number of Hours",
-        input: "assessmentAndCertificationProcess",
-        type: "file",
-      },
-
-      {
-        title: "Assessment Equipment",
-        description:
-          "List down the equipment available to facilitate this assessment)[Name of equipment/Number/Related Trade",
-        input: "assessmentEquipment",
+        input: "role",
         type: "textarea",
       },
       {
-        title: "Assessment Equipment - (Continued)",
+        title: "Training Delivery Process",
+        description:
+          "Estimate the training duration with respect to the training content/modules to be offered. [Trade/Name of Module/From/To/Number of Hours]",
+        input: "trainingProcess",
+        type: "arrayOfObjects",
+        dto: {
+          trade: {
+            type: "text",
+            label: "Trade",
+            selector: "trades",
+            getOptions: (t: any) => {
+              return { label: t.name, value: t.uuid };
+            },
+          },
+          moduleName: { type: "text", label: "Name of Module" },
+          fromDate: { type: "date", label: "From Date" },
+          toDate: { type: "date", label: "To Date" },
+          numberOfHours: { type: "number", label: "Number of Hours" },
+        },
+      },
+      {
+        title: "Training Manual",
+        description:
+          "[Please attach a detailed description of the content (training manual) of the proposed training",
+        input: "identificationEmployee",
+        type: "file",
+      },
+      {
+        title: "Training Equipment",
+        description:
+          "List down the equipment available to facilitate this training. [Name of equipment/Number/Related Trade]",
+        input: "trainingEquipment",
+        type: "arrayOfObjects",
+        dto: {
+          equipmentName: { type: "text", label: "Name of Equipment" },
+          quantity: { type: "number", label: "Number" },
+          relatedTrade: { type: "text", label: "Related Trade" },
+        },
+      },
+      {
+        title: "Training Equipment - (Continued) ",
         description:
           "Please attach the proof of ownership (Notarized list of equipment, Original Invoices (EBM for locally purchased equipment).",
-        input: " assessmentEquipmentAttachmen",
-        type: "textarea",
+        input: "trainingEquipmentProofOwnership",
+        type: "file",
       },
       {
-        title: "Assessment Equipment - (Continued) ",
-        description: "Add a comment related to the assessment equipment if an.",
-        input: " staffAttachment",
-        type: "textarea",
-      },
-      {
-        title: "Recruitment of candidates",
-        description:
-          "Provide the number of candidates you need to assess and their background",
-        input: "sustainability",
+        title: "Training Equipment - (Continued) ",
+        description: "Add a comment related to the training equipment if any",
+        input: "trainingEquipmentComment",
         type: "textarea",
       },
       {
@@ -412,49 +492,49 @@ export const questions = {
         type: "number",
       },
       {
-        title: "Assessors/facilitators ",
+        title: "Technical Staff",
         description:
-          "Provide the assessors/facilitators required to assess the trades you are applying for",
-        input: "  assessorsAndFacilitators",
-        type: "textarea",
+          "Identify the technical staff (instructors) required to train the trades you are applying for",
+        input: "trainingPremisesAttachment",
+        type: "arrayOfObjects",
+        dto: {
+          name: { type: "text", label: "Name of Equipment" },
+          position: { type: "number", label: "Number" },
+          qualification: { type: "text", label: "Related Trade" },
+          availability: {
+            type: "select",
+            label: "Related Trade",
+            option: [
+              { label: "Available", value: "available" },
+              { label: "Not Available", value: "notavailable" },
+            ],
+          },
+        },
       },
       {
         title: "Sustainability",
         description:
-          "How will your project (the planned training activity) continue after this funding",
-        input: "contributionFromApplicant",
+          "How will your project (the planned training activity) continue after this funding?",
+        input: "sustainability",
         type: "textarea",
       },
       {
-        title: "Budget Summary ",
-        description:
-          "List the most important activities you are soliciting funding for and the indicative budget for each activity",
-        input: "contributionFromApplicant",
-        type: "textarea",
-      },
-      {
-        title: "Previous financial Report ",
-        description: "Provide the financial report of the previous year",
-        input: "MOUsAttachment1",
-        type: "file",
-      },
-      {
-        title: "Previous financial Report(2) ",
-        description: "Provide the financial report of the previous year",
-        input: "MOUsAttachment2",
-        type: "file",
-      },
-      {
-        title: "Training premises",
+        title: "Provide the financial report of the previous financial year",
         description: "",
-        input: "contributionFromApplicant",
-        type: "textarea",
+        input: "previousFinancialReportAttachment",
+        type: "file",
       },
-
       {
-        title: "Contribution from the applicant  ",
+        title:
+          " Provide at least 2 MoUs with the companies/industries to host the trainees during  the internship for a period of 3 months",
+        description: "",
+        input: "trainingPremisesAttachment",
+        type: "file",
+      },
+      {
+        title: "Contribution from the applicant",
         description:
-          "Justify how your institution will contribute to facilitate the  assessment",
+          "Justify how your institution will contribute to facilitate the training.",
         input: "contributionFromApplicant",
         type: "textarea",
       },
@@ -485,8 +565,8 @@ export const questions = {
           "Explain the role of any other involved training provider in the project, if any.",
         description:
           "(Indicate the training provider you would like to partner with if any.)",
-        input: "roleAttachment",
-        type: "file",
+        input: "role",
+        type: "textarea",
       },
       {
         title: "Training Delivery Process",
@@ -605,8 +685,8 @@ export const questions = {
           "Explain the role of any other involved training provider in the project, if any.",
         description:
           "(Indicate the training provider you would like to partner with if any.)",
-        input: "roleAttachment",
-        type: "file",
+        input: "role",
+        type: "textarea",
       },
       {
         title: "Training Delivery Process",
@@ -816,8 +896,8 @@ export const questions = {
           "Explain the role of any other involved training provider in the project, if any.",
         description:
           "(Indicate the training provider you would like to partner with if any.)",
-        input: "roleAttachment",
-        type: "file",
+        input: "role",
+        type: "textarea",
       },
       {
         title: "Training Delivery Process",
@@ -935,8 +1015,8 @@ export const questions = {
         "Explain the role of any other involved training provider in the project, if any.",
       description:
         "(Indicate the training provider you would like to partner with if any.)",
-      input: "roleAttachment",
-      type: "file",
+      input: "role",
+      type: "textarea",
     },
     {
       title: "Training Delivery Process",
