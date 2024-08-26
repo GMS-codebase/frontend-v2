@@ -14,6 +14,9 @@ import {
   GET_TRADES_SUCCESS,
 } from "@/actions/TradesActions";
 import {
+  GET_SUB_WINDOWS_ERROR,
+  GET_SUB_WINDOWS_LOADING,
+  GET_SUB_WINDOWS_SUCCESS,
   GET_WINDOWS_ERROR,
   GET_WINDOWS_LOADING,
   GET_WINDOWS_SUCCESS,
@@ -71,6 +74,21 @@ export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_WINDOWS_ERROR, payload: err.response.data.error });
     });
 };
+export const getSubWindows = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_SUB_WINDOWS_LOADING });
+  authorizedApi
+    .get("/sub-window/allSubWindows")
+    .then((res) => {
+      console.log(res.data.data.data);
+      dispatch({ type: GET_SUB_WINDOWS_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_SUB_WINDOWS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
 export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/auth/me")
@@ -84,7 +102,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -171,7 +189,7 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
 export const getMyContacts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_CONTACTS_LOADING });
   authorizedApi
-    .get("/contacts/mine")
+    .get("/contacts")
     .then((res) => {
       dispatch({ type: GET_MY_CONTACTS_SUCCESS, payload: res.data.data.data });
     })
