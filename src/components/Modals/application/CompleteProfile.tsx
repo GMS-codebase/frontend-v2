@@ -31,9 +31,11 @@ type FormData = {
 const CompleteProfile = ({
   isOpenCompleteProfile,
   closeCompleteProfile,
+  finishAddingProfile,
 }: {
   isOpenCompleteProfile: boolean;
   closeCompleteProfile: () => void;
+  finishAddingProfile?: () => void;
 }) => {
   const [activeTab, setActiveTab] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -113,7 +115,7 @@ const CompleteProfile = ({
     setActiveTab((current) => (current > 0 ? current - 1 : current));
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -140,6 +142,7 @@ const CompleteProfile = ({
       if (certificate) {
         submitData.append("certificate", certificate);
       }
+      console.log(submitData);
       authorizedApi
         .put("/applicant/update/profile", submitData)
         .then((_res) => {
@@ -167,7 +170,7 @@ const CompleteProfile = ({
             cell: "",
             village: "",
           });
-          closeCompleteProfile();
+          finishAddingProfile && finishAddingProfile();
         })
         .catch((err) => {
           notifications.show({
