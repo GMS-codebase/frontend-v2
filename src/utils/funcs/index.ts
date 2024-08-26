@@ -102,7 +102,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   authorizedApi
     .get("/applicant/me")
