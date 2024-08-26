@@ -13,25 +13,26 @@ import SuccessModal from "@/components/Modals/success";
 import SetPasswordModal from "@/components/Modals/auth/SetPasswordModal";
 import { SolarFolder2Bold } from "@/components/core/icons";
 import { useSearchParams } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { getCalls } from "@/utils/funcs";
 
 function Page() {
-  const randomCalls = [
-    { id: 1, title: "Call for Proposal 1" },
-    { id: 2, title: "Call for Proposal 2" },
-    { id: 3, title: "Call for Proposal 3" },
-    { id: 4, title: "Call for Proposal 4" },
-    { id: 5, title: "Call for Proposal 5" },
-  ];
-
-  const [hasCalls, setHasCalls] = useState(true);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    getCalls(dispatch);
+  }, []);
+  const { calls, loading } = useSelector((state: any) => state.calls);
+  console.log(loading, calls);
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
   const [isOpenLogin, { open: openLogin, close: closeLogin }] =
     useDisclosure(false);
   const [isOpenSuccess, { open: openSuccess, close: closeSuccess }] =
     useDisclosure(false);
-  const [isOpenCall, { open: openCall, close: closeCall }] =
-    useDisclosure(false);
+  const [openCall, setOpenCall] = useState({
+    isOpen: false,
+    call: null,
+  });
   const [
     isOpenSetPassword,
     { open: openSetPassword, close: closeSetPassword },
@@ -92,17 +93,26 @@ function Page() {
           style={{ scrollbarWidth: "none" }}
         >
           <div className="flex space-x-4">
-            {hasCalls &&
-              randomCalls.map((call) => (
+            {calls &&
+              calls.map((call: any) => (
                 <div
                   key={call.id}
                   className="min-w-[350px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
                 >
                   <SolarFolder2Bold className="w-8 h-8 text-[#005DE9]" />
-                  <h3 className="font-bold text-black">{call.title}</h3>
+                  <h3 className="font-bold text-black">
+                    {call.title?.length >= 20
+                      ? `${call?.title?.slice(0, 20)}...`
+                      : call?.title}
+                  </h3>
                   <button
                     className="bg-[#1F5DB014] text-primary font-bold rounded-full px-4 py-2"
-                    onClick={openCall}
+                    onClick={() =>
+                      setOpenCall({
+                        isOpen: true,
+                        call: call,
+                      })
+                    }
                   >
                     View details
                   </button>
@@ -146,7 +156,12 @@ function Page() {
         openRegister={openRegister}
       />
       <SuccessModal opened={isOpenSuccess} close={closeSuccess} />
-      <CallModal opened={isOpenCall} close={closeCall} />
+      <CallModal
+        openLogin={openLogin}
+        call={openCall.call}
+        opened={openCall.isOpen}
+        close={() => setOpenCall({ isOpen: false, call: null })}
+      />
       <SetPasswordModal
         opened={isOpenSetPassword}
         close={closeSetPassword}

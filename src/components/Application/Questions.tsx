@@ -152,8 +152,8 @@ const Questions: React.FC<QuestionsProps> = ({
     const questionType = question.dto
       ? question.dto[key].type
       : question.arrayItemType
-      ? question.arrayItemType
-      : question.type;
+        ? question.arrayItemType
+        : question.type;
 
     if (questionType === "textarea") {
       return (

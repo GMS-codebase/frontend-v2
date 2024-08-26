@@ -46,7 +46,7 @@ const Page = () => {
     // } else {
     //   console.log("Here");
     //   // router.push(`/applicant/applications/${callId}/apply`);
-      
+
     // }
     openCreateApplication();
   };
@@ -167,6 +167,10 @@ const Page = () => {
       <CreateApplication
         isOpenCreatingApplication={isOpenCreateApplication}
         closeCreatingApplication={closeCreateApplication}
+        finishCreatingApplication={() => {
+          closeCreateApplication();
+          router.push(`/applicant/applications/${callId}/apply`);
+        }}
         call={call}
       />
     </div>

@@ -104,7 +104,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                   onChange={(e) =>
                     handleCommentChange(
                       "budgetSummaryAttachment",
-                      e.target.value
+                      e.target.value,
                     )
                   }
                   className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
