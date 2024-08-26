@@ -113,7 +113,7 @@ const CreateApplication = ({
 
   const subwindowOptions = formData.window
     ? windows
-        .find((win: any) => win.id === formData.window?.value)
+        .find((win: any) => win.id === formData.window)
         ?.subWindows.map((sub: any) => ({
           label: sub.name,
           value: sub.id,

@@ -189,7 +189,7 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
 export const getMyContacts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_CONTACTS_LOADING });
   authorizedApi
-    .get("/contacts")
+    .get("/contacts/mine")
     .then((res) => {
       dispatch({ type: GET_MY_CONTACTS_SUCCESS, payload: res.data.data.data });
     })
