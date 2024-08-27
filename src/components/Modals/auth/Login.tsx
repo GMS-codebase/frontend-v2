@@ -36,7 +36,7 @@ const LoginModal = ({
           case "dynamic":
             navigate.push("/dynamic");
             break;
-          case "normal_employee":
+          case "employee":
             navigate.push("/employee");
             break;
           case "applicant":

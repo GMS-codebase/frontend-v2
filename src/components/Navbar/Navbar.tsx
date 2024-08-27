@@ -47,9 +47,9 @@ const Navbar = () => {
       ? "ADMIN"
       : active.startsWith("/applicant")
         ? "APPLICANT"
-      : active.startsWith("/sdf")
-        ? "SDF_SECRETARIATE"
-        : null;
+        : active.startsWith("/sdf")
+          ? "SDF_SECRETARIATE"
+          : null;
 
     if (role === "ADMIN") {
       getApplicants(dispatch);

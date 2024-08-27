@@ -22,7 +22,7 @@ const AddContract: React.FC<AddContractProps> = ({
     {
       name: "",
       file: null,
-    }
+    },
   );
   const dispatch = useDispatch();
 
