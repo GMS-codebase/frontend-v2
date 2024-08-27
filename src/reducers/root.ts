@@ -24,7 +24,6 @@ const rootReducer = combineReducers({
   mereports: MEReportsReducer,
   profile: ProfileReducer,
   contracts: ContractsReducer,
-  
 });
 
 export default rootReducer;

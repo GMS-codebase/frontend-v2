@@ -66,7 +66,11 @@ import {
   GET_PROFILE_LOADING,
   GET_PROFILE_SUCCESS,
 } from "@/actions/ProfileActions";
-import { GET_APPLICANTS_ERROR, GET_APPLICANTS_LOADING, GET_APPLICANTS_SUCCESS } from "@/actions/ApplicantsActions";
+import {
+  GET_APPLICANTS_ERROR,
+  GET_APPLICANTS_LOADING,
+  GET_APPLICANTS_SUCCESS,
+} from "@/actions/ApplicantsActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -157,10 +161,16 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/applicant/all")
     .then((res) => {
-      dispatch({ type: GET_APPLICANTS_SUCCESS, payload: res.data.data.data.data });
+      dispatch({
+        type: GET_APPLICANTS_SUCCESS,
+        payload: res.data.data.data.data,
+      });
     })
     .catch((err) => {
-      dispatch({ type: GET_APPLICANTS_ERROR, payload: err.response.data.error });
+      dispatch({
+        type: GET_APPLICANTS_ERROR,
+        payload: err.response.data.error,
+      });
     });
 };
 export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
@@ -168,18 +178,26 @@ export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/contracts")
     .then((res) => {
-      dispatch({ type: GET_CONTRACTS_SUCCESS, payload: res.data.data.data.data });
+      dispatch({
+        type: GET_CONTRACTS_SUCCESS,
+        payload: res.data.data.data.data,
+      });
     })
     .catch((err) => {
       dispatch({ type: GET_CONTRACTS_ERROR, payload: err.response.data.error });
     });
 };
-export const getApplicationsForContracts = async (dispatch: Dispatch<UnknownAction>) => {
+export const getApplicationsForContracts = async (
+  dispatch: Dispatch<UnknownAction>,
+) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
     .get("/application/contract-signing/all")
     .then((res) => {
-      dispatch({ type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS, payload: res.data.data.data });
+      dispatch({
+        type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
+        payload: res.data.data.data,
+      });
     })
     .catch((err) => {
       dispatch({

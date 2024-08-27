@@ -14,7 +14,7 @@ const ContractsActions = ({
   setIsContract: (employee: any) => void;
   data: any;
 }) => {
-    console.log(data);
+  console.log(data);
   return (
     <div className="">
       <Menu shadow="lg" width={300}>
@@ -35,9 +35,7 @@ const ContractsActions = ({
           </Menu.Label>
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
-            <div
-              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-            >
+            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
               <FiEye size={21} color="#576074" />
               Download Contract
             </div>
