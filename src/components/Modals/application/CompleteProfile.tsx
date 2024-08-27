@@ -115,7 +115,7 @@ const CompleteProfile = ({
     setActiveTab((current) => (current > 0 ? current - 1 : current));
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -144,7 +144,11 @@ const CompleteProfile = ({
       }
       console.log(submitData);
       authorizedApi
-        .put("/applicant/update/profile", submitData)
+        .put("/applicant/update/profile", submitData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
         .then((_res) => {
           notifications.show({
             message: "Profile updated successfully!",

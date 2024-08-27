@@ -99,7 +99,9 @@ const AddWindow = ({
                       value={formData.title}
                       data={["Window 1", "Window 2", "Window 3", "Window 4"]}
                       placeholder="Window title"
-                      onChange={(value)=> setFormData({...formData, title: value ?? ""})}
+                      onChange={(value) =>
+                        setFormData({ ...formData, title: value ?? "" })
+                      }
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
                       required
                     />

@@ -74,16 +74,6 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-
-        <button
-          onClick={open}
-          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-        >
-          <span className="text-2xl">
-            <SolarAddFolderBold />
-          </span>
-          <h1 className="text-base font-medium text-white">New Call</h1>
-        </button>
       </div>
 
       <div className="w-full h-full">
