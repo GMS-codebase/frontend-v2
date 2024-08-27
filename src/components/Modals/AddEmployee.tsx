@@ -508,7 +508,7 @@ const RegisterModal = ({
                         }
                         data={[
                           {
-                            value: "EMPLOYEE",
+                            value: "NORMAL_EMPLOYEE",
                             label: "normal-employee",
                           },
                           {

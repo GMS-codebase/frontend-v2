@@ -55,13 +55,13 @@ const GenericSidebar = ({
       <div className="w-full h-screen overflow-y-auto pb-[17vh] sidebar-container">
         {isDynamic && loading ? (
           <div className="w-full flex flex-col gap-3">
-            <Skeleton width={"100%"} height={100}/>
-            <Skeleton width={"100%"} height={100}/>
-            <Skeleton width={"100%"} height={100}/>
-            <Skeleton width={"100%"} height={100}/>
-            <Skeleton width={"100%"} height={100}/>
-            <Skeleton width={"100%"} height={100}/>
-            <Skeleton width={"100%"} height={100}/>
+            <Skeleton width={"100%"} height={100} />
+            <Skeleton width={"100%"} height={100} />
+            <Skeleton width={"100%"} height={100} />
+            <Skeleton width={"100%"} height={100} />
+            <Skeleton width={"100%"} height={100} />
+            <Skeleton width={"100%"} height={100} />
+            <Skeleton width={"100%"} height={100} />
           </div>
         ) : (
           routes.map((route, index: any) => {
