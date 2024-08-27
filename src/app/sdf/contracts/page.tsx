@@ -8,14 +8,34 @@ import { tradesData as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
 import AddContract from "@/components/Modals/AddContract";
 import Contracts from "@/components/contracts/contracts";
+import { useSelector } from "react-redux";
+import ContractsActions from "./ContractsActions";
+import { useState } from "react";
+import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
+  const [isContract, setIsContract] = useState({
+    isOpen: false,
+    application: null
+  })
+  const {applicationsForContractSigning: applications, loading} = useSelector((state: any)=> state.applications);
+  console.log(applications);
   const columns: ColumnDef<any>[] = [
+    {
+      accessorKey: "applicationNumber",
+      header: "Application Number",
+      cell: ({ row }) => <div className="w-full">{row.original?.applicationNumber}</div>,
+    },
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
+      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.name}</div>,
+    },
+    {
+      accessorKey: "phone",
+      header: "Applicant Phone",
+      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.phone}</div>,
     },
     {
       accessorKey: "description",
@@ -31,19 +51,7 @@ const Page = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => (
-        <div>
-          <button
-            style={{
-              background:
-                "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-            }}
-            className="p-3 rounded-full border text-white hover:bg-red-100"
-          >
-            <HiDotsHorizontal size={25} color="white" />
-          </button>
-        </div>
-      ),
+      cell: ({ row }) => <ContractsActions data={row.original} setIsContract={setIsContract}/>
     },
   ];
   return (
@@ -59,21 +67,13 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-        <button
-          onClick={open}
-          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-        >
-          <span className="text-2xl">
-            <SolarAddFolderBold />
-          </span>
-          <h1 className="text-base font-medium text-white">New Contract</h1>
-        </button>
       </div>
 
       <div className="w-full h-full">
-        <Contracts />
+        <h1 className="text-xl p-4 font-bold">Applications Ready For Contract Signing</h1>
+        {loading ? <TableSkeleton columns={columns}/>: <DataTable columns={columns} data={applications} noDataMessage="No Approved Applications"/>}
       </div>
-      <AddContract isOpenAddContract={isOpenTrade} closeAddContract={close} />
+      <AddContract data={isContract.application} isOpenAddContract={isContract.isOpen} closeAddContract={()=> setIsContract({isOpen: false, application: null})} />
     </div>
   );
 };

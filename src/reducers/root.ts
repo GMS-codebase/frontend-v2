@@ -10,6 +10,7 @@ import EmployeesReducer from "./EmployeesReducer";
 import ContactsReducer from "./ContactsReducer";
 import MEReportsReducer from "./MEReportsReducer";
 import ProfileReducer from "./ProfileReducer";
+import ContractsReducer from "./ContractsReducer";
 const rootReducer = combineReducers({
   contacts: ContactsReducer,
   auth: authReducer,
@@ -22,6 +23,8 @@ const rootReducer = combineReducers({
   employees: EmployeesReducer,
   mereports: MEReportsReducer,
   profile: ProfileReducer,
+  contracts: ContractsReducer,
+  
 });
 
 export default rootReducer;
