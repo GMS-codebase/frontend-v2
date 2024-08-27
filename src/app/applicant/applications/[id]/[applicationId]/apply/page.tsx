@@ -18,7 +18,8 @@ const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
-  const { id } = useParams();
+  const { id, applicationId } = useParams();
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ApplicationQuestions>({
     title: "",
     activitiesAndOutcomes: "",
@@ -48,103 +49,104 @@ const Page = () => {
     budgetSummaryAttachment: undefined,
   });
   const handleSubmit = async () => {
-    const requiredFields = [
-      { name: "Title", value: data.title, message: "Please enter the title." },
-      {
-        name: "Activities and Outcomes",
-        value: data.activitiesAndOutcomes,
-        message: "Please describe the activities and outcomes.",
-      },
-      {
-        name: "Readiness to Execute",
-        value: data.readinessExecute,
-        message: "Please provide your readiness to execute.",
-      },
-      { name: "Role", value: data.role, message: "Please specify the role." },
-      {
-        name: "Institution",
-        value: data.institution,
-        message: "Please enter the institution name.",
-      },
-      {
-        name: "Training Process",
-        value: data.trainingProcess,
-        message: "Please outline the training process.",
-      },
-      {
-        name: "Training Equipment",
-        value: data.trainingEquipment,
-        message: "Please list the training equipment.",
-      },
-      {
-        name: "Employee Identification",
-        value: data.identificationEmployee,
-        message: "Please provide the employee identification.",
-      },
-      {
-        name: "Staffs",
-        value: data.staffs,
-        message: "Please list the staffs involved.",
-      },
-      {
-        name: "Sustainability",
-        value: data.sustainability,
-        message: "Please describe sustainability efforts.",
-      },
-      {
-        name: "Contribution from Applicant",
-        value: data.contributionFromApplicant,
-        message: "Please detail the contribution from the applicant.",
-      },
-      {
-        name: "Recruitment Trainer Number",
-        value: data.recruitmentTrainerNumber,
-        message: "Please provide the recruitment trainer number.",
-      },
-      {
-        name: "Member Identification",
-        value: data.identificationMember,
-        message: "Please provide member identification.",
-      },
-      {
-        name: "Assessment and Certification Process",
-        value: data.assessmentAndCertificationProcess,
-        message: "Please outline the assessment and certification process.",
-      },
-      {
-        name: "Assessment Equipment",
-        value: data.assessmentEquipment,
-        message: "Please list the assessment equipment.",
-      },
-      {
-        name: "Recruitment Candidates Number",
-        value: data.recruitmentCandidatesNumber,
-        message: "Please provide the number of recruitment candidates.",
-      },
-      {
-        name: "Assessors and Facilitators",
-        value: data.assessorsAndFacilitators,
-        message: "Please list the assessors and facilitators.",
-      },
-      {
-        name: "Contribution",
-        value: data.contribution,
-        message: "Please detail the contribution.",
-      },
-    ];
+    setLoading(true);
+    // const requiredFields = [
+    //   { name: "Title", value: data.title, message: "Please enter the title." },
+    //   {
+    //     name: "Activities and Outcomes",
+    //     value: data.activitiesAndOutcomes,
+    //     message: "Please describe the activities and outcomes.",
+    //   },
+    //   {
+    //     name: "Readiness to Execute",
+    //     value: data.readinessExecute,
+    //     message: "Please provide your readiness to execute.",
+    //   },
+    //   { name: "Role", value: data.role, message: "Please specify the role." },
+    //   {
+    //     name: "Institution",
+    //     value: data.institution,
+    //     message: "Please enter the institution name.",
+    //   },
+    //   {
+    //     name: "Training Process",
+    //     value: data.trainingProcess,
+    //     message: "Please outline the training process.",
+    //   },
+    //   {
+    //     name: "Training Equipment",
+    //     value: data.trainingEquipment,
+    //     message: "Please list the training equipment.",
+    //   },
+    //   {
+    //     name: "Employee Identification",
+    //     value: data.identificationEmployee,
+    //     message: "Please provide the employee identification.",
+    //   },
+    //   {
+    //     name: "Staffs",
+    //     value: data.staffs,
+    //     message: "Please list the staffs involved.",
+    //   },
+    //   {
+    //     name: "Sustainability",
+    //     value: data.sustainability,
+    //     message: "Please describe sustainability efforts.",
+    //   },
+    //   {
+    //     name: "Contribution from Applicant",
+    //     value: data.contributionFromApplicant,
+    //     message: "Please detail the contribution from the applicant.",
+    //   },
+    //   {
+    //     name: "Recruitment Trainer Number",
+    //     value: data.recruitmentTrainerNumber,
+    //     message: "Please provide the recruitment trainer number.",
+    //   },
+    //   {
+    //     name: "Member Identification",
+    //     value: data.identificationMember,
+    //     message: "Please provide member identification.",
+    //   },
+    //   {
+    //     name: "Assessment and Certification Process",
+    //     value: data.assessmentAndCertificationProcess,
+    //     message: "Please outline the assessment and certification process.",
+    //   },
+    //   {
+    //     name: "Assessment Equipment",
+    //     value: data.assessmentEquipment,
+    //     message: "Please list the assessment equipment.",
+    //   },
+    //   {
+    //     name: "Recruitment Candidates Number",
+    //     value: data.recruitmentCandidatesNumber,
+    //     message: "Please provide the number of recruitment candidates.",
+    //   },
+    //   {
+    //     name: "Assessors and Facilitators",
+    //     value: data.assessorsAndFacilitators,
+    //     message: "Please list the assessors and facilitators.",
+    //   },
+    //   {
+    //     name: "Contribution",
+    //     value: data.contribution,
+    //     message: "Please detail the contribution.",
+    //   },
+    // ];
 
-    for (let field of requiredFields) {
-      if (
-        !field.value ||
-        (Array.isArray(field.value) && field.value.length === 0)
-      ) {
-        notifications.show({
-          message: field.message,
-          color: "red",
-        });
-        return;
-      }
-    }
+    // for (let field of requiredFields) {
+    //   if (
+    //     !field.value ||
+    //     (Array.isArray(field.value) && field.value.length === 0)
+    //   ) {
+    //     notifications.show({
+    //       message: field.message,
+    //       color: "red",
+    //     });
+    //     return;
+    //   }
+    // }
 
     const submitData = new FormData();
 
@@ -273,16 +275,13 @@ const Page = () => {
     }
 
     try {
-      const applicationRes = await authorizedApi.post(
-        `/application/create-application/${id}`,
-        submitData,
-      );
       const res = await authorizedApi.post(
-        `/application/fillApplication/${applicationRes.data.data.id}`,
-        submitData,
+        `/application/fillApplication/${applicationId}`,
+        submitData
       );
+      console.log(res.data);
       notifications.show({
-        message: "Application submitted successfully!",
+        message: "Application filled successfully!",
         color: "blue",
       });
     } catch (err: any) {
@@ -292,6 +291,7 @@ const Page = () => {
         color: "red",
       });
     }
+    setLoading(false);
   };
 
   const calls = useSelector((state: any) => state.calls);
@@ -300,23 +300,9 @@ const Page = () => {
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":
-        return (
-          <FundingQuestions
-            data={data}
-            setData={setData}
-            subwindows={["subwindow_1"]}
-          />
-        );
+        return <FundingQuestions data={data} setData={setData} />;
       case "IndicativeBudget":
-        return (
-          <BudgetQuestions
-            data={data}
-            setData={setData}
-            componentData={data}
-            setComponentData={setData}
-            mode="commenting"
-          />
-        );
+        return <BudgetQuestions data={data} setData={setData} />;
       default:
         return null;
     }
@@ -356,9 +342,10 @@ const Page = () => {
           <button
             type="button"
             onClick={handleSubmit}
+            disabled={loading}
             className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            Send Application
+            {loading ? "Loading..." : "Send Application"}
           </button>
         </div>
       </div>

@@ -116,7 +116,7 @@ const AddCall = ({
     submitData.append("applicationEndDate", formData.endDate);
     submitData.append("window", JSON.stringify(selectedWindows));
     submitData.append("sector", JSON.stringify(selectedSelectors));
-    submitData.append("subWindow", JSON.stringify(selectedSubWindows));
+    submitData.append("subWindows", JSON.stringify(selectedSubWindows));
     if (formData.attachment) {
       submitData.append("attachment", formData.attachment);
     }
