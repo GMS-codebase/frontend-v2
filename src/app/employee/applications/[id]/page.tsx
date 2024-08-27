@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Questions from "@/components/Application/Questions";
+import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
 import {
   SolarFileBold,
   SolarFolder2Bold,
@@ -57,23 +57,30 @@ const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
-  const [data, setData] = useState<{ [key: string]: any }>();
-
+  const [commentsData, setCommentsData] = useState<Comments>({
+    titleComment: "",
+    activitiesComment: "",
+    readinessExecuteComment: "",
+    roleComment: "",
+    institutionComment: "",
+    trainingManualComment: "",
+    trainingEquipmentComment: "",
+    identificationEmployeeComment: "",
+    staffComment: "",
+    sustainabilityComment: "",
+    previousFinancialReportComment: "",
+    trainingPremisesComment: "",
+    contributionFromApplicantComment: "",
+    recruitmentTrainerComment: "",
+    MOUsAttachmentComment: "",
+    identificationMemberComment: "",
+    assessmentEquipmentComment: "",
+    recruitmentCandidatesNumberComment: "",
+    assessorsAndFacilitatorsComment: "",
+    budgetAttachmentComment: "",
+    contributionComment: "",
+  });
   const renderComponent = () => {
-    const filterQuestionsBySubWindows = (
-      subWindows: { window: string; subWindow: string }[],
-    ) => {
-      return subWindows.map(({ window, subWindow }) => {
-        //@ts-ignore
-        return questions[window as any]?.[subWindow] || [];
-      });
-    };
-
-    const filteredQuestions = filterQuestionsBySubWindows([
-      { window: "window_1", subWindow: "subwindow_1" },
-      { window: "window_2", subWindow: "subwindow_1" },
-    ]);
-
     switch (currentComponent) {
       case "Project":
         return (
@@ -84,12 +91,7 @@ const Page = () => {
           />
         );
       case "IndicativeBudget":
-        return (
-          <Questions
-            questions={[indicativeBudgetQuestions as any]}
-            setQuestionsData={setData}
-          />
-        );
+        return <IndicativeBudget />;
       default:
         return null;
     }
@@ -296,4 +298,5 @@ const Page = () => {
     </div>
   );
 };
+
 export default Page;
