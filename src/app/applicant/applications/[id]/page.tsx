@@ -24,6 +24,7 @@ const Page = () => {
   const profile = useSelector((state: any) => state.auth);
   const contacts = useSelector((state: any) => state.contacts);
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
+  const applications = useSelector((state: any) => state.myApplications);
   const [
     isOpenCreateProfile,
     { open: openAddProfile, close: closeAddProfile },
@@ -150,6 +151,7 @@ const Page = () => {
         closeCompleteProfile={closeAddProfile}
         isOpenCompleteProfile={isOpenCreateProfile}
         finishAddingProfile={() => {
+          closeAddProfile();
           if (!contacts.myContacts || contacts.myContacts.length === 0) {
             openAddContact();
           } else {
@@ -161,16 +163,12 @@ const Page = () => {
         isOpenAddEditContact={isOpenAddContact}
         closeAddEditContact={closeAddContact}
         finishAddingContact={() => {
-          router.push(`/applicant/applications/${callId}/apply`);
+          openCreateApplication();
         }}
       />
       <CreateApplication
         isOpenCreatingApplication={isOpenCreateApplication}
         closeCreatingApplication={closeCreateApplication}
-        finishCreatingApplication={() => {
-          closeCreateApplication();
-          router.push(`/applicant/applications/${callId}/apply`);
-        }}
         call={call}
       />
     </div>
