@@ -11,17 +11,18 @@ import {
   SolarSubtitlesBold,
   SolarDownloadMinimalisticBold,
 } from "@/components/core/icons";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { format } from "date-fns";
 import CompleteProfile from "@/components/Modals/application/CompleteProfile";
 import { useDisclosure } from "@mantine/hooks";
 import AddEditContact from "@/components/Modals/applicantContacts/AddEditContact";
+import CreateApplication from "@/components/Modals/application/CreateApplication";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
   const profile = useSelector((state: any) => state.auth);
-  const contacts = useSelector((state: any) => state.auth);
+  const contacts = useSelector((state: any) => state.contacts);
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
   const [
     isOpenCreateProfile,
@@ -29,14 +30,25 @@ const Page = () => {
   ] = useDisclosure(false);
   const [isOpenAddContact, { open: openAddContact, close: closeAddContact }] =
     useDisclosure(false);
+  const [
+    isOpenCreateApplication,
+    { open: openCreateApplication, close: closeCreateApplication },
+  ] = useDisclosure(false);
+  const router = useRouter();
   const handleApply = () => {
-    openAddProfile();
     // if (!profile.applicantProfile || !profile.applicantProfile.business_name) {
     //   openAddProfile();
-    // }
-    // if (!contacts.myContacts || contacts.myContacts.length === 0) {
+    // } else if (
+    //   !contacts.loading &&
+    //   (!contacts.myContacts || contacts.myContacts.length === 0)
+    // ) {
     //   openAddContact();
+    // } else {
+    //   console.log("Here");
+    //   // router.push(`/applicant/applications/${callId}/apply`);
+
     // }
+    openCreateApplication();
   };
   return (
     <div className="bg-white rounded-2xl p-10 ">
@@ -137,10 +149,29 @@ const Page = () => {
       <CompleteProfile
         closeCompleteProfile={closeAddProfile}
         isOpenCompleteProfile={isOpenCreateProfile}
+        finishAddingProfile={() => {
+          if (!contacts.myContacts || contacts.myContacts.length === 0) {
+            openAddContact();
+          } else {
+            router.push(`/applicant/applications/${callId}/apply`);
+          }
+        }}
       />
       <AddEditContact
         isOpenAddEditContact={isOpenAddContact}
         closeAddEditContact={closeAddContact}
+        finishAddingContact={() => {
+          router.push(`/applicant/applications/${callId}/apply`);
+        }}
+      />
+      <CreateApplication
+        isOpenCreatingApplication={isOpenCreateApplication}
+        closeCreatingApplication={closeCreateApplication}
+        finishCreatingApplication={() => {
+          closeCreateApplication();
+          router.push(`/applicant/applications/${callId}/apply`);
+        }}
+        call={call}
       />
     </div>
   );

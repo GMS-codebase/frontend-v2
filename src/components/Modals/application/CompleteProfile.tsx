@@ -31,9 +31,11 @@ type FormData = {
 const CompleteProfile = ({
   isOpenCompleteProfile,
   closeCompleteProfile,
+  finishAddingProfile,
 }: {
   isOpenCompleteProfile: boolean;
   closeCompleteProfile: () => void;
+  finishAddingProfile?: () => void;
 }) => {
   const [activeTab, setActiveTab] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -140,8 +142,13 @@ const CompleteProfile = ({
       if (certificate) {
         submitData.append("certificate", certificate);
       }
+      console.log(submitData);
       authorizedApi
-        .put("/applicant/update/profile", submitData)
+        .put("/applicant/update/profile", submitData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
         .then((_res) => {
           notifications.show({
             message: "Profile updated successfully!",
@@ -167,7 +174,7 @@ const CompleteProfile = ({
             cell: "",
             village: "",
           });
-          closeCompleteProfile();
+          finishAddingProfile && finishAddingProfile();
         })
         .catch((err) => {
           notifications.show({

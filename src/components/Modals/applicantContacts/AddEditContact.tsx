@@ -28,9 +28,11 @@ const AddEditContact = ({
   isOpenAddEditContact,
   closeAddEditContact,
   defaultData,
+  finishAddingContact,
 }: {
   isOpenAddEditContact: boolean;
   closeAddEditContact: () => void;
+  finishAddingContact?: () => void;
   defaultData?: {
     id: string;
     firstname?: string;
@@ -137,7 +139,7 @@ const AddEditContact = ({
           gender: "",
           position: "",
         });
-        closeAddEditContact();
+        finishAddingContact && finishAddingContact();
       } catch (error: any) {
         console.error("Failed to save contact:", error);
         notifications.show({

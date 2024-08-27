@@ -9,7 +9,8 @@ interface Question {
   getOptions?: (obj: any) => any;
   selector?: string;
   options?: any;
-  type: "text" | "textarea" | "file" | "arrayOfObjects";
+  type: "text" | "textarea" | "file" | "arrayOfObjects" | "array";
+  arrayItemType?: "text" | "textarea" | "file" | "arrayOfObjects" | "array";
   dto?: Record<
     string,
     {
@@ -38,6 +39,7 @@ const Questions: React.FC<QuestionsProps> = ({
   const [arrayOfObjectsData, setArrayOfObjectsData] = useState<{
     [key: string]: any[];
   }>({});
+  const [arrayData, setArrayData] = useState<any[]>([]);
   const seenInputs = useMemo(() => {
     const seen = new Set<string>();
     for (let i = 0; i < currentPage; i++) {
@@ -59,7 +61,7 @@ const Questions: React.FC<QuestionsProps> = ({
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setInputs({ ...inputs, [name]: value });
@@ -75,7 +77,7 @@ const Questions: React.FC<QuestionsProps> = ({
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    inputName: string
+    inputName: string,
   ) => {
     const uploadedFile = e.target.files ? e.target.files[0] : null;
     setFiles({ ...files, [inputName]: uploadedFile });
@@ -147,7 +149,11 @@ const Questions: React.FC<QuestionsProps> = ({
   };
 
   const renderInputField = (question: Question, key: string) => {
-    const questionType = question.dto ? question.dto[key].type : question.type;
+    const questionType = question.dto
+      ? question.dto[key].type
+      : question.arrayItemType
+        ? question.arrayItemType
+        : question.type;
 
     if (questionType === "textarea") {
       return (
@@ -201,7 +207,7 @@ const Questions: React.FC<QuestionsProps> = ({
         if (question.selector.toLowerCase() === "trades") {
           options = tradesData.trades?.map((trade: any) =>
             //@ts-ignore
-            question.getOptions(trade)
+            question.getOptions(trade),
           );
         }
       }
@@ -276,6 +282,51 @@ const Questions: React.FC<QuestionsProps> = ({
                     <thead>
                       <tr>
                         {Object.keys(question.dto).map((key) => (
+                          <th
+                            key={key}
+                            className="px-4 py-2 border bg-gray-200 text-gray-700 text-xs uppercase"
+                          >
+                            {key}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {arrayOfObjectsData[question.input].map((item, idx) => (
+                        <tr key={idx}>
+                          {Object.keys(question.dto as any).map((key) => (
+                            <td
+                              key={key}
+                              className="px-4 py-2 border text-center"
+                            >
+                              {item[key]}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            ) : question.type === "array" && question.arrayItemType ? (
+              <div>
+                {question.dto && renderInputField(question, question.input)}
+                {errors[question.input] && (
+                  <p className="text-red-500 text-sm mt-2">
+                    {errors[question.input]}
+                  </p>
+                )}
+                <button
+                  onClick={() => handleAddArrayOfObjects(question)}
+                  className="mt-4 px-4 py-2 bg-blue-500 rounded-md text-white"
+                >
+                  Add
+                </button>
+                {arrayData[question.input as any] && (
+                  <table className="mt-4 w-full table-auto">
+                    <thead>
+                      <tr>
+                        {Object.keys(question.dto as any).map((key) => (
                           <th
                             key={key}
                             className="px-4 py-2 border bg-gray-200 text-gray-700 text-xs uppercase"
