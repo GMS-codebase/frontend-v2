@@ -61,8 +61,8 @@ const AddCall = ({
         .flatMap((window: any) =>
           window.subWindows?.map((subWindow: any) => ({
             value: subWindow.uuid,
-            label: window.title + " " + subWindow.title,
-          }))
+            label: subWindow.title,
+          })),
         ) || [];
     console.log(subWindowData);
     return subWindowData;
@@ -73,14 +73,14 @@ const AddCall = ({
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid)
+            selectedSubWindows.includes(subWindow.uuid),
           )
           .flatMap((subWindow: any) =>
             subWindow.sectors?.map((sector: any) => ({
               value: sector.uuid,
               label: sector.name,
-            }))
-          ) || []
+            })),
+          ) || [],
     );
     return sectorData;
   };
@@ -107,7 +107,7 @@ const AddCall = ({
       sectors: selectedSelectors,
       windows: selectedWindows,
     });
-
+    console.log(formData);
     const submitData = new FormData();
     submitData.append("title", formData.title);
     submitData.append("description", formData.description);
@@ -121,7 +121,11 @@ const AddCall = ({
       submitData.append("attachment", formData.attachment);
     }
     authorizedApi
-      .post("/call/create", submitData)
+      .post("/call/create", submitData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((res) => {
         console.log(res.data);
         notifications.show({

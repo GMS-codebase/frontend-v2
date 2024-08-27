@@ -79,7 +79,7 @@ export default function WindowsReducer(state = initialState, action: Action) {
         windows: state.windows.map((window: Window) =>
           window.uuid === action.payload.id
             ? { ...window, ...action.payload.data }
-            : window
+            : window,
         ),
         error: null,
         isError: false,
@@ -89,7 +89,7 @@ export default function WindowsReducer(state = initialState, action: Action) {
       return {
         ...state,
         windows: state.windows.filter(
-          (window: Window) => window.uuid !== action.payload.id
+          (window: Window) => window.uuid !== action.payload.id,
         ),
         error: null,
         isError: false,

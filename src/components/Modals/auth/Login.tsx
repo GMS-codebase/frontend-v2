@@ -36,16 +36,16 @@ const LoginModal = ({
           case "dynamic":
             navigate.push("/dynamic");
             break;
-          case "employee":
+          case "normal_employee":
             navigate.push("/employee");
             break;
           case "applicant":
             navigate.push("/applicant/contacts");
             break;
-          case "grant":
+          case "grant_committee":
             navigate.push("/grant");
             break;
-          case "sdf":
+          case "sdf_secretariate":
             navigate.push("/sdf/contracts");
             break;
           default:

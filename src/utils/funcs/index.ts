@@ -29,9 +29,13 @@ import {
   GET_APPLICATIONS_SUCCESS,
   GET_MY_APPLICATIONS_ERROR,
   GET_MY_APPLICATIONS_LOADING,
+  GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
   GET_MY_APPLICATIONS_SUCCESS,
 } from "@/actions/ApplicationsActions";
 import {
+  GET_CONTRACTS_ERROR,
+  GET_CONTRACTS_LOADING,
+  GET_CONTRACTS_SUCCESS,
   GET_MY_CONTRACTS_ERROR,
   GET_MY_CONTRACTS_LOADING,
   GET_MY_CONTRACTS_SUCCESS,
@@ -62,6 +66,7 @@ import {
   GET_PROFILE_LOADING,
   GET_PROFILE_SUCCESS,
 } from "@/actions/ProfileActions";
+import { GET_APPLICANTS_ERROR, GET_APPLICANTS_LOADING, GET_APPLICANTS_SUCCESS } from "@/actions/ApplicantsActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -102,7 +107,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -148,14 +153,39 @@ export const getCalls = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_TRADES_LOADING });
+  dispatch({ type: GET_APPLICANTS_LOADING });
   authorizedApi
-    .get("/applicant")
+    .get("/applicant/all")
     .then((res) => {
-      dispatch({ type: GET_TRADES_SUCCESS, payload: res.data.data });
+      dispatch({ type: GET_APPLICANTS_SUCCESS, payload: res.data.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_TRADES_ERROR, payload: err.response.data.error });
+      dispatch({ type: GET_APPLICANTS_ERROR, payload: err.response.data.error });
+    });
+};
+export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_CONTRACTS_LOADING });
+  authorizedApi
+    .get("/contracts")
+    .then((res) => {
+      dispatch({ type: GET_CONTRACTS_SUCCESS, payload: res.data.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_CONTRACTS_ERROR, payload: err.response.data.error });
+    });
+};
+export const getApplicationsForContracts = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_APPLICATIONS_LOADING });
+  authorizedApi
+    .get("/application/contract-signing/all")
+    .then((res) => {
+      dispatch({ type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_APPLICATIONS_ERROR,
+        payload: err.response.data.error,
+      });
     });
 };
 export const getApplications = async (dispatch: Dispatch<UnknownAction>) => {
@@ -217,7 +247,7 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
 export const getEmployees = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_EMPLOYEES_LOADING });
   authorizedApi
-    .get("/employee/all")
+    .get("/employees/all")
     .then((res) => {
       dispatch({ type: GET_EMPLOYEES_SUCCESS, payload: res.data.data.data });
     })

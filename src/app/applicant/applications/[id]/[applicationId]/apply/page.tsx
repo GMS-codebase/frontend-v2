@@ -168,13 +168,13 @@ const Page = () => {
     if (data.trainingProcess && data.trainingProcess.length > 0) {
       submitData.append(
         "trainingProcess",
-        JSON.stringify(data.trainingProcess)
+        JSON.stringify(data.trainingProcess),
       );
     }
     if (data.trainingEquipment && data.trainingEquipment.length > 0) {
       submitData.append(
         "trainingEquipment",
-        JSON.stringify(data.trainingEquipment)
+        JSON.stringify(data.trainingEquipment),
       );
     }
     if (data.identificationEmployee) {
@@ -189,13 +189,13 @@ const Page = () => {
     if (data.contributionFromApplicant) {
       submitData.append(
         "contributionFromApplicant",
-        data.contributionFromApplicant
+        data.contributionFromApplicant,
       );
     }
     if (data.recruitmentTrainerNumber) {
       submitData.append(
         "recruitmentTrainerNumber",
-        data.recruitmentTrainerNumber
+        data.recruitmentTrainerNumber,
       );
     }
     if (data.identificationMember) {
@@ -207,25 +207,25 @@ const Page = () => {
     ) {
       submitData.append(
         "assessmentAndCertificationProcess",
-        JSON.stringify(data.assessmentAndCertificationProcess)
+        JSON.stringify(data.assessmentAndCertificationProcess),
       );
     }
     if (data.assessmentEquipment && data.assessmentEquipment.length > 0) {
       submitData.append(
         "assessmentEquipment",
-        JSON.stringify(data.assessmentEquipment)
+        JSON.stringify(data.assessmentEquipment),
       );
     }
     if (data.recruitmentCandidatesNumber) {
       submitData.append(
         "recruitmentCandidatesNumber",
-        data.recruitmentCandidatesNumber
+        data.recruitmentCandidatesNumber,
       );
     }
     if (data.assessorsAndFacilitators) {
       submitData.append(
         "assessorsAndFacilitators",
-        data.assessorsAndFacilitators
+        data.assessorsAndFacilitators,
       );
     }
     if (data.contribution) {
@@ -241,19 +241,19 @@ const Page = () => {
     if (data.trainingManualAttachment) {
       submitData.append(
         "trainingManualAttachment",
-        data.trainingManualAttachment
+        data.trainingManualAttachment,
       );
     }
     if (data.trainingEquipmentAttachment) {
       submitData.append(
         "trainingEquipmentAttachment",
-        data.trainingEquipmentAttachment
+        data.trainingEquipmentAttachment,
       );
     }
     if (data.previousFinancialReportAttachment) {
       submitData.append(
         "previousFinancialReportAttachment",
-        data.previousFinancialReportAttachment
+        data.previousFinancialReportAttachment,
       );
     }
     if (data.MOUsAttachment && data.MOUsAttachment.length > 0) {
@@ -264,13 +264,13 @@ const Page = () => {
     if (data.assessmentEquipmentAttachment) {
       submitData.append(
         "assessmentEquipmentAttachment",
-        data.assessmentEquipmentAttachment
+        data.assessmentEquipmentAttachment,
       );
     }
     if (data.budgetSummaryAttachment) {
       submitData.append(
         "budgetSummaryAttachment",
-        data.budgetSummaryAttachment
+        data.budgetSummaryAttachment,
       );
     }
 

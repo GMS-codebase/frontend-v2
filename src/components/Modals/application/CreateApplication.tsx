@@ -45,7 +45,7 @@ const CreateApplication = ({
   }, [call]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -202,7 +202,7 @@ const CreateApplication = ({
                         window: value,
                         subwindow: null,
                         sectors: [],
-                      } as any)
+                      }) as any,
                   )
                 }
                 data={windowOptions}
@@ -235,7 +235,7 @@ const CreateApplication = ({
                         ...prevData,
                         subwindow: value,
                         sectors: [],
-                      } as any)
+                      }) as any,
                   )
                 }
                 data={subwindowOptions}
