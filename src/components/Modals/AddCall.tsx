@@ -78,7 +78,7 @@ const AddCall = ({
           .flatMap((subWindow: any) =>
             subWindow.sectors?.map((sector: any) => ({
               value: sector.uuid,
-              label: sector.title,
+              label: sector.name,
             }))
           ) || []
     );
@@ -107,6 +107,7 @@ const AddCall = ({
       sectors: selectedSelectors,
       windows: selectedWindows,
     });
+
     const submitData = new FormData();
     submitData.append("title", formData.title);
     submitData.append("description", formData.description);
@@ -115,7 +116,7 @@ const AddCall = ({
     submitData.append("applicationEndDate", formData.endDate);
     submitData.append("window", JSON.stringify(selectedWindows));
     submitData.append("sector", JSON.stringify(selectedSelectors));
-    submitData.append("subWindow", JSON.stringify(selectedSubWindows));
+    submitData.append("subWindows", JSON.stringify(selectedSubWindows));
     if (formData.attachment) {
       submitData.append("attachment", formData.attachment);
     }

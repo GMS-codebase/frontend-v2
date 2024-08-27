@@ -10,56 +10,50 @@ import {
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { Comments } from "@/types";
+import FundingQuestions from "@/components/Application/FundingQuestions";
+import { authorizedApi } from "@/utils/api";
+import { notifications } from "@mantine/notifications";
+import EvalDetails from "@/components/Modals/evalDetails";
+import EditEvalModal from "@/components/Modals/EditEvalModal";
+import DueDetail from "@/components/Modals/Duediligency";
 
-/*
-applicationNumber
-: 
-"GMS-APP-0454909"
-budget
-: 
-{uuid: 'b04382d9-a91e-4efc-b6a5-5ca707b4018a', deletedStatus: false, doneAt: '2024-08-16T12:16:37.534Z', lastUpdatedAt: '2024-08-16T12:16:37.534Z', doneBy: null, …}
-currentStage
-: 
-"EVALUATION"
-deletedStatus
-: 
-false
-description
-: 
-"This is a sample application description."
-doneAt
-: 
-"2024-08-16T12:14:14.918Z"
-doneBy
-: 
-null
-finishedAnswering
-: 
-true
-lastUpdatedAt
-: 
-"2024-08-16T12:16:37.562Z"
-lastUpdatedBy
-: 
-null
-projectFunding
-: 
-{uuid: '51b6a010-74e1-49c6-8992-32660795b563', deletedStatus: false, doneAt: '2024-08-16T12:16:37.539Z', lastUpdatedAt: '2024-08-16T12:16:37.539Z', doneBy: null, …}
-status
-: 
-"PENDING"
-uuid
-: 
-"28f17e79-a876-4971-adb9-3f1daaf72352"
-*/
 const Page = () => {
-  const { id } = useParams();
-  console.log(id);
+  const { id } = useParams<{ id: string }>();
   const applications = useSelector((state: any) => state.applications);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id,
+    (application: any) => application.uuid === id
   )[0];
   console.log(application);
+  const [loading, setLoading] = useState(false);
+
+  const [isOpenAddDue, setIsOpenAddDue] = useState(false);
+  const [isOpenAddEval, setIsOpenAddEval] = useState(false);
+  const [isOpenEditEval, setIsOpenEditEval] = useState(false);
+  const [savedData, setSavedData] = useState({ title: "", description: "" });
+
+  // Separate states for showing decision buttons
+  const [showEvaluationButtons, setShowEvaluationButtons] = useState(false);
+  const [showDueDiligenceButtons, setShowDueDiligenceButtons] = useState(false);
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  const openAddDue = () => setIsOpenAddDue(true);
+  const closeAddDue = () => setIsOpenAddDue(false);
+
+  const openAddEval = () => setIsOpenAddEval(true);
+  const closeAddEval = () => setIsOpenAddEval(false);
+
+  const [isOpenAddDues, setIsOpenAddDues] = useState(false);
+  const [isOpenAddEvals, setIsOpenAddEvals] = useState(false);
+
+  const openAddDues = () => setIsOpenAddDues(true);
+  const closeAddDues = () => setIsOpenAddDues(false);
+
+  const openAddEvals = () => setIsOpenAddEvals(true);
+  const closeAddEvals = () => setIsOpenAddEvals(false);
+
+  const openEditModal = () => setIsOpenEditEval(true);
+  const closeEditEval = () => setIsOpenEditEval(false);
 
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
@@ -91,16 +85,52 @@ const Page = () => {
     switch (currentComponent) {
       case "Project":
         return (
-          <Project
+          <FundingQuestions
             data={application?.projectFunding}
             setComments={setCommentsData}
-            commentsData={commentsData}
+            comments={commentsData}
           />
         );
       case "IndicativeBudget":
         return <IndicativeBudget />;
       default:
         return null;
+    }
+  };
+
+  const handleAddComments = async () => {
+    setLoading(true);
+    try {
+      await authorizedApi.post(
+        `/application/fillApplication/${id}`,
+        commentsData
+      );
+      notifications.show({
+        message: "Application filled successfully!",
+        color: "blue",
+      });
+    } catch (err: any) {
+      console.log(err.response);
+      notifications.show({
+        message: err.response?.data?.message ?? "Failed to submit the form!",
+        color: "red",
+      });
+    }
+    setLoading(false);
+  };
+  const handleUpdate = (updatedData: {
+    title: string;
+    description: string;
+  }) => {
+    setSavedData(updatedData);
+  };
+  const handleDecisionMade = (stage: "Evaluation" | "DueDiligence") => {
+    if (stage === "Evaluation") {
+      setShowEvaluationButtons(true);
+      closeAddEval();
+    } else if (stage === "DueDiligence") {
+      setShowDueDiligenceButtons(true);
+      closeAddDue();
     }
   };
 
@@ -135,7 +165,7 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
                 Submitted
               </p>
-              <p>YES</p>
+              <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
             </div>
           </div>
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
@@ -143,13 +173,13 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Call
               </p>
-              <p>SDF CALL 5 FOR GRANT PROPOSALS</p>
+              <p>{application?.call.title}</p>
             </div>
             <div className="flex gap-6 justify-start items-start">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Window
               </p>
-              <p>Window 1: Rapid response training</p>
+              <p>{application?.window.title}</p>
             </div>
             <div className="flex gap-6 justify-start items-start">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
@@ -210,14 +240,26 @@ const Page = () => {
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold">Evaluation Stage</h3>
             <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-              Proposal Approved
+              Pending
             </div>
-            <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
-              <span>
-                <SolarEyeLinear />
-              </span>
-              <p>details</p>
-            </div>
+            {!showEvaluationButtons && (
+              <div
+                onClick={openAddEval}
+                className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+              >
+                <p>Make a decision</p>
+              </div>
+            )}
+            {showEvaluationButtons && (
+              <div className="flex flex-col gap-2 mt-4">
+                <button
+                  onClick={openAddEvals}
+                  className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                >
+                  View details
+                </button>
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-2">
             <h3 className="font-bold">DueDiligency Stage</h3>
@@ -233,6 +275,27 @@ const Page = () => {
           </div>
         </div>
       </div>
+      <DueDetail
+        isOpenAddDue={isOpenAddDue}
+        closeAddDue={closeAddDue}
+        onMakeDecision={() => handleDecisionMade("DueDiligence")}
+      />
+      <EvalDetails
+        applicationId={id}
+        isOpenAddEval={isOpenAddEval}
+        closeAddEval={closeAddEval}
+        onMakeDecision={() => handleDecisionMade("Evaluation")}
+        openEditModal={openEditModal}
+      />
+
+      {isOpenEditEval && (
+        <EditEvalModal
+          isOpenEditEval={isOpenEditEval}
+          closeEditEval={closeEditEval}
+          formData={savedData}
+          onUpdate={handleUpdate}
+        />
+      )}
     </div>
   );
 };
