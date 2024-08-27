@@ -55,24 +55,32 @@ const AddCall = ({
   }));
 
   const getSubWindowsData = () => {
-    const subWindowData = windows?.windows?.filter((window: any) =>
-      selectedWindows.includes(window.uuid)
-    ).flatMap((window: any) => window.subWindows?.map((subWindow: any) => ({
-      value: subWindow.uuid,
-      label: subWindow.title,
-    }))) || [];
+    const subWindowData =
+      windows?.windows
+        ?.filter((window: any) => selectedWindows.includes(window.uuid))
+        .flatMap((window: any) =>
+          window.subWindows?.map((subWindow: any) => ({
+            value: subWindow.uuid,
+            label: subWindow.title,
+          })),
+        ) || [];
     console.log(subWindowData);
     return subWindowData;
   };
 
   const getSectorData = () => {
-    const sectorData = windows?.windows?.flatMap((window: any) =>
-      window.subWindows?.filter((subWindow: any) =>
-        selectedSubWindows.includes(subWindow.uuid)
-      ).flatMap((subWindow: any) => subWindow.sectors?.map((sector: any) => ({
-        value: sector.uuid,
-        label: sector.title,
-      }))) || []
+    const sectorData = windows?.windows?.flatMap(
+      (window: any) =>
+        window.subWindows
+          ?.filter((subWindow: any) =>
+            selectedSubWindows.includes(subWindow.uuid),
+          )
+          .flatMap((subWindow: any) =>
+            subWindow.sectors?.map((sector: any) => ({
+              value: sector.uuid,
+              label: sector.name,
+            })),
+          ) || [],
     );
     return sectorData;
   };
@@ -99,6 +107,7 @@ const AddCall = ({
       sectors: selectedSelectors,
       windows: selectedWindows,
     });
+    console.log(formData);
     const submitData = new FormData();
     submitData.append("title", formData.title);
     submitData.append("description", formData.description);
@@ -112,7 +121,11 @@ const AddCall = ({
       submitData.append("attachment", formData.attachment);
     }
     authorizedApi
-      .post("/call/create", submitData)
+      .post("/call/create", submitData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((res) => {
         console.log(res.data);
         notifications.show({
@@ -153,11 +166,11 @@ const AddCall = ({
         </div>
         <div className="w-full flex flex-col items-center mt-4 overflow-hidden px-[5%]">
           <Stepper active={active} onStepClick={setActive} className="w-full">
-          <Stepper.Step label="Call detail" className="text-xs">
-               <div className="w-full overflow-y-auto flex flex-col gap-2 px-2">
-                 <div className="w-full flex justify-between gap-3">
-                   <div className="w-full">
-                     <label
+            <Stepper.Step label="Call detail" className="text-xs">
+              <div className="w-full overflow-y-auto flex flex-col gap-2 px-2">
+                <div className="w-full flex justify-between gap-3">
+                  <div className="w-full">
+                    <label
                       htmlFor="callTitle"
                       className="block text-xs font-bold text-gray-700"
                     >
@@ -367,10 +380,17 @@ const AddCall = ({
               </div>
             </Stepper.Step>
 
-            <Stepper.Step label="Select options" description="" className="text-xs">
+            <Stepper.Step
+              label="Select options"
+              description=""
+              className="text-xs"
+            >
               <div className="mt-4 w-full overflow-y-auto flex flex-col gap-2 px-2">
                 <div className="">
-                  <label htmlFor="windows" className="block text-xs font-bold text-gray-700">
+                  <label
+                    htmlFor="windows"
+                    className="block text-xs font-bold text-gray-700"
+                  >
                     Select windows
                   </label>
                   <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
@@ -392,7 +412,10 @@ const AddCall = ({
                 </div>
 
                 <div className="">
-                  <label htmlFor="subWindows" className="block text-xs font-bold text-gray-700">
+                  <label
+                    htmlFor="subWindows"
+                    className="block text-xs font-bold text-gray-700"
+                  >
                     Select sub-windows
                   </label>
                   <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
@@ -413,7 +436,10 @@ const AddCall = ({
                 </div>
 
                 <div className="">
-                  <label htmlFor="sectors" className="block text-xs font-bold text-gray-700">
+                  <label
+                    htmlFor="sectors"
+                    className="block text-xs font-bold text-gray-700"
+                  >
                     Select sectors
                   </label>
                   <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">

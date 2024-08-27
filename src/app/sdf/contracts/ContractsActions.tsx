@@ -1,3 +1,5 @@
+import { useDisclosure } from "@mantine/hooks";
+``;
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Menu, Button, Text, rem } from "@mantine/core";
 import { FiEye } from "react-icons/fi";
@@ -5,10 +7,17 @@ import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 import Link from "next/link";
 
-const MeActions = () => {
+const ContractsActions = ({
+  data,
+  setIsContract,
+}: {
+  setIsContract: (employee: any) => void;
+  data: any;
+}) => {
+    console.log(data);
   return (
-    <div>
-      <Menu shadow="lg" width={200}>
+    <div className="">
+      <Menu shadow="lg" width={300}>
         <Menu.Target>
           <button
             style={{
@@ -26,15 +35,25 @@ const MeActions = () => {
           </Menu.Label>
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
-            <button className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
+            <div
+              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+            >
               <FiEye size={21} color="#576074" />
-              View
-            </button>
+              Download Contract
+            </div>
           </Menu.Item>
           <Menu.Item>
-            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-              <RiDeleteBinLine size={21} color="#576074" />
-              Remove
+            <div
+              onClick={() =>
+                setIsContract({
+                  isOpen: true,
+                  application: data,
+                })
+              }
+              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+            >
+              <CiEdit size={21} color="#576074" />
+              Create Contract
             </div>
           </Menu.Item>
         </Menu.Dropdown>
@@ -43,4 +62,4 @@ const MeActions = () => {
   );
 };
 
-export default MeActions;
+export default ContractsActions;

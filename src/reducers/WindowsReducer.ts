@@ -3,6 +3,9 @@ import {
   GET_WINDOWS_ERROR,
   GET_WINDOWS_SUCCESS,
   GET_WINDOWS_LOADING,
+  GET_SUB_WINDOWS_ERROR,
+  GET_SUB_WINDOWS_SUCCESS,
+  GET_SUB_WINDOWS_LOADING,
   UPDATE_WINDOW_SUCCESS,
   DELETE_WINDOW_SUCCESS,
 } from "@/actions/WindowsActions";
@@ -10,9 +13,13 @@ import { Window } from "@/types";
 
 const initialState = {
   windows: [],
+  subWindows: [],
   error: null,
   isError: false,
   loading: false,
+  subWindowLoading: false,
+  subWindowError: null,
+  subWindowIsError: false,
 };
 
 type Action = {
@@ -39,6 +46,24 @@ export default function WindowsReducer(state = initialState, action: Action) {
         isError: true,
         loading: false,
         error: action.payload,
+      };
+    case GET_SUB_WINDOWS_LOADING:
+      return {
+        ...state,
+        subWindowsLoading: true,
+      };
+    case GET_SUB_WINDOWS_SUCCESS:
+      return {
+        ...state,
+        subWindowsLoading: false,
+        subWindows: action.payload,
+      };
+    case GET_SUB_WINDOWS_ERROR:
+      return {
+        ...state,
+        subWindowIsError: true,
+        subWindowsLoading: false,
+        subWindowError: action.payload,
       };
     case ADD_WINDOW_SUCCESS:
       return {

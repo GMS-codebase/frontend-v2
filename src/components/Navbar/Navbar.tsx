@@ -18,6 +18,10 @@ import {
   getSectors,
   getTrades,
   getWindows,
+  getSubWindows,
+  getMyContracts,
+  getContracts,
+  getApplicationsForContracts,
 } from "@/utils/funcs";
 
 const Navbar = () => {
@@ -43,18 +47,23 @@ const Navbar = () => {
       ? "ADMIN"
       : active.startsWith("/applicant")
         ? "APPLICANT"
+      : active.startsWith("/sdf")
+        ? "SDF_SECRETARIATE"
         : null;
 
     if (role === "ADMIN") {
-      getWindows(dispatch);
-      getSectors(dispatch);
       getApplicants(dispatch);
       getEmployees(dispatch);
-      getApplications(dispatch);
+    } else if (role === "SDF_SECRETARIATE") {
+      getContracts(dispatch);
+      getApplicationsForContracts(dispatch);
     } else if (role === "APPLICANT") {
       getMyContacts(dispatch);
       getMyApplicantProfile(dispatch);
     }
+    getWindows(dispatch);
+    getSectors(dispatch);
+    getSubWindows(dispatch);
     getTrades(dispatch);
     getCalls(dispatch);
     getMyProfile(dispatch);

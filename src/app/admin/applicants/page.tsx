@@ -50,6 +50,7 @@ const Page = () => {
     },
   ];
   const applicants = useSelector((state: any) => state.applicants);
+  console.log(applicants);
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
