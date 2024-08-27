@@ -225,7 +225,7 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/application/all-application")
     .then((res) => {
-      dispatch({ type: GET_MY_APPLICATIONS_SUCCESS, payload: res.data.data });
+      dispatch({ type: GET_MY_APPLICATIONS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
       dispatch({

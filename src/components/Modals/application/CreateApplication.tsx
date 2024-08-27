@@ -6,20 +6,19 @@ import { Modal, MultiSelect, Select } from "@mantine/core";
 import { Folder2, Subtitles } from "solar-icon-set";
 import { IoMdClose } from "react-icons/io";
 import { SolarSuitcaseLinear } from "@/components/core/icons";
+import { useRouter } from "next/navigation";
 
 const CreateApplication = ({
   isOpenCreatingApplication,
   closeCreatingApplication,
-  finishCreatingApplication,
   call,
 }: {
   isOpenCreatingApplication: boolean;
   closeCreatingApplication: () => void;
-  finishCreatingApplication: () => void;
   call: any;
 }) => {
-  const trades = useSelector((state: any) => state.trades.trades);
-
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [formData, setFormData] = useState({
     window: null,
     subwindow: null,
@@ -84,21 +83,27 @@ const CreateApplication = ({
       setErrors(newErrors);
       return;
     }
-
     try {
-      await authorizedApi.post(`/application/create-application/${call.uuid}`, {
-        window: formData.window,
-        subwindow: formData.subwindow,
-        description: formData.description,
-        sectors: formData.sectors,
-        trades: formData.trades,
-      });
+      setLoading(true);
+      const res = await authorizedApi.post(
+        `/application/create-application/${call.uuid}`,
+        {
+          window: formData.window,
+          subwindow: formData.subwindow,
+          description: formData.description,
+          sectors: formData.sectors,
+          trades: formData.trades,
+        }
+      );
       notifications.show({
         title: "Success",
         message: "Application created successfully!",
         color: "green",
       });
-      finishCreatingApplication();
+      router.push(
+        `/applicant/applications/${call.uuid}/${res.data.data.data.uuid}/apply`
+      );
+      closeCreatingApplication();
     } catch (error: any) {
       notifications.show({
         title: "Error",
@@ -106,7 +111,11 @@ const CreateApplication = ({
         color: "red",
       });
     }
+    setLoading(false);
   };
+
+  console.log(call);
+  const windows = useSelector((state: any) => state.windows.windows);
 
   const windowOptions =
     call?.windows.map((window: any) => ({
@@ -115,28 +124,45 @@ const CreateApplication = ({
     })) || [];
 
   const subwindowOptions = formData.window
-    ? call?.windows
-        .find((window: any) => window.uuid === formData.window)
-        ?.subWindows.map((sub: any) => ({
-          label: sub.title,
-          value: sub.uuid,
+    ? call.subWindows
+        .filter((subWindow: any) =>
+          windows
+            .find((win: any) => win.uuid === formData.window)
+            ?.subWindows.some((subWin: any) => subWin.uuid === subWindow.uuid)
+        )
+        .map((subWindow: any) => ({
+          label: subWindow.title,
+          value: subWindow.uuid,
         })) || []
     : [];
 
   const sectorOptions = formData.subwindow
-    ? call?.windows
-        .find((window: any) => window.uuid === formData.window)
-        ?.subWindows.find((sub: any) => sub.uuid === formData.subwindow)
-        ?.sectors.map((sector: any) => ({
+    ? call.sectors
+        .filter((sector: any) =>
+          windows.map((window: any) =>
+            window.subWindows
+              .find((subWin: any) => subWin.uuid === formData.subwindow)
+              ?.sectors.some(
+                (subWindowSector: any) => subWindowSector.uuid === sector.uuid
+              )
+          )
+        )
+        .map((sector: any) => ({
           label: sector.name,
           value: sector.uuid,
         })) || []
     : [];
 
-  const tradeOptions = trades.map((trade: any) => ({
-    label: trade.title,
-    value: trade.uuid,
-  }));
+  const tradesOptions =
+    call?.sectors
+      .filter((sector: any) => formData.sectors.includes(sector.uuid))
+      .flatMap((sector: any) =>
+        sector.trades.map((trade: any) => ({
+          label: trade.title,
+          value: trade.uuid,
+        }))
+      ) || [];
+
   return (
     <Modal
       size=""
@@ -270,7 +296,7 @@ const CreateApplication = ({
                     trades: value,
                   }))
                 }
-                data={tradeOptions}
+                data={tradesOptions}
                 placeholder="Select or type in a trade"
                 required
               />
@@ -296,7 +322,6 @@ const CreateApplication = ({
                 placeholder="Add description"
                 onChange={handleChange}
                 className="mt-1 block w-full pb-5 pt-2 pl-8 pr-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
-                required
               />
             </div>
             {errors.description && (
@@ -313,9 +338,10 @@ const CreateApplication = ({
             </button>
             <button
               type="submit"
+              disabled={loading}
               className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
-              Create Application
+              {loading ? "Loading" : "Create Application"}
             </button>
           </div>
         </form>
