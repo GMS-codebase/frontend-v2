@@ -6,6 +6,7 @@ import {
   questions,
 } from "@/utils/constants/questions";
 import { SolarEyeLinear } from "@/components/core/icons";
+import MakeDecisions from "@/components/Decisions";
 
 const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
@@ -85,33 +86,7 @@ const Page = () => {
           </button>
         </div>
       </div>
-      <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
-        <h2 className="font-bold">Decision</h2>
-        <div className="flex flex-col gap-2">
-          <h3 className="font-semibold">Evaluation Stage</h3>
-          <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-            Proposal Approved
-          </div>
-          <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
-            <span>
-              <SolarEyeLinear />
-            </span>
-            <p>details</p>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <h3 className="font-bold">DueDiligency Stage</h3>
-          <div className="font-medium bg-[#C50000] bg-opacity-10 text-[#C50000] w-fit justify-start items-center rounded-full px-4 py-2">
-            Proposal Rejected
-          </div>
-          <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
-            <span>
-              <SolarEyeLinear />
-            </span>
-            <p>details</p>
-          </div>
-        </div>
-      </div>
+      <MakeDecisions/>
     </div>
   );
 };
