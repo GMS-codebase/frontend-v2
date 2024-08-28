@@ -3,7 +3,12 @@ import { useState } from "react";
 import { HiOutlineMail } from "react-icons/hi";
 import { IoMdClose } from "react-icons/io";
 import { Folder2, Subtitles } from "solar-icon-set";
-import { SolarSuitcaseLinear, SolarWindowFrameLinear } from "../core/icons";
+
+import {
+    SolarSuitcaseLinear,
+    SolarWindowFrameLinear,
+    
+} from "../core/icons";
 const AddSectorTrade = ({
   isOpenAddSectorTrade,
   closeAddSectorTrade,
