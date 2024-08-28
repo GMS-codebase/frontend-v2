@@ -132,7 +132,7 @@ const MakeDecision = ({
                                         <span className="text-xl">
                                             <SolarAddSquareBold />
                                         </span>
-                                        <span>Add Trades</span>
+                                        <span>Add</span>
                                     </button>
                                 </div>
                             </div>
