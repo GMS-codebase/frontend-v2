@@ -2,10 +2,10 @@
 import React, { useState } from "react";
 import Project from "@/components/ApplicantDetails/Project";
 import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
-import EvalDetails from "@/components/Modals/evalDetails";
+import EvalDetails from "@/components/Modals/MakeEvaluationDecision";
 import EditEvalModal from "@/components/Modals/EditEvalModal";
 import DueDetail from "@/components/Modals/Duediligency";
-import DecisionDetails from "@/components/Modals/DecisionDetails";
+import DecisionDetails from "@/components/Modals/EvaluationDetails";
 import DueDetails from "@/components/Modals/DueDiigence";
 
 const Page = () => {

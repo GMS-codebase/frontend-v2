@@ -809,18 +809,6 @@ export const Staff = ({
               ))}
             </tbody>
           </table>
-
-          {commentData && (
-            <div className="mt-4">
-              <label className="text-sm text-gray-600">Comment</label>
-              <textarea
-                value={commentData.staff || ""}
-                onChange={(e) => handleCommentChange("staff", e.target.value)}
-                className="mt-2 p-2 border rounded-lg bg-gray-100 outline-none w-full"
-                disabled={!setCommentData}
-              />
-            </div>
-          )}
         </>
       )}
       {commentData && (

@@ -1,10 +1,11 @@
+import { Comments } from "@/types";
 import { ApplicationQuestions } from "@/types/application";
 import React, { useState, ChangeEvent } from "react";
 
 interface FundingQuestionsProps {
   data: ApplicationQuestions;
-  setData: React.Dispatch<React.SetStateAction<any>>;
-  commentData?: any; // For comments and evaluations
+  setData?: React.Dispatch<React.SetStateAction<any>>;
+  commentData?: Comments; // For comments and evaluations
   setCommentData?: React.Dispatch<React.SetStateAction<any>>;
 }
 
@@ -16,16 +17,17 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
 }) => {
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const handleInputChange = (inputName: string, value: any) => {
-    setData((prev: any) => ({
-      ...prev,
-      [inputName]: value,
-    }));
+    setData &&
+      setData((prev: any) => ({
+        ...prev,
+        [inputName]: value,
+      }));
   };
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
     const file = e.target.files?.[0];
     if (file) {
       setFiles((prev) => ({ ...prev, [key]: file }));
-      setData((prev: any) => ({ ...prev, [key]: file }));
+      setData && setData((prev: any) => ({ ...prev, [key]: file }));
     }
   };
 
@@ -45,11 +47,23 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
         <p className="text-sm text-gray-600">
           Attach a file related to the budget summary
         </p>
-        {commentData && data.budgetSummaryAttachment ? (
+        {commentData ? (
           <div className="mt-2">
-            <button className="w-full h-12 bg-blue-500 text-white rounded-xl">
+            <button className="w-full h-12 bg-primary text-white rounded-full">
               Download Budget Summary
             </button>
+            <div className="mt-2">
+              <p>Comment</p>
+              <textarea
+                value={commentData?.budgetAttachmentComment || ""}
+                disabled={!setCommentData}
+                onChange={(e) =>
+                  handleCommentChange("budgetAttachmentComment", e.target.value)
+                }
+                className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
+                placeholder="Add your comment"
+              />
+            </div>
           </div>
         ) : (
           <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
@@ -97,23 +111,9 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
           value={data.contribution || ""}
           onChange={(e) => handleInputChange("contribution", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          readOnly={commentData}
+          readOnly={!!!commentData}
           placeholder="Describe your contribution"
         />
-        {commentData && (
-          <div>
-            <p>Comment</p>
-            <textarea
-              value={commentData?.budgetComment || ""}
-              disabled={!setCommentData}
-              onChange={(e) =>
-                handleCommentChange("contribution", e.target.value)
-              }
-              className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-              placeholder="Add your comment"
-            />
-          </div>
-        )}
       </div>
     </div>
   );

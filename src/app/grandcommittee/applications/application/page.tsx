@@ -8,7 +8,7 @@ import {
   SolarFolder2Bold,
   SolarEyeLinear,
 } from "@/components/core/icons";
-import DecisionDetails from "@/components/Modals/DecisionDetails"; // Corrected import
+import DecisionDetails from "@/components/Modals/EvaluationDetails"; // Corrected import
 import DueDetails from "@/components/Modals/DueDiigence"; // Corrected import path and typo
 import RevertDue from "@/components/Modals/RevertDue";
 import RevertEval from "@/components/Modals/RevertEval";
