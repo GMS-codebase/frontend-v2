@@ -4,35 +4,38 @@ import React, { useState } from "react";
 import { Modal } from "@mantine/core";
 import { IoMdClose } from "react-icons/io";
 
-const DecisionDetailModal = ({
+const EvaluationDetails = ({
+  evaluations,
   opened,
   close,
   isEditing,
   onSaveComment,
 }: {
+  evaluations: any;
   opened: boolean;
   close: () => void;
   isEditing?: boolean;
   onSaveComment?: (updatedText: string) => void;
 }) => {
   const [text, setText] = useState(
-    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era.",
+    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era."
   );
 
   const handleSave = () => {
     onSaveComment && onSaveComment(text);
   };
+  console.log(evaluations);
 
   return (
     <Modal
       opened={opened}
-      size={"xl"}
+      size={""}
       onClose={close}
       withCloseButton={false}
       centered
       className="flex flex-col gap-4 rounded-full"
     >
-      <div className="flex flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative">
+      <div className="flex max-h-[90vh] overflow-y-auto flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative">
         <div className="absolute right-3 m-4 text-center mt-0">
           <button
             onClick={close}
@@ -43,7 +46,7 @@ const DecisionDetailModal = ({
         </div>
         <div className="flex flex-col justify-start items-start gap-6 font-semibold">
           <h1 className="text-xl font-bold">Evaluation decision details</h1>
-          <div className="flex gap-6 justify-start items-start">
+          {/* <div className="flex gap-6 justify-start items-start">
             <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
               Decision
             </p>
@@ -60,7 +63,7 @@ const DecisionDetailModal = ({
               Approved Trades
             </p>
             <p className="mt-2">ART AND CRAFT</p>
-          </div>
+          </div> */}
         </div>
         <div className="flex flex-col justify-start items-start gap-6 font-semibold">
           <h1 className="text-xl font-bold">
@@ -69,7 +72,38 @@ const DecisionDetailModal = ({
               (people who made approval and confirmation)
             </span>
           </h1>
-          <div className="flex gap-6 justify-start items-start">
+          {[...evaluations].reverse().map((evaluation: any, i: any) => (
+            <div key={i} className="w-full ">
+              <div className="flex gap-6 justify-start items-start">
+                <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
+                  {evaluation.evaluator.email}
+                </p>
+                {i === 0 && <p className="mt-2">Selected</p>}
+                <p
+                  className={` px-4 py-2 rounded-full flex gap-2 justify-start items-start ${
+                    evaluation.evaluationDecision.decision === "APPROVED"
+                      ? "bg-green bg-opacity-10 text-green"
+                      : evaluation.evaluationDecision.decision === "REJECTED" &&
+                        "bg-red-500 bg-opacity-10 text-danger"
+                  }`}
+                >
+                  {evaluation.evaluationDecision.decision}
+                </p>
+              </div>
+              <div className="p-2 mt-2 w-full">
+                <label className="block text-sm text-gray-600">Comment:</label>
+                <textarea
+                  value={evaluation.evaluationDecision.comment}
+                  disabled
+                  rows={2}
+                  className={`mt-2 p-2 w-full border border-gray-500  rounded-xl shadow-sm  ${
+                    isEditing ? "bg-white" : "bg-gray-100"
+                  }`}
+                />
+              </div>
+            </div>
+          ))}
+          {/* <div className="flex gap-6 justify-start items-start">
             <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
               Iradukunda Octave
             </p>
@@ -86,9 +120,9 @@ const DecisionDetailModal = ({
               Mukankubito Rehema
             </p>
             <p className="mt-2">Confirm</p>
-          </div>
+          </div> */}
         </div>
-        <div className="p-4 mt-5 w-full">
+        {/* <div className="p-4 mt-5 w-full">
           <label className="block text-sm text-gray-600" htmlFor="textarea">
             Comment:
           </label>
@@ -113,10 +147,10 @@ const DecisionDetailModal = ({
               Save
             </button>
           </div>
-        )}
+        )} */}
       </div>
     </Modal>
   );
 };
 
-export default DecisionDetailModal;
+export default EvaluationDetails;

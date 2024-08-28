@@ -14,6 +14,7 @@ const config: Config = {
         primaryText: "#000F23",
         secondaryText: "#233041",
         background: "#005DE905",
+        green: "#4BC500",
       },
       fontSize: {
         xxs: "0.635rem",
