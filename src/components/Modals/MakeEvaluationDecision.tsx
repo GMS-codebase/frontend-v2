@@ -6,7 +6,7 @@ import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
 import { Select } from "@mantine/core";
 
-interface EvalDetailsProps {
+interface MakeEvaluationDecisionProps {
   applicationId: string;
   isOpenAddEval: boolean;
   closeAddEval: () => void;
@@ -14,13 +14,13 @@ interface EvalDetailsProps {
   openEditModal: () => void;
 }
 
-const EvalDetails = ({
+const MakeEvaluationDecision = ({
   applicationId,
   isOpenAddEval,
   closeAddEval,
   onMakeDecision,
   openEditModal,
-}: EvalDetailsProps) => {
+}: MakeEvaluationDecisionProps) => {
   const [formData, setFormData] = useState({
     decision: "",
     comment: "",
@@ -142,8 +142,8 @@ const EvalDetails = ({
                       }
                     }}
                     data={[
-                      { label: "Confirm", value: "confirm" },
-                      { label: "Reject", value: "reject" },
+                      { label: "Approve", value: "APPROVED" },
+                      { label: "Reject", value: "REJECTED" },
                     ]}
                     className="mt-1 block w-full  pl-6 text-gray-400  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     placeholder="Select your decision"
@@ -201,4 +201,4 @@ const EvalDetails = ({
   );
 };
 
-export default EvalDetails;
+export default MakeEvaluationDecision;
