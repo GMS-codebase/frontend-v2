@@ -22,6 +22,7 @@ import {
   getMyContracts,
   getContracts,
   getApplicationsForContracts,
+  getMyApplications,
 } from "@/utils/funcs";
 
 const Navbar = () => {
@@ -46,10 +47,10 @@ const Navbar = () => {
     const role = active.startsWith("/admin")
       ? "ADMIN"
       : active.startsWith("/applicant")
-        ? "APPLICANT"
+      ? "APPLICANT"
       : active.startsWith("/sdf")
-        ? "SDF_SECRETARIATE"
-        : null;
+      ? "SDF_SECRETARIATE"
+      : null;
 
     if (role === "ADMIN") {
       getApplicants(dispatch);
@@ -60,6 +61,7 @@ const Navbar = () => {
     } else if (role === "APPLICANT") {
       getMyContacts(dispatch);
       getMyApplicantProfile(dispatch);
+      getMyApplications(dispatch);
     }
     getWindows(dispatch);
     getSectors(dispatch);

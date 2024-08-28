@@ -100,7 +100,6 @@ const CompleteProfile = ({
       if (!formData.cell) newErrors.cell = "Cell is required.";
       if (!formData.village) newErrors.village = "Village is required.";
     }
-    console.log(newErrors);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -142,7 +141,6 @@ const CompleteProfile = ({
       if (certificate) {
         submitData.append("certificate", certificate);
       }
-      console.log(submitData);
       authorizedApi
         .put("/applicant/update/profile", submitData, {
           headers: {

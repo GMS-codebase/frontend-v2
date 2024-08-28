@@ -29,7 +29,6 @@ const NewRoleModal = ({ isOpen, onClose }: NewRoleModalProps) => {
         "/admin/create-dynamic-user",
         form.values,
       );
-      console.log("Form submitted:", response.data);
       notifications.show({
         message:
           "User created successfully! Email Is sent to the user for more steps",
@@ -39,7 +38,6 @@ const NewRoleModal = ({ isOpen, onClose }: NewRoleModalProps) => {
       form.setValues({title: "", email: "", tabs: []});
       onClose();
     } catch (err: any) {
-      console.log(err.response);
       notifications.show({
         message: err.response?.data?.message ?? "Failed to create user!",
         color: "red",

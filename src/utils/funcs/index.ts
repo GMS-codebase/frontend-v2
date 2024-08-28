@@ -66,13 +66,16 @@ import {
   GET_PROFILE_LOADING,
   GET_PROFILE_SUCCESS,
 } from "@/actions/ProfileActions";
-import { GET_APPLICANTS_ERROR, GET_APPLICANTS_LOADING, GET_APPLICANTS_SUCCESS } from "@/actions/ApplicantsActions";
+import {
+  GET_APPLICANTS_ERROR,
+  GET_APPLICANTS_LOADING,
+  GET_APPLICANTS_SUCCESS,
+} from "@/actions/ApplicantsActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
     .get("/window/all")
     .then((res) => {
-      console.log(res.data.data.data);
       dispatch({ type: GET_WINDOWS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
@@ -84,7 +87,6 @@ export const getSubWindows = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/sub-window/allSubWindows")
     .then((res) => {
-      console.log(res.data.data.data);
       dispatch({ type: GET_SUB_WINDOWS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
@@ -98,8 +100,6 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/auth/me")
     .then((res) => {
-      console.log("getting my profile");
-      console.log(res.data.data);
       dispatch({ type: SET_USER_PROFILE, payload: res.data.data }); //Todo: change this only when the BEs change the response schema
     })
     .catch((err) => {
@@ -107,7 +107,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -134,7 +134,6 @@ export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/trade")
     .then((res) => {
-      console.log(res.data);
       dispatch({ type: GET_TRADES_SUCCESS, payload: res.data.data });
     })
     .catch((err) => {
@@ -157,10 +156,16 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/applicant/all")
     .then((res) => {
-      dispatch({ type: GET_APPLICANTS_SUCCESS, payload: res.data.data.data.data });
+      dispatch({
+        type: GET_APPLICANTS_SUCCESS,
+        payload: res.data.data.data.data,
+      });
     })
     .catch((err) => {
-      dispatch({ type: GET_APPLICANTS_ERROR, payload: err.response.data.error });
+      dispatch({
+        type: GET_APPLICANTS_ERROR,
+        payload: err.response.data.error,
+      });
     });
 };
 export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
@@ -168,18 +173,26 @@ export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/contracts")
     .then((res) => {
-      dispatch({ type: GET_CONTRACTS_SUCCESS, payload: res.data.data.data.data });
+      dispatch({
+        type: GET_CONTRACTS_SUCCESS,
+        payload: res.data.data.data.data,
+      });
     })
     .catch((err) => {
       dispatch({ type: GET_CONTRACTS_ERROR, payload: err.response.data.error });
     });
 };
-export const getApplicationsForContracts = async (dispatch: Dispatch<UnknownAction>) => {
+export const getApplicationsForContracts = async (
+  dispatch: Dispatch<UnknownAction>
+) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
     .get("/application/contract-signing/all")
     .then((res) => {
-      dispatch({ type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS, payload: res.data.data.data });
+      dispatch({
+        type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
+        payload: res.data.data.data,
+      });
     })
     .catch((err) => {
       dispatch({
@@ -207,7 +220,10 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/application/all-application")
     .then((res) => {
-      dispatch({ type: GET_MY_APPLICATIONS_SUCCESS, payload: res.data.data.data });
+      dispatch({
+        type: GET_MY_APPLICATIONS_SUCCESS,
+        payload: res.data.data.data,
+      });
     })
     .catch((err) => {
       dispatch({

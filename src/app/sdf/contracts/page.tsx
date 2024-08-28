@@ -20,7 +20,6 @@ const Page = () => {
     application: null
   })
   const {applicationsForContractSigning: applications, loading} = useSelector((state: any)=> state.applications);
-  console.log(applications);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "applicationNumber",
