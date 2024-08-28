@@ -8,9 +8,28 @@ import { useDisclosure } from "@mantine/hooks";
 import AddTrade from "@/components/Modals/AddTrade";
 import Contracts from "@/components/contracts/contracts";
 import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
   const contracts = useSelector((state: any) => state.contract);
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    // Simulating an API call
+    axios.get('/api/contracts') // Replace with your actual API endpoint
+      .then((response) => {
+        setData(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching contracts:", error);
+        setLoading(false);
+      });
+  }, []);
+
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -46,6 +65,7 @@ const Page = () => {
       ),
     },
   ];
+
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
@@ -73,11 +93,12 @@ const Page = () => {
 
       <div className="w-full h-full">
         <div className="w-full h-full">
-          <Contracts />
+          <Contracts data={data} loading={loading} />
         </div>
       </div>
       <AddTrade isOpenAddTrade={isOpenTrade} closeAddTrade={close} />
     </div>
   );
 };
+
 export default Page;
