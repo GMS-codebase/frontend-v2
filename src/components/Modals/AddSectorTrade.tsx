@@ -26,7 +26,6 @@ const AddSectorTrade = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log("Form Data: ", formData);
   };
 
   return (

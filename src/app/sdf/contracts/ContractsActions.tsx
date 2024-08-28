@@ -14,7 +14,6 @@ const ContractsActions = ({
   setIsContract: (employee: any) => void;
   data: any;
 }) => {
-    console.log(data);
   return (
     <div className="">
       <Menu shadow="lg" width={300}>

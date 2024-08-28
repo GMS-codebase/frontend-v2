@@ -108,7 +108,6 @@ const ExportForm: FC<Props> = ({
                     ".xlsx",
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
                   );
-                  console.log(data, "file data");
                 }}
               >
                 <BsFileExcel className="mr-2" />
@@ -139,7 +138,6 @@ const ExportForm: FC<Props> = ({
                     ".xlsx",
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
                   );
-                  console.log(data, "file data", date);
                 }}
               >
                 <BsFileExcel className="mr-2" />
@@ -170,7 +168,6 @@ const ExportForm: FC<Props> = ({
                     ".xlsx",
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
                   );
-                  console.log(data, "file data");
                 }}
               >
                 <BsFileExcel className="mr-2" />

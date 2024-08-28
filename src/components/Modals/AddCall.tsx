@@ -33,7 +33,6 @@ const AddCall = ({
   const [active, setActive] = useState(0);
   const sectors = useSelector((state: any) => state.sectors);
   const windows = useSelector((state: any) => state.windows);
-  console.log(windows);
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSelectors, setSelectedSelectors] = useState<any>([]);
@@ -64,7 +63,6 @@ const AddCall = ({
             label: subWindow.title,
           })),
         ) || [];
-    console.log(subWindowData);
     return subWindowData;
   };
 
@@ -107,7 +105,6 @@ const AddCall = ({
       sectors: selectedSelectors,
       windows: selectedWindows,
     });
-    console.log(formData);
     const submitData = new FormData();
     submitData.append("title", formData.title);
     submitData.append("description", formData.description);
@@ -127,7 +124,6 @@ const AddCall = ({
         },
       })
       .then((res) => {
-        console.log(res.data);
         notifications.show({
           message: "Call created successfully!",
           color: "blue",
@@ -135,7 +131,6 @@ const AddCall = ({
         closeAddCall();
       })
       .catch((err) => {
-        console.log(err.response);
         notifications.show({
           message: err.response?.data?.message ?? "Failed to create call!",
           color: "red",

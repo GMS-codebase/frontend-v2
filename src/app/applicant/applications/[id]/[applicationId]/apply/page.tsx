@@ -50,6 +50,7 @@ const Page = () => {
   });
   const handleSubmit = async () => {
     setLoading(true);
+    console.log(data)
     // const requiredFields = [
     //   { name: "Title", value: data.title, message: "Please enter the title." },
     //   {
@@ -147,7 +148,6 @@ const Page = () => {
     //     return;
     //   }
     // }
-
     const submitData = new FormData();
 
     if (data.title) {
@@ -295,8 +295,6 @@ const Page = () => {
   };
 
   const calls = useSelector((state: any) => state.calls);
-  console.log(calls.calls.filter((call: any) => call.uuid.toString() === id));
-
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":

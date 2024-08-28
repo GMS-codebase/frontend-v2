@@ -19,7 +19,6 @@ const Page = () => {
   const { applications, loading } = useSelector(
     (state: any) => state.applications,
   );
-  console.log(applications, loading);
   const filtersContainerRef = useRef<HTMLDivElement>(null);
 
   const columns: ColumnDef<any>[] = [
