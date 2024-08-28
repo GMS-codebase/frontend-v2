@@ -22,12 +22,12 @@ const EvalDetails = ({
   openEditModal,
 }: EvalDetailsProps) => {
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
+    decision: "",
+    comment: "",
   });
   const [errors, setErrors] = useState({
-    title: "",
-    description: "",
+    decision: "",
+    comment: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +37,7 @@ const EvalDetails = ({
       ...prevData,
       [name]: value,
     }));
-    if (errors[name as keyof { title: string; description: string }]) {
+    if (errors[name as keyof { decision: string; comment: string }]) {
       setErrors((prevData) => ({
         ...prevData,
         [name]: "",
@@ -47,15 +47,15 @@ const EvalDetails = ({
 
   const validate = () => {
     let valid = true;
-    const newErrors = { title: "", description: "" };
+    const newErrors = { decision: "", comment: "" };
 
-    if (!formData.title) {
-      newErrors.title = "Decision is required.";
+    if (!formData.decision) {
+      newErrors.decision = "Decision is required.";
       valid = false;
     }
 
-    if (!formData.description) {
-      newErrors.description = "Comment is required.";
+    if (!formData.comment) {
+      newErrors.comment = "Comment is required.";
       valid = false;
     }
 
@@ -70,8 +70,8 @@ const EvalDetails = ({
 
     setLoading(true);
     try {
-      await authorizedApi.post(
-        `/application/fillApplication/${applicationId}`,
+      await authorizedApi.patch(
+        `/application/evaluation/make-decision/${applicationId}`,
         formData
       );
       notifications.show({
@@ -81,7 +81,6 @@ const EvalDetails = ({
       onMakeDecision();
       closeAddEval();
     } catch (err: any) {
-      console.log(err.response);
       notifications.show({
         message: err.response?.data?.message ?? "Failed to submit the form!",
         color: "red",
@@ -118,7 +117,7 @@ const EvalDetails = ({
             <div className="w-full flex justify-between gap-3">
               <div className="w-full">
                 <label
-                  htmlFor="title"
+                  htmlFor="decision"
                   className="block text-xs font-bold text-gray-700"
                 >
                   Decision
@@ -129,16 +128,16 @@ const EvalDetails = ({
                   </span>
                   <Select
                     name="decision"
-                    value={formData.title}
+                    value={formData.decision}
                     onChange={(value: any) => {
                       setFormData((prevData) => ({
                         ...prevData,
-                        title: value,
+                        decision: value,
                       }));
-                      if (errors.title) {
+                      if (errors.decision) {
                         setErrors((prevData) => ({
                           ...prevData,
-                          title: "",
+                          decision: "",
                         }));
                       }
                     }}
@@ -151,15 +150,15 @@ const EvalDetails = ({
                     required
                   />
                 </div>
-                {errors.title && (
-                  <p className="text-red-500 text-sm">{errors.title}</p>
+                {errors.decision && (
+                  <p className="text-red-500 text-sm">{errors.decision}</p>
                 )}
               </div>
             </div>
 
             <div className="w-full">
               <label
-                htmlFor="description"
+                htmlFor="comment"
                 className="block text-xs font-bold text-gray-700"
               >
                 Comment
@@ -167,15 +166,15 @@ const EvalDetails = ({
               <div className="w-full relative">
                 <input
                   type="text"
-                  name="description"
-                  value={formData.description}
+                  name="comment"
+                  value={formData.comment}
                   placeholder="Provide a comment"
                   onChange={handleChange}
                   className="mt-1 block w-full pb-28 pt-2 pl-8 px-6 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
                 />
               </div>
-              {errors.description && (
-                <p className="text-red-500 text-sm">{errors.description}</p>
+              {errors.comment && (
+                <p className="text-red-500 text-sm">{errors.comment}</p>
               )}
             </div>
 

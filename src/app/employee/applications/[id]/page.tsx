@@ -22,8 +22,8 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id
   )[0];
-  console.log(application);
   const [loading, setLoading] = useState(false);
+  console.log(application);
 
   const [isOpenAddDue, setIsOpenAddDue] = useState(false);
   const [isOpenAddEval, setIsOpenAddEval] = useState(false);
@@ -100,8 +100,8 @@ const Page = () => {
   const handleAddComments = async () => {
     setLoading(true);
     try {
-      await authorizedApi.post(
-        `/application/fillApplication/${id}`,
+      await authorizedApi.patch(
+        `/application/comment/${id}`,
         commentsData
       );
       notifications.show({
@@ -109,7 +109,6 @@ const Page = () => {
         color: "blue",
       });
     } catch (err: any) {
-      console.log(err.response);
       notifications.show({
         message: err.response?.data?.message ?? "Failed to submit the form!",
         color: "red",
@@ -232,6 +231,7 @@ const Page = () => {
               </div>
             </div>
             <div className="mt-4 w-full">{renderComponent()}</div>
+            <button className="bg-primary py-2 w-full text-white font-bold" onClick={handleAddComments}>Add Comments</button>
           </div>
         </div>
         <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">

@@ -51,7 +51,6 @@ const AddWindowSubwindow = ({
   };
 
   function handleSubmit() {
-    console.log("Form Data: ", formData);
     authorizedApi
       .post(`/sub-window/create/${windowId}`, {
         title: formData.title,

@@ -24,7 +24,11 @@ const Page = () => {
   const profile = useSelector((state: any) => state.auth);
   const contacts = useSelector((state: any) => state.contacts);
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
-  const applications = useSelector((state: any) => state.myApplications);
+  const { myApplications } = useSelector((state: any) => state.applications);
+  console.log(myApplications)
+  const existingApplication = myApplications.find(
+    (app: any) => app?.call?.uuid === callId
+  );
   const [
     isOpenCreateProfile,
     { open: openAddProfile, close: closeAddProfile },
@@ -37,19 +41,20 @@ const Page = () => {
   ] = useDisclosure(false);
   const router = useRouter();
   const handleApply = () => {
-    // if (!profile.applicantProfile || !profile.applicantProfile.business_name) {
-    //   openAddProfile();
-    // } else if (
-    //   !contacts.loading &&
-    //   (!contacts.myContacts || contacts.myContacts.length === 0)
-    // ) {
-    //   openAddContact();
-    // } else {
-    //   console.log("Here");
-    //   // router.push(`/applicant/applications/${callId}/apply`);
-
-    // }
-    openCreateApplication();
+    if (!profile.applicantProfile || !profile.applicantProfile.business_name) {
+      openAddProfile();
+    } else if (
+      !contacts.loading &&
+      (!contacts.myContacts || contacts.myContacts.length === 0)
+    ) {
+      openAddContact();
+    } else if (!existingApplication) {
+      openCreateApplication();
+    } else {
+      router.push(
+        `/applicant/applications/${callId}/${existingApplication.uuid}/apply`
+      );
+    }
   };
   return (
     <div className="bg-white rounded-2xl p-10 ">
@@ -163,6 +168,7 @@ const Page = () => {
         isOpenAddEditContact={isOpenAddContact}
         closeAddEditContact={closeAddContact}
         finishAddingContact={() => {
+          closeAddContact();
           openCreateApplication();
         }}
       />

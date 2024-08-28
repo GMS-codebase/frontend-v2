@@ -19,7 +19,6 @@ const Page = () => {
   const [isOpenCall, { open: openCall, close: closeCall }] =
     useDisclosure(false);
   const mereports = useSelector((state: any) => state.mereports);
-  console.log(mereports);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "title",

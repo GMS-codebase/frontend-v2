@@ -30,7 +30,6 @@ const AddTrade = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log(formData);
     authorizedApi
       .post("/trade", formData)
       .then((res) => {

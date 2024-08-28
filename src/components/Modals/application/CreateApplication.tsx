@@ -113,8 +113,6 @@ const CreateApplication = ({
     }
     setLoading(false);
   };
-
-  console.log(call);
   const windows = useSelector((state: any) => state.windows.windows);
 
   const windowOptions =
