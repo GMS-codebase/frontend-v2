@@ -14,13 +14,19 @@ import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import EvalDetails from "@/components/Modals/evalDetails";
 import EditEvalModal from "@/components/Modals/EditEvalModal";
-import DueDetail from "@/components/Modals/DueDiligency";
+import DueDetail from "@/components/Modals/Duediligency";
+import DueDiligenceModal from "@/components/Modals/DueDiigence";
+import { format } from "date-fns";
+import { Skeleton } from "@mantine/core";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
+  const { stages } = useSelector((state: any) => state.empStages);
+  const stagesArr = stages?.map((stage: any) => stage?.stage);
+  console.log(stages, stagesArr);
   const applications = useSelector((state: any) => state.applications);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id
+    (application: any) => application.uuid === id,
   )[0];
   console.log(application);
   const [loading, setLoading] = useState(false);
@@ -96,27 +102,6 @@ const Page = () => {
         return null;
     }
   };
-
-  const handleAddComments = async () => {
-    setLoading(true);
-    try {
-      await authorizedApi.post(
-        `/application/fillApplication/${id}`,
-        commentsData
-      );
-      notifications.show({
-        message: "Application filled successfully!",
-        color: "blue",
-      });
-    } catch (err: any) {
-      console.log(err.response);
-      notifications.show({
-        message: err.response?.data?.message ?? "Failed to submit the form!",
-        color: "red",
-      });
-    }
-    setLoading(false);
-  };
   const handleUpdate = (updatedData: {
     title: string;
     description: string;
@@ -135,6 +120,17 @@ const Page = () => {
 
   return (
     <div className="flex flex-col gap-6 p-8 rounded-3xl">
+      {applications.loading ? (
+          <div>
+          <Skeleton height={40} width="30%" radius="md" />
+          <Skeleton height={30} mt={10} width="50%" radius="md" />
+          <Skeleton height={20} mt={10} width="60%" radius="md" />
+          <Skeleton height={400} mt={30} width="100%" radius="md" />
+          <Skeleton height={50} mt={10} width="30%" radius="md" />
+        </div>
+      ): (
+        <>
+
       <div className="bg-white rounded-2xl gap-6 p-5">
         <div className="flex justify-between items-center">
           <h2 className="text-black font-semibold">Legal status</h2>
@@ -184,7 +180,7 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Application submission deadline
               </p>
-              <p>2022/02.18 02:00:00</p>
+              <p>{application?.call?.endDate && format(application?.call?.endDate, "MMM dd yyy")} {application?.call?.endDate && format(application?.call?.endDate, "hh:MM:ss")}</p>
             </div>
           </div>
         </div>
@@ -238,7 +234,7 @@ const Page = () => {
           <h2 className="font-bold">Decision</h2>
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold">Evaluation Stage</h3>
-            <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
+            <div className="font-medium bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
               Pending
             </div>
             {!showEvaluationButtons && (
@@ -260,21 +256,41 @@ const Page = () => {
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-2">
-            <h3 className="font-bold">DueDiligency Stage</h3>
-            <div className="font-medium bg-[#C50000] bg-opacity-10 text-[#C50000] w-fit justify-start items-center rounded-full px-4 py-2">
-              Proposal Rejected
-            </div>
-            <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
-              <span>
-                <SolarEyeLinear />
-              </span>
-              <p>details</p>
-            </div>
-          </div>
+          {(application?.currentStage !== "EVALUATION") &&
+            stagesArr?.includes("DUE_DILIGENCY") && (
+              <div className="flex flex-col gap-2">
+                <h3 className="font-bold">Due Diligence Stage</h3>
+                <div className={`font-medium  ${application?.status === "APPROVED" || application?.currentStage !== "EVALUATION" ? "bg-[#4BC500] text-[#4BC500]" : application?.status === "PENDING" ? "bg-red-600 text-red-600" :  ""} bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}>
+                  {application?.currentStage !== "EVALUATION" && application?.currentStage !== "DUE_DILIGENCY" ? "APPROVED" : application?.status}
+                </div>
+                {application?.status === "PENDING" && application?.currentStage !== "GRANT_COMMITTEE" && (
+                  <div
+                    onClick={openAddDue}
+                    className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                  >
+                    <p>Make a decision</p>
+                  </div>
+                )}
+                {application?.currentStage !== "DUE_DILIGENCY" && (
+                  <div className="flex flex-col gap-2 mt-4">
+                    <button
+                      onClick={openAddDues}
+                      className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                    >
+                      View details
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
         </div>
       </div>
+        </>
+      )}
+
+      <DueDiligenceModal application={application} opened={isOpenAddDues} close={closeAddDues} />
       <DueDetail
+        application={application}
         isOpenAddDue={isOpenAddDue}
         closeAddDue={closeAddDue}
         // onMakeDecision={() => handleDecisionMade("DueDiligence")}

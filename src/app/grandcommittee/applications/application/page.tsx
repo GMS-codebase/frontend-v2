@@ -8,8 +8,8 @@ import {
   SolarFolder2Bold,
   SolarEyeLinear,
 } from "@/components/core/icons";
-import DecisionDetails from "@/components/Modals/DecisionDetails"; // Corrected import
-import DueDetails from "@/components/Modals/DueDiigence"; // Corrected import path and typo
+import DecisionDetails from "@/components/Modals/DecisionDetails";
+import DueDetails from "@/components/Modals/DueDiigence";
 import RevertDue from "@/components/Modals/RevertDue";
 import RevertEval from "@/components/Modals/RevertEval";
 const Page = () => {
@@ -17,7 +17,7 @@ const Page = () => {
     "Project" | "IndicativeBudget"
   >("Project");
 
-  const [isOpenAddDue, setIsOpenAddDue] = useState(false); // Updated naming consistency
+  const [isOpenAddDue, setIsOpenAddDue] = useState(false);
   const [isOpenAddEval, setIsOpenAddEval] = useState(false);
 
   const openAddDue = () => setIsOpenAddDue(true);
@@ -241,6 +241,7 @@ const Page = () => {
       </div>
 
       <DueDetails
+        application={{}}
         opened={isOpenAddDue}
         close={closeAddDue}
         // isEditing={isEditing}
