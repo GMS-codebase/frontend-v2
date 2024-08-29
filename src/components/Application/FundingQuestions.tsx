@@ -38,10 +38,12 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
           `/application/get-application/${applicationId}`,
         );
         const applicationData = response.data.data.data;
+        console.log(response.data);
         const trades: any = applicationData.trades.map((trade: any) => ({
           label: trade.title,
           value: trade.uuid,
         }));
+        console.log(trades);
         setApplicationTrades(trades);
       } catch (error) {
         console.error("Error fetching application data:", error);
@@ -70,7 +72,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const handleArrayOfObjectsChange = (
     inputName: string,
     value: any,
-    index: number,
+    index: number
   ) => {
     setData &&
       setData((prev: any) => {

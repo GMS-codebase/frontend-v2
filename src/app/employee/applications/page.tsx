@@ -17,9 +17,8 @@ import { useSelector } from "react-redux";
 const Page = () => {
   const [isOpenCall, { open, close }] = useDisclosure(false);
   const { applications, loading } = useSelector(
-    (state: any) => state.applications,
+    (state: any) => state.applications
   );
-  console.log(applications, loading);
   const filtersContainerRef = useRef<HTMLDivElement>(null);
 
   const columns: ColumnDef<any>[] = [
@@ -166,7 +165,13 @@ const Page = () => {
       </div>
 
       <div className="w-full h-full">
-        <DataTable columns={columns} data={applications} tableWidth={1800} />
+        <DataTable
+          columns={columns}
+          data={applications}
+          tableWidth={1800}
+          loading={loading}
+          noDataMessage={"No Applications So Far"}
+        />
       </div>
       <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
     </div>

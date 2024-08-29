@@ -127,7 +127,6 @@ const RegisterModal = ({
   const dispatch = useDispatch();
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log(formData);
     if (active === 0 && validateStep1()) {
       setActive((current) => (current < 1 ? current + 1 : current));
     } else if (active === 1 && validateStep2()) {
@@ -499,11 +498,11 @@ const RegisterModal = ({
                       </span>
                       <Select
                         name="employee role"
-                        value={formData.employee}
+                        value={formData.employeeRole}
                         onChange={(value: any) =>
                           setFormData((prevData) => ({
                             ...prevData,
-                            employee: value,
+                            employeeRole: value,
                           }))
                         }
                         data={[
@@ -512,11 +511,11 @@ const RegisterModal = ({
                             label: "normal-employee",
                           },
                           {
-                            value: "SDF_COMMITTEE",
+                            value: "SDF_SECRETARIAT",
                             label: "SDF-secretariat",
                           },
                           {
-                            value: "GRAND_COMMITTEE",
+                            value: "GRANT_COMMITTEE",
                             label: "grand-committee",
                           },
                         ]}

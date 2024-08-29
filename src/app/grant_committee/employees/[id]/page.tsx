@@ -46,8 +46,6 @@ const AssignedStage = ({
   const employee = employees.find(
     (employee: any) => employee.uuid === employee.uuid,
   );
-  console.log(employees);
-  console.log("employee", employee);
   return (
     <div className="w-full flex justify-between items-center bg-[#000F230A] p-3 rounded-xl">
       <h1 className="font-bold text-lg">{stage.name}</h1>

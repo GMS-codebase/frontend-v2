@@ -89,7 +89,6 @@ const CallsList = () => {
           </>
         ) : (
           calls.calls.map((call: any, index: any) => {
-            console.log(call);
             return <CallCard key={index} call={call} />;
           })
         )}
