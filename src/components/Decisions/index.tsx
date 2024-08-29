@@ -9,7 +9,7 @@ import DecisionDetails from "@/components/Modals/DecisionDetails";
 import DueDetails from "@/components/Modals/DueDiigence";
 
 const MakeDecisions = () => {
-    const [isOpenAddDue, setIsOpenAddDue] = useState(false);
+  const [isOpenAddDue, setIsOpenAddDue] = useState(false);
   const [isOpenAddEval, setIsOpenAddEval] = useState(false);
   const [isOpenEditEval, setIsOpenEditEval] = useState(false);
   const [savedData, setSavedData] = useState({ title: "", description: "" });
@@ -101,18 +101,19 @@ const MakeDecisions = () => {
           <p>details</p>
         </div>
       </div>
-      
+
       {/* <DueDetails
         isOpenAddDue={isOpenAddDue}
         closeAddDue={closeAddDue}
         onMakeDecision={() => handleDecisionMade("DueDiligence")}
       /> */}
-      <EvalDetails
+      {/* <EvalDetails
         isOpenAddEval={isOpenAddEval}
         closeAddEval={closeAddEval}
         onMakeDecision={() => handleDecisionMade("Evaluation")}
         openEditModal={openEditModal}
-      />
+        applicationId={application}
+      /> */}
 
       {isOpenEditEval && (
         <EditEvalModal
@@ -124,6 +125,7 @@ const MakeDecisions = () => {
       )}
 
       <DueDetails
+        application={{}}
         opened={isOpenAddDues}
         close={closeAddDues}
         isEditing={isEditing}

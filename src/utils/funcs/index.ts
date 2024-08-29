@@ -71,6 +71,10 @@ import {
   GET_APPLICANTS_LOADING,
   GET_APPLICANTS_SUCCESS,
 } from "@/actions/ApplicantsActions";
+import {
+  GET_STAGES_ERROR,
+  GET_STAGES_SUCCESS,
+} from "@/actions/EmpStagesActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -187,6 +191,20 @@ export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_CONTRACTS_ERROR, payload: err.response.data.error });
     });
 };
+export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_STAGES_ERROR });
+  authorizedApi
+    .get("/employees/my/stages")
+    .then((res) => {
+      dispatch({
+        type: GET_STAGES_SUCCESS,
+        payload: res.data.data.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_STAGES_ERROR, payload: err.response.data.error });
+    });
+};
 export const getApplicationsForContracts = async (
   dispatch: Dispatch<UnknownAction>,
 ) => {
@@ -225,7 +243,10 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/application/all-application")
     .then((res) => {
-      dispatch({ type: GET_MY_APPLICATIONS_SUCCESS, payload: res.data.data.data });
+      dispatch({
+        type: GET_MY_APPLICATIONS_SUCCESS,
+        payload: res.data.data.data,
+      });
     })
     .catch((err) => {
       dispatch({

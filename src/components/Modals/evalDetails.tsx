@@ -72,7 +72,7 @@ const EvalDetails = ({
     try {
       await authorizedApi.post(
         `/application/fillApplication/${applicationId}`,
-        formData
+        formData,
       );
       notifications.show({
         message: "Application filled successfully!",
