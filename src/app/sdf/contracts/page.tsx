@@ -17,12 +17,9 @@ const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
   const [isContract, setIsContract] = useState({
     isOpen: false,
-    application: null,
-  });
-  const { applicationsForContractSigning: applications, loading } = useSelector(
-    (state: any) => state.applications,
-  );
-  console.log(applications);
+    application: null
+  })
+  const {applicationsForContractSigning: applications, loading} = useSelector((state: any)=> state.applications);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "applicationNumber",

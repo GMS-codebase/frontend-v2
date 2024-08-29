@@ -22,7 +22,6 @@ function Page() {
     getCalls(dispatch);
   }, []);
   const { calls, loading } = useSelector((state: any) => state.calls);
-  console.log(loading, calls);
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
   const [isOpenLogin, { open: openLogin, close: closeLogin }] =

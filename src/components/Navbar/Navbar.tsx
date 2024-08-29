@@ -23,6 +23,7 @@ import {
   getContracts,
   getApplicationsForContracts,
   getEmpStages,
+  getMyApplications,
 } from "@/utils/funcs";
 
 const Navbar = () => {
@@ -61,6 +62,7 @@ const Navbar = () => {
     } else if (role === "APPLICANT") {
       getMyContacts(dispatch);
       getMyApplicantProfile(dispatch);
+      getMyApplications(dispatch);
     }
     getEmpStages(dispatch);
     getWindows(dispatch);

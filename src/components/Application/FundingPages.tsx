@@ -634,23 +634,23 @@ export const Staff = ({
     number: "",
     position: "",
     qualification: "",
-    availability: "",
+    available: "",
   });
 
   const [errors, setErrors] = useState({
     number: "",
     position: "",
     qualification: "",
-    availability: "",
+    available: "",
   });
 
   const validateStaffInputs = () => {
-    const { number, position, qualification, availability } = staffInputs;
+    const { number, position, qualification, available } = staffInputs;
     const newErrors = {
       number: number ? "" : "Staff number is required.",
       position: position ? "" : "Position is required.",
       qualification: qualification ? "" : "Qualification is required.",
-      availability: availability ? "" : "Availability is required.",
+      available: available ? "" : "Availability is required.",
     };
     setErrors(newErrors);
     return Object.values(newErrors).every((error) => !error);
@@ -660,18 +660,18 @@ export const Staff = ({
     if (!validateStaffInputs()) {
       return;
     }
-    handleArrayOfObjectsChange("staff", staffInputs, data?.staff?.length || 0);
+    handleArrayOfObjectsChange("staffs", staffInputs, data?.staff?.length || 0);
     setStaffInputs({
       number: "",
       position: "",
       qualification: "",
-      availability: "",
+      available: "",
     });
     setErrors({
       number: "",
       position: "",
       qualification: "",
-      availability: "",
+      available: "",
     });
   };
 
@@ -753,24 +753,27 @@ export const Staff = ({
               )}
             </div>
             <div className="relative">
-              <input
-                type="text"
-                placeholder="Availability"
-                value={staffInputs.availability}
-                onChange={(e) =>
-                  setStaffInputs((prev) => ({
-                    ...prev,
-                    availability: e.target.value,
-                  }))
+              <Select
+                name="available"
+                value={staffInputs.available}
+                onChange={(selectedOption) =>
+                  setStaffInputs(
+                    (prev) =>
+                      ({
+                        ...prev,
+                        available: selectedOption,
+                      } as any)
+                  )
                 }
-                className={`mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full ${
-                  errors.availability ? "border-red-500" : ""
-                }`}
+                data={[
+                  { value: "available", label: "Available" },
+                  { value: "hired", label: "Hired" },
+                ]}
+                className="mt-1 block w-full pl-5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Select Availability"
               />
-              {errors.availability && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.availability}
-                </p>
+              {errors.available && (
+                <p className="text-red-500 text-sm mt-1">{errors.available}</p>
               )}
             </div>
           </div>
@@ -784,7 +787,7 @@ export const Staff = ({
           </div>
         </div>
       )}
-      {data?.staff?.length > 0 && (
+      {data?.staffs?.length > 0 && (
         <>
           <table className="w-full mt-4 border-collapse border border-gray-200">
             <thead>
@@ -796,7 +799,7 @@ export const Staff = ({
               </tr>
             </thead>
             <tbody>
-              {data?.staff.map((item: any, index: any) => (
+              {data?.staffs.map((item: any, index: any) => (
                 <tr key={index}>
                   <td className="border p-2">{item.number}</td>
                   <td className="border p-2">{item.position}</td>
@@ -806,18 +809,6 @@ export const Staff = ({
               ))}
             </tbody>
           </table>
-
-          {commentData && (
-            <div className="mt-4">
-              <label className="text-sm text-gray-600">Comment</label>
-              <textarea
-                value={commentData.staff || ""}
-                onChange={(e) => handleCommentChange("staff", e.target.value)}
-                className="mt-2 p-2 border rounded-lg bg-gray-100 outline-none w-full"
-                disabled={!setCommentData}
-              />
-            </div>
-          )}
         </>
       )}
       {commentData && (

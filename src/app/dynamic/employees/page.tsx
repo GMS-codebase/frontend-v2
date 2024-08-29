@@ -23,7 +23,6 @@ const Page = () => {
   const [isOpenAddRole, { open: openAddRole, close: closeAddRole }] =
     useDisclosure(false);
   const employees = useSelector((state: any) => state.employees);
-  console.log(employees);
   const [isOpenEmployee, setIsOpenEmployee] = useState({
     openUpdate: false,
     openDelete: false,

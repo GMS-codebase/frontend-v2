@@ -35,7 +35,6 @@ const AssignStage = ({
   isAssignStage: boolean;
   closeAssignStage: () => void;
 }) => {
-  console.log("employee in assign stage", employee);
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -66,7 +65,6 @@ const AssignStage = ({
       })
       .then((res) => {
         getEmployees(dispatch);
-        console.log(res.data);
         notifications.show({
           message: "Stage assigned successfully",
           color: "blue",
@@ -75,7 +73,6 @@ const AssignStage = ({
         closeAssignStage();
       })
       .catch((err) => {
-        console.log(err.response);
         notifications.show({
           message: err.response?.data?.message,
           color: "red",
