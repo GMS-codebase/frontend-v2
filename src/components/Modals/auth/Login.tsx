@@ -42,7 +42,7 @@ const LoginModal = ({
             navigate.push("/applicant/contacts");
             break;
           case "grant_committee":
-            navigate.push("/grant");
+            navigate.push("/grant_committee");
             break;
           case "sdf_secretariate":
             navigate.push("/sdf/contracts");
@@ -50,7 +50,7 @@ const LoginModal = ({
           default:
             navigate.push("/");
         }
-      },
+      }
     );
     setLoading(false);
   };

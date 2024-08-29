@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import DonutChart from "../../../../components/chart/DonutChart";
+import DonutChart from "@/components/chart/DonutChart";
 import {
   SolarPen2Bold,
   SolarAddFolderBold,
@@ -52,7 +52,7 @@ const Page = () => {
       openCreateApplication();
     } else {
       router.push(
-        `/applicant/applications/${callId}/${existingApplication.uuid}/apply`
+        `/applicant/applications/call/${callId}/${existingApplication.uuid}/apply`
       );
     }
   };
