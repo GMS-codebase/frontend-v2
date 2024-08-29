@@ -2,42 +2,42 @@
 import * as Icons from "@/components/core/icons";
 import { Route } from "@/types";
 
-const grandcommitteeRoutes: Route[] = [
+const grant_committeeRoutes: Route[] = [
   {
     label: "Dashboard",
-    path: "/grandcommittee",
+    path: "/grant_committee",
     icon: <Icons.SolarPieChart2Bold />,
   },
   {
     label: "Applicants",
-    path: "/grandcommittee/applicants",
+    path: "/grant_committee/applicants",
     icon: <Icons.SolarUsersGroupTwoRoundedBold />,
   },
   {
     label: "Applications",
-    path: "/grandcommittee/applications",
+    path: "/grant_committee/applications",
     icon: <Icons.SolarFolderWithFilesBold />,
   },
   {
     label: "Application Reports",
-    path: "/grandcommittee/reports/application",
+    path: "/grant_committee/reports/application",
     icon: <Icons.SolarDocumentBold />,
   },
   {
     label: "Reports",
-    path: "/grandcommittee/reports/reports",
+    path: "/grant_committee/reports/reports",
     icon: <Icons.SolarDocumentsBold />,
   },
   {
     label: "M&E Reports",
-    path: "/grandcommittee/reports/m_and_e",
+    path: "/grant_committee/reports/m_and_e",
     icon: <Icons.SolarFileBold />,
   },
   {
     label: "Profile",
-    path: "/grandcommittee/profile",
+    path: "/grant_committee/profile",
     icon: <Icons.SolarUserCircleBold />,
   },
 ];
 
-export default grandcommitteeRoutes;
+export default grant_committeeRoutes;
