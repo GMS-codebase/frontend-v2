@@ -22,6 +22,7 @@ import {
   getMyContracts,
   getContracts,
   getApplicationsForContracts,
+  getEmpStages,
 } from "@/utils/funcs";
 
 const Navbar = () => {
@@ -61,6 +62,7 @@ const Navbar = () => {
       getMyContacts(dispatch);
       getMyApplicantProfile(dispatch);
     }
+    getEmpStages(dispatch);
     getWindows(dispatch);
     getSectors(dispatch);
     getSubWindows(dispatch);
