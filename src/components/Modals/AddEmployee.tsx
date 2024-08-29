@@ -498,11 +498,11 @@ const RegisterModal = ({
                       </span>
                       <Select
                         name="employee role"
-                        value={formData.employee}
+                        value={formData.employeeRole}
                         onChange={(value: any) =>
                           setFormData((prevData) => ({
                             ...prevData,
-                            employee: value,
+                            employeeRole: value,
                           }))
                         }
                         data={[
@@ -511,11 +511,11 @@ const RegisterModal = ({
                             label: "normal-employee",
                           },
                           {
-                            value: "SDF_COMMITTEE",
+                            value: "SDF_SECRETARIAT",
                             label: "SDF-secretariat",
                           },
                           {
-                            value: "GRAND_COMMITTEE",
+                            value: "GRANT_COMMITTEE",
                             label: "grand-committee",
                           },
                         ]}

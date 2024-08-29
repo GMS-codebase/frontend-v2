@@ -11,7 +11,6 @@ interface MakeEvaluationDecisionProps {
   isOpenAddEval: boolean;
   closeAddEval: () => void;
   onMakeDecision: () => void;
-  openEditModal: () => void;
 }
 
 const MakeEvaluationDecision = ({
@@ -19,7 +18,6 @@ const MakeEvaluationDecision = ({
   isOpenAddEval,
   closeAddEval,
   onMakeDecision,
-  openEditModal,
 }: MakeEvaluationDecisionProps) => {
   const [formData, setFormData] = useState({
     decision: "",
