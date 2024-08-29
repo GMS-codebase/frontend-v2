@@ -101,7 +101,7 @@ const CreateApplication = ({
         color: "green",
       });
       router.push(
-        `/applicant/applications/${call.uuid}/${res.data.data.data.uuid}/apply`,
+        `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`
       );
       closeCreatingApplication();
     } catch (error: any) {
@@ -113,8 +113,6 @@ const CreateApplication = ({
     }
     setLoading(false);
   };
-
-  console.log(call);
   const windows = useSelector((state: any) => state.windows.windows);
 
   const windowOptions =

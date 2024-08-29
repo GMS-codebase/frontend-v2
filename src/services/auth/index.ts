@@ -13,7 +13,6 @@ class AuthService {
       await unauthorizedApi.post("/applicant/register", data);
       callback && callback();
     } catch (error: any) {
-      console.log(error);
       notifications.show({
         title: error.response.message
           ? error.response.data.message
@@ -31,7 +30,6 @@ class AuthService {
       const tokenData: { role: string } = jwtDecode(response.data.data.data);
       push(tokenData.role);
     } catch (error: any) {
-      console.log(error);
       notifications.show({
         title: "Error Logging In ",
         message: error?.response?.data?.message,
