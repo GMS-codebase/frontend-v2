@@ -93,7 +93,7 @@ const CreateApplication = ({
           description: formData.description,
           sectors: formData.sectors,
           trades: formData.trades,
-        }
+        },
       );
       notifications.show({
         title: "Success",
@@ -126,7 +126,7 @@ const CreateApplication = ({
         .filter((subWindow: any) =>
           windows
             .find((win: any) => win.uuid === formData.window)
-            ?.subWindows.some((subWin: any) => subWin.uuid === subWindow.uuid)
+            ?.subWindows.some((subWin: any) => subWin.uuid === subWindow.uuid),
         )
         .map((subWindow: any) => ({
           label: subWindow.title,
@@ -141,9 +141,9 @@ const CreateApplication = ({
             window.subWindows
               .find((subWin: any) => subWin.uuid === formData.subwindow)
               ?.sectors.some(
-                (subWindowSector: any) => subWindowSector.uuid === sector.uuid
-              )
-          )
+                (subWindowSector: any) => subWindowSector.uuid === sector.uuid,
+              ),
+          ),
         )
         .map((sector: any) => ({
           label: sector.name,
@@ -158,7 +158,7 @@ const CreateApplication = ({
         sector.trades.map((trade: any) => ({
           label: trade.title,
           value: trade.uuid,
-        }))
+        })),
       ) || [];
 
   return (

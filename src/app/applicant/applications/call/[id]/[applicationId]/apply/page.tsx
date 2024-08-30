@@ -277,7 +277,7 @@ const Page = () => {
     try {
       const res = await authorizedApi.post(
         `/application/fillApplication/${applicationId}`,
-        submitData
+        submitData,
       );
       console.log(res.data);
       notifications.show({
