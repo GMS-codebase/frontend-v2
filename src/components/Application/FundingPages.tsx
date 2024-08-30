@@ -174,7 +174,7 @@ export const FirstPageQuestions = ({
               onChange={(e) =>
                 handleCommentChange(
                   "identificationEmployeeComment",
-                  e.target.value
+                  e.target.value,
                 )
               }
               className="mt-2 p-2 border rounded-full bg-gray-100 outline-none w-full"
@@ -226,7 +226,7 @@ export const TrainingProgress = ({
     handleArrayOfObjectsChange(
       "trainingProcess",
       trainingProcessInputs,
-      data?.trainingProcess?.length || 0
+      data?.trainingProcess?.length || 0,
     );
     setTrainingProcessInputs({
       trade: "",
@@ -457,7 +457,7 @@ export function TrainingEquipments({
     handleArrayOfObjectsChange(
       "trainingEquipment",
       trainingEquipments,
-      data?.trainingEquipment?.length || 0
+      data?.trainingEquipment?.length || 0,
     );
     setTrainingEquipments({
       trade: "",
