@@ -43,11 +43,11 @@ const Page = () => {
       header: "Stage",
       cell: ({ row }) => <div>{row.original?.stage}</div>,
     },
-    {
-      accessorKey: "actions",
-      header: "Actions",
-      cell: ({ row }) => <CallsActions />,
-    },
+    // {
+    //   accessorKey: "actions",
+    //   header: "Actions",
+    //   cell: ({ row }) => <CallsActions />,
+    // },
   ];
 
   const FilterDropDown = ({
