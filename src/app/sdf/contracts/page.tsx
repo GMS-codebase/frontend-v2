@@ -24,17 +24,23 @@ const Page = () => {
     {
       accessorKey: "applicationNumber",
       header: "Application Number",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicationNumber}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicationNumber}</div>
+      ),
     },
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.name}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.name}</div>
+      ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.phone}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.phone}</div>
+      ),
     },
     {
       accessorKey: "description",
@@ -50,7 +56,9 @@ const Page = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <ContractsActions data={row.original} setIsContract={setIsContract}/>
+      cell: ({ row }) => (
+        <ContractsActions data={row.original} setIsContract={setIsContract} />
+      ),
     },
   ];
   return (
@@ -69,10 +77,26 @@ const Page = () => {
       </div>
 
       <div className="w-full h-full">
-        <h1 className="text-xl p-4 font-bold">Applications Ready For Contract Signing</h1>
-        {loading ? <TableSkeleton columns={columns}/>: <DataTable columns={columns} data={applications} noDataMessage="No Approved Applications"/>}
+        <h1 className="text-xl p-4 font-bold">
+          Applications Ready For Contract Signing
+        </h1>
+        {loading ? (
+          <TableSkeleton columns={columns} />
+        ) : (
+          <DataTable
+            columns={columns}
+            data={applications}
+            noDataMessage="No Approved Applications"
+          />
+        )}
       </div>
-      <AddContract data={isContract.application} isOpenAddContract={isContract.isOpen} closeAddContract={()=> setIsContract({isOpen: false, application: null})} />
+      <AddContract
+        data={isContract.application}
+        isOpenAddContract={isContract.isOpen}
+        closeAddContract={() =>
+          setIsContract({ isOpen: false, application: null })
+        }
+      />
     </div>
   );
 };

@@ -34,8 +34,8 @@ const NewRoleModal = ({ isOpen, onClose }: NewRoleModalProps) => {
           "User created successfully! Email Is sent to the user for more steps",
         color: "blue",
       });
-      form.setValues({title: "", email: "", tabs:[]});
-      form.setValues({title: "", email: "", tabs: []});
+      form.setValues({ title: "", email: "", tabs: [] });
+      form.setValues({ title: "", email: "", tabs: [] });
       onClose();
     } catch (err: any) {
       notifications.show({

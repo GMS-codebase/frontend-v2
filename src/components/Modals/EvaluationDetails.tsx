@@ -76,24 +76,24 @@ const EvaluationDetails = ({
             <div key={i} className="w-full ">
               <div className="flex gap-6 justify-start items-start">
                 <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-                  {evaluation.evaluator.email}
+                  {evaluation?.evaluator?.email}
                 </p>
                 {i === 0 && <p className="mt-2">Selected</p>}
                 <p
                   className={` px-4 py-2 rounded-full flex gap-2 justify-start items-start ${
-                    evaluation.evaluationDecision.decision === "APPROVED"
+                    evaluation?.evaluationDecision?.decision === "APPROVED"
                       ? "bg-green bg-opacity-10 text-green"
-                      : evaluation.evaluationDecision.decision === "REJECTED" &&
+                      : evaluation?.evaluationDecision?.decision === "REJECTED" &&
                         "bg-red-500 bg-opacity-10 text-danger"
                   }`}
                 >
-                  {evaluation.evaluationDecision.decision}
+                  {evaluation?.evaluationDecision?.decision}
                 </p>
               </div>
               <div className="p-2 mt-2 w-full">
                 <label className="block text-sm text-gray-600">Comment:</label>
                 <textarea
-                  value={evaluation.evaluationDecision.comment}
+                  value={evaluation?.evaluationDecision?.comment}
                   disabled
                   rows={2}
                   className={`mt-2 p-2 w-full border border-gray-500  rounded-xl shadow-sm  ${
