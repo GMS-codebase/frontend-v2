@@ -1,181 +1,277 @@
-import React, { useState } from "react";
-import { Modal } from "@mantine/core";
+import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import { SolarFileBold } from "../core/icons";
+import { useDispatch } from "react-redux";
+import { SolarCheckCircleBold, SolarUploadBold } from "../core/icons";
+import { SolarDocumentsBold } from "@/components/core/icons/index";
+import TextArea from "../ApplicantDetails/TextArea";
+import { Modal, Select } from "@mantine/core";
+import { authorizedApi } from "@/utils/api";
+import { notifications } from "@mantine/notifications";
+interface FormData {
+  financeInfo: string;
+  ohsInfo: string;
+  equipmentInfo: string;
+  workPlaceInfo: string;
+  comment: string;
+  decision: string;
+  attachment: File | null;
+}
 
-const DueDiligenceModal = ({
-  opened,
-  close,
+const decisions = [
+  { value: "APPROVED", label: "Approve" },
+  { value: "REJECTED", label: "Reject" },
+];
+
+const DueDetails = ({
+  isOpenAddDue,
+  closeAddDue,
+  application,
 }: {
-  opened: boolean;
-  close: () => void;
+  isOpenAddDue: boolean;
+  closeAddDue: () => void;
+  application: any;
 }) => {
-  const [text, setText] = useState(
-    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era.",
-  );
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    financeInfo: "",
+    ohsInfo: "",
+    equipmentInfo: "",
+    workPlaceInfo: "",
+    comment: "",
+    decision: "",
+    attachment: null,
+  });
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, files } = e.target as HTMLInputElement;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: files ? files[0] : value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    let hasError = false;
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData.decision) {
+      newErrors.decision = "Decision is required";
+      hasError = true;
+    }
+
+    if (hasError) {
+      setErrors(newErrors);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const submitData = new FormData();
+      submitData.append("financeInfo", formData.financeInfo);
+      submitData.append("ohsinfo", formData.ohsInfo);
+      submitData.append("equipmentinfo", formData.equipmentInfo);
+      submitData.append("workPlaceInfo", formData.workPlaceInfo);
+      submitData.append("comment", formData.comment);
+      submitData.append("decision", formData.decision);
+      if (formData.attachment) {
+        submitData.append("attachment", formData.attachment);
+      }
+
+      await authorizedApi.post(
+        `/application/${application?.uuid}/submit/due-diligency-form`,
+        submitData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+
+      notifications.show({
+        message: "Due diligence details are submitted successfully",
+        color: "blue",
+      });
+
+      setFormData({
+        financeInfo: "",
+        ohsInfo: "",
+        equipmentInfo: "",
+        workPlaceInfo: "",
+        comment: "",
+        decision: "",
+        attachment: null,
+      });
+
+      closeAddDue();
+    } catch (error: any) {
+      console.error(error);
+      notifications.show({
+        message:
+          error.response?.data?.message ??
+          "Failed to submit due diligence details!",
+        color: "red",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Modal
-      opened={opened}
-      size={"xl"}
-      onClose={close}
+      size="lg"
+      opened={isOpenAddDue}
+      onClose={closeAddDue}
+      closeOnClickOutside={false}
       withCloseButton={false}
-      centered
-      className="overflow-y-auto"
-      style={{ maxHeight: "90vh" }}
     >
-      <div
-        className="overflow-y-auto flex flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative"
-        style={{ maxHeight: "80vh" }}
-      >
-        <div className="absolute right-3 m-4 text-center mt-0">
-          <button
-            onClick={close}
-            className="text-gray-500 hover:text-gray-700 focus:outline-none"
-          >
-            <IoMdClose size={24} />
-          </button>
-        </div>
-        <div className="flex flex-col justify-start items-start gap-6 font-semibold">
-          <h1 className="text-xl font-bold">Due Diligency decision details</h1>
-          <div className="flex gap-6 justify-start items-start">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Decision
-            </p>
-            <p className="mt-2">Selected</p>
-          </div>
-          <div className="flex gap-6 justify-start items-start font-semibold">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Approved number of trainees
-            </p>
-            <p className="mt-2">7</p>
-          </div>
-          <div className="flex gap-6 justify-start items-start">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Approved Trades
-            </p>
-            <p className="mt-2">ART AND CRAFT</p>
-          </div>
-        </div>
-        <div className="flex flex-col justify-start items-start gap-6 font-semibold">
-          <h1 className="text-xl font-bold">
-            Approval personnel{" "}
-            <span className="text-sm font-light">
-              (people who made approval and confirmation)
-            </span>
+      <div className="w-full h-[90vh] relative bg-white rounded-3xl pt-6 pb-6 flex flex-col items-center px-6">
+        <button
+          className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
+          onClick={closeAddDue}
+        >
+          <IoMdClose />
+        </button>
+        <div>
+          <h1 className="text-xl font-bold text-gray-700">
+            Due Diligence Decision Details
           </h1>
-          <div className="flex gap-6 justify-start items-start">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Iradukunda Octave
-            </p>
-            <p className="mt-2">Selected</p>
-          </div>
-          <div className="flex gap-6 justify-start items-start font-semibold">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Hategekimana Aimable
-            </p>
-            <p className="mt-2">Confirm</p>
-          </div>
-          <div className="flex gap-6 justify-start items-start">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Mukankubito Rehema
-            </p>
-            <p className="mt-2">Confirm</p>
-          </div>
         </div>
+        <div className="w-full flex flex-col items-center mt-10 overflow-hidden">
+          <form
+            onSubmit={handleSubmit}
+            className="w-full overflow-y-auto flex flex-col gap-4 px-2"
+          >
+            <div className="w-full flex flex-col">
+              <label
+                htmlFor="decision"
+                className="block font-semibold text-sm text-gray-700"
+              >
+                Decision
+              </label>
+              <Select
+                name="decision"
+                value={formData.decision}
+                onChange={(value: any) =>
+                  setFormData({ ...formData, decision: value })
+                }
+                data={decisions}
+                placeholder="Select your decision"
+                classNames={{
+                  root: "w-full",
+                }}
+                required
+              />
+              {errors.decision && (
+                <span className="text-red-500 text-xs">{errors.decision}</span>
+              )}
+            </div>
 
-        <div className="mt-5 w-full">
-          <label className="block text-sm text-gray-600" htmlFor="textarea">
-            Attachment:
-          </label>
-          <div className="flex mb-3 justify-center text-center items-center gap-2 px-4 py-2 bg-[#005DE9] rounded-full text-white">
-            <span>
-              <SolarFileBold />
-            </span>
-            <div>Download</div>
-          </div>
-        </div>
-        <div className="p-4 w-full">
-          <label className="block text-sm text-gray-600" htmlFor="textarea">
-            Finance Information:
-          </label>
-          <textarea
-            id="textarea"
-            name="textarea"
-            value={text}
-            readOnly
-            rows={4}
-            className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
-          />
-        </div>
-        <div className="p-4 w-full">
-          <label className="block text-sm text-gray-600" htmlFor="textarea">
-            OHS Information:
-          </label>
-          <textarea
-            id="textarea"
-            name="textarea"
-            value={text}
-            readOnly
-            rows={4}
-            className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
-          />
-        </div>
-        <div className="p-4 w-full">
-          <label className="block text-sm text-gray-600" htmlFor="textarea">
-            Equipment:
-          </label>
-          <textarea
-            id="textarea"
-            name="textarea"
-            value={text}
-            readOnly
-            rows={4}
-            className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
-          />
-        </div>
-        <div className="p-4 w-full">
-          <label className="block text-sm text-gray-600" htmlFor="textarea">
-            Workplace:
-          </label>
-          <textarea
-            id="textarea"
-            name="textarea"
-            value={text}
-            readOnly
-            rows={4}
-            className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
-          />
-        </div>
-        <div className="p-4 w-full">
-          <label className="block text-sm text-gray-600" htmlFor="textarea">
-            OHS Information:
-          </label>
-          <textarea
-            id="textarea"
-            name="textarea"
-            value={text}
-            readOnly
-            rows={4}
-            className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
-          />
-        </div>
-        <div className="p-4 w-full">
-          <label className="block text-sm text-gray-600" htmlFor="textarea">
-            Comment:
-          </label>
-          <textarea
-            id="textarea"
-            name="textarea"
-            value={text}
-            readOnly
-            rows={4}
-            className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
-          />
+            <div>
+              <label
+                htmlFor="attachment"
+                className="block text-xs font-bold text-gray-700"
+              >
+                Attachment
+              </label>
+              <div className="relative mt-1 flex flex-col items-center justify-center w-full h-[15vh] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <label
+                  htmlFor="attachment"
+                  className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+                >
+                  {!formData.attachment ? (
+                    <>
+                      <SolarUploadBold className="text-blue-500 text-3xl" />
+                      <div className="text-center">
+                        <p className="text-sm text-gray-500">Upload file</p>
+                        <p className="text-xs text-gray-400">
+                          or drag and drop
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <span>
+                        <SolarCheckCircleBold />
+                      </span>
+                      <div className="text-center">
+                        <p className="text-sm text-gray-500">File Uploaded</p>
+                        <p className="text-xs text-gray-400">
+                          {formData?.attachment?.name}
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </label>
+                <input
+                  id="attachment"
+                  type="file"
+                  name="attachment"
+                  accept=".pdf"
+                  onChange={handleChange}
+                  style={{ display: "none" }}
+                  required
+                />
+              </div>
+            </div>
+
+            {["financeInfo", "ohsInfo", "equipmentInfo", "workPlaceInfo"].map(
+              (field, idx) => (
+                <div key={idx} className="py-1 w-full">
+                  <label
+                    className="block text-sm text-gray-600"
+                    htmlFor={field}
+                  >
+                    {field.replace(/([A-Z])/g, " $1")}:
+                  </label>
+                  <textarea
+                    id={field}
+                    name={field}
+                    value={formData[field as keyof FormData] as string}
+                    onChange={handleChange}
+                    rows={4}
+                    className="mt-2 p-2 w-full border border-primary resize-none rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
+                  />
+                </div>
+              ),
+            )}
+
+            <div className="py-4 w-full">
+              <label className="block text-sm text-gray-600" htmlFor="comment">
+                Comment:
+              </label>
+              <textarea
+                id="comment"
+                name="comment"
+                value={formData.comment}
+                onChange={handleChange}
+                rows={4}
+                className="mt-2 p-2 w-full border border-primary resize-none rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
+              />
+            </div>
+
+            <div className="w-full flex justify-center mt-4 space-x-4 mb-2">
+              <button
+                type="button"
+                onClick={closeAddDue}
+                className="w-full px-4 py-3 bg-gray-200 text-gray-700 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                {loading ? "Loading..." : "Make Decision"}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </Modal>
   );
 };
 
-export default DueDiligenceModal;
+export default DueDetails;

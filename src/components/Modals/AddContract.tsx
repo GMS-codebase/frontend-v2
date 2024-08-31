@@ -43,9 +43,14 @@ const AddContract: React.FC<AddContractProps> = ({
       applicantId: data.applicant.uuid,
       applicationId: data?.uuid,
     };
-
+    console.log(newData);
     try {
-      const res = await authorizedApi.post("/contracts", newData, {
+      const submitForm = new FormData();
+      submitForm.append("name", newData.name);
+      submitForm.append("contract", JSON.stringify(newData.contract));
+      submitForm.append("applicantId", newData.applicantId);
+      submitForm.append("applicationId", newData.applicationId);
+      const res = await authorizedApi.post("/contracts", submitForm, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
