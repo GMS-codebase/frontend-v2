@@ -5,29 +5,26 @@ import { Folder2, Subtitles } from "solar-icon-set";
 import {
   SolarAddSquareBold,
   SolarSuitcaseLinear,
-  SolarUploadBold,
-  SolarWindowFrameLinear,
-} from "../core/icons";
-import { CalendarMinimalistic } from "solar-icon-set";
-import { ShieldWarning } from "solar-icon-set";
+} from "@/components/core/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { notifications } from "@mantine/notifications";
 import { useParams, useRouter } from "next/navigation";
 import { useDisclosure } from "@mantine/hooks";
-import AddSector from "./AddSector";
+import AddSector from "../AddSector";
 import { authorizedApi } from "@/utils/api";
+import { ADD_SUB_WINDOW_SUCCESS } from "@/actions/WindowsActions";
 
 const AddWindowSubwindow = ({
   isOpenAddWindowSubwindow,
   closeAddWindowSubwindow,
-  setSubWindows,
 }: {
   isOpenAddWindowSubwindow: boolean;
   closeAddWindowSubwindow: () => void;
-  setSubWindows: (p: any) => void;
 }) => {
   const { id: windowId } = useParams();
   const dispatch = useDispatch();
+  const router = useRouter();
+
   const [active, setActive] = useState(0);
   const [isAddSector, { open, close }] = useDisclosure(false);
   const [formData, setFormData] = useState({
@@ -36,11 +33,14 @@ const AddWindowSubwindow = ({
     sectors: [],
   });
   const [selectedSelectors, setSelectedSelectors] = useState<any>([]);
-  const router = useRouter();
-  const nextStep = () =>
-    setActive((current) => (current < 3 ? current + 1 : current));
-  const prevStep = () =>
-    setActive((current) => (current > 0 ? current - 1 : current));
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const sectors = useSelector((state: any) => state.sectors);
+  const MultiSelectData = sectors?.sectors?.map((sector: any) => ({
+    value: sector.uuid,
+    label: sector.name,
+  }));
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
@@ -48,41 +48,83 @@ const AddWindowSubwindow = ({
       ...prevData,
       [name]: value,
     }));
+    setErrors((prevData) => ({
+      ...prevData,
+      [name]: null,
+    }));
   };
 
-  function handleSubmit() {
-    authorizedApi
-      .post(`/sub-window/create/${windowId}`, {
-        title: formData.title,
-        description: formData.description,
-        sectors: selectedSelectors,
-      })
-      .then((res) => {
-        notifications.show({
-          message: "Sub window is created successfully",
-          color: "blue",
-        });
-        setSubWindows((prevState: any) => [...prevState, res.data.data.data]);
-        setFormData({
-          title: "",
-          description: "",
-          sectors: [],
-        });
-        router.refresh();
-        closeAddWindowSubwindow();
-      })
-      .catch((err) => {
-        notifications.show({
-          message:
-            err.response?.data?.message ?? "Failed to create sub window!",
-          color: "red",
-        });
-      });
-  }
-  const sectors = useSelector((state: any) => state.sectors);
-  const MultiSelectData = sectors?.sectors?.map((sector: any) => {
-    return { value: sector.uuid, label: sector.name };
-  });
+  const validateStep = () => {
+    let tempErrors: { [key: string]: string } = {};
+    if (active === 0) {
+      if (!formData.title) tempErrors.title = "Title is required";
+      if (!formData.description)
+        tempErrors.description = "Description is required";
+    } else if (active === 1 && selectedSelectors.length === 0) {
+      tempErrors.sectors = "At least one sector must be selected";
+    }
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
+  const nextStep = () => {
+    if (validateStep()) {
+      setActive((current) => (current < 3 ? current + 1 : current));
+    }
+  };
+
+  const prevStep = () =>
+    setActive((current) => (current > 0 ? current - 1 : current));
+
+  const handleSubmit = () => {
+    if (validateStep()) {
+      setIsSubmitting(true);
+      authorizedApi
+        .post(`/sub-window/create/${windowId}`, {
+          title: formData.title,
+          description: formData.description,
+          sectors: selectedSelectors,
+        })
+        .then((res) => {
+          notifications.show({
+            message: "Sub window is created successfully",
+            color: "blue",
+          });
+          console.log(res.data.data);
+          dispatch({
+            type: ADD_SUB_WINDOW_SUCCESS,
+            payload: { windowId: windowId, data: res.data.data.data },
+          });
+          resetForm();
+          closeAddWindowSubwindow();
+        })
+        .catch((err) => {
+          notifications.show({
+            message: err.response?.data?.message?.includes("duplicate key")
+              ? "Failed to create sub window! A sub window with the same title may already exist."
+              : err.response?.data?.message ?? "Failed to create sub window!",
+            color: "red",
+          });
+        })
+        .finally(() => setIsSubmitting(false));
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      description: "",
+      sectors: [],
+    });
+    setSelectedSelectors([]);
+    setActive(0);
+    setErrors({});
+  };
+
+  const handleCancel = () => {
+    resetForm();
+    closeAddWindowSubwindow();
+  };
 
   return (
     <Modal
@@ -95,7 +137,7 @@ const AddWindowSubwindow = ({
       <div className="w-[600px] h-fit relative bg-white rounded-3xl pt-10 pb-10 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
-          onClick={closeAddWindowSubwindow}
+          onClick={handleCancel}
         >
           <IoMdClose size={25} color={"#000"} />
         </button>
@@ -124,12 +166,17 @@ const AddWindowSubwindow = ({
                       <input
                         type="text"
                         name="title"
-                        // value={formData.title}
+                        value={formData.title}
                         placeholder="Title"
                         onChange={handleChange}
                         className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
                         required
                       />
+                      {errors.title && (
+                        <p className="text-red-600 text-sm mt-1">
+                          {errors.title}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -145,8 +192,7 @@ const AddWindowSubwindow = ({
                     <span className="absolute left-2 top-[10px]">
                       <Subtitles />
                     </span>
-                    <input
-                      type="text"
+                    <textarea
                       name="description"
                       value={formData.description}
                       placeholder="Add description"
@@ -154,13 +200,18 @@ const AddWindowSubwindow = ({
                       className="mt-1 block w-full pb-28 pt-2 pl-8 px-3  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
                       required
                     />
+                    {errors.description && (
+                      <p className="text-red-600 text-sm mt-1">
+                        {errors.description}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 <div className="w-full flex justify-center mt-4 space-x-4">
                   <button
                     type="button"
-                    onClick={closeAddWindowSubwindow}
+                    onClick={handleCancel}
                     className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
                     Cancel
@@ -198,47 +249,52 @@ const AddWindowSubwindow = ({
                       disabled={!MultiSelectData}
                       onChange={setSelectedSelectors}
                       data={
-                        MultiSelectData
+                        MultiSelectData.length
                           ? MultiSelectData
                           : [
                               {
                                 value: "NO SECTOR",
-                                label: "No Sectors Created!",
+                                label: "No Sectors Created",
+                                disabled: true,
                               },
                             ]
                       }
-                      placeholder="Select or type in a sector"
-                      required
+                      value={selectedSelectors}
+                      placeholder="Choose Sectors"
+                      className="w-full pl-7"
                     />
+                    {errors.sectors && (
+                      <p className="text-red-600 text-sm mt-1">
+                        {errors.sectors}
+                      </p>
+                    )}
+                  </div>
+                  <div className="w-full flex justify-center mt-3">
+                    <button
+                      className="w-1/3 px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      onClick={open}
+                    >
+                      Add Sector
+                    </button>
                   </div>
                 </div>
-                {!MultiSelectData && (
-                  <button
-                    type="button"
-                    onClick={open}
-                    className="bg-[#005DE9] text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-                  >
-                    <span className="text-2xl">
-                      <SolarAddSquareBold />
-                    </span>
-                    <h1 className="text-base font-medium text-white">
-                      Add Sectors
-                    </h1>
-                  </button>
-                )}
                 <div className="w-full flex justify-center mt-4 space-x-4">
                   <button
                     type="button"
-                    onClick={closeAddWindowSubwindow}
+                    onClick={prevStep}
                     className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                    Cancel
+                    Previous
                   </button>
                   <button
+                    type="button"
                     onClick={handleSubmit}
-                    className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    disabled={isSubmitting}
+                    className={`w-full px-4 py-3 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                      isSubmitting ? "bg-gray-500" : "bg-blue-500"
+                    } text-white`}
                   >
-                    Save
+                    {isSubmitting ? "Submitting..." : "Submit"}
                   </button>
                 </div>
               </div>
@@ -246,7 +302,7 @@ const AddWindowSubwindow = ({
           </Stepper>
         </div>
       </div>
-      <AddSector isOpenAddSector={isAddSector} closeAddSector={close} />
+      {/* <AddSector opened={isAddSector} close={close} dispatch={dispatch} /> */}
     </Modal>
   );
 };

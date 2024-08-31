@@ -64,7 +64,7 @@ export function DataTable({
   const [rowSelection, setRowSelection] = React.useState({});
   const [{ pageIndex, pageSize }, setPagination] = React.useState({
     pageIndex: paginationProps?.paginateOpts.page ?? 0,
-    pageSize: paginationProps?.paginateOpts.limit ?? limit ?? 8,
+    pageSize: paginationProps?.paginateOpts.limit ?? limit ?? 10,
   });
 
   const pagination = React.useMemo(
@@ -287,7 +287,7 @@ export function DataTable({
             />
             <div className="flex md:flex-row flex-col text-sm items-center gap-2 justify-center">
               <h1 className="text-lg font-medium text-[#B5B7C0]">
-                Showing data 1 to 8 of {table.getRowCount()} entries
+                Showing data 1 to 10 of {table.getRowCount()} entries
               </h1>
             </div>
           </div>
