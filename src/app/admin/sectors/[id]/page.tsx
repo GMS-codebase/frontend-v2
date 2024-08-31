@@ -13,13 +13,19 @@ import { tradesData as data } from "@/utils/constants/dummy";
 import { CiSearch } from "react-icons/ci";
 import AddSector from "@/components/Modals/AddSector";
 import { useDisclosure } from "@mantine/hooks";
-import AddSectorTrade from "@/components/Modals/AddSectorTrade";
+import AddSectorTrade from "@/components/Modals/sectors/AddSectorTrade";
 import UpdateSector from "@/components/Modals/UpdateSector";
+import { useSelector } from "react-redux";
+import { useParams } from "next/navigation";
 
 const Page = () => {
+  const { id } = useParams<{ id: string }>();
   const [isAddSector, { open, close }] = useDisclosure(false);
   const [isUpdateSector, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
+  const sectors = useSelector((state: any) => state.sectors);
+  const sector = sectors.sectors.filter((sec: any) => sec.uuid === id)[0];
+  console.log(sector);
 
   const columns: ColumnDef<any>[] = [
     {
@@ -72,25 +78,28 @@ const Page = () => {
               <div>Edit Sector</div>
             </button>
           </div>
-          <div className="flex justify-between w-3/5  font-semibold px-10">
-            <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-              <span className="">
-                <SolarAddFolderBold />
-              </span>
-              <div>Title</div>
+          <div className="px-8 space-y-5">
+            <div className="space-y-2">
+              <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center w-fit">
+                <span className="">
+                  <SolarAddFolderBold />
+                </span>
+                <div>Title</div>
+              </div>
+              <div className="flex flex-col gap-6 justify-start items-start ">
+                <h1 className="font-bold text-xl">{sector?.name}</h1>
+              </div>
             </div>
-            <div className="flex gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center ">
-              <span className="">
-                <SolarClockSquareBold />
-              </span>
-              <div>Description</div>
-            </div>
-          </div>
-          <div className="flex gap-2 px-10">
-            <div className="flex flex-col gap-6 justify-start items-start ">
-              <h1 className="font-bold text-xl">
-                SDF CALL 5 FOR GRANT PROPOSALS
-              </h1>
+            <div className="space-y-2">
+              <div className="flex gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center w-fit ">
+                <span className="">
+                  <SolarClockSquareBold />
+                </span>
+                <div>Description</div>
+              </div>
+              <div className="flex flex-col gap-6 justify-start items-start ">
+                <h1 className="font-semibold">{sector?.description}</h1>
+              </div>
             </div>
           </div>
           <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
@@ -128,7 +137,7 @@ const Page = () => {
             </div>
 
             <div className="w-full h-full">
-              <DataTable columns={columns} data={data.slice(0, 5)} />
+              <DataTable columns={columns} data={sector?.trades || []} />
             </div>
           </div>
         </div>

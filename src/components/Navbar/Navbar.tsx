@@ -78,13 +78,13 @@ const Navbar = () => {
 
   const { profile } = useSelector((state: any) => state.profile);
   return (
-    <div className="w-full flex items-center justify-between py-6 bg-white rounded-2xl px-5">
+    <div className="w-full flex items-center justify-between py-3 bg-white rounded-2xl px-5">
       <h1 className="text-xl font-extrabold text-primary">{pageName}</h1>
       <div className="flex items-center gap-3">
-        <button className="text-3xl text-primary bg-background p-3 rounded-full">
+        <button className="text-2xl text-primary bg-background p-3 rounded-full">
           <Icons.SolarUserBold />
         </button>
-        <h1 className="text-xl font-medium">{profile?.firstname ?? ""}</h1>
+        <h1 className="text-lg font-medium capitalize">{profile?.firstname ?? ""}</h1>
       </div>
     </div>
   );
