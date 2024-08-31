@@ -12,30 +12,27 @@ import { DataTable } from "@/components/core/data-table";
 import { tradesData as data } from "@/utils/constants/dummy";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddWindowSubwindow from "@/components/Modals/AddWindowSubwindow";
+import AddWindowSubwindow from "@/components/Modals/windows/AddWindowSubwindow";
 import UpdateWindow from "@/components/Modals/UpdateWindow";
 import { useSelector } from "react-redux";
 import { useParams } from "next/navigation";
 import { authorizedApi } from "@/utils/api";
+import AddEditWindow from "@/components/Modals/windows/AddEditWindow";
 
 const Page = () => {
-  const [isAddWindow, { open, close }] = useDisclosure(false);
-  const [window, setWindow] = useState<any>({});
-  const [subWindows, setSubWindows] = useState([]);
+  const [isAddSubWindow, { open: openAddSubWindow, close: closeAddSubWindow }] =
+    useDisclosure(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { id: windowId } = useParams();
   const [isUpdateWindow, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
-  useEffect(() => {
-    authorizedApi
-      .get(`/window/${windowId}`)
-      .then((res) => {
-        setWindow(res.data?.data?.data);
-        setSubWindows(res.data?.data?.data?.subWindows);
-      })
-      .catch((err) => {
-      });
-  }, [windowId]);
-  // const window = windows.windows?.filter((window: any) => window.uuid === windowId)
+  const windows = useSelector((state: any) => state.windows);
+  const window = windows.windows?.filter(
+    (window: any) => window.uuid === windowId
+  )[0];
+  const filteredSubWindows = window?.subWindows.filter((subW: any) =>
+    subW.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -87,30 +84,33 @@ const Page = () => {
               <div>Edit Window</div>
             </button>
           </div>
-          <div className="flex justify-between w-3/5  font-semibold px-10">
-            <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-              <span className="">
-                <SolarAddFolderBold />
-              </span>
-              <div>Title</div>
+          <div className=" px-10 space-y-5">
+            <div className="space-y-2">
+              <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center w-fit">
+                <span className="">
+                  <SolarAddFolderBold />
+                </span>
+                <div>Title</div>
+              </div>
+              <div className="flex flex-col gap-6 justify-start items-start ">
+                <h1 className="font-bold text-xl">{window?.title}</h1>
+              </div>
             </div>
-            <div className="flex gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center ">
-              <span className="">
-                <SolarClockSquareBold />
-              </span>
-              <div>Description</div>
+            <div className="space-y-2">
+              <div className="flex gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center  w-fit">
+                <span className="">
+                  <SolarClockSquareBold />
+                </span>
+                <div>Description</div>
+              </div>
+              <div className="flex flex-col gap-6 justify-start items-start ">
+                <h1 className="font-medium text-base text-gray-500">
+                  {window?.description}
+                </h1>
+              </div>
             </div>
           </div>
-          <div className="flex justify-between items-center w-3/5  font-semibold px-10">
-            <div className="flex flex-col gap-6 justify-start items-start ">
-              <h1 className="font-bold text-xl">{window?.title}</h1>
-            </div>
-            <div className="flex flex-col gap-6 justify-start items-start ">
-              <h1 className="font-medium text-base text-gray-500">
-                {window?.description}
-              </h1>
-            </div>
-          </div>
+          <div className="flex justify-between items-center w-3/5  font-semibold px-10"></div>
           <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
             <div className="w-full flex justify-between items-center py-4 px-10">
               <div className="flex  gap-2  bg-gray-400 rounded-full bg-opacity-10 px-4  py-2 font-semibold items-center justify-center">
@@ -126,13 +126,15 @@ const Page = () => {
                   </span>
                   <input
                     name="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
                     placeholder="Search"
                   />
                 </div>
 
                 <button
-                  onClick={open}
+                  onClick={openAddSubWindow}
                   className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
                 >
                   <span className="text-2xl">
@@ -148,21 +150,24 @@ const Page = () => {
             <div className="w-full h-full">
               <DataTable
                 columns={columns}
-                data={subWindows ?? []}
-                noDataMessage={`No Sub Windows Created For ${window?.title}`}
+                data={filteredSubWindows ?? []}
+                noDataMessage={
+                  searchQuery
+                    ? "No Sub Windows found matching " + searchQuery
+                    : `No Sub Windows Created For ${window?.title}`
+                }
               />
             </div>
           </div>
         </div>
         <AddWindowSubwindow
-          setSubWindows={setSubWindows}
-          isOpenAddWindowSubwindow={isAddWindow}
-          closeAddWindowSubwindow={close}
+          isOpenAddWindowSubwindow={isAddSubWindow}
+          closeAddWindowSubwindow={closeAddSubWindow}
         />
-        <UpdateWindow
-          Window={window}
-          isOpenUpdateWindow={isUpdateWindow}
-          closeUpdateWindow={closeUpdate}
+        <AddEditWindow
+          isOpenAddEditWindow={isUpdateWindow}
+          closeAddEditWindow={closeUpdate}
+          defaultData={window}
         />
       </div>
     </div>
