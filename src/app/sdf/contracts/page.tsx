@@ -17,9 +17,54 @@ const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
   const [isContract, setIsContract] = useState({
     isOpen: false,
-    application: null
-  })
-  const {applicationsForContractSigning: applications, loading} = useSelector((state: any)=> state.applications);
+    application: null,
+  });
+
+  const { contracts, loading: loadingContracts } = useSelector(
+    (state: any) => state.contracts,
+  );
+  const { applicationsForContractSigning: applications, loading } = useSelector(
+    (state: any) => state.applications,
+  );
+  const contractColumns: ColumnDef<any>[] = [
+    {
+      accessorKey: "name",
+      header: "Applicant Name",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.name}</div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: "Applicant Phone",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.phone}</div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: "Applicant Email",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.email}</div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: "Contract Name",
+      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <ContractsActions
+          data={row.original}
+          setIsContract={setIsContract}
+          isNew={false}
+        />
+      ),
+    },
+  ];
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "applicationNumber",
@@ -47,9 +92,9 @@ const Page = () => {
       header: "Description",
       cell: ({ row }) => (
         <div className="truncate">
-          {row.original?.description.length > 50
-            ? row.original?.description.slice(0, 50) + "..."
-            : row.original.description}
+          {row.original?.description?.length > 50
+            ? row.original?.description?.slice(0, 50) + "..."
+            : row.original?.description}
         </div>
       ),
     },
@@ -57,7 +102,11 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <ContractsActions data={row.original} setIsContract={setIsContract} />
+        <ContractsActions
+          data={row.original}
+          setIsContract={setIsContract}
+          isNew={true}
+        />
       ),
     },
   ];
@@ -74,6 +123,19 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
+      </div>
+
+      <div className="w-full h-full mb-10">
+        <h1 className="text-xl p-4 font-bold">Contracts Signed</h1>
+        {loading ? (
+          <TableSkeleton columns={contractColumns} />
+        ) : (
+          <DataTable
+            columns={contractColumns}
+            data={contracts}
+            noDataMessage="No Created Contracts"
+          />
+        )}
       </div>
 
       <div className="w-full h-full">

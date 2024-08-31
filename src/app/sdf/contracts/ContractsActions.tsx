@@ -8,11 +8,13 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import Link from "next/link";
 
 const ContractsActions = ({
+  isNew,
   data,
   setIsContract,
 }: {
   setIsContract: (employee: any) => void;
   data: any;
+  isNew?: boolean;
 }) => {
   console.log(data);
   return (
@@ -34,26 +36,30 @@ const ContractsActions = ({
             <h1 className="text-lg">Actions</h1>
           </Menu.Label>
           <Menu.Divider />
-          <Menu.Item className="bg-[#F0F0F0]">
-            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-              <FiEye size={21} color="#576074" />
-              Download Contract
-            </div>
-          </Menu.Item>
-          <Menu.Item>
-            <div
-              onClick={() =>
-                setIsContract({
-                  isOpen: true,
-                  application: data,
-                })
-              }
-              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-            >
-              <CiEdit size={21} color="#576074" />
-              Create Contract
-            </div>
-          </Menu.Item>
+          {!isNew && (
+            <Menu.Item className="bg-[#F0F0F0]">
+              <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+                <FiEye size={21} color="#576074" />
+                Download Contract
+              </div>
+            </Menu.Item>
+          )}
+          {isNew && (
+            <Menu.Item>
+              <div
+                onClick={() =>
+                  setIsContract({
+                    isOpen: true,
+                    application: data,
+                  })
+                }
+                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+              >
+                <CiEdit size={21} color="#576074" />
+                Create Contract
+              </div>
+            </Menu.Item>
+          )}
         </Menu.Dropdown>
       </Menu>
     </div>

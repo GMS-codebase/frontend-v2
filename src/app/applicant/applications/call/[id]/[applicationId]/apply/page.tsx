@@ -50,7 +50,7 @@ const Page = () => {
   });
   const handleSubmit = async () => {
     setLoading(true);
-    console.log(data)
+    console.log(data);
     // const requiredFields = [
     //   { name: "Title", value: data.title, message: "Please enter the title." },
     //   {
