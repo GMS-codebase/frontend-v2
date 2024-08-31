@@ -18,7 +18,7 @@ const EvaluationDetails = ({
   onSaveComment?: (updatedText: string) => void;
 }) => {
   const [text, setText] = useState(
-    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era."
+    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era.",
   );
 
   const handleSave = () => {
@@ -83,8 +83,8 @@ const EvaluationDetails = ({
                   className={` px-4 py-2 rounded-full flex gap-2 justify-start items-start ${
                     evaluation?.evaluationDecision?.decision === "APPROVED"
                       ? "bg-green bg-opacity-10 text-green"
-                      : evaluation?.evaluationDecision?.decision === "REJECTED" &&
-                        "bg-red-500 bg-opacity-10 text-danger"
+                      : evaluation?.evaluationDecision?.decision ===
+                          "REJECTED" && "bg-red-500 bg-opacity-10 text-danger"
                   }`}
                 >
                   {evaluation?.evaluationDecision?.decision}

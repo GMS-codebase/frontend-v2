@@ -26,7 +26,7 @@ const Page = () => {
   const { myApplications } = useSelector((state: any) => state.applications);
   console.log(myApplications);
   const existingApplication = myApplications.find(
-    (app: any) => app?.call?.uuid === callId
+    (app: any) => app?.call?.uuid === callId,
   );
   const router = useRouter();
   return (

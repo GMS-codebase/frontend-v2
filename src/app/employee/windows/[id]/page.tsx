@@ -32,8 +32,7 @@ const Page = () => {
         setWindow(res.data?.data?.data);
         setSubWindows(res.data?.data?.data?.subWindows);
       })
-      .catch((err) => {
-      });
+      .catch((err) => {});
   }, [windowId]);
   // const window = windows.windows?.filter((window: any) => window.uuid === windowId)
   const columns: ColumnDef<any>[] = [

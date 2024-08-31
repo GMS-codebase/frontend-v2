@@ -94,8 +94,7 @@ const Page = () => {
           });
         }
       })
-      .catch((error) => {
-      })
+      .catch((error) => {})
       .finally(() => setLoading(false));
   };
   const FilterDropDown = ({
