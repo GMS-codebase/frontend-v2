@@ -17,7 +17,7 @@ import { useSelector } from "react-redux";
 const Page = () => {
   const [isOpenCall, { open, close }] = useDisclosure(false);
   const { applications, loading } = useSelector(
-    (state: any) => state.applications
+    (state: any) => state.applications,
   );
   const filtersContainerRef = useRef<HTMLDivElement>(null);
 
@@ -30,26 +30,17 @@ const Page = () => {
     {
       accessorKey: "applicantName",
       header: "Applicant Name",
-      cell: ({ row }) => <div>{row.original?.applicantName}</div>,
+      cell: ({ row }) => <div>{row.original?.applicant?.name}</div>,
     },
     {
       accessorKey: "window",
       header: "Window",
-      cell: ({ row }) => (
-        <div>
-          WINDOW {row.original?.window?.number} : {row.original?.window?.name}
-        </div>
-      ),
+      cell: ({ row }) => <div>{row.original?.window?.title}</div>,
     },
     {
-      accessorKey: "sector",
-      header: "Sector",
-      cell: ({ row }) => <div>{row.original?.sector}</div>,
-    },
-    {
-      accessorKey: "trade",
-      header: "Trade",
-      cell: ({ row }) => <div>{row.original?.trade}</div>,
+      accessorKey: "call",
+      header: "Call",
+      cell: ({ row }) => <div>{row.original?.call?.title}</div>,
     },
     {
       accessorKey: "stage",

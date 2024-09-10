@@ -70,7 +70,7 @@ const MakeEvaluationDecision = ({
     try {
       await authorizedApi.patch(
         `/application/evaluation/make-decision/${applicationId}`,
-        formData
+        formData,
       );
       notifications.show({
         message: "Application filled successfully!",
