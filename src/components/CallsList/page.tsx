@@ -21,7 +21,7 @@ const CallCard = ({
         <div className="font-medium flex justify-evenly items-start">
           {call.description}
         </div>
-        <Link href={`/applicant/applications/${call.uuid}`}>
+        <Link href={`/applicant/applications/call/${call.uuid}`}>
           <div className="flex gap-2 p-2 bg-[#005DE9] font-normal rounded-full text-white px-4 py-2 items-center justify-start w-fit">
             View details
           </div>

@@ -418,6 +418,10 @@ import EditEvalModal from "@/components/Modals/EditEvalModal";
 import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import { useDisclosure } from "@mantine/hooks";
 import BudgetQuestions from "@/components/Application/BudgetQuestions";
+import DueDetails from "@/components/Modals/DueDiligence";
+import DueDiligenceModal from "@/components/Modals/DueDiigence";
+import { format } from "date-fns";
+import { Skeleton } from "@mantine/core";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
@@ -689,7 +693,7 @@ const Page = () => {
             </div>
             {application?.evaluators.length < 3 &&
               !application?.evaluators.find(
-                (ev: any) => ev.user_id === profile?.userProfile?.data.uuid
+                (ev: any) => ev.user_id === profile?.userProfile?.data.uuid,
               ) && (
                 <div
                   onClick={openAddEval}
@@ -709,21 +713,26 @@ const Page = () => {
               </div>
             )}
           </div>
-          {(application?.currentStage !== "EVALUATION") &&
+          {application?.currentStage !== "EVALUATION" &&
             stagesArr?.includes("DUE_DILIGENCY") && (
               <div className="flex flex-col gap-2">
                 <h3 className="font-bold">Due Diligence Stage</h3>
-                <div className={`font-medium  ${application?.status === "APPROVED" || application?.currentStage !== "EVALUATION" ? "bg-[#4BC500] text-[#4BC500]" : application?.status === "PENDING" ? "bg-red-600 text-red-600" :  ""} bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}>
-                  {application?.currentStage !== "EVALUATION" && application?.currentStage !== "DUE_DILIGENCY" ? "APPROVED" : application?.status}
+                <div
+                  className={`font-medium  ${application?.status === "APPROVED" || application?.currentStage !== "EVALUATION" ? "bg-[#4BC500] text-[#4BC500]" : application?.status === "PENDING" ? "bg-red-600 text-red-600" : ""} bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+                >
+                  {application?.currentStage !== "EVALUATION" &&
+                  application?.currentStage !== "DUE_DILIGENCY"
+                    ? "APPROVED"
+                    : application?.status}
                 </div>
-                {application?.status === "PENDING" && application?.currentStage !== "GRANT_COMMITTEE" && (
-                  <div
-                    onClick={openAddDue}
-                    className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
-                  >
-                    <p>Make a decision</p>
-                  </div>
-                )}
+                {/* {application?.status === "PENDING" && application?.currentStage !== "GRANT_COMMITTEE" && ( */}
+                <div
+                  onClick={openAddDue}
+                  className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                >
+                  <p>Make a decision</p>
+                </div>
+                {/* )} */}
                 {application?.currentStage !== "DUE_DILIGENCY" && (
                   <div className="flex flex-col gap-2 mt-4">
                     <button
@@ -738,6 +747,17 @@ const Page = () => {
             )}
         </div>
       </div>
+      <DueDiligenceModal
+        application={application}
+        opened={isOpenAddDues}
+        close={closeAddDues}
+      />
+      <DueDetails
+        application={application}
+        isOpenAddDue={isOpenAddDue}
+        closeAddDue={closeAddDue}
+        // onMakeDecision={() => handleDecisionMade("DueDiligence")}
+      />
       <MakeEvaluationDecision
         applicationId={id}
         isOpenAddEval={isOpenAddEval}
@@ -764,7 +784,7 @@ const Page = () => {
                 (decision: any, index: any) => ({
                   evaluator: application.evaluators[index],
                   evaluationDecision: decision,
-                })
+                }),
               )
             : []
         }
