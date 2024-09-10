@@ -9,6 +9,7 @@ import {
   UPDATE_WINDOW_SUCCESS,
   DELETE_WINDOW_SUCCESS,
   ADD_SUB_WINDOW_SUCCESS,
+  DELETE_SUB_WINDOW_SUCCESS,
 } from "@/actions/WindowsActions";
 import { Window } from "@/types";
 
@@ -106,6 +107,23 @@ export default function WindowsReducer(state = initialState, action: Action) {
         ...state,
         windows: state.windows.filter(
           (window: Window) => window.uuid !== action.payload.id
+        ),
+        error: null,
+        isError: false,
+        loading: false,
+      };
+    case DELETE_SUB_WINDOW_SUCCESS:
+      return {
+        ...state,
+        windows: state.windows.map((window: any) =>
+          window.uuid === action.payload.windowId
+            ? {
+                ...window,
+                subWindows: window.subWindows.filter(
+                  (sub: any) => sub.uuid !== action.payload.data.uuid
+                ),
+              }
+            : window
         ),
         error: null,
         isError: false,

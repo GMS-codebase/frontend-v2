@@ -150,7 +150,7 @@ const AddEditSector = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[40vw] max-h-[90vh] overflow-y-auto relative bg-white rounded-3xl p-16 flex flex-col items-center">
+      <div className="w-[40vw] max-h-[90vh] overflow-y-auto modal relative bg-white rounded-3xl p-16 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeAddEditSector}
@@ -167,7 +167,7 @@ const AddEditSector = ({
               : "Provide your Sector details to create a new Sector."}
           </h2>
         </div>
-        <div className="w-full flex flex-col items-center mt-10 overflow-hidden">
+        <div className="w-full flex flex-col items-center mt-10 ">
           <form
             onSubmit={handleSubmit}
             className="w-full flex flex-col gap-2 px-2"
@@ -241,7 +241,7 @@ const AddEditSector = ({
                   value={formData.description}
                   placeholder="Add description"
                   onChange={handleChange}
-                  className="mt-1 block w-full pb-28 pt-2 pl-8 px-3  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
+                  className="mt-1 block w-full pb-28  pt-2 pl-8 px-3  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
                 />
               </div>
               {errors.description && (
