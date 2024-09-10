@@ -101,7 +101,7 @@ const CreateApplication = ({
         color: "green",
       });
       router.push(
-        `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`
+        `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`,
       );
       closeCreatingApplication();
     } catch (error: any) {

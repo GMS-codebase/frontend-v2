@@ -43,30 +43,38 @@ const AddContract: React.FC<AddContractProps> = ({
       applicantId: data.applicant.uuid,
       applicationId: data?.uuid,
     };
-
-    try {
-      const res = await authorizedApi.post("/contracts", newData, {
+    console.log(JSON.stringify(formData.file));
+    const submitForm = new FormData();
+    submitForm.append("name", newData.name);
+    submitForm.append("contract", newData.contract as Blob);
+    submitForm.append("applicantId", newData.applicantId);
+    submitForm.append("applicationId", newData.applicationId);
+    authorizedApi
+      .post("/contracts", submitForm, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+      })
+      .then((res) => {
+        notifications.show({
+          message: res?.data?.message,
+          color: "blue",
+        });
+        setFormData({
+          file: null,
+          name: "",
+        });
+        closeAddContract();
+      })
+      .catch((err: any) => {
+        notifications.show({
+          message: err.response?.data?.message ?? "Failed to create contract",
+          color: "red",
+        });
+      })
+      .finally(() => {
+        setLoading(false);
       });
-      notifications.show({
-        message: res?.data?.message,
-        color: "blue",
-      });
-      setFormData({
-        file: null,
-        name: "",
-      });
-      closeAddContract();
-    } catch (err: any) {
-      notifications.show({
-        message: err.response?.data?.message ?? "Failed to create contract",
-        color: "red",
-      });
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (

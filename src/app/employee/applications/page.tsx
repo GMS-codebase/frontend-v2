@@ -17,7 +17,7 @@ import { useSelector } from "react-redux";
 const Page = () => {
   const [isOpenCall, { open, close }] = useDisclosure(false);
   const { applications, loading } = useSelector(
-    (state: any) => state.applications
+    (state: any) => state.applications,
   );
   const filtersContainerRef = useRef<HTMLDivElement>(null);
 
