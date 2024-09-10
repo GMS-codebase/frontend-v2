@@ -15,9 +15,16 @@ import AddSector from "@/components/Modals/AddSector";
 import { useDisclosure } from "@mantine/hooks";
 import AddSectorTrade from "@/components/Modals/AddSectorTrade";
 import UpdateSector from "@/components/Modals/UpdateSector";
+import { useSelector } from "react-redux";
+import { useParams } from "next/navigation";
 
 const Page = () => {
   const [isAddSector, { open, close }] = useDisclosure(false);
+  const sectors = useSelector((state: any)=> state.sectors);
+  const {id} = useParams();
+  console.log(id);
+  const sector = sectors.sectors.find((sector: any)=> sector.uuid === id);
+  console.log(sectors);
   const [isUpdateSector, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
 
@@ -89,7 +96,7 @@ const Page = () => {
           <div className="flex gap-2 px-10">
             <div className="flex flex-col gap-6 justify-start items-start ">
               <h1 className="font-bold text-xl">
-                SDF CALL 5 FOR GRANT PROPOSALS
+                {sector?.name} ({sector?.shortname})
               </h1>
             </div>
           </div>
@@ -128,7 +135,7 @@ const Page = () => {
             </div>
 
             <div className="w-full h-full">
-              <DataTable columns={columns} data={data.slice(0, 5)} />
+              <DataTable columns={columns} data={sectors.sectors.trades ?? []} noDataMessage="No Trades For This Sector"/>
             </div>
           </div>
         </div>
