@@ -10,18 +10,28 @@ import { ColumnDef } from "@tanstack/react-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { DataTable } from "@/components/core/data-table";
 import { tradesData as data } from "@/utils/constants/dummy";
-import { CiSearch } from "react-icons/ci";
+import { CiEdit, CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddWindowSubwindow from "@/components/Modals/windows/AddWindowSubwindow";
+import AddEditWindowSubwindow from "@/components/Modals/windows/AddEditWindowSubwindow";
 import UpdateWindow from "@/components/Modals/UpdateWindow";
 import { useSelector } from "react-redux";
 import { useParams } from "next/navigation";
 import { authorizedApi } from "@/utils/api";
 import AddEditWindow from "@/components/Modals/windows/AddEditWindow";
+import { Menu } from "@mantine/core";
+import { FiEye } from "react-icons/fi";
+import { RiDeleteBinLine } from "react-icons/ri";
+import DeleteModal from "@/components/Modals/DeleteModal";
 
 const Page = () => {
-  const [isAddSubWindow, { open: openAddSubWindow, close: closeAddSubWindow }] =
-    useDisclosure(false);
+  const [
+    isAddEditSubWindow,
+    { open: openAddEditSubWindow, close: closeAddEditSubWindow },
+  ] = useDisclosure(false);
+  const [
+    isDeleteSubWindow,
+    { open: openDeleteSubWindow, close: closeDeleteSubWindow },
+  ] = useDisclosure(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { id: windowId } = useParams();
   const [isUpdateWindow, { open: openUpdate, close: closeUpdate }] =
@@ -33,6 +43,7 @@ const Page = () => {
   const filteredSubWindows = window?.subWindows.filter((subW: any) =>
     subW.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  const [selectedSubWindow, setSelectedSubWindow] = useState<any>();
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -54,16 +65,56 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <div>
-          <button
-            style={{
-              background:
-                "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-            }}
-            className="p-3 rounded-full border text-white hover:bg-red-100"
-          >
-            <HiDotsHorizontal size={25} color="white" />
-          </button>
+        <div className="">
+          <Menu shadow="lg" width={300}>
+            <Menu.Target>
+              <button
+                style={{
+                  background:
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+                }}
+                className="p-3 rounded-full border text-white hover:bg-red-100"
+              >
+                <HiDotsHorizontal size={25} color="white" />
+              </button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>
+                <h1 className="text-lg">Actions</h1>
+              </Menu.Label>
+              <Menu.Divider />
+              <Menu.Item className="bg-[#F0F0F0]">
+                <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+                  <FiEye size={21} color="#576074" />
+                  View
+                </div>
+              </Menu.Item>
+              <Menu.Item>
+                <div
+                  onClick={() => {
+                    setSelectedSubWindow(row.original);
+                    openAddEditSubWindow();
+                  }}
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <CiEdit size={21} color="#576074" />
+                  Edit
+                </div>
+              </Menu.Item>
+              <Menu.Item>
+                <div
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                  onClick={() => {
+                    setSelectedSubWindow(row.original);
+                    openDeleteSubWindow();
+                  }}
+                >
+                  <RiDeleteBinLine size={21} color="#576074" />
+                  Remove
+                </div>
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </div>
       ),
     },
@@ -134,7 +185,7 @@ const Page = () => {
                 </div>
 
                 <button
-                  onClick={openAddSubWindow}
+                  onClick={openAddEditSubWindow}
                   className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
                 >
                   <span className="text-2xl">
@@ -160,14 +211,28 @@ const Page = () => {
             </div>
           </div>
         </div>
-        <AddWindowSubwindow
-          isOpenAddWindowSubwindow={isAddSubWindow}
-          closeAddWindowSubwindow={closeAddSubWindow}
+        <AddEditWindowSubwindow
+          isOpenAddEditWindowSubwindow={isAddEditSubWindow}
+          closeAddEditWindowSubwindow={() => {
+            closeAddEditSubWindow();
+            selectedSubWindow && setSelectedSubWindow(null);
+          }}
+          defaultData={selectedSubWindow}
         />
         <AddEditWindow
           isOpenAddEditWindow={isUpdateWindow}
           closeAddEditWindow={closeUpdate}
           defaultData={window}
+        />
+        <DeleteModal
+          type="subwindows"
+          closeModal={() => {
+            closeDeleteSubWindow();
+            selectedSubWindow && setSelectedSubWindow(null);
+          }}
+          id={selectedSubWindow?.uuid}
+          isOpenModal={isDeleteSubWindow}
+          windowId={window.uuid}
         />
       </div>
     </div>

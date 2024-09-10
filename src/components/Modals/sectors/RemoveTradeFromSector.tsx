@@ -8,42 +8,17 @@ import deleteSvg from "@/assets/Vectors/delete.svg";
 import { notifications } from "@mantine/notifications";
 import { useDispatch } from "react-redux";
 import { authorizedApi } from "@/utils/api";
-import {
-  DELETE_SUB_WINDOW_SUCCESS,
-  DELETE_WINDOW_SUCCESS,
-} from "@/actions/WindowsActions";
-import { DELETE_SECTOR_SUCCESS } from "@/actions/SectorsActions";
-import { DELETE_TRADE_SUCCESS } from "@/actions/TradesActions";
-import { DELETE_CALL_SUCCESS } from "@/actions/CallsActions";
 
-// Redux action mappings
-const actionMappings = {
-  windows: DELETE_WINDOW_SUCCESS,
-  sectors: DELETE_SECTOR_SUCCESS,
-  trades: DELETE_TRADE_SUCCESS,
-  subwindows: DELETE_SUB_WINDOW_SUCCESS,
-  calls: DELETE_CALL_SUCCESS,
-};
-
-const routeMappings = {
-  windows: "/window",
-  sectors: "/Sectors",
-  trades: "/trade",
-  subwindows: "/sub-window",
-  calls: "/call",
-};
-const DeleteModal = ({
+const RemoveTradeFromSectorModal = ({
   isOpenModal,
   closeModal,
   id,
-  windowId,
-  type,
+  sectorId,
 }: {
   isOpenModal: boolean;
   closeModal: () => void;
   id: string;
-  windowId?: string;
-  type: "windows" | "sectors" | "trades" | "subwindows" | "calls";
+  sectorId?: string;
 }) => {
   const dispatch = useDispatch();
   const [deleteId, setDeleteId] = useState(id);
@@ -56,24 +31,24 @@ const DeleteModal = ({
   const onDelete = () => {
     setLoading(true);
     authorizedApi
-      .delete(`${routeMappings[type]}/${deleteId}`)
+      .delete(`/Sectors/${deleteId}`)
       .then(() => {
         notifications.show({
-          message: `${capitalize(type.slice(0, -1))} is deleted successfully`,
+          message: `Trade is removed successfully`,
           color: "blue",
         });
-        dispatch({
-          type: actionMappings[type],
-          payload:
-            type === "subwindows" ? { windowId, data: { uuid: id } } : { id },
-        });
+        // dispatch({
+        //   type: ,
+        //   payload:
+        //     type === "subwindows" ? { windowId, data: { uuid: id } } : { id },
+        // });
         closeModal();
       })
       .catch((err) => {
         notifications.show({
           message:
             err.response?.data?.message ??
-            `Failed to delete ${capitalize(type.slice(0, -1))}!`,
+            `Failed to remove trade from sector!`,
           color: "red",
         });
       })
@@ -118,12 +93,10 @@ const DeleteModal = ({
           <div className="w-full flex flex-col items-center">
             <Image src={deleteSvg} alt="vector" width={200} height={50} />
             <h1 className="text-2xl font-extrabold text-center">
-              Are you sure you want to delete this{" "}
-              {capitalize(type.slice(0, -1))}?
+              Are you sure you want to remove this trade from the sector
             </h1>
             <h2 className="text-[#000F2369] text-lg font-medium text-center">
-              All the data concerned with this {capitalize(type.slice(0, -1))}{" "}
-              might be deleted or harmed
+              All the data concerned with this might be deleted or harmed
             </h2>
           </div>
           <div className="w-full flex justify-center mt-4 space-x-4 p-6">
@@ -140,7 +113,7 @@ const DeleteModal = ({
               disabled={loading}
               className="w-full px-4 py-3 bg-[#C50D0DF2] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Loading" : `Delete ${capitalize(type.slice(0, -1))}`}
+              {loading ? "Loading" : `Remove`}
             </button>
           </div>
         </div>
@@ -149,4 +122,4 @@ const DeleteModal = ({
   );
 };
 
-export default DeleteModal;
+export default RemoveTradeFromSectorModal;
