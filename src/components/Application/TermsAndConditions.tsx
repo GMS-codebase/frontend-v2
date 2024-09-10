@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
 
@@ -13,8 +12,8 @@ const TermsAndConditions = () => {
   const handleDecision = async (decision: string) => {
     setLoading(decision === "decline");
     try {
-      await authorizedApi.patch(`/applications/terms_conditions/${id}`, {
-        decision,
+      await authorizedApi.put(`/contracts/${id}/terms-conditions`, {
+        accept: decision === "accept",
       });
       notifications.show({
         message: `Terms ${
@@ -22,7 +21,7 @@ const TermsAndConditions = () => {
         } successfully!`,
         color: "blue",
       });
-      router.push("/next-page"); // Adjust the redirect path as needed
+      router.push("/applicant/applications");
     } catch (err: any) {
       notifications.show({
         message:

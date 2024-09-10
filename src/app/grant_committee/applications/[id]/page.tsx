@@ -18,15 +18,21 @@ import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import { useDisclosure } from "@mantine/hooks";
 import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
+import DueDetails from "@/components/Modals/DueDiligence";
+import DueDiligenceModal from "@/components/Modals/DueDiigence";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id
+    (application: any) => application.uuid === id,
   )[0];
+  console.log(application);
   const [loading, setLoading] = useState(false);
+  const [isOpenAddDue, setIsOpenAddDue] = useState(false);
+  const openAddDue = () => setIsOpenAddDue(true);
+  const closeAddDue = () => setIsOpenAddDue(false);
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
@@ -230,20 +236,27 @@ const Page = () => {
               </div>
             )}
           </div>
-          {application?.currentStage === "DUE_DILIGENCY" && (
-            <div className="flex flex-col gap-2">
-              <h3 className="font-bold">DueDiligency Stage</h3>
-              <div className="font-medium bg-[#C50000] bg-opacity-10 text-[#C50000] w-fit justify-start items-center rounded-full px-4 py-2">
-                Proposal Rejected
-              </div>
-              <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
-                <span>
-                  <SolarEyeLinear />
-                </span>
-                <p>details</p>
-              </div>
+          <div className="flex flex-col gap-2">
+            <h3 className="font-bold">Due Diligence Stage</h3>
+            <div
+              className={`font-medium  ${application?.status === "APPROVED" || application?.currentStage !== "EVALUATION" ? "bg-[#4BC500] text-[#4BC500]" : application?.status === "PENDING" ? "bg-red-600 text-red-600" : ""} bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+            >
+              {application?.currentStage !== "EVALUATION" &&
+              application?.currentStage !== "DUE_DILIGENCY"
+                ? "APPROVED"
+                : application?.status}
             </div>
-          )}
+            {application?.currentStage !== "DUE_DILIGENCY" && (
+              <div className="flex flex-col gap-2 mt-4">
+                <button
+                  onClick={openAddDue}
+                  className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                >
+                  View details
+                </button>
+              </div>
+            )}
+          </div>
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold">Grant Committee</h3>
             <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
@@ -270,6 +283,11 @@ const Page = () => {
           </div>
         </div>
       </div>
+      <DueDiligenceModal
+        application={application}
+        opened={isOpenAddDue}
+        close={closeAddDue}
+      />
       <MakeGrantCommitteeDecision
         applicationId={id}
         closeModal={closeGrantCommitteeMakeDecision}
@@ -289,7 +307,7 @@ const Page = () => {
                 (decision: any, index: any) => ({
                   evaluator: application.evaluators[index],
                   evaluationDecision: decision,
-                })
+                }),
               )
             : []
         }

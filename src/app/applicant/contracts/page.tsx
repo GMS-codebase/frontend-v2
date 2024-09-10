@@ -19,7 +19,8 @@ const Page = () => {
 
   useEffect(() => {
     // Simulating an API call
-    axios.get('/api/contracts') // Replace with your actual API endpoint
+    axios
+      .get("/api/contracts") // Replace with your actual API endpoint
       .then((response) => {
         setData(response.data);
         setLoading(false);

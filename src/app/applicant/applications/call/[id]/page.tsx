@@ -25,9 +25,9 @@ const Page = () => {
   const contacts = useSelector((state: any) => state.contacts);
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
   const { myApplications } = useSelector((state: any) => state.applications);
-  console.log(myApplications)
+  console.log(myApplications);
   const existingApplication = myApplications.find(
-    (app: any) => app?.call?.uuid === callId
+    (app: any) => app?.call?.uuid === callId,
   );
   const [
     isOpenCreateProfile,
@@ -52,7 +52,7 @@ const Page = () => {
       openCreateApplication();
     } else {
       router.push(
-        `/applicant/applications/call/${callId}/${existingApplication.uuid}/apply`
+        `/applicant/applications/call/${callId}/${existingApplication.uuid}/apply`,
       );
     }
   };
