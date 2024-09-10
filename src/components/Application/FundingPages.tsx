@@ -762,7 +762,7 @@ export const Staff = ({
                       ({
                         ...prev,
                         available: selectedOption,
-                      } as any)
+                      }) as any,
                   )
                 }
                 data={[

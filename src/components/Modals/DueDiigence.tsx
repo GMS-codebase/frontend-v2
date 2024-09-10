@@ -8,7 +8,7 @@ const DueDiligenceModal = ({
   close,
   isEditing,
   onSaveComment,
-  application
+  application,
 }: {
   opened: boolean;
   close: () => void;
@@ -53,7 +53,11 @@ const DueDiligenceModal = ({
             <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
               Decision
             </p>
-            <p className="mt-2">{application?.currentStage === "GRANT_COMMITTEE" ? "APPROVED" : application?.status}</p>
+            <p className="mt-2">
+              {application?.currentStage === "GRANT_COMMITTEE"
+                ? "APPROVED"
+                : application?.status}
+            </p>
           </div>
         </div>
         <div className="mt-5 w-full">
