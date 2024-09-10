@@ -72,7 +72,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const handleArrayOfObjectsChange = (
     inputName: string,
     value: any,
-    index: number
+    index: number,
   ) => {
     setData &&
       setData((prev: any) => {

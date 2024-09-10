@@ -50,7 +50,7 @@ const LoginModal = ({
           default:
             navigate.push("/");
         }
-      }
+      },
     );
     setLoading(false);
   };

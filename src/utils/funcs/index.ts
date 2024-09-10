@@ -111,7 +111,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -187,11 +187,7 @@ export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
     .then((res) => {
       dispatch({
         type: GET_CONTRACTS_SUCCESS,
-        payload: res.data.data.data.data,
-      });
-      dispatch({
-        type: GET_CONTRACTS_SUCCESS,
-        payload: res.data.data.data.data,
+        payload: res.data.data,
       });
     })
     .catch((err) => {
@@ -213,9 +209,7 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplicationsForContracts = async (
-  
   dispatch: Dispatch<UnknownAction>,
-
 ) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
@@ -252,12 +246,14 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/application/all-application")
     .then((res) => {
+      console.log(res.data.data);
       dispatch({
         type: GET_MY_APPLICATIONS_SUCCESS,
         payload: res.data.data.data,
       });
     })
     .catch((err) => {
+      console.log(err);
       dispatch({
         type: GET_MY_APPLICATIONS_ERROR,
         payload: err.response.data.error,
