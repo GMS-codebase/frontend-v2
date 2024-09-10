@@ -1,5 +1,4 @@
 import { useDisclosure } from "@mantine/hooks";
-``;
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Menu, Button, Text, rem } from "@mantine/core";
 import { FiEye } from "react-icons/fi";
@@ -14,10 +13,6 @@ const ContractsActions = ({
   setIsContract: (employee: any) => void;
   data: any;
 }) => {
-<<<<<<< HEAD
-  console.log(data);
-=======
->>>>>>> 66108b14b6a40d0aac19a9e5f4c972fb75c50831
   return (
     <div className="">
       <Menu shadow="lg" width={300}>

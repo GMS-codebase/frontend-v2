@@ -2,10 +2,7 @@ import { useState } from "react";
 import { SolarEyeLinear } from "../core/icons";
 import Project from "@/components/ApplicantDetails/Project";
 import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
-import EvalDetails from "@/components/Modals/evalDetails";
 import EditEvalModal from "@/components/Modals/EditEvalModal";
-import DueDetail from "@/components/Modals/Duediligency";
-import DecisionDetails from "@/components/Modals/DecisionDetails";
 import DueDetails from "@/components/Modals/DueDiigence";
 
 const MakeDecisions = () => {
@@ -131,12 +128,12 @@ const MakeDecisions = () => {
         isEditing={isEditing}
         onSaveComment={handleSaveComment}
       />
-      <DecisionDetails
+      {/* <DecisionDetails
         opened={isOpenAddEvals}
         close={closeAddEvals}
         isEditing={isEditing}
         onSaveComment={handleSaveComment}
-      />
+      /> */}
     </div>
   );
 };
