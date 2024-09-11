@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   SolarPen2Bold,
   SolarAddFolderBold,
@@ -13,26 +13,45 @@ import { tradesData as data } from "@/utils/constants/dummy";
 import { CiSearch } from "react-icons/ci";
 import AddSector from "@/components/Modals/AddSector";
 import { useDisclosure } from "@mantine/hooks";
-import AddSectorTrade from "@/components/Modals/AddSectorTrade";
+import AddSectorTrade from "@/components/Modals/sectors/AddSectorTrade";
 import UpdateSector from "@/components/Modals/UpdateSector";
 import { useSelector } from "react-redux";
 import { useParams } from "next/navigation";
+import { Menu } from "@mantine/core";
+import { RiDeleteBinLine } from "react-icons/ri";
+import { Trade } from "@/types";
+import RemoveTradeFromSectorModal from "@/components/Modals/sectors/RemoveTradeFromSector";
+import AddEditSector from "@/components/Modals/sectors/AddEditSector";
 
 const Page = () => {
+  const { id } = useParams<{ id: string }>();
+  const [searchQuery, setSearchQuery] = useState("");
   const [isAddSector, { open, close }] = useDisclosure(false);
-  const sectors = useSelector((state: any)=> state.sectors);
-  const {id} = useParams();
-  console.log(id);
-  const sector = sectors.sectors.find((sector: any)=> sector.uuid === id);
-  console.log(sectors);
+  const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
+  const [isRemoveTrade, { open: openRemoveTrade, close: closeRemoveTrade }] =
+    useDisclosure(false);
   const [isUpdateSector, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
+  const sectors = useSelector((state: any) => state.sectors);
+  const sector = sectors.sectors.filter((sec: any) => sec.uuid === id)[0];
+  const filteredTrades = sector?.trades?.filter(
+    (tr: any) =>
+      tr.title.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+      tr.shortname.toLowerCase().includes(searchQuery?.toLowerCase())
+  );
 
-  const columns: ColumnDef<any>[] = [
+  const columns: ColumnDef<Trade>[] = [
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
+      cell: ({ row }) => <div className="w-full">{row.original?.title}</div>,
+    },
+    {
+      accessorKey: "shortname",
+      header: "Short Name",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.shortname}</div>
+      ),
     },
     {
       accessorKey: "description",
@@ -49,16 +68,38 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <div>
-          <button
-            style={{
-              background:
-                "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-            }}
-            className="p-3 rounded-full border text-white hover:bg-red-100"
-          >
-            <HiDotsHorizontal size={25} color="white" />
-          </button>
+        <div className="">
+          <Menu shadow="lg" width={300}>
+            <Menu.Target>
+              <button
+                style={{
+                  background:
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+                }}
+                className="p-3 rounded-full border text-white hover:bg-red-100"
+              >
+                <HiDotsHorizontal size={25} color="white" />
+              </button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>
+                <h1 className="text-lg">Actions</h1>
+              </Menu.Label>
+              <Menu.Divider />
+              <Menu.Item>
+                <div
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                  onClick={() => {
+                    setSelectedTrade(row.original);
+                    openRemoveTrade();
+                  }}
+                >
+                  <RiDeleteBinLine size={21} color="#576074" />
+                  Remove
+                </div>
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </div>
       ),
     },
@@ -79,25 +120,28 @@ const Page = () => {
               <div>Edit Sector</div>
             </button>
           </div>
-          <div className="flex justify-between w-3/5  font-semibold px-10">
-            <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-              <span className="">
-                <SolarAddFolderBold />
-              </span>
-              <div>Title</div>
+          <div className="px-8 space-y-5">
+            <div className="space-y-2">
+              <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center w-fit">
+                <span className="">
+                  <SolarAddFolderBold />
+                </span>
+                <div>Title</div>
+              </div>
+              <div className="flex flex-col gap-6 justify-start items-start ">
+                <h1 className="font-bold text-xl">{sector?.name}</h1>
+              </div>
             </div>
-            <div className="flex gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center ">
-              <span className="">
-                <SolarClockSquareBold />
-              </span>
-              <div>Description</div>
-            </div>
-          </div>
-          <div className="flex gap-2 px-10">
-            <div className="flex flex-col gap-6 justify-start items-start ">
-              <h1 className="font-bold text-xl">
-                {sector?.name} ({sector?.shortname})
-              </h1>
+            <div className="space-y-2">
+              <div className="flex gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center w-fit ">
+                <span className="">
+                  <SolarClockSquareBold />
+                </span>
+                <div>Description</div>
+              </div>
+              <div className="flex flex-col gap-6 justify-start items-start ">
+                <h1 className="font-semibold">{sector?.description}</h1>
+              </div>
             </div>
           </div>
           <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
@@ -115,6 +159,8 @@ const Page = () => {
                   </span>
                   <input
                     name="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
                     placeholder="Search"
                   />
@@ -133,9 +179,16 @@ const Page = () => {
                 </button>
               </div>
             </div>
-
             <div className="w-full h-full">
-              <DataTable columns={columns} data={sectors.sectors.trades ?? []} noDataMessage="No Trades For This Sector"/>
+              <DataTable
+                columns={columns}
+                data={filteredTrades || []}
+                noDataMessage={
+                  searchQuery
+                    ? `No Trades in this sector matching ${searchQuery}`
+                    : "No Trades in this sector yet"
+                }
+              />
             </div>
           </div>
         </div>
@@ -143,10 +196,16 @@ const Page = () => {
           isOpenAddSectorTrade={isAddSector}
           closeAddSectorTrade={close}
         />
-        <UpdateSector
-          sector={{}}
-          isOpenUpdateSector={isUpdateSector}
-          closeUpdateSector={closeUpdate}
+        <RemoveTradeFromSectorModal
+          id={selectedTrade?.uuid as any}
+          closeModal={closeRemoveTrade}
+          isOpenModal={isRemoveTrade}
+          sectorId={sector?.uuid}
+        />
+        <AddEditSector
+          defaultData={sector}
+          closeAddEditSector={closeUpdate}
+          isOpenAddEditSector={isUpdateSector}
         />
       </div>
     </div>
