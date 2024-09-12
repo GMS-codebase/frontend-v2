@@ -97,7 +97,7 @@ const Page = () => {
           <Contracts data={data} loading={loading} />
         </div>
       </div>
-      <AddTrade isOpenAddTrade={isOpenTrade} closeAddTrade={close} />
+      <AddTrade isOpenAddEditTrade={isOpenTrade} closeAddEditTrade={close} />
     </div>
   );
 };

@@ -78,22 +78,24 @@ const Page = () => {
   const { sectors } = useSelector((state: any) => state.sectors);
   const [filteredApplicants, setFilteredApplicants] = useState([]);
   const {applicants, loading: applicantsLoading} = useSelector((state: any) => state.applicants);
+  console.log("applicants", applicants);
   console.log(sectors, calls, windows);
   useEffect(()=>{
-    setFilteredApplicants(applicants.applicants);
+    setFilteredApplicants(applicants);
   },[applicants])
 
-  useEffect(()=>{
-    authorizedApi.get(`/applicant/filter?callId=${formData.filters.call}&windowId==${formData.filters.window}&sectorId==${formData.filters.sector}&stage=${formData.filters.stage}`)
-      .then((response)=>{
-        console.log("response ==> ",response)
-        setFilteredApplicants(response.data.data == "{}" ? [] : response.data.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(()=> setLoading(false));
-  },[formData.filters]);
+  // useEffect(()=>{
+  //   authorizedApi.get(`/applicant/filter?callId=${formData.filters.call}&windowId==${formData.filters.window}&sectorId==${formData.filters.sector}&stage=${formData.filters.stage}`)
+  //     .then((response)=>{
+  //       console.log("response ==> ",response)
+  //       setFilteredApplicants(response.data.data == "{}" ? [] : response.data.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     })
+  //     .finally(()=> setLoading(false));
+  // },[formData.filters]);
+
   const handleSubmit = (event: any) => {
     event.preventDefault();
     setLoading(true);
@@ -284,15 +286,15 @@ const Page = () => {
           />
         </div>
       </div>
-      <div className="w-full h-full">
+      {/* <div className="w-full h-full">
       {applicantsLoading && loading ? (
           <TableSkeleton columns={columns} />
         ) : applicants?.length === 0 ? (
           <h1 className="w-full text-center">No Applicants Found!</h1>
         ) : (
-          <DataTable columns={columns} data={applicants?.applicants ?? []} />
+          <DataTable columns={columns} data={applicants ?? []} />
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

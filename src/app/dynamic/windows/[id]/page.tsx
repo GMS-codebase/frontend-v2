@@ -12,7 +12,7 @@ import { DataTable } from "@/components/core/data-table";
 import { tradesData as data } from "@/utils/constants/dummy";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddWindowSubwindow from "@/components/Modals/AddWindowSubwindow";
+import AddEditWindowSubwindow from "@/components/Modals/windows/AddEditWindowSubwindow";
 import UpdateWindow from "@/components/Modals/UpdateWindow";
 import { useSelector } from "react-redux";
 import { useParams } from "next/navigation";
@@ -153,10 +153,10 @@ const Page = () => {
             </div>
           </div>
         </div>
-        <AddWindowSubwindow
-          setSubWindows={setSubWindows}
-          isOpenAddWindowSubwindow={isAddWindow}
-          closeAddWindowSubwindow={close}
+        <AddEditWindowSubwindow
+          defaultData={setSubWindows}
+          isOpenAddEditWindowSubwindow={isAddWindow}
+          closeAddEditWindowSubwindow={close}
         />
         <UpdateWindow
           Window={window}
