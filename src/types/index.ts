@@ -23,7 +23,7 @@ export type Sector = {
 };
 
 export type ReduxState = {
-  applications
+  applications: any;
 }
 
 export type Application = {
