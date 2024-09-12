@@ -34,7 +34,7 @@ const SectorsActions = ({
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
             <Link
-              href={"/admin/sectors/sector"}
+              href={`/admin/sectors/${sector.uuid}`}
               className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
             >
               <FiEye size={21} color="#576074" />

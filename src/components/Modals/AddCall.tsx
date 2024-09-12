@@ -10,12 +10,13 @@ import { notifications } from "@mantine/notifications";
 import { SolarCheckCircleBold } from "../core/icons";
 import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
-
+import { Calendar, DatePicker } from "@mantine/dates";
+import dayjs from "dayjs";
 type FormData = {
   title: string;
   description: string;
-  startDate: string;
-  endDate: string;
+  startDate: any;
+  endDate: any;
   appealDays: string;
   windows: any;
   sectors: any;
@@ -36,6 +37,7 @@ const AddCall = ({
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSelectors, setSelectedSelectors] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
@@ -106,6 +108,7 @@ const AddCall = ({
       windows: selectedWindows,
     });
     const submitData = new FormData();
+    setLoading(true);
     submitData.append("title", formData.title);
     submitData.append("description", formData.description);
     submitData.append("appealDays", formData.appealDays);
@@ -135,7 +138,8 @@ const AddCall = ({
           message: err.response?.data?.message ?? "Failed to create call!",
           color: "red",
         });
-      });
+      })
+      .finally(()=> setLoading(false));
   };
 
   return (
@@ -146,7 +150,7 @@ const AddCall = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[80vh] h-fit relative bg-white rounded-3xl pt-10 pb-10 flex flex-col items-center">
+      <div className="w-[80vh] h-fit relative bg-white rounded-3xl pt-10 pb-6 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeAddCall}
@@ -253,7 +257,7 @@ const AddCall = ({
                       id="attachment"
                       type="file"
                       name="attachment"
-                      accept=".pdf"
+                      // accept=".pdf"
                       onChange={handleChange}
                       style={{ display: "none" }}
                       className="content-none"
@@ -296,20 +300,21 @@ const AddCall = ({
                       Start Date
                     </label>
                     <div className="w-full relative">
-                      <span className="absolute left-2 top-[10px]">
-                        <CalendarMinimalistic />
-                      </span>
-                      <input
-                        type="date"
-                        name="startDate"
-                        value={formData.startDate}
-                        onChange={handleChange}
-                        className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        required
+                    <DatePicker
+                        minDate={new Date()}
+                        value={formData.startDate ? new Date(formData.startDate) : null}
+                        onChange={(date: Date | null) => {
+                          const formattedDate = date
+                            ? dayjs(date).format("YYYY-MM-DD")
+                            : "";
+                          setFormData((prev) => ({
+                            ...prev,
+                            startDate: formattedDate,
+                          }));
+                        }}
                       />
                     </div>
                   </div>
-
                   <div className="w-1/2">
                     <label
                       htmlFor="endDate"
@@ -318,16 +323,18 @@ const AddCall = ({
                       End Date
                     </label>
                     <div className="w-full relative">
-                      <span className="absolute left-2 top-[10px]">
-                        <CalendarMinimalistic />
-                      </span>
-                      <input
-                        type="date"
-                        name="endDate"
-                        value={formData.endDate}
-                        onChange={handleChange}
-                        className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        required
+                    <DatePicker
+                        minDate={formData.startDate ? new Date(formData.startDate) : undefined}
+                        value={formData.endDate ? new Date(formData.endDate) : null}
+                        onChange={(date: Date | null) => {
+                          const formattedDate = date
+                            ? dayjs(date).format("YYYY-MM-DD")
+                            : "";
+                          setFormData((prev) => ({
+                            ...prev,
+                            endDate: formattedDate,
+                          }));
+                        }}
                       />
                     </div>
                   </div>
@@ -450,7 +457,7 @@ const AddCall = ({
                     />
                   </div>
                 </div>
-                <div className="w-full flex justify-center mt-4 space-x-4">
+                <div className="w-full flex justify-center mt-4 space-x-4 pb-3">
                   <button
                     type="button"
                     onClick={prevStep}
@@ -460,9 +467,10 @@ const AddCall = ({
                   </button>
                   <button
                     onClick={handleSubmit}
+                    disabled={loading}
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                    Create Call
+                    {loading ? "Creating Call . . ." : "Creating Call"}
                   </button>
                 </div>
               </div>

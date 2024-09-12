@@ -6,9 +6,10 @@ import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { tradesData as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
-import AddTrade from "@/components/Modals/AddTrade";
+import AddTrade from "@/components/Modals/trades/AddEditTrade";
 import { useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
+import AddEditTrade from "@/components/Modals/trades/AddEditTrade";
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
   const trades = useSelector((state: any) => state.trades);
@@ -82,7 +83,7 @@ const Page = () => {
           <DataTable columns={columns} data={trades.trades ?? []} />
         </div>
       )}
-      <AddTrade isOpenAddTrade={isOpenTrade} closeAddTrade={close} />
+      <AddEditTrade isOpenAddEditTrade={isOpenTrade} closeAddEditTrade={close} />
     </div>
   );
 };

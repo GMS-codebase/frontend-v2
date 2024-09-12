@@ -83,7 +83,7 @@ const AddSector = ({
           <div className="w-4/5 flex flex-col items-center mt-10 overflow-hidden">
             <form
               onSubmit={handleSubmit}
-              className="w-full h-[60vh] overflow-y-auto flex flex-col gap-2 px-2"
+              className="w-full overflow-y-auto flex flex-col gap-2 px-2"
             >
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
@@ -156,30 +156,8 @@ const AddSector = ({
                   />
                 </div>
               </div>
-              <div className="">
-                <label
-                  htmlFor="description"
-                  className="block text-lg font-bold text-gray-700"
-                >
-                  Description
-                </label>
-                <div className="w-full relative">
-                  <span className="absolute left-2 top-[10px]">
-                    <Subtitles />
-                  </span>
-                  <input
-                    type="text"
-                    name="description"
-                    value={formData.description}
-                    placeholder="Add description"
-                    onChange={handleChange}
-                    className="mt-1 block w-full pb-28 pt-2 pl-8 px-3  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
-                    required
-                  />
-                </div>
-              </div>
 
-              <div className="w-full flex justify-center mt-4 space-x-4">
+              <div className="w-full flex justify-center mt-4 pb-2 space-x-4">
                 <button
                   type="button"
                   onClick={closeAddSector}
