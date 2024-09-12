@@ -273,7 +273,7 @@ const Page = () => {
           )}
         </button>
       </form>
-      <div className="relative  w-full my-5 flex justify-between">
+      {/* <div className="relative  w-full my-5 flex justify-between">
         <h1 className="font-bold text-xl">Concerned Applicants</h1>
         <div className="relative  w-[20rem]">
           <span className="absolute top-4 left-4">
@@ -285,7 +285,7 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-      </div>
+      </div> */}
       {/* <div className="w-full h-full">
       {applicantsLoading && loading ? (
           <TableSkeleton columns={columns} />
