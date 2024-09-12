@@ -127,7 +127,7 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/Sectors")
     .then((res) => {
-      dispatch({ type: GET_SECTORS_SUCCESS, payload: res.data.data });
+      dispatch({ type: GET_SECTORS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
       dispatch({ type: GET_SECTORS_ERROR, payload: err.response.data.error });
@@ -162,11 +162,7 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
     .then((res) => {
       dispatch({
         type: GET_APPLICANTS_SUCCESS,
-        payload: res.data.data.data.data,
-      });
-      dispatch({
-        type: GET_APPLICANTS_SUCCESS,
-        payload: res.data.data.data.data,
+        payload: res.data.data.data,
       });
     })
     .catch((err) => {
