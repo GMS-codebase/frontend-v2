@@ -11,7 +11,7 @@ import { SolarCheckCircleBold } from "../core/icons";
 import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { Calendar, DatePicker } from "@mantine/dates";
-
+import dayjs from "dayjs";
 type FormData = {
   title: string;
   description: string;
@@ -300,13 +300,21 @@ const AddCall = ({
                       Start Date
                     </label>
                     <div className="w-full relative">
-                      <span className="absolute left-2 top-[10px]">
-                        <CalendarMinimalistic />
-                      </span>
-                      <DatePicker minDate={new Date()} value={formData.startDate} onChange={(e: any)=> setFormData({...formData, startDate: e})}/>
+                    <DatePicker
+                        minDate={new Date()}
+                        value={formData.startDate ? new Date(formData.startDate) : null}
+                        onChange={(date: Date | null) => {
+                          const formattedDate = date
+                            ? dayjs(date).format("YYYY-MM-DD")
+                            : "";
+                          setFormData((prev) => ({
+                            ...prev,
+                            startDate: formattedDate,
+                          }));
+                        }}
+                      />
                     </div>
                   </div>
-
                   <div className="w-1/2">
                     <label
                       htmlFor="endDate"
@@ -315,10 +323,19 @@ const AddCall = ({
                       End Date
                     </label>
                     <div className="w-full relative">
-                      <span className="absolute left-2 top-[10px]">
-                        <CalendarMinimalistic />
-                      </span>
-                      <DatePicker minDate={formData.startDate} value={formData.endDate} onChange={(e: any)=> setFormData({...formData, endDate: e})}/>
+                    <DatePicker
+                        minDate={formData.startDate ? new Date(formData.startDate) : undefined}
+                        value={formData.endDate ? new Date(formData.endDate) : null}
+                        onChange={(date: Date | null) => {
+                          const formattedDate = date
+                            ? dayjs(date).format("YYYY-MM-DD")
+                            : "";
+                          setFormData((prev) => ({
+                            ...prev,
+                            endDate: formattedDate,
+                          }));
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
