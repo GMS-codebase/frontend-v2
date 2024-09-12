@@ -29,13 +29,10 @@ const Page = () => {
     authorizedApi
       .get(`/window/${windowId}`)
       .then((res) => {
-        console.log(res.data.data);
         setWindow(res.data?.data?.data);
         setSubWindows(res.data?.data?.data?.subWindows);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   }, [windowId]);
   // const window = windows.windows?.filter((window: any) => window.uuid === windowId)
   const columns: ColumnDef<any>[] = [

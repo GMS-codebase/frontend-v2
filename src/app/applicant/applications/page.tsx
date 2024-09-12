@@ -15,48 +15,26 @@ const Page = () => {
       accessorKey: "number",
       header: "Application number",
       cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.number?.length > 50
-            ? row.original.number.slice(0, 50) + "..."
-            : row.original.number}
-        </div>
+        <div className="truncate">{row.original.applicationNumber}</div>
       ),
     },
     {
       accessorKey: "window",
       header: "Window",
       cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.window?.length > 50
-            ? row.original.window.slice(0, 50) + "..."
-            : row.original.window}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "sector",
-      header: "sector",
-      cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.sector?.length > 50
-            ? row.original.sector.slice(0, 50) + "..."
-            : row.original.sector}
-        </div>
+        <div className="truncate">{row.original.window.title}</div>
       ),
     },
     {
       accessorKey: "currentStage",
       header: "Current Stage",
       cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.currentStage?.length > 50
-            ? row.original.currentStage.slice(0, 50) + "..."
-            : row.original.currentStage}
-        </div>
+        <div className="truncate">{row.original?.currentStage}</div>
       ),
     },
   ];
   const myApplications = useSelector((state: any) => state.applications);
+  console.log(myApplications);
 
   return (
     <div className="w-full  flex flex-col gap-4">

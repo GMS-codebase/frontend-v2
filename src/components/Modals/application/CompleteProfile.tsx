@@ -100,7 +100,6 @@ const CompleteProfile = ({
       if (!formData.cell) newErrors.cell = "Cell is required.";
       if (!formData.village) newErrors.village = "Village is required.";
     }
-    console.log(newErrors);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -115,7 +114,7 @@ const CompleteProfile = ({
     setActiveTab((current) => (current > 0 ? current - 1 : current));
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -142,9 +141,12 @@ const CompleteProfile = ({
       if (certificate) {
         submitData.append("certificate", certificate);
       }
-      console.log(submitData);
       authorizedApi
-        .put("/applicant/update/profile", submitData)
+        .put("/applicant/update/profile", submitData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
         .then((_res) => {
           notifications.show({
             message: "Profile updated successfully!",

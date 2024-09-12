@@ -13,7 +13,7 @@ import { tradesData as data } from "@/utils/constants/dummy";
 import { CiSearch } from "react-icons/ci";
 import AddSector from "@/components/Modals/AddSector";
 import { useDisclosure } from "@mantine/hooks";
-import AddSectorTrade from "@/components/Modals/AddSectorTrade";
+import AddSectorTrade from "@/components/Modals/sectors/AddSectorTrade";
 import UpdateSector from "@/components/Modals/UpdateSector";
 
 const Page = () => {

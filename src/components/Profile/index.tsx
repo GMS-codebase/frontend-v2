@@ -41,17 +41,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   const navigate = useRouter();
   const [loading, setLoading] = useState(false);
-  const handleLogout = () => {
-    dispatch({ type: LOGOUT });
-    dispatch({ type: GET_PROFILE_ERROR });
-    setLoading(true);
-    navigate.push("/");
-    notifications.show({
-      message: "Logged Out Successfully!",
-      color: "blue",
-      duration: 6000,
-    });
-  };
+
   return (
     <div className="w-full bg-white rounded-2xl ">
       {profile?.loading ? (
@@ -310,15 +300,6 @@ const Profile = () => {
                 />
               </div>
             </div>
-          </div>
-          <div className="w-full flex justify-end px-10">
-            <button
-              onClick={handleLogout}
-              type="button"
-              className="w-[43%] px-4 py-2 bg-red-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-            >
-              {loading ? <ClipLoader size={20} color="white" /> : "Logout"}
-            </button>
           </div>
         </>
       )}

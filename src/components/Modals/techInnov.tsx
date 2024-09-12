@@ -2,13 +2,18 @@ import React from "react";
 import { Modal } from "@mantine/core";
 import { IoMdClose } from "react-icons/io";
 import { FaClock, FaDownload } from "react-icons/fa";
+import { format } from "date-fns";
 
 const CallModal = ({
   opened,
   close,
+  call,
+  openLogin,
 }: {
   opened: boolean;
   close: () => void;
+  call: any;
+  openLogin: () => void;
 }) => {
   return (
     <Modal
@@ -30,27 +35,17 @@ const CallModal = ({
         </div>
 
         <div className="flex flex-col gap-3">
-          <h2 className="font-bold text-xl text-start">Tech Innovators</h2>
+          <h2 className="font-bold text-xl text-start">{call?.title}</h2>
           <div className="text-gray-400 text-start">
-            <p>
-              Lorem ipsum dolor sit amet consectetur. Cursus odio imperdiet nibh
-              ornare ac molestie. Dignissim sapien molestie adipiscing augue
-              vitae. Scelerisque morbi volutpat tellus ipsum et suspendisse
-              velit mattis. Eu aliquam arcu quisque sit. Lorem ipsum dolor sit
-              amet consectetur. Cursus odio imperdiet nibh ornare ac molestie.
-              Dignissim sapien molestie adipiscing augue vitae. Scelerisque
-              morbi volutpat tellus ipsum et suspendisse velit mattis. Eu
-              aliquam arcu quisque sit. Lorem ipsum dolor sit amet consectetur.
-              Cursus odio imperdiet nibh ornare ac molestie. Dignissim sapien
-              molestie adipiscing augue vitae. Scelerisque morbi volutpat tellus
-              ipsum et suspendisse velit mattis. Eu aliquam arcu quisque sit.
-              ipsum et suspendisse velit mattis. Eu aliquam arcu quisque sit.
-            </p>
+            <p>{call?.description}</p>
           </div>
           <div className="flex gap-4 mt-4 justify-around items-stretch">
             <div className="flex items-center gap-2  bg-[#E97E00] bg-opacity-10 px-4 py-2 rounded-full font-bold">
               <FaClock className="text-[#E97E00]" />
-              <p className="text-[#E97E00]">12th July 2024 - 31st July 2024</p>
+              <p className="text-[#E97E00]">
+                {call?.startDate && format(call?.startDate, "dd MMMM yyyy")} -{" "}
+                {call?.endDate && format(call?.endDate, "dd MMMM yyyy")}
+              </p>
             </div>
             <div className="flex items-center gap-2 text-primary bg-[#005DE908] bg-opacity-10 cursor-pointer px-4 py-2 rounded-full font-bold ">
               <FaDownload className="text-primary" />
@@ -58,13 +53,22 @@ const CallModal = ({
             </div>
           </div>
           <div className="flex gap-4 mt-4 justify-around ">
-            <div className="bg-black cursor-pointer text-white px-36 py-2 rounded-full font-bold">
+            <button
+              onClick={close}
+              className="bg-black cursor-pointer text-white px-36 py-2 rounded-full font-bold"
+            >
               {" "}
               Back
-            </div>
-            <div className="bg-primary cursor-pointer text-white px-36 py-2 rounded-full font-bold">
+            </button>
+            <button
+              onClick={() => {
+                close();
+                openLogin();
+              }}
+              className="bg-primary cursor-pointer text-white px-36 py-2 rounded-full font-bold"
+            >
               Apply
-            </div>
+            </button>
           </div>
         </div>
       </div>

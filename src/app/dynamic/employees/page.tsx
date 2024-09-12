@@ -23,7 +23,6 @@ const Page = () => {
   const [isOpenAddRole, { open: openAddRole, close: closeAddRole }] =
     useDisclosure(false);
   const employees = useSelector((state: any) => state.employees);
-  console.log(employees);
   const [isOpenEmployee, setIsOpenEmployee] = useState({
     openUpdate: false,
     openDelete: false,
@@ -77,25 +76,6 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-
-        <button
-          onClick={openAddEmployee}
-          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-        >
-          <span className="text-2xl">
-            <SolarUserPlusBold />
-          </span>
-          <h1 className="text-base font-medium text-white">New Employee</h1>
-        </button>
-        <button
-          onClick={openAddRole}
-          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-        >
-          <span className="text-2xl">
-            <SolarUserPlusBold />
-          </span>
-          <h1 className="text-base font-medium text-white">Add another role</h1>
-        </button>
       </div>
 
       {employees?.loading ? (
