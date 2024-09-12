@@ -51,7 +51,6 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
 
   const handleSubmit = async (values: any) => {
     setIsSubmitting(true);
-    console.log(form.values.report);
     const submitForm = new FormData();
     submitForm.append("title", form.values.title);
     submitForm.append("call", form.values.call);

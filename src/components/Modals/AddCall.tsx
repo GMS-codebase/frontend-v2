@@ -33,7 +33,6 @@ const AddCall = ({
   const [active, setActive] = useState(0);
   const sectors = useSelector((state: any) => state.sectors);
   const windows = useSelector((state: any) => state.windows);
-  console.log(windows);
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSelectors, setSelectedSelectors] = useState<any>([]);
@@ -61,10 +60,9 @@ const AddCall = ({
         .flatMap((window: any) =>
           window.subWindows?.map((subWindow: any) => ({
             value: subWindow.uuid,
-            label: window.title + " " + subWindow.title,
-          }))
+            label: subWindow.title,
+          })),
         ) || [];
-    console.log(subWindowData);
     return subWindowData;
   };
 
@@ -73,14 +71,14 @@ const AddCall = ({
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid)
+            selectedSubWindows.includes(subWindow.uuid),
           )
           .flatMap((subWindow: any) =>
             subWindow.sectors?.map((sector: any) => ({
               value: sector.uuid,
-              label: sector.title,
-            }))
-          ) || []
+              label: sector.name,
+            })),
+          ) || [],
     );
     return sectorData;
   };
@@ -115,14 +113,17 @@ const AddCall = ({
     submitData.append("applicationEndDate", formData.endDate);
     submitData.append("window", JSON.stringify(selectedWindows));
     submitData.append("sector", JSON.stringify(selectedSelectors));
-    submitData.append("subWindow", JSON.stringify(selectedSubWindows));
+    submitData.append("subWindows", JSON.stringify(selectedSubWindows));
     if (formData.attachment) {
       submitData.append("attachment", formData.attachment);
     }
     authorizedApi
-      .post("/call/create", submitData)
+      .post("/call/create", submitData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((res) => {
-        console.log(res.data);
         notifications.show({
           message: "Call created successfully!",
           color: "blue",
@@ -130,7 +131,6 @@ const AddCall = ({
         closeAddCall();
       })
       .catch((err) => {
-        console.log(err.response);
         notifications.show({
           message: err.response?.data?.message ?? "Failed to create call!",
           color: "red",

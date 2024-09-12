@@ -28,7 +28,6 @@ const LoginModal = ({
         password: values.password,
       },
       (role: string) => {
-        console.log(role);
         switch (role?.toLowerCase()) {
           case "admin":
             navigate.push("/admin");
@@ -42,10 +41,10 @@ const LoginModal = ({
           case "applicant":
             navigate.push("/applicant/contacts");
             break;
-          case "grant":
-            navigate.push("/grant");
+          case "grant_committee":
+            navigate.push("/grant_committee");
             break;
-          case "sdf":
+          case "sdf_secretariate":
             navigate.push("/sdf/contracts");
             break;
           default:

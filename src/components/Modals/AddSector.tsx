@@ -50,7 +50,6 @@ const AddSector = ({
         closeAddSector();
       })
       .catch((err) => {
-        console.log(err.response);
         if (err.response)
           notifications.show({
             message: err.response?.data?.message ?? "Failed to create sector!",
