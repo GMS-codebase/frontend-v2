@@ -10,12 +10,15 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import MeActions from "./MeActions";
 import { SolarFileBold } from "@/components/core/icons";
 import AddReportModal from "@/components/Modals/AddReportModalsProps";
+import { useSelector } from "react-redux";
+import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 
 const Page = () => {
   const [isOpenReportModal, { open: openReport, close: closeReport }] =
     useDisclosure(false);
   const [isOpenCall, { open: openCall, close: closeCall }] =
     useDisclosure(false);
+  const mereports = useSelector((state: any) => state.mereports);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "title",
@@ -83,7 +86,6 @@ const Page = () => {
               data={Array.from(new Set(data.map((item) => item.call)))}
             />
           </div>
-
           <div
             className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white"
             onClick={openReport}
@@ -93,7 +95,6 @@ const Page = () => {
             </span>
             <div>Add new Report</div>
           </div>
-
           <div className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white">
             <span>
               <SolarFileBold />
@@ -102,23 +103,12 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <div
-        className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white"
-        onClick={openReport}
-      >
-        <span>
-          <SolarFileBold />
-        </span>
-        <div>Add new Report</div>
-      </div>
-      <div className="w-44">
-        <FilterDropDown
-          placeholderText="Filter By Call"
-          data={Array.from(new Set(data.map((item) => item.call)))}
-        />
-      </div>
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} />
+        {mereports?.loading ? (
+          <TableSkeleton columns={columns} />
+        ) : (
+          <DataTable columns={columns} data={mereports?.mereports ?? []} />
+        )}
       </div>
       <AddReportModal isOpen={isOpenReportModal} onClose={closeReport} />
       <AddCall isOpenAddCall={isOpenCall} closeAddCall={closeCall} />

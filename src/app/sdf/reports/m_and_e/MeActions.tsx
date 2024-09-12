@@ -26,19 +26,10 @@ const MeActions = () => {
           </Menu.Label>
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
-            <Link
-              href={"/admin/calls/call"}
-              className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
-            >
+            <button className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
               <FiEye size={21} color="#576074" />
               View
-            </Link>
-          </Menu.Item>
-          <Menu.Item>
-            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-              <CiEdit size={21} color="#576074" />
-              Edit Call
-            </div>
+            </button>
           </Menu.Item>
           <Menu.Item>
             <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">

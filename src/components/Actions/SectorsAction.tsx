@@ -13,7 +13,6 @@ const SectorsActions = ({
   setIsSector: (sector: any) => void;
   sector: any;
 }) => {
-  console.log("sector update --> ", sector);
   return (
     <div className="">
       <Menu shadow="lg" width={300}>

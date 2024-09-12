@@ -66,11 +66,9 @@ const Page = () => {
   const { windows } = useSelector((state: any) => state.windows);
   const { calls } = useSelector((state: any) => state.calls);
   const { sectors } = useSelector((state: any) => state.sectors);
-  console.log(windows, calls, sectors);
   const handleSubmit = (event: any) => {
     event.preventDefault();
     setLoading(true);
-    console.log("Form Data: ", formData);
     authorizedApi
       .post("/notifications", formData)
       .then((res) => {
@@ -96,9 +94,7 @@ const Page = () => {
           });
         }
       })
-      .catch((error) => {
-        console.log("Error sending notification: ", error);
-      })
+      .catch((error) => {})
       .finally(() => setLoading(false));
   };
   const FilterDropDown = ({
