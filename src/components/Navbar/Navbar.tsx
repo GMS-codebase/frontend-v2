@@ -123,12 +123,6 @@ const Navbar = () => {
             </div>
           </div>
         )}
-      <div className="flex items-center gap-3">
-        <button className="text-2xl text-primary bg-background p-3 rounded-full">
-          <Icons.SolarUserBold />
-        </button>
-        <h1 className="text-lg font-medium capitalize">{profile?.firstname ?? ""}</h1>
-      </div>
     </div>
     </div>
   );
