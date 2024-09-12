@@ -89,7 +89,7 @@ export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
 export const getSubWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_SUB_WINDOWS_LOADING });
   authorizedApi
-    .get("/sub-window/allSubWindows")
+    .get("/sub-window/sub-windows/all")
     .then((res) => {
       dispatch({ type: GET_SUB_WINDOWS_SUCCESS, payload: res.data.data.data });
     })
