@@ -6,7 +6,7 @@ import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { applicantContacts as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
-import AddTrade from "@/components/Modals/AddTrade";
+import AddTrade from "@/components/Modals/trades/AddEditTrade";
 import AddEditContact from "@/components/Modals/applicantContacts/AddEditContact";
 import { useSelector } from "react-redux";
 import Actions from "./ContactsAction";

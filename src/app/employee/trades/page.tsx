@@ -6,7 +6,7 @@ import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { tradesData as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
-import AddTrade from "@/components/Modals/AddTrade";
+import AddTrade from "@/components/Modals/trades/AddEditTrade";
 import { useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
 const Page = () => {
@@ -82,7 +82,7 @@ const Page = () => {
           <DataTable columns={columns} data={trades.trades ?? []} />
         </div>
       )}
-      <AddTrade isOpenAddTrade={isOpenTrade} closeAddTrade={close} />
+      <AddTrade isOpenAddEditTrade={isOpenTrade} closeAddEditTrade={close} />
     </div>
   );
 };

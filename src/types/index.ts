@@ -12,13 +12,19 @@ export type Window = {
 export type Trade = {
   title: string;
   description: string;
+  shortname: string;
   uuid: string;
 };
 export type Sector = {
   title: string;
   description: string;
   uuid: string;
+  trades: Trade[];
 };
+
+export type ReduxState = {
+  applications: any;
+}
 
 export type Application = {
   uuid: string;

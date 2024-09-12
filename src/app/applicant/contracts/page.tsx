@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useDisclosure } from "@mantine/hooks";
-import AddTrade from "@/components/Modals/AddTrade";
+import AddTrade from "@/components/Modals/trades/AddEditTrade";
 import Contracts from "@/components/contracts/contracts";
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
@@ -97,7 +97,7 @@ const Page = () => {
           <Contracts data={data} loading={loading} />
         </div>
       </div>
-      <AddTrade isOpenAddTrade={isOpenTrade} closeAddTrade={close} />
+      <AddTrade isOpenAddEditTrade={isOpenTrade} closeAddEditTrade={close} />
     </div>
   );
 };
