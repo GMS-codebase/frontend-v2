@@ -135,10 +135,10 @@ const ApplicantTable = () => {
       </div>
       <div className="w-full h-full">
         {activeTable === "contacts" && (
-          <DataTable columns={contactColumns} data={contactData} />
+          <DataTable columns={contactColumns} data={contactData.slice(0,6)} />
         )}
         {activeTable === "applications" && (
-          <DataTable columns={applicationColumns} data={data} />
+          <DataTable columns={applicationColumns} data={data.slice(0,6)} />
         )}
       </div>
     </div>
