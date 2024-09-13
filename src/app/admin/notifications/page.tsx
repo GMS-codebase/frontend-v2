@@ -77,12 +77,14 @@ const Page = () => {
   const { calls } = useSelector((state: any) => state.calls);
   const { sectors } = useSelector((state: any) => state.sectors);
   const [filteredApplicants, setFilteredApplicants] = useState([]);
-  const {applicants, loading: applicantsLoading} = useSelector((state: any) => state.applicants);
+  const { applicants, loading: applicantsLoading } = useSelector(
+    (state: any) => state.applicants,
+  );
   console.log("applicants", applicants);
   console.log(sectors, calls, windows);
-  useEffect(()=>{
+  useEffect(() => {
     setFilteredApplicants(applicants);
-  },[applicants])
+  }, [applicants]);
 
   // useEffect(()=>{
   //   authorizedApi.get(`/applicant/filter?callId=${formData.filters.call}&windowId==${formData.filters.window}&sectorId==${formData.filters.sector}&stage=${formData.filters.stage}`)

@@ -48,7 +48,11 @@ const Page = () => {
     {
       accessorKey: "phone",
       header: "Minute Approval Status",
-      cell: ({ row }) => <div className="w-full">{row.original?.approval_status?.toUpperCase()}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">
+          {row.original?.approval_status?.toUpperCase()}
+        </div>
+      ),
     },
     {
       accessorKey: "actions",
@@ -126,18 +130,16 @@ const Page = () => {
         <h1 className="text-xl p-4 font-bold">Minutes Uploaded</h1>
         {loading ? (
           <TableSkeleton columns={minuteColumns} />
-        ) : (
-          minutes === 0 ? 
+        ) : minutes === 0 ? (
           <div className="w-full flex justify-center">
             <h1>No Created Minutes Negotiations</h1>
           </div>
-          : (
-            <DataTable
+        ) : (
+          <DataTable
             columns={minuteColumns}
             data={minutes}
             noDataMessage="No Created Minutes"
           />
-          )
         )}
       </div>
 
@@ -158,9 +160,7 @@ const Page = () => {
       <AddMinute
         data={isMinute.application}
         isOpenAddMinute={isMinute.isOpen}
-        closeAddMinute={() =>
-          setIsMinute({ isOpen: false, application: null })
-        }
+        closeAddMinute={() => setIsMinute({ isOpen: false, application: null })}
       />
     </div>
   );

@@ -58,7 +58,7 @@ export function middleware(request: NextRequest) {
       console.log(nextUrl);
       return NextResponse.redirect(new URL(nextUrl, request.url));
     }
-  return NextResponse.next();
+    return NextResponse.next();
   } catch (error) {
     request.cookies.delete("token");
     return NextResponse.redirect(new URL("/", request.url));
