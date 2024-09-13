@@ -6,16 +6,16 @@ import { IoMdClose } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { Folder2, Upload } from "solar-icon-set";
 
-interface AddContractProps {
+interface AddMinuteProps {
   data: any; // Replace `any` with the actual type if available
-  isOpenAddContract: boolean;
-  closeAddContract: () => void;
+  isOpenAddMinute: boolean;
+  closeAddMinute: () => void;
 }
 
-const AddContract: React.FC<AddContractProps> = ({
+const AddMinute: React.FC<AddMinuteProps> = ({
   data,
-  isOpenAddContract,
-  closeAddContract,
+  isOpenAddMinute,
+  closeAddMinute,
 }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<{ name: string; file: File | null, amount: string }>(
@@ -39,21 +39,17 @@ const AddContract: React.FC<AddContractProps> = ({
     e.preventDefault();
     setLoading(true);
     const newData = {
-      name: formData.name,
-      amount: formData.amount,
-      contract: formData.file,
+      minute: formData.file,
       applicantId: data.applicant.uuid,
       applicationId: data?.uuid,
     };
     console.log(JSON.stringify(formData.file));
     const submitForm = new FormData();
-    submitForm.append("name", newData.name);
-    submitForm.append("amount", newData.amount);
-    submitForm.append("contract", newData.contract as Blob);
+    submitForm.append("minutesNegotiation", newData.minute as Blob);
     submitForm.append("applicantId", newData.applicantId);
     submitForm.append("applicationId", newData.applicationId);
     authorizedApi
-      .post("/contracts", submitForm, {
+      .post("/contracts/negotiate", submitForm, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -68,11 +64,11 @@ const AddContract: React.FC<AddContractProps> = ({
           name: "",
           amount:""
         });
-        closeAddContract();
+        closeAddMinute();
       })
       .catch((err: any) => {
         notifications.show({
-          message: err.response?.data?.message ?? "Failed to create contract",
+          message: err.response?.data?.message ?? "Failed to create Minute",
           color: "red",
         });
       })
@@ -83,8 +79,8 @@ const AddContract: React.FC<AddContractProps> = ({
 
   return (
     <Modal
-      opened={isOpenAddContract}
-      onClose={closeAddContract}
+      opened={isOpenAddMinute}
+      onClose={closeAddMinute}
       closeOnClickOutside={false}
       withCloseButton={false}
       centered
@@ -93,14 +89,14 @@ const AddContract: React.FC<AddContractProps> = ({
       <div className="w-[80vh] h-fit relative bg-white rounded-3xl pt-10 pb-6 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
-          onClick={closeAddContract}
+          onClick={closeAddMinute}
         >
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="w-full flex flex-col items-center">
-          <h1 className="text-2xl font-extrabold">Create New Contract</h1>
+          <h1 className="text-2xl font-extrabold">Create New Minute</h1>
           <h2 className="text-[#000F2369] text-lg font-medium">
-            Provide your Contract details to create a new contract.
+            Provide your Minute details to create a new Minute.
           </h2>
         </div>
         <div className="w-4/5 flex flex-col items-center mt-10 overflow-hidden">
@@ -108,60 +104,12 @@ const AddContract: React.FC<AddContractProps> = ({
             onSubmit={handleSubmit}
             className="w-full overflow-y-auto flex flex-col gap-2 px-2"
           >
-            <div className="w-full flex justify-between gap-3">
-              <div className="w-full">
-                <label
-                  htmlFor="TradeTitle"
-                  className="block text-md font-bold text-gray-700"
-                >
-                  Contract name
-                </label>
-                <div className="w-full relative">
-                  <span className="absolute left-2 top-[10px]">
-                    <Folder2 />
-                  </span>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    placeholder="Contract Name"
-                    onChange={handleChange}
-                    className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A]  rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="w-full flex justify-between gap-3">
-              <div className="w-full">
-                <label
-                  htmlFor="TradeTitle"
-                  className="block text-md font-bold text-gray-700"
-                >
-                  Contract amount
-                </label>
-                <div className="w-full relative">
-                  <span className="absolute left-2 top-[10px]">
-                    <Folder2 />
-                  </span>
-                  <input
-                    type="text"
-                    name="amount"
-                    value={formData.amount}
-                    placeholder="Contract Amount"
-                    onChange={handleChange}
-                    className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A]  rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
             <div className="w-full my-5">
               <label
                 htmlFor="fileUpload"
                 className="block text-md font-bold text-gray-700"
               >
-                Attachment
+                Minutes Negotiation
               </label>
               <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <label
@@ -197,7 +145,7 @@ const AddContract: React.FC<AddContractProps> = ({
             <div className="w-full flex justify-center mt-4 space-x-4">
               <button
                 type="button"
-                onClick={closeAddContract}
+                onClick={closeAddMinute}
                 className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 Cancel
@@ -206,7 +154,7 @@ const AddContract: React.FC<AddContractProps> = ({
                 type="submit"
                 className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
-                {loading ? "Loading..." : "Create"}
+                {loading ? "Loading..." : "Upload"}
               </button>
             </div>
           </form>
@@ -216,4 +164,4 @@ const AddContract: React.FC<AddContractProps> = ({
   );
 };
 
-export default AddContract;
+export default AddMinute;
