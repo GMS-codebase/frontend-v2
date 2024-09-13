@@ -32,11 +32,7 @@ const Page = () => {
     {
       accessorKey: "window",
       header: "Window",
-      cell: ({ row }) => (
-        <div>
-          {row.original?.window?.title}
-        </div>
-      ),
+      cell: ({ row }) => <div>{row.original?.window?.title}</div>,
     },
     {
       accessorKey: "sector",
@@ -46,7 +42,13 @@ const Page = () => {
     {
       accessorKey: "trade",
       header: "Trade",
-      cell: ({ row }) => <div>{row.original.trades[0] ? row.original?.trades[0].title : "Not Assigned"}</div>,
+      cell: ({ row }) => (
+        <div>
+          {row.original.trades[0]
+            ? row.original?.trades[0].title
+            : "Not Assigned"}
+        </div>
+      ),
     },
     {
       accessorKey: "stage",
@@ -56,7 +58,7 @@ const Page = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions application={row.original}/>,
+      cell: ({ row }) => <CallsActions application={row.original} />,
     },
   ];
 
