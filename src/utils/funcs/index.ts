@@ -75,6 +75,7 @@ import {
   GET_STAGES_ERROR,
   GET_STAGES_SUCCESS,
 } from "@/actions/EmpStagesActions";
+import { GET_MINUTES_ERROR, GET_MINUTES_LOADING, GET_MINUTES_SUCCESS } from "@/actions/MinutesActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -188,6 +189,21 @@ export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
     })
     .catch((err) => {
       dispatch({ type: GET_CONTRACTS_ERROR, payload: err.response.data.error });
+    });
+};
+
+export const getMinutes = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_MINUTES_LOADING });
+  authorizedApi
+    .get("/contracts/negotiations/docs/all")
+    .then((res) => {
+      dispatch({
+        type: GET_MINUTES_SUCCESS,
+        payload: res.data.data.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_MINUTES_ERROR, payload: err.response.data.error });
     });
 };
 export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {

@@ -26,6 +26,7 @@ import {
   getApplicationsForContracts,
   getEmpStages,
   getMyApplications,
+  getMinutes,
 } from "@/utils/funcs";
 import ClipLoader from "react-spinners/ClipLoader"; 
 import { LOGOUT } from '../../actions/AuthActions';
@@ -79,6 +80,7 @@ const Navbar = () => {
       getEmployees(dispatch);
     } else if (role === "SDF_SECRETARIATE") {
       getContracts(dispatch);
+      getMinutes(dispatch);
       getApplicationsForContracts(dispatch);
     } else if (role === "APPLICANT") {
       getMyContacts(dispatch);
