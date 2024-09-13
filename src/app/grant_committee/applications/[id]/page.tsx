@@ -12,7 +12,7 @@ import { Comments } from "@/types";
 import FundingQuestions from "@/components/Application/FundingQuestions";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import MakeEvaluationDecision from "@/components/Modals/MakeEvaluationDecision";
+import MakeEvaluationDecision from "@/components/Modals/MakeDecision";
 import EditEvalModal from "@/components/Modals/EditEvalModal";
 import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import { useDisclosure } from "@mantine/hooks";

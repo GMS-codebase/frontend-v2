@@ -1,33 +1,47 @@
-import { Modal } from "@mantine/core";
+import { Modal, Select } from "@mantine/core";
 import { IoMdClose } from "react-icons/io";
-import { SolarDocumentBold } from "@/components/core/icons/index";
-import { useState } from "react";
+import { SolarDocumentBold } from "@/components/core/icons";
+import { useState, useEffect } from "react";
 import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
-import { Select } from "@mantine/core";
 
-interface MakeEvaluationDecisionProps {
+interface MakeDecisionProps {
   applicationId: string;
-  isOpenAddEval: boolean;
-  closeAddEval: () => void;
+  isOpen: boolean;
+  close: () => void;
   onMakeDecision: () => void;
+  type: "Evaluation" | "Due Diligence";
+  defaultData?: {
+    decision: string;
+    comment: string;
+  };
 }
 
-const MakeEvaluationDecision = ({
+const MakeDecision = ({
   applicationId,
-  isOpenAddEval,
-  closeAddEval,
+  isOpen,
+  close,
   onMakeDecision,
-}: MakeEvaluationDecisionProps) => {
+  type,
+  defaultData,
+}: MakeDecisionProps) => {
   const [formData, setFormData] = useState({
     decision: "",
     comment: "",
   });
+
   const [errors, setErrors] = useState({
     decision: "",
     comment: "",
   });
+
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (defaultData) {
+      setFormData(defaultData);
+    }
+  }, [defaultData]);
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
@@ -35,7 +49,7 @@ const MakeEvaluationDecision = ({
       ...prevData,
       [name]: value,
     }));
-    if (errors[name as keyof { decision: string; comment: string }]) {
+    if (errors[name as keyof typeof errors]) {
       setErrors((prevData) => ({
         ...prevData,
         [name]: "",
@@ -61,6 +75,7 @@ const MakeEvaluationDecision = ({
     return valid;
   };
 
+
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
@@ -68,16 +83,21 @@ const MakeEvaluationDecision = ({
 
     setLoading(true);
     try {
-      await authorizedApi.patch(
-        `/application/evaluation/make-decision/${applicationId}`,
-        formData,
-      );
+      const endpoint = defaultData
+        ? `/application/${type.toLowerCase()}/update-decision/${applicationId}`
+        : `/application/${type.toLowerCase()}/make-decision/${applicationId}`;
+
+      await authorizedApi.patch(endpoint, formData);
+
       notifications.show({
-        message: "Application filled successfully!",
+        message: defaultData
+          ? `${type} decision updated successfully!`
+          : `${type} decision made successfully!`,
         color: "blue",
       });
+
       onMakeDecision();
-      closeAddEval();
+      close();
     } catch (err: any) {
       notifications.show({
         message: err.response?.data?.message ?? "Failed to submit the form!",
@@ -89,28 +109,26 @@ const MakeEvaluationDecision = ({
 
   return (
     <Modal
-      size={""}
-      opened={isOpenAddEval}
-      onClose={closeAddEval}
+      size=""
+      opened={isOpen}
+      onClose={close}
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[45vw] max-h-[90vh]   relative bg-white rounded-3xl pt-6 pb-6 flex flex-col items-center">
+      <div className="w-[45vw] max-h-[90vh] relative bg-white rounded-3xl pt-6 pb-6 flex flex-col items-center">
         <button
           className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
-          onClick={closeAddEval}
+          onClick={close}
         >
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="w-full flex flex-col items-center">
-          <h1 className="text-2xl font-extrabold">
-            Evaluation decision details
-          </h1>
+          <h1 className="text-2xl font-extrabold">{type} decision details</h1>
         </div>
         <div className="w-11/12 flex flex-col items-center mt-10 overflow-hidden">
           <form
             onSubmit={handleSubmit}
-            className="w-full  overflow-y-auto flex flex-col gap-4 px-2"
+            className="w-full overflow-y-auto flex flex-col gap-4 px-2"
           >
             <div className="w-full flex justify-between gap-3">
               <div className="w-full">
@@ -143,7 +161,7 @@ const MakeEvaluationDecision = ({
                       { label: "Approve", value: "APPROVED" },
                       { label: "Reject", value: "REJECTED" },
                     ]}
-                    className="mt-1 block w-full  pl-6 text-gray-400  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="mt-1 block w-full pl-6 text-gray-400 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     placeholder="Select your decision"
                     required
                   />
@@ -179,7 +197,7 @@ const MakeEvaluationDecision = ({
             <div className="w-full flex justify-center mt-4 space-x-4">
               <button
                 type="button"
-                onClick={closeAddEval}
+                onClick={close}
                 className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 Cancel
@@ -189,7 +207,11 @@ const MakeEvaluationDecision = ({
                 disabled={loading}
                 className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
-                {loading ? "Loading.." : "Make Decision"}
+                {loading
+                  ? "Loading.."
+                  : defaultData
+                  ? "Update Decision"
+                  : "Make Decision"}
               </button>
             </div>
           </form>
@@ -199,4 +221,4 @@ const MakeEvaluationDecision = ({
   );
 };
 
-export default MakeEvaluationDecision;
+export default MakeDecision;

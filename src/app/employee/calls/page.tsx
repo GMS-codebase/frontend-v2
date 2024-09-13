@@ -8,7 +8,7 @@ import { callsData as data } from "@/utils/constants/dummy";
 import CallsActions from "./CallsAction";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
+import AddCall from "@/components/Modals/call/AddCall";
 import { useState } from "react";
 import UpdateCall from "@/components/Modals/UpdateCall";
 import DeleteCall from "@/components/Modals/DeleteCall";
