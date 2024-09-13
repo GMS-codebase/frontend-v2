@@ -18,13 +18,15 @@ const AddContract: React.FC<AddContractProps> = ({
   closeAddContract,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<{ name: string; file: File | null, amount: string }>(
-    {
-      name: "",
-      file: null,
-      amount: ""
-    },
-  );
+  const [formData, setFormData] = useState<{
+    name: string;
+    file: File | null;
+    amount: string;
+  }>({
+    name: "",
+    file: null,
+    amount: "",
+  });
   const dispatch = useDispatch();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +68,7 @@ const AddContract: React.FC<AddContractProps> = ({
         setFormData({
           file: null,
           name: "",
-          amount:""
+          amount: "",
         });
         closeAddContract();
       })

@@ -75,7 +75,11 @@ import {
   GET_STAGES_ERROR,
   GET_STAGES_SUCCESS,
 } from "@/actions/EmpStagesActions";
-import { GET_MINUTES_ERROR, GET_MINUTES_LOADING, GET_MINUTES_SUCCESS } from "@/actions/MinutesActions";
+import {
+  GET_MINUTES_ERROR,
+  GET_MINUTES_LOADING,
+  GET_MINUTES_SUCCESS,
+} from "@/actions/MinutesActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
