@@ -9,7 +9,13 @@ import { callData as data } from "@/utils/constants/dummy";
 import { CiSearch } from "react-icons/ci";
 import { useSelector } from "react-redux";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
+import { HiDotsHorizontal } from "react-icons/hi";
+import { useRouter } from "next/navigation";
+import { Menu } from "@mantine/core";
+import Link from "next/link";
+import { FiEye } from "react-icons/fi";
 const Page = () => {
+  const navigate = useRouter();
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
@@ -30,6 +36,42 @@ const Page = () => {
       header: "Current Stage",
       cell: ({ row }) => (
         <div className="truncate">{row.original?.currentStage}</div>
+      ),
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+          <div>
+          <Menu shadow="lg" width={300}>
+            <Menu.Target>
+              <button
+                style={{
+                  background:
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+                }}
+                className="p-3 rounded-full border text-white hover:bg-red-100"
+              >
+                <HiDotsHorizontal size={25} color="white" />
+              </button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>
+                <h1 className="text-lg">Actions</h1>
+              </Menu.Label>
+              <Menu.Divider />
+              <Menu.Item className="bg-[#F0F0F0]">
+                <Link
+                  href={`/applicant/applications/${row.original.uuid}`}
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <FiEye size={21} color="#576074" />
+                  View
+                </Link>
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </div>
       ),
     },
   ];
