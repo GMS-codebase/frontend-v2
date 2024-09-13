@@ -7,7 +7,7 @@ import CallsActions from "@/app/admin/calls/CallsAction";
 import { Contact as contactData } from "@/utils/constants/contact";
 import {ContractDetails as contract} from '@/utils/constants/dummy'
 import ContractsAction from '@/components/Actions/ContractsAction'
-
+import TraineeAction from '@/components/Actions/TraineeAction'
 const TraineeTable = () => {
   const [activeTable, setActiveTable] = useState("trainees");
   const [isOpenCall, setIsOpenCall] = useState({
@@ -50,7 +50,7 @@ const TraineeTable = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />
+        <TraineeAction/>
       ),
     },
   ];
