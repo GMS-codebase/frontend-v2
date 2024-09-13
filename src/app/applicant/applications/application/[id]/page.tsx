@@ -19,6 +19,7 @@ import { useDisclosure } from "@mantine/hooks";
 import AddEditContact from "@/components/Modals/applicantContacts/AddEditContact";
 import CreateApplication from "@/components/Modals/application/CreateApplication";
 import TermsAndConditions from "@/components/Application/TermsAndConditions";
+import MinutesNegotiation from "@/components/Application/MinutesNegotiation";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
@@ -117,7 +118,8 @@ const Page = () => {
               {call?.description}
             </div>
           </div>
-          <TermsAndConditions />
+          {/* <TermsAndConditions /> */}
+          <MinutesNegotiation />
         </div>
       </div>
     </div>
