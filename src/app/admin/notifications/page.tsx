@@ -207,8 +207,8 @@ const Page = () => {
               }
               placeholderText="Filter By Sector"
               data={
-                sectors?.data
-                  ? sectors?.data?.map((sector: any) => {
+                sectors
+                  ? sectors?.map((sector: any) => {
                       return { value: sector.uuid, label: sector?.name };
                     })
                   : []
