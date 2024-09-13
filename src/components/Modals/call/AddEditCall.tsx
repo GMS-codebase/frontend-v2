@@ -2,41 +2,32 @@ import { Modal, MultiSelect, Select, Stepper } from "@mantine/core";
 import { FormEvent, useState, useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
 import { Folder2, Subtitles } from "solar-icon-set";
-import { SolarSuitcaseLinear, SolarUploadBold } from "../core/icons";
+import { SolarSuitcaseLinear, SolarUploadBold } from "../../core/icons";
 import { CalendarMinimalistic } from "solar-icon-set";
 import { ShieldWarning } from "solar-icon-set";
 import axios from "axios";
 import { notifications } from "@mantine/notifications";
-import { SolarCheckCircleBold } from "../core/icons";
+import { SolarCheckCircleBold } from "../../core/icons";
 import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
+import { Call } from "@/types";
 
-type FormData = {
-  title: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  appealDays: string;
-  windows: any;
-  sectors: any;
-  subWindows: any;
-  attachment: File | null;
-};
-
-const AddCall = ({
-  isOpenAddCall,
-  closeAddCall,
+const AddEditCall = ({
+  isOpenAddEditCall,
+  closeAddEditCall,
+  defaultData,
 }: {
-  isOpenAddCall: boolean;
-  closeAddCall: () => void;
+  isOpenAddEditCall: boolean;
+  closeAddEditCall: () => void;
+  defaultData?: Call;
 }) => {
   const [active, setActive] = useState(0);
-  const sectors = useSelector((state: any) => state.sectors);
+  const [loading, setLoading] = useState(false);
   const windows = useSelector((state: any) => state.windows);
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
-  const [selectedSelectors, setSelectedSelectors] = useState<any>([]);
-  const [formData, setFormData] = useState<FormData>({
+  const [selectedSectors, setSelectedSectors] = useState<any>([]);
+  const [formData, setFormData] = useState<Partial<Call>>({
     title: "",
     description: "",
     startDate: "",
@@ -61,7 +52,7 @@ const AddCall = ({
           window.subWindows?.map((subWindow: any) => ({
             value: subWindow.uuid,
             label: subWindow.title,
-          })),
+          }))
         ) || [];
     return subWindowData;
   };
@@ -71,21 +62,28 @@ const AddCall = ({
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid),
+            selectedSubWindows.includes(subWindow.uuid)
           )
           .flatMap((subWindow: any) =>
             subWindow.sectors?.map((sector: any) => ({
               value: sector.uuid,
               label: sector.name,
-            })),
-          ) || [],
+            }))
+          ) || []
     );
     return sectorData;
   };
 
   const MultiSubWindowData = getSubWindowsData();
   const MultiSectorData = getSectorData();
-
+  useEffect(() => {
+    if (defaultData) {
+      setFormData(defaultData);
+      setSelectedWindows(defaultData.windows);
+      setSelectedSubWindows(defaultData.subWindows);
+      setSelectedSectors(defaultData.sectors);
+    }
+  }, [defaultData]);
   const nextStep = () =>
     setActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>
@@ -100,56 +98,66 @@ const AddCall = ({
   };
 
   const handleSubmit = () => {
+    setLoading(true);
     setFormData({
       ...formData,
-      sectors: selectedSelectors,
+      sectors: selectedSectors,
       windows: selectedWindows,
     });
     const submitData = new FormData();
-    submitData.append("title", formData.title);
-    submitData.append("description", formData.description);
-    submitData.append("appealDays", formData.appealDays);
-    submitData.append("applicationStartDate", formData.startDate);
-    submitData.append("applicationEndDate", formData.endDate);
+    submitData.append("title", formData.title as any);
+    submitData.append("description", formData.description as any);
+    submitData.append("appealDays", formData.appealDays as any);
+    submitData.append("applicationStartDate", formData.startDate as any);
+    submitData.append("applicationEndDate", formData.endDate as any);
     submitData.append("window", JSON.stringify(selectedWindows));
-    submitData.append("sector", JSON.stringify(selectedSelectors));
+    submitData.append("sector", JSON.stringify(selectedSectors));
     submitData.append("subWindows", JSON.stringify(selectedSubWindows));
     if (formData.attachment) {
       submitData.append("attachment", formData.attachment);
     }
+
+    const apiUrl = defaultData
+      ? `/call/update/${defaultData.uuid}`
+      : "/call/create";
     authorizedApi
-      .post("/call/create", submitData, {
+      .post(apiUrl, submitData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
       .then((res) => {
         notifications.show({
-          message: "Call created successfully!",
+          message: defaultData
+            ? "Call updated successfully!"
+            : "Call created successfully!",
           color: "blue",
         });
-        closeAddCall();
+        closeAddEditCall();
       })
       .catch((err) => {
         notifications.show({
-          message: err.response?.data?.message ?? "Failed to create call!",
+          message: err.response?.data?.message ?? "Failed to submit call!",
           color: "red",
         });
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
   return (
     <Modal
       size={""}
-      opened={isOpenAddCall}
-      onClose={closeAddCall}
+      opened={isOpenAddEditCall}
+      onClose={closeAddEditCall}
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[80vh] h-fit relative bg-white rounded-3xl pt-10 pb-10 flex flex-col items-center">
+      <div className="w-[80vh] max-h-[90vh] overflow-y-auto  relative bg-white rounded-3xl pt-10 pb-10 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
-          onClick={closeAddCall}
+          onClick={closeAddEditCall}
         >
           <IoMdClose size={25} color={"#000"} />
         </button>
@@ -159,7 +167,7 @@ const AddCall = ({
             Provide your call details to create a new call.
           </h2>
         </div>
-        <div className="w-full flex flex-col items-center mt-4 overflow-hidden px-[5%]">
+        <div className="w-full flex flex-col items-center mt-4  px-[5%]">
           <Stepper active={active} onStepClick={setActive} className="w-full">
             <Stepper.Step label="Call detail" className="text-xs">
               <div className="w-full overflow-y-auto flex flex-col gap-2 px-2">
@@ -243,7 +251,9 @@ const AddCall = ({
                               File Uploaded
                             </p>
                             <p className="text-xs text-gray-400">
-                              {formData?.attachment?.name}
+                              {formData?.attachment instanceof File
+                                ? formData.attachment.name
+                                : formData?.attachment}
                             </p>
                           </div>
                         </>
@@ -397,7 +407,7 @@ const AddCall = ({
                       onChange={(value) => {
                         setSelectedWindows(value);
                         setSelectedSubWindows([]);
-                        setSelectedSelectors([]);
+                        setSelectedSectors([]);
                       }}
                       data={MultiWindowData}
                       placeholder="Select or type in a window"
@@ -421,7 +431,7 @@ const AddCall = ({
                       name="subWindows"
                       onChange={(value) => {
                         setSelectedSubWindows(value);
-                        setSelectedSelectors([]);
+                        setSelectedSectors([]);
                       }}
                       data={MultiSubWindowData}
                       placeholder="Select or type in a sub-window"
@@ -443,7 +453,7 @@ const AddCall = ({
                     </span>
                     <MultiSelect
                       name="sectors"
-                      onChange={setSelectedSelectors}
+                      onChange={setSelectedSectors}
                       data={MultiSectorData}
                       placeholder="Select or type in a sector"
                       required
@@ -460,9 +470,11 @@ const AddCall = ({
                   </button>
                   <button
                     onClick={handleSubmit}
+                    disabled={loading}
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                    Create Call
+                    {loading ? "Loading..." : defaultData ? "Update" : "Create"}{" "}
+                    Call
                   </button>
                 </div>
               </div>
@@ -474,4 +486,4 @@ const AddCall = ({
   );
 };
 
-export default AddCall;
+export default AddEditCall;

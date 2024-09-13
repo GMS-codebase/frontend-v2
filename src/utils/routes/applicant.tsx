@@ -24,11 +24,6 @@ const applicantRoutes: Route[] = [
     path: "/applicant/profile",
     icon: <Icons.SolarUserCircleBold />,
   },
-  {
-    label: "TermsAndCondition",
-    path: "/applicant/TermsAndCondition",
-    icon: <Icons.SolarUserCircleBold />,
-  },
 ];
 
 export default applicantRoutes;

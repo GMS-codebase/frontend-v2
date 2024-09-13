@@ -25,6 +25,12 @@ import {
   getEmpStages,
   getMyApplications,
 } from "@/utils/funcs";
+import { Menu } from "@mantine/core";
+import { IoMdLogOut } from "react-icons/io";
+import { useRouter } from "next/navigation";
+import { LOGOUT } from "@/actions/AuthActions";
+import { GET_PROFILE_ERROR } from "@/actions/ProfileActions";
+import { notifications } from "@mantine/notifications";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -48,10 +54,10 @@ const Navbar = () => {
     const role = active.startsWith("/admin")
       ? "ADMIN"
       : active.startsWith("/applicant")
-        ? "APPLICANT"
-        : active.startsWith("/sdf")
-          ? "SDF_SECRETARIATE"
-          : null;
+      ? "APPLICANT"
+      : active.startsWith("/sdf")
+      ? "SDF_SECRETARIATE"
+      : null;
 
     if (role === "ADMIN") {
       getApplicants(dispatch);
@@ -76,15 +82,48 @@ const Navbar = () => {
     getProfile(dispatch);
   }, []);
 
+  const navigate = useRouter();
+  const [loading, setLoading] = useState(false);
+  const handleLogout = () => {
+    dispatch({ type: LOGOUT });
+    dispatch({ type: GET_PROFILE_ERROR });
+    setLoading(true);
+    navigate.push("/");
+    notifications.show({
+      message: "Logged Out Successfully!",
+      color: "blue",
+      duration: 6000,
+    });
+  };
+
   const { profile } = useSelector((state: any) => state.profile);
   return (
     <div className="w-full flex items-center justify-between py-3 bg-white rounded-2xl px-5">
       <h1 className="text-xl font-extrabold text-primary">{pageName}</h1>
-      <div className="flex items-center gap-3">
-        <button className="text-2xl text-primary bg-background p-3 rounded-full">
-          <Icons.SolarUserBold />
-        </button>
-        <h1 className="text-lg font-medium capitalize">{profile?.firstname ?? ""}</h1>
+      <div>
+        <Menu shadow="lg" width={200}>
+          <Menu.Target>
+            <div className="flex items-center gap-3 bg-background p-3 rounded-full cursor-pointer">
+              <button className="text-2xl text-primary ">
+                <Icons.SolarUserBold />
+              </button>
+              <h1 className="text-lg font-medium capitalize">
+                {profile?.firstname ?? "----"}
+              </h1>
+            </div>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item className="bg-[#F0F0F0]">
+              <button
+                className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                onClick={() => handleLogout()}
+              >
+                <IoMdLogOut size={21} color="#576074" />
+                Logout
+              </button>
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
       </div>
     </div>
   );
