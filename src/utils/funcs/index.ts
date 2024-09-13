@@ -127,7 +127,7 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/Sectors")
     .then((res) => {
-      dispatch({ type: GET_SECTORS_SUCCESS, payload: res.data.data });
+      dispatch({ type: GET_SECTORS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
       dispatch({ type: GET_SECTORS_ERROR, payload: err.response.data.error });
