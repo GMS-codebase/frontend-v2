@@ -42,7 +42,7 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-          <div>
+        <div>
           <Menu shadow="lg" width={300}>
             <Menu.Target>
               <button

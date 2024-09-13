@@ -139,7 +139,7 @@ const AddCall = ({
           color: "red",
         });
       })
-      .finally(()=> setLoading(false));
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -300,9 +300,13 @@ const AddCall = ({
                       Start Date
                     </label>
                     <div className="w-full relative">
-                    <DatePicker
+                      <DatePicker
                         minDate={new Date()}
-                        value={formData.startDate ? new Date(formData.startDate) : null}
+                        value={
+                          formData.startDate
+                            ? new Date(formData.startDate)
+                            : null
+                        }
                         onChange={(date: Date | null) => {
                           const formattedDate = date
                             ? dayjs(date).format("YYYY-MM-DD")
@@ -323,9 +327,15 @@ const AddCall = ({
                       End Date
                     </label>
                     <div className="w-full relative">
-                    <DatePicker
-                        minDate={formData.startDate ? new Date(formData.startDate) : undefined}
-                        value={formData.endDate ? new Date(formData.endDate) : null}
+                      <DatePicker
+                        minDate={
+                          formData.startDate
+                            ? new Date(formData.startDate)
+                            : undefined
+                        }
+                        value={
+                          formData.endDate ? new Date(formData.endDate) : null
+                        }
                         onChange={(date: Date | null) => {
                           const formattedDate = date
                             ? dayjs(date).format("YYYY-MM-DD")

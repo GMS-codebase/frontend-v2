@@ -24,7 +24,9 @@ function Page() {
   useEffect(() => {
     getCalls(dispatch);
   }, []);
-  const { calls, loading: loadingCalls } = useSelector((state: any) => state.calls);
+  const { calls, loading: loadingCalls } = useSelector(
+    (state: any) => state.calls,
+  );
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
   const [isOpenLogin, { open: openLogin, close: closeLogin }] =
@@ -52,24 +54,25 @@ function Page() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubscribe = ()=>{
-    if(!email) {
+  const handleSubscribe = () => {
+    if (!email) {
       return;
     }
     setLoading(true);
-    unauthorizedApi.post("/subscriptions/subscribe", {email})
-      .then((res)=>{
+    unauthorizedApi
+      .post("/subscriptions/subscribe", { email })
+      .then((res) => {
         console.log(res.data);
         notifications.show({
           message: "SUbscribed Successfully!",
-          color: "blue"
-        })
+          color: "blue",
+        });
       })
-      .catch(e=>{
+      .catch((e) => {
         console.log("error", e);
       })
-      .finally(()=> setLoading(false))
-  }
+      .finally(() => setLoading(false));
+  };
 
   return (
     <div className="relative h-screen">
@@ -149,11 +152,14 @@ function Page() {
           <input
             type="text"
             value={email}
-            onChange={(e: any)=> setEmail(e.target.value)}
+            onChange={(e: any) => setEmail(e.target.value)}
             className="w-full ml-3 border-none text-black bg-white outline-none"
             placeholder="Type your email"
           />
-          <button disabled={loading} className="bg-[#1F5DB014] bg-opacity-10 text-primary font-bold rounded-full px-4 py-2">
+          <button
+            disabled={loading}
+            className="bg-[#1F5DB014] bg-opacity-10 text-primary font-bold rounded-full px-4 py-2"
+          >
             {loading ? "Subscribing . . ." : "Subscribe"}
           </button>
         </div>

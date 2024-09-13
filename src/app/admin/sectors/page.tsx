@@ -22,7 +22,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 
 const Page = () => {
   const sectors = useSelector((state: any) => state.sectors);
-  console.log("sectors --> ",sectors);
+  console.log("sectors --> ", sectors);
   const [searchQuery, setSearchQuery] = useState("");
   const [
     isOpenCreateEdit,
@@ -35,7 +35,7 @@ const Page = () => {
     sectors.sectors?.filter(
       (sector: any) =>
         sector?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        sector?.shortname?.toLowerCase().includes(searchQuery.toLowerCase())
+        sector?.shortname?.toLowerCase().includes(searchQuery.toLowerCase()),
     ) ?? [];
   const columns: ColumnDef<any>[] = [
     {
