@@ -26,9 +26,10 @@ import {
   getApplicationsForContracts,
   getEmpStages,
   getMyApplications,
+  getMinutes,
 } from "@/utils/funcs";
-import ClipLoader from "react-spinners/ClipLoader"; 
-import { LOGOUT } from '../../actions/AuthActions';
+import ClipLoader from "react-spinners/ClipLoader";
+import { LOGOUT } from "../../actions/AuthActions";
 import { notifications } from "@mantine/notifications";
 import { GET_PROFILE_ERROR } from "@/actions/ProfileActions";
 import { CiLogout } from "react-icons/ci";
@@ -42,7 +43,7 @@ const Navbar = () => {
   const active = usePathname();
   const auth = useSelector((state: any) => state.auth);
 
- const handleLogout = () => {
+  const handleLogout = () => {
     dispatch({ type: LOGOUT });
     dispatch({ type: GET_PROFILE_ERROR });
     setLoading(true);
@@ -79,6 +80,7 @@ const Navbar = () => {
       getEmployees(dispatch);
     } else if (role === "SDF_SECRETARIATE") {
       getContracts(dispatch);
+      getMinutes(dispatch);
       getApplicationsForContracts(dispatch);
     } else if (role === "APPLICANT") {
       getMyContacts(dispatch);
@@ -103,12 +105,17 @@ const Navbar = () => {
     <div className="w-full flex items-center justify-between py-3 bg-white rounded-2xl px-5">
       <h1 className="text-xl font-extrabold text-primary">{pageName}</h1>
       <div className="relative cursor-pointer">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+        <div
+          className="flex items-center gap-3 cursor-pointer"
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        >
           <button className="text-3xl text-primary bg-background p-3 rounded-full">
             <Icons.SolarUserBold />
           </button>
           <h1 className="text-xl font-medium">{profile?.firstname ?? ""}</h1>
-          <span className={`${isDropdownOpen ? "rotate-180" : ""}`}><SolarArrowDown/></span>
+          <span className={`${isDropdownOpen ? "rotate-180" : ""}`}>
+            <SolarArrowDown />
+          </span>
         </div>
         {isDropdownOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg p-2 z-10 transition-all duration-300 cursor-pointer">
@@ -124,9 +131,9 @@ const Navbar = () => {
             </div>
           </div>
         )}
-    </div>
+      </div>
     </div>
   );
-}
+};
 
 export default Navbar;

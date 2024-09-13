@@ -96,11 +96,11 @@ const AddEditWindowSubwindow = ({
         const response = defaultData
           ? await authorizedApi.patch(
               `/sub-window/${defaultData.uuid}`,
-              formData
+              formData,
             )
           : await authorizedApi.post(
               `/sub-window/create/${windowId}`,
-              formData
+              formData,
             );
 
         notifications.show({
@@ -125,7 +125,7 @@ const AddEditWindowSubwindow = ({
         notifications.show({
           message: err.response?.data?.message?.includes("duplicate key")
             ? "Failed to save sub-window! A sub-window with the same title may already exist."
-            : err.response?.data?.message ?? "Failed to save sub-window!",
+            : (err.response?.data?.message ?? "Failed to save sub-window!"),
           color: "red",
         });
       } finally {
@@ -323,8 +323,8 @@ const AddEditWindowSubwindow = ({
                           ? "Updating..."
                           : "Creating..."
                         : defaultData
-                        ? "Update"
-                        : "Create"}
+                          ? "Update"
+                          : "Create"}
                     </button>
                   </div>
                 </div>
