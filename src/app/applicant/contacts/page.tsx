@@ -118,7 +118,7 @@ const Page = () => {
       (contact: any) =>
         contact?.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         contact?.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        contact?.email?.toLowerCase().includes(searchQuery.toLowerCase())
+        contact?.email?.toLowerCase().includes(searchQuery.toLowerCase()),
     ) ?? [];
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">

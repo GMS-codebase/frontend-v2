@@ -111,7 +111,10 @@ const Page = () => {
         )}
       </div>
       <AddReportModal isOpen={isOpenReportModal} onClose={closeReport} />
-      <AddEditCall isOpenAddEditCall={isOpenCall} closeAddEditCall={closeCall} />
+      <AddEditCall
+        isOpenAddEditCall={isOpenCall}
+        closeAddEditCall={closeCall}
+      />
     </div>
   );
 };

@@ -38,6 +38,9 @@ const LoginModal = ({
           case "employee":
             navigate.push("/employee");
             break;
+          case "normal_employee":
+            navigate.push("/employee");
+            break;
           case "applicant":
             navigate.push("/applicant/contacts");
             break;

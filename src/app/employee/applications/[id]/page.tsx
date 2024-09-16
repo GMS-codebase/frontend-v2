@@ -24,7 +24,7 @@ const Page = () => {
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id
+    (application: any) => application.uuid === id,
   )[0];
   console.log(application);
   const [loading, setLoading] = useState(false);
@@ -315,7 +315,7 @@ const Page = () => {
             </div>
             {application?.evaluators.length < 3 &&
               !application?.evaluators.find(
-                (ev: any) => ev.user_id === profile?.userProfile?.data.uuid
+                (ev: any) => ev.user_id === profile?.userProfile?.data.uuid,
               ) && (
                 <div
                   onClick={() => {
@@ -348,8 +348,8 @@ const Page = () => {
                     application?.currentStage !== "EVALUATION"
                       ? "bg-[#4BC500] text-[#4BC500]"
                       : application?.status === "PENDING"
-                      ? "bg-red-600 text-red-600"
-                      : ""
+                        ? "bg-red-600 text-red-600"
+                        : ""
                   } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
                 >
                   {application?.currentStage !== "EVALUATION" &&
@@ -360,7 +360,8 @@ const Page = () => {
                 {application?.duediligencyDecisions?.length < 3 &&
                   !application.duediligencyDecisions.find(
                     (dec: any) =>
-                      dec?.employee?.user_id === profile?.userProfile?.data.uuid
+                      dec?.employee?.user_id ===
+                      profile?.userProfile?.data.uuid,
                   ) && (
                     <div
                       onClick={() => {
@@ -429,7 +430,7 @@ const Page = () => {
                 (decision: any, index: any) => ({
                   evaluator: application.evaluators[index],
                   evaluationDecision: decision,
-                })
+                }),
               )
             : []
         }
