@@ -6,23 +6,19 @@ import {
   TextInput,
   Button,
 } from "@mantine/core";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import { Folder2, Subtitles } from "solar-icon-set";
-import {
-  SolarSuitcaseLinear,
-  SolarWindowFrameLinear,
-  SolarUploadBold,
-} from "../../core/icons";
-import { CalendarMinimalistic } from "solar-icon-set";
-import { ShieldWarning } from "solar-icon-set";
 import { HiOutlineMail } from "react-icons/hi";
 import { MdPhoneAndroid } from "react-icons/md";
 import { BsPerson } from "react-icons/bs";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import { ADD_CONTACT_SUCCESS } from "@/actions/ContactsActions";
+import {
+  ADD_CONTACT_SUCCESS,
+  UPDATE_CONTACT_SUCCESS,
+} from "@/actions/ContactsActions";
 import { useDispatch } from "react-redux";
+import { Contact } from "@/types";
 
 const AddEditContact = ({
   isOpenAddEditContact,
@@ -33,50 +29,54 @@ const AddEditContact = ({
   isOpenAddEditContact: boolean;
   closeAddEditContact: () => void;
   finishAddingContact?: () => void;
-  defaultData?: {
-    id: string;
-    firstname?: string;
-    lastname?: string;
-    email?: string;
-    phone1?: string;
-    phone2?: string;
-    gender?: string;
-    institutionName?: string;
-    position?: string;
-  };
+  defaultData?: Contact;
 }) => {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    firstname: defaultData?.firstname || "",
-    lastname: defaultData?.lastname || "",
+    firstName: defaultData?.firstName || "",
+    lastName: defaultData?.lastName || "",
     email: defaultData?.email || "",
-    phone1: defaultData?.phone1 || "",
-    phone2: defaultData?.phone2 || "",
+    mobile: defaultData?.mobile || "",
+    mobile1: defaultData?.mobile1 || "",
     gender: defaultData?.gender || "",
     position: defaultData?.position || "",
   });
   const [errors, setErrors] = useState({
-    firstname: defaultData?.firstname || "",
-    lastname: defaultData?.lastname || "",
-    email: defaultData?.email || "",
-    phone1: defaultData?.phone1 || "",
-    phone2: defaultData?.phone1 || "",
-    gender: defaultData?.gender || "",
-    position: defaultData?.position || "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    mobile: "",
+    mobile1: "",
+    gender: "",
+    position: "",
   });
+
+  useEffect(() => {
+    if (defaultData) {
+      setFormData({
+        firstName: defaultData?.firstName || "",
+        lastName: defaultData?.lastName || "",
+        email: defaultData?.email || "",
+        mobile: defaultData?.mobile || "",
+        mobile1: defaultData?.mobile1 || "",
+        gender: defaultData?.gender || "",
+        position: defaultData?.position || "",
+      });
+    }
+  }, [defaultData]);
 
   const validateStep = () => {
     const stepErrors: any = {};
 
     if (active === 0) {
-      if (!formData.firstname) stepErrors.firstname = "First name is required.";
-      if (!formData.lastname) stepErrors.lastname = "Last name is required.";
+      if (!formData.firstName) stepErrors.firstName = "First name is required.";
+      if (!formData.lastName) stepErrors.lastName = "Last name is required.";
       if (!formData.email) stepErrors.email = "Email is required.";
       if (!formData.gender) stepErrors.gender = "Gender is required.";
     } else if (active === 1) {
-      if (!formData.phone1)
-        stepErrors.phone1 = "At least one phone number is required.";
+      if (!formData.mobile)
+        stepErrors.mobile = "At least one phone number is required.";
       if (!formData.position) stepErrors.position = "Position is required.";
     }
 
@@ -116,30 +116,41 @@ const AddEditContact = ({
         let res;
         if (defaultData) {
           res = await authorizedApi.put(
-            `/contacts/${defaultData.id}`,
-            formData,
+            `/contacts/update/${defaultData.uuid}`,
+            formData
           );
         } else {
-          res = await authorizedApi.post("/contacts", formData);
+          res = await authorizedApi.post("/contacts", {
+            firstname: formData.firstName,
+            lastname: formData.lastName,
+            email: formData.email,
+            phone1: formData.mobile,
+            gender: formData.gender,
+            phone2: formData.mobile1,
+            position: formData.position,
+          });
         }
         notifications.show({
-          message: "Contact is created successfully",
+          message: defaultData
+            ? "Contact updated successfully"
+            : "Contact is created successfully",
           color: "blue",
         });
         dispatch({
-          type: ADD_CONTACT_SUCCESS,
-          payload: res.data?.data,
+          type: defaultData ? UPDATE_CONTACT_SUCCESS : ADD_CONTACT_SUCCESS,
+          payload: res.data?.data.data,
         });
         setFormData({
-          firstname: "",
-          lastname: "",
+          firstName: "",
+          lastName: "",
           email: "",
-          phone1: "",
-          phone2: "",
+          mobile: "",
+          mobile1: "",
           gender: "",
           position: "",
         });
         finishAddingContact && finishAddingContact();
+        closeAddEditContact();
       } catch (error: any) {
         console.error("Failed to save contact:", error);
         notifications.show({
@@ -187,7 +198,7 @@ const AddEditContact = ({
                 <div className="w-full flex justify-between gap-3">
                   <div className="w-full">
                     <label
-                      htmlFor="firstname"
+                      htmlFor="firstName"
                       className="block text-xs font-bold text-gray-700"
                     >
                       First name
@@ -198,20 +209,20 @@ const AddEditContact = ({
                       </span>
                       <input
                         type="text"
-                        name="firstname"
-                        value={formData.firstname}
+                        name="firstName"
+                        value={formData.firstName}
                         placeholder="Type in your first name"
                         onChange={handleChange}
                         className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
                     </div>
-                    {errors.firstname && (
-                      <p className="text-red-500 text-sm">{errors.firstname}</p>
+                    {errors.firstName && (
+                      <p className="text-red-500 text-sm">{errors.firstName}</p>
                     )}
                   </div>
                   <div className="w-full">
                     <label
-                      htmlFor="lastname"
+                      htmlFor="lastName"
                       className="block text-xs font-bold text-gray-700"
                     >
                       Last Name
@@ -222,15 +233,15 @@ const AddEditContact = ({
                       </span>
                       <input
                         type="text"
-                        name="lastname"
-                        value={formData.lastname}
+                        name="lastName"
+                        value={formData.lastName}
                         placeholder="Type in your last name"
                         onChange={handleChange}
                         className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       />
                     </div>
-                    {errors.lastname && (
-                      <p className="text-red-500 text-sm">{errors.lastname}</p>
+                    {errors.lastName && (
+                      <p className="text-red-500 text-sm">{errors.lastName}</p>
                     )}
                   </div>
                 </div>
@@ -322,7 +333,7 @@ const AddEditContact = ({
               >
                 <div className="">
                   <label
-                    htmlFor="phone1"
+                    htmlFor="mobile"
                     className="block text-xs font-bold text-gray-700"
                   >
                     Phone Number
@@ -338,8 +349,8 @@ const AddEditContact = ({
                     </div>
                     <input
                       type="text"
-                      name="phone1"
-                      value={formData.phone1}
+                      name="mobile"
+                      value={formData.mobile}
                       onChange={handleChange}
                       placeholder="Type in your phone"
                       className="block w-full pl-[6.5rem] pr-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -349,7 +360,7 @@ const AddEditContact = ({
 
                 <div className="">
                   <label
-                    htmlFor="phone2"
+                    htmlFor="mobile1"
                     className="block text-xs font-bold text-gray-700"
                   >
                     Phone Number 2{" "}
@@ -366,15 +377,15 @@ const AddEditContact = ({
                     </div>
                     <input
                       type="text"
-                      name="phone2"
-                      value={formData.phone2}
+                      name="mobile1"
+                      value={formData.mobile1}
                       onChange={handleChange}
                       placeholder="Type in  phone"
                       className="block w-full pl-[6.5rem] pr-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   </div>
-                  {errors.phone1 && (
-                    <p className="text-red-500 text-sm">{errors.phone1}</p>
+                  {errors.mobile && (
+                    <p className="text-red-500 text-sm">{errors.mobile}</p>
                   )}
                 </div>
 

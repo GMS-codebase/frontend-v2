@@ -19,7 +19,7 @@ const MinutesNegotiation = () => {
       status: true,
     });
     try {
-      await authorizedApi.put(`/contracts/negotiate/${id}/accept-reject`)
+      await authorizedApi.put(`/contracts/negotiate/${id}/accept-reject`);
       notifications.show({
         message: `Terms ${
           decision === "accept" ? "accepted" : "declined"

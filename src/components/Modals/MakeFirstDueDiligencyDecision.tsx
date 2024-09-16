@@ -22,13 +22,13 @@ const decisions = [
   { value: "REJECTED", label: "Reject" },
 ];
 
-const DueDetails = ({
-  isOpenAddDue,
-  closeAddDue,
+const MakeFirstDueDiligencyDecision = ({
+  isOpenModal,
+  closeModal,
   application,
 }: {
-  isOpenAddDue: boolean;
-  closeAddDue: () => void;
+  isOpenModal: boolean;
+  closeModal: () => void;
   application: any;
 }) => {
   const [loading, setLoading] = useState(false);
@@ -46,7 +46,7 @@ const DueDetails = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ) => {
     const { name, value, files } = e.target as HTMLInputElement;
     setFormData((prevData) => ({
@@ -91,7 +91,7 @@ const DueDetails = ({
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        },
+        }
       );
 
       notifications.show({
@@ -109,7 +109,7 @@ const DueDetails = ({
         attachment: null,
       });
 
-      closeAddDue();
+      closeModal();
     } catch (error: any) {
       console.error(error);
       notifications.show({
@@ -126,15 +126,15 @@ const DueDetails = ({
   return (
     <Modal
       size="lg"
-      opened={isOpenAddDue}
-      onClose={closeAddDue}
+      opened={isOpenModal}
+      onClose={closeModal}
       closeOnClickOutside={false}
       withCloseButton={false}
     >
       <div className="w-full h-[90vh] relative bg-white rounded-3xl pt-6 pb-6 flex flex-col items-center px-6">
         <button
           className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
-          onClick={closeAddDue}
+          onClick={closeModal}
         >
           <IoMdClose />
         </button>
@@ -239,7 +239,7 @@ const DueDetails = ({
                     className="mt-2 p-2 w-full border border-primary resize-none rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
                   />
                 </div>
-              ),
+              )
             )}
 
             <div className="py-4 w-full">
@@ -259,7 +259,7 @@ const DueDetails = ({
             <div className="w-full flex justify-center mt-4 space-x-4 mb-2">
               <button
                 type="button"
-                onClick={closeAddDue}
+                onClick={closeModal}
                 className="w-full px-4 py-3 bg-gray-200 text-gray-700 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
               >
                 Cancel
@@ -278,4 +278,4 @@ const DueDetails = ({
   );
 };
 
-export default DueDetails;
+export default MakeFirstDueDiligencyDecision;
