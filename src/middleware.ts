@@ -3,14 +3,12 @@ import type { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
 import { Role } from "@/types/base.type";
 
-const roles = ["ADMIN", "APPLICANT", "EMPLOYEE"];
+const roles = ["ADMIN" , "APPLICANT" , "EMPLOYEE" , "NORMAL_EMPLOYEE" , "SDF_SECRETARIATE" , "GRANT_COMMITTEE" , "DYNAMIC"];
 const whitelist = ["/", "/redirect", "/public"];
 function getRolePath(role: Role): string {
   switch (role.toLowerCase()) {
     case "dynamic":
       return "/dynamic";
-    case "employee":
-      return "/employee";
     case "normal_employee":
       return "/employee";
     case "grant_committee":
@@ -21,8 +19,6 @@ function getRolePath(role: Role): string {
       return "/applicant/contacts";
     case "admin":
       return "/admin";
-    case "employee":
-      return "/employee";
     default:
       return "/";
   }
@@ -60,17 +56,14 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL(nextUrl, request.url));
     }
     if (request.nextUrl.pathname === "/") {
-      console.log("The next url is /");
       return NextResponse.redirect(new URL(nextUrl, request.url));
     }
     const roleInRoute = request.nextUrl.pathname.split("/")[1].toUpperCase();
     if (roles.includes(roleInRoute as Role) && role !== roleInRoute) {
-      console.log(nextUrl);
-      return NextResponse.redirect(new URL(nextUrl, request.url));
+      return NextResponse.next();
     }
     return NextResponse.next();
   } catch (error) {
-    console.log("error directing ", error);
     request.cookies.delete("token");
     return NextResponse.redirect(new URL("/", request.url));
   }
