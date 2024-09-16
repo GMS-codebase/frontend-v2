@@ -139,7 +139,10 @@ const Page = () => {
             </div>
           </div>
           {/* <TermsAndConditions /> */}
-          <MinutesNegotiation />
+          {existingApplication?.currentStage === "CONTRACT_SIGNING" ||
+            (existingApplication?.currentStage === "FINISH_GRANT_APPROVAL" && (
+              <MinutesNegotiation />
+            ))}
         </div>
       </div>
     </div>
