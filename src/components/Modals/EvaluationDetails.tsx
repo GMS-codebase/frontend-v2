@@ -5,7 +5,7 @@ import { Modal } from "@mantine/core";
 import { IoMdClose } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { CiEdit } from "react-icons/ci";
-import { useDisclosure  } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 import MakeDecision from "./MakeDecision";
 
 const EvaluationDetails = ({
@@ -34,7 +34,7 @@ const EvaluationDetails = ({
   const handleSave = () => {
     onSaveComment && onSaveComment(text);
   };
-  console.log(evaluations)
+  console.log(evaluations);
   return (
     <>
       <Modal
@@ -99,8 +99,8 @@ const EvaluationDetails = ({
                   >
                     {evaluation?.evaluationDecision?.decision}
                   </p>
-                  {evaluation.evaluator.user_id ==
-                    profile.userProfile.data.uuid && (
+                  {evaluation?.evaluator?.user_id ==
+                    profile?.userProfile?.data?.uuid && (
                     <button
                       className="bg-primary p-2 rounded-full text-white font-bold"
                       onClick={() => {
@@ -176,11 +176,10 @@ const EvaluationDetails = ({
       </Modal>
       <MakeDecision
         onMakeDecision={() => closeEditDecision()}
-        applicationId=""
         close={closeEditDecision}
         isOpen={isOpenEditDecision}
         type="Evaluation"
-        defaultData={selectedDecision}
+        defaultData={selectedDecision?.evaluationDecision}
       />
     </>
   );

@@ -4,9 +4,9 @@ import { SolarDocumentBold } from "@/components/core/icons";
 import { useState, useEffect } from "react";
 import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
+import { useParams } from "next/navigation";
 
 interface MakeDecisionProps {
-  applicationId: string;
   isOpen: boolean;
   close: () => void;
   onMakeDecision: () => void;
@@ -18,7 +18,6 @@ interface MakeDecisionProps {
 }
 
 const MakeDecision = ({
-  applicationId,
   isOpen,
   close,
   onMakeDecision,
@@ -29,6 +28,7 @@ const MakeDecision = ({
     decision: "",
     comment: "",
   });
+  const { id } = useParams<{ id: string }>();
 
   const [errors, setErrors] = useState({
     decision: "",
@@ -39,6 +39,7 @@ const MakeDecision = ({
 
   useEffect(() => {
     if (defaultData) {
+      console.log(defaultData);
       setFormData(defaultData);
     }
   }, [defaultData]);
@@ -75,7 +76,6 @@ const MakeDecision = ({
     return valid;
   };
 
-
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
@@ -83,11 +83,14 @@ const MakeDecision = ({
 
     setLoading(true);
     try {
-      const endpoint = defaultData
-        ? `/application/${type.toLowerCase()}/update-decision/${applicationId}`
-        : `/application/${type.toLowerCase()}/make-decision/${applicationId}`;
+      const endpoint =
+        type === "Evaluation"
+          ? `/application/evaluation/make-decision/${id}`
+          : `/application/${id}/due-diligency-form/make-decision`;
 
-      await authorizedApi.patch(endpoint, formData);
+      type === "Evaluation"
+        ? await authorizedApi.patch(endpoint, formData)
+        : await authorizedApi.post(endpoint, formData);
 
       notifications.show({
         message: defaultData

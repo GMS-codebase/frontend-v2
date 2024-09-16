@@ -12,8 +12,10 @@ import EditEvalModal from "@/components/Modals/EditEvalModal";
 import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import { useDisclosure } from "@mantine/hooks";
 import BudgetQuestions from "@/components/Application/BudgetQuestions";
-import DueDetails from "@/components/Modals/DueDiligence";
+import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
+import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDiligencyDecision";
+import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
@@ -24,14 +26,26 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id
   )[0];
+  console.log(application);
   const [loading, setLoading] = useState(false);
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
   ] = useDisclosure(false);
   const [
+    isOpenDueDiligencyDetails,
+    { open: openDueDiligencyDetails, close: closeDueDiligencyDetails },
+  ] = useDisclosure(false);
+  const [
     isOpenMakeDecision,
     { open: openMakeDecision, close: closeMakeDecision },
+  ] = useDisclosure(false);
+  const [
+    isOpenMakeFirstDueDiligencyDecision,
+    {
+      open: openMakeFirstDueDiligencyDecision,
+      close: closeMakeFirstDueDiligencyDecision,
+    },
   ] = useDisclosure(false);
   const [selectedStage, setSelectedStage] = useState<
     "Evaluation" | "Due Diligence"
@@ -108,7 +122,13 @@ const Page = () => {
         return (
           <FundingQuestions
             data={application?.projectFunding}
-            setComments={setCommentsData}
+            setComments={
+              application?.evaluators.length === 0 ||
+              application?.evaluators[0].user_id ===
+                profile?.userProfile?.data.uuid
+                ? setCommentsData
+                : undefined
+            }
             comments={commentsData}
           />
         );
@@ -117,7 +137,13 @@ const Page = () => {
           <BudgetQuestions
             data={application?.projectFunding}
             commentData={commentsData}
-            setCommentData={setCommentsData}
+            setCommentData={
+              application?.evaluators.length === 0 ||
+              application?.evaluators[0].user_id ===
+                profile?.userProfile?.data.uuid
+                ? setCommentsData
+                : undefined
+            }
           />
         );
       default:
@@ -331,21 +357,32 @@ const Page = () => {
                     ? "APPROVED"
                     : application?.status}
                 </div>
-                {/* {application?.status === "PENDING" && application?.currentStage !== "GRANT_COMMITTEE" && ( */}
-                <div
-                  onClick={() => {
-                    setSelectedStage("Due Diligence");
-                    openMakeDecision();
-                  }}
-                  className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
-                >
-                  <p>Make a decision</p>
-                </div>
-                {/* )} */}
-                {application?.currentStage !== "DUE_DILIGENCY" && (
+                {application?.duediligencyDecisions?.length < 3 &&
+                  !application.duediligencyDecisions.find(
+                    (dec: any) =>
+                      dec?.employee?.user_id === profile?.userProfile?.data.uuid
+                  ) && (
+                    <div
+                      onClick={() => {
+                        setSelectedStage("Due Diligence");
+                        if (
+                          !application?.duediligencyForm &&
+                          application?.duediligencyDecisions?.length < 2
+                        ) {
+                          openMakeFirstDueDiligencyDecision();
+                        } else {
+                          openMakeDecision();
+                        }
+                      }}
+                      className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                    >
+                      <p>Make a decision</p>
+                    </div>
+                  )}
+                {application?.duediligencyForm && (
                   <div className="flex flex-col gap-2 mt-4">
                     <button
-                      onClick={openAddDues}
+                      onClick={openDueDiligencyDetails}
                       className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
                     >
                       View details
@@ -356,20 +393,19 @@ const Page = () => {
             )}
         </div>
       </div>
-      <DueDiligenceModal
+      <MakeFirstDueDiligencyDecision
         application={application}
-        opened={isOpenAddDues}
-        close={closeAddDues}
+        closeModal={closeMakeFirstDueDiligencyDecision}
+        isOpenModal={isOpenMakeFirstDueDiligencyDecision}
       />
-      <DueDetails
+      <DueDiligencyDetails
         application={application}
-        isOpenAddDue={isOpenAddDue}
-        closeAddDue={closeAddDue}
-        // onMakeDecision={() => handleDecisionMade("DueDiligence")}
+        opened={isOpenDueDiligencyDetails}
+        close={closeDueDiligencyDetails}
+        decisions={application?.duediligencyDecisions}
       />
       <MakeDecision
         type={selectedStage as any}
-        applicationId={id}
         isOpen={isOpenMakeDecision}
         close={closeMakeDecision}
         onMakeDecision={() => handleDecisionMade("Evaluation")}
