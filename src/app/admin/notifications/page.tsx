@@ -6,7 +6,6 @@ import { TableData } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { applicationsData as data } from "@/utils/constants/dummy";
-import CallsActions from "../calls/CallsAction";
 import { CiSearch } from "react-icons/ci";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";

@@ -14,6 +14,7 @@ import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
+import { IoIosSave } from "react-icons/io";
 const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
@@ -168,13 +169,13 @@ const Page = () => {
     if (data.trainingProcess && data.trainingProcess.length > 0) {
       submitData.append(
         "trainingProcess",
-        JSON.stringify(data.trainingProcess),
+        JSON.stringify(data.trainingProcess)
       );
     }
     if (data.trainingEquipment && data.trainingEquipment.length > 0) {
       submitData.append(
         "trainingEquipment",
-        JSON.stringify(data.trainingEquipment),
+        JSON.stringify(data.trainingEquipment)
       );
     }
     if (data.identificationEmployee) {
@@ -189,13 +190,13 @@ const Page = () => {
     if (data.contributionFromApplicant) {
       submitData.append(
         "contributionFromApplicant",
-        data.contributionFromApplicant,
+        data.contributionFromApplicant
       );
     }
     if (data.recruitmentTrainerNumber) {
       submitData.append(
         "recruitmentTrainerNumber",
-        data.recruitmentTrainerNumber,
+        data.recruitmentTrainerNumber
       );
     }
     if (data.identificationMember) {
@@ -207,25 +208,25 @@ const Page = () => {
     ) {
       submitData.append(
         "assessmentAndCertificationProcess",
-        JSON.stringify(data.assessmentAndCertificationProcess),
+        JSON.stringify(data.assessmentAndCertificationProcess)
       );
     }
     if (data.assessmentEquipment && data.assessmentEquipment.length > 0) {
       submitData.append(
         "assessmentEquipment",
-        JSON.stringify(data.assessmentEquipment),
+        JSON.stringify(data.assessmentEquipment)
       );
     }
     if (data.recruitmentCandidatesNumber) {
       submitData.append(
         "recruitmentCandidatesNumber",
-        data.recruitmentCandidatesNumber,
+        data.recruitmentCandidatesNumber
       );
     }
     if (data.assessorsAndFacilitators) {
       submitData.append(
         "assessorsAndFacilitators",
-        data.assessorsAndFacilitators,
+        data.assessorsAndFacilitators
       );
     }
     if (data.contribution) {
@@ -241,19 +242,19 @@ const Page = () => {
     if (data.trainingManualAttachment) {
       submitData.append(
         "trainingManualAttachment",
-        data.trainingManualAttachment,
+        data.trainingManualAttachment
       );
     }
     if (data.trainingEquipmentAttachment) {
       submitData.append(
         "trainingEquipmentAttachment",
-        data.trainingEquipmentAttachment,
+        data.trainingEquipmentAttachment
       );
     }
     if (data.previousFinancialReportAttachment) {
       submitData.append(
         "previousFinancialReportAttachment",
-        data.previousFinancialReportAttachment,
+        data.previousFinancialReportAttachment
       );
     }
     if (data.MOUsAttachment && data.MOUsAttachment.length > 0) {
@@ -264,20 +265,20 @@ const Page = () => {
     if (data.assessmentEquipmentAttachment) {
       submitData.append(
         "assessmentEquipmentAttachment",
-        data.assessmentEquipmentAttachment,
+        data.assessmentEquipmentAttachment
       );
     }
     if (data.budgetSummaryAttachment) {
       submitData.append(
         "budgetSummaryAttachment",
-        data.budgetSummaryAttachment,
+        data.budgetSummaryAttachment
       );
     }
 
     try {
       const res = await authorizedApi.post(
         `/application/fillApplication/${applicationId}`,
-        submitData,
+        submitData
       );
       console.log(res.data);
       notifications.show({
@@ -308,7 +309,17 @@ const Page = () => {
   return (
     <div>
       <div className="flex flex-col gap-4 w-full bg-white p-4 rounded-2xl ">
-        <div className="font-semibold text-2xl">Questions and answers</div>
+        <div className="font-semibold text-2xl flex justify-between items-center">
+          <p>Questions and answers</p>
+          <button
+            className="bg-primary text-white p-3 rounded-full"
+            onClick={() => {
+              handleSubmit();
+            }}
+          >
+            <IoIosSave />
+          </button>
+        </div>
         <div className="flex font-semibold">
           <div
             onClick={() => setCurrentComponent("Project")}
