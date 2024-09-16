@@ -38,10 +38,10 @@ const Page = () => {
     useDisclosure(false);
   const windows = useSelector((state: any) => state.windows);
   const window = windows.windows?.filter(
-    (window: any) => window.uuid === windowId
+    (window: any) => window.uuid === windowId,
   )[0];
   const filteredSubWindows = window?.subWindows.filter((subW: any) =>
-    subW.title.toLowerCase().includes(searchQuery.toLowerCase())
+    subW.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
   const [selectedSubWindow, setSelectedSubWindow] = useState<any>();
   const columns: ColumnDef<any>[] = [
