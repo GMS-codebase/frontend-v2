@@ -9,14 +9,14 @@ const employeeRoutes: Route[] = [
     icon: <Icons.SolarPieChart2Bold />,
   },
   {
-    label: "Applicants",
-    path: "/employee/applicants",
-    icon: <Icons.SolarUsersGroupTwoRoundedBold />,
-  },
-  {
     label: "Applications",
     path: "/employee/applications",
     icon: <Icons.SolarFolderWithFilesBold />,
+  },
+  {
+    label: "Applicants",
+    path: "/employee/applicants",
+    icon: <Icons.SolarUsersGroupTwoRoundedBold />,
   },
   {
     label: "Application Reports",

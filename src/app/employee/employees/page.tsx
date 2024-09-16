@@ -5,7 +5,7 @@ import { DataTable } from "@/components/core/data-table";
 import Actions from "./EmployeeAction";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
+import AddEditCall from "@/components/Modals/call/AddEditCall";
 import { employee } from "@/utils/constants/dummy";
 import AddEmployee from "@/components/Modals/AddEmployee";
 import UpdateEmployee from "@/components/Modals/UpdateEmployee";
