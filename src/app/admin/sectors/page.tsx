@@ -22,6 +22,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 
 const Page = () => {
   const sectors = useSelector((state: any) => state.sectors);
+  console.log("sectors --> ",sectors);
   const [searchQuery, setSearchQuery] = useState("");
   const [
     isOpenCreateEdit,
