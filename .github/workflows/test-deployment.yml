@@ -27,16 +27,15 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
-          port: 22
           username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/deployment/testing/gms
+            cd ~/apps/frontend-v2
             git stash
             git pull origin main
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
             npm  install --force
             npm  run build
-            pm2 restart gms
+            pm2 restart frontend-v2
+            pm2 save

@@ -9,6 +9,11 @@ export type Window = {
   description: string;
   uuid: string;
 };
+export type SubWindow = {
+  title: string;
+  description: string;
+  uuid: string;
+};
 export type Trade = {
   title: string;
   description: string;
@@ -37,6 +42,13 @@ export type Contract = {
 
 export type Contact = {
   uuid: string;
+  firstName: string;
+  lastName: string;
+  mobile: string;
+  mobile1: string;
+  position: string;
+  gender: string;
+  email: string;
 };
 
 export type Comments = {
@@ -61,4 +73,18 @@ export type Comments = {
   assessorsAndFacilitatorsComment: string;
   budgetAttachmentComment: string;
   contributionComment: string;
+};
+
+export type Call = {
+  uuid: string;
+  title: string;
+  status: "OPEN" | "CLOSED";
+  startDate: string;
+  endDate: string;
+  description: string;
+  appealDays: string;
+  windows: Window[] | string[];
+  subWindows: SubWindow[] | string[];
+  sectors: Sector[] | string[];
+  attachment: File | string | null;
 };

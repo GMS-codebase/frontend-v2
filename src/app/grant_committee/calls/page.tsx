@@ -8,10 +8,8 @@ import { callsData as data } from "@/utils/constants/dummy";
 import CallsActions from "./CallsAction";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
+import AddEditCall from "@/components/Modals/call/AddEditCall";
 import { useState } from "react";
-import UpdateCall from "@/components/Modals/UpdateCall";
-import DeleteCall from "@/components/Modals/DeleteCall";
 import { useSelector } from "react-redux";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 import { format } from "date-fns";
@@ -97,7 +95,7 @@ const Page = () => {
           />
         )}
       </div>
-      <AddCall isOpenAddCall={isOpen} closeAddCall={close} />
+      {/* <AddCall isOpenAddCall={isOpen} closeAddCall={close} />
       <UpdateCall
         isOpenUpdateCall={isOpenCall.openUpdate}
         closeUpdateCall={() =>
@@ -118,7 +116,7 @@ const Page = () => {
             openUpdate: false,
           })
         }
-      />
+      /> */}
     </div>
   );
 };
