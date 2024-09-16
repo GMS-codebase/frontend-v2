@@ -46,7 +46,7 @@ const MakeFirstDueDiligencyDecision = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value, files } = e.target as HTMLInputElement;
     setFormData((prevData) => ({
@@ -91,7 +91,7 @@ const MakeFirstDueDiligencyDecision = ({
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       notifications.show({
@@ -239,7 +239,7 @@ const MakeFirstDueDiligencyDecision = ({
                     className="mt-2 p-2 w-full border border-primary resize-none rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
                   />
                 </div>
-              )
+              ),
             )}
 
             <div className="py-4 w-full">

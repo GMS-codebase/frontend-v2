@@ -6,12 +6,22 @@ import { Role } from "@/types/base.type";
 const roles = ["ADMIN", "APPLICANT", "EMPLOYEE"];
 const whitelist = ["/", "/redirect", "/public"];
 function getRolePath(role: Role): string {
-  switch (role) {
-    case "APPLICANT":
+  switch (role.toLowerCase()) {
+    case "dynamic":
+      return "/dynamic";
+    case "employee":
+      return "/employee";
+    case "normal_employee":
+      return "/employee";
+    case "grant_committee":
+      return "/grant_committee";
+    case "sdf_secretariate":
+      return "/sdf/contracts";
+    case "applicant":
       return "/applicant/contacts";
-    case "ADMIN":
+    case "admin":
       return "/admin";
-    case "EMPLOYEE":
+    case "employee":
       return "/employee";
     default:
       return "/";
@@ -60,6 +70,7 @@ export function middleware(request: NextRequest) {
     }
     return NextResponse.next();
   } catch (error) {
+    console.log("error directing ", error);
     request.cookies.delete("token");
     return NextResponse.redirect(new URL("/", request.url));
   }

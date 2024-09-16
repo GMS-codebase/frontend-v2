@@ -117,7 +117,7 @@ const AddEditContact = ({
         if (defaultData) {
           res = await authorizedApi.put(
             `/contacts/update/${defaultData.uuid}`,
-            formData
+            formData,
           );
         } else {
           res = await authorizedApi.post("/contacts", {
