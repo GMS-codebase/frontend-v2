@@ -83,7 +83,10 @@ const Page = () => {
           <DataTable columns={columns} data={trades.trades ?? []} />
         </div>
       )}
-      <AddEditTrade isOpenAddEditTrade={isOpenTrade} closeAddEditTrade={close} />
+      <AddEditTrade
+        isOpenAddEditTrade={isOpenTrade}
+        closeAddEditTrade={close}
+      />
     </div>
   );
 };

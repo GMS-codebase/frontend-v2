@@ -29,7 +29,7 @@ export type Sector = {
 
 export type ReduxState = {
   applications: any;
-}
+};
 
 export type Application = {
   uuid: string;

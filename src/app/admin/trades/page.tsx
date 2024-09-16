@@ -30,7 +30,7 @@ const Page = () => {
     trades.trades?.filter(
       (trade: any) =>
         trade?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        trade?.shortname?.toLowerCase().includes(searchQuery.toLowerCase())
+        trade?.shortname?.toLowerCase().includes(searchQuery.toLowerCase()),
     ) ?? [];
 
   const columns: ColumnDef<any>[] = [

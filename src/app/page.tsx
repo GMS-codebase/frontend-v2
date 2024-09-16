@@ -15,13 +15,18 @@ import { SolarFolder2Bold } from "@/components/core/icons";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getCalls } from "@/utils/funcs";
+import { AnyNaptrRecord } from "dns";
+import { unauthorizedApi } from "@/utils/api";
+import { notifications } from "@mantine/notifications";
 
 function Page() {
   const dispatch = useDispatch();
   useEffect(() => {
     getCalls(dispatch);
   }, []);
-  const { calls, loading } = useSelector((state: any) => state.calls);
+  const { calls, loading: loadingCalls } = useSelector(
+    (state: any) => state.calls,
+  );
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
   const [isOpenLogin, { open: openLogin, close: closeLogin }] =
@@ -45,6 +50,29 @@ function Page() {
       openSetPassword();
     }
   }, [token, openSetPassword]);
+
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = () => {
+    if (!email) {
+      return;
+    }
+    setLoading(true);
+    unauthorizedApi
+      .post("/subscriptions/subscribe", { email })
+      .then((res) => {
+        console.log(res.data);
+        notifications.show({
+          message: "SUbscribed Successfully!",
+          color: "blue",
+        });
+      })
+      .catch((e) => {
+        console.log("error", e);
+      })
+      .finally(() => setLoading(false));
+  };
 
   return (
     <div className="relative h-screen">
@@ -123,11 +151,16 @@ function Page() {
           <HiOutlineMail className="text-primary ml-3 w-8 h-8" />
           <input
             type="text"
+            value={email}
+            onChange={(e: any) => setEmail(e.target.value)}
             className="w-full ml-3 border-none text-black bg-white outline-none"
             placeholder="Type your email"
           />
-          <button className="bg-[#1F5DB014] bg-opacity-10 text-primary font-bold rounded-full px-4 py-2">
-            Subscribe
+          <button
+            disabled={loading}
+            className="bg-[#1F5DB014] bg-opacity-10 text-primary font-bold rounded-full px-4 py-2"
+          >
+            {loading ? "Subscribing . . ." : "Subscribe"}
           </button>
         </div>
       </div>
