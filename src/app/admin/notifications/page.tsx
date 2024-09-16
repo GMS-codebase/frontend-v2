@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Select } from "@mantine/core";
 import { ChangeEvent } from "react";
 import { TableData } from "@mantine/core";
@@ -12,6 +12,8 @@ import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { ClipLoader } from "react-spinners";
 import { useSelector } from "react-redux";
+import { HiDotsHorizontal } from "react-icons/hi";
+import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 
 const Page = () => {
   const [text, setText] = useState("");
@@ -27,34 +29,42 @@ const Page = () => {
   });
   const columns: ColumnDef<any>[] = [
     {
-      accessorKey: "applicationNumber",
-      header: "Application Number",
-      cell: ({ row }) => <div>{row.original?.applicationNumber}</div>,
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
     },
     {
-      accessorKey: "applicantName",
-      header: "Applicant Name",
-      cell: ({ row }) => <div>{row.original?.applicantName}</div>,
-    },
-    {
-      accessorKey: "window",
-      header: "Window",
+      accessorKey: "institution",
+      header: "Institution Name",
       cell: ({ row }) => (
-        <div>
-          WINDOW {row.original?.window.number} : {row.original?.window.name}
-        </div>
+        <div className="w-full">{row.original?.institution}</div>
       ),
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+      cell: ({ row }) => <div className="w-full">{row.original?.email}</div>,
+    },
+    {
+      accessorKey: "phone",
+      header: "Phone",
+      cell: ({ row }) => <div className="w-full">{row.original?.phone}</div>,
     },
     {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <CallsActions
-          setIsCall={function (employee: any): void {
-            throw new Error("Function not implemented.");
-          }}
-          call={undefined}
-        />
+        <div>
+          <button
+            style={{
+              background:
+                "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+            }}
+            className="p-3 rounded-full border text-white hover:bg-red-100"
+          >
+            <HiDotsHorizontal size={25} color="white" />
+          </button>
+        </div>
       ),
     },
   ];
@@ -66,6 +76,26 @@ const Page = () => {
   const { windows } = useSelector((state: any) => state.windows);
   const { calls } = useSelector((state: any) => state.calls);
   const { sectors } = useSelector((state: any) => state.sectors);
+  const [filteredApplicants, setFilteredApplicants] = useState([]);
+  const {applicants, loading: applicantsLoading} = useSelector((state: any) => state.applicants);
+  console.log("applicants", applicants);
+  console.log(sectors, calls, windows);
+  useEffect(()=>{
+    setFilteredApplicants(applicants);
+  },[applicants])
+
+  // useEffect(()=>{
+  //   authorizedApi.get(`/applicant/filter?callId=${formData.filters.call}&windowId==${formData.filters.window}&sectorId==${formData.filters.sector}&stage=${formData.filters.stage}`)
+  //     .then((response)=>{
+  //       console.log("response ==> ",response)
+  //       setFilteredApplicants(response.data.data == "{}" ? [] : response.data.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     })
+  //     .finally(()=> setLoading(false));
+  // },[formData.filters]);
+
   const handleSubmit = (event: any) => {
     event.preventDefault();
     setLoading(true);
@@ -175,8 +205,8 @@ const Page = () => {
               }
               placeholderText="Filter By Sector"
               data={
-                sectors
-                  ? sectors?.map((sector: any) => {
+                sectors?.data
+                  ? sectors?.data?.map((sector: any) => {
                       return { value: sector.uuid, label: sector?.name };
                     })
                   : []
@@ -243,7 +273,7 @@ const Page = () => {
           )}
         </button>
       </form>
-      <div className="relative  w-full my-5 flex justify-between">
+      {/* <div className="relative  w-full my-5 flex justify-between">
         <h1 className="font-bold text-xl">Concerned Applicants</h1>
         <div className="relative  w-[20rem]">
           <span className="absolute top-4 left-4">
@@ -255,10 +285,16 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-      </div>
-      <div className="w-full h-full">
-        <DataTable columns={columns} data={data} />
-      </div>
+      </div> */}
+      {/* <div className="w-full h-full">
+      {applicantsLoading && loading ? (
+          <TableSkeleton columns={columns} />
+        ) : applicants?.length === 0 ? (
+          <h1 className="w-full text-center">No Applicants Found!</h1>
+        ) : (
+          <DataTable columns={columns} data={applicants ?? []} />
+        )}
+      </div> */}
     </div>
   );
 };
