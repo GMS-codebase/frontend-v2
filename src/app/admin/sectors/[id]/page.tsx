@@ -37,7 +37,7 @@ const Page = () => {
   const filteredTrades = sector?.trades?.filter(
     (tr: any) =>
       tr.title.toLowerCase().includes(searchQuery?.toLowerCase()) ||
-      tr.shortname.toLowerCase().includes(searchQuery?.toLowerCase())
+      tr.shortname.toLowerCase().includes(searchQuery?.toLowerCase()),
   );
 
   const columns: ColumnDef<Trade>[] = [
