@@ -263,7 +263,7 @@ const AddEditCall = ({
                       id="attachment"
                       type="file"
                       name="attachment"
-                      accept=".pdf"
+                      // accept=".pdf"
                       onChange={handleChange}
                       style={{ display: "none" }}
                       className="content-none"
@@ -306,20 +306,21 @@ const AddEditCall = ({
                       Start Date
                     </label>
                     <div className="w-full relative">
-                      <span className="absolute left-2 top-[10px]">
-                        <CalendarMinimalistic />
-                      </span>
-                      <input
-                        type="date"
-                        name="startDate"
-                        value={formData.startDate}
-                        onChange={handleChange}
-                        className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        required
+                    <DatePicker
+                        minDate={new Date()}
+                        value={formData.startDate ? new Date(formData.startDate) : null}
+                        onChange={(date: Date | null) => {
+                          const formattedDate = date
+                            ? dayjs(date).format("YYYY-MM-DD")
+                            : "";
+                          setFormData((prev) => ({
+                            ...prev,
+                            startDate: formattedDate,
+                          }));
+                        }}
                       />
                     </div>
                   </div>
-
                   <div className="w-1/2">
                     <label
                       htmlFor="endDate"
@@ -328,16 +329,18 @@ const AddEditCall = ({
                       End Date
                     </label>
                     <div className="w-full relative">
-                      <span className="absolute left-2 top-[10px]">
-                        <CalendarMinimalistic />
-                      </span>
-                      <input
-                        type="date"
-                        name="endDate"
-                        value={formData.endDate}
-                        onChange={handleChange}
-                        className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        required
+                    <DatePicker
+                        minDate={formData.startDate ? new Date(formData.startDate) : undefined}
+                        value={formData.endDate ? new Date(formData.endDate) : null}
+                        onChange={(date: Date | null) => {
+                          const formattedDate = date
+                            ? dayjs(date).format("YYYY-MM-DD")
+                            : "";
+                          setFormData((prev) => ({
+                            ...prev,
+                            endDate: formattedDate,
+                          }));
+                        }}
                       />
                     </div>
                   </div>
@@ -460,7 +463,7 @@ const AddEditCall = ({
                     />
                   </div>
                 </div>
-                <div className="w-full flex justify-center mt-4 space-x-4">
+                <div className="w-full flex justify-center mt-4 space-x-4 pb-3">
                   <button
                     type="button"
                     onClick={prevStep}
@@ -470,6 +473,7 @@ const AddEditCall = ({
                   </button>
                   <button
                     onClick={handleSubmit}
+                    disabled={loading}
                     disabled={loading}
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
