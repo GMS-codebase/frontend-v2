@@ -120,7 +120,15 @@ const AddEditContact = ({
             formData
           );
         } else {
-          res = await authorizedApi.post("/contacts", formData);
+          res = await authorizedApi.post("/contacts", {
+            firstname: formData.firstName,
+            lastname: formData.lastName,
+            email: formData.email,
+            phone1: formData.mobile,
+            gender: formData.gender,
+            phone2: formData.mobile1,
+            position: formData.position,
+          });
         }
         notifications.show({
           message: defaultData
@@ -133,7 +141,7 @@ const AddEditContact = ({
           payload: res.data?.data.data,
         });
         setFormData({
-          firstName: "", 
+          firstName: "",
           lastName: "",
           email: "",
           mobile: "",

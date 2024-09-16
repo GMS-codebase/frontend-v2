@@ -11,6 +11,8 @@ import { SolarCheckCircleBold } from "../../core/icons";
 import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { Call } from "@/types";
+import { DatePicker } from "@mantine/dates";
+import dayjs from "dayjs";
 
 const AddEditCall = ({
   isOpenAddEditCall,
@@ -306,9 +308,13 @@ const AddEditCall = ({
                       Start Date
                     </label>
                     <div className="w-full relative">
-                    <DatePicker
+                      <DatePicker
                         minDate={new Date()}
-                        value={formData.startDate ? new Date(formData.startDate) : null}
+                        value={
+                          formData.startDate
+                            ? new Date(formData.startDate)
+                            : null
+                        }
                         onChange={(date: Date | null) => {
                           const formattedDate = date
                             ? dayjs(date).format("YYYY-MM-DD")
@@ -329,9 +335,15 @@ const AddEditCall = ({
                       End Date
                     </label>
                     <div className="w-full relative">
-                    <DatePicker
-                        minDate={formData.startDate ? new Date(formData.startDate) : undefined}
-                        value={formData.endDate ? new Date(formData.endDate) : null}
+                      <DatePicker
+                        minDate={
+                          formData.startDate
+                            ? new Date(formData.startDate)
+                            : undefined
+                        }
+                        value={
+                          formData.endDate ? new Date(formData.endDate) : null
+                        }
                         onChange={(date: Date | null) => {
                           const formattedDate = date
                             ? dayjs(date).format("YYYY-MM-DD")
@@ -473,7 +485,6 @@ const AddEditCall = ({
                   </button>
                   <button
                     onClick={handleSubmit}
-                    disabled={loading}
                     disabled={loading}
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
