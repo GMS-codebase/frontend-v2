@@ -9,54 +9,74 @@ import { callData as data } from "@/utils/constants/dummy";
 import { CiSearch } from "react-icons/ci";
 import { useSelector } from "react-redux";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
+import { HiDotsHorizontal } from "react-icons/hi";
+import { useRouter } from "next/navigation";
+import { Menu } from "@mantine/core";
+import Link from "next/link";
+import { FiEye } from "react-icons/fi";
 const Page = () => {
+  const navigate = useRouter();
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
       header: "Application number",
       cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.number?.length > 50
-            ? row.original.number.slice(0, 50) + "..."
-            : row.original.number}
-        </div>
+        <div className="truncate">{row.original.applicationNumber}</div>
       ),
     },
     {
       accessorKey: "window",
       header: "Window",
       cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.window?.length > 50
-            ? row.original.window.slice(0, 50) + "..."
-            : row.original.window}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "sector",
-      header: "sector",
-      cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.sector?.length > 50
-            ? row.original.sector.slice(0, 50) + "..."
-            : row.original.sector}
-        </div>
+        <div className="truncate">{row.original.window.title}</div>
       ),
     },
     {
       accessorKey: "currentStage",
       header: "Current Stage",
       cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.currentStage?.length > 50
-            ? row.original.currentStage.slice(0, 50) + "..."
-            : row.original.currentStage}
+        <div className="truncate">{row.original?.currentStage}</div>
+      ),
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <div>
+          <Menu shadow="lg" width={300}>
+            <Menu.Target>
+              <button
+                style={{
+                  background:
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+                }}
+                className="p-3 rounded-full border text-white hover:bg-red-100"
+              >
+                <HiDotsHorizontal size={25} color="white" />
+              </button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>
+                <h1 className="text-lg">Actions</h1>
+              </Menu.Label>
+              <Menu.Divider />
+              <Menu.Item className="bg-[#F0F0F0]">
+                <Link
+                  href={`/applicant/applications/application/${row.original.uuid}`}
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <FiEye size={21} color="#576074" />
+                  View
+                </Link>
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </div>
       ),
     },
   ];
   const myApplications = useSelector((state: any) => state.applications);
+  console.log(myApplications);
 
   return (
     <div className="w-full  flex flex-col gap-4">

@@ -30,7 +30,7 @@ authorizedApi.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 export const unauthorizedApi: AxiosInstance = axios.create({

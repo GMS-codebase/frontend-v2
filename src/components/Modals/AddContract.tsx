@@ -18,12 +18,15 @@ const AddContract: React.FC<AddContractProps> = ({
   closeAddContract,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<{ name: string; file: File | null }>(
-    {
-      name: "",
-      file: null,
-    }
-  );
+  const [formData, setFormData] = useState<{
+    name: string;
+    file: File | null;
+    amount: string;
+  }>({
+    name: "",
+    file: null,
+    amount: "",
+  });
   const dispatch = useDispatch();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,34 +42,45 @@ const AddContract: React.FC<AddContractProps> = ({
     setLoading(true);
     const newData = {
       name: formData.name,
+      amount: formData.amount,
       contract: formData.file,
       applicantId: data.applicant.uuid,
       applicationId: data?.uuid,
     };
-
-    try {
-      const res = await authorizedApi.post("/contracts", newData, {
+    console.log(JSON.stringify(formData.file));
+    const submitForm = new FormData();
+    submitForm.append("name", newData.name);
+    submitForm.append("amount", newData.amount);
+    submitForm.append("contract", newData.contract as Blob);
+    submitForm.append("applicantId", newData.applicantId);
+    submitForm.append("applicationId", newData.applicationId);
+    authorizedApi
+      .post("/contracts", submitForm, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+      })
+      .then((res) => {
+        notifications.show({
+          message: res?.data?.message,
+          color: "blue",
+        });
+        setFormData({
+          file: null,
+          name: "",
+          amount: "",
+        });
+        closeAddContract();
+      })
+      .catch((err: any) => {
+        notifications.show({
+          message: err.response?.data?.message ?? "Failed to create contract",
+          color: "red",
+        });
+      })
+      .finally(() => {
+        setLoading(false);
       });
-      notifications.show({
-        message: res?.data?.message,
-        color: "blue",
-      });
-      setFormData({
-        file: null,
-        name: "",
-      });
-      closeAddContract();
-    } catch (err: any) {
-      notifications.show({
-        message: err.response?.data?.message ?? "Failed to create contract",
-        color: "red",
-      });
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
@@ -112,7 +126,31 @@ const AddContract: React.FC<AddContractProps> = ({
                     type="text"
                     name="name"
                     value={formData.name}
-                    placeholder="Contract name"
+                    placeholder="Contract Name"
+                    onChange={handleChange}
+                    className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A]  rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="w-full flex justify-between gap-3">
+              <div className="w-full">
+                <label
+                  htmlFor="TradeTitle"
+                  className="block text-md font-bold text-gray-700"
+                >
+                  Contract amount
+                </label>
+                <div className="w-full relative">
+                  <span className="absolute left-2 top-[10px]">
+                    <Folder2 />
+                  </span>
+                  <input
+                    type="text"
+                    name="amount"
+                    value={formData.amount}
+                    placeholder="Contract Amount"
                     onChange={handleChange}
                     className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A]  rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     required

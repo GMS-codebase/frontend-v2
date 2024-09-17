@@ -35,7 +35,6 @@ const AssignStage = ({
   isAssignStage: boolean;
   closeAssignStage: () => void;
 }) => {
-  console.log("employee in assign stage", employee);
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -66,7 +65,6 @@ const AssignStage = ({
       })
       .then((res) => {
         getEmployees(dispatch);
-        console.log(res.data);
         notifications.show({
           message: "Stage assigned successfully",
           color: "blue",
@@ -75,7 +73,6 @@ const AssignStage = ({
         closeAssignStage();
       })
       .catch((err) => {
-        console.log(err.response);
         notifications.show({
           message: err.response?.data?.message,
           color: "red",
@@ -140,9 +137,8 @@ const AssignStage = ({
                   value={stage}
                   onChange={(value: any) => setStage(value)}
                   data={[
-                    { value: "Evaluation", label: "Evaluation" },
-                    { value: "DueDiligency", label: "DueDiligency" },
-                    { value: "SDFSecretariate", label: "SDFSecretariate" },
+                    { value: "EVALUATION", label: "Evaluation" },
+                    { value: "DUE_DILIGENCY", label: "DueDiligency" },
                   ]}
                   placeholder="Select stage"
                   className="text-base"

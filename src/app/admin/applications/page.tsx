@@ -8,7 +8,7 @@ import { applicationsData as data } from "@/utils/constants/dummy";
 import CallsActions from "./CallsAction";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
+import AddEditCall from "@/components/Modals/call/AddEditCall";
 import { Select } from "@mantine/core";
 import { useRef } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -18,7 +18,6 @@ import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 const Page = () => {
   const [isOpenCall, { open, close }] = useDisclosure(false);
   const filtersContainerRef = useRef<HTMLDivElement>(null);
-
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "applicationNumber",
@@ -28,36 +27,38 @@ const Page = () => {
     {
       accessorKey: "applicantName",
       header: "Applicant Name",
-      cell: ({ row }) => <div>{row.original?.applicantName}</div>,
+      cell: ({ row }) => <div>{row.original?.applicant?.name}</div>,
     },
     {
       accessorKey: "window",
       header: "Window",
-      cell: ({ row }) => (
-        <div>
-          WINDOW {row.original?.window?.number} : {row.original?.window?.name}
-        </div>
-      ),
+      cell: ({ row }) => <div>{row.original?.window?.title}</div>,
     },
     {
       accessorKey: "sector",
       header: "Sector",
-      cell: ({ row }) => <div>{row.original?.sector}</div>,
+      cell: ({ row }) => <div>{row.original?.sectors[0].name}</div>,
     },
     {
       accessorKey: "trade",
       header: "Trade",
-      cell: ({ row }) => <div>{row.original?.trade}</div>,
+      cell: ({ row }) => (
+        <div>
+          {row.original.trades[0]
+            ? row.original?.trades[0].title
+            : "Not Assigned"}
+        </div>
+      ),
     },
     {
       accessorKey: "stage",
       header: "Stage",
-      cell: ({ row }) => <div>{row.original?.stage}</div>,
+      cell: ({ row }) => <div>{row.original?.currentStage}</div>,
     },
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions />,
+      cell: ({ row }) => <CallsActions application={row.original} />,
     },
   ];
 
@@ -90,6 +91,7 @@ const Page = () => {
   };
 
   const applications = useSelector((state: any) => state.applications);
+  console.log("applications", applications);
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
@@ -186,7 +188,7 @@ const Page = () => {
           />
         )}
       </div>
-      <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
+      <AddEditCall isOpenAddEditCall={isOpenCall} closeAddEditCall={close} />
     </div>
   );
 };
