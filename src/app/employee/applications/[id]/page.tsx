@@ -1,29 +1,55 @@
 "use client";
 import React, { useState } from "react";
-import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
-import {
-  SolarFileBold,
-  SolarFolder2Bold,
-  SolarEyeLinear,
-} from "@/components/core/icons";
+import { SolarFileBold, SolarFolder2Bold } from "@/components/core/icons";
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { Comments } from "@/types";
 import FundingQuestions from "@/components/Application/FundingQuestions";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import EvalDetails from "@/components/Modals/evalDetails";
+import MakeDecision from "@/components/Modals/MakeDecision";
 import EditEvalModal from "@/components/Modals/EditEvalModal";
-import DueDetail from "@/components/Modals/Duediligency";
-
+import EvaluationDetails from "@/components/Modals/EvaluationDetails";
+import { useDisclosure } from "@mantine/hooks";
+import BudgetQuestions from "@/components/Application/BudgetQuestions";
+import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
+import DueDiligenceModal from "@/components/Modals/DueDiigence";
+import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDiligencyDecision";
+import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
+  const { stages } = useSelector((state: any) => state.empStages);
+  const stagesArr = stages?.map((stage: any) => stage?.stage);
+  console.log(stages, stagesArr);
   const applications = useSelector((state: any) => state.applications);
+  const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id
+    (application: any) => application.uuid === id,
   )[0];
   console.log(application);
   const [loading, setLoading] = useState(false);
+  const [
+    isOpenEvaluationDetails,
+    { open: openEvaluationDetails, close: closeEvaluationDetails },
+  ] = useDisclosure(false);
+  const [
+    isOpenDueDiligencyDetails,
+    { open: openDueDiligencyDetails, close: closeDueDiligencyDetails },
+  ] = useDisclosure(false);
+  const [
+    isOpenMakeDecision,
+    { open: openMakeDecision, close: closeMakeDecision },
+  ] = useDisclosure(false);
+  const [
+    isOpenMakeFirstDueDiligencyDecision,
+    {
+      open: openMakeFirstDueDiligencyDecision,
+      close: closeMakeFirstDueDiligencyDecision,
+    },
+  ] = useDisclosure(false);
+  const [selectedStage, setSelectedStage] = useState<
+    "Evaluation" | "Due Diligence"
+  >();
 
   const [isOpenAddDue, setIsOpenAddDue] = useState(false);
   const [isOpenAddEval, setIsOpenAddEval] = useState(false);
@@ -43,13 +69,8 @@ const Page = () => {
   const closeAddEval = () => setIsOpenAddEval(false);
 
   const [isOpenAddDues, setIsOpenAddDues] = useState(false);
-  const [isOpenAddEvals, setIsOpenAddEvals] = useState(false);
-
   const openAddDues = () => setIsOpenAddDues(true);
   const closeAddDues = () => setIsOpenAddDues(false);
-
-  const openAddEvals = () => setIsOpenAddEvals(true);
-  const closeAddEvals = () => setIsOpenAddEvals(false);
 
   const openEditModal = () => setIsOpenEditEval(true);
   const closeEditEval = () => setIsOpenEditEval(false);
@@ -58,27 +79,42 @@ const Page = () => {
     "Project" | "IndicativeBudget"
   >("Project");
   const [commentsData, setCommentsData] = useState<Comments>({
-    titleComment: "",
-    activitiesComment: "",
-    readinessExecuteComment: "",
-    roleComment: "",
-    institutionComment: "",
-    trainingManualComment: "",
-    trainingEquipmentComment: "",
-    identificationEmployeeComment: "",
-    staffComment: "",
-    sustainabilityComment: "",
-    previousFinancialReportComment: "",
-    trainingPremisesComment: "",
-    contributionFromApplicantComment: "",
-    recruitmentTrainerComment: "",
-    MOUsAttachmentComment: "",
-    identificationMemberComment: "",
-    assessmentEquipmentComment: "",
-    recruitmentCandidatesNumberComment: "",
-    assessorsAndFacilitatorsComment: "",
-    budgetAttachmentComment: "",
-    contributionComment: "",
+    titleComment: application?.projectFunding.titleComment || "",
+    activitiesComment: application?.projectFunding.activitiesComment || "",
+    readinessExecuteComment:
+      application?.projectFunding.readinessExecuteComment || "",
+    roleComment: application?.projectFunding.roleComment || "",
+    institutionComment: application?.projectFunding.institutionComment || "",
+    trainingManualComment:
+      application?.projectFunding.trainingManualComment || "",
+    trainingEquipmentComment:
+      application?.projectFunding.trainingEquipmentComment || "",
+    identificationEmployeeComment:
+      application?.projectFunding.identificationEmployeeComment || "",
+    staffComment: application?.projectFunding.staffComment || "",
+    sustainabilityComment:
+      application?.projectFunding.sustainabilityComment || "",
+    previousFinancialReportComment:
+      application?.projectFunding.previousFinancialReportComment || "",
+    trainingPremisesComment:
+      application?.projectFunding.trainingPremisesComment || "",
+    contributionFromApplicantComment:
+      application?.projectFunding.contributionFromApplicantComment || "",
+    recruitmentTrainerComment:
+      application?.projectFunding.recruitmentTrainerComment || "",
+    MOUsAttachmentComment:
+      application?.projectFunding.MOUsAttachmentComment || "",
+    identificationMemberComment:
+      application?.projectFunding.identificationMemberComment || "",
+    assessmentEquipmentComment:
+      application?.projectFunding.assessmentEquipmentComment || "",
+    recruitmentCandidatesNumberComment:
+      application?.projectFunding.recruitmentCandidatesNumberComment || "",
+    assessorsAndFacilitatorsComment:
+      application?.projectFunding.assessorsAndFacilitatorsComment || "",
+    budgetAttachmentComment:
+      application?.projectFunding.budgetAttachmentComment || "",
+    contributionComment: application?.projectFunding.contributionComment || "",
   });
   const renderComponent = () => {
     switch (currentComponent) {
@@ -86,12 +122,30 @@ const Page = () => {
         return (
           <FundingQuestions
             data={application?.projectFunding}
-            setComments={setCommentsData}
+            setComments={
+              application?.evaluators.length === 0 ||
+              application?.evaluators[0].user_id ===
+                profile?.userProfile?.data.uuid
+                ? setCommentsData
+                : undefined
+            }
             comments={commentsData}
           />
         );
       case "IndicativeBudget":
-        return <IndicativeBudget />;
+        return (
+          <BudgetQuestions
+            data={application?.projectFunding}
+            commentData={commentsData}
+            setCommentData={
+              application?.evaluators.length === 0 ||
+              application?.evaluators[0].user_id ===
+                profile?.userProfile?.data.uuid
+                ? setCommentsData
+                : undefined
+            }
+          />
+        );
       default:
         return null;
     }
@@ -100,16 +154,12 @@ const Page = () => {
   const handleAddComments = async () => {
     setLoading(true);
     try {
-      await authorizedApi.post(
-        `/application/fillApplication/${id}`,
-        commentsData
-      );
+      await authorizedApi.patch(`/application/comment/${id}`, commentsData);
       notifications.show({
-        message: "Application filled successfully!",
+        message: "Comments Added Successfully!",
         color: "blue",
       });
     } catch (err: any) {
-      console.log(err.response);
       notifications.show({
         message: err.response?.data?.message ?? "Failed to submit the form!",
         color: "red",
@@ -134,7 +184,7 @@ const Page = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-8 rounded-3xl">
+    <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
         <div className="flex justify-between items-center">
           <h2 className="text-black font-semibold">Legal status</h2>
@@ -232,6 +282,26 @@ const Page = () => {
               </div>
             </div>
             <div className="mt-4 w-full">{renderComponent()}</div>
+            {(application?.evaluators.length === 0 ||
+              application?.evaluators[0].user_id ===
+                profile?.userProfile?.data.uuid) && (
+              <div className="w-full flex justify-center mt-4 space-x-4">
+                <button
+                  type="button"
+                  className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddComments}
+                  disabled={loading}
+                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  {loading ? "Loading..." : "Save Comments"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
@@ -239,20 +309,28 @@ const Page = () => {
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold">Evaluation Stage</h3>
             <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-              Pending
+              {application?.currentStage === "EVALUATION"
+                ? "Pending"
+                : "Finished"}
             </div>
-            {!showEvaluationButtons && (
-              <div
-                onClick={openAddEval}
-                className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
-              >
-                <p>Make a decision</p>
-              </div>
-            )}
-            {showEvaluationButtons && (
+            {application?.evaluators.length < 3 &&
+              !application?.evaluators.find(
+                (ev: any) => ev.user_id === profile?.userProfile?.data.uuid,
+              ) && (
+                <div
+                  onClick={() => {
+                    setSelectedStage("Evaluation");
+                    openMakeDecision();
+                  }}
+                  className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                >
+                  <p>Make a decision</p>
+                </div>
+              )}
+            {application?.evaluationDecisions.length > 0 && (
               <div className="flex flex-col gap-2 mt-4">
                 <button
-                  onClick={openAddEvals}
+                  onClick={openEvaluationDetails}
                   className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
                 >
                   View details
@@ -260,31 +338,78 @@ const Page = () => {
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-2">
-            <h3 className="font-bold">DueDiligency Stage</h3>
-            <div className="font-medium bg-[#C50000] bg-opacity-10 text-[#C50000] w-fit justify-start items-center rounded-full px-4 py-2">
-              Proposal Rejected
-            </div>
-            <div className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full">
-              <span>
-                <SolarEyeLinear />
-              </span>
-              <p>details</p>
-            </div>
-          </div>
+          {application?.currentStage !== "EVALUATION" &&
+            stagesArr?.includes("DUE_DILIGENCY") && (
+              <div className="flex flex-col gap-2">
+                <h3 className="font-bold">Due Diligence Stage</h3>
+                <div
+                  className={`font-medium  ${
+                    application?.status === "APPROVED" ||
+                    application?.currentStage !== "EVALUATION"
+                      ? "bg-[#4BC500] text-[#4BC500]"
+                      : application?.status === "PENDING"
+                        ? "bg-red-600 text-red-600"
+                        : ""
+                  } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+                >
+                  {application?.currentStage !== "EVALUATION" &&
+                  application?.currentStage !== "DUE_DILIGENCY"
+                    ? "APPROVED"
+                    : application?.status}
+                </div>
+                {application?.duediligencyDecisions?.length < 3 &&
+                  !application.duediligencyDecisions.find(
+                    (dec: any) =>
+                      dec?.employee?.user_id ===
+                      profile?.userProfile?.data.uuid,
+                  ) && (
+                    <div
+                      onClick={() => {
+                        setSelectedStage("Due Diligence");
+                        if (
+                          !application?.duediligencyForm &&
+                          application?.duediligencyDecisions?.length < 2
+                        ) {
+                          openMakeFirstDueDiligencyDecision();
+                        } else {
+                          openMakeDecision();
+                        }
+                      }}
+                      className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                    >
+                      <p>Make a decision</p>
+                    </div>
+                  )}
+                {application?.duediligencyForm && (
+                  <div className="flex flex-col gap-2 mt-4">
+                    <button
+                      onClick={openDueDiligencyDetails}
+                      className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                    >
+                      View details
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
         </div>
       </div>
-      <DueDetail
-        isOpenAddDue={isOpenAddDue}
-        closeAddDue={closeAddDue}
-        onMakeDecision={() => handleDecisionMade("DueDiligence")}
+      <MakeFirstDueDiligencyDecision
+        application={application}
+        closeModal={closeMakeFirstDueDiligencyDecision}
+        isOpenModal={isOpenMakeFirstDueDiligencyDecision}
       />
-      <EvalDetails
-        applicationId={id}
-        isOpenAddEval={isOpenAddEval}
-        closeAddEval={closeAddEval}
+      <DueDiligencyDetails
+        application={application}
+        opened={isOpenDueDiligencyDetails}
+        close={closeDueDiligencyDetails}
+        decisions={application?.duediligencyDecisions}
+      />
+      <MakeDecision
+        type={selectedStage as any}
+        isOpen={isOpenMakeDecision}
+        close={closeMakeDecision}
         onMakeDecision={() => handleDecisionMade("Evaluation")}
-        openEditModal={openEditModal}
       />
 
       {isOpenEditEval && (
@@ -295,6 +420,21 @@ const Page = () => {
           onUpdate={handleUpdate}
         />
       )}
+      <EvaluationDetails
+        opened={isOpenEvaluationDetails}
+        close={closeEvaluationDetails}
+        evaluations={
+          application?.evaluationDecisions?.length &&
+          application?.evaluators?.length
+            ? application.evaluationDecisions.map(
+                (decision: any, index: any) => ({
+                  evaluator: application.evaluators[index],
+                  evaluationDecision: decision,
+                }),
+              )
+            : []
+        }
+      />
     </div>
   );
 };

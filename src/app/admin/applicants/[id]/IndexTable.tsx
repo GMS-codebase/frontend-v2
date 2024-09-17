@@ -3,7 +3,7 @@ import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import CallsActions from "@/app/admin/calls/CallsAction";
+// import CallsActions from "@/app/admin/calls/CallsAction";
 import { Contact as contactData } from "@/utils/constants/contact";
 import { applicationsData as data } from "@/utils/constants/dummy";
 
@@ -49,7 +49,8 @@ const ApplicantTable = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />
+        <div></div>
+        // <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />
       ),
     },
   ];
@@ -88,7 +89,8 @@ const ApplicantTable = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <CallsActions call={isOpenCall.call} setIsCall={setIsOpenCall} />
+        <div></div>
+        // <CallsActions call={isOpenCall.call} setIsCall={setIsOpenCall} />
       ),
     },
   ];
@@ -135,10 +137,10 @@ const ApplicantTable = () => {
       </div>
       <div className="w-full h-full">
         {activeTable === "contacts" && (
-          <DataTable columns={contactColumns} data={contactData} />
+          <DataTable columns={contactColumns} data={contactData.slice(0, 6)} />
         )}
         {activeTable === "applications" && (
-          <DataTable columns={applicationColumns} data={data} />
+          <DataTable columns={applicationColumns} data={data.slice(0, 6)} />
         )}
       </div>
     </div>

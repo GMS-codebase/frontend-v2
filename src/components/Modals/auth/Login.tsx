@@ -28,13 +28,15 @@ const LoginModal = ({
         password: values.password,
       },
       (role: string) => {
-        console.log(role);
         switch (role?.toLowerCase()) {
           case "admin":
             navigate.push("/admin");
             break;
           case "dynamic":
             navigate.push("/dynamic");
+            break;
+          case "employee":
+            navigate.push("/employee");
             break;
           case "normal_employee":
             navigate.push("/employee");
@@ -43,7 +45,7 @@ const LoginModal = ({
             navigate.push("/applicant/contacts");
             break;
           case "grant_committee":
-            navigate.push("/grant");
+            navigate.push("/grant_committee");
             break;
           case "sdf_secretariate":
             navigate.push("/sdf/contracts");
