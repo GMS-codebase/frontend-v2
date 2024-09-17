@@ -9,6 +9,7 @@ import {
   GET_MY_APPLICATIONS_SUCCESS,
   GET_MY_APPLICATIONS_ERROR,
   GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
+  GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOTIATION_SUCCESS,
 } from "@/actions/ApplicationsActions";
 import { Application } from "@/types";
 
@@ -16,6 +17,7 @@ const initialState = {
   applications: [],
   myApplications: [],
   applicationsForContractSigning: [],
+  applicationsForMinuteNegotiation: [],
   error: null,
   isError: false,
   loading: false,
@@ -50,8 +52,16 @@ export default function ApplicationsReducer(
         loading: false,
         applicationsForContractSigning: action.payload,
       };
-
+    case GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOTIATION_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOCIATION_SUCCESS:
+          action.payload,
+      };
     case GET_MY_APPLICATIONS_SUCCESS:
+      console.log(action.payload);
+      console.log("added my own applications");
       return {
         ...state,
         loading: false,

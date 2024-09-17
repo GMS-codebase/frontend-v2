@@ -53,7 +53,7 @@ export default function TradesReducer(state = initialState, action: Action) {
         ...state,
         trade: state.trades.map((trade: Trade) =>
           trade.uuid === action.payload.id
-            ? { ...trade, ...action.payload.data }
+            ? { ...trade, ...action.payload }
             : trade,
         ),
         error: null,

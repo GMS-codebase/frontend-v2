@@ -109,8 +109,6 @@ const EmployeeDetails = () => {
   const employee = employees.filter(
     (employee: any) => employee.uuid === employeeId,
   );
-  console.log(employees);
-  console.log("employee", employee);
   return (
     <div className="w-full h-full flex items-start justify-between">
       <div className="w-[60%] flex flex-col gap-6  text-black bg-white p-3 py-5 rounded-2xl">

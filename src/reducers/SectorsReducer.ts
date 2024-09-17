@@ -5,6 +5,7 @@ import {
   GET_SECTORS_LOADING,
   UPDATE_SECTOR_SUCCESS,
   DELETE_SECTOR_SUCCESS,
+  ADD_TRADE_SECTOR_SUCCESS,
 } from "@/actions/SectorsActions";
 import { Sector } from "@/types";
 
@@ -52,8 +53,23 @@ export default function SectorsReducer(state = initialState, action: Action) {
       return {
         ...state,
         sectors: state.sectors.map((sector: Sector) =>
-          sector.uuid === action.payload.id
-            ? { ...sector, ...action.payload.data }
+          sector.uuid === action.payload.uuid
+            ? { ...sector, ...action.payload }
+            : sector,
+        ),
+        error: null,
+        isError: false,
+        loading: false,
+      };
+    case ADD_TRADE_SECTOR_SUCCESS:
+      return {
+        ...state,
+        sectors: state.sectors.map((sector: Sector) =>
+          sector.uuid === action.payload.sectorId
+            ? {
+                ...sector,
+                trades: [...(sector.trades || []), action.payload.trade],
+              }
             : sector,
         ),
         error: null,

@@ -6,20 +6,23 @@ import { SolarFileBold } from "../core/icons";
 const DueDiligenceModal = ({
   opened,
   close,
-  isEditing, // Add isEditing prop
-  onSaveComment, // Add callback for saving comments
+  isEditing,
+  onSaveComment,
+  application,
 }: {
   opened: boolean;
   close: () => void;
-  isEditing?: boolean; // Flag for edit mode
-  onSaveComment?: (updatedText: string) => void; // Callback for saving
+  isEditing?: boolean;
+  onSaveComment?: (updatedText: string) => void;
+  application: any;
 }) => {
+  console.log(application);
   const [text, setText] = useState(
     "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era.",
   );
 
   const handleSave = () => {
-    onSaveComment && onSaveComment(text); // Save the updated comment
+    onSaveComment && onSaveComment(text);
   };
 
   return (
@@ -50,48 +53,13 @@ const DueDiligenceModal = ({
             <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
               Decision
             </p>
-            <p className="mt-2">Selected</p>
-          </div>
-          <div className="flex gap-6 justify-start items-start font-semibold">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Approved number of trainees
+            <p className="mt-2">
+              {application?.currentStage === "GRANT_COMMITTEE"
+                ? "APPROVED"
+                : application?.status}
             </p>
-            <p className="mt-2">7</p>
-          </div>
-          <div className="flex gap-6 justify-start items-start">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Approved Trades
-            </p>
-            <p className="mt-2">ART AND CRAFT</p>
           </div>
         </div>
-        <div className="flex flex-col justify-start items-start gap-6 font-semibold">
-          <h1 className="text-xl font-bold">
-            Approval personnel{" "}
-            <span className="text-sm font-light">
-              (people who made approval and confirmation)
-            </span>
-          </h1>
-          <div className="flex gap-6 justify-start items-start">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Iradukunda Octave
-            </p>
-            <p className="mt-2">Selected</p>
-          </div>
-          <div className="flex gap-6 justify-start items-start font-semibold">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Hategekimana Aimable
-            </p>
-            <p className="mt-2">Confirm</p>
-          </div>
-          <div className="flex gap-6 justify-start items-start">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Mukankubito Rehema
-            </p>
-            <p className="mt-2">Confirm</p>
-          </div>
-        </div>
-
         <div className="mt-5 w-full">
           <label className="block text-sm text-gray-600" htmlFor="textarea">
             Attachment:
@@ -110,20 +78,7 @@ const DueDiligenceModal = ({
           <textarea
             id="textarea"
             name="textarea"
-            value={text}
-            readOnly
-            rows={4}
-            className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
-          />
-        </div>
-        <div className="p-4 w-full">
-          <label className="block text-sm text-gray-600" htmlFor="textarea">
-            OHS Information:
-          </label>
-          <textarea
-            id="textarea"
-            name="textarea"
-            value={text}
+            value={application?.duediligencyForm?.financeInfo}
             readOnly
             rows={4}
             className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
@@ -136,7 +91,7 @@ const DueDiligenceModal = ({
           <textarea
             id="textarea"
             name="textarea"
-            value={text}
+            value={application?.duediligencyForm?.equipmentInfo}
             readOnly
             rows={4}
             className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
@@ -149,7 +104,7 @@ const DueDiligenceModal = ({
           <textarea
             id="textarea"
             name="textarea"
-            value={text}
+            value={application?.duediligencyForm?.workPlaceInfo}
             readOnly
             rows={4}
             className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
@@ -162,7 +117,7 @@ const DueDiligenceModal = ({
           <textarea
             id="textarea"
             name="textarea"
-            value={text}
+            value={application?.duediligencyForm?.ohsInfo}
             readOnly
             rows={4}
             className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
@@ -175,7 +130,7 @@ const DueDiligenceModal = ({
           <textarea
             id="textarea"
             name="textarea"
-            value={text}
+            value={application?.duediligencyForm?.comment}
             onChange={(e) => setText(e.target.value)}
             readOnly={!isEditing}
             rows={4}

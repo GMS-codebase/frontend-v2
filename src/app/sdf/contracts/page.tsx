@@ -17,41 +17,97 @@ const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
   const [isContract, setIsContract] = useState({
     isOpen: false,
-    application: null
-  })
-  const {applicationsForContractSigning: applications, loading} = useSelector((state: any)=> state.applications);
-  console.log(applications);
-  const columns: ColumnDef<any>[] = [
-    {
-      accessorKey: "applicationNumber",
-      header: "Application Number",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicationNumber}</div>,
-    },
+    application: null,
+  });
+
+  const { contracts, loading: loadingContracts } = useSelector(
+    (state: any) => state.contracts,
+  );
+  const { applicationsForContractSigning: applications, loading } = useSelector(
+    (state: any) => state.applications,
+  );
+  const contractColumns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
-      header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.name}</div>,
+      header: "Applicant Name",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.name}</div>
+      ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.phone}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.phone}</div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: "Applicant Email",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.email}</div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: "Contract Name",
+      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <ContractsActions
+          data={row.original}
+          setIsContract={setIsContract}
+          isNew={false}
+        />
+      ),
+    },
+  ];
+  const columns: ColumnDef<any>[] = [
+    {
+      accessorKey: "applicationNumber",
+      header: "Application Number",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicationNumber}</div>
+      ),
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.name}</div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: "Applicant Phone",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.phone}</div>
+      ),
     },
     {
       accessorKey: "description",
       header: "Description",
       cell: ({ row }) => (
         <div className="truncate">
-          {row.original?.description.length > 50
-            ? row.original?.description.slice(0, 50) + "..."
-            : row.original.description}
+          {row.original?.description?.length > 50
+            ? row.original?.description?.slice(0, 50) + "..."
+            : row.original?.description}
         </div>
       ),
     },
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <ContractsActions data={row.original} setIsContract={setIsContract}/>
+      cell: ({ row }) => (
+        <ContractsActions
+          data={row.original}
+          setIsContract={setIsContract}
+          isNew={true}
+        />
+      ),
     },
   ];
   return (
@@ -69,11 +125,40 @@ const Page = () => {
         </div>
       </div>
 
-      <div className="w-full h-full">
-        <h1 className="text-xl p-4 font-bold">Applications Ready For Contract Signing</h1>
-        {loading ? <TableSkeleton columns={columns}/>: <DataTable columns={columns} data={applications} noDataMessage="No Approved Applications"/>}
+      <div className="w-full h-full mb-10">
+        <h1 className="text-xl p-4 font-bold">Contracts Signed</h1>
+        {loading ? (
+          <TableSkeleton columns={contractColumns} />
+        ) : (
+          <DataTable
+            columns={contractColumns}
+            data={contracts}
+            noDataMessage="No Created Contracts"
+          />
+        )}
       </div>
-      <AddContract data={isContract.application} isOpenAddContract={isContract.isOpen} closeAddContract={()=> setIsContract({isOpen: false, application: null})} />
+
+      <div className="w-full h-full">
+        <h1 className="text-xl p-4 font-bold">
+          Applications Ready For Contract Signing
+        </h1>
+        {loading ? (
+          <TableSkeleton columns={columns} />
+        ) : (
+          <DataTable
+            columns={columns}
+            data={applications}
+            noDataMessage="No Approved Applications"
+          />
+        )}
+      </div>
+      <AddContract
+        data={isContract.application}
+        isOpenAddContract={isContract.isOpen}
+        closeAddContract={() =>
+          setIsContract({ isOpen: false, application: null })
+        }
+      />
     </div>
   );
 };
