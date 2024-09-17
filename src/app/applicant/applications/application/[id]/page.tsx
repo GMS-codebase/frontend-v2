@@ -28,7 +28,7 @@ const Page = () => {
   const existingApplication = myApplications.find(
     (app: any) => app?.uuid === callId,
   );
-  console.log(myApplications, existingApplication, callId);
+  console.log(myApplications, existingApplication, callId,existingApplication?.currentStage == "CONTRACT_SIGNING" || existingApplication?.currentStage === "FINISH_GRANT_APPROVAL");
   const router = useRouter();
   return (
     <div className="bg-white rounded-2xl p-10 ">
@@ -139,10 +139,10 @@ const Page = () => {
             </div>
           </div>
           {/* <TermsAndConditions /> */}
-          {existingApplication?.currentStage === "CONTRACT_SIGNING" ||
-            (existingApplication?.currentStage === "FINISH_GRANT_APPROVAL" && (
+          {}
+          {existingApplication?.currentStage == "CONTRACT_SIGNING" || existingApplication?.currentStage === "FINISH_GRANT_APPROVAL" ? (
               <MinutesNegotiation />
-            ))}
+            ) : <></>}
         </div>
       </div>
     </div>
