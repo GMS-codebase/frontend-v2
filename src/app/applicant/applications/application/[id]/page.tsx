@@ -26,162 +26,134 @@ const Page = () => {
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
   const { myApplications } = useSelector((state: any) => state.applications);
   const existingApplication = myApplications.find(
-    (app: any) => app?.uuid === callId,
+    (app: any) => app?.uuid === callId
   );
-  console.log(myApplications, existingApplication, callId,existingApplication?.currentStage == "CONTRACT_SIGNING" || existingApplication?.currentStage === "FINISH_GRANT_APPROVAL");
+  console.log(
+    myApplications,
+    existingApplication,
+    callId,
+    existingApplication?.currentStage == "CONTRACT_SIGNING" ||
+      existingApplication?.currentStage === "FINISH_GRANT_APPROVAL"
+  );
   const router = useRouter();
   return (
-      <div className="bg-white rounded-2xl p-10 ">
-          <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-6  text-black">
-                  <div className="flex justify-between">
-                      <div className="text-xl font-bold">Call Info</div>
-                      <div className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center">
-                          <span>
-                              <SolarDownloadMinimalisticBold />
-                          </span>
-                          <p>View application instructions</p>
-                      </div>
-                  </div>
-                  <div className="flex justify-between w-3/5  font-semibold ">
-                      <div className="flex gap-4 rounded-2xl items-center justify-center ">
-                          <div className="flex gap-2  bg-gray-400 bg-opacity-10 rounded-full px-4  py-2 items-center justify-center font-semibold">
-                              <span className="">
-                                  <SolarAddFolderBold />
-                              </span>
-                              <div>Title</div>
-                          </div>
-                          <div className="text-xl font-bold">
-                              {existingApplication?.call?.title}
-                          </div>
-                      </div>
-                      <div className="flex gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center ">
-                          <span className="">
-                              <SolarClockSquareBold />
-                          </span>
-                          <div>Timeline</div>
-                      </div>
-                  </div>
-                  <div className="flex gap-2 ">
-                      <div className="flex flex-col gap-6 justify-start items-start ">
-                          <div className="flex gap-4 rounded-2xl items-center justify-center ">
-                              <div className="flex gap-2  bg-gray-400 bg-opacity-10 rounded-full px-4  py-2 items-center justify-center font-semibold">
-                                  <span>
-                                      <SolarShieldWarningBold />
-                                  </span>
-                                  <div>Appeal Days</div>
-                              </div>
-                              <div className="text-xl font-bold">
-                                  {existingApplication?.call?.appealDays} Days
-                              </div>
-                          </div>
-                          <div className="flex gap-4 items-center justify-center ">
-                              <div className="flex  gap-2  bg-gray-400 rounded-full bg-opacity-10 px-4  py-2 font-semibold items-center justify-center">
-                                  <span>
-                                      <SolarBookmarkBold />
-                                  </span>
-                                  <div>Status</div>
-                              </div>
-                              <div className="text-xl font-bold">
-                                  {existingApplication?.call?.status}
-                              </div>
-                          </div>
-                      </div>
-                      <div className="flex  mr-10">
-                          <div className="flex  ">
-                              <DonutChart />
-                          </div>
-                          <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4   rounded-3xl items-center justify-center font-semibold gap-2">
-                              <div className="flex gap-2 items-center  w-full ">
-                                  <span className="text-[#005DE9]">
-                                      <SolarCalendarBold />
-                                  </span>
-                                  <div>
-                                      <p>Start date</p>
-                                      <p>
-                                          {existingApplication?.call &&
-                                              format(
-                                                  existingApplication?.call
-                                                      ?.startDate,
-                                                  "dd MMMM yyyy"
-                                              )}
-                                      </p>
-                                  </div>
-                              </div>
-
-                              <div className="flex flex-row gap-2 items-center  w-full ">
-                                  <span className="text-[#005DE9]">
-                                      <SolarCalendarBold />
-                                  </span>
-                                  <div>
-                                      <p>End Date</p>
-                                      <p>
-                                          {existingApplication?.call &&
-                                              format(
-                                                  existingApplication?.call
-                                                      ?.endDate,
-                                                  "dd MMMM yyyy"
-                                              )}
-                                      </p>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                      <div className="flex  gap-2  bg-gray-400 rounded-full bg-opacity-10 px-4  py-2 font-semibold w-fit items-center justify-center">
-                          <span>
-                              <SolarSubtitlesBold />
-                          </span>
-                          <p>Description</p>
-                      </div>
-
-                      <div className=" font-semibold text-gray-400">
-                          {existingApplication?.call?.description}
-                      </div>
-                  </div>
-                  {/* <TermsAndConditions /> */}
-                  {existingApplication?.currentStage === "CONTRACT_SIGNING" ||
-                      (existingApplication?.currentStage ===
-                          "FINISH_GRANT_APPROVAL" && <MinutesNegotiation />)}
-              </div>
-
-              <div className="flex flex-col items-center justify-center space-y-4">
-                  {/* Accept and Reject Buttons */}
-                  <div className="flex gap-4">
-                      <div
-                          className="flex items-center justify-center gap-2 text-white cursor-pointer text-lg font-semibold bg-green px-4 py-2 rounded-full"
-                          // onClick={handleAcceptNegotiation}
-                      >
-                          <span>Accept Negotiation</span>
-                      </div>
-                      <div
-                          className="flex items-center justify-center gap-2 text-white cursor-pointer text-lg font-semibold bg-red-500 px-4 py-2 rounded-full"
-                          // onClick={handleRejectNegotiation}
-                      >
-                          <span>Reject Negotiation</span>
-                      </div>
-                  </div>
-
-                  {/* Download Minute Negotiations Button */}
-                  <div
-                      className="flex items-center justify-center gap-2 text-white cursor-pointer text-2xl font-bold bg-blue-700 px-4 py-3 rounded-full"
-                      // onClick={handleDownload}
-                  >
-                      <span>
-                          <SolarDownloadMinimalisticBold />
-                      </span>
-                      <p>Download your Minute Negotiations</p>
-                  </div>
-              </div>
+    <div className="bg-white rounded-2xl p-10 ">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6  text-black">
+          <div className="flex justify-between">
+            <div className="text-xl font-bold">Call Info</div>
+            <div className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center">
+              <span>
+                <SolarDownloadMinimalisticBold />
+              </span>
+              <p>View application instructions</p>
+            </div>
           </div>
-         
-          {existingApplication?.currentStage == "CONTRACT_SIGNING" || existingApplication?.currentStage === "FINISH_GRANT_APPROVAL" ? (
-              <MinutesNegotiation />
-            ) : <></>}
-        </div>
+          <div className="flex justify-between w-3/5  font-semibold ">
+            <div className="flex gap-4 rounded-2xl items-center justify-center ">
+              <div className="flex gap-2  bg-gray-400 bg-opacity-10 rounded-full px-4  py-2 items-center justify-center font-semibold">
+                <span className="">
+                  <SolarAddFolderBold />
+                </span>
+                <div>Title</div>
+              </div>
+              <div className="text-xl font-bold">
+                {existingApplication?.call?.title}
+              </div>
+            </div>
+            <div className="flex gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center ">
+              <span className="">
+                <SolarClockSquareBold />
+              </span>
+              <div>Timeline</div>
+            </div>
+          </div>
+          <div className="flex gap-2 ">
+            <div className="flex flex-col gap-6 justify-start items-start ">
+              <div className="flex gap-4 rounded-2xl items-center justify-center ">
+                <div className="flex gap-2  bg-gray-400 bg-opacity-10 rounded-full px-4  py-2 items-center justify-center font-semibold">
+                  <span>
+                    <SolarShieldWarningBold />
+                  </span>
+                  <div>Appeal Days</div>
+                </div>
+                <div className="text-xl font-bold">
+                  {existingApplication?.call?.appealDays} Days
+                </div>
+              </div>
+              <div className="flex gap-4 items-center justify-center ">
+                <div className="flex  gap-2  bg-gray-400 rounded-full bg-opacity-10 px-4  py-2 font-semibold items-center justify-center">
+                  <span>
+                    <SolarBookmarkBold />
+                  </span>
+                  <div>Status</div>
+                </div>
+                <div className="text-xl font-bold">
+                  {existingApplication?.call?.status}
+                </div>
+              </div>
+            </div>
+            <div className="flex  mr-10">
+              <div className="flex  ">
+                <DonutChart />
+              </div>
+              <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4   rounded-3xl items-center justify-center font-semibold gap-2">
+                <div className="flex gap-2 items-center  w-full ">
+                  <span className="text-[#005DE9]">
+                    <SolarCalendarBold />
+                  </span>
+                  <div>
+                    <p>Start date</p>
+                    <p>
+                      {existingApplication?.call &&
+                        format(
+                          existingApplication?.call?.startDate,
+                          "dd MMMM yyyy"
+                        )}
+                    </p>
+                  </div>
+                </div>
 
+                <div className="flex flex-row gap-2 items-center  w-full ">
+                  <span className="text-[#005DE9]">
+                    <SolarCalendarBold />
+                  </span>
+                  <div>
+                    <p>End Date</p>
+                    <p>
+                      {existingApplication?.call &&
+                        format(
+                          existingApplication?.call?.endDate,
+                          "dd MMMM yyyy"
+                        )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="flex  gap-2  bg-gray-400 rounded-full bg-opacity-10 px-4  py-2 font-semibold w-fit items-center justify-center">
+              <span>
+                <SolarSubtitlesBold />
+              </span>
+              <p>Description</p>
+            </div>
+
+            <div className=" font-semibold text-gray-400">
+              {existingApplication?.call?.description}
+            </div>
+          </div>
+        </div>
       </div>
+
+      {existingApplication?.currentStage == "CONTRACT_SIGNING" ||
+      existingApplication?.currentStage === "FINISH_GRANT_APPROVAL" ? (
+        <MinutesNegotiation />
+      ) : (
+        <></>
+      )}
+    </div>
   );
 };
 

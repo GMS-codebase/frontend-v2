@@ -3,7 +3,7 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { Menu } from "@mantine/core";
 import { CiEdit } from "react-icons/ci";
 import AddContract from "@/components/Modals/AddContract"; // Import AddContract
-import AddMinute from "@/components/Modals/AddMinutes"; // Import AddMinute (for minutes)
+import AddMinute from "@/components/Modals/contracts/AddMinutes"; // Import AddMinute (for minutes)
 
 const MinutesActions = ({
     setIsMinute,
