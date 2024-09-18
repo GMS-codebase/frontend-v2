@@ -6,7 +6,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
-import AddMinute from "@/components/Modals/AddMinutes";
+import AddMinute from "@/components/Modals/contracts/AddMinutes";
 import MinutesActions from "./MinutesActions";
 import { SolarAddFolderBold, SolarFileBold } from "@/components/core/icons";
 
