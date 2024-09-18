@@ -73,9 +73,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .side-section {
-  transition:
-    width 0.2s ease-in-out,
-    opacity 0.2s ease-in-out;
+  transition: width 0.2s ease-in-out, opacity 0.2s ease-in-out;
 }
 
 .pages-parent::-webkit-scrollbar {
@@ -97,6 +95,10 @@ textarea::-webkit-scrollbar-thumb {
 .calls-list-cont::-webkit-scrollbar-thumb {
   background: #000f23;
   border-radius: 10px;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 .chart-container {
