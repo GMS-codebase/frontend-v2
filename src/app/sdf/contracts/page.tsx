@@ -15,16 +15,19 @@ import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
-  const [isContract, setIsContract] = useState({
+  const [isContract, setIsContract] = useState<{
+    isOpen: boolean;
+    application: any;
+  }>({
     isOpen: false,
     application: null,
   });
 
   const { contracts, loading: loadingContracts } = useSelector(
-    (state: any) => state.contracts,
+    (state: any) => state.contracts
   );
   const { applicationsForContractSigning: applications, loading } = useSelector(
-    (state: any) => state.applications,
+    (state: any) => state.applications
   );
   const contractColumns: ColumnDef<any>[] = [
     {
@@ -154,6 +157,7 @@ const Page = () => {
       </div>
       <AddContract
         data={isContract.application}
+        trades={isContract.application?.trades || []}
         isOpenAddContract={isContract.isOpen}
         closeAddContract={() =>
           setIsContract({ isOpen: false, application: null })
