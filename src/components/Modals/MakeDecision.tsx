@@ -213,8 +213,8 @@ const MakeDecision = ({
                 {loading
                   ? "Loading.."
                   : defaultData
-                  ? "Update Decision"
-                  : "Make Decision"}
+                    ? "Update Decision"
+                    : "Make Decision"}
               </button>
             </div>
           </form>

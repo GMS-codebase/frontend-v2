@@ -4,7 +4,7 @@ import CustomBarChart from "@/components/core/charts/CustomBarChart";
 import { SolarCalendarBold } from "@/components/core/icons";
 import { Select } from "@mantine/core";
 import dashVector from "@/assets/Vectors/dashVector.png";
-import DashboardLineChart from "@/components/core/charts/DashboardLineChart"; // Import the line chart component
+import DashboardLineChart from "@/components/core/charts/DashboardLineChart";
 import Image from "next/image";
 
 const weeklyData = [
