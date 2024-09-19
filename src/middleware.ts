@@ -3,7 +3,15 @@ import type { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
 import { Role } from "@/types/base.type";
 
-const roles = ["ADMIN" , "APPLICANT" , "EMPLOYEE" , "NORMAL_EMPLOYEE" , "SDF_SECRETARIATE" , "GRANT_COMMITTEE" , "DYNAMIC"];
+const roles = [
+  "ADMIN",
+  "APPLICANT",
+  "EMPLOYEE",
+  "NORMAL_EMPLOYEE",
+  "SDF_SECRETARIATE",
+  "GRANT_COMMITTEE",
+  "DYNAMIC",
+];
 const whitelist = ["/", "/redirect", "/public"];
 function getRolePath(role: Role): string {
   switch (role.toLowerCase()) {
