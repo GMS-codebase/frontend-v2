@@ -1,81 +1,91 @@
-import { Modal } from "@mantine/core";
-import Image from "next/image";
+import { Modal, Select, Text, Button } from "@mantine/core";
 import { IoMdClose } from "react-icons/io";
-import SideVector1 from "@/assets/Vectors/redSideVector.svg";
-import SideVector2 from "@/assets/Vectors/redSideVector2.svg";
-import deleteSvg from "@/assets/Vectors/delete.svg";
-type FormData = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  gender: string;
-  position: string;
-  isInternal: undefined | boolean;
-};
+import { useState } from "react";
+import { authorizedApi } from "@/utils/api";
+import { notifications } from "@mantine/notifications";
+
 const RemoveFromStage = ({
   employee,
   isOpen,
-  closeRemoveEmployee,
+  stage,
+  closeModal,
+  onRemoveSector,
 }: {
   employee: any;
   isOpen: boolean;
-  closeRemoveEmployee: () => void;
+  stage: any;
+  closeModal: any;
+  onRemoveSector: any;
 }) => {
+  const [selectedSector, setSelectedSector] = useState<any>("");
+  const [loading, setLoading] = useState(false);
+
+  const handleRemoveStage = () => {
+    setLoading(true);
+    authorizedApi
+      .post("/admin/employee/remove/stage", {
+        stage_id: stage.uuid,
+        emp_id: employee.uuid,
+        sector_name: selectedSector,
+      })
+      .then(() => {
+        notifications.show({
+          message: "Sector removed successfully",
+          color: "blue",
+        });
+        onRemoveSector(selectedSector); // Update the UI after successful removal
+        closeModal();
+      })
+      .catch(() => {
+        notifications.show({
+          message: "Failed to remove sector",
+          color: "red",
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   return (
     <Modal
-      size={""}
       opened={isOpen}
-      onClose={closeRemoveEmployee}
+      onClose={closeModal}
+      title="Remove from Stage"
+      centered
+      size="sm"
       closeOnClickOutside={false}
-      withCloseButton={false}
+      overlayProps={{
+        color: "#000",
+        opacity: 0.55,
+        blur: 3,
+      }}
     >
-      <div className="w-[550px] h-[400px] relative bg-white rounded-3xl p-4 pt-10 pb-4 flex flex-col items-center">
-        <button
-          className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
-          onClick={closeRemoveEmployee}
-        >
-          <IoMdClose size={25} color={"#000"} />
-        </button>
-        <Image
-          src={SideVector1}
-          alt="vector"
-          className="absolute bottom-[3rem] right-[-2rem] h-32"
-          width={100}
-          height={50}
+      <div className="p-5 space-y-4">
+        <Text className="text-gray-600">
+          Are you sure you want to remove the sector from the stage?
+        </Text>
+        <Select
+          placeholder="Select a sector to remove"
+          value={selectedSector}
+          onChange={setSelectedSector}
+          data={stage?.sectors || []}
+          classNames={{
+            input: "h-12 w-full border-2 border-gray-300 rounded-lg",
+          }}
         />
-        <Image
-          src={SideVector2}
-          alt="vector"
-          className="absolute top-[3rem] left-[-2rem] h-32"
-          width={100}
-          height={50}
-        />
-        <div className="w-4/5 flex flex-col items-center mt-4 overflow-hidden">
-          <div className="w-full flex flex-col items-center">
-            <Image src={deleteSvg} alt="vector" width={200} height={50} />
-            <h1 className="text-2xl font-extrabold text-center">
-              Are you sure you want to remove this stage from this employee?
-            </h1>
-            <h2 className="text-[#000F2369] text-lg font-medium text-center">
-              This employee will be forbidden to access these permissions
-            </h2>
-          </div>
-          <div className="w-full flex justify-center mt-4 space-x-4 p-6">
-            <button
-              type="button"
-              onClick={closeRemoveEmployee}
-              className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="w-full px-4 py-3 bg-[#C50D0DF2] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-            >
-              Remove
-            </button>
-          </div>
+        <div className="flex justify-end space-x-3">
+          <Button onClick={closeModal} variant="default">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleRemoveStage}
+            loading={loading}
+            className="bg-red-500 hover:bg-red-600 text-white"
+            disabled={!selectedSector}
+          >
+            Remove Sector
+          </Button>
         </div>
       </div>
     </Modal>
