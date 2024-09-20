@@ -31,6 +31,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { LOGOUT } from '../../actions/AuthActions';
 import { notifications } from "@mantine/notifications";
 import { GET_PROFILE_ERROR } from "@/actions/ProfileActions";
+import { CiLogout } from "react-icons/ci";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -101,24 +102,24 @@ const Navbar = () => {
   return (
     <div className="w-full flex items-center justify-between py-3 bg-white rounded-2xl px-5">
       <h1 className="text-xl font-extrabold text-primary">{pageName}</h1>
-      <div className="relative">
+      <div className="relative cursor-pointer">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
           <button className="text-3xl text-primary bg-background p-3 rounded-full">
             <Icons.SolarUserBold />
           </button>
           <h1 className="text-xl font-medium">{profile?.firstname ?? ""}</h1>
-          <SolarArrowDown/>
+          <span className={`${isDropdownOpen ? "rotate-180" : ""}`}><SolarArrowDown/></span>
         </div>
         {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 h-32 bg-white rounded-md shadow-lg py-2 z-10">
-            <h1 className="text-center">Profile dropdown</h1>
+          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg p-2 z-10 transition-all duration-300 cursor-pointer">
             <div className="w-full flex justify-end ">
               <button
                 onClick={handleLogout}
                 type="button"
-                className="w-full px-4 py-2 mt-4 text-black hover:text-white text-start bg-slate-50 shadow-sm focus:outline-none focus:ring-2 hover:bg-red-500 focus:ring-offset-2"
+                className="w-full px-4 py-2 mt-4 flex items-center gap-3 text-black hover:text-white text-start shadow-sm focus:outline-none focus:ring-2 bg-red-300 rounded-md hover:bg-red-500 focus:ring-offset-2"
               >
-                {loading ? <ClipLoader size={20} color="white" /> : "Logout"}
+                <CiLogout />
+                {loading ? "Logging Out . . ." : "Logout"}
               </button>
             </div>
           </div>

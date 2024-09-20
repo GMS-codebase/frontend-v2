@@ -82,7 +82,7 @@ const centerTextPlugin: Plugin<"doughnut"> = {
 };
 
 // DonutChart Component
-const DonutChart: React.FC<DonutChartProps> = ({ daysLeft = 5 }) => {
+const DonutChart: React.FC<DonutChartProps> = ({ daysLeft=5 }) => {
   const data = getData(daysLeft);
   return (
     <Doughnut data={data} options={options} plugins={[centerTextPlugin]} />
