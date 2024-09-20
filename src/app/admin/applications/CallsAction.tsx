@@ -5,7 +5,7 @@ import { Menu, Button, Text, rem } from "@mantine/core";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
 
-const CallsActions = ({application}:{application: any}) => {
+const CallsActions = ({ application }: { application: any }) => {
   return (
     <div>
       <Menu shadow="lg" width={200}>

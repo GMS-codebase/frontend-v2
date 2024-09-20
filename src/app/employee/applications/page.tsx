@@ -1,25 +1,53 @@
 "use client";
-import { BiSearch } from "react-icons/bi";
-import { SolarAddFolderBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { applicationsData as data } from "@/utils/constants/dummy";
-import CallsActions from "./CallsAction";
 import { CiSearch } from "react-icons/ci";
-import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
-import { Select } from "@mantine/core";
-import { useRef } from "react";
+import { Menu, Select } from "@mantine/core";
+import { useRef, useState, useMemo } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
+import Link from "next/link";
+import { VscEye } from "react-icons/vsc";
 
 const Page = () => {
-  const [isOpenCall, { open, close }] = useDisclosure(false);
   const { applications, loading } = useSelector(
     (state: any) => state.applications,
   );
   const filtersContainerRef = useRef<HTMLDivElement>(null);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedFilters, setSelectedFilters] = useState({
+    stage: "",
+    window: "",
+    subwindow: "",
+    sector: "",
+    trade: "",
+    district: "",
+  });
+
+  // Helper function to extract unique values for the filters
+  const getUniqueValues = (key: string) => {
+    return [
+      ...new Set(applications.map((app: any) => app[key]).filter(Boolean)),
+    ];
+  };
+
+  // Memoizing the filter options to avoid recalculations on every render
+  const filterOptions = useMemo(
+    () => ({
+      stages: getUniqueValues("currentStage"),
+      windows: getUniqueValues("window.title"),
+      subwindows: getUniqueValues("subWindow.title"),
+      sectors: getUniqueValues("sectors[0].name"),
+      trades: getUniqueValues("sectors[0].trades[0].title"),
+      districts: getUniqueValues("district"),
+    }),
+    [applications],
+  );
+  const formatStage = (stage: string) => {
+    return stage.replace(/_/g, " ").toUpperCase();
+  };
 
   const columns: ColumnDef<any>[] = [
     {
@@ -45,27 +73,63 @@ const Page = () => {
     {
       accessorKey: "stage",
       header: "Stage",
-      cell: ({ row }) => <div>{row.original?.currentStage}</div>,
+      cell: ({ row }) => <div>{formatStage(row.original?.currentStage)}</div>,
     },
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions application={row.original} />,
+      cell: ({ row }) => (
+        <div>
+          <Menu shadow="lg" width={200}>
+            <Menu.Target>
+              <button
+                style={{
+                  background:
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+                }}
+                className="p-3 rounded-full border text-white hover:bg-red-100"
+              >
+                <HiDotsHorizontal size={25} color="white" />
+              </button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>
+                <h1 className="text-lg">Actions</h1>
+              </Menu.Label>
+              <Menu.Divider />
+              <Menu.Item className="bg-[#F0F0F0]">
+                <Link
+                  href={`/employee/applications/${row.original.uuid}`}
+                  className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <VscEye size={21} color="#576074" />
+                  View
+                </Link>
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </div>
+      ),
     },
   ];
 
   const FilterDropDown = ({
     placeholderText,
     data,
+    filterKey,
   }: {
     placeholderText: string;
     data: any[];
+    filterKey: keyof typeof selectedFilters;
   }) => {
     return (
       <Select
-        data={data}
+        data={data.map((item) => ({ value: item, label: item }))}
         placeholder={placeholderText}
-        defaultValue={placeholderText}
+        value={selectedFilters[filterKey]}
+        onChange={(value) =>
+          setSelectedFilters((prev) => ({ ...prev, [filterKey]: value }))
+        }
         className="w-full px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
       />
     );
@@ -82,9 +146,32 @@ const Page = () => {
     }
   };
 
+  // Apply search and filter logic
+  const filteredApplications = useMemo(() => {
+    return applications
+      .filter(
+        (app: any) =>
+          app.applicationNumber
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+      .filter((app: any) => {
+        const { stage, window, subwindow, sector, trade, district } =
+          selectedFilters;
+        return (
+          (!stage || formatStage(app.currentStage) === stage) &&
+          (!window || app.window?.title === window) &&
+          (!subwindow || app.subWindow?.title === subwindow) &&
+          (!sector || app.sectors?.some((s: any) => s.name === sector)) &&
+          (!trade || app.sectors?.[0]?.trades?.[0]?.title === trade)
+        );
+      });
+  }, [applications, searchTerm, selectedFilters]);
+
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
+      <div className="w-full flex justify-between items-center p-4 gap-5">
         <div className="relative w-[20rem]">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} color="" />
@@ -93,9 +180,11 @@ const Page = () => {
             name="search"
             className="w-full p-3 py-4 pl-12 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
             placeholder="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center max-w-[70%]">
           <button
             onClick={() => handleScroll("left")}
             className="p-2 bg-white shadow-lg rounded-full mr-2"
@@ -105,52 +194,42 @@ const Page = () => {
 
           <div
             ref={filtersContainerRef}
-            className="flex items-center gap-3 overflow-x-hidden scrollbar-hide"
-            style={{ scrollBehavior: "smooth", maxWidth: "calc(4 * 11rem)" }}
+            className="flex items-center gap-3 overflow-x-hidden scrollbar-hide  flex-grow"
+            style={{ scrollBehavior: "smooth" }}
           >
             <div className="w-44 flex-shrink-0">
               <FilterDropDown
-                placeholderText="Filter By stage"
-                data={["Duediligence"]}
+                placeholderText="Filter By Stage"
+                data={filterOptions.stages}
+                filterKey="stage"
               />
             </div>
             <div className="w-44 flex-shrink-0">
               <FilterDropDown
                 placeholderText="Filter By Window"
-                data={["Window 1: Apprenticeship and Internships"]}
+                data={filterOptions.windows}
+                filterKey="window"
               />
             </div>
             <div className="w-44 flex-shrink-0">
               <FilterDropDown
                 placeholderText="Filter By Subwindow"
-                data={["Rapid apprentices"]}
+                data={filterOptions.subwindows}
+                filterKey="subwindow"
               />
             </div>
             <div className="w-44 flex-shrink-0">
               <FilterDropDown
                 placeholderText="Filter By Sector"
-                data={["ICT & Innovations"]}
+                data={filterOptions.sectors}
+                filterKey="sector"
               />
             </div>
             <div className="w-44 flex-shrink-0">
               <FilterDropDown
-                placeholderText="Filter By trade"
-                data={["Agriculture"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By District"
-                data={[
-                  "Kicukiro",
-                  "Musanze",
-                  "Nyagatare",
-                  "Muhanga",
-                  "Nyarugenge",
-                  "Kamonyi",
-                  "Nyanza",
-                  "Gasabo",
-                ]}
+                placeholderText="Filter By Trade"
+                data={filterOptions.trades}
+                filterKey="trade"
               />
             </div>
           </div>
@@ -163,18 +242,20 @@ const Page = () => {
           </button>
         </div>
       </div>
-
-      <div className="w-full h-full">
+      <div className="p-4">
         <DataTable
           columns={columns}
-          data={applications}
-          tableWidth={1800}
+          data={filteredApplications}
           loading={loading}
-          noDataMessage={"No Applications So Far"}
+          noDataMessage={
+            filteredApplications.length === 0
+              ? `No applications found matching your search term or filters.`
+              : ""
+          }
         />
       </div>
-      <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
     </div>
   );
 };
+
 export default Page;
