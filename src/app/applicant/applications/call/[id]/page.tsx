@@ -56,6 +56,16 @@ const Page = () => {
       );
     }
   };
+
+const startDate = call?.startDate ? new Date(call.startDate) : null;
+const endDate = call?.endDate ? new Date(call.endDate) : null;
+
+let callcloseDays = 0;
+if (startDate && endDate && !isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+  const timeDifference = endDate.getTime() - startDate.getTime();
+  callcloseDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+}
+
   return (
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">
@@ -107,7 +117,7 @@ const Page = () => {
             </div>
             <div className="flex  mr-10">
               <div className="flex  ">
-                <DonutChart />
+                <DonutChart daysLeft={callcloseDays} />
               </div>
               <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4   rounded-3xl items-center justify-center font-semibold gap-2">
                 <div className="flex gap-2 items-center  w-full ">

@@ -89,7 +89,7 @@ export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
 export const getSubWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_SUB_WINDOWS_LOADING });
   authorizedApi
-    .get("/sub-window/allSubWindows")
+    .get("/sub-window/sub-windows/all")
     .then((res) => {
       dispatch({ type: GET_SUB_WINDOWS_SUCCESS, payload: res.data.data.data });
     })
@@ -127,7 +127,7 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/Sectors")
     .then((res) => {
-      dispatch({ type: GET_SECTORS_SUCCESS, payload: res.data.data });
+      dispatch({ type: GET_SECTORS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
       dispatch({ type: GET_SECTORS_ERROR, payload: err.response.data.error });
@@ -162,11 +162,7 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
     .then((res) => {
       dispatch({
         type: GET_APPLICANTS_SUCCESS,
-        payload: res.data.data.data.data,
-      });
-      dispatch({
-        type: GET_APPLICANTS_SUCCESS,
-        payload: res.data.data.data.data,
+        payload: res.data.data.data,
       });
     })
     .catch((err) => {
