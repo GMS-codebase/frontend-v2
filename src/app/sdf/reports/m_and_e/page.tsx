@@ -4,7 +4,7 @@ import { DataTable } from "@/components/core/data-table";
 import { meReports as data } from "@/utils/constants/dummy";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
+import AddEditCall from "@/components/Modals/call/AddEditCall";
 import { Select } from "@mantine/core";
 import { HiDotsHorizontal } from "react-icons/hi";
 import MeActions from "./MeActions";
@@ -111,7 +111,10 @@ const Page = () => {
         )}
       </div>
       <AddReportModal isOpen={isOpenReportModal} onClose={closeReport} />
-      <AddCall isOpenAddCall={isOpenCall} closeAddCall={closeCall} />
+      <AddEditCall
+        isOpenAddEditCall={isOpenCall}
+        closeAddEditCall={closeCall}
+      />
     </div>
   );
 };

@@ -6,7 +6,6 @@ import { TableData } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { applicationsData as data } from "@/utils/constants/dummy";
-import CallsActions from "../calls/CallsAction";
 import { CiSearch } from "react-icons/ci";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
@@ -77,12 +76,14 @@ const Page = () => {
   const { calls } = useSelector((state: any) => state.calls);
   const { sectors } = useSelector((state: any) => state.sectors);
   const [filteredApplicants, setFilteredApplicants] = useState([]);
-  const {applicants, loading: applicantsLoading} = useSelector((state: any) => state.applicants);
+  const { applicants, loading: applicantsLoading } = useSelector(
+    (state: any) => state.applicants,
+  );
   console.log("applicants", applicants);
   console.log(sectors, calls, windows);
-  useEffect(()=>{
+  useEffect(() => {
     setFilteredApplicants(applicants);
-  },[applicants])
+  }, [applicants]);
 
   // useEffect(()=>{
   //   authorizedApi.get(`/applicant/filter?callId=${formData.filters.call}&windowId==${formData.filters.window}&sectorId==${formData.filters.sector}&stage=${formData.filters.stage}`)
@@ -205,8 +206,8 @@ const Page = () => {
               }
               placeholderText="Filter By Sector"
               data={
-                sectors?.data
-                  ? sectors?.data?.map((sector: any) => {
+                sectors
+                  ? sectors?.map((sector: any) => {
                       return { value: sector.uuid, label: sector?.name };
                     })
                   : []

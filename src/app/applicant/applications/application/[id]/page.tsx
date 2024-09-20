@@ -19,15 +19,16 @@ import { useDisclosure } from "@mantine/hooks";
 import AddEditContact from "@/components/Modals/applicantContacts/AddEditContact";
 import CreateApplication from "@/components/Modals/application/CreateApplication";
 import TermsAndConditions from "@/components/Application/TermsAndConditions";
+import MinutesNegotiation from "@/components/Application/MinutesNegotiation";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
   const { myApplications } = useSelector((state: any) => state.applications);
-  console.log(myApplications);
   const existingApplication = myApplications.find(
-    (app: any) => app?.call?.uuid === callId,
+    (app: any) => app?.uuid === callId,
   );
+  console.log(myApplications, existingApplication, callId,existingApplication?.currentStage == "CONTRACT_SIGNING" || existingApplication?.currentStage === "FINISH_GRANT_APPROVAL");
   const router = useRouter();
   return (
     <div className="bg-white rounded-2xl p-10 ">
@@ -43,11 +44,16 @@ const Page = () => {
             </div>
           </div>
           <div className="flex justify-between w-3/5  font-semibold ">
-            <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-              <span className="">
-                <SolarAddFolderBold />
-              </span>
-              <div>Title</div>
+            <div className="flex gap-4 rounded-2xl items-center justify-center ">
+              <div className="flex gap-2  bg-gray-400 bg-opacity-10 rounded-full px-4  py-2 items-center justify-center font-semibold">
+                <span className="">
+                  <SolarAddFolderBold />
+                </span>
+                <div>Title</div>
+              </div>
+              <div className="text-xl font-bold">
+                {existingApplication?.call?.title}
+              </div>
             </div>
             <div className="flex gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center ">
               <span className="">
@@ -58,7 +64,6 @@ const Page = () => {
           </div>
           <div className="flex gap-2 ">
             <div className="flex flex-col gap-6 justify-start items-start ">
-              <h1 className="font-bold text-xl">{call?.title}</h1>
               <div className="flex gap-4 rounded-2xl items-center justify-center ">
                 <div className="flex gap-2  bg-gray-400 bg-opacity-10 rounded-full px-4  py-2 items-center justify-center font-semibold">
                   <span>
@@ -66,7 +71,9 @@ const Page = () => {
                   </span>
                   <div>Appeal Days</div>
                 </div>
-                <div className="text-xl font-bold">{call?.appealDays} Days</div>
+                <div className="text-xl font-bold">
+                  {existingApplication?.call?.appealDays} Days
+                </div>
               </div>
               <div className="flex gap-4 items-center justify-center ">
                 <div className="flex  gap-2  bg-gray-400 rounded-full bg-opacity-10 px-4  py-2 font-semibold items-center justify-center">
@@ -75,7 +82,9 @@ const Page = () => {
                   </span>
                   <div>Status</div>
                 </div>
-                <div className="text-xl font-bold">{call?.status}</div>
+                <div className="text-xl font-bold">
+                  {existingApplication?.call?.status}
+                </div>
               </div>
             </div>
             <div className="flex  mr-10">
@@ -89,7 +98,13 @@ const Page = () => {
                   </span>
                   <div>
                     <p>Start date</p>
-                    <p>{call && format(call?.startDate, "dd MMMM yyyy")}</p>
+                    <p>
+                      {existingApplication?.call &&
+                        format(
+                          existingApplication?.call?.startDate,
+                          "dd MMMM yyyy",
+                        )}
+                    </p>
                   </div>
                 </div>
 
@@ -99,7 +114,13 @@ const Page = () => {
                   </span>
                   <div>
                     <p>End Date</p>
-                    <p>{call && format(call?.endDate, "dd MMMM yyyy")}</p>
+                    <p>
+                      {existingApplication?.call &&
+                        format(
+                          existingApplication?.call?.endDate,
+                          "dd MMMM yyyy",
+                        )}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -114,10 +135,14 @@ const Page = () => {
             </div>
 
             <div className=" font-semibold text-gray-400">
-              {call?.description}
+              {existingApplication?.call?.description}
             </div>
           </div>
-          <TermsAndConditions />
+          {/* <TermsAndConditions /> */}
+          {}
+          {existingApplication?.currentStage == "CONTRACT_SIGNING" || existingApplication?.currentStage === "FINISH_GRANT_APPROVAL" ? (
+              <MinutesNegotiation />
+            ) : <></>}
         </div>
       </div>
     </div>

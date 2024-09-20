@@ -8,7 +8,7 @@ import { applicationsData as data } from "@/utils/constants/dummy";
 import CallsActions from "./CallsAction";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
+import AddEditCall from "@/components/Modals/call/AddEditCall";
 import { Select } from "@mantine/core";
 
 const Page = () => {
@@ -120,7 +120,7 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable columns={columns} data={data} />
       </div>
-      <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
+      <AddEditCall isOpenAddEditCall={isOpenCall} closeAddEditCall={close} />
     </div>
   );
 };

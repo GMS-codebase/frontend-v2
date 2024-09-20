@@ -14,6 +14,7 @@ import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
+import { IoIosSave } from "react-icons/io";
 const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
@@ -308,7 +309,17 @@ const Page = () => {
   return (
     <div>
       <div className="flex flex-col gap-4 w-full bg-white p-4 rounded-2xl ">
-        <div className="font-semibold text-2xl">Questions and answers</div>
+        <div className="font-semibold text-2xl flex justify-between items-center">
+          <p>Questions and answers</p>
+          <button
+            className="bg-primary text-white p-3 rounded-full"
+            onClick={() => {
+              handleSubmit();
+            }}
+          >
+            <IoIosSave />
+          </button>
+        </div>
         <div className="flex font-semibold">
           <div
             onClick={() => setCurrentComponent("Project")}
