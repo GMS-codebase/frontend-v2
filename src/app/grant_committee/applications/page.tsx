@@ -8,7 +8,7 @@ import { applicationsData as data } from "@/utils/constants/dummy";
 import CallsActions from "./CallsAction";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
+import AddEditCall from "@/components/Modals/call/AddEditCall";
 import { Select } from "@mantine/core";
 import { useRef } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -173,7 +173,7 @@ const Page = () => {
           noDataMessage={"No Applications So Far"}
         />
       </div>
-      <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
+      <AddEditCall isOpenAddEditCall={isOpenCall} closeAddEditCall={close} />
     </div>
   );
 };

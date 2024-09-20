@@ -8,7 +8,7 @@ import { applicationsData as data } from "@/utils/constants/dummy";
 import CallsActions from "./CallsAction";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
+import AddEditCall from "@/components/Modals/call/AddEditCall";
 import { Select } from "@mantine/core";
 import { useRef } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -32,11 +32,7 @@ const Page = () => {
     {
       accessorKey: "window",
       header: "Window",
-      cell: ({ row }) => (
-        <div>
-          {row.original?.window?.title}
-        </div>
-      ),
+      cell: ({ row }) => <div>{row.original?.window?.title}</div>,
     },
     {
       accessorKey: "sector",
@@ -46,7 +42,13 @@ const Page = () => {
     {
       accessorKey: "trade",
       header: "Trade",
-      cell: ({ row }) => <div>{row.original.trades[0] ? row.original?.trades[0].title : "Not Assigned"}</div>,
+      cell: ({ row }) => (
+        <div>
+          {row.original.trades[0]
+            ? row.original?.trades[0].title
+            : "Not Assigned"}
+        </div>
+      ),
     },
     {
       accessorKey: "stage",
@@ -56,7 +58,7 @@ const Page = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions application={row.original}/>,
+      cell: ({ row }) => <CallsActions application={row.original} />,
     },
   ];
 
@@ -186,7 +188,7 @@ const Page = () => {
           />
         )}
       </div>
-      <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
+      <AddEditCall isOpenAddEditCall={isOpenCall} closeAddEditCall={close} />
     </div>
   );
 };

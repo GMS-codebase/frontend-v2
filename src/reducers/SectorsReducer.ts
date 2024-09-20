@@ -55,7 +55,7 @@ export default function SectorsReducer(state = initialState, action: Action) {
         sectors: state.sectors.map((sector: Sector) =>
           sector.uuid === action.payload.uuid
             ? { ...sector, ...action.payload }
-            : sector
+            : sector,
         ),
         error: null,
         isError: false,
@@ -70,7 +70,7 @@ export default function SectorsReducer(state = initialState, action: Action) {
                 ...sector,
                 trades: [...(sector.trades || []), action.payload.trade],
               }
-            : sector
+            : sector,
         ),
         error: null,
         isError: false,
@@ -80,7 +80,7 @@ export default function SectorsReducer(state = initialState, action: Action) {
       return {
         ...state,
         sectors: state.sectors.filter(
-          (sector: Sector) => sector.uuid !== action.payload.id
+          (sector: Sector) => sector.uuid !== action.payload.id,
         ),
         error: null,
         isError: false,

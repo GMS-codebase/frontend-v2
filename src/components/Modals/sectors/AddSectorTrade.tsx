@@ -41,8 +41,8 @@ const AddSectorTrade = ({
   const windowOptions = windows.windows
     .filter((window: any) =>
       window.subWindows.filter((subWindow: any) =>
-        subWindow.sectors.filter((sec: any) => sec.uuid === id)
-      )
+        subWindow.sectors.filter((sec: any) => sec.uuid === id),
+      ),
     )
     .map((window: any) => ({
       value: window.uuid,
@@ -86,7 +86,7 @@ const AddSectorTrade = ({
         payload: {
           sectorId: id,
           trade: trades.trades.filter(
-            (tr: any) => tr.uuid === formData.trade
+            (tr: any) => tr.uuid === formData.trade,
           )[0],
         },
       });
@@ -96,7 +96,7 @@ const AddSectorTrade = ({
       });
       closeAddSectorTrade();
     } catch (error: any) {
-      console.log(error)
+      console.log(error);
       notifications.show({
         message: error.response?.data?.message ?? "Failed to assign trade!",
         color: "red",

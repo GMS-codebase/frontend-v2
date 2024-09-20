@@ -46,7 +46,9 @@ const GenericSidebar = ({
         <button
           onClick={toggle}
           className={`absolute  ${
-            isCompressed ? "rotate-180  left-[80%]    top-[18vh]" : "left-[95%]    top-[5vh]"
+            isCompressed
+              ? "rotate-180  left-[80%]    top-[18vh]"
+              : "left-[95%]    top-[5vh]"
           }  flex items-center gap-0 bg-primary rounded-full h-fit py-1.5 px-1`}
         >
           <PiCaretLeftBold color="#fff" size={20} />
