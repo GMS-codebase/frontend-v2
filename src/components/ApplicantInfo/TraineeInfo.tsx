@@ -1,10 +1,10 @@
-import React from 'react'
-import { SolarPen2Bold } from '../core/icons'
+import React from "react";
+import { SolarPen2Bold } from "../core/icons";
 
 function TraineeInfo() {
   return (
     <div>
-          <div className="bg-white rounded-2xl p-10 mb-10 flex flex-col gap-6">
+      <div className="bg-white rounded-2xl p-10 mb-10 flex flex-col gap-6">
         <div className="flex flex-col gap-6  text-black">
           <div className="flex justify-between">
             <div className="text-xl font-bold">Trainee</div>
@@ -40,8 +40,7 @@ function TraineeInfo() {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Graduate status</div>
               </div>
-              <div className="mt-2 ml-4">ONGOING
-</div>
+              <div className="mt-2 ml-4">ONGOING</div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -63,8 +62,7 @@ function TraineeInfo() {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Date of birth</div>
               </div>
-              <div className="mt-2 ml-4">2004-01-01
-</div>
+              <div className="mt-2 ml-4">2004-01-01</div>
             </div>
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
@@ -112,15 +110,13 @@ function TraineeInfo() {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Trade</div>
               </div>
-              <div className="mt-2 ml-4">
-               Networking
-              </div>
+              <div className="mt-2 ml-4">Networking</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default TraineeInfo
+export default TraineeInfo;

@@ -8,11 +8,12 @@ import { ShieldWarning } from "solar-icon-set";
 import axios from "axios";
 import { notifications } from "@mantine/notifications";
 import { SolarCheckCircleBold } from "../../core/icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { Call } from "@/types";
 import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
+import { getCalls } from "@/utils/funcs";
 
 const AddEditCall = ({
   isOpenAddEditCall,
@@ -29,6 +30,7 @@ const AddEditCall = ({
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState<Partial<Call>>({
     title: "",
     description: "",
@@ -44,17 +46,17 @@ const AddEditCall = ({
   let MultiWindowData = windows?.windows?.map((window: any) => ({
     value: window.uuid,
     label: window.title,
-  }));
+  })) ?? [];
 
   const getSubWindowsData = () => {
     const subWindowData =
       windows?.windows
-        ?.filter((window: any) => selectedWindows.includes(window.uuid))
+        ?.filter((window: any) => selectedWindows?.includes(window.uuid))
         .flatMap((window: any) =>
           window.subWindows?.map((subWindow: any) => ({
-            value: subWindow.uuid,
-            label: subWindow.title,
-          }))
+            value: subWindow?.uuid,
+            label: subWindow?.title,
+          })),
         ) || [];
     return subWindowData;
   };
@@ -68,10 +70,10 @@ const AddEditCall = ({
           )
           .flatMap((subWindow: any) =>
             subWindow.sectors?.map((sector: any) => ({
-              value: sector.uuid,
-              label: sector.name,
-            }))
-          ) || []
+              value: sector?.uuid,
+              label: sector?.name,
+            })),
+          ) || [],
     );
     return sectorData;
   };
@@ -125,28 +127,29 @@ const AddEditCall = ({
       windows: selectedWindows,
     });
     const submitData = new FormData();
-    submitData.append("title", formData.title as any);
-    submitData.append("description", formData.description as any);
-    submitData.append("appealDays", formData.appealDays as any);
-    submitData.append("applicationStartDate", formData.startDate as any);
-    submitData.append("applicationEndDate", formData.endDate as any);
+    submitData.append("title", formData?.title as any);
+    submitData.append("description", formData?.description as any);
+    submitData.append("appealDays", formData?.appealDays as any);
+    submitData.append("applicationStartDate", formData?.startDate as any);
+    submitData.append("applicationEndDate", formData?.endDate as any);
     submitData.append("window", JSON.stringify(selectedWindows));
     submitData.append("sector", JSON.stringify(selectedSectors));
     submitData.append("subWindows", JSON.stringify(selectedSubWindows));
-    if (formData.attachment) {
-      submitData.append("attachment", formData.attachment);
+    if (formData?.attachment) {
+      submitData?.append("attachment", formData?.attachment);
     }
 
-    const apiUrl = defaultData ? `/call/${defaultData.uuid}` : "/call/create";
+    const apiUrl = defaultData ? `/call/update/${defaultData.uuid}` : "/call/create";
 
     defaultData
       ? authorizedApi
-          .patch(apiUrl, submitData, {
+          .post(apiUrl, submitData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
           })
           .then((res) => {
+            getCalls(dispatch)
             notifications.show({
               message: "Call updated successfully!",
               color: "blue",
@@ -171,6 +174,7 @@ const AddEditCall = ({
             },
           })
           .then((res) => {
+            getCalls(dispatch)
             notifications.show({
               message: defaultData
                 ? "Call updated successfully!"
