@@ -26,7 +26,7 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id,
   )[0];
-  console.log(application);
+  console.log(application)
   const [loading, setLoading] = useState(false);
   const [
     isOpenEvaluationDetails,
@@ -357,7 +357,7 @@ const Page = () => {
                     ? "APPROVED"
                     : application?.status}
                 </div>
-                {application?.duediligencyDecisions?.length < 3 &&
+                {application?.duediligencyDecisions?.length < 4 &&
                   !application.duediligencyDecisions.find(
                     (dec: any) =>
                       dec?.employee?.user_id ===

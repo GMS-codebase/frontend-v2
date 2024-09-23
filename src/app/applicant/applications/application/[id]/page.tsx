@@ -26,9 +26,15 @@ const Page = () => {
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
   const { myApplications } = useSelector((state: any) => state.applications);
   const existingApplication = myApplications.find(
-    (app: any) => app?.uuid === callId,
+    (app: any) => app?.uuid === callId
   );
-  console.log(myApplications, existingApplication, callId);
+  console.log(
+    myApplications,
+    existingApplication,
+    callId,
+    existingApplication?.currentStage == "CONTRACT_SIGNING" ||
+      existingApplication?.currentStage === "FINISH_GRANT_APPROVAL"
+  );
   const router = useRouter();
   return (
     <div className="bg-white rounded-2xl p-10 ">
@@ -102,7 +108,7 @@ const Page = () => {
                       {existingApplication?.call &&
                         format(
                           existingApplication?.call?.startDate,
-                          "dd MMMM yyyy",
+                          "dd MMMM yyyy"
                         )}
                     </p>
                   </div>
@@ -118,7 +124,7 @@ const Page = () => {
                       {existingApplication?.call &&
                         format(
                           existingApplication?.call?.endDate,
-                          "dd MMMM yyyy",
+                          "dd MMMM yyyy"
                         )}
                     </p>
                   </div>
@@ -138,13 +144,15 @@ const Page = () => {
               {existingApplication?.call?.description}
             </div>
           </div>
-          {/* <TermsAndConditions /> */}
-          {}
-          {existingApplication?.currentStage == "CONTRACT_SIGNING" || existingApplication?.currentStage === "FINISH_GRANT_APPROVAL" ? (
-              <MinutesNegotiation />
-            ) : <></>}
         </div>
       </div>
+
+      {existingApplication?.currentStage == "CONTRACT_SIGNING" ||
+      existingApplication?.currentStage === "FINISH_GRANT_APPROVAL" ? (
+        <MinutesNegotiation />
+      ) : (
+        <></>
+      )}
     </div>
   );
 };
