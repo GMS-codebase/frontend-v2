@@ -26,7 +26,7 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id,
   )[0];
-  console.log(application)
+  console.log(application);
   const [loading, setLoading] = useState(false);
   const [
     isOpenEvaluationDetails,
