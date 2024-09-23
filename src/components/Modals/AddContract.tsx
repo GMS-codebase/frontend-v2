@@ -34,9 +34,11 @@ const AddContract: React.FC<AddContractProps> = ({
     file: File | null;
     paymentType: string;
     installments?: number[];
+    amount: number;
     tradeTrainees: { trade: Trade; trainees: number }[];
   }>({
     name: "",
+    amount: 0,
     file: null,
     paymentType: "",
     tradeTrainees: [],
@@ -51,18 +53,24 @@ const AddContract: React.FC<AddContractProps> = ({
       contract: formData.file,
       applicantId: data.applicant.uuid,
       applicationId: data?.uuid,
-      tradeTrainees: formData.tradeTrainees,
+      amount: formData.amount,
+      tradeTrainees: formData.tradeTrainees.map((trd) => ({
+        trade_id: trd.trade.uuid,
+        numberOfTrainees: trd.trainees,
+      })),
       installments: formData.installments,
     };
+    console.log(newData);
 
     const submitForm = new FormData();
     submitForm.append("name", newData.name);
     submitForm.append("contract", newData.contract as Blob);
     submitForm.append("applicantId", newData.applicantId);
+    submitForm.append("amount", newData.amount.toString());
     submitForm.append("applicationId", newData.applicationId);
     newData.installments &&
-      submitForm.append("installments", JSON.stringify(newData.installments));
-    submitForm.append("tradeTrainees", JSON.stringify(newData.tradeTrainees));
+      submitForm.append("installments", newData.installments as any);
+    submitForm.append("tradeNumbers", newData.tradeTrainees as any);
 
     try {
       const res = await authorizedApi.post("/contracts", submitForm, {
@@ -108,6 +116,26 @@ const AddContract: React.FC<AddContractProps> = ({
             onSubmit={handleSubmit}
             className="w-full  flex flex-col gap-2 px-2"
           >
+            <div className="w-full mb-4 ">
+              <label
+                htmlFor="name"
+                className="block text-md font-bold text-gray-700"
+              >
+                Name of the Contract
+              </label>
+              <div className="flex items-center w-full bg-gray2 p-2 px-3 rounded-2xl gap-2">
+                <CashOut />
+                <input
+                  type="text"
+                  placeholder="Name"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, name: e.target.value }))
+                  }
+                  className="flex-grow outline-none bg-transparent py-1"
+                />
+              </div>
+            </div>
             <div className="w-full my-2">
               <label
                 htmlFor="fileUpload"
@@ -164,9 +192,17 @@ const AddContract: React.FC<AddContractProps> = ({
               <div className="flex items-center w-full bg-gray2 p-2 px-3 rounded-2xl gap-2">
                 <CashOut />
                 <input
-                  type="text"
-                  placeholder="Total Amount"
+                  type="number"
+                  min={0}
+                  placeholder="Total Amount in Rwf"
                   className="flex-grow outline-none bg-transparent py-1"
+                  value={formData.amount}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      amount: parseInt(e.target.value),
+                    }))
+                  }
                 />
               </div>
             </div>

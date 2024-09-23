@@ -114,13 +114,11 @@ const CallsList = () => {
             </>
           ) : (
             <>
-              {Array.from({ length: 20 }).map((_, iterationIndex) =>
-                calls.calls
-                  .filter((call: Call) => call.status === "OPEN")
-                  .map((call: any, index: any) => (
-                    <CallCard key={`${iterationIndex}-${index}`} call={call} />
-                  ))
-              )}
+              {calls.calls
+                .filter((call: Call) => call.status === "OPEN")
+                .map((call: any, index: any) => (
+                  <CallCard key={index} call={call} />
+                ))}
             </>
           )}
         </div>
