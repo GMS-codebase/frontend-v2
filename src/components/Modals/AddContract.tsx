@@ -69,8 +69,8 @@ const AddContract: React.FC<AddContractProps> = ({
     submitForm.append("amount", newData.amount.toString());
     submitForm.append("applicationId", newData.applicationId);
     newData.installments &&
-      submitForm.append("installments", newData.installments as any);
-    submitForm.append("tradeNumbers", newData.tradeTrainees as any);
+      submitForm.append("installments", JSON.stringify(newData.installments));
+    submitForm.append("tradeNumbers", JSON.stringify(newData.tradeTrainees));
 
     try {
       const res = await authorizedApi.post("/contracts", submitForm, {
