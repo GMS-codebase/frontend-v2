@@ -1,4 +1,4 @@
-import { Modal, Select } from "@mantine/core";
+import { Modal, Select, MultiSelect } from "@mantine/core";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { SolarSuitcaseLinear, SolarWindowFrameLinear } from "../../core/icons";
@@ -22,11 +22,11 @@ const AddSectorTrade = ({
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     trade: "",
-    window: "",
+    windows: [] as string[], // Changed window to windows as an array
   });
   const [errors, setErrors] = useState({
     trade: "",
-    window: "",
+    windows: "",
   });
 
   const windows = useSelector((state: any) => state.windows);
@@ -41,25 +41,24 @@ const AddSectorTrade = ({
   const windowOptions = windows.windows
     .filter((window: any) =>
       window.subWindows.filter((subWindow: any) =>
-        subWindow.sectors.filter((sec: any) => sec.uuid === id),
-      ),
+        subWindow.sectors.filter((sec: any) => sec.uuid === id)
+      )
     )
     .map((window: any) => ({
       value: window.uuid,
       label: window.title,
     }));
 
-  console.log(windowOptions);
-
   const validateForm = () => {
     const newErrors: any = {};
     if (!formData.trade) newErrors.trade = "Trade is required";
-    if (!formData.window) newErrors.window = "Window is required";
+    if (!formData.windows.length)
+      newErrors.windows = "At least one window is required"; // Validate for at least one window
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (name: string, value: string) => {
+  const handleChange = (name: string, value: any) => {
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -70,28 +69,36 @@ const AddSectorTrade = ({
     }));
   };
 
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
-    setLoading(true);
+  const assignTradeToWindow = async (tradeId: string, windowId: string) => {
     try {
-      const response = await authorizedApi.put(`/Sectors/${id}/assign-trade`, {
-        tradeId: formData.trade,
-        windowId: formData.window,
+      await authorizedApi.put(`/Sectors/${id}/assign-trade`, {
+        tradeId,
+        windowId, // Single windowId per request
       });
       dispatch({
         type: ADD_TRADE_SECTOR_SUCCESS,
         payload: {
           sectorId: id,
-          trade: trades.trades.filter(
-            (tr: any) => tr.uuid === formData.trade,
-          )[0],
+          trade: trades.trades.find((tr: any) => tr.uuid === tradeId),
         },
       });
+    } catch (error: any) {
+      throw error; // Throw error to be handled in the parent function
+    }
+  };
+
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    setLoading(true);
+    try {
+      for (const windowId of formData.windows) {
+        await assignTradeToWindow(formData.trade, windowId);
+      }
+
       notifications.show({
-        message: "Trade assigned to sector successfully!",
+        message:
+          "Trade assigned to sector for all selected windows successfully!",
         color: "blue",
       });
       closeAddSectorTrade();
@@ -159,26 +166,28 @@ const AddSectorTrade = ({
 
             <div className="w-full">
               <label
-                htmlFor="window"
+                htmlFor="windows"
                 className="block text-base font-medium text-black"
               >
-                Select Window
+                Select Windows
               </label>
               <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <span className="absolute left-2 top-3 text-black text-lg">
                   <SolarWindowFrameLinear />
                 </span>
-                <Select
-                  name="window"
-                  value={formData.window}
-                  onChange={(value: any) => handleChange("window", value)}
+                <MultiSelect
+                  name="windows"
+                  value={formData.windows}
+                  onChange={(value: string[]) => handleChange("windows", value)}
                   data={windowOptions}
-                  placeholder="Type in or select window"
+                  placeholder="Type in or select windows"
                   required
                 />
               </div>
-              {errors.window && (
-                <div className="text-red-600 text-sm mt-1">{errors.window}</div>
+              {errors.windows && (
+                <div className="text-red-600 text-sm mt-1">
+                  {errors.windows}
+                </div>
               )}
             </div>
 
