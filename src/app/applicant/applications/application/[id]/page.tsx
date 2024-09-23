@@ -26,14 +26,14 @@ const Page = () => {
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
   const { myApplications } = useSelector((state: any) => state.applications);
   const existingApplication = myApplications.find(
-    (app: any) => app?.uuid === callId
+    (app: any) => app?.uuid === callId,
   );
   console.log(
     myApplications,
     existingApplication,
     callId,
     existingApplication?.currentStage == "CONTRACT_SIGNING" ||
-      existingApplication?.currentStage === "FINISH_GRANT_APPROVAL"
+      existingApplication?.currentStage === "FINISH_GRANT_APPROVAL",
   );
   const router = useRouter();
   return (
@@ -108,7 +108,7 @@ const Page = () => {
                       {existingApplication?.call &&
                         format(
                           existingApplication?.call?.startDate,
-                          "dd MMMM yyyy"
+                          "dd MMMM yyyy",
                         )}
                     </p>
                   </div>
@@ -124,7 +124,7 @@ const Page = () => {
                       {existingApplication?.call &&
                         format(
                           existingApplication?.call?.endDate,
-                          "dd MMMM yyyy"
+                          "dd MMMM yyyy",
                         )}
                     </p>
                   </div>
