@@ -7,6 +7,8 @@ import deleteSvg from "@/assets/Vectors/delete.svg";
 import { useState } from "react";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
+import { getEmployees } from "@/utils/funcs";
+import { useDispatch } from "react-redux";
 type FormData = {
   firstName: string;
   lastName: string;
@@ -21,22 +23,17 @@ const RemoveFromStage = ({
   isOpen,
   stage,
   closeModal,
-  onRemoveSector,
+  // onRemoveSector,
 }: {
   employee: any;
   isOpen: boolean;
   stage: any;
   closeModal: () => void;
-  onRemoveSector: any;
+  // onRemoveSector: any;
 }) => {
   const [selectedSector, setSelectedSector] = useState("");
-
-  const handleRemove = () => {
-    if (selectedSector) {
-      onRemoveSector(selectedSector);
-    }
-  };
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
   const handleRemoveStage = () => {
     setLoading(true);
     authorizedApi
@@ -47,11 +44,12 @@ const RemoveFromStage = ({
       })
       .then((res) => {
         console.log(res);
+        getEmployees(dispatch)
         notifications.show({
           message: "Stage removed successfully",
           color: "blue",
         });
-        onRemoveSector(stage, selectedSector);
+        // onRemoveSector(stage, selectedSector);
         closeModal();
       })
       .catch((err) => {
