@@ -27,7 +27,7 @@ const Page = () => {
                 setDownloading(true);
                 try {
                   const response = await authorizedApi.get(
-                    `/admin/applicant/get-details-${id}`,
+                    `/admin/applicant-details/${id}`,
                     {
                       responseType: "blob",
                     }
@@ -93,7 +93,9 @@ const Page = () => {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Business Type </div>
               </div>
-              <div className="mt-2 ml-4">{applicant?.businesses[0].businessType || ""}</div>
+              <div className="mt-2 ml-4">
+                {applicant?.businesses[0].businessType || ""}
+              </div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -101,27 +103,13 @@ const Page = () => {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Phone</div>
               </div>
-              <div className="mt-2 ml-4">Phone 250788472005</div>
-            </div>
-            <div className="flex w-1/2">
-              <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                <div>Registration number</div>
-              </div>
-              <div className="mt-2 ml-4">103733616</div>
-            </div>
-          </div>
-          <div className="flex  w-4/5  font-semibold ">
-            <div className="flex w-1/2">
-              <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                <div>Is Private</div>
-              </div>
-              <div className="mt-2 ml-4">YES</div>
+              <div className="mt-2 ml-4">{applicant?.phone}</div>
             </div>
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Email</div>
               </div>
-              <div className="mt-2 ml-4">jniyonambaza@yahoo.fr</div>
+              <div className="mt-2 ml-4">{applicant?.email}</div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -129,13 +117,17 @@ const Page = () => {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>TIN</div>
               </div>
-              <div className="mt-2 ml-4">103733616</div>
+              <div className="mt-2 ml-4">
+                {applicant?.businesses[0].tinNumber}
+              </div>
             </div>
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Bank</div>
               </div>
-              <div className="mt-2 ml-4">BPR</div>
+              <div className="mt-2 ml-4">
+                {applicant?.businesses[0].bankName}
+              </div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -143,13 +135,15 @@ const Page = () => {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>PO Box</div>
               </div>
-              <div className="mt-2 ml-4">0987654</div>
+              <div className="mt-2 ml-4">{applicant?.po_box}</div>
             </div>
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Registration date</div>
               </div>
-              <div className="mt-2 ml-4">2013-01-01</div>
+              <div className="mt-2 ml-4">
+                {new Date(applicant?.done_at).toLocaleDateString()}
+              </div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -157,7 +151,7 @@ const Page = () => {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Bank Account</div>
               </div>
-              <div className="mt-2 ml-4">558373164110173</div>
+              <div className="mt-2 ml-4">{applicant?.businesses[0].bank}</div>
             </div>
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">

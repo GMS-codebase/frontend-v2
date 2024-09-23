@@ -2,6 +2,7 @@
 import React from "react";
 import { SolarPen2Bold } from "@/components/core/icons";
 import ApplicantTable from "./IndexTable";
+
 const Page = () => {
   return (
     <div className="">
@@ -10,10 +11,7 @@ const Page = () => {
           <div className="flex justify-between">
             <div className="text-xl font-bold">Legal Status</div>
             <div className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center">
-              <span>
-                <SolarPen2Bold />
-              </span>
-              <div>Export Applicant Details</div>
+              <span></span>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -134,7 +132,7 @@ const Page = () => {
       </div>
       <ApplicantTable />
     </div>
-  );
+  )
 };
 
 export default Page;
