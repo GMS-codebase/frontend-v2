@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Modal } from "@mantine/core";
 import { IoMdClose } from "react-icons/io";
 import { FaClock, FaDownload } from "react-icons/fa";
 import { format } from "date-fns";
+import { useRouter } from "next/navigation";
+import { unauthorizedApi } from "@/utils/api";
 
 const CallModal = ({
   opened,
@@ -15,6 +17,36 @@ const CallModal = ({
   call: any;
   openLogin: () => void;
 }) => {
+  const navigate = useRouter();
+  const [loading, setLoading] = useState(false);
+  const handleDownloadInstructions = async () => {
+    setLoading(true);
+    try {
+      console.log("attachment --> ",call.attachment);
+      const filename = call.attachment.split("/").pop();
+      console.log(filename);
+      const response = await unauthorizedApi.get(
+        `/admin/download/calls/${filename}`,
+        {
+          responseType: "blob",
+        }
+      );
+      const blob = new Blob([response.data], { type: response.headers["content-type"] });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = call.attachment || "downloaded-file.jpg";
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+    finally {
+      setLoading(false);
+    }
+  };
   return (
     <Modal
       size={"xl"}
@@ -47,9 +79,9 @@ const CallModal = ({
                 {call?.endDate && format(call?.endDate, "dd MMMM yyyy")}
               </p>
             </div>
-            <div className="flex items-center gap-2 text-primary bg-[#005DE908] bg-opacity-10 cursor-pointer px-4 py-2 rounded-full font-bold ">
+            <div onClick={handleDownloadInstructions} className="flex items-center gap-2 text-primary bg-[#005DE908] bg-opacity-10 cursor-pointer px-4 py-2 rounded-full font-bold ">
               <FaDownload className="text-primary" />
-              <div>View application instructions</div>
+              <div>{loading ? "Downloading . . ." : "View application instructions" }</div>
             </div>
           </div>
           <div className="flex gap-4 mt-4 justify-around ">
