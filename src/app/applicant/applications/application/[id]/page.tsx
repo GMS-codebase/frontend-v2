@@ -100,8 +100,8 @@ const Page = () => {
                   activeColor="#005DE9"
                   bgColor="#fff"
                   baseColor="#EAEAFC"
-                  endDate={call?.endDate}
-                  startDate={call?.startDate}
+                  endDate={existingApplication?.call?.endDate}
+                  startDate={existingApplication?.call?.startDate}
                 />
               </div>
               <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4   rounded-3xl items-center justify-center font-semibold gap-2">
