@@ -136,7 +136,10 @@ const RegisterModal = ({
         name: formData.firstname + " " + formData.lastname,
       });
       authorizedApi
-        .post("/employees/create", formData)
+        .post("/employees/create", {
+          ...formData,
+          name: formData.firstname + " " + formData.lastname,
+        })
         .then((res) => {
           notifications.show({
             message: "Employee is created successfully",
@@ -511,7 +514,7 @@ const RegisterModal = ({
                             label: "normal-employee",
                           },
                           {
-                            value: "SDF_SECRETARIAT",
+                            value: "SDF_SECRETARIATE",
                             label: "SDF-secretariat",
                           },
                           {
