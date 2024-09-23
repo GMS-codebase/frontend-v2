@@ -3,7 +3,7 @@ import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import CallsActions from "@/app/admin/calls/CallsAction";
+import CallsActions from "@/app/employee/calls/CallsAction";
 import { Contact as contactData } from "@/utils/constants/contact";
 import {ContractDetails as contract} from '@/utils/constants/dummy'
 import ContractsAction from '@/components/Actions/ContractsAction'
