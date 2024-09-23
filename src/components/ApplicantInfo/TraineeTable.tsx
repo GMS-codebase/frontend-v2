@@ -3,7 +3,7 @@ import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import CallsActions from "@/app/employee/calls/CallsAction";
+// import CallsActions from "@/app/admin/calls/CallsAction";
 import { Contact as contactData } from "@/utils/constants/contact";
 import { ContractDetails as contract } from "@/utils/constants/dummy";
 import ContractsAction from "@/components/Actions/ContractsAction";
@@ -50,7 +50,8 @@ const TraineeTable = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />
+        // <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />
+        <div></div>
       ),
     },
   ];
@@ -76,7 +77,6 @@ const TraineeTable = () => {
       header: "Paid",
       cell: ({ row }) => <div>{row.original?.paid}</div>,
     },
-
     {
       accessorKey: "actions",
       header: "Actions",
