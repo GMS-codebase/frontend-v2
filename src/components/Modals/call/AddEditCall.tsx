@@ -41,7 +41,7 @@ const AddEditCall = ({
     attachment: null,
   });
 
-  const MultiWindowData = windows?.windows?.map((window: any) => ({
+  let MultiWindowData = windows?.windows?.map((window: any) => ({
     value: window.uuid,
     label: window.title,
   }));
@@ -119,33 +119,57 @@ const AddEditCall = ({
       submitData.append("attachment", formData.attachment);
     }
 
-    const apiUrl = defaultData
-      ? `/call/update/${defaultData.uuid}`
-      : "/call/create";
-    authorizedApi
-      .post(apiUrl, submitData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        notifications.show({
-          message: defaultData
-            ? "Call updated successfully!"
-            : "Call created successfully!",
-          color: "blue",
-        });
-        closeAddEditCall();
-      })
-      .catch((err) => {
-        notifications.show({
-          message: err.response?.data?.message ?? "Failed to submit call!",
-          color: "red",
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    const apiUrl = defaultData ? `/call/${defaultData.uuid}` : "/call/create";
+
+    defaultData
+      ? authorizedApi
+          .patch(apiUrl, submitData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((res) => {
+            notifications.show({
+              message: "Call updated successfully!",
+              color: "blue",
+            });
+            console.log(res.data);
+
+            closeAddEditCall();
+          })
+          .catch((err) => {
+            notifications.show({
+              message: err.response?.data?.message ?? "Failed to submit call!",
+              color: "red",
+            });
+          })
+          .finally(() => {
+            setLoading(false);
+          })
+      : authorizedApi
+          .post(apiUrl, submitData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((res) => {
+            notifications.show({
+              message: defaultData
+                ? "Call updated successfully!"
+                : "Call created successfully!",
+              color: "blue",
+            });
+            closeAddEditCall();
+          })
+          .catch((err) => {
+            notifications.show({
+              message: err.response?.data?.message ?? "Failed to submit call!",
+              color: "red",
+            });
+          })
+          .finally(() => {
+            setLoading(false);
+          });
   };
 
   return (
@@ -449,6 +473,7 @@ const AddEditCall = ({
                         setSelectedSectors([]);
                       }}
                       data={MultiSubWindowData}
+                      // value={formData.subWindows}
                       placeholder="Select or type in a sub-window"
                       required
                     />
@@ -470,6 +495,7 @@ const AddEditCall = ({
                       name="sectors"
                       onChange={setSelectedSectors}
                       data={MultiSectorData}
+                      value={selectedSectors}
                       placeholder="Select or type in a sector"
                       required
                     />
