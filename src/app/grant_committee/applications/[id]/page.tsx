@@ -5,6 +5,7 @@ import {
   SolarFileBold,
   SolarFolder2Bold,
   SolarEyeLinear,
+  SolarPen2Bold,
 } from "@/components/core/icons";
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
@@ -26,7 +27,7 @@ const Page = () => {
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id,
+    (application: any) => application.uuid === id
   )[0];
   console.log(application);
   const [loading, setLoading] = useState(false);
@@ -115,16 +116,70 @@ const Page = () => {
     }
   };
 
+  const [downloading, setDownloading] = useState(false);
+
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
         <div className="flex justify-between items-center">
           <h2 className="text-black font-semibold">Legal status</h2>
-          <div className="flex justify-between items-center gap-2 px-4 py-2 bg-[#005DE9] rounded-full text-white w-fit">
-            <span>
-              <SolarFileBold />
-            </span>
-            <div>Export Applicant Details</div>
+          <div
+            className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
+            onClick={async (): Promise<void> => {
+              setDownloading(true);
+              try {
+                const response = await authorizedApi.get(
+                  `/admin/applicant-details/${id}`,
+                  {
+                    responseType: "blob",
+                  }
+                );
+                const contentDisposition =
+                  response.headers["content-disposition"];
+                const fileNameMatch =
+                  contentDisposition?.match(/filename="(.+)"/);
+                const fileName = fileNameMatch
+                  ? fileNameMatch[1]
+                  : "applicant-data";
+                const blob = new Blob([response.data], {
+                  type: response.data.type,
+                });
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = downloadUrl;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(downloadUrl);
+                notifications.show({
+                  title: "Download Successful",
+                  message: "The file has been downloaded successfully.",
+                  type: "success",
+                });
+              } catch (error) {
+                console.error("Download error:", error);
+                notifications.show({
+                  title: "Download Failed",
+                  message:
+                    "There was an issue downloading the file. Please try again.",
+                  type: "error",
+                });
+              } finally {
+                setDownloading(false);
+              }
+            }}
+          >
+            {downloading ? (
+              <p>Loading ....</p>
+            ) : (
+              <>
+                <span>
+                  <SolarPen2Bold />
+                </span>
+                <div>Export Applicant Details</div>
+              </>
+            )}
           </div>
         </div>
 
@@ -239,7 +294,14 @@ const Page = () => {
           <div className="flex flex-col gap-2">
             <h3 className="font-bold">Due Diligence Stage</h3>
             <div
-              className={`font-medium  ${application?.status === "APPROVED" || application?.currentStage !== "EVALUATION" ? "bg-[#4BC500] text-[#4BC500]" : application?.status === "PENDING" ? "bg-red-600 text-red-600" : ""} bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+              className={`font-medium  ${
+                application?.status === "APPROVED" ||
+                application?.currentStage !== "EVALUATION"
+                  ? "bg-[#4BC500] text-[#4BC500]"
+                  : application?.status === "PENDING"
+                  ? "bg-red-600 text-red-600"
+                  : ""
+              } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
             >
               {application?.currentStage !== "EVALUATION" &&
               application?.currentStage !== "DUE_DILIGENCY"
@@ -307,7 +369,7 @@ const Page = () => {
                 (decision: any, index: any) => ({
                   evaluator: application.evaluators[index],
                   evaluationDecision: decision,
-                }),
+                })
               )
             : []
         }
