@@ -13,11 +13,14 @@ import { Select } from "@mantine/core";
 import { useRef } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
-import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 
 const Page = () => {
     const [isOpenCall, { open, close }] = useDisclosure(false);
+    const { applications, loading } = useSelector(
+        (state: any) => state.applications
+    );
     const filtersContainerRef = useRef<HTMLDivElement>(null);
+
     const columns: ColumnDef<any>[] = [
         {
             accessorKey: "applicationNumber",
@@ -35,20 +38,9 @@ const Page = () => {
             cell: ({ row }) => <div>{row.original?.window?.title}</div>,
         },
         {
-            accessorKey: "sector",
-            header: "Sector",
-            cell: ({ row }) => <div>{row.original?.sectors[0].name}</div>,
-        },
-        {
-            accessorKey: "trade",
-            header: "Trade",
-            cell: ({ row }) => (
-                <div>
-                    {row.original.trades[0]
-                        ? row.original?.trades[0].title
-                        : "Not Assigned"}
-                </div>
-            ),
+            accessorKey: "call",
+            header: "Call",
+            cell: ({ row }) => <div>{row.original?.call?.title}</div>,
         },
         {
             accessorKey: "stage",
@@ -89,9 +81,6 @@ const Page = () => {
             }
         }
     };
-
-    const applications = useSelector((state: any) => state.applications);
-    console.log("applications", applications);
 
     return (
         <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
@@ -181,17 +170,13 @@ const Page = () => {
             </div>
 
             <div className="w-full h-full">
-                {applications?.loading ? (
-                    <TableSkeleton columns={columns} />
-                ) : applications.applications?.length === 0 ? (
-                    <h1>No Applications Found!</h1>
-                ) : (
-                    <DataTable
-                        columns={columns}
-                        data={applications?.applications ?? []}
-                        tableWidth={1800}
-                    />
-                )}
+                <DataTable
+                    columns={columns}
+                    data={applications}
+                    tableWidth={1800}
+                    loading={loading}
+                    noDataMessage={"No Applications So Far"}
+                />
             </div>
             <AddEditCall
                 isOpenAddEditCall={isOpenCall}
