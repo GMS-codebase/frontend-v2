@@ -3,10 +3,10 @@ import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import CallsActions from "@/app/employee/calls/CallsAction";
+// import CallsActions from "@/app/admin/calls/CallsAction";
 import { Contact as contactData } from "@/utils/constants/contact";
-import {ContractDetails as contract} from '@/utils/constants/dummy'
-import ContractsAction from '@/components/Actions/ContractsAction'
+import { ContractDetails as contract } from "@/utils/constants/dummy";
+import ContractsAction from "@/components/Actions/ContractsAction";
 
 const TraineeTable = () => {
   const [activeTable, setActiveTable] = useState("trainees");
@@ -50,7 +50,8 @@ const TraineeTable = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />
+        // <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />
+        <div></div>
       ),
     },
   ];
@@ -69,24 +70,17 @@ const TraineeTable = () => {
     {
       accessorKey: "percentage",
       header: "Percentage",
-      cell: ({ row }) => (
-        <div>
-        {row.original?.percentage}
-        </div>
-      ),
+      cell: ({ row }) => <div>{row.original?.percentage}</div>,
     },
     {
       accessorKey: "paid",
       header: "Paid",
       cell: ({ row }) => <div>{row.original?.paid}</div>,
     },
-
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => (
-       <ContractsAction/>
-      ),
+      cell: ({ row }) => <ContractsAction />,
     },
   ];
 
@@ -126,7 +120,9 @@ const TraineeTable = () => {
                 : "bg-[#005DE9] bg-opacity-20 text-blue-500"
             }`}
           >
-            <h1 className="text-base font-medium text-blue-500">Contract Installments</h1>
+            <h1 className="text-base font-medium text-blue-500">
+              Contract Installments
+            </h1>
           </button>
         </div>
       </div>
