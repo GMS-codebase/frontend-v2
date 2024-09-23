@@ -121,7 +121,7 @@ const EmployeeDetails = () => {
   const employee = employees.filter(
     (employee: any) => employee.uuid === employeeId,
   );
-  const [employeeStages, setEmployeesStages] = useState(employee[0]);
+  const [employeeStages, setEmployeesStages] = useState(employee[0].emp_stages);
 
   // Group the employee stages
   const groupedStages = groupStages(employee[0]?.emp_stages || []);
