@@ -54,7 +54,7 @@ const AddEditCall = ({
           window.subWindows?.map((subWindow: any) => ({
             value: subWindow.uuid,
             label: subWindow.title,
-          })),
+          }))
         ) || [];
     return subWindowData;
   };
@@ -64,14 +64,14 @@ const AddEditCall = ({
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid),
+            selectedSubWindows.includes(subWindow.uuid)
           )
           .flatMap((subWindow: any) =>
             subWindow.sectors?.map((sector: any) => ({
               value: sector.uuid,
               label: sector.name,
-            })),
-          ) || [],
+            }))
+          ) || []
     );
     return sectorData;
   };
@@ -80,10 +80,28 @@ const AddEditCall = ({
   const MultiSectorData = getSectorData();
   useEffect(() => {
     if (defaultData) {
+      console.log(defaultData)
       setFormData(defaultData);
-      setSelectedWindows(defaultData.windows);
-      setSelectedSubWindows(defaultData.subWindows);
-      setSelectedSectors(defaultData.sectors);
+      setSelectedWindows(
+        defaultData.windows.map((item: any) => ({
+          value: item.uuid,
+          label: item.title,
+        }))
+      );
+      setSelectedSubWindows(
+        defaultData.subWindows.map((item: any) => ({
+          value: item.uuid,
+          label: item.title,
+        }))
+      );
+      setSelectedSectors(
+        defaultData.sectors.map((item: any) => ({
+          value: item.uuid, 
+          label: item.name,
+        }))
+      );
+
+      
     }
   }, [defaultData]);
   const nextStep = () =>
@@ -448,7 +466,7 @@ const AddEditCall = ({
                         setSelectedSubWindows([]);
                         setSelectedSectors([]);
                       }}
-                      data={MultiWindowData}
+                      data={MultiWindowData || []}
                       placeholder="Select or type in a window"
                       required
                     />
@@ -472,7 +490,7 @@ const AddEditCall = ({
                         setSelectedSubWindows(value);
                         setSelectedSectors([]);
                       }}
-                      data={MultiSubWindowData}
+                      data={MultiSubWindowData || []}
                       // value={formData.subWindows}
                       placeholder="Select or type in a sub-window"
                       required
@@ -494,7 +512,7 @@ const AddEditCall = ({
                     <MultiSelect
                       name="sectors"
                       onChange={setSelectedSectors}
-                      data={MultiSectorData}
+                      data={MultiSectorData || []}
                       value={selectedSectors}
                       placeholder="Select or type in a sector"
                       required
