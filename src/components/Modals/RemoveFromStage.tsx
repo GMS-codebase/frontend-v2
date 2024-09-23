@@ -7,6 +7,8 @@ import deleteSvg from "@/assets/Vectors/delete.svg";
 import { useState } from "react";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
+import { getEmployees } from "@/utils/funcs";
+import { useDispatch } from "react-redux";
 type FormData = {
   firstName: string;
   lastName: string;
@@ -21,45 +23,45 @@ const RemoveFromStage = ({
   isOpen,
   stage,
   closeModal,
-  onRemoveSector,
+  // onRemoveSector,
 }: {
   employee: any;
   isOpen: boolean;
   stage: any;
   closeModal: () => void;
-  onRemoveSector: any;
+  // onRemoveSector: any;
 }) => {
   const [selectedSector, setSelectedSector] = useState("");
-
-  const handleRemove = () => {
-    if (selectedSector) {
-      onRemoveSector(selectedSector);
-    }
-  };
   const [loading, setLoading] = useState(false);
-  const handleRemoveStage = ()=>{
+  const dispatch = useDispatch();
+  const handleRemoveStage = () => {
     setLoading(true);
-    authorizedApi.post("/admin/employee/remove/stage", { stage_id: stage.uuid, emp_id: employee.uuid, sector_name: selectedSector }
-    )
-    .then((res)=>{
-      console.log(res);
-      notifications.show({
-        message: "Stage removed successfully",
-        color: "blue",
+    authorizedApi
+      .post("/admin/employee/remove/stage", {
+        stage_id: stage.uuid,
+        emp_id: employee.uuid,
+        sector_name: selectedSector,
       })
-      onRemoveSector(stage,selectedSector);
-      closeModal();
-    })
-    .catch((err)=>{
-      console.log("errorrrr --> ",err);
-      notifications.show({
-        title: "Failed to remove from stage",
-        message: err.response.data.message ?? "",
-        color: "red",
+      .then((res) => {
+        console.log(res);
+        getEmployees(dispatch)
+        notifications.show({
+          message: "Stage removed successfully",
+          color: "blue",
+        });
+        // onRemoveSector(stage, selectedSector);
+        closeModal();
       })
-    })
-    .finally(()=> setLoading(false))
-  }
+      .catch((err) => {
+        console.log("errorrrr --> ", err);
+        notifications.show({
+          title: "Failed to remove from stage",
+          message: err.response.data.message ?? "",
+          color: "red",
+        });
+      })
+      .finally(() => setLoading(false));
+  };
   return (
     <Modal
       size={""}
@@ -98,16 +100,18 @@ const RemoveFromStage = ({
             <h2 className="text-[#000F2369] text-lg font-medium text-center">
               This employee will be forbidden to access these permissions
             </h2>
-        <p className="text-[#000F2369] text-lg font-medium text-left">Select a sector to remove:</p>
-        <Select
-          className="border w-full"
-          placeholder="Select a sector"
-          data={stage?.sectors || []}
-          value={selectedSector}
-          onChange={(value: any) => setSelectedSector(value)}
-          radius="md"
-          size="md"
-        />
+            <p className="text-[#000F2369] text-lg font-medium text-left">
+              Select a sector to remove:
+            </p>
+            <Select
+              className="border w-full"
+              placeholder="Select a sector"
+              data={stage?.sectors || []}
+              value={selectedSector}
+              onChange={(value: any) => setSelectedSector(value)}
+              radius="md"
+              size="md"
+            />
           </div>
           <div className="w-full flex justify-center mt-4 space-x-4 p-6">
             <button
