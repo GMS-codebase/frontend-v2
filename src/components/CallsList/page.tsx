@@ -5,16 +5,9 @@ import DonutChart from "../chart/DonutChart";
 import { SolarAltArrowRightOutline } from "@/components/core/icons/index";
 import Link from "next/link";
 import { Call } from "@/types";
+import ProgressCircle from "./ProgressBar";
 
-const CallCard = ({
-  call,
-}: {
-  call: {
-    uuid: string;
-    title: string;
-    description: string;
-  };
-}) => {
+const CallCard = ({ call }: { call: Call }) => {
   return (
     <div className="flex flex-shrink-0 gap-2 w-[600px] bg-[#005DE9] bg-opacity-10 rounded-3xl px-4 py-2">
       <div className="flex flex-col gap-4 w-[60%]">
@@ -28,8 +21,14 @@ const CallCard = ({
           </div>
         </Link>
       </div>
-      <div className="w-[40%] text-[6px] font-bold">
-        <DonutChart />
+      <div className="w-full  text-[6px] font-bold">
+        <ProgressCircle
+          activeColor="#005DE9"
+          baseColor="#fff"
+          bgColor="#EAEAFC"
+          endDate={call.endDate}
+          startDate={call.startDate}
+        />
       </div>
     </div>
   );

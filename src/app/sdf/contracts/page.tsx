@@ -29,6 +29,14 @@ const Page = () => {
   const { applicationsForContractSigning: applications, loading } = useSelector(
     (state: any) => state.applications,
   );
+  console.log(applications);
+  console.log(contracts);
+  const filteredApplications = applications.filter((app: any) =>
+    app.stages.some(
+      (stage: any) =>
+        stage.name === "CONTRACT_SIGNING" && stage.status === "PENDING"
+    )
+  );
   const contractColumns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -145,15 +153,12 @@ const Page = () => {
         <h1 className="text-xl p-4 font-bold">
           Applications Ready For Contract Signing
         </h1>
-        {loading ? (
-          <TableSkeleton columns={columns} />
-        ) : (
-          <DataTable
-            columns={columns}
-            data={applications}
-            noDataMessage="No Approved Applications"
-          />
-        )}
+        <DataTable
+          columns={columns}
+          data={filteredApplications}
+          loading={loading}
+          noDataMessage="No Approved Applications"
+        />
       </div>
       <AddContract
         data={isContract.application}
