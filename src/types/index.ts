@@ -35,6 +35,10 @@ export type Application = {
   uuid: string;
 };
 
+export type Applicant = {
+  uuid: string;
+};
+
 export type Contract = {
   uuid: string;
   contractNumber: number;
