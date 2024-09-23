@@ -80,18 +80,11 @@ const Page = () => {
 
   return (
     <div className="w-full  flex flex-col gap-4">
-      <div className="font-bold text-2xl w-full">Open calls</div>
-      {/* <div>
-  return (
-    <div className="w-full  flex flex-col gap-4">
-      <div className="font-bold text-2xl w-full">Open calls</div>
-      {/* <div>
-                {calls.map((call, index) => {
-                    return <Calls key={index} call={call} />;
-                })}
-            </div> */}
-      <div className="w-full ">
-        <CallsList />
+      <div className="p-7 rounded-2xl bg-white space-y-4">
+        <div className="font-bold text-2xl w-full">Open calls</div>
+        <div className="w-full ">
+          <CallsList />
+        </div>
       </div>
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">

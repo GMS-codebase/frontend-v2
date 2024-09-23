@@ -25,7 +25,7 @@ function Page() {
     getCalls(dispatch);
   }, []);
   const { calls, loading: loadingCalls } = useSelector(
-    (state: any) => state.calls,
+    (state: any) => state.calls
   );
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
@@ -111,10 +111,12 @@ function Page() {
         <h1 className="font-extrabold text-black text-2xl w-[50%] md:text-4xl">
           Welcome To SDF GRANT MANAGEMENT SYSTEM
         </h1>
-        <h2 className="text-black w-[40%] text-md md:text-xl mt-4 font-normal">
-          Unfortunately there is no open call. Please subscribe to get notified
-          when there is a new call.
-        </h2>
+        {!calls && (
+          <h2 className="text-black w-[40%] text-md md:text-xl mt-4 font-normal">
+            Unfortunately there is no open call. Please subscribe to get
+            notified when there is a new call.
+          </h2>
+        )}
         <div
           className="w-[80%] overflow-x-auto no-scrollbar m-10"
           style={{ scrollbarWidth: "none" }}
@@ -166,9 +168,7 @@ function Page() {
       </div>
 
       <div className="absolute bottom-0 left-0 p-4 z-30">
-        <h2 className="text-black font-extrabold">
-          © 2024 Rwanda TVET Board.
-        </h2>
+        <h2 className="text-black font-extrabold">© 2024 Rwanda TVET Board.</h2>
       </div>
       <div className="absolute bottom-0 right-0 p-4 z-30">
         <button className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
