@@ -55,7 +55,14 @@ export enum ERole {
   EMPLOYEE = "EMPLOYEE",
 }
 
-export type Role = "ADMIN" | "APPLICANT" | "EMPLOYEE" | "NORMAL_EMPLOYEE" | "SDF_SECRETARIATE" | "GRANT_COMMITTEE" | "DYNAMIC";
+export type Role =
+  | "ADMIN"
+  | "APPLICANT"
+  | "EMPLOYEE"
+  | "NORMAL_EMPLOYEE"
+  | "SDF_SECRETARIATE"
+  | "GRANT_COMMITTEE"
+  | "DYNAMIC";
 
 export interface PageProps {
   params?: { [key: string]: string };
