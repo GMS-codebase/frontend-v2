@@ -29,8 +29,8 @@ const SelectSectorModal = ({
       title="Select Sector to Remove"
       size="md"
       centered
-    //   overlayBlur={3}
-    //   overlayOpacity={0.55}
+      //   overlayBlur={3}
+      //   overlayOpacity={0.55}
       withCloseButton={false} // To enhance modal appearance
     >
       <div className="flex flex-col gap-4 p-4">
@@ -51,9 +51,9 @@ const SelectSectorModal = ({
           radius="md"
           size="md"
           withAsterisk
-        //   transition="pop-top-left"
-        //   transitionDuration={200}
-        //   transitionTimingFunction="ease"
+          //   transition="pop-top-left"
+          //   transitionDuration={200}
+          //   transitionTimingFunction="ease"
         />
 
         {/* Action Buttons */}

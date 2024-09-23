@@ -37,14 +37,14 @@ const Page = () => {
   const filteredTrades = sector?.trades?.filter(
     (tr: any) =>
       tr.title.toLowerCase().includes(searchQuery?.toLowerCase()) ||
-      tr.shortname.toLowerCase().includes(searchQuery?.toLowerCase())
+      tr.shortname.toLowerCase().includes(searchQuery?.toLowerCase()),
   );
 
   const getWindowForTrade = (trade: Trade) => {
     const windowWithSubWindow = windows.windows.find((win: any) =>
       win.subWindows.some((subWindow: any) =>
-        subWindow.sectors.some((sec: any) => sec.uuid === sector?.uuid)
-      )
+        subWindow.sectors.some((sec: any) => sec.uuid === sector?.uuid),
+      ),
     );
     return windowWithSubWindow ? windowWithSubWindow.title : "No Window";
   };
