@@ -15,40 +15,39 @@ const AddRoleModal: React.FC<AddRoleModalProps> = ({
         roleTitle: string;
         permissions: string[];
         users: string[];
+        userInputs: string[];  // For dynamically added users
+        tabInputs: string[];   // For dynamically added tabs
     }>({
         roleTitle: "",
         permissions: [],
         users: [],
+        userInputs: [""],    // Start with one user input
+        tabInputs: [""],     // Start with one tab input
     });
-    const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const MultiSelectPermissionsData = [
-        { value: "Permission 1", label: "Permission 1" },
-        { value: "Permission 2", label: "Permission 2" },
-        { value: "Permission 3", label: "Permission 3" },
-    ];
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number, type: 'users' | 'tabs') => {
+        const { value } = e.target;
+        setFormData((prevData) => {
+            const updatedInputs = type === 'users' ? [...prevData.userInputs] : [...prevData.tabInputs];
+            updatedInputs[index] = value;
+            return {
+                ...prevData,
+                [type === 'users' ? 'userInputs' : 'tabInputs']: updatedInputs,
+            };
+        });
+    };
 
-    const MultiSelectUsersData = [
-        { value: "User 1", label: "User 1" },
-        { value: "User 2", label: "User 2" },
-        { value: "User 3", label: "User 3" },
-    ];
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+    const addNewInput = (type: 'users' | 'tabs') => {
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value,
-        }));
-        setErrors((prevData) => ({
-            ...prevData,
-            [name]: null,
+            [type === 'users' ? 'userInputs' : 'tabInputs']: [
+                ...(type === 'users' ? prevData.userInputs : prevData.tabInputs), 
+                "" // Add an empty string for the new input
+            ],
         }));
     };
 
     const handleSubmit = () => {
-        // Handle form submission logic here
         console.log(formData);
     };
 
@@ -56,148 +55,132 @@ const AddRoleModal: React.FC<AddRoleModalProps> = ({
         closeAddEditRole();
     };
 
+    const MultiSelectPermissionsData = [
+        { value: "Permission 1", label: "Permission 1" },
+        { value: "Permission 2", label: "Permission 2" },
+        { value: "Permission 3", label: "Permission 3" },
+    ];
+
     return (
-       <Modal
-    opened={isOpenAddEditRole}
-    onClose={handleCancel}
-    closeOnClickOutside={false}
-    withCloseButton={false}
-    size="lg"
-    styles={{
-        content: {
-            backgroundColor: "#ffffff", // Set the modal background to white
-            borderRadius: "10px", // Optional: add border radius
-        },
-        header: {
-            borderBottom: "none", // Optional: remove header border
-        },
-    }}
->
-
+        <Modal
+            opened={isOpenAddEditRole}
+            onClose={handleCancel}
+            closeOnClickOutside={false}
+            withCloseButton={false}
+            size="lg"
+        >
             <div className="w-full flex flex-col gap-2 p-8 bg-white rounded-3xl ">
-                <div className="">
-                    <button
-                        className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
-                        onClick={handleCancel}
+                <button
+                    className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
+                    onClick={handleCancel}
+                >
+                    <IoMdClose size={25} color={"#000"} />
+                </button>
+                <h1 className="text-2xl font-extrabold">Add Role</h1>
+                <h2 className="text-[#000F2369] text-lg font-medium">
+                    Provide the role details to create a new role.
+                </h2>
+
+                {/* Role Title */}
+                <div className="w-full">
+                    <label
+                        htmlFor="roleTitle"
+                        className="block text-base font-medium text-black"
                     >
-                        <IoMdClose size={25} color={"#000"} />
-                    </button>
-                    <h1 className="text-2xl font-extrabold">Add Role</h1>
-                    <h2 className="text-[#000F2369] text-lg font-medium">
-                        Provide the role details to create a new role.
-                    </h2>
-
-                    <div className="w-full">
-                        <label
-                            htmlFor="roleTitle"
-                            className="block text-base font-medium text-black"
-                        >
-                            Role Title
-                        </label>
-                        <input
-                            type="text"
-                            name="roleTitle"
-                            value={formData.roleTitle}
-                            onChange={handleChange}
-                            placeholder="Role Title"
-                            className="mt-1 block w-full px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
-                        />
-                        {errors.roleTitle && (
-                            <p className="text-red-600 text-sm mt-1">
-                                {errors.roleTitle}
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="w-full flex flex-col gap-2 my-4">
-                        <label
-                            htmlFor="permissions"
-                            className="block text-base font-medium text-black"
-                        >
-                            Permissions/tabs
-                        </label>
-                        <div className="w-full">
-                            <MultiSelect
-                                value={formData.permissions}
-                                onChange={(value) =>
-                                    setFormData((prevData) => ({
-                                        ...prevData,
-                                        permissions: value,
-                                    }))
-                                }
-                                data={MultiSelectPermissionsData}
-                                placeholder="Select permissions"
-                                searchable
-                                clearable
-                                className="bg-[#000F230A] rounded-2xl"
-                            />
-                            {errors.permissions && (
-                                <p className="text-red-600 text-sm mt-1">
-                                    {errors.permissions}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="w-full flex flex-col gap-2 my-4">
-                        <label
-                            htmlFor="users"
-                            className="block text-base font-medium text-black"
-                        >
-                            Users
-                        </label>
-                        
-                            <div className="w-full">
-                                <MultiSelect
-                                    value={formData.users}
-                                    onChange={(value) =>
-                                        setFormData((prevData) => ({
-                                            ...prevData,
-                                            users: value,
-                                        }))
-                                    }
-                                    data={MultiSelectUsersData}
-                                    placeholder="Select users"
-                                    searchable
-                                    clearable
-                                    className="bg-[#000F230A] rounded-2xl"
-                                />
-                                {errors.users && (
-                                    <p className="text-red-600 text-sm mt-1">
-                                        {errors.users}
-                                    </p>
-                                )}
-                            </div>
-                            {/* <div className="w-full flex justify-end my-5 space-x-4">
-                                <button
-                                    type="button"
-                                    className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                >
-                                    Add New Sector
-                                </button>
-                            </div> */}
-                        </div>
-                    </div>
-
-                    <div className="w-full flex justify-between gap-3 mt-4">
-                        <button
-                            type="button"
-                            onClick={handleCancel}
-                            className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                        >
-                            Back
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleSubmit}
-                            className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? "Processing..." : "Create"}
-                        </button>
-                    </div>
+                        Role Title
+                    </label>
+                    <input
+                        type="text"
+                        name="roleTitle"
+                        value={formData.roleTitle}
+                        onChange={(e) => setFormData({ ...formData, roleTitle: e.target.value })}
+                        placeholder="Role Title"
+                        className="mt-1 block w-full px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm"
+                    />
                 </div>
-            
+
+                {/* Permissions/Tabs Section */}
+                <div className="w-full flex flex-col gap-2 my-4 relative">
+                    <label className="block text-base font-medium text-black">
+                        Permissions/Tabs
+                    </label>
+                    <MultiSelect
+                        value={formData.permissions}
+                        onChange={(value) =>
+                            setFormData((prevData) => ({
+                                ...prevData,
+                                permissions: value,
+                            }))
+                        }
+                        data={MultiSelectPermissionsData}
+                        placeholder="Select permissions"
+                        searchable
+                        clearable
+                        className="w-full bg-[#000F230A] rounded-2xl"
+                    />
+                    {formData.tabInputs.map((tabInput, index) => (
+                        <div key={index} className="relative w-full mt-2">
+                            <input
+                                type="text"
+                                value={tabInput}
+                                onChange={(e) => handleChange(e, index, 'tabs')}
+                                placeholder={`Tab ${index + 1}`}
+                                className="block w-full px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm pr-24" // Add padding-right to make space for the button
+                            />
+                            <button
+                                type="button"
+                                className="absolute right-3 top-2 bg-blue-500 text-white px-2 rounded-full h-8"
+                                onClick={() => addNewInput('tabs')}
+                            >
+                                Add Tab
+                            </button>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Users Section */}
+                <div className="w-full flex flex-col gap-2 my-4 relative">
+                    <label className="block text-base font-medium text-black">
+                        Users
+                    </label>
+                    {formData.userInputs.map((userInput, index) => (
+                        <div key={index} className="relative w-full mt-2">
+                            <input
+                                type="text"
+                                value={userInput}
+                                onChange={(e) => handleChange(e, index, 'users')}
+                                placeholder={`User ${index + 1}`}
+                                className="block w-full px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm pr-24" // Add padding-right to make space for the button
+                            />
+                            <button
+                                type="button"
+                                className="absolute right-3 top-2 bg-blue-500 text-white px-2 rounded-full h-8"
+                                onClick={() => addNewInput('users')}
+                            >
+                                Add User
+                            </button>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Buttons */}
+                <div className="w-full flex justify-between gap-3 mt-4">
+                    <button
+                        type="button"
+                        onClick={handleCancel}
+                        className="w-full px-4 py-3 bg-black text-white rounded-full"
+                    >
+                        Back
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleSubmit}
+                        className="w-full px-4 py-3 bg-blue-500 text-white rounded-full"
+                    >
+                        Create
+                    </button>
+                </div>
+            </div>
         </Modal>
     );
 };
