@@ -25,7 +25,7 @@ function Page() {
     getCalls(dispatch);
   }, []);
   const { calls, loading: loadingCalls } = useSelector(
-    (state: any) => state.calls
+    (state: any) => state.calls,
   );
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
@@ -168,7 +168,9 @@ function Page() {
       </div>
 
       <div className="absolute bottom-0 left-0 p-4 z-30">
-        <h2 className="text-black font-extrabold">© 2024 Rwanda TVET Board.</h2>
+        <h2 className="text-black font-extrabold">
+          © 2024 Rwanda TVET Board.
+        </h2>
       </div>
       <div className="absolute bottom-0 right-0 p-4 z-30">
         <button className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
