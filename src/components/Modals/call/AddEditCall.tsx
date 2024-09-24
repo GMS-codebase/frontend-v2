@@ -84,26 +84,9 @@ const AddEditCall = ({
     if (defaultData) {
       console.log(defaultData)
       setFormData(defaultData);
-      setSelectedWindows(
-        defaultData.windows.map((item: any) => ({
-          value: item.uuid,
-          label: item.title,
-        }))
-      );
-      setSelectedSubWindows(
-        defaultData.subWindows.map((item: any) => ({
-          value: item.uuid,
-          label: item.title,
-        }))
-      );
-      setSelectedSectors(
-        defaultData.sectors.map((item: any) => ({
-          value: item.uuid, 
-          label: item.name,
-        }))
-      );
-
-      
+      setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
+      setSelectedSubWindows(defaultData.subWindows.map((item: any) => item.uuid));
+      setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
     }
   }, [defaultData]);
   const nextStep = () =>
