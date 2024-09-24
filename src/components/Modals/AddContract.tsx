@@ -27,7 +27,7 @@ const AddContract: React.FC<AddContractProps> = ({
   const [selectedTrade, setSelectedTrade] = useState<any>();
   const [traineesNumber, setTraineesNumber] = useState(0);
   const [paymentType, setPaymentType] = useState<"instant" | "installments">(
-    "instant"
+    "instant",
   );
   const [formData, setFormData] = useState<{
     name: string;
@@ -69,8 +69,8 @@ const AddContract: React.FC<AddContractProps> = ({
     submitForm.append("amount", newData.amount.toString());
     submitForm.append("applicationId", newData.applicationId);
     newData.installments &&
-      submitForm.append("installments", newData.installments as any);
-    submitForm.append("tradeNumbers", newData.tradeTrainees as any);
+      submitForm.append("installments", JSON.stringify(newData.installments));
+    submitForm.append("tradeNumbers", JSON.stringify(newData.tradeTrainees));
 
     try {
       const res = await authorizedApi.post("/contracts", submitForm, {
@@ -308,7 +308,7 @@ const AddContract: React.FC<AddContractProps> = ({
                           value={selectedTrade}
                           onChange={(value) =>
                             setSelectedTrade(
-                              trades.find((trade) => trade.uuid === value)
+                              trades.find((trade) => trade.uuid === value),
                             )
                           }
                           data={trades.map((trade) => ({
@@ -383,7 +383,8 @@ const AddContract: React.FC<AddContractProps> = ({
                                 ...prev,
                                 tradeTrainees: prev.tradeTrainees.filter(
                                   (trade) =>
-                                    trade.trade.uuid !== tradeTrainee.trade.uuid
+                                    trade.trade.uuid !==
+                                    tradeTrainee.trade.uuid,
                                 ),
                               }))
                             }

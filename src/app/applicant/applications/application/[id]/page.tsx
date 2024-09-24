@@ -20,20 +20,21 @@ import AddEditContact from "@/components/Modals/applicantContacts/AddEditContact
 import CreateApplication from "@/components/Modals/application/CreateApplication";
 import TermsAndConditions from "@/components/Application/TermsAndConditions";
 import MinutesNegotiation from "@/components/Application/MinutesNegotiation";
+import ProgressCircle from "@/components/CallsList/ProgressBar";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
   const { myApplications } = useSelector((state: any) => state.applications);
   const existingApplication = myApplications.find(
-    (app: any) => app?.uuid === callId
+    (app: any) => app?.uuid === callId,
   );
   console.log(
     myApplications,
     existingApplication,
     callId,
     existingApplication?.currentStage == "CONTRACT_SIGNING" ||
-      existingApplication?.currentStage === "FINISH_GRANT_APPROVAL"
+      existingApplication?.currentStage === "FINISH_GRANT_APPROVAL",
   );
   const router = useRouter();
   return (
@@ -95,7 +96,13 @@ const Page = () => {
             </div>
             <div className="flex  mr-10">
               <div className="flex  ">
-                <DonutChart />
+                <ProgressCircle
+                  activeColor="#005DE9"
+                  bgColor="#fff"
+                  baseColor="#EAEAFC"
+                  endDate={existingApplication?.call?.endDate}
+                  startDate={existingApplication?.call?.startDate}
+                />
               </div>
               <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4   rounded-3xl items-center justify-center font-semibold gap-2">
                 <div className="flex gap-2 items-center  w-full ">
@@ -108,7 +115,7 @@ const Page = () => {
                       {existingApplication?.call &&
                         format(
                           existingApplication?.call?.startDate,
-                          "dd MMMM yyyy"
+                          "dd MMMM yyyy",
                         )}
                     </p>
                   </div>
@@ -124,7 +131,7 @@ const Page = () => {
                       {existingApplication?.call &&
                         format(
                           existingApplication?.call?.endDate,
-                          "dd MMMM yyyy"
+                          "dd MMMM yyyy",
                         )}
                     </p>
                   </div>
