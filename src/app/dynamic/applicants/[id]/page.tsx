@@ -2,6 +2,7 @@
 import React from "react";
 import { SolarPen2Bold } from "@/components/core/icons";
 import ApplicantTable from "./IndexTable";
+
 const Page = () => {
   return (
     <div className="">
@@ -134,7 +135,7 @@ const Page = () => {
       </div>
       <ApplicantTable />
     </div>
-  );
+  )
 };
 
 export default Page;

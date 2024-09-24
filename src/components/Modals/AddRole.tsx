@@ -57,22 +57,23 @@ const AddRoleModal: React.FC<AddRoleModalProps> = ({
     };
 
     return (
-        <Modal
-            opened={isOpenAddEditRole}
-            onClose={handleCancel}
-            closeOnClickOutside={false}
-            withCloseButton={false}
-            size="lg"
-            styles={{
-                modal: {
-                    backgroundColor: "#ffffff", // Set the modal background to white
-                    borderRadius: "10px", // Optional: add border radius
-                },
-                header: {
-                    borderBottom: "none", // Optional: remove header border
-                },
-            }}
-        >
+       <Modal
+    opened={isOpenAddEditRole}
+    onClose={handleCancel}
+    closeOnClickOutside={false}
+    withCloseButton={false}
+    size="lg"
+    styles={{
+        content: {
+            backgroundColor: "#ffffff", // Set the modal background to white
+            borderRadius: "10px", // Optional: add border radius
+        },
+        header: {
+            borderBottom: "none", // Optional: remove header border
+        },
+    }}
+>
+
             <div className="w-full flex flex-col gap-2 p-8 bg-white rounded-3xl ">
                 <div className="">
                     <button
@@ -145,8 +146,8 @@ const AddRoleModal: React.FC<AddRoleModalProps> = ({
                         >
                             Users
                         </label>
-                        <div className="flex">
-                            <div className="w-full flex">
+                        
+                            <div className="w-full">
                                 <MultiSelect
                                     value={formData.users}
                                     onChange={(value) =>
@@ -167,56 +168,14 @@ const AddRoleModal: React.FC<AddRoleModalProps> = ({
                                     </p>
                                 )}
                             </div>
-                            <div className="w-full flex justify-end my-5 space-x-4">
-                                <b
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    utton
+                            {/* <div className="w-full flex justify-end my-5 space-x-4">
+                                <button
                                     type="button"
                                     className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                 >
                                     Add New Sector
-                                </b>
-                            </div>
+                                </button>
+                            </div> */}
                         </div>
                     </div>
 
@@ -238,7 +197,7 @@ const AddRoleModal: React.FC<AddRoleModalProps> = ({
                         </button>
                     </div>
                 </div>
-            </div>
+            
         </Modal>
     );
 };
