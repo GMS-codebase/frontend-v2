@@ -190,12 +190,7 @@ const Page = () => {
                         <div>{application?.description}</div>
                     </div>
 
-                    <div className="flex px-4 py-2 gap-2 bg-[#005DE9] rounded-full text-white items-center justify-start w-fit">
-                        <span>
-                            <SolarFolder2Bold />
-                        </span>
-                        <div className="">Apply for Appeal</div>
-                    </div>
+                   
                 </div>
             </div>
             <div className="flex gap-2 p-5">
