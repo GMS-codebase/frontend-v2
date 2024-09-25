@@ -20,7 +20,7 @@ const Roles: React.FC<RolesProps> = ({ role, numberOfUsers, id }) => {
                     opened={menuOpened}
                     onOpen={() => setMenuOpened(true)}
                     onClose={() => setMenuOpened(false)}
-                    shadow="md"
+                    shadow="lg"
                     width={150}
                 >
                     <Menu.Target>
