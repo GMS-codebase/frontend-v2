@@ -634,23 +634,23 @@ export const Staff = ({
     number: "",
     position: "",
     qualification: "",
-    available: "",
+    availability: "", // Updated key to match table field
   });
 
   const [errors, setErrors] = useState({
     number: "",
     position: "",
     qualification: "",
-    available: "",
+    availability: "",
   });
 
   const validateStaffInputs = () => {
-    const { number, position, qualification, available } = staffInputs;
+    const { number, position, qualification, availability } = staffInputs;
     const newErrors = {
       number: number ? "" : "Staff number is required.",
       position: position ? "" : "Position is required.",
       qualification: qualification ? "" : "Qualification is required.",
-      available: available ? "" : "Availability is required.",
+      availability: availability ? "" : "Availability is required.", // Validate availability
     };
     setErrors(newErrors);
     return Object.values(newErrors).every((error) => !error);
@@ -665,13 +665,13 @@ export const Staff = ({
       number: "",
       position: "",
       qualification: "",
-      available: "",
+      availability: "", // Clear availability after submission
     });
     setErrors({
       number: "",
       position: "",
       qualification: "",
-      available: "",
+      availability: "",
     });
   };
 
@@ -696,7 +696,7 @@ export const Staff = ({
             <div className="relative">
               <input
                 type="number"
-                placeholder="Name"
+                placeholder="Number"
                 value={staffInputs.number}
                 onChange={(e) =>
                   setStaffInputs((prev) => ({
@@ -753,27 +753,27 @@ export const Staff = ({
               )}
             </div>
             <div className="relative">
-              <Select
-                name="available"
-                value={staffInputs.available}
-                onChange={(selectedOption) =>
-                  setStaffInputs(
-                    (prev) =>
-                      ({
-                        ...prev,
-                        available: selectedOption,
-                      }) as any,
-                  )
-                }
-                data={[
-                  { value: "available", label: "Available" },
-                  { value: "hired", label: "Hired" },
-                ]}
-                className="mt-1 block w-full pl-5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Select Availability"
-              />
-              {errors.available && (
-                <p className="text-red-500 text-sm mt-1">{errors.available}</p>
+             <Select
+  name="availability"
+  value={staffInputs.availability}
+  onChange={(value: string | null) =>
+    setStaffInputs((prev) => ({
+      ...prev,
+      availability: value ?? "", // Handle `null` case by assigning an empty string
+    }))
+  }
+  data={[
+    { value: "available", label: "Available" },
+    { value: "hired", label: "Hired" },
+  ]}
+  className="mt-1 block w-full pl-5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+  placeholder="Select Availability"
+/>
+
+              {errors.availability && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.availability}
+                </p>
               )}
             </div>
           </div>
@@ -812,7 +812,7 @@ export const Staff = ({
         </>
       )}
       {commentData && (
-        <div className="mt-2 ">
+        <div className="mt-2">
           <label htmlFor="" className="font-medium text-sm">
             Comment
           </label>
@@ -829,6 +829,7 @@ export const Staff = ({
     </div>
   );
 };
+
 
 export const LastPageQuestions = ({
   data,
