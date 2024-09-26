@@ -113,7 +113,7 @@ const Page = () => {
               {call?.description}
             </div>
           </div>
-          <div className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center">
+          <div   className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center">
             <span>
               <SolarDownloadMinimalisticBold />
             </span>
