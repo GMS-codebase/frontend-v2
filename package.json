@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start -p 5600",
     "lint": "next lint",
-    "format": "prettier --write ./"
+    "format": "npx prettier --write ./",
+    "prepare": "husky"
   },
   "dependencies": {
     "@mantine/core": "^7.11.2",
@@ -28,6 +29,7 @@
     "cookies-next": "^4.2.1",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.12",
+    "husky": "^9.1.6",
     "jwt-decode": "^4.0.0",
     "next": "14.2.5",
     "next13-progressbar": "^1.2.1",
@@ -49,6 +51,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8",
+    "prettier": "^3.3.3",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }

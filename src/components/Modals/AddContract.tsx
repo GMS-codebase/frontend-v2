@@ -27,7 +27,7 @@ const AddContract: React.FC<AddContractProps> = ({
   const [selectedTrade, setSelectedTrade] = useState<any>();
   const [traineesNumber, setTraineesNumber] = useState(0);
   const [paymentType, setPaymentType] = useState<"instant" | "installments">(
-    "instant"
+    "instant",
   );
   const [formData, setFormData] = useState<{
     name: string;
@@ -308,7 +308,7 @@ const AddContract: React.FC<AddContractProps> = ({
                           value={selectedTrade}
                           onChange={(value) =>
                             setSelectedTrade(
-                              trades.find((trade) => trade.uuid === value)
+                              trades.find((trade) => trade.uuid === value),
                             )
                           }
                           data={trades.map((trade) => ({
@@ -383,7 +383,8 @@ const AddContract: React.FC<AddContractProps> = ({
                                 ...prev,
                                 tradeTrainees: prev.tradeTrainees.filter(
                                   (trade) =>
-                                    trade.trade.uuid !== tradeTrainee.trade.uuid
+                                    trade.trade.uuid !==
+                                    tradeTrainee.trade.uuid,
                                 ),
                               }))
                             }
