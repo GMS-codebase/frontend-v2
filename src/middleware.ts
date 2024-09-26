@@ -45,10 +45,10 @@ export const checkToken = (token: string) => {
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("token");
-  if (whitelist.includes(request.nextUrl.pathname) && !token) {
+  if (whitelist.includes(request.nextUrl.pathname) && !token?.value) {
     return NextResponse.next();
   }
-  if (!token) {
+  if (!token?.value) {
     return NextResponse.redirect(new URL("/", request.url));
   }
   try {
@@ -61,10 +61,10 @@ export function middleware(request: NextRequest) {
     const role = decoded?.role;
     const nextUrl = getRolePath(role ?? "");
     if (whitelist.includes(request.nextUrl.pathname)) {
-      return NextResponse.redirect(new URL(nextUrl, request.url));
+      return NextResponse.next();
     }
     if (request.nextUrl.pathname === "/") {
-      return NextResponse.redirect(new URL(nextUrl, request.url));
+      return NextResponse.next();
     }
     const roleInRoute = request.nextUrl.pathname.split("/")[1].toUpperCase();
     if (roles.includes(roleInRoute as Role) && role !== roleInRoute) {

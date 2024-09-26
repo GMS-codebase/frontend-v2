@@ -27,7 +27,7 @@ const Page = () => {
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id
+    (application: any) => application.uuid === id,
   )[0];
   console.log(application);
   const [loading, setLoading] = useState(false);
@@ -132,7 +132,7 @@ const Page = () => {
                   `/admin/applicant-details/${id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -299,8 +299,8 @@ const Page = () => {
                 application?.currentStage !== "EVALUATION"
                   ? "bg-[#4BC500] text-[#4BC500]"
                   : application?.status === "PENDING"
-                  ? "bg-red-600 text-red-600"
-                  : ""
+                    ? "bg-red-600 text-red-600"
+                    : ""
               } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
             >
               {application?.currentStage !== "EVALUATION" &&
@@ -362,7 +362,7 @@ const Page = () => {
                 (decision: any, index: any) => ({
                   evaluator: application.evaluators[index],
                   evaluationDecision: decision,
-                })
+                }),
               )
             : []
         }
