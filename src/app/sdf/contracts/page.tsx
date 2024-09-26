@@ -24,10 +24,10 @@ const Page = () => {
   });
 
   const { contracts, loading: loadingContracts } = useSelector(
-    (state: any) => state.contracts
+    (state: any) => state.contracts,
   );
   const { applicationsForContractSigning: applications, loading } = useSelector(
-    (state: any) => state.applications
+    (state: any) => state.applications,
   );
   console.log(applications);
   console.log(contracts);

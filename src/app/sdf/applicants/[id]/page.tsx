@@ -8,10 +8,10 @@ const Page = () => {
   return (
     <div className="">
       <div className="flex">
-       <ContractInfo/>  
-       <ApplicationInfo/>
+        <ContractInfo />
+        <ApplicationInfo />
       </div>
-      <TraineeTable/>
+      <TraineeTable />
     </div>
   );
 };
