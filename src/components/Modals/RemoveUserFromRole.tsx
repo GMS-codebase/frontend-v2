@@ -21,7 +21,6 @@ const RemoveUserFromRole = ({
   user: any;
   closeModal: () => void;
 }) => {
-  const [selectedSector, setSelectedSector] = useState("");
   const dispatch = useDispatch();
   const handleRemove = () => {
     authorizedApi
