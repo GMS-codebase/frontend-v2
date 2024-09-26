@@ -18,7 +18,7 @@ const calculateDaysRemaining = (startDate: string, endDate: string) => {
 
   const percentageCompleted = Math.min(
     100,
-    Math.max(0, (1 - remainingDays / totalDays) * 100)
+    Math.max(0, (1 - remainingDays / totalDays) * 100),
   );
 
   return {
@@ -40,7 +40,7 @@ const ProgressCircle: React.FC<ProgressCircleProps> = ({
   useEffect(() => {
     const { remainingDays, percentageCompleted } = calculateDaysRemaining(
       startDate,
-      endDate
+      endDate,
     );
     setDaysRemaining(remainingDays);
     setProgress(percentageCompleted);
