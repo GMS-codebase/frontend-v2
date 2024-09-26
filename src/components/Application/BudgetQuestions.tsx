@@ -4,9 +4,9 @@ import React, { useState, ChangeEvent } from "react";
 
 interface FundingQuestionsProps {
   data: ApplicationQuestions;
-  setData?: React.Dispatch<React.SetStateAction<any>>;
+  setData?: React.Dispatch<React.SetStateAction<ApplicationQuestions>>;
   commentData?: Comments; // For comments and evaluations
-  setCommentData?: React.Dispatch<React.SetStateAction<any>>;
+  setCommentData?: React.Dispatch<React.SetStateAction<Comments>>;
 }
 
 const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
@@ -16,24 +16,34 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
   setCommentData,
 }) => {
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
+
+  // Handle text input changes for both main data and comments
   const handleInputChange = (inputName: string, value: any) => {
-    setData &&
-      setData((prev: any) => ({
+    if (setData) {
+      setData((prev: ApplicationQuestions) => ({
         ...prev,
         [inputName]: value,
       }));
+    }
   };
+
+  // Handle file changes and associate them with the correct field
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
     const file = e.target.files?.[0];
     if (file) {
       setFiles((prev) => ({ ...prev, [key]: file }));
-      setData && setData((prev: any) => ({ ...prev, [key]: file }));
+      setData &&
+        setData((prev: ApplicationQuestions) => ({
+          ...prev,
+          [key]: file,
+        }));
     }
   };
 
+  // Handle comment changes
   const handleCommentChange = (inputName: string, value: any) => {
     if (setCommentData) {
-      setCommentData((prev: any) => ({
+      setCommentData((prev: Comments) => ({
         ...prev,
         [inputName]: value,
       }));
@@ -42,7 +52,8 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
 
   return (
     <div className="space-y-2">
-      <div className="p-4 bg-white rounded-lg ">
+      {/* Budget Summary */}
+      <div className="p-4 bg-white rounded-lg">
         <h3 className="text-lg font-bold">Budget Summary</h3>
         <p className="text-sm text-gray-600">
           Attach a file related to the budget summary
@@ -56,9 +67,12 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
               <p>Comment</p>
               <textarea
                 value={commentData?.budgetAttachmentComment || ""}
-                disabled={!setCommentData}
+                disabled={!setCommentData} // Disable only if comment data cannot be set
                 onChange={(e) =>
-                  handleCommentChange("budgetAttachmentComment", e.target.value)
+                  handleCommentChange(
+                    "budgetAttachmentComment",
+                    e.target.value
+                  )
                 }
                 className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
                 placeholder="Add your comment"
@@ -99,7 +113,9 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
           </div>
         )}
       </div>
-      <div className="p-4 bg-white rounded-lg ">
+
+      {/* Contribution Section */}
+      <div className="p-4 bg-white rounded-lg">
         <h3 className="text-lg font-bold">Contribution</h3>
         <p className="text-sm text-gray-600">
           Outline the planned activities to be supported; The skills gap to be
@@ -111,7 +127,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
           value={data.contribution || ""}
           onChange={(e) => handleInputChange("contribution", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          readOnly={!!!commentData}
+          readOnly={commentData ? true : false} // Editable if no commentData is passed
           placeholder="Describe your contribution"
         />
       </div>
