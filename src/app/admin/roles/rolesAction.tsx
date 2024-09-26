@@ -5,7 +5,7 @@ import { Menu, Button, Text, rem } from "@mantine/core";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
 
-const CallsActions = ({ application }: { application: any }) => {
+const rolesActions = ({ application }: { application: any }) => {
   return (
     <div>
       <Menu shadow="lg" width={200}>
@@ -27,7 +27,7 @@ const CallsActions = ({ application }: { application: any }) => {
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
             <Link
-              href={`/sdf/applications/${application.uuid}`}
+              href={`/admin/roles/[id]}`}
               className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
             >
               <VscEye size={21} color="#576074" />
@@ -40,4 +40,4 @@ const CallsActions = ({ application }: { application: any }) => {
   );
 };
 
-export default CallsActions;
+export default rolesActions;

@@ -25,6 +25,7 @@ import {
   getEmpStages,
   getMyApplications,
   getMinutes,
+  getRoles,
 } from "@/utils/funcs";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
@@ -76,6 +77,7 @@ const Navbar = () => {
     if (role === "ADMIN") {
       getApplicants(dispatch);
       getEmployees(dispatch);
+      getRoles(dispatch);
     } else if (role === "SDF_SECRETARIATE") {
       getContracts(dispatch);
       getMinutes(dispatch);
