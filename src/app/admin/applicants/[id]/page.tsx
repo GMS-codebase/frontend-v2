@@ -12,7 +12,7 @@ const Page = () => {
   const [downloading, setDownloading] = useState(false);
   const applicants = useSelector((state: any) => state.applicants);
   const applicant = applicants.applicants.filter(
-    (app: Applicant) => app.uuid === id
+    (app: Applicant) => app.uuid === id,
   )[0];
   console.log(applicant);
   return (
@@ -30,7 +30,7 @@ const Page = () => {
                     `/admin/applicant-details/${id}`,
                     {
                       responseType: "blob",
-                    }
+                    },
                   );
                   const contentDisposition =
                     response.headers["content-disposition"];
