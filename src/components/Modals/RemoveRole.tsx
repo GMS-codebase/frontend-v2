@@ -7,60 +7,43 @@ import deleteSvg from "@/assets/Vectors/delete.svg";
 import { useState } from "react";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import { getEmployees } from "@/utils/funcs";
 import { useDispatch } from "react-redux";
-type FormData = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  gender: string;
-  position: string;
-  isInternal: undefined | boolean;
-};
-const RemoveFromStage = ({
-  employee,
+import { getRoles } from "@/utils/funcs";
+
+const RemoveRole = ({
   isOpen,
-  stage,
   closeModal,
-  // onRemoveSector,
+  role,
 }: {
-  employee: any;
+  role: any;
   isOpen: boolean;
-  stage: any;
   closeModal: () => void;
-  // onRemoveSector: any;
 }) => {
-  const [selectedSector, setSelectedSector] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const handleRemoveStage = () => {
-    setLoading(true);
+  const handleRemove = () => {
+    console.log("role", role);
+    setIsLoading(true);
     authorizedApi
-      .post("/admin/employee/remove/stage", {
-        stage_id: stage.uuid,
-        emp_id: employee.uuid,
-        sector_name: selectedSector,
-      })
+      .delete(`/roles/${role.uuid}`)
       .then((res) => {
-        console.log(res);
-        getEmployees(dispatch);
+        getRoles(dispatch);
+        console.log(res.data);
         notifications.show({
-          message: "Stage removed successfully",
+          message: "Role is removed successfully",
           color: "blue",
         });
-        // onRemoveSector(stage, selectedSector);
         closeModal();
       })
       .catch((err) => {
-        console.log("errorrrr --> ", err);
+        console.log(err.response);
         notifications.show({
-          title: "Failed to remove from stage",
+          title: "Failed to remove role",
           message: err.response.data.message ?? "",
           color: "red",
         });
       })
-      .finally(() => setLoading(false));
+      .finally(() => setIsLoading(false));
   };
   return (
     <Modal
@@ -95,23 +78,11 @@ const RemoveFromStage = ({
           <div className="w-full flex flex-col items-center">
             <Image src={deleteSvg} alt="vector" width={200} height={50} />
             <h1 className="text-2xl font-extrabold text-center">
-              Are you sure you want to remove this stage from this employee?
+              Are you sure you want to delete this role?
             </h1>
             <h2 className="text-[#000F2369] text-lg font-medium text-center">
-              This employee will be forbidden to access these permissions
+              Role {role.role} will be removed
             </h2>
-            <p className="text-[#000F2369] text-lg font-medium text-left">
-              Select a sector to remove:
-            </p>
-            <Select
-              className="border w-full"
-              placeholder="Select a sector"
-              data={stage?.sectors || []}
-              value={selectedSector}
-              onChange={(value: any) => setSelectedSector(value)}
-              radius="md"
-              size="md"
-            />
           </div>
           <div className="w-full flex justify-center mt-4 space-x-4 p-6">
             <button
@@ -123,10 +94,10 @@ const RemoveFromStage = ({
             </button>
             <button
               type="button"
-              onClick={handleRemoveStage}
+              onClick={handleRemove}
               className="w-full px-4 py-3 bg-[#C50D0DF2] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
             >
-              {loading ? "Removing . . . " : "Remove"}
+              {isLoading ? "Deleting . . ." : "Delete"}
             </button>
           </div>
         </div>
@@ -135,4 +106,4 @@ const RemoveFromStage = ({
   );
 };
 
-export default RemoveFromStage;
+export default RemoveRole;

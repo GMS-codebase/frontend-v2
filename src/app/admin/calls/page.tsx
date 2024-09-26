@@ -33,7 +33,6 @@ const Page = () => {
     { open: openDeleteModal, close: closeDeleteModal },
   ] = useDisclosure(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "title",
@@ -62,7 +61,13 @@ const Page = () => {
     {
       accessorKey: "status",
       header: "Status",
-      cell: ({ row }) => <div>{row.original?.status}</div>,
+      cell: ({ row }) => (
+        <div
+          className={`${row.original?.status === "OPEN" ? "bg-lime-100 text-lime-900" : "bg-red-50 text-red-500"} text-center px-2 rounded-full py-1`}
+        >
+          {row.original?.status}
+        </div>
+      ),
     },
     {
       accessorKey: "actions",
@@ -86,15 +91,17 @@ const Page = () => {
                 <h1 className="text-lg">Actions</h1>
               </Menu.Label>
               <Menu.Divider />
-              <Menu.Item className="bg-[#F0F0F0]">
-                <Link
-                  href={`/admin/calls/${row.original.uuid}`}
-                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                >
-                  <FiEye size={21} color="#576074" />
-                  View
-                </Link>
-              </Menu.Item>
+              {row.original.status === "OPEN" && (
+                <Menu.Item className="bg-[#F0F0F0]">
+                  <Link
+                    href={`/admin/calls/${row.original.uuid}`}
+                    className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                  >
+                    <FiEye size={21} color="#576074" />
+                    View
+                  </Link>
+                </Menu.Item>
+              )}
               <Menu.Item>
                 <div
                   onClick={() => {
