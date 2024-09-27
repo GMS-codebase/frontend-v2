@@ -68,7 +68,7 @@ export function middleware(request: NextRequest) {
     }
     const roleInRoute = request.nextUrl.pathname.split("/")[1].toUpperCase();
     if (roles.includes(roleInRoute as Role) && role !== roleInRoute) {
-      return NextResponse.next();
+      return NextResponse.redirect(new URL(nextUrl, request.url));
     }
     return NextResponse.next();
   } catch (error) {
