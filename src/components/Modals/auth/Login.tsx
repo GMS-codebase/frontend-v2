@@ -9,6 +9,7 @@ import {
   SolarLetterLinear,
   SolarLockKeyholeMinimalisticOutline,
 } from "../../core/icons";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginModal = ({
   opened,
@@ -20,6 +21,7 @@ const LoginModal = ({
   openRegister: () => void;
 }) => {
   const navigate = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
   const handleSubmit = async (values: { email: string; password: string }) => {
     setLoading(true);
     await AuthService.login(
@@ -146,13 +148,20 @@ const LoginModal = ({
                 <SolarLockKeyholeMinimalisticOutline className="w-5 h-5" />
               </span>
               <input
-                type="password"
+                type={!showPassword ? "password" : "text"}
                 id="password"
                 placeholder="Type in your password"
                 name="password"
                 className="w-full bg-gray-100 p-3 rounded-3xl pl-10 outline-primary transition-all duration-150"
                 {...form.getInputProps("password")}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
             {form.errors.password && (
               <p className="text-red-500 text-sm mt-1">

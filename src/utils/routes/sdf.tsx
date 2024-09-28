@@ -8,10 +8,15 @@ const sdfRoutes: Route[] = [
     path: "/sdf/contracts",
     icon: <Icons.SolarDocumentBold />,
   },
-   {
+  {
     label: "Applicants",
     path: "/sdf/applicants",
     icon: <Icons.SolarFileBold />,
+  },
+  {
+    label: "Applications",
+    path: "/sdf/applications",
+    icon: <Icons.SolarFolderWithFilesBold />,
   },
   {
     label: "Minutes",

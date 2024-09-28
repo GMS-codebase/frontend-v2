@@ -20,6 +20,7 @@ import AddEditContact from "@/components/Modals/applicantContacts/AddEditContact
 import CreateApplication from "@/components/Modals/application/CreateApplication";
 import TermsAndConditions from "@/components/Application/TermsAndConditions";
 import MinutesNegotiation from "@/components/Application/MinutesNegotiation";
+import ProgressCircle from "@/components/CallsList/ProgressBar";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
@@ -28,7 +29,13 @@ const Page = () => {
   const existingApplication = myApplications.find(
     (app: any) => app?.uuid === callId,
   );
-  console.log(myApplications, existingApplication, callId,existingApplication?.currentStage == "CONTRACT_SIGNING" || existingApplication?.currentStage === "FINISH_GRANT_APPROVAL");
+  console.log(
+    myApplications,
+    existingApplication,
+    callId,
+    existingApplication?.currentStage == "CONTRACT_SIGNING" ||
+      existingApplication?.currentStage === "FINISH_GRANT_APPROVAL",
+  );
   const router = useRouter();
   return (
     <div className="bg-white rounded-2xl p-10 ">
@@ -89,7 +96,13 @@ const Page = () => {
             </div>
             <div className="flex  mr-10">
               <div className="flex  ">
-                <DonutChart />
+                <ProgressCircle
+                  activeColor="#005DE9"
+                  bgColor="#fff"
+                  baseColor="#EAEAFC"
+                  endDate={existingApplication?.call?.endDate}
+                  startDate={existingApplication?.call?.startDate}
+                />
               </div>
               <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4   rounded-3xl items-center justify-center font-semibold gap-2">
                 <div className="flex gap-2 items-center  w-full ">
@@ -138,13 +151,15 @@ const Page = () => {
               {existingApplication?.call?.description}
             </div>
           </div>
-          {/* <TermsAndConditions /> */}
-          {}
-          {existingApplication?.currentStage == "CONTRACT_SIGNING" || existingApplication?.currentStage === "FINISH_GRANT_APPROVAL" ? (
-              <MinutesNegotiation />
-            ) : <></>}
         </div>
       </div>
+
+      {existingApplication?.currentStage == "CONTRACT_SIGNING" ||
+      existingApplication?.currentStage === "FINISH_GRANT_APPROVAL" ? (
+        <MinutesNegotiation />
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

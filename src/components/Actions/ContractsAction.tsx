@@ -2,9 +2,7 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { Menu, Button, Text, rem } from "@mantine/core";
 import { FiEye } from "react-icons/fi";
 
-const ContractsAction = ({
-}: {
-}) => {
+const ContractsAction = ({}: {}) => {
   return (
     <div className="">
       <Menu shadow="lg" width={300}>
@@ -25,28 +23,21 @@ const ContractsAction = ({
           </Menu.Label>
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
-            <p
-             
-              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-            >
+            <p className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
               <FiEye size={21} color="#576074" />
               View
             </p>
           </Menu.Item>
           <Menu.Item>
-            <div
-              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-            >
+            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
               <FiEye size={21} color="#576074" />
-            Make paid
+              Make paid
             </div>
           </Menu.Item>
           <Menu.Item>
-            <div
-              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-            >
-             <FiEye size={21} color="#576074" />
-            Make unpaid
+            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+              <FiEye size={21} color="#576074" />
+              Make unpaid
             </div>
           </Menu.Item>
         </Menu.Dropdown>

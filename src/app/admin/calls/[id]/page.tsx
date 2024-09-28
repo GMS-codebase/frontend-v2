@@ -14,6 +14,7 @@ import {
 import { useSelector } from "react-redux";
 import { useParams } from "next/navigation";
 import { format } from "date-fns";
+import ProgressCircle from "@/components/CallsList/ProgressBar";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
@@ -78,7 +79,13 @@ if (startDate && endDate && !isNaN(startDate.getTime()) && !isNaN(endDate.getTim
             </div>
             <div className="flex  mr-10">
               <div className="flex  ">
-                <DonutChart daysLeft={callcloseDays} />
+                                <ProgressCircle
+                  activeColor="#005DE9"
+                  bgColor="#fff"
+                  baseColor="#EAEAFC"
+                  endDate={call?.endDate}
+                  startDate={call?.startDate}
+                />
               </div>
               <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4 py-2 rounded-3xl items-center justify-center font-semibold gap-2">
                 <div className="flex gap-2 items-center justify-center">
@@ -115,7 +122,7 @@ if (startDate && endDate && !isNaN(startDate.getTime()) && !isNaN(endDate.getTim
               {call?.description}
             </div>
           </div>
-          <div className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center">
+          <div   className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center">
             <span>
               <SolarDownloadMinimalisticBold />
             </span>
