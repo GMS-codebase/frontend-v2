@@ -121,7 +121,7 @@ const EmployeeDetails = () => {
   const employee = employees.filter(
     (employee: any) => employee.uuid === employeeId,
   );
-  const [employeeStages, setEmployeesStages] = useState(employee[0]);
+  const [employeeStages, setEmployeesStages] = useState(employee[0]?.emp_stages);
 
   // Group the employee stages
   const groupedStages = groupStages(employee[0]?.emp_stages || []);
@@ -136,16 +136,17 @@ const EmployeeDetails = () => {
     setIsSelectSectorOpen(true);
   };
 
-  // Handle the removal of a sector from a stage
-  const handleRemoveSector = (stage: any, sector: any) => {
-    const updatedStages = employeeStages.emp_stages.filter(
-      (s: any) => !(s.stage === stage.stage && s.sector === sector),
-    );
-    setEmployeesStages({
-      ...employeeStages,
-      emp_stages: updatedStages,
-    });
-  };
+//   const handleRemoveSector = (stage: any, sector: any) => {
+//     const updatedStages = employeeStages.emp_stages.filter(
+//       (s: any) => !(s.stage === stage.stage && s.sector === sector),
+//     );
+//     setEmployeesStages({
+//       ...employeeStages,
+//       emp_stages: updatedStages,
+//     });
+//     setIsSelectSectorOpen(false);
+//     close();
+// };
 
   return (
     <div className="w-full h-full flex items-start justify-between">
@@ -259,7 +260,7 @@ const EmployeeDetails = () => {
       />
       <RemoveFromStage
         isOpen={isSelectSectorOpen}
-        onRemoveSector={handleRemoveSector}
+        // onRemoveSector={handleRemoveSector}
         stage={selectedStage}
         closeModal={() => setIsSelectSectorOpen(false)}
         employee={employee[0]}

@@ -9,7 +9,6 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { DataTable } from "@/components/core/data-table";
-import { tradesData as data } from "@/utils/constants/dummy";
 import { CiSearch } from "react-icons/ci";
 import AddSector from "@/components/Modals/AddSector";
 import { useDisclosure } from "@mantine/hooks";
@@ -33,12 +32,22 @@ const Page = () => {
   const [isUpdateSector, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
   const sectors = useSelector((state: any) => state.sectors);
+  const windows = useSelector((state: any) => state.windows);
   const sector = sectors.sectors.filter((sec: any) => sec.uuid === id)[0];
   const filteredTrades = sector?.trades?.filter(
     (tr: any) =>
       tr.title.toLowerCase().includes(searchQuery?.toLowerCase()) ||
       tr.shortname.toLowerCase().includes(searchQuery?.toLowerCase()),
   );
+
+  const getWindowForTrade = (trade: Trade) => {
+    const windowWithSubWindow = windows.windows.find((win: any) =>
+      win.subWindows.some((subWindow: any) =>
+        subWindow.sectors.some((sec: any) => sec.uuid === sector?.uuid),
+      ),
+    );
+    return windowWithSubWindow ? windowWithSubWindow.title : "No Window";
+  };
 
   const columns: ColumnDef<Trade>[] = [
     {
@@ -63,6 +72,11 @@ const Page = () => {
             : row.original.description}
         </div>
       ),
+    },
+    {
+      accessorKey: "window",
+      header: "Window",
+      cell: ({ row }) => <div>{getWindowForTrade(row.original)}</div>,
     },
     {
       accessorKey: "actions",
@@ -104,6 +118,7 @@ const Page = () => {
       ),
     },
   ];
+
   return (
     <div className="bg-white rounded-2xl py-10">
       <div className="flex flex-col gap-6">
