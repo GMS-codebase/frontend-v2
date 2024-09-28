@@ -99,6 +99,10 @@ textarea::-webkit-scrollbar-thumb {
   border-radius: 10px;
 }
 
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 .chart-container {
   border-radius: 16px; /* Adjust the radius as needed */
   overflow: hidden; /* This ensures the chart respects the border radius */

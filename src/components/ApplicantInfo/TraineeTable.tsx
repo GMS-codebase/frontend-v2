@@ -3,11 +3,17 @@ import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import CallsActions from "@/app/admin/calls/CallsAction";
+// import CallsActions from "@/app/admin/calls/CallsAction";
 import { Contact as contactData } from "@/utils/constants/contact";
+<<<<<<< HEAD
 import {ContractDetails as contract} from '@/utils/constants/dummy'
 import ContractsAction from '@/components/Actions/ContractsAction'
 import TraineeAction from '@/components/Actions/TraineeAction'
+=======
+import { ContractDetails as contract } from "@/utils/constants/dummy";
+import ContractsAction from "@/components/Actions/ContractsAction";
+
+>>>>>>> 364a574a3d900b5083bd563ed741e064436f5ef9
 const TraineeTable = () => {
   const [activeTable, setActiveTable] = useState("trainees");
   const [isOpenCall, setIsOpenCall] = useState({
@@ -50,7 +56,12 @@ const TraineeTable = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
+<<<<<<< HEAD
         <TraineeAction/>
+=======
+        // <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />
+        <div></div>
+>>>>>>> 364a574a3d900b5083bd563ed741e064436f5ef9
       ),
     },
   ];
@@ -69,24 +80,17 @@ const TraineeTable = () => {
     {
       accessorKey: "percentage",
       header: "Percentage",
-      cell: ({ row }) => (
-        <div>
-        {row.original?.percentage}
-        </div>
-      ),
+      cell: ({ row }) => <div>{row.original?.percentage}</div>,
     },
     {
       accessorKey: "paid",
       header: "Paid",
       cell: ({ row }) => <div>{row.original?.paid}</div>,
     },
-
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => (
-       <ContractsAction/>
-      ),
+      cell: ({ row }) => <ContractsAction />,
     },
   ];
 
@@ -126,7 +130,9 @@ const TraineeTable = () => {
                 : "bg-[#005DE9] bg-opacity-20 text-blue-500"
             }`}
           >
-            <h1 className="text-base font-medium text-blue-500">Contract Installments</h1>
+            <h1 className="text-base font-medium text-blue-500">
+              Contract Installments
+            </h1>
           </button>
         </div>
       </div>

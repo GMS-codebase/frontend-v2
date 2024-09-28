@@ -15,7 +15,10 @@ import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
-  const [isContract, setIsContract] = useState({
+  const [isContract, setIsContract] = useState<{
+    isOpen: boolean;
+    application: any;
+  }>({
     isOpen: false,
     application: null,
   });
@@ -25,6 +28,14 @@ const Page = () => {
   );
   const { applicationsForContractSigning: applications, loading } = useSelector(
     (state: any) => state.applications,
+  );
+  console.log(applications);
+  console.log(contracts);
+  const filteredApplications = applications.filter((app: any) =>
+    app.stages.some(
+      (stage: any) =>
+        stage.name === "CONTRACT_SIGNING" && stage.status === "PENDING"
+    )
   );
   const contractColumns: ColumnDef<any>[] = [
     {
@@ -142,18 +153,16 @@ const Page = () => {
         <h1 className="text-xl p-4 font-bold">
           Applications Ready For Contract Signing
         </h1>
-        {loading ? (
-          <TableSkeleton columns={columns} />
-        ) : (
-          <DataTable
-            columns={columns}
-            data={applications}
-            noDataMessage="No Approved Applications"
-          />
-        )}
+        <DataTable
+          columns={columns}
+          data={filteredApplications}
+          loading={loading}
+          noDataMessage="No Approved Applications"
+        />
       </div>
       <AddContract
         data={isContract.application}
+        trades={isContract.application?.trades || []}
         isOpenAddContract={isContract.isOpen}
         closeAddContract={() =>
           setIsContract({ isOpen: false, application: null })

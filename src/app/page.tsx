@@ -111,10 +111,12 @@ function Page() {
         <h1 className="font-extrabold text-black text-2xl w-[50%] md:text-4xl">
           Welcome To SDF GRANT MANAGEMENT SYSTEM
         </h1>
-        <h2 className="text-black w-[40%] text-md md:text-xl mt-4 font-normal">
-          Unfortunately there is no open call. Please subscribe to get notified
-          when there is a new call.
-        </h2>
+        {!calls && (
+          <h2 className="text-black w-[40%] text-md md:text-xl mt-4 font-normal">
+            Unfortunately there is no open call. Please subscribe to get
+            notified when there is a new call.
+          </h2>
+        )}
         <div
           className="w-[80%] overflow-x-auto no-scrollbar m-10"
           style={{ scrollbarWidth: "none" }}
