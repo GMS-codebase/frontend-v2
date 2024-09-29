@@ -83,12 +83,6 @@ const Page = () => {
                 <h1 className="text-lg">Actions</h1>
               </Menu.Label>
               <Menu.Divider />
-              <Menu.Item className="bg-[#F0F0F0]">
-                <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-                  <FiEye size={21} color="#576074" />
-                  View
-                </div>
-              </Menu.Item>
               <Menu.Item>
                 <div
                   onClick={() => {
@@ -119,7 +113,7 @@ const Page = () => {
       ),
     },
   ];
-  return (
+  return  window?.uuid ?  (
     <div className="bg-white rounded-2xl py-10">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-6  text-black">
@@ -232,11 +226,13 @@ const Page = () => {
           }}
           id={selectedSubWindow?.uuid}
           isOpenModal={isDeleteSubWindow}
-          windowId={window.uuid}
+          windowId={window?.uuid}
         />
       </div>
     </div>
-  );
+  ):(<div className="flex items-center justify-center h-full">
+    <p>Loading</p>
+  </div>);
 };
 
 export default Page;

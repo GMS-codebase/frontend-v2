@@ -48,18 +48,18 @@ export default function TradesReducer(state = initialState, action: Action) {
         isError: false,
         loading: false,
       };
-    case UPDATE_TRADE_SUCCESS:
-      return {
-        ...state,
-        trade: state.trades.map((trade: Trade) =>
-          trade.uuid === action.payload.id
-            ? { ...trade, ...action.payload }
-            : trade,
-        ),
-        error: null,
-        isError: false,
-        loading: false,
-      };
+      case UPDATE_TRADE_SUCCESS:
+        return {
+          ...state,
+          trades: state.trades.map((trade: Trade) => 
+            trade.uuid == action.payload.uuid
+              ? { ...trade, ...action.payload }
+              : trade
+          ),
+          error: null,
+          isError: false,
+          loading: false,
+        };
     case DELETE_TRADE_SUCCESS:
       return {
         ...state,
