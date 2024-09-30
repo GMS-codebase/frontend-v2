@@ -135,7 +135,7 @@ const Page = () => {
       </div>
       <ApplicantTable />
     </div>
-  )
+  );
 };
 
 export default Page;

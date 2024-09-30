@@ -70,7 +70,7 @@ const Page = () => {
             </div>
             <div className="flex  mr-10">
               <div className="flex  ">
-                                <ProgressCircle
+                <ProgressCircle
                   activeColor="#005DE9"
                   bgColor="#fff"
                   baseColor="#EAEAFC"
