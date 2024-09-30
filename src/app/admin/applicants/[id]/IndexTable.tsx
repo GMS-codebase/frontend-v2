@@ -3,11 +3,9 @@ import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-// import CallsActions from "@/app/admin/calls/CallsAction";
-import { Contact as contactData } from "@/utils/constants/contact";
-import { applicationsData as data } from "@/utils/constants/dummy";
 
-const ApplicantTable = () => {
+const ApplicantTable = ({ data }: { data: any }) => {
+  console.log("applicant info", data);
   const [activeTable, setActiveTable] = useState("contacts");
   const [isOpenCall, setIsOpenCall] = useState({
     openUpdate: false,
@@ -28,12 +26,12 @@ const ApplicantTable = () => {
     {
       accessorKey: "mobile1",
       header: "Mobile 1",
-      cell: ({ row }) => <div>{row.original?.mobile1}</div>,
+      cell: ({ row }) => <div>{row.original?.mobile}</div>,
     },
     {
       accessorKey: "mobile2",
       header: "Mobile 2",
-      cell: ({ row }) => <div>{row.original?.mobile2}</div>,
+      cell: ({ row }) => <div>{row.original?.mobile1}</div>,
     },
     {
       accessorKey: "gender",
@@ -64,26 +62,17 @@ const ApplicantTable = () => {
     {
       accessorKey: "applicantName",
       header: "Applicant Name",
-      cell: ({ row }) => <div>{row.original?.applicantName}</div>,
+      cell: ({ row }) => <div>{row.original?.name}</div>,
     },
     {
-      accessorKey: "window",
-      header: "Window",
-      cell: ({ row }) => (
-        <div>
-          WINDOW {row.original?.window.number} : {row.original?.window.name}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "sector",
-      header: "Sector",
-      cell: ({ row }) => <div>{row.original?.sector}</div>,
+      accessorKey: "email",
+      header: "Email",
+      cell: ({ row }) => <div>{row.original?.email}</div>,
     },
     {
       accessorKey: "stage",
       header: "Stage",
-      cell: ({ row }) => <div>{row.original?.stage}</div>,
+      cell: ({ row }) => <div>{row.original?.currentStage}</div>,
     },
     {
       accessorKey: "actions",
@@ -137,10 +126,16 @@ const ApplicantTable = () => {
       </div>
       <div className="w-full h-full">
         {activeTable === "contacts" && (
-          <DataTable columns={contactColumns} data={contactData.slice(0, 6)} />
+          <DataTable
+            columns={contactColumns}
+            data={data?.applicantContacts ?? []}
+          />
         )}
         {activeTable === "applications" && (
-          <DataTable columns={applicationColumns} data={data.slice(0, 6)} />
+          <DataTable
+            columns={applicationColumns}
+            data={data?.applications ?? []}
+          />
         )}
       </div>
     </div>
