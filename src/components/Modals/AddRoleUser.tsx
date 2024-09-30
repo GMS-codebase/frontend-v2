@@ -17,7 +17,7 @@ interface AddRoleModalProps {
 const AddRoleUser: React.FC<AddRoleModalProps> = ({
   isOpenAddRoleUser,
   closeAddRoleUser,
-  role
+  role,
 }) => {
   const [formData, setFormData] = useState<{
     email: string;

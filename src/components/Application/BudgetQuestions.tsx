@@ -69,10 +69,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                 value={commentData?.budgetAttachmentComment || ""}
                 disabled={!setCommentData} // Disable only if comment data cannot be set
                 onChange={(e) =>
-                  handleCommentChange(
-                    "budgetAttachmentComment",
-                    e.target.value
-                  )
+                  handleCommentChange("budgetAttachmentComment", e.target.value)
                 }
                 className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
                 placeholder="Add your comment"
