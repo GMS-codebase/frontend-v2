@@ -3,7 +3,6 @@ import React, { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import bg from "../assets/Images/landing.jpg";
 import logo from "../assets/Images/logo.png";
-import { HiOutlineMail } from "react-icons/hi";
 import { IoDownloadOutline } from "react-icons/io5";
 import RegisterModal from "@/components/Modals/auth/RegisterModal";
 import { useDisclosure } from "@mantine/hooks";
@@ -26,6 +25,11 @@ function Page() {
   const { calls, loading: loadingCalls } = useSelector(
     (state: any) => state.calls,
   );
+    const sortedCalls = calls
+    ? [...calls].sort((a: any, b: any) =>
+        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+      )
+    : [];
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
   const [isOpenLogin, { open: openLogin, close: closeLogin }] =
@@ -121,16 +125,16 @@ function Page() {
           style={{ scrollbarWidth: "none" }}
         >
           <div className="flex space-x-4">
-            {calls &&
-              calls.map((call: any) => (
+            {sortedCalls &&
+              sortedCalls.map((call: any) => (
                 <div
                   key={call.id}
                   className="min-w-[350px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
                 >
                   <SolarFolder2Bold className="w-8 h-8 text-[#005DE9]" />
                   <h3 className="font-bold text-black">
-                    {call.title?.length >= 20
-                      ? `${call?.title?.slice(0, 20)}...`
+                    {call.title?.length >= 15
+                      ? `${call?.title?.slice(0, 15)}...`
                       : call?.title}
                   </h3>
                   <button
@@ -148,22 +152,7 @@ function Page() {
               ))}
           </div>
         </div>
-        <div className="p-3 w-[40%] md:w-[30%] bg-white mt-5 rounded-full justify-center items-center flex">
-          <HiOutlineMail className="text-primary ml-3 w-8 h-8" />
-          <input
-            type="text"
-            value={email}
-            onChange={(e: any) => setEmail(e.target.value)}
-            className="w-full ml-3 border-none text-black bg-white outline-none"
-            placeholder="Type your email"
-          />
-          <button
-            disabled={loading}
-            className="bg-[#1F5DB014] bg-opacity-10 text-primary font-bold rounded-full px-4 py-2"
-          >
-            {loading ? "Subscribing . . ." : "Subscribe"}
-          </button>
-        </div>
+     
       </div>
 
       <div className="absolute bottom-0 left-0 p-4 z-30">
@@ -204,7 +193,6 @@ function Page() {
     </div>
   );
 }
-
 export default function DefaultPage() {
   return (
     <Suspense>

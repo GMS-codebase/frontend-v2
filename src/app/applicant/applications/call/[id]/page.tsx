@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import DonutChart from "@/components/chart/DonutChart";
 import {
   SolarPen2Bold,
@@ -19,6 +19,7 @@ import { useDisclosure } from "@mantine/hooks";
 import AddEditContact from "@/components/Modals/applicantContacts/AddEditContact";
 import CreateApplication from "@/components/Modals/application/CreateApplication";
 import ProgressCircle from "@/components/CallsList/ProgressBar";
+import { unauthorizedApi } from "@/utils/api";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
@@ -57,17 +58,47 @@ const Page = () => {
       );
     }
   };
+  const [loading, setLoading] = useState(false);
+  const handleDownloadInstructions = async () => {
+    setLoading(true);
+    try {
+      console.log("attachment --> ", call.attachment);
+      const filename = call.attachment.split("/").pop();
+      console.log(filename);
+      const response = await unauthorizedApi.get(
+        `/admin/download/calls/${filename}`,
+        {
+          responseType: "blob",
+        },
+      );
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = call.attachment || "downloaded-file.jpg";
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-6  text-black">
           <div className="flex justify-between">
             <div className="text-xl font-bold">Call Info</div>
-            <div className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center">
+            <div onClick={handleDownloadInstructions} className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center">
               <span>
                 <SolarDownloadMinimalisticBold />
               </span>
-              <p>View application instructions</p>
+              <p>{loading ? "Downloading . . .": "View application instructions"}</p>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

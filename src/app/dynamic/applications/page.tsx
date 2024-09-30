@@ -28,31 +28,41 @@ const Page = () => {
     {
       accessorKey: "applicantName",
       header: "Applicant Name",
-      cell: ({ row }) => <div>{row.original?.applicantName}</div>,
+      cell: ({ row }) => <div>{row.original?.applicant.name}</div>,
     },
     {
       accessorKey: "window",
       header: "Window",
       cell: ({ row }) => (
         <div>
-          WINDOW {row.original?.window?.number} : {row.original?.window?.name}
+          {row.original?.window?.title}
         </div>
       ),
     },
     {
       accessorKey: "sector",
       header: "Sector",
-      cell: ({ row }) => <div>{row.original?.sector}</div>,
+      cell: ({ row }) => <div>{row.original?.sectors.map((sector: any, index: any)=> (
+        <>
+          <span key={index}>{sector.name}</span>
+          {index < row.original?.sectors.length - 1 && ", "}
+        </>
+      ))}</div>,
     },
     {
       accessorKey: "trade",
       header: "Trade",
-      cell: ({ row }) => <div>{row.original?.trade}</div>,
+      cell: ({ row }) => <div>{row.original?.trades.map((trade: any, index: any)=> (
+        <>
+          <span key={index}>{trade.title}</span>
+          {index < row.original?.trades.length - 1 && ", "}
+        </>
+      ))}</div>,
     },
     {
       accessorKey: "stage",
       header: "Stage",
-      cell: ({ row }) => <div>{row.original?.stage}</div>,
+      cell: ({ row }) => <div>{row.original?.currentStage}</div>,
     },
     {
       accessorKey: "actions",
@@ -90,6 +100,8 @@ const Page = () => {
   };
 
   const applications = useSelector((state: any) => state.applications);
+
+  console.log("applications --> ", applications);
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
