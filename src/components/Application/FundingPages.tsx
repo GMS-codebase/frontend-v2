@@ -753,22 +753,22 @@ export const Staff = ({
               )}
             </div>
             <div className="relative">
-             <Select
-  name="availability"
-  value={staffInputs.availability}
-  onChange={(value: string | null) =>
-    setStaffInputs((prev) => ({
-      ...prev,
-      availability: value ?? "", // Handle `null` case by assigning an empty string
-    }))
-  }
-  data={[
-    { value: "available", label: "Available" },
-    { value: "hired", label: "Hired" },
-  ]}
-  className="mt-1 block w-full pl-5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-  placeholder="Select Availability"
-/>
+              <Select
+                name="availability"
+                value={staffInputs.availability}
+                onChange={(value: string | null) =>
+                  setStaffInputs((prev) => ({
+                    ...prev,
+                    availability: value ?? "", // Handle `null` case by assigning an empty string
+                  }))
+                }
+                data={[
+                  { value: "available", label: "Available" },
+                  { value: "hired", label: "Hired" },
+                ]}
+                className="mt-1 block w-full pl-5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Select Availability"
+              />
 
               {errors.availability && (
                 <p className="text-red-500 text-sm mt-1">
@@ -829,7 +829,6 @@ export const Staff = ({
     </div>
   );
 };
-
 
 export const LastPageQuestions = ({
   data,
