@@ -33,14 +33,15 @@ const GenericSidebar = ({
     if (index === 0) return active === path;
     return active.startsWith(path);
   };
+  const navigate = useRouter()
   return (
     <div className={`w-full h-full flex flex-col`}>
       <div
         className={`flex ${
           isCompressed ? "flex-col gap-2 mb-8 " : "flex-row mb-5"
-        } items-center justify-start pt-4 pl-4 gap-2 cursor-pointer   relative`}
+        } items-center justify-start pt-4 pl-4 gap-2 cursor-pointer relative`}
       >
-        <Image src={logo} className="w-[80px] h-[60px]" alt="" />
+        <Image src={logo} className="w-[80px] h-[60px]" alt="" onClick={()=>navigate.push('/')} />
         <h1 className="text-2xl uppercase text-primary font-bold">GMS</h1>
 
         <button
