@@ -1,14 +1,13 @@
-import { useDisclosure } from "@mantine/hooks";
-``;
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Menu, Button, Text, rem } from "@mantine/core";
-import Link from "next/link";
-import { VscEye } from "react-icons/vsc";
+import { FiEye } from "react-icons/fi";
 
-const CallsActions = () => {
+const ContractsAction = ({
+}: {
+}) => {
   return (
-    <div>
-      <Menu shadow="lg" width={200}>
+    <div className="">
+      <Menu shadow="lg" width={300}>
         <Menu.Target>
           <button
             style={{
@@ -26,13 +25,13 @@ const CallsActions = () => {
           </Menu.Label>
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
-            <Link
-              href={"/dynamic/applications/application"}
-              className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
+            <p
+             
+              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
             >
-              <VscEye size={21} color="#576074" />
+              <FiEye size={21} color="#576074" />
               View
-            </Link>
+            </p>
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
@@ -40,4 +39,4 @@ const CallsActions = () => {
   );
 };
 
-export default CallsActions;
+export default ContractsAction;
