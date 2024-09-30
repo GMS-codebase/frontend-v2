@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { notifications } from "@mantine/notifications";
 import { useSelector } from "react-redux";
 import { Applicant } from "@/types";
+import { ClipLoader } from "react-spinners";
 const Page = () => {
   const { id } = useParams();
   const [downloading, setDownloading] = useState(false);
@@ -14,7 +15,6 @@ const Page = () => {
   const applicant = applicants.applicants.filter(
     (app: Applicant) => app.uuid === id,
   )[0];
-  console.log(applicant);
   return (
     <div className="">
       <div className="bg-white rounded-2xl p-10 mb-10 flex flex-col gap-6">
@@ -94,7 +94,7 @@ const Page = () => {
                 <div>Business Type </div>
               </div>
               <div className="mt-2 ml-4">
-                {applicant?.businesses[0].businessType || ""}
+                {applicant?.businesses[0]?.businessType || ""}
               </div>
             </div>
           </div>
@@ -118,7 +118,7 @@ const Page = () => {
                 <div>TIN</div>
               </div>
               <div className="mt-2 ml-4">
-                {applicant?.businesses[0].tinNumber}
+                {applicant?.businesses[0]?.tinNumber}
               </div>
             </div>
             <div className="flex w-1/2">
@@ -126,7 +126,7 @@ const Page = () => {
                 <div>Bank</div>
               </div>
               <div className="mt-2 ml-4">
-                {applicant?.businesses[0].bankName}
+                {applicant?.businesses[0]?.bankName}
               </div>
             </div>
           </div>
@@ -142,7 +142,7 @@ const Page = () => {
                 <div>Registration date</div>
               </div>
               <div className="mt-2 ml-4">
-                {new Date(applicant?.done_at).toLocaleDateString()}
+                {new Date(applicant?.done_at)?.toLocaleDateString()}
               </div>
             </div>
           </div>
@@ -151,13 +151,15 @@ const Page = () => {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Bank Account</div>
               </div>
-              <div className="mt-2 ml-4">{applicant?.businesses[0].bank}</div>
+              <div className="mt-2 ml-4">{applicant?.businesses[0]?.bank}</div>
             </div>
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Year of estabrishment</div>
               </div>
-              <div className="mt-2 ml-4">2013</div>
+              <div className="mt-2 ml-4">
+                {applicant?.businesses[0]?.yearOfEstablishment}
+              </div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -165,15 +167,15 @@ const Page = () => {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Number of Employee</div>
               </div>
-              <div className="mt-2 ml-4">8</div>
+              <div className="mt-2 ml-4">
+                {applicant?.businesses[0]?.employeeNumber}
+              </div>
             </div>
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Address</div>
               </div>
-              <div className="mt-2 ml-4">
-                Rutare-gicumbi district-northern province-Rwanda{" "}
-              </div>
+              <div className="mt-2 ml-4">{applicant?.address} </div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -181,18 +183,20 @@ const Page = () => {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Business Name</div>
               </div>
-              <div className="mt-2 ml-4">Butare Tvet</div>
-            </div>
-            <div className="flex w-1/2">
-              <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                <div>Business Name</div>
+              <div className="mt-2 ml-4">
+                {applicant?.businesses[0]?.businessName}
               </div>
-              <div className="mt-2 ml-4">Butare Tvet</div>
             </div>
           </div>
         </div>
       </div>
-      <ApplicantTable />
+      {applicants?.loading ? (
+        <div className="w-full h-full flex justify-center items-center">
+          <ClipLoader size={20} />
+        </div>
+      ) : (
+        <ApplicantTable data={applicant} />
+      )}
     </div>
   );
 };

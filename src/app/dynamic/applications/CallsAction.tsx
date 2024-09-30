@@ -27,7 +27,7 @@ const CallsActions = () => {
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
             <Link
-              href={"/admin/applications/application"}
+              href={"/dynamic/applications/application"}
               className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
             >
               <VscEye size={21} color="#576074" />
