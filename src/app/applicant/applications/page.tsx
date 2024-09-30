@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { Menu } from "@mantine/core";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
+import { Call } from "@/types";
 const Page = () => {
   const navigate = useRouter();
   const columns: ColumnDef<any>[] = [
@@ -76,16 +77,17 @@ const Page = () => {
     },
   ];
   const myApplications = useSelector((state: any) => state.applications);
-  console.log(myApplications);
+  const calls = useSelector((state: any) => state.calls);
+  
 
   return (
     <div className="w-full  flex flex-col gap-4">
-      <div className="p-7 rounded-2xl bg-white space-y-4">
+{calls?.calls?.filter((call:Call)=>call.status === "OPEN").length > 0 &&   <div className="p-7 rounded-2xl bg-white space-y-4">
         <div className="font-bold text-2xl w-full">Open calls</div>
         <div className="w-full ">
           <CallsList />
         </div>
-      </div>
+      </div>}
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">Latest applications</h2>

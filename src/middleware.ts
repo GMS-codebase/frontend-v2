@@ -18,6 +18,7 @@ function getRolePath(role: Role): string {
     case "dynamic":
       return "/dynamic";
     case "normal_employee":
+    case "employee": 
       return "/employee";
     case "grant_committee":
       return "/grant_committee";
@@ -67,6 +68,10 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     }
     const roleInRoute = request.nextUrl.pathname.split("/")[1].toUpperCase();
+    if ((role === "NORMAL_EMPLOYEE" && roleInRoute === "EMPLOYEE") || (role === "EMPLOYEE" && roleInRoute === "NORMAL_EMPLOYEE")) {
+      return NextResponse.next();
+    }
+
     if (roles.includes(roleInRoute as Role) && role !== roleInRoute) {
       return NextResponse.redirect(new URL(nextUrl, request.url));
     }
