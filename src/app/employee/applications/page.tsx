@@ -18,33 +18,25 @@ const Page = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
-    stage: "",
-    window: "",
-    subwindow: "",
-    sector: "",
-    trade: "",
-    district: "",
+    stage: "All",
+    window: "All",
   });
 
-  // Helper function to extract unique values for the filters
   const getUniqueValues = (key: string) => {
     return [
+      "All", // Adding the "All" option
       ...new Set(applications.map((app: any) => app[key]).filter(Boolean)),
     ];
   };
 
-  // Memoizing the filter options to avoid recalculations on every render
   const filterOptions = useMemo(
     () => ({
       stages: getUniqueValues("currentStage"),
       windows: getUniqueValues("window.title"),
-      subwindows: getUniqueValues("subWindow.title"),
-      sectors: getUniqueValues("sectors[0].name"),
-      trades: getUniqueValues("sectors[0].trades[0].title"),
-      districts: getUniqueValues("district"),
     }),
     [applications],
   );
+
   const formatStage = (stage: string) => {
     return stage.replace(/_/g, " ").toUpperCase();
   };
@@ -146,7 +138,6 @@ const Page = () => {
     }
   };
 
-  // Apply search and filter logic
   const filteredApplications = useMemo(() => {
     return applications
       .filter(
@@ -157,14 +148,10 @@ const Page = () => {
           app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
       )
       .filter((app: any) => {
-        const { stage, window, subwindow, sector, trade, district } =
-          selectedFilters;
+        const { stage, window } = selectedFilters;
         return (
-          (!stage || formatStage(app.currentStage) === stage) &&
-          (!window || app.window?.title === window) &&
-          (!subwindow || app.subWindow?.title === subwindow) &&
-          (!sector || app.sectors?.some((s: any) => s.name === sector)) &&
-          (!trade || app.sectors?.[0]?.trades?.[0]?.title === trade)
+          (stage === "All" || formatStage(app.currentStage) === stage) &&
+          (window === "All" || app.window?.title === window)
         );
       });
   }, [applications, searchTerm, selectedFilters]);
@@ -209,27 +196,6 @@ const Page = () => {
                 placeholderText="Filter By Window"
                 data={filterOptions.windows}
                 filterKey="window"
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Subwindow"
-                data={filterOptions.subwindows}
-                filterKey="subwindow"
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Sector"
-                data={filterOptions.sectors}
-                filterKey="sector"
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Trade"
-                data={filterOptions.trades}
-                filterKey="trade"
               />
             </div>
           </div>

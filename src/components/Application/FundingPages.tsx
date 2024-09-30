@@ -24,7 +24,7 @@ export const FirstPageQuestions = ({
 
   return (
     <>
-      <div className="p-4 bg-white rounded-lg">
+      <div className="">
         <h3 className="text-lg font-bold">Title of the project</h3>
         <p className="text-sm text-gray-600">
           Please provide the name/title of your project.
@@ -33,7 +33,7 @@ export const FirstPageQuestions = ({
           type="text"
           value={data?.title || ""}
           onChange={(e) => handleInputChange("title", e.target.value)}
-          className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+          className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!commentData}
         />
         {commentData && (
@@ -52,7 +52,7 @@ export const FirstPageQuestions = ({
           </div>
         )}
       </div>
-      <div className="p-4 bg-white rounded-lg">
+      <div className="">
         <h3 className="text-lg font-bold">
           Project Activities and Expected Outcomes
         </h3>
@@ -86,7 +86,7 @@ export const FirstPageQuestions = ({
           </div>
         )}
       </div>
-      <div className="p-4 bg-white rounded-lg">
+      <div className="">
         <h3 className="text-lg font-bold">Readiness to execute the project</h3>
         <p className="text-sm text-gray-600">
           Explain to which extent you are prepared to execute this project.
@@ -115,7 +115,7 @@ export const FirstPageQuestions = ({
           </div>
         )}
       </div>
-      <div className="p-4 bg-white rounded-lg">
+      <div className="">
         <h3 className="text-lg font-bold">
           Role of other involved training providers
         </h3>
@@ -146,7 +146,7 @@ export const FirstPageQuestions = ({
           </div>
         )}
       </div>
-      <div className="p-4 bg-white rounded-lg">
+      <div className="">
         <h3 className="text-lg font-bold">
           Identification of employees in need of skills upgrading
         </h3>
@@ -160,7 +160,7 @@ export const FirstPageQuestions = ({
           onChange={(e) =>
             handleInputChange("identificationEmployee", e.target.value)
           }
-          className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+          className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!commentData}
         />
         {commentData && (
@@ -177,7 +177,7 @@ export const FirstPageQuestions = ({
                   e.target.value,
                 )
               }
-              className="mt-2 p-2 border rounded-full bg-gray-100 outline-none w-full"
+              className="mt-2 p-2 border rounded-2xl bg-gray-100 outline-none w-full"
               disabled={!setCommentData}
             />
           </div>
@@ -263,7 +263,7 @@ export const TrainingProgress = ({
               moduleName: e.target.value,
             }))
           }
-          className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+          className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
         />
         <input
           type="date"
@@ -275,7 +275,7 @@ export const TrainingProgress = ({
               from: e.target.value,
             }))
           }
-          className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+          className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
         />
         <input
           type="date"
@@ -287,7 +287,7 @@ export const TrainingProgress = ({
               to: e.target.value,
             }))
           }
-          className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+          className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
         />
         <input
           type="number"
@@ -299,13 +299,13 @@ export const TrainingProgress = ({
               numberOfHours: e.target.value,
             }))
           }
-          className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+          className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
         />
       </div>
       <div className="flex justify-end">
         <button
           onClick={addTrainingProcess}
-          className="mt-2 p-2 bg-primary text-white px-20 rounded-full"
+          className="mt-2 p-2 bg-primary text-white px-20 rounded-2xl"
         >
           Add
         </button>
@@ -322,7 +322,7 @@ export const TrainingProgress = ({
           setCommentsData &&
           setCommentsData({ ...commentsData, [field]: e.target.value })
         }
-        className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+        className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
         disabled={!setCommentsData}
       />
     </div>
@@ -370,7 +370,7 @@ export const TrainingProgress = ({
           </table>
         )}
       </div>
-      <div className="p-4 bg-white rounded-lg">
+      <div className="">
         <h3 className="text-lg font-bold">Training Manual</h3>
         <p className="text-sm text-gray-600">
           Please attach a detailed description of the content (training manual)
@@ -378,7 +378,7 @@ export const TrainingProgress = ({
         </p>
         {commentsData ? (
           <>
-            <button className="bg-primary rounded-full  my-2 text-white font-semibold w-full py-2">
+            <button className="bg-primary rounded-2xl  my-2 text-white font-semibold w-full py-2">
               Download File
             </button>
             {renderCommentsSection("trainingManualComment")}
@@ -389,7 +389,7 @@ export const TrainingProgress = ({
               htmlFor="file-upload-trainingManual"
               className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
             >
-              <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl font-bold">+</span>
               </div>
               {files.trainingManual ? (
@@ -479,7 +479,7 @@ export function TrainingEquipments({
               nameOfEquipment: e.target.value,
             }))
           }
-          className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+          className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
         />
         <input
           type="number"
@@ -491,7 +491,7 @@ export function TrainingEquipments({
               numberOfEquipment: e.target.value,
             }))
           }
-          className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+          className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
         />
         <Select
           name="trade"
@@ -510,7 +510,7 @@ export function TrainingEquipments({
       <div className="flex justify-end">
         <button
           onClick={addTrainingEquipment}
-          className="mt-2 p-2 bg-primary text-white px-20 rounded-full"
+          className="mt-2 p-2 bg-primary text-white px-20 rounded-2xl"
         >
           Add
         </button>
@@ -527,7 +527,7 @@ export function TrainingEquipments({
           setCommentsData &&
           setCommentsData({ ...commentsData, [field]: e.target.value })
         }
-        className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+        className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
         disabled={!setCommentsData}
       />
     </div>
@@ -566,7 +566,7 @@ export function TrainingEquipments({
           </table>
         )}
       </div>
-      <div className="p-4 bg-white rounded-lg">
+      <div className="">
         <h3 className="text-lg font-bold">Training Equipment - (Continued)</h3>
         <p className="text-sm text-gray-600">
           Please attach the proof of ownership (Notarized list of equipment,
@@ -574,7 +574,7 @@ export function TrainingEquipments({
         </p>
         {commentsData ? (
           <>
-            <button className="bg-primary rounded-full py-2 w-full text-white font-bold">
+            <button className="bg-primary rounded-2xl py-2 w-full text-white font-bold">
               Download File
             </button>
             {renderCommentsSection("trainingEquipmentAttachmentComment")}
@@ -585,7 +585,7 @@ export function TrainingEquipments({
               htmlFor="file-upload-trainingEquipmentAttachment"
               className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
             >
-              <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl font-bold">+</span>
               </div>
               {files.trainingEquipmentAttachment ? (
@@ -630,27 +630,28 @@ export const Staff = ({
   commentData?: any;
   setCommentData?: any;
 }) => {
+  console.log(data.staffs)
   const [staffInputs, setStaffInputs] = useState({
     number: "",
     position: "",
     qualification: "",
-    availability: "", // Updated key to match table field
+    available: "", // Updated key to match table field
   });
 
   const [errors, setErrors] = useState({
     number: "",
     position: "",
     qualification: "",
-    availability: "",
+    available: "",
   });
 
   const validateStaffInputs = () => {
-    const { number, position, qualification, availability } = staffInputs;
+    const { number, position, qualification, available } = staffInputs;
     const newErrors = {
       number: number ? "" : "Staff number is required.",
       position: position ? "" : "Position is required.",
       qualification: qualification ? "" : "Qualification is required.",
-      availability: availability ? "" : "Availability is required.", // Validate availability
+      available: available ? "" : "Availability is required.", // Validate available
     };
     setErrors(newErrors);
     return Object.values(newErrors).every((error) => !error);
@@ -660,18 +661,18 @@ export const Staff = ({
     if (!validateStaffInputs()) {
       return;
     }
-    handleArrayOfObjectsChange("staffs", staffInputs, data?.staff?.length || 0);
+    handleArrayOfObjectsChange("staffs", staffInputs, data?.staffs?.length || 0);
     setStaffInputs({
       number: "",
       position: "",
       qualification: "",
-      availability: "", // Clear availability after submission
+      available: "", // Clear available after submission
     });
     setErrors({
       number: "",
       position: "",
       qualification: "",
-      availability: "",
+      available: "",
     });
   };
 
@@ -685,7 +686,7 @@ export const Staff = ({
   };
 
   return (
-    <div className="p-4 bg-white rounded-lg">
+    <div className="">
       <h3 className="text-lg font-bold">Staff Information</h3>
       <p className="text-sm text-gray-600">
         Add details of the staff involved in the training process.
@@ -704,7 +705,7 @@ export const Staff = ({
                     number: e.target.value,
                   }))
                 }
-                className={`mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full ${
+                className={`mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full ${
                   errors.number ? "border-red-500" : ""
                 }`}
               />
@@ -723,7 +724,7 @@ export const Staff = ({
                     position: e.target.value,
                   }))
                 }
-                className={`mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full ${
+                className={`mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full ${
                   errors.position ? "border-red-500" : ""
                 }`}
               />
@@ -742,7 +743,7 @@ export const Staff = ({
                     qualification: e.target.value,
                   }))
                 }
-                className={`mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full ${
+                className={`mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full ${
                   errors.qualification ? "border-red-500" : ""
                 }`}
               />
@@ -754,25 +755,25 @@ export const Staff = ({
             </div>
             <div className="relative">
              <Select
-  name="availability"
-  value={staffInputs.availability}
+  name="available"
+  value={staffInputs.available}
   onChange={(value: string | null) =>
     setStaffInputs((prev) => ({
       ...prev,
-      availability: value ?? "", // Handle `null` case by assigning an empty string
+      available: value ?? "", // Handle `null` case by assigning an empty string
     }))
   }
   data={[
     { value: "available", label: "Available" },
-    { value: "hired", label: "Hired" },
+    { value: "hired", label: "To Be Hired" },
   ]}
   className="mt-1 block w-full pl-5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
   placeholder="Select Availability"
 />
 
-              {errors.availability && (
+              {errors.available && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.availability}
+                  {errors.available}
                 </p>
               )}
             </div>
@@ -780,7 +781,7 @@ export const Staff = ({
           <div className="flex justify-end">
             <button
               onClick={addStaff}
-              className="mt-2 p-2 bg-primary text-white px-20 rounded-full"
+              className="mt-2 p-2 bg-primary text-white px-20 rounded-2xl"
             >
               Add
             </button>
@@ -792,19 +793,19 @@ export const Staff = ({
           <table className="w-full mt-4 border-collapse border border-gray-200">
             <thead>
               <tr className="bg-gray-100">
-                <th className="border p-2">Number</th>
-                <th className="border p-2">Position</th>
+              <th className="border p-2">Position</th>
+                <th className="border p-2">Number of Staff</th>
                 <th className="border p-2">Qualification</th>
-                <th className="border p-2">Availability</th>
+                <th className="border p-2">Status</th>
               </tr>
             </thead>
             <tbody>
               {data?.staffs.map((item: any, index: any) => (
                 <tr key={index}>
-                  <td className="border p-2">{item.number}</td>
                   <td className="border p-2">{item.position}</td>
+                  <td className="border p-2">{item.number}</td>
                   <td className="border p-2">{item.qualification}</td>
-                  <td className="border p-2">{item.availability}</td>
+                  <td className="border p-2">{item.available?.toUpperCase()}</td>
                 </tr>
               ))}
             </tbody>
@@ -848,7 +849,7 @@ export const LastPageQuestions = ({
 }) => {
   return (
     <>
-      <div className="p-4 bg-white rounded-lg">
+      <div className="">
         <h3 className="text-lg font-bold">Sustainability</h3>
         <p className="text-sm text-gray-600">
           How will your project (the planned training activity) continue after
@@ -857,7 +858,7 @@ export const LastPageQuestions = ({
         <textarea
           value={(data && data.sustainability) || ""}
           onChange={(e) => handleInputChange("sustainability", e.target.value)}
-          className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+          className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!commentData}
         />
         {commentData && (
@@ -872,20 +873,20 @@ export const LastPageQuestions = ({
                   sustainabilityComment: e.target.value,
                 })
               }
-              className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+              className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
               disabled={!setCommentData}
             />
           </div>
         )}
       </div>
-      <div className="p-4 bg-white rounded-lg">
+      <div className="">
         <h3 className="text-lg font-bold">Previous financial Report</h3>
         <p className="text-sm text-gray-600">
           Provide the financial report of the previous year.
         </p>
         {commentData ? (
           <>
-            <button className="bg-primary rounded-full  my-2 text-white font-semibold w-full py-2">
+            <button className="bg-primary rounded-2xl  my-2 text-white font-semibold w-full py-2">
               Download File
             </button>
             <div className="mt-2">
@@ -899,7 +900,7 @@ export const LastPageQuestions = ({
                     previousFinancialReportComment: e.target.value,
                   })
                 }
-                className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+                className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
                 disabled={!setCommentData}
               />
             </div>
@@ -910,7 +911,7 @@ export const LastPageQuestions = ({
               htmlFor="file-upload-previousFinancialReportAttachment"
               className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
             >
-              <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl font-bold">+</span>
               </div>
               {files.previousFinancialReportAttachment ? (
@@ -941,7 +942,7 @@ export const LastPageQuestions = ({
         )}
       </div>
 
-      <div className="p-4 bg-white rounded-lg">
+      <div className="">
         <h3 className="text-lg font-bold">Contribution from the applicant</h3>
         <p className="text-sm text-gray-600">
           Justify how your institution will contribute to facilitate the
@@ -952,7 +953,7 @@ export const LastPageQuestions = ({
           onChange={(e) =>
             handleInputChange("contributionFromApplicant", e.target.value)
           }
-          className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+          className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!commentData}
         />
         {commentData && (
@@ -967,7 +968,7 @@ export const LastPageQuestions = ({
                   contributionFromApplicantComment: e.target.value,
                 })
               }
-              className="mt-2 p-2 border rounded-full bg-primaryText bg-opacity-5 outline-none w-full"
+              className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
               disabled={!setCommentData}
             />
           </div>

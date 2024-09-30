@@ -183,8 +183,7 @@ const MakeDecision = ({
                 Comment
               </label>
               <div className="w-full relative">
-                <input
-                  type="text"
+                <textarea
                   name="comment"
                   value={formData.comment}
                   placeholder="Provide a comment"

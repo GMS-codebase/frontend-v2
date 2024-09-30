@@ -190,7 +190,7 @@ const AddEditCall = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[80vh] max-h-[90vh] overflow-y-auto  relative bg-white rounded-3xl pt-10 pb-10 flex flex-col items-center">
+      <div className="w-full md:w-[70vw]  lg:w-[50vw] max-h-[90vh] overflow-y-auto  relative bg-white rounded-3xl pt-10 pb-10 flex flex-col items-center modal">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeAddEditCall}
@@ -299,7 +299,7 @@ const AddEditCall = ({
                       id="attachment"
                       type="file"
                       name="attachment"
-                      // accept=".pdf"
+                      accept=".pdf, .doc, .docx" 
                       onChange={handleChange}
                       style={{ display: "none" }}
                       className="content-none"
@@ -333,15 +333,15 @@ const AddEditCall = ({
               className="text-xs"
             >
               <div className="mt-4 w-full overflow-y-auto flex flex-col gap-2 px-2">
-                <div className="w-full flex space-x-4">
-                  <div className="w-1/2">
+                <div className="w-full flex space-x-4 justify-center">
+                  <div className="">
                     <label
                       htmlFor="startDate"
                       className="block text-xs font-bold text-gray-700"
                     >
                       Start Date
                     </label>
-                    <div className="w-full relative">
+                    <div className="w-full relative ">
                       <DatePicker
                         minDate={new Date()}
                         value={
@@ -361,7 +361,7 @@ const AddEditCall = ({
                       />
                     </div>
                   </div>
-                  <div className="w-1/2">
+                  <div className="">
                     <label
                       htmlFor="endDate"
                       className="block text-xs font-bold text-gray-700"
@@ -524,8 +524,8 @@ const AddEditCall = ({
                     disabled={loading}
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                    {loading ? "Loading..." : defaultData ? "Update" : "Create"}{" "}
-                    Call
+                    {loading ? "Loading..." : defaultData ? "Update Call" : "Create Call"}{" "}
+                    
                   </button>
                 </div>
               </div>

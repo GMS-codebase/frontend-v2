@@ -82,7 +82,7 @@ export type Comments = {
   assessmentEquipmentComment: string;
   recruitmentCandidatesNumberComment: string;
   assessorsAndFacilitatorsComment: string;
-  budgetAttachmentComment: string;
+  budgetSummaryAttachmentComment: string;
   contributionComment: string;
 };
 
