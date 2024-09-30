@@ -80,6 +80,11 @@ import {
   GET_MINUTES_LOADING,
   GET_MINUTES_SUCCESS,
 } from "@/actions/MinutesActions";
+import {
+  GET_ROLES_LOADING,
+  GET_ROLES_SUCCESS,
+  GET_ROLES_ERROR,
+} from "@/actions/RolesActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -158,6 +163,17 @@ export const getCalls = async (dispatch: Dispatch<UnknownAction>) => {
     })
     .catch((err) => {
       dispatch({ type: GET_CALLS_ERROR, payload: err.response.data.error });
+    });
+};
+export const getRoles = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_ROLES_LOADING });
+  authorizedApi
+    .get("/roles/all-roles")
+    .then((res) => {
+      dispatch({ type: GET_ROLES_SUCCESS, payload: res.data?.data?.data });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_ROLES_ERROR, payload: err.response.data.error });
     });
 };
 export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
