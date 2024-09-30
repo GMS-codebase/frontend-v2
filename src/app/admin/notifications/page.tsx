@@ -36,36 +36,36 @@ const Page = () => {
     (state: any) => state.applicants
   );
 
-  const filterApplicants = () => {
-    const query = `/applicant/filter?callId=${formData.filters.call}&windowId=${formData.filters.window}&sectorId=${formData.filters.sector}&stage=${formData.filters.stage}&status=${formData.filters.status}`;
+  // const filterApplicants = () => {
+  //   const query = `/applicant/filter?callId=${formData.filters.call}&windowId=${formData.filters.window}&sectorId=${formData.filters.sector}&stage=${formData.filters.stage}&status=${formData.filters.status}`;
 
-    setLoading(true);
-    authorizedApi
-      .get(query)
-      .then((response) => {
-        const applicants = JSON.stringify(response.data.data.data) == "{}" ? [] : response.data.data.data;
-        console.log("concerned applicants", applicants, response.data.data.data);
-        // Search logic for name, institution, email, phone
-        const searchFilteredApplicants = applicants.filter((applicant: any) => {
-          return (
-            applicant.name.toLowerCase().includes(text.toLowerCase()) ||
-            applicant.institution.toLowerCase().includes(text.toLowerCase()) ||
-            applicant.email.toLowerCase().includes(text.toLowerCase()) ||
-            applicant.phone.toLowerCase().includes(text.toLowerCase())
-          );
-        });
+  //   setLoading(true);
+  //   authorizedApi
+  //     .get(query)
+  //     .then((response) => {
+  //       const applicants = JSON.stringify(response.data.data.data) == "{}" ? [] : response.data.data.data;
+  //       console.log("concerned applicants", applicants, response.data.data.data);
+  //       // Search logic for name, institution, email, phone
+  //       const searchFilteredApplicants = applicants.filter((applicant: any) => {
+  //         return (
+  //           applicant.name.toLowerCase().includes(text.toLowerCase()) ||
+  //           applicant.institution.toLowerCase().includes(text.toLowerCase()) ||
+  //           applicant.email.toLowerCase().includes(text.toLowerCase()) ||
+  //           applicant.phone.toLowerCase().includes(text.toLowerCase())
+  //         );
+  //       });
 
-        setFilteredApplicants(searchFilteredApplicants);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => setLoading(false));
-  };
+  //       setFilteredApplicants(searchFilteredApplicants);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     })
+  //     .finally(() => setLoading(false));
+  // };
 
-  useEffect(() => {
-    filterApplicants()
-  }, [formData.filters, text]);
+  // useEffect(() => {
+  //   filterApplicants()
+  // }, [formData.filters, text]);
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setText(event.target.value);
@@ -307,7 +307,7 @@ const Page = () => {
           {isSubmitting ? <ClipLoader size={20} color="white" /> : "Send notification"}
         </button>
       </form>
-      <div className="relative w-full my-5 flex justify-between">
+      {/* <div className="relative w-full my-5 flex justify-between">
         <h1 className="font-bold text-xl">Concerned Applicants</h1>
         <div className="relative w-[20rem]">
           <span className="absolute top-4 left-4">
@@ -330,7 +330,7 @@ const Page = () => {
         ) : (
           <DataTable columns={columns} data={filteredApplicants ?? []} />
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
