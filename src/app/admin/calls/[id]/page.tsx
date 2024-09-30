@@ -79,7 +79,7 @@ if (startDate && endDate && !isNaN(startDate.getTime()) && !isNaN(endDate.getTim
             </div>
             <div className="flex  mr-10">
               <div className="flex  ">
-                                <ProgressCircle
+                <ProgressCircle
                   activeColor="#005DE9"
                   bgColor="#fff"
                   baseColor="#EAEAFC"
@@ -122,11 +122,11 @@ if (startDate && endDate && !isNaN(startDate.getTime()) && !isNaN(endDate.getTim
               {call?.description}
             </div>
           </div>
-          <div   className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center">
+          <div className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center">
             <span>
               <SolarDownloadMinimalisticBold />
             </span>
-            <p>View application instructions</p>
+            <p>View call attachment</p>
           </div>
         </div>
       </div>

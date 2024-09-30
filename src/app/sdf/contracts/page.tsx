@@ -34,8 +34,8 @@ const Page = () => {
   const filteredApplications = applications.filter((app: any) =>
     app.stages.some(
       (stage: any) =>
-        stage.name === "CONTRACT_SIGNING" && stage.status === "PENDING"
-    )
+        stage.name === "CONTRACT_SIGNING" && stage.status === "PENDING",
+    ),
   );
   const contractColumns: ColumnDef<any>[] = [
     {

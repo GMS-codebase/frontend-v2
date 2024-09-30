@@ -43,10 +43,11 @@ const AddEditCall = ({
     attachment: null,
   });
 
-  let MultiWindowData = windows?.windows?.map((window: any) => ({
-    value: window.uuid,
-    label: window.title,
-  })) ?? [];
+  let MultiWindowData =
+    windows?.windows?.map((window: any) => ({
+      value: window.uuid,
+      label: window.title,
+    })) ?? [];
 
   const getSubWindowsData = () => {
     const subWindowData =
@@ -66,7 +67,7 @@ const AddEditCall = ({
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid)
+            selectedSubWindows.includes(subWindow.uuid),
           )
           .flatMap((subWindow: any) =>
             subWindow.sectors?.map((sector: any) => ({
@@ -82,10 +83,12 @@ const AddEditCall = ({
   const MultiSectorData = getSectorData();
   useEffect(() => {
     if (defaultData) {
-      console.log(defaultData)
+      console.log(defaultData);
       setFormData(defaultData);
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
-      setSelectedSubWindows(defaultData.subWindows.map((item: any) => item.uuid));
+      setSelectedSubWindows(
+        defaultData.subWindows.map((item: any) => item.uuid),
+      );
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
     }
   }, [defaultData]);
@@ -122,7 +125,9 @@ const AddEditCall = ({
       submitData?.append("attachment", formData?.attachment);
     }
 
-    const apiUrl = defaultData ? `/call/update/${defaultData.uuid}` : "/call/create";
+    const apiUrl = defaultData
+      ? `/call/update/${defaultData.uuid}`
+      : "/call/create";
 
     defaultData
       ? authorizedApi
@@ -132,7 +137,7 @@ const AddEditCall = ({
             },
           })
           .then((res) => {
-            getCalls(dispatch)
+            getCalls(dispatch);
             notifications.show({
               message: "Call updated successfully!",
               color: "blue",
@@ -157,7 +162,7 @@ const AddEditCall = ({
             },
           })
           .then((res) => {
-            getCalls(dispatch)
+            getCalls(dispatch);
             notifications.show({
               message: defaultData
                 ? "Call updated successfully!"

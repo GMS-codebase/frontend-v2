@@ -15,7 +15,6 @@ import { SolarFolder2Bold } from "@/components/core/icons";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getCalls } from "@/utils/funcs";
-import { AnyNaptrRecord } from "dns";
 import { unauthorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 
