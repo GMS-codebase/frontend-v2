@@ -133,8 +133,8 @@ function Page() {
                 >
                   <SolarFolder2Bold className="w-8 h-8 text-[#005DE9]" />
                   <h3 className="font-bold text-black">
-                    {call.title?.length >= 20
-                      ? `${call?.title?.slice(0, 20)}...`
+                    {call.title?.length >= 15
+                      ? `${call?.title?.slice(0, 15)}...`
                       : call?.title}
                   </h3>
                   <button
