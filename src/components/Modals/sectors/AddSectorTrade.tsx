@@ -22,7 +22,7 @@ const AddSectorTrade = ({
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     trade: "",
-    windows: [] as string[], // Changed window to windows as an array
+    windows: [] as string[],
   });
   const [errors, setErrors] = useState({
     trade: "",
