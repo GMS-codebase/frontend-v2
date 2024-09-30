@@ -5,15 +5,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 // import CallsActions from "@/app/admin/calls/CallsAction";
 import { Contact as contactData } from "@/utils/constants/contact";
-<<<<<<< HEAD
-import {ContractDetails as contract} from '@/utils/constants/dummy'
-import ContractsAction from '@/components/Actions/ContractsAction'
-import TraineeAction from '@/components/Actions/TraineeAction'
-=======
 import { ContractDetails as contract } from "@/utils/constants/dummy";
 import ContractsAction from "@/components/Actions/ContractsAction";
 
->>>>>>> 364a574a3d900b5083bd563ed741e064436f5ef9
 const TraineeTable = () => {
   const [activeTable, setActiveTable] = useState("trainees");
   const [isOpenCall, setIsOpenCall] = useState({
@@ -56,12 +50,8 @@ const TraineeTable = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-<<<<<<< HEAD
-        <TraineeAction/>
-=======
         // <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />
         <div></div>
->>>>>>> 364a574a3d900b5083bd563ed741e064436f5ef9
       ),
     },
   ];
