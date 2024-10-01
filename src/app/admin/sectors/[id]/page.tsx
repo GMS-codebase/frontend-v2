@@ -28,7 +28,7 @@ const Page = () => {
   const [trades, setTrades] = useState<TradeSector[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
+  const [selectedTrade, setSelectedTrade] = useState<TradeSector | null>(null);
 
   const [isAddSector, { open: openAddSector, close: closeAddSector }] = useDisclosure(false);
   const [isRemoveTrade, { open: openRemoveTrade, close: closeRemoveTrade }] = useDisclosure(false);
@@ -44,28 +44,26 @@ const Page = () => {
   }, [sectors, id]);
 
   // Fetch trades using useEffect
+  const fetchTrades = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await authorizedApi.get(`/Sectors/${id}/trades`);
+      console.log(response.data.data)
+      setTrades(response.data.data.data);
+    } catch (err: any) {
+      console.error("Error fetching trades:", err);
+      setError(err?.response?.data?.message || "Failed to fetch trades.");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchTrades = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await authorizedApi.get(`/Sectors/${id}/trades`);
-        console.log(response.data.data)
-        setTrades(response.data.data.data);
-      } catch (err: any) {
-        console.error("Error fetching trades:", err);
-        setError(err?.response?.data?.message || "Failed to fetch trades.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (id) {
       fetchTrades();
     }
   }, [id]);
 
-  // Filter trades based on search query
   const filteredTrades = useMemo(() => {
     return trades?.filter(
       (tradeSector) =>
@@ -74,17 +72,6 @@ const Page = () => {
     );
   }, [trades, searchQuery]);
 
-  // // Function to get window title for a trade
-  // const getWindowForTrade = (trade: Trade): string => {
-  //   const windowWithSector: Window | undefined = windows.windows.find((win: Window) =>
-  //     win.subWindows.some((subWin) =>
-  //       subWin.sectors.some((sec: Sector) => sec.uuid === sector?.uuid)
-  //     )
-  //   );
-  //   return windowWithSector ? windowWithSector.title : "No Window";
-  // };
-
-  // Define table columns
   const columns: ColumnDef<TradeSector>[] = useMemo(() => [
     {
       accessorKey: "name",
@@ -136,7 +123,7 @@ const Page = () => {
               <div
                 className="w-full py-1 flex text-base items-center gap-3 text-[#576074] cursor-pointer"
                 onClick={() => {
-                  setSelectedTrade(row.original.trade);
+                  setSelectedTrade(row.original);
                   openRemoveTrade();
                 }}
               >
@@ -246,17 +233,18 @@ const Page = () => {
             )}
           </div>
         </div>
-
-        {/* Modals */}
         <AddSectorTrade
           isOpenAddSectorTrade={isAddSector}
-          closeAddSectorTrade={closeAddSector}
+          closeAddSectorTrade={()=>{
+            fetchTrades()
+            closeAddSector()
+          }}
         />
         <RemoveTradeFromSectorModal
-          id={selectedTrade?.uuid || ""}
+          tradeId={selectedTrade?.trade?.uuid || ""}
+          windowId={selectedTrade?.theWindow.uuid || ""}
           closeModal={closeRemoveTrade}
           isOpenModal={isRemoveTrade}
-          sectorId={sector?.uuid || ""}
         />
         <AddEditSector
           defaultData={sector}
