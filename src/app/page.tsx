@@ -25,9 +25,10 @@ function Page() {
   const { calls, loading: loadingCalls } = useSelector(
     (state: any) => state.calls,
   );
-    const sortedCalls = calls
-    ? [...calls].sort((a: any, b: any) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+  const sortedCalls = calls
+    ? [...calls].sort(
+        (a: any, b: any) =>
+          new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
       )
     : [];
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
@@ -152,7 +153,6 @@ function Page() {
               ))}
           </div>
         </div>
-     
       </div>
 
       <div className="absolute bottom-0 left-0 p-4 z-30">
