@@ -5,11 +5,6 @@ import { PeopleNearby } from "solar-icon-set";
 
 const applicantRoutes: Route[] = [
   {
-    label: "Contacts",
-    path: "/applicant/contacts",
-    icon: <Icons.SolarUsersGroupTwoRoundedBold />,
-  },
-  {
     label: "Applications",
     path: "/applicant/applications",
     icon: <Icons.SolarFolderWithFilesBold />,
@@ -18,6 +13,11 @@ const applicantRoutes: Route[] = [
     label: "Applicant Contracts",
     path: "/applicant/contracts",
     icon: <Icons.SolarDocumentBold />,
+  },
+  {
+    label: "Contacts",
+    path: "/applicant/contacts",
+    icon: <Icons.SolarUsersGroupTwoRoundedBold />,
   },
   {
     label: "Profile",
