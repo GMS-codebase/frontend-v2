@@ -127,7 +127,7 @@ const Page = () => {
       ),
     },
   ];
-  return (
+  return  window?.uuid ?  (
     <div className="bg-white rounded-2xl py-10">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-6  text-black">
@@ -244,7 +244,9 @@ const Page = () => {
         />
       </div>
     </div>
-  );
+  ):(<div className="flex items-center justify-center h-full">
+    <p>Loading</p>
+  </div>);
 };
 
 export default Page;

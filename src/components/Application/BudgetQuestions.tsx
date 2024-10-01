@@ -5,7 +5,7 @@ import React, { useState, ChangeEvent } from "react";
 interface FundingQuestionsProps {
   data: ApplicationQuestions;
   setData?: React.Dispatch<React.SetStateAction<ApplicationQuestions>>;
-  commentData?: Comments; // For comments and evaluations
+  commentData?: Comments; 
   setCommentData?: React.Dispatch<React.SetStateAction<Comments>>;
 }
 
@@ -17,7 +17,6 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
 }) => {
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
 
-  // Handle text input changes for both main data and comments
   const handleInputChange = (inputName: string, value: any) => {
     if (setData) {
       setData((prev: ApplicationQuestions) => ({
@@ -27,7 +26,6 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
     }
   };
 
-  // Handle file changes and associate them with the correct field
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -40,7 +38,6 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
     }
   };
 
-  // Handle comment changes
   const handleCommentChange = (inputName: string, value: any) => {
     if (setCommentData) {
       setCommentData((prev: Comments) => ({
@@ -52,8 +49,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
 
   return (
     <div className="space-y-2">
-      {/* Budget Summary */}
-      <div className="p-4 bg-white rounded-lg">
+      <div className="">
         <h3 className="text-lg font-bold">Budget Summary</h3>
         <p className="text-sm text-gray-600">
           Attach a file related to the budget summary
@@ -66,10 +62,13 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
             <div className="mt-2">
               <p>Comment</p>
               <textarea
-                value={commentData?.budgetAttachmentComment || ""}
-                disabled={!setCommentData} // Disable only if comment data cannot be set
+                value={commentData?.budgetSummaryAttachmentComment || ""}
+                disabled={!setCommentData} 
                 onChange={(e) =>
-                  handleCommentChange("budgetAttachmentComment", e.target.value)
+                  handleCommentChange(
+                    "budgetSummaryAttachmentComment",
+                    e.target.value
+                  )
                 }
                 className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
                 placeholder="Add your comment"
@@ -111,8 +110,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
         )}
       </div>
 
-      {/* Contribution Section */}
-      <div className="p-4 bg-white rounded-lg">
+      <div className="">
         <h3 className="text-lg font-bold">Contribution</h3>
         <p className="text-sm text-gray-600">
           Outline the planned activities to be supported; The skills gap to be
@@ -124,9 +122,24 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
           value={data.contribution || ""}
           onChange={(e) => handleInputChange("contribution", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          readOnly={commentData ? true : false} // Editable if no commentData is passed
+          readOnly={commentData ? true : false}
           placeholder="Describe your contribution"
         />
+                {commentData && <>
+                  <p className="text-sm text-gray-600">Comment</p>
+                  <textarea
+                value={commentData?.contributionComment || ""}
+                disabled={!setCommentData} 
+                onChange={(e) =>
+                  handleCommentChange(
+                    "contributionComment",
+                    e.target.value
+                  )
+                }
+                className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
+                placeholder="Add your comment"
+              />
+        </>}
       </div>
     </div>
   );

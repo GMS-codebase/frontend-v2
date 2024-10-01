@@ -9,10 +9,10 @@ import ProgressCircle from "./ProgressBar";
 
 const CallCard = ({ call }: { call: Call }) => {
   return (
-    <div className="flex flex-shrink-0 gap-2 w-[600px] bg-[#005DE9] bg-opacity-10 rounded-3xl px-4 py-2">
-      <div className="flex flex-col gap-4 w-[60%]">
+    <div className="flex flex-shrink-0 gap-2 w-[600px] bg-[#005DE9] bg-opacity-10 rounded-3xl p-5">
+      <div className="flex flex-col gap-4 flex-grow">
         <h2 className="font-semibold text-[#005DE9]">{call.title}</h2>
-        <div className="font-medium flex justify-evenly items-start">
+        <div className="font-medium ">
           {call.description}
         </div>
         <Link href={`/applicant/applications/call/${call.uuid}`}>
@@ -21,7 +21,7 @@ const CallCard = ({ call }: { call: Call }) => {
           </div>
         </Link>
       </div>
-      <div className="w-full  text-[6px] font-bold">
+      <div className="w-[45%]  text-[6px] font-bold">
         <ProgressCircle
           activeColor="#005DE9"
           baseColor="#fff"
