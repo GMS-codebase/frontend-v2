@@ -12,7 +12,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Page = () => {
-  const [isOpenTrade, { open, close }] = useDisclosure(false);
+ 
   const contracts = useSelector((state: any) => state.contract);
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -82,7 +82,7 @@ const Page = () => {
         </div>
 
         <button
-          onClick={open}
+        
           className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
         >
           <span className="text-2xl">
@@ -97,7 +97,7 @@ const Page = () => {
           <Contracts data={data} loading={loading} />
         </div>
       </div>
-      <AddTrade isOpenAddEditTrade={isOpenTrade} closeAddEditTrade={close} />
+  
     </div>
   );
 };

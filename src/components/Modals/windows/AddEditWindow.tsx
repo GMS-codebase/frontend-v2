@@ -140,7 +140,7 @@ const AddEditWindow = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[45vw] max-h-[90vh] overflow-y-auto relative bg-white rounded-3xl p-16 flex flex-col items-center">
+      <div className="w-[100vw] md:w-[55vw] lg:w-[40vw] max-h-[90vh] overflow-y-auto relative bg-white rounded-3xl p-10 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeAddEditWindow}

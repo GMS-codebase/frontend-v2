@@ -15,7 +15,7 @@ import { useDisclosure } from "@mantine/hooks";
 import AddEditWindowSubwindow from "@/components/Modals/windows/AddEditWindowSubwindow";
 import UpdateWindow from "@/components/Modals/UpdateWindow";
 import { useSelector } from "react-redux";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { authorizedApi } from "@/utils/api";
 import AddEditWindow from "@/components/Modals/windows/AddEditWindow";
 import { Menu } from "@mantine/core";
@@ -24,7 +24,6 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import DeleteModal from "@/components/Modals/DeleteModal";
 
 const Page = () => {
-  const navigate = useRouter();
   const [
     isAddEditSubWindow,
     { open: openAddEditSubWindow, close: closeAddEditSubWindow },
@@ -35,21 +34,26 @@ const Page = () => {
   ] = useDisclosure(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { id: windowId } = useParams();
+  const { subWindowId: subWindowId } = useParams();
   const [isUpdateWindow, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
   const windows = useSelector((state: any) => state.windows);
   const window = windows.windows?.filter(
     (window: any) => window.uuid === windowId,
   )[0];
-  const filteredSubWindows = window?.subWindows.filter((subW: any) =>
-    subW.title.toLowerCase().includes(searchQuery.toLowerCase()),
+  const subWindow = window?.subWindows?.filter(
+    (sbWindow: any, index: any) => sbWindow?.uuid === subWindowId,
+  )[0];
+  const filteredSectors = subWindow?.sectors.filter((sector: any) =>
+    sector?.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+  console.log(subWindow);
   const [selectedSubWindow, setSelectedSubWindow] = useState<any>();
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.title}</div>,
+      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
     },
     {
       accessorKey: "description",
@@ -62,77 +66,52 @@ const Page = () => {
         </div>
       ),
     },
-    {
-      accessorKey: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="">
-          <Menu shadow="lg" width={300}>
-            <Menu.Target>
-              <button
-                style={{
-                  background:
-                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-                }}
-                className="p-3 rounded-full border text-white hover:bg-red-100"
-              >
-                <HiDotsHorizontal size={25} color="white" />
-              </button>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Label>
-                <h1 className="text-lg">Actions</h1>
-              </Menu.Label>
-              <Menu.Divider />
-              <Menu.Item className="bg-[#F0F0F0]">
-                <div
-                  onClick={() =>
-                    navigate.push(
-                      `/admin/windows/${window?.uuid}/${row.original?.uuid}`,
-                    )
-                  }
-                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                >
-                  <FiEye size={21} color="#576074" />
-                  View
-                </div>
-              </Menu.Item>
-              <Menu.Item>
-                <div
-                  onClick={() => {
-                    setSelectedSubWindow(row.original);
-                    openAddEditSubWindow();
-                  }}
-                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                >
-                  <CiEdit size={21} color="#576074" />
-                  Edit
-                </div>
-              </Menu.Item>
-              <Menu.Item>
-                <div
-                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                  onClick={() => {
-                    setSelectedSubWindow(row.original);
-                    openDeleteSubWindow();
-                  }}
-                >
-                  <RiDeleteBinLine size={21} color="#576074" />
-                  Remove
-                </div>
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </div>
-      ),
-    },
+    // {
+    //   accessorKey: "actions",
+    //   header: "Actions",
+    //   cell: ({ row }) => (
+    //     <div className="">
+    //       <Menu shadow="lg" width={300}>
+    //         <Menu.Target>
+    //           <button
+    //             style={{
+    //               background:
+    //                 "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+    //             }}
+    //             className="p-3 rounded-full border text-white hover:bg-red-100"
+    //           >
+    //             <HiDotsHorizontal size={25} color="white" />
+    //           </button>
+    //         </Menu.Target>
+    //         <Menu.Dropdown>
+    //           <Menu.Label>
+    //             <h1 className="text-lg">Actions</h1>
+    //           </Menu.Label>
+    //           <Menu.Divider />
+    //           <Menu.Item>
+    //             <div
+    //               className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+    //               onClick={() => {
+    //                 setSelectedSubWindow(row.original);
+    //                 openDeleteSubWindow();
+    //               }}
+    //             >
+    //               <RiDeleteBinLine size={21} color="#576074" />
+    //               Remove
+    //             </div>
+    //           </Menu.Item>
+    //         </Menu.Dropdown>
+    //       </Menu>
+    //     </div>
+    //   ),
+    // },
   ];
-  return  window?.uuid ?  (
+  return (
     <div className="bg-white rounded-2xl py-10">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-6  text-black">
           <div className="flex justify-between px-10">
-            <div className="text-xl font-bold">Window Info</div>
+            <div className="text-xl font-bold">Sub-Window Info</div>
             <button
               onClick={openUpdate}
               className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
@@ -140,7 +119,7 @@ const Page = () => {
               <span>
                 <SolarPen2Bold />
               </span>
-              <div>Edit Window</div>
+              <div>Edit Sub-window</div>
             </button>
           </div>
           <div className=" px-10 space-y-5">
@@ -152,7 +131,7 @@ const Page = () => {
                 <div>Title</div>
               </div>
               <div className="flex flex-col gap-6 justify-start items-start ">
-                <h1 className="font-bold text-xl">{window?.title}</h1>
+                <h1 className="font-bold text-xl">{subWindow?.title}</h1>
               </div>
             </div>
             <div className="space-y-2">
@@ -164,7 +143,7 @@ const Page = () => {
               </div>
               <div className="flex flex-col gap-6 justify-start items-start ">
                 <h1 className="font-medium text-base text-gray-500">
-                  {window?.description}
+                  {subWindow?.description}
                 </h1>
               </div>
             </div>
@@ -176,7 +155,7 @@ const Page = () => {
                 <span>
                   <SolarBookmarkBold />
                 </span>
-                <div>Sub Windows</div>
+                <div>Sectors</div>
               </div>
               <div className="flex gap-3 items-center">
                 <div className="relative w-[25rem]">
@@ -192,7 +171,7 @@ const Page = () => {
                   />
                 </div>
 
-                <button
+                {/* <button
                   onClick={openAddEditSubWindow}
                   className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
                 >
@@ -202,18 +181,18 @@ const Page = () => {
                   <h1 className="text-base font-medium text-white">
                     New Sub-Window
                   </h1>
-                </button>
+                </button> */}
               </div>
             </div>
 
             <div className="w-full h-full">
               <DataTable
                 columns={columns}
-                data={filteredSubWindows ?? []}
+                data={filteredSectors ?? []}
                 noDataMessage={
                   searchQuery
                     ? "No Sub Windows found matching " + searchQuery
-                    : `No Sub Windows Created For ${window?.title}`
+                    : `No Sub Windows Created For ${subWindow?.title}`
                 }
               />
             </div>
@@ -240,13 +219,11 @@ const Page = () => {
           }}
           id={selectedSubWindow?.uuid}
           isOpenModal={isDeleteSubWindow}
-          windowId={window?.uuid}
+          windowId={subWindow?.uuid}
         />
       </div>
     </div>
-  ):(<div className="flex items-center justify-center h-full">
-    <p>Loading</p>
-  </div>);
+  );
 };
 
 export default Page;

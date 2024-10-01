@@ -5,6 +5,7 @@ export type Route = {
 };
 
 export type Window = {
+  subWindows: any;
   title: string;
   description: string;
   uuid: string;
@@ -20,8 +21,14 @@ export type Trade = {
   shortname: string;
   uuid: string;
 };
+export type TradeSector = {
+  trade:Trade;
+  sector:Sector;
+  theWindow:Window
+  uuid: string;
+};
 export type Sector = {
-  title: string;
+  name: string;
   description: string;
   uuid: string;
   trades: Trade[];
@@ -75,7 +82,7 @@ export type Comments = {
   assessmentEquipmentComment: string;
   recruitmentCandidatesNumberComment: string;
   assessorsAndFacilitatorsComment: string;
-  budgetAttachmentComment: string;
+  budgetSummaryAttachmentComment: string;
   contributionComment: string;
 };
 

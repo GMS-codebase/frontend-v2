@@ -105,7 +105,7 @@ const AddEditSector = ({
         console.log(res.data.data);
         dispatch({
           type: defaultData ? UPDATE_SECTOR_SUCCESS : ADD_SECTOR_SUCCESS,
-          payload: res.data?.data,
+          payload: res.data?.data?.data,
         });
         setFormData({
           name: "",
