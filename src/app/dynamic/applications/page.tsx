@@ -33,31 +33,35 @@ const Page = () => {
     {
       accessorKey: "window",
       header: "Window",
-      cell: ({ row }) => (
-        <div>
-          {row.original?.window?.title}
-        </div>
-      ),
+      cell: ({ row }) => <div>{row.original?.window?.title}</div>,
     },
     {
       accessorKey: "sector",
       header: "Sector",
-      cell: ({ row }) => <div>{row.original?.sectors.map((sector: any, index: any)=> (
-        <>
-          <span key={index}>{sector.name}</span>
-          {index < row.original?.sectors.length - 1 && ", "}
-        </>
-      ))}</div>,
+      cell: ({ row }) => (
+        <div>
+          {row.original?.sectors.map((sector: any, index: any) => (
+            <>
+              <span key={index}>{sector.name}</span>
+              {index < row.original?.sectors.length - 1 && ", "}
+            </>
+          ))}
+        </div>
+      ),
     },
     {
       accessorKey: "trade",
       header: "Trade",
-      cell: ({ row }) => <div>{row.original?.trades.map((trade: any, index: any)=> (
-        <>
-          <span key={index}>{trade.title}</span>
-          {index < row.original?.trades.length - 1 && ", "}
-        </>
-      ))}</div>,
+      cell: ({ row }) => (
+        <div>
+          {row.original?.trades.map((trade: any, index: any) => (
+            <>
+              <span key={index}>{trade.title}</span>
+              {index < row.original?.trades.length - 1 && ", "}
+            </>
+          ))}
+        </div>
+      ),
     },
     {
       accessorKey: "stage",

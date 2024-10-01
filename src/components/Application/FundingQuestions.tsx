@@ -16,7 +16,6 @@ import { Comments } from "@/types";
 interface FundingQuestionsProps {
   data: ApplicationQuestions;
   setData?: React.Dispatch<React.SetStateAction<any>>;
-  subwindows?: string[];
   comments?: Comments;
   setComments?: React.Dispatch<React.SetStateAction<Comments>>;
 }
@@ -24,26 +23,27 @@ interface FundingQuestionsProps {
 const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   data,
   setData,
-  subwindows,
   comments,
   setComments,
 }) => {
   const { applicationId } = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
+  const [currentStep, setCurrentStep] = useState(0);
+
+
+
   useEffect(() => {
     const fetchApplicationData = async () => {
       try {
         const response = await authorizedApi.get(
-          `/application/get-application/${applicationId}`,
+          `/application/get-application/${applicationId}`
         );
         const applicationData = response.data.data.data;
-        console.log(response.data);
         const trades: any = applicationData.trades.map((trade: any) => ({
           label: trade.title,
           value: trade.uuid,
         }));
-        console.log(trades);
         setApplicationTrades(trades);
       } catch (error) {
         console.error("Error fetching application data:", error);
@@ -72,7 +72,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const handleArrayOfObjectsChange = (
     inputName: string,
     value: any,
-    index: number,
+    index: number
   ) => {
     setData &&
       setData((prev: any) => {
@@ -85,46 +85,87 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       });
   };
 
+  const steps = [
+    <FirstPageQuestions
+      key="first"
+      data={data}
+      handleInputChange={handleInputChange}
+      commentData={comments}
+      setCommentData={setComments}
+    />,
+    <TrainingProgress
+      key="progress"
+      data={data}
+      files={files}
+      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
+      handleFileChange={handleFileChange}
+      trades={applicationTrades}
+      commentsData={comments}
+      setCommentsData={setComments}
+    />,
+    <TrainingEquipments
+      key="equipments"
+      data={data}
+      files={files}
+      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
+      handleFileChange={handleFileChange}
+      trades={applicationTrades}
+      commentsData={comments}
+      setCommentsData={setComments}
+    />,
+    <Staff
+      key="staff"
+      data={data}
+      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
+      commentData={comments}
+      setCommentData={setComments}
+    />,
+    <LastPageQuestions
+      key="last"
+      data={data}
+      handleInputChange={handleInputChange}
+      files={files}
+      handleFileChange={handleFileChange}
+      commentData={comments}
+      setCommentData={setComments}
+    />,
+  ];
+
+  const handlePrev = () => {
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep((prev) => prev + 1);
+    }
+  };
+
   return (
-    <div className="space-y-2">
-      <FirstPageQuestions
-        data={data}
-        handleInputChange={handleInputChange}
-        commentData={comments}
-        setCommentData={setComments}
-      />
-      <TrainingProgress
-        data={data}
-        files={files}
-        handleArrayOfObjectsChange={handleArrayOfObjectsChange}
-        handleFileChange={handleFileChange}
-        trades={applicationTrades}
-        commentsData={comments}
-        setCommentsData={setComments}
-      />
-      <TrainingEquipments
-        data={data}
-        files={files}
-        handleArrayOfObjectsChange={handleArrayOfObjectsChange}
-        handleFileChange={handleFileChange}
-        trades={applicationTrades}
-        commentsData={comments}
-        setCommentsData={setComments}
-      />
-      <Staff
-        data={data}
-        handleArrayOfObjectsChange={handleArrayOfObjectsChange}
-        commentData={comments}
-        setCommentData={setComments}
-      />
-      <LastPageQuestions
-        data={data}
-        handleInputChange={handleInputChange}
-        files={files}
-        handleFileChange={handleFileChange}
-        commentData={comments}
-        setCommentData={setComments}
-      />
+    <div className="space-y-4">
+      {steps[currentStep]}
+      <div className="flex items-center gap-5 justify-end">
+        <button
+          onClick={handlePrev}
+          disabled={currentStep === 0}
+          className={`px-10 py-2 rounded-full text-white ${
+            currentStep === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-primary hover:bg-blue-600"
+          }`}
+        >
+          Prev
+        </button>
+        <button
+          onClick={handleNext}
+          disabled={currentStep === steps.length - 1}
+          className={`px-10 py-2 rounded-full text-white ${
+            currentStep === steps.length - 1 ? "bg-gray-400 cursor-not-allowed" : "bg-primary hover:bg-blue-600"
+          }`}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
