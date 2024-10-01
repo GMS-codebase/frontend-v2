@@ -19,6 +19,20 @@ const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
+
+  const startDate = call?.startDate ? new Date(call.startDate) : null;
+  const endDate = call?.endDate ? new Date(call.endDate) : null;
+
+  let callcloseDays = 0;
+  if (
+    startDate &&
+    endDate &&
+    !isNaN(startDate.getTime()) &&
+    !isNaN(endDate.getTime())
+  ) {
+    const timeDifference = endDate.getTime() - startDate.getTime();
+    callcloseDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+  }
   return (
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">

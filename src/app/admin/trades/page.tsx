@@ -141,7 +141,7 @@ const Page = () => {
           columns={columns}
           data={filteredTrades}
           loading={trades.loading}
-          noDataMessage={"No Trades Added So Far"}
+          noDataMessage={searchQuery ? `No Trades found related to ${searchQuery}`:"No Trades Added So Far"}
         />
       </div>
       <AddTrade

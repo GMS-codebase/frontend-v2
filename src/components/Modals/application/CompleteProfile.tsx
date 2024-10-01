@@ -348,8 +348,16 @@ const CompleteProfile = ({
                           }));
                       }}
                       data={[
+                        { label: "Company", value: "company" },
+                        { label: "Cooperative", value: "cooperative" },
+                        { label: "NGO", value: "ngo" },
+                        { label: "Trade Union", value: "tradeUnion" },
+                        { label: "Association", value: "association" },
                         { label: "School", value: "school" },
-                        { label: "Institution", value: "institution" },
+                        {
+                          label: "Training Center(VTC)",
+                          value: "training center",
+                        },
                       ]}
                       className="mt-1 block w-full  pl-5  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       placeholder="Select Business Type"
