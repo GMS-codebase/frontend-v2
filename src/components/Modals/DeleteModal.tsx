@@ -16,6 +16,7 @@ import { DELETE_SECTOR_SUCCESS } from "@/actions/SectorsActions";
 import { DELETE_TRADE_SUCCESS } from "@/actions/TradesActions";
 import { DELETE_CALL_SUCCESS } from "@/actions/CallsActions";
 import { DELETE_CONTACT_SUCCESS } from "@/actions/ContactsActions";
+import { DELETE_EMPLOYEE_SUCCESS } from "@/actions/EmployeesActions";
 
 // Redux action mappings
 const actionMappings = {
@@ -25,6 +26,7 @@ const actionMappings = {
   subwindows: DELETE_SUB_WINDOW_SUCCESS,
   calls: DELETE_CALL_SUCCESS,
   contacts: DELETE_CONTACT_SUCCESS,
+  employees:DELETE_EMPLOYEE_SUCCESS
 };
 
 const routeMappings = {
@@ -34,6 +36,7 @@ const routeMappings = {
   subwindows: "/sub-window",
   calls: "/call",
   contacts: "/contacts",
+  employees:"/employees"
 };
 const DeleteModal = ({
   isOpenModal,
@@ -46,7 +49,7 @@ const DeleteModal = ({
   closeModal: () => void;
   id: string;
   windowId?: string;
-  type: "windows" | "sectors" | "trades" | "subwindows" | "calls" | "contacts";
+  type: "windows" | "sectors" | "trades" | "subwindows" | "calls" | "contacts" | "employees";
 }) => {
   const dispatch = useDispatch();
   const [deleteId, setDeleteId] = useState(id);
