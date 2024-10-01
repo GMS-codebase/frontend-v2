@@ -85,7 +85,14 @@ const Page = () => {
               </Menu.Label>
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
-                <div onClick={()=> navigate.push(`/admin/windows/${window?.uuid}/${row.original?.uuid}`)} className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+                <div
+                  onClick={() =>
+                    navigate.push(
+                      `/admin/windows/${window?.uuid}/${row.original?.uuid}`,
+                    )
+                  }
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
                   <FiEye size={21} color="#576074" />
                   View
                 </div>
@@ -120,7 +127,7 @@ const Page = () => {
       ),
     },
   ];
-  return (
+  return  window?.uuid ?  (
     <div className="bg-white rounded-2xl py-10">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-6  text-black">
@@ -237,7 +244,9 @@ const Page = () => {
         />
       </div>
     </div>
-  );
+  ):(<div className="flex items-center justify-center h-full">
+    <p>Loading</p>
+  </div>);
 };
 
 export default Page;

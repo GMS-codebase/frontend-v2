@@ -12,6 +12,9 @@ import { useSelector } from "react-redux";
 import ContractsActions from "./ContractsActions";
 import { useState } from "react";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
+import { unauthorizedApi } from "@/utils/api";
+import { Menu } from "@mantine/core";
+import { CiEdit } from "react-icons/ci";
 
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
@@ -37,6 +40,36 @@ const Page = () => {
         stage.name === "CONTRACT_SIGNING" && stage.status === "PENDING",
     ),
   );
+  const [loadingDownload, setLoadingDownload] = useState(false);
+  const handleDownloadInstructions = async (file: any) => {
+    setLoadingDownload(true);
+    try {
+      console.log("attachment --> ", file);
+      const filename = file.split("\\").pop();
+      console.log(filename);
+      const response = await unauthorizedApi.get(
+        `/admin/download/contracts/${filename}`,
+        {
+          responseType: "blob",
+        },
+      );
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = file || "downloaded-file.jpg";
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    } finally {
+      setLoadingDownload(false);
+    }
+  };
   const contractColumns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -68,11 +101,36 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <ContractsActions
-          data={row.original}
-          setIsContract={setIsContract}
-          isNew={false}
-        />
+        <Menu shadow="lg" width={300}>
+          <Menu.Target>
+            <button
+              style={{
+                background:
+                  "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+              }}
+              className="p-3 rounded-full border text-white hover:bg-red-100"
+            >
+              <HiDotsHorizontal size={25} color="white" />
+            </button>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Label>
+              <h1 className="text-lg">Actions</h1>
+            </Menu.Label>
+            <Menu.Divider />
+            <Menu.Item>
+              <div
+                onClick={() =>
+                  handleDownloadInstructions(row.original.contract)
+                }
+                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+              >
+                <CiEdit size={21} color="#576074" />
+                Download Contract
+              </div>
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
       ),
     },
   ];
