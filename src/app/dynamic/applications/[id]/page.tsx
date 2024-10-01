@@ -85,8 +85,8 @@ const Page = () => {
       application?.projectFunding.recruitmentCandidatesNumberComment || "",
     assessorsAndFacilitatorsComment:
       application?.projectFunding.assessorsAndFacilitatorsComment || "",
-    budgetAttachmentComment:
-      application?.projectFunding.budgetAttachmentComment || "",
+    budgetSummaryAttachmentComment:
+      application?.projectFunding.budgetSummaryAttachmentComment || "",
     contributionComment: application?.projectFunding.contributionComment || "",
   });
   const renderComponent = () => {

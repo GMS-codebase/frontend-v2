@@ -45,7 +45,7 @@ const AddSectorTrade = ({
       ),
     )
     .map((window: any) => ({
-      value: window.uuid,
+      value: window.title,
       label: window.title,
     }));
 
@@ -69,33 +69,24 @@ const AddSectorTrade = ({
     }));
   };
 
-  const assignTradeToWindow = async (tradeId: string, windowId: string) => {
-    try {
-      await authorizedApi.put(`/Sectors/${id}/assign-trade`, {
-        tradeId,
-        windowId, // Single windowId per request
-      });
-      dispatch({
-        type: ADD_TRADE_SECTOR_SUCCESS,
-        payload: {
-          sectorId: id,
-          trade: trades.trades.find((tr: any) => tr.uuid === tradeId),
-        },
-      });
-    } catch (error: any) {
-      throw error; // Throw error to be handled in the parent function
-    }
-  };
+
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (!validateForm()) return;
     setLoading(true);
     try {
-      for (const windowId of formData.windows) {
-        await assignTradeToWindow(formData.trade, windowId);
-      }
-
+      await authorizedApi.put(`/Sectors/${id}/assign-trade`, {
+        tradeId:formData.trade,
+        windows:formData.windows,
+      });
+      // dispatch({
+      //   type: ADD_TRADE_SECTOR_SUCCESS,
+      //   payload: {
+      //     sectorId: id,
+      //     trade: trades.trades.find((tr: any) => tr.uuid === tradeId),
+      //   },
+      // });
       notifications.show({
         message:
           "Trade assigned to sector for all selected windows successfully!",

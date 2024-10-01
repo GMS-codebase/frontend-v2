@@ -108,24 +108,18 @@ const Page = () => {
               </p>
             </div>
           </div>
-          <div className="flex justify-between w-3/5  font-semibold ">
-            <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-              <span className="">
-                <SolarAddFolderBold />
-              </span>
-              <div>Title</div>
-            </div>
-            <div className="flex gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center ">
-              <span className="">
-                <SolarClockSquareBold />
-              </span>
-              <div>Timeline</div>
-            </div>
-          </div>
-          <div className="flex gap-2 ">
-            <div className="flex flex-col gap-6 justify-start items-start ">
-              <h1 className="font-bold text-xl">{call?.title}</h1>
-              <div className="flex gap-4 rounded-2xl items-center justify-center ">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="space-y-8">
+              <div className="flex items-center gap-4">
+                <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
+                  <span className="">
+                    <SolarAddFolderBold />
+                  </span>
+                  <div>Title</div>
+                </div>
+                <p className="text-xl font-bold">{call?.title}</p>
+              </div>
+              <div className="flex gap-4 items-center ">
                 <div className="flex gap-2  bg-gray-400 bg-opacity-10 rounded-full px-4  py-2 items-center justify-center font-semibold">
                   <span>
                     <SolarShieldWarningBold />
@@ -134,7 +128,7 @@ const Page = () => {
                 </div>
                 <div className="text-xl font-bold">{call?.appealDays} Days</div>
               </div>
-              <div className="flex gap-4 items-center justify-center ">
+              <div className="flex gap-4 items-center  ">
                 <div className="flex  gap-2  bg-gray-400 rounded-full bg-opacity-10 px-4  py-2 font-semibold items-center justify-center">
                   <span>
                     <SolarBookmarkBold />
@@ -144,8 +138,14 @@ const Page = () => {
                 <div className="text-xl font-bold">{call?.status}</div>
               </div>
             </div>
-            <div className="flex  mr-10">
-              <div className="flex  ">
+            <div className="space-y-5">
+              <div className="flex gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center w-fit ">
+                <span className="">
+                  <SolarClockSquareBold />
+                </span>
+                <div>Timeline</div>
+              </div>
+              <div className="flex gap-4  ">
                 <ProgressCircle
                   activeColor="#005DE9"
                   bgColor="#fff"
@@ -153,25 +153,25 @@ const Page = () => {
                   endDate={call?.endDate}
                   startDate={call?.startDate}
                 />
-              </div>
-              <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4   rounded-3xl items-center justify-center font-semibold gap-2">
-                <div className="flex gap-2 items-center  w-full ">
-                  <span className="text-[#005DE9]">
-                    <SolarCalendarBold />
-                  </span>
-                  <div>
-                    <p>Start date</p>
-                    <p>{call && format(call?.startDate, "dd MMMM yyyy")}</p>
+                <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4   rounded-3xl items-center justify-center font-semibold gap-2">
+                  <div className="flex gap-2 items-center  w-full ">
+                    <span className="text-[#005DE9]">
+                      <SolarCalendarBold />
+                    </span>
+                    <div>
+                      <p>Start date</p>
+                      <p>{call && format(call?.startDate, "dd MMMM yyyy")}</p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex flex-row gap-2 items-center  w-full ">
-                  <span className="text-[#005DE9]">
-                    <SolarCalendarBold />
-                  </span>
-                  <div>
-                    <p>End Date</p>
-                    <p>{call && format(call?.endDate, "dd MMMM yyyy")}</p>
+                  <div className="flex flex-row gap-2 items-center  w-full ">
+                    <span className="text-[#005DE9]">
+                      <SolarCalendarBold />
+                    </span>
+                    <div>
+                      <p>End Date</p>
+                      <p>{call && format(call?.endDate, "dd MMMM yyyy")}</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -184,7 +184,6 @@ const Page = () => {
               </span>
               <p>Description</p>
             </div>
-
             <div className=" font-semibold text-gray-400">
               {call?.description}
             </div>
