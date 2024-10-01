@@ -6,15 +6,14 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useDisclosure } from "@mantine/hooks";
-import AddWindow from "@/components/Modals/windows/AddEditWindow";
+import AddEditWindow from "@/components/Modals/windows/AddEditWindow";
 import { useSelector } from "react-redux";
-import { Menu, Button, Text, rem } from "@mantine/core";
+import { Menu } from "@mantine/core";
 import { FiEye } from "react-icons/fi";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 import Link from "next/link";
 import DeleteModal from "@/components/Modals/DeleteModal";
-import AddEditWindow from "@/components/Modals/windows/AddEditWindow";
 
 const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,21 +25,25 @@ const Page = () => {
     useDisclosure(false);
 
   const windows = useSelector((state: any) => state.windows);
+  console.log("Windows Data:", windows); // Debugging line
+
   const [selectedWindow, setSelectedWindow] = useState<any>("");
+
   const filteredWindows =
-    windows.windows?.filter(
-      (trade: any) =>
-        trade?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        trade?.shortname?.toLowerCase().includes(searchQuery.toLowerCase()),
-    ) ?? [];
+    windows.windows?.filter((trade: any) => {
+      const query = searchQuery.toLowerCase();
+      return (
+        trade?.title?.toLowerCase().includes(query) ||
+        trade?.shortname?.toLowerCase().includes(query)
+      );
+    }) ?? [];
 
   const columns: ColumnDef<any>[] = [
     {
-      accessorKey: "name",
+      accessorKey: "title", // Updated from "name" to "title"
       header: "Name",
       cell: ({ row }) => (
         <div className="w-full">
-          {" "}
           {row.original?.title.length > 25
             ? row.original?.title.slice(0, 25) + "..."
             : row.original.title}
@@ -147,16 +150,20 @@ const Page = () => {
         </button>
       </div>
       <div className="w-full h-full">
-        <DataTable
-          columns={columns}
-          data={filteredWindows}
-          loading={windows.loading}
-          noDataMessage={
-            searchQuery
-              ? `No Windows related to ${searchQuery} found`
-              : "No Windows Added So Far"
-          }
-        />
+        {windows?.windows ? (
+          <DataTable
+            columns={columns}
+            data={filteredWindows}
+            loading={windows.loading}
+            noDataMessage={
+              searchQuery
+                ? `No Windows related to "${searchQuery}" found`
+                : "No Windows Added So Far"
+            }
+          />
+        ) : (
+          <div>Loading...</div> // Optional: Add a loading indicator
+        )}
       </div>
       <AddEditWindow
         isOpenAddEditWindow={isOpenCreateEdit}
