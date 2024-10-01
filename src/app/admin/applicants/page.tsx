@@ -116,7 +116,7 @@ const Page = () => {
       accessorKey: "institution",
       header: "Institution Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.institution}</div>
+        <div className="w-full">{row.original?.businesses[0]?.businessName}</div>
       ),
     },
     {
