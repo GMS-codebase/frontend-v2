@@ -149,7 +149,7 @@ const Page = () => {
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
                 <Link
-                  href={`/admin/applicants/${row.original.uuid}`}
+                  href={`/sdf/applicants/${row.original.uuid}`}
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <FiEye size={21} color="#576074" />
@@ -167,7 +167,7 @@ const Page = () => {
   console.log("applicants --> ", applicants);
 
   const ApplicantsWithProfile = applicants?.applicants?.filter(
-    (applicant: any) => applicant.has_completed_profile
+    (applicant: any) => applicant.has_completed_profile,
   );
 
   return (
@@ -196,6 +196,5 @@ const Page = () => {
     </div>
   );
 };
-
 
 export default Page;

@@ -43,14 +43,6 @@ const ApplicantTable = ({ data }: { data: any }) => {
       header: "Email",
       cell: ({ row }) => <div>{row.original?.email}</div>,
     },
-    {
-      accessorKey: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div></div>
-        // <CallsActions setIsCall={setIsOpenCall} call={isOpenCall.call} />
-      ),
-    },
   ];
 
   const applicationColumns: ColumnDef<any>[] = [
@@ -73,14 +65,6 @@ const ApplicantTable = ({ data }: { data: any }) => {
       accessorKey: "stage",
       header: "Stage",
       cell: ({ row }) => <div>{row.original?.currentStage}</div>,
-    },
-    {
-      accessorKey: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div></div>
-        // <CallsActions call={isOpenCall.call} setIsCall={setIsOpenCall} />
-      ),
     },
   ];
 
@@ -112,7 +96,7 @@ const ApplicantTable = ({ data }: { data: any }) => {
           >
             <h1 className="text-base font-medium text-white">Contacts</h1>
           </button>
-          <button
+          {/* <button
             onClick={() => handleTableChange("applications")}
             className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 ${
               activeTable === "applications"
@@ -121,7 +105,7 @@ const ApplicantTable = ({ data }: { data: any }) => {
             }`}
           >
             <h1 className="text-base font-medium text-white">Applications</h1>
-          </button>
+          </button> */}
         </div>
       </div>
       <div className="w-full h-full">
@@ -131,12 +115,12 @@ const ApplicantTable = ({ data }: { data: any }) => {
             data={data?.applicantContacts ?? []}
           />
         )}
-        {activeTable === "applications" && (
+        {/* {activeTable === "applications" && (
           <DataTable
             columns={applicationColumns}
             data={data?.applications ?? []}
           />
-        )}
+        )} */}
       </div>
     </div>
   );
