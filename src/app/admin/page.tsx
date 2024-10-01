@@ -8,13 +8,13 @@ import DashboardLineChart from "@/components/core/charts/DashboardLineChart";
 import Image from "next/image";
 
 const weeklyData = [
-    { day: "Mon", value: 50 },
-    { day: "Tue", value: 75 },
-    { day: "Wed", value: 100 },
-    { day: "Thu", value: 60 },
-    { day: "Fri", value: 90 },
-    { day: "Sat", value: 40 },
-    { day: "Sun", value: 30 },
+    { day: "Mon", completed: 50, ongoing: 20 },
+    { day: "Tue", completed: 75, ongoing: 30 },
+    { day: "Wed", completed: 100, ongoing: 50 },
+    { day: "Thu", completed: 60, ongoing: 25 },
+    { day: "Fri", completed: 90, ongoing: 40 },
+    { day: "Sat", completed: 40, ongoing: 15 },
+    { day: "Sun", completed: 30, ongoing: 10 },
 ];
 
 const lineChartData = {
@@ -47,27 +47,27 @@ const Page = () => {
                     <h2 className="text-lg font-semibold mb-4">
                         Applicants per Priority Sector
                     </h2>
-                    <div className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl  text-primary">
+                    <div className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary">
                         <span className="text-base">Culinary Programs</span>
-                        <span className="text-base  bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                        <span className="text-base bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                             32
                         </span>
                     </div>
-                    <div className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl  text-primary mt-2">
+                    <div className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2">
                         <span className="text-base">Tech Innovators</span>
-                        <span className="text-base  bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                        <span className="text-base bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                             14
                         </span>
                     </div>
-                    <div className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl  text-primary mt-2">
+                    <div className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2">
                         <span className="text-base">Masonry Internships</span>
-                        <span className="text-base  bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                        <span className="text-base bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                             20
                         </span>
                     </div>
-                    <div className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl  text-primary mt-2">
+                    <div className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2">
                         <span className="text-base">Culinary Workshops</span>
-                        <span className="text-base  bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                        <span className="text-base bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                             8
                         </span>
                     </div>
@@ -96,13 +96,13 @@ const Page = () => {
                         <div className="text-primary text-sm space-y-2">
                             <p>
                                 Companies{" "}
-                                <span className="bg-[#005DE91F] px-2  rounded font-medium">
+                                <span className="bg-[#005DE91F] px-2 rounded font-medium">
                                     12345
                                 </span>
                             </p>
                             <p>
                                 Schools{" "}
-                                <span className="bg-[#005DE91F] px-2  rounded font-medium">
+                                <span className="bg-[#005DE91F] px-2 rounded font-medium">
                                     11123
                                 </span>
                             </p>
@@ -114,14 +114,13 @@ const Page = () => {
             <div className="flex items-center gap-2">
                 <div className="w-3/5 bg-white rounded-2xl shadow p-3">
                     <p className="text-xl font-medium">
-                        SDF Graduates Per year
+                        SDF Graduates Per Year
                     </p>
-                    {/* Insert the DashboardLineChart component here */}
                     <DashboardLineChart data={lineChartData} />
                 </div>
                 <div className="w-2/5 bg-white rounded-2xl shadow p-3">
                     <div className="flex items-center justify-between">
-                        <p>Applicants rate analysis</p>
+                        <p>Applicants Rate Analysis</p>
                         <Select
                             name="time"
                             value={"this-week"}
@@ -138,7 +137,7 @@ const Page = () => {
                         <CustomBarChart data={weeklyData} maxValue={100} />
                     </div>
                 </div>
-            </div>z
+            </div>
         </div>
     );
 };
