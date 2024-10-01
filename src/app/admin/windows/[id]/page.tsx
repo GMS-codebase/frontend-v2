@@ -85,7 +85,14 @@ const Page = () => {
               </Menu.Label>
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
-                <div onClick={()=> navigate.push(`/admin/windows/${window?.uuid}/${row.original?.uuid}`)} className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+                <div
+                  onClick={() =>
+                    navigate.push(
+                      `/admin/windows/${window?.uuid}/${row.original?.uuid}`,
+                    )
+                  }
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
                   <FiEye size={21} color="#576074" />
                   View
                 </div>
