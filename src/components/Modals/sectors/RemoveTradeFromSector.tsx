@@ -8,30 +8,32 @@ import deleteSvg from "@/assets/Vectors/delete.svg";
 import { notifications } from "@mantine/notifications";
 import { useDispatch } from "react-redux";
 import { authorizedApi } from "@/utils/api";
+import { useParams } from "next/navigation";
+import { tradesData } from "@/utils/constants/dummy";
 
 const RemoveTradeFromSectorModal = ({
   isOpenModal,
   closeModal,
-  id,
-  sectorId,
+  tradeId,
+  windowId,
 }: {
   isOpenModal: boolean;
   closeModal: () => void;
-  id: string;
-  sectorId?: string;
+  tradeId: string;
+  windowId?: string;
 }) => {
   const dispatch = useDispatch();
-  const [deleteId, setDeleteId] = useState(id);
   const [loading, setLoading] = useState(false);
+  const {id} = useParams()
 
-  useEffect(() => {
-    setDeleteId(id);
-  }, [id]);
 
   const onDelete = () => {
     setLoading(true);
     authorizedApi
-      .delete(`/Sectors/${deleteId}`)
+      .put(`/Sectors/${id}/remove-trade`,{
+        tradeId,
+        windowId
+      })
       .then(() => {
         notifications.show({
           message: `Trade is removed successfully`,

@@ -167,7 +167,7 @@ const Page = () => {
   console.log("applicants --> ", applicants);
 
   const ApplicantsWithProfile = applicants?.applicants?.filter(
-    (applicant: any) => applicant.has_completed_profile
+    (applicant: any) => applicant.has_completed_profile,
   );
 
   return (
@@ -196,6 +196,5 @@ const Page = () => {
     </div>
   );
 };
-
 
 export default Page;
