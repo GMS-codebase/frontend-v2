@@ -68,39 +68,6 @@ import { FiEye } from "react-icons/fi";
 //               </Menu.Item>
 //             </Menu.Dropdown>
 //           </Menu>
-//         </div>
-//       ),
-//     },
-//   ];
-//   const applicants = useSelector((state: any) => state.applicants);
-//   console.log("applicants --> ", applicants);
-//   return (
-//     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-//       <div className="w-full flex justify-between items-center p-4">
-//         <div className="relative w-[25rem]">
-//           <span className="absolute top-4 left-2">
-//             <BiSearch size={25} />
-//           </span>
-//           <input
-//             name="search"
-//             className="w-full p-3 py-4 pl-10 text-base text-black rounded-full bg-[#005DE908] border-none outline-none"
-//             placeholder="Search"
-//           />
-//         </div>
-//       </div>
-//       <div className="w-full h-full">
-//         {applicants?.loading ? (
-//           <TableSkeleton columns={columns} />
-//         ) : applicants.applicants?.length === 0 ? (
-//           <h1>No Applicants Found!</h1>
-//         ) : (
-//           <DataTable columns={columns} data={applicants?.applicants ?? []} />
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
 const Page = () => {
   const columns: ColumnDef<any>[] = [
     {
@@ -112,7 +79,7 @@ const Page = () => {
       accessorKey: "institution",
       header: "Institution Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.institution}</div>
+        <div className="w-full">{row.original?.businesses[0]?.businessName}</div>
       ),
     },
     {
@@ -149,7 +116,7 @@ const Page = () => {
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
                 <Link
-                  href={`/admin/applicants/${row.original.uuid}`}
+                  href={`/sdf/applicants/${row.original.uuid}`}
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <FiEye size={21} color="#576074" />
@@ -167,7 +134,7 @@ const Page = () => {
   console.log("applicants --> ", applicants);
 
   const ApplicantsWithProfile = applicants?.applicants?.filter(
-    (applicant: any) => applicant.has_completed_profile
+    (applicant: any) => applicant.has_completed_profile,
   );
 
   return (
@@ -196,6 +163,5 @@ const Page = () => {
     </div>
   );
 };
-
 
 export default Page;

@@ -65,8 +65,6 @@
 // };
 // export default Page;
 
-
-
 "use client";
 import { BiSearch } from "react-icons/bi";
 import { ColumnDef } from "@tanstack/react-table";
@@ -80,7 +78,6 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { Menu } from "@mantine/core";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
-
 
 const Page = () => {
   const columns: ColumnDef<any>[] = [
@@ -148,7 +145,7 @@ const Page = () => {
   console.log("applicants --> ", applicants);
 
   const ApplicantsWithProfile = applicants?.applicants?.filter(
-    (applicant: any) => applicant.has_completed_profile
+    (applicant: any) => applicant.has_completed_profile,
   );
 
   return (
@@ -177,6 +174,5 @@ const Page = () => {
     </div>
   );
 };
-
 
 export default Page;
