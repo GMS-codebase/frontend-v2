@@ -22,12 +22,22 @@ const Page = () => {
   ] = useDisclosure(false);
   const [isOpenAddRole, { open: openAddRole, close: closeAddRole }] =
     useDisclosure(false);
+  
   const employees = useSelector((state: any) => state.employees);
+  const dispatch = useDispatch();
+  
+  const [searchQuery, setSearchQuery] = useState("");
   const [isOpenEmployee, setIsOpenEmployee] = useState({
     openUpdate: false,
     openDelete: false,
     employee: null,
   });
+
+  // Filter employees by name based on search query
+  const filteredEmployees = employees?.employees?.filter((employee: any) =>
+    employee.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -62,7 +72,7 @@ const Page = () => {
       ),
     },
   ];
-  const dispatch = useDispatch();
+
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
@@ -72,6 +82,8 @@ const Page = () => {
           </span>
           <input
             name="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full p-3 py-4 pl-12 text-base placeholder:text-black text-black rounded-full bg-[#005DE908] border-none outline-none"
             placeholder="Search"
           />
@@ -100,7 +112,7 @@ const Page = () => {
         </div>
       ) : (
         <div className="w-full h-full">
-          <DataTable columns={columns} data={employees?.employees ?? []} />
+          <DataTable columns={columns} data={filteredEmployees ?? []} />
         </div>
       )}
       <AddEmployee

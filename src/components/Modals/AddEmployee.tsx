@@ -158,8 +158,8 @@ const RegisterModal = ({
               err.response?.data?.message ?? "Failed to create employee!",
             color: "red",
           });
-        });
-      setLoading(false);
+        })
+        .finally(() => setLoading(false));
     }
   };
 
@@ -541,7 +541,7 @@ const RegisterModal = ({
                     type="submit"
                     className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                    Create Employee
+                    {loading ? "Creating . . ." : "Create Employee"}
                   </button>
                 </div>
               </form>
