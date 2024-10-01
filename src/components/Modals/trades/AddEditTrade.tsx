@@ -103,7 +103,6 @@ const AddEditTrade = ({
             : "Trade is created successfully",
           color: "blue",
         });
-        console.log(res.data.data);
         dispatch({
           type: defaultData ? UPDATE_TRADE_SUCCESS : ADD_TRADE_SUCCESS,
           payload: res.data?.data,
@@ -118,7 +117,6 @@ const AddEditTrade = ({
       .catch((err) => {
         if (err.response) {
           const errorMessage = err.response.data.message;
-
           if (errorMessage && errorMessage.includes("duplicate key")) {
             notifications.show({
               message: `Failed to ${
@@ -151,7 +149,7 @@ const AddEditTrade = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[45vw] max-h-[90vh] overflow-y-auto  relative bg-white rounded-3xl p-16 flex flex-col items-center">
+      <div className="w-[45vw] max-h-[90vh] overflow-y-auto  relative bg-white rounded-3xl p-16 flex flex-col items-center modal">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeAddEditTrade}
@@ -168,7 +166,7 @@ const AddEditTrade = ({
               : "Provide your Trade details to create a new Trade."}
           </h2>
         </div>
-        <div className="w-full flex flex-col items-center mt-10 overflow-hidden">
+        <div className="w-full flex flex-col items-center mt-10 ">
           <form
             onSubmit={handleSubmit}
             className="w-full flex flex-col gap-2 px-2"
