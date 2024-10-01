@@ -8,13 +8,13 @@ import DashboardLineChart from "@/components/core/charts/DashboardLineChart"; //
 import Image from "next/image";
 
 const weeklyData = [
-  { day: "Mon", value: 50 },
-  { day: "Tue", value: 75 },
-  { day: "Wed", value: 100 },
-  { day: "Thu", value: 60 },
-  { day: "Fri", value: 90 },
-  { day: "Sat", value: 40 },
-  { day: "Sun", value: 30 },
+  { day: "Mon", completed: 50, ongoing: 20 },
+  { day: "Tue", completed: 75, ongoing: 15 },
+  { day: "Wed", completed: 100, ongoing: 25 },
+  { day: "Thu", completed: 60, ongoing: 10 },
+  { day: "Fri", completed: 90, ongoing: 30 },
+  { day: "Sat", completed: 40, ongoing: 5 },
+  { day: "Sun", completed: 30, ongoing: 10 },
 ];
 
 const lineChartData = {
