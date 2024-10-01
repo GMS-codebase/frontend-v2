@@ -79,6 +79,7 @@ const Navbar = () => {
       getEmployees(dispatch);
       getRoles(dispatch);
     } else if (role === "SDF_SECRETARIATE") {
+      getApplicants(dispatch);
       getContracts(dispatch);
       getMinutes(dispatch);
       getApplicationsForContracts(dispatch);

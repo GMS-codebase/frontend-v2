@@ -7,6 +7,7 @@ import {
   GET_SUB_WINDOWS_SUCCESS,
   GET_SUB_WINDOWS_LOADING,
   UPDATE_WINDOW_SUCCESS,
+  UPDATE_SUB_WINDOW_SUCCESS,
   DELETE_WINDOW_SUCCESS,
   ADD_SUB_WINDOW_SUCCESS,
   DELETE_SUB_WINDOW_SUCCESS,
@@ -112,6 +113,25 @@ export default function WindowsReducer(state = initialState, action: Action) {
         isError: false,
         loading: false,
       };
+      case UPDATE_SUB_WINDOW_SUCCESS:
+        return {
+          ...state,
+          windows: state.windows.map((window: any) =>
+            window.uuid == action.payload.windowId
+              ? {
+                  ...window,
+                  subWindows: window.subWindows.map((sub: any) =>
+                    sub.uuid === action.payload.data.uuid
+                      ? { ...sub, ...action.payload.data }
+                      : sub
+                  ),
+                }
+              : window
+          ),
+          error: null,
+          isError: false,
+          loading: false,
+        };
     case DELETE_SUB_WINDOW_SUCCESS:
       return {
         ...state,
