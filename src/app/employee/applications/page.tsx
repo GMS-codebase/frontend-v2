@@ -12,7 +12,7 @@ import { VscEye } from "react-icons/vsc";
 
 const Page = () => {
   const { applications, loading } = useSelector(
-    (state: any) => state.applications,
+    (state: any) => state.applications
   );
   const filtersContainerRef = useRef<HTMLDivElement>(null);
 
@@ -24,8 +24,16 @@ const Page = () => {
 
   const getUniqueValues = (key: string) => {
     return [
-      "All", // Adding the "All" option
-      ...new Set(applications.map((app: any) => app[key]).filter(Boolean)),
+      "All",
+      ...new Set(
+        applications
+          .map((app: any) => {
+            return key
+              .split(".")
+              .reduce((obj, property) => obj?.[property], app);
+          })
+          .filter(Boolean)
+      ),
     ];
   };
 
@@ -34,7 +42,7 @@ const Page = () => {
       stages: getUniqueValues("currentStage"),
       windows: getUniqueValues("window.title"),
     }),
-    [applications],
+    [applications]
   );
 
   const formatStage = (stage: string) => {
@@ -145,7 +153,7 @@ const Page = () => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .filter((app: any) => {
         const { stage, window } = selectedFilters;
@@ -214,9 +222,10 @@ const Page = () => {
           data={filteredApplications}
           loading={loading}
           noDataMessage={
-            filteredApplications.length === 0
-              ? `No applications found matching your search term or filters.`
-              : ""
+            applications?.length === 0
+              ? "No Applications So Far"
+              : filteredApplications.length === 0 &&
+                `No applications found matching your search term or filters.`
           }
         />
       </div>

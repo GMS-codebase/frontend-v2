@@ -27,19 +27,28 @@ const Page = () => {
   });
 
   const { contracts, loading: loadingContracts } = useSelector(
-    (state: any) => state.contracts,
+    (state: any) => state.contracts
+  );
+  const { minutes, loading: loadingMinutes } = useSelector(
+    (state: any) => state.minutes
   );
   const { applicationsForContractSigning: applications, loading } = useSelector(
-    (state: any) => state.applications,
+    (state: any) => state.applications
   );
-  console.log(applications);
-  console.log(contracts);
-  const filteredApplications = applications.filter((app: any) =>
-    app.stages.some(
-      (stage: any) =>
-        stage.name === "CONTRACT_SIGNING" && stage.status === "PENDING",
-    ),
-  );
+  // console.log(applications);
+  // console.log(contracts);
+  // const filteredApplications = applications.filter(
+  //   (app: any) =>
+  //     app.stages.some(
+  //       (stage: any) =>
+  //         stage.name === "CONTRACT_SIGNING" && stage.status === "PENDING"
+  //     ) &&
+  //     minutes.find(
+  //       (min: any) =>
+  //         min.application.uuid === app.uuid &&
+  //         min.approval_status.toUpperCase() === "APPROVED"
+  //     ) !== null
+  // );
   const [loadingDownload, setLoadingDownload] = useState(false);
   const handleDownloadInstructions = async (file: any) => {
     setLoadingDownload(true);
@@ -51,7 +60,7 @@ const Page = () => {
         `/admin/download/contracts/${filename}`,
         {
           responseType: "blob",
-        },
+        }
       );
       const blob = new Blob([response.data], {
         type: response.headers["content-type"],
@@ -180,40 +189,24 @@ const Page = () => {
     },
   ];
   return (
-    <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[25rem]">
-          <span className="absolute top-4 left-2">
-            <BiSearch size={25} />
-          </span>
-          <input
-            name="search"
-            className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
-            placeholder="Search"
-          />
-        </div>
-      </div>
-
-      <div className="w-full h-full mb-10">
+    <div className="w-full flex flex-col  mb-20 pb-10">
+      <div className="w-full h-full mb-10 bg-white rounded-2xl ">
         <h1 className="text-xl p-4 font-bold">Contracts Signed</h1>
-        {loading ? (
-          <TableSkeleton columns={contractColumns} />
-        ) : (
-          <DataTable
-            columns={contractColumns}
-            data={contracts}
-            noDataMessage="No Created Contracts"
-          />
-        )}
+        <DataTable
+          columns={contractColumns}
+          data={contracts}
+          loading={loading}
+          noDataMessage="No Created Contracts"
+        />
       </div>
 
-      <div className="w-full h-full">
+      <div className="w-full h-full bg-white rounded-2xl ">
         <h1 className="text-xl p-4 font-bold">
           Applications Ready For Contract Signing
         </h1>
         <DataTable
           columns={columns}
-          data={filteredApplications}
+          data={applications}
           loading={loading}
           noDataMessage="No Approved Applications"
         />
