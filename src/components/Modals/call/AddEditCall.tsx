@@ -14,6 +14,7 @@ import { Call } from "@/types";
 import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
 import { getCalls } from "@/utils/funcs";
+import { ADD_CALL_SUCCESS, UPDATE_CALL_SUCCESS } from "@/actions/CallsActions";
 
 const AddEditCall = ({
   isOpenAddEditCall,
@@ -34,7 +35,7 @@ const AddEditCall = ({
   const [formData, setFormData] = useState<Partial<Call>>({
     title: "",
     description: "",
-    startDate: "",
+    startDate: '"',
     endDate: "",
     appealDays: "",
     windows: [],
@@ -57,7 +58,7 @@ const AddEditCall = ({
           window.subWindows?.map((subWindow: any) => ({
             value: subWindow?.uuid,
             label: subWindow?.title,
-          })),
+          }))
         ) || [];
     return subWindowData;
   };
@@ -67,14 +68,14 @@ const AddEditCall = ({
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid),
+            selectedSubWindows.includes(subWindow.uuid)
           )
           .flatMap((subWindow: any) =>
             subWindow.sectors?.map((sector: any) => ({
               value: sector?.uuid,
               label: sector?.name,
-            })),
-          ) || [],
+            }))
+          ) || []
     );
     return sectorData;
   };
@@ -87,7 +88,7 @@ const AddEditCall = ({
       setFormData(defaultData);
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
       setSelectedSubWindows(
-        defaultData.subWindows.map((item: any) => item.uuid),
+        defaultData.subWindows.map((item: any) => item.uuid)
       );
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
     }
@@ -137,13 +138,15 @@ const AddEditCall = ({
             },
           })
           .then((res) => {
-            getCalls(dispatch);
+            dispatch({
+              type: defaultData ? UPDATE_CALL_SUCCESS : ADD_CALL_SUCCESS,
+              payload: res.data.data.data,
+            });
             notifications.show({
               message: "Call updated successfully!",
               color: "blue",
             });
             console.log(res.data);
-
             closeAddEditCall();
           })
           .catch((err) => {
@@ -299,7 +302,7 @@ const AddEditCall = ({
                       id="attachment"
                       type="file"
                       name="attachment"
-                      accept=".pdf, .doc, .docx" 
+                      accept=".pdf, .doc, .docx"
                       onChange={handleChange}
                       style={{ display: "none" }}
                       className="content-none"
@@ -459,6 +462,7 @@ const AddEditCall = ({
                         setSelectedSectors([]);
                       }}
                       data={MultiWindowData || []}
+                      value={selectedWindows}
                       placeholder="Select or type in a window"
                       required
                     />
@@ -483,7 +487,7 @@ const AddEditCall = ({
                         setSelectedSectors([]);
                       }}
                       data={MultiSubWindowData || []}
-                      // value={formData.subWindows}
+                      value={selectedSubWindows}
                       placeholder="Select or type in a sub-window"
                       required
                     />
@@ -524,8 +528,11 @@ const AddEditCall = ({
                     disabled={loading}
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                    {loading ? "Loading..." : defaultData ? "Update Call" : "Create Call"}{" "}
-                    
+                    {loading
+                      ? "Loading..."
+                      : defaultData
+                        ? "Update Call"
+                        : "Create Call"}{" "}
                   </button>
                 </div>
               </div>
