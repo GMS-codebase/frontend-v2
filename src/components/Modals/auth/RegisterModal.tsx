@@ -394,49 +394,31 @@ const RegisterModal = ({
                     )}
                   </div>
                 </div>
-
                 <div className="w-full">
                   <label
-                    htmlFor="position"
+                    htmlFor="institution"
                     className="block text-xs font-bold text-gray-700"
                   >
                     Position
                   </label>
-                  <div className="mt-1 pl-4 relative block w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                  <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
                       <HiOutlineMail />
                     </span>
-                    <Select
+                    <input
+                      type="text"
                       name="position"
                       value={formData.position}
-                      onChange={(value: any) => {
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          position: value,
-                        }));
-                        errors.position &&
-                          setErrors((prevErrors) => ({
-                            ...prevErrors,
-                            position: "",
-                          }));
-                      }}
-                      data={[
-                        { value: "CEO", label: "CEO" },
-                        { value: "CTO", label: "CTO" },
-                        {
-                          value: "Marketing Manager",
-                          label: "Marketing Manager",
-                        },
-                      ]}
-                      placeholder="Select your position"
-                      className={`mt-1 block w-full  focus:outline-none sm:text-sm ${
+                      placeholder="Type in position name"
+                      onChange={handleChange}
+                      className={`mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                         errors.position ? "border-red-500" : ""
                       }`}
                     />
+                    {errors.position && (
+                      <p className="text-red-500 text-xs">{errors.position}</p>
+                    )}
                   </div>
-                  {errors.position && (
-                    <p className="text-red-500 text-xs">{errors.position}</p>
-                  )}
                 </div>
 
                 <div className="w-full flex flex-col justify-center mt-4 gap-3">

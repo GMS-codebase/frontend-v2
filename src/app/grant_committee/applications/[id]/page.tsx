@@ -8,7 +8,7 @@ import {
   SolarPen2Bold,
 } from "@/components/core/icons";
 import { useParams } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Comments } from "@/types";
 import FundingQuestions from "@/components/Application/FundingQuestions";
 import { authorizedApi } from "@/utils/api";
@@ -21,16 +21,16 @@ import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
 import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
+import { getApplications } from "@/utils/funcs";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id,
+    (application: any) => application.uuid === id
   )[0];
-  console.log(application);
-  const [loading, setLoading] = useState(false);
+  const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [isOpenAddDue, setIsOpenAddDue] = useState(false);
   const openAddDue = () => setIsOpenAddDue(true);
   const closeAddDue = () => setIsOpenAddDue(false);
@@ -49,9 +49,16 @@ const Page = () => {
       close: closeGrantCommitteeMakeDecision,
     },
   ] = useDisclosure(false);
-  console.log(application);
-  console.log(profile);
+  const dispatch = useDispatch();
 
+  const refetch = async () => {
+    setDecisionsLoading(true);
+    try {
+      await getApplications(dispatch);
+    } finally {
+      setDecisionsLoading(false);
+    }
+  };
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
@@ -118,6 +125,14 @@ const Page = () => {
 
   const [downloading, setDownloading] = useState(false);
 
+  if (applications.loading) {
+    return (
+      <div className="h-full w-full flex items-center justify-center text-sm">
+        Loading ...
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -132,7 +147,7 @@ const Page = () => {
                   `/admin/applicant-details/${id}`,
                   {
                     responseType: "blob",
-                  },
+                  }
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -354,9 +369,7 @@ const Page = () => {
         applicationId={id}
         closeModal={closeGrantCommitteeMakeDecision}
         isOpen={isOpenGrantCommitteeMakeDecision}
-        onMakeDecision={() => {
-          console.log("Decisions made");
-        }}
+        onMakeDecision={refetch}
         trades={application?.trades}
       />
       <EvaluationDetails
@@ -369,7 +382,7 @@ const Page = () => {
                 (decision: any, index: any) => ({
                   evaluator: application.evaluators[index],
                   evaluationDecision: decision,
-                }),
+                })
               )
             : []
         }
