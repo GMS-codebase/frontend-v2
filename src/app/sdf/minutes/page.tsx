@@ -18,11 +18,10 @@ const Page = () => {
   });
 
   const { minutes, loading: loadingMinutes } = useSelector(
-    (state: any) => state.minutes,
+    (state: any) => state.minutes
   );
-  console.log("minutes", minutes);
   const { applicationsForContractSigning: applications, loading } = useSelector(
-    (state: any) => state.applications,
+    (state: any) => state.applications
   );
   const minuteColumns: ColumnDef<any>[] = [
     {
@@ -112,6 +111,8 @@ const Page = () => {
       ),
     },
   ];
+  console.log(minutes);
+  console.log(applications);
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
@@ -125,39 +126,35 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-        {/* Update here to open the modal */}
       </div>
 
       <div className="w-full h-full mb-10">
         <h1 className="text-xl p-4 font-bold">Minutes Uploaded</h1>
-        {loading ? (
-          <TableSkeleton columns={minuteColumns} />
-        ) : minutes === 0 ? (
-          <div className="w-full flex justify-center">
-            <h1>No Created Minutes Negotiations</h1>
-          </div>
-        ) : (
-          <DataTable
-            columns={minuteColumns}
-            data={minutes}
-            noDataMessage="No Created Minutes"
-          />
-        )}
+        <DataTable
+          columns={minuteColumns}
+          data={minutes}
+          loading={loadingMinutes}
+          noDataMessage="No Created Minutes"
+        />
       </div>
 
       <div className="w-full h-full">
         <h1 className="text-xl p-4 font-bold">
           Applications Ready For Minutes Negotiations
         </h1>
-        {loading ? (
-          <TableSkeleton columns={columns} />
-        ) : (
-          <DataTable
-            columns={columns}
-            data={applications}
-            noDataMessage="No Approved Applications"
-          />
-        )}
+        <DataTable
+          columns={columns}
+          loading={loading}
+          data={applications.filter(
+            (app: any) =>
+              minutes.find(
+                (min: any) =>
+                  min.application.uuid == app.uuid &&
+                  min.approval_status.toUpperCase() === "APPROVED"
+              ) === null
+          )}
+          noDataMessage="No Applications ready for minutes negotiation"
+        />
       </div>
 
       {/* AddMinute Modal */}

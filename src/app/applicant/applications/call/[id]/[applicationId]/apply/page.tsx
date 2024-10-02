@@ -15,8 +15,10 @@ import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { IoIosSave } from "react-icons/io";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
+  const router = useRouter();
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
@@ -56,42 +58,109 @@ const Page = () => {
     const submitData = new FormData();
 
     if (data.title) submitData.append("title", data.title);
-    if (data.activitiesAndOutcomes) submitData.append("activitiesAndOutcomes", data.activitiesAndOutcomes);
-    if (data.readinessExecute) submitData.append("readinessExecute", data.readinessExecute);
+    if (data.activitiesAndOutcomes)
+      submitData.append("activitiesAndOutcomes", data.activitiesAndOutcomes);
+    if (data.readinessExecute)
+      submitData.append("readinessExecute", data.readinessExecute);
     if (data.role) submitData.append("role", data.role);
     if (data.institution) submitData.append("institution", data.institution);
-    if (data.trainingProcess && data.trainingProcess.length > 0) submitData.append("trainingProcess", JSON.stringify(data.trainingProcess));
-    if (data.trainingEquipment && data.trainingEquipment.length > 0) submitData.append("trainingEquipment", JSON.stringify(data.trainingEquipment));
-    if (data.identificationEmployee) submitData.append("identificationEmployee", data.identificationEmployee);
-    if (data.staffs && data.staffs.length > 0) submitData.append("staffs", JSON.stringify(data.staffs));
-    if (data.sustainability) submitData.append("sustainability", data.sustainability);
-    if (data.contributionFromApplicant) submitData.append("contributionFromApplicant", data.contributionFromApplicant);
-    if (data.recruitmentTrainerNumber) submitData.append("recruitmentTrainerNumber", data.recruitmentTrainerNumber);
-    if (data.identificationMember) submitData.append("identificationMember", data.identificationMember);
-    if (data.assessmentAndCertificationProcess && data.assessmentAndCertificationProcess.length > 0) submitData.append("assessmentAndCertificationProcess", JSON.stringify(data.assessmentAndCertificationProcess));
-    if (data.assessmentEquipment && data.assessmentEquipment.length > 0) submitData.append("assessmentEquipment", JSON.stringify(data.assessmentEquipment));
-    if (data.recruitmentCandidatesNumber) submitData.append("recruitmentCandidatesNumber", data.recruitmentCandidatesNumber);
-    if (data.assessorsAndFacilitators) submitData.append("assessorsAndFacilitators", data.assessorsAndFacilitators);
+    if (data.trainingProcess && data.trainingProcess.length > 0)
+      submitData.append(
+        "trainingProcess",
+        JSON.stringify(data.trainingProcess)
+      );
+    if (data.trainingEquipment && data.trainingEquipment.length > 0)
+      submitData.append(
+        "trainingEquipment",
+        JSON.stringify(data.trainingEquipment)
+      );
+    if (data.identificationEmployee)
+      submitData.append("identificationEmployee", data.identificationEmployee);
+    if (data.staffs && data.staffs.length > 0)
+      submitData.append("staffs", JSON.stringify(data.staffs));
+    if (data.sustainability)
+      submitData.append("sustainability", data.sustainability);
+    if (data.contributionFromApplicant)
+      submitData.append(
+        "contributionFromApplicant",
+        data.contributionFromApplicant
+      );
+    if (data.recruitmentTrainerNumber)
+      submitData.append(
+        "recruitmentTrainerNumber",
+        data.recruitmentTrainerNumber
+      );
+    if (data.identificationMember)
+      submitData.append("identificationMember", data.identificationMember);
+    if (
+      data.assessmentAndCertificationProcess &&
+      data.assessmentAndCertificationProcess.length > 0
+    )
+      submitData.append(
+        "assessmentAndCertificationProcess",
+        JSON.stringify(data.assessmentAndCertificationProcess)
+      );
+    if (data.assessmentEquipment && data.assessmentEquipment.length > 0)
+      submitData.append(
+        "assessmentEquipment",
+        JSON.stringify(data.assessmentEquipment)
+      );
+    if (data.recruitmentCandidatesNumber)
+      submitData.append(
+        "recruitmentCandidatesNumber",
+        data.recruitmentCandidatesNumber
+      );
+    if (data.assessorsAndFacilitators)
+      submitData.append(
+        "assessorsAndFacilitators",
+        data.assessorsAndFacilitators
+      );
     if (data.contribution) submitData.append("contribution", data.contribution);
-    if (data.roleAttachment) submitData.append("roleAttachment", data.roleAttachment);
-    if (data.institutionAttachment) submitData.append("institutionAttachment", data.institutionAttachment);
-    if (data.trainingManualAttachment) submitData.append("trainingManualAttachment", data.trainingManualAttachment);
-    if (data.trainingEquipmentAttachment) submitData.append("trainingEquipmentAttachment", data.trainingEquipmentAttachment);
-    if (data.previousFinancialReportAttachment) submitData.append("previousFinancialReportAttachment", data.previousFinancialReportAttachment);
+    if (data.roleAttachment)
+      submitData.append("roleAttachment", data.roleAttachment);
+    if (data.institutionAttachment)
+      submitData.append("institutionAttachment", data.institutionAttachment);
+    if (data.trainingManualAttachment)
+      submitData.append(
+        "trainingManualAttachment",
+        data.trainingManualAttachment
+      );
+    if (data.trainingEquipmentAttachment)
+      submitData.append(
+        "trainingEquipmentAttachment",
+        data.trainingEquipmentAttachment
+      );
+    if (data.previousFinancialReportAttachment)
+      submitData.append(
+        "previousFinancialReportAttachment",
+        data.previousFinancialReportAttachment
+      );
     if (data.MOUsAttachment && data.MOUsAttachment.length > 0) {
       data.MOUsAttachment.forEach((file, index) => {
         submitData.append(`MOUsAttachment[${index}]`, file);
       });
     }
-    if (data.assessmentEquipmentAttachment) submitData.append("assessmentEquipmentAttachment", data.assessmentEquipmentAttachment);
-    if (data.budgetSummaryAttachment) submitData.append("budgetSummaryAttachment", data.budgetSummaryAttachment);
+    if (data.assessmentEquipmentAttachment)
+      submitData.append(
+        "assessmentEquipmentAttachment",
+        data.assessmentEquipmentAttachment
+      );
+    if (data.budgetSummaryAttachment)
+      submitData.append(
+        "budgetSummaryAttachment",
+        data.budgetSummaryAttachment
+      );
 
     try {
-      const res = await authorizedApi.post(`/application/fillApplication/${applicationId}`, submitData);
+      const res = await authorizedApi.post(
+        `/application/fillApplication/${applicationId}`,
+        submitData
+      );
       notifications.show({
         message: "Application filled successfully!",
         color: "blue",
       });
+      router.push("/applicant/applications");
     } catch (err: any) {
       notifications.show({
         message: err.response?.data?.message ?? "Failed to submit the form!",
@@ -136,7 +205,13 @@ const Page = () => {
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":
-        return <FundingQuestions data={data} setData={setData} />;
+        return (
+          <FundingQuestions
+            data={data}
+            setData={setData}
+            goToBudget={() => setCurrentComponent("IndicativeBudget")}
+          />
+        );
       case "IndicativeBudget":
         return <BudgetQuestions data={data} setData={setData} />;
       default:
@@ -144,7 +219,7 @@ const Page = () => {
     }
   };
 
-  const allFieldsFilled = Object.values(data).every(value => {
+  const allFieldsFilled = Object.values(data).every((value) => {
     if (Array.isArray(value)) return value.length > 0;
     return value !== "" && value !== undefined;
   });
@@ -165,19 +240,21 @@ const Page = () => {
         <div className="flex font-semibold">
           <div
             onClick={() => setCurrentComponent("Project")}
-            className={`cursor-pointer w-1/2 transition-all duration-200 ${currentComponent === "Project"
+            className={`cursor-pointer w-1/2 transition-all duration-200 ${
+              currentComponent === "Project"
                 ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
                 : ""
-              } py-2.5 flex items-center justify-center`}
+            } py-2.5 flex items-center justify-center`}
           >
             Project Funding Application
           </div>
           <div
             onClick={() => setCurrentComponent("IndicativeBudget")}
-            className={`cursor-pointer w-1/2 transition-all duration-200  ${currentComponent === "IndicativeBudget"
+            className={`cursor-pointer w-1/2 transition-all duration-200  ${
+              currentComponent === "IndicativeBudget"
                 ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
                 : ""
-              } py-2.5 flex items-center justify-center`}
+            } py-2.5 flex items-center justify-center`}
           >
             Indicative Budget
           </div>
@@ -194,13 +271,12 @@ const Page = () => {
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={ loading}
+            disabled={loading}
             className={`w-full px-4 py-2 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 bg-primary text-white
               `}
           >
             {loading ? "Loading..." : "Send Application"}
           </button>
-
         </div>
       </div>
     </div>

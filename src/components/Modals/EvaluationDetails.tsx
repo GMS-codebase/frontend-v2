@@ -34,7 +34,6 @@ const EvaluationDetails = ({
   const handleSave = () => {
     onSaveComment && onSaveComment(text);
   };
-  console.log(evaluations);
   return (
     <>
       <Modal
@@ -56,24 +55,6 @@ const EvaluationDetails = ({
           </div>
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
             <h1 className="text-xl font-bold">Evaluation decision details</h1>
-            {/* <div className="flex gap-6 justify-start items-start">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Decision
-            </p>
-            <p className="mt-2">Selected</p>
-          </div>
-          <div className="flex gap-6 justify-start items-start font-semibold">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Approved number of trainees
-            </p>
-            <p className="mt-2">7</p>
-          </div>
-          <div className="flex gap-6 justify-start items-start">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Approved Trades
-            </p>
-            <p className="mt-2">ART AND CRAFT</p>
-          </div> */}
           </div>
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
             <h1 className="text-xl font-bold">
@@ -82,24 +63,24 @@ const EvaluationDetails = ({
                 (people who made approval and confirmation)
               </span>
             </h1>
-            {[...evaluations].reverse().map((evaluation: any, i: any) => (
+            {evaluations && [...evaluations].reverse().map((evaluation: any, i: any) => (
               <div key={i} className="w-full ">
                 <div className="flex gap-6 justify-start items-start">
                   <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-                    {evaluation?.evaluator?.name}
+                    {evaluation?.employee?.name}
                   </p>
                   {i === 0 && <p className="mt-2">Selected</p>}
                   <p
                     className={` px-4 py-2 rounded-full flex gap-2 justify-start items-start ${
-                      evaluation?.evaluationDecision?.decision === "APPROVED"
-                        ? "bg-green bg-opacity-10 text-green"
-                        : evaluation?.evaluationDecision?.decision ===
+                      evaluation?.decision === "APPROVED"
+                        ? "bg-lime-500  bg-opacity-10 text-green-500"
+                        : evaluation?.decision ===
                             "REJECTED" && "bg-red-500 bg-opacity-10 text-danger"
                     }`}
                   >
-                    {evaluation?.evaluationDecision?.decision}
+                    {evaluation?.decision}
                   </p>
-                  {evaluation?.evaluator?.user_id ==
+                  {evaluation?.employee?.user_id ==
                     profile?.userProfile?.data?.uuid && (
                     <button
                       className="bg-primary p-2 rounded-full text-white font-bold"
@@ -117,7 +98,7 @@ const EvaluationDetails = ({
                     Comment:
                   </label>
                   <textarea
-                    value={evaluation?.evaluationDecision?.comment}
+                    value={evaluation?.comment}
                     disabled
                     rows={2}
                     className={`mt-2 p-2 w-full border border-gray-500  rounded-xl shadow-sm  ${
@@ -127,51 +108,7 @@ const EvaluationDetails = ({
                 </div>
               </div>
             ))}
-            {/* <div className="flex gap-6 justify-start items-start">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Iradukunda Octave
-            </p>
-            <p className="mt-2">Selected</p>
           </div>
-          <div className="flex gap-6 justify-start items-start font-semibold">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Hategekimana Aimable
-            </p>
-            <p className="mt-2">Confirm</p>
-          </div>
-          <div className="flex gap-6 justify-start items-start">
-            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-              Mukankubito Rehema
-            </p>
-            <p className="mt-2">Confirm</p>
-          </div> */}
-          </div>
-          {/* <div className="p-4 mt-5 w-full">
-          <label className="block text-sm text-gray-600" htmlFor="textarea">
-            Comment:
-          </label>
-          <textarea
-            id="textarea"
-            name="textarea"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            readOnly={!isEditing}
-            rows={4}
-            className={`mt-2 p-2 w-full border border-primary rounded-xl shadow-sm ${
-              isEditing ? "bg-white" : "bg-gray-100"
-            }`}
-          />
-        </div>
-        {isEditing && (
-          <div className="flex justify-end gap-4 mt-4">
-            <button
-              onClick={handleSave}
-              className="bg-blue-500 text-white px-4 py-2 rounded-full"
-            >
-              Save
-            </button>
-          </div>
-        )} */}
         </div>
       </Modal>
       <MakeDecision
