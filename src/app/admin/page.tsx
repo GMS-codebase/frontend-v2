@@ -10,7 +10,7 @@ import Image from "next/image";
 import ProgressGender from "./progressGender";
 import BasicGauges from "./BasicGauges";
 import Dash from "./dash";
-import AdminAction from "@/components/Actions/AdminAction.tsx"; // Importing the AdminAction component
+import AdminAction from "@/components/Actions/AdminAction"; // Importing the AdminAction component
 
 // Data for line chart and bar chart
 const lineChartData = [
