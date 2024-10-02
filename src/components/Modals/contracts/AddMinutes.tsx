@@ -1,4 +1,5 @@
 import { authorizedApi } from "@/utils/api";
+import { getMinutes } from "@/utils/funcs";
 import { Modal } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import React, { useState } from "react";
@@ -66,6 +67,7 @@ const AddMinute: React.FC<AddMinuteProps> = ({
           name: "",
           amount: "",
         });
+        getMinutes(dispatch)
         closeAddMinute();
       })
       .catch((err: any) => {
