@@ -52,7 +52,7 @@ export default function CallsReducer(state = initialState, action: Action) {
       return {
         ...state,
         calls: state.calls.map((call: any) =>
-          call.uuid === action.payload.id
+          call.uuid === action.payload.uuid
             ? { ...call, ...action.payload.data }
             : call,
         ),

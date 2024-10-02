@@ -8,10 +8,8 @@ import { useDisclosure } from "@mantine/hooks";
 import AddEmployee from "@/components/Modals/AddEmployee";
 import UpdateEmployee from "@/components/Modals/UpdateEmployee";
 import DeleteEmployee from "@/components/Modals/DeleteEmployee";
-import NewRoleModal from "@/components/Modals/newRole"; // Import the NewRoleModal component
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ClipLoader } from "react-spinners";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 import { getEmployees } from "@/utils/funcs";
 
@@ -20,7 +18,6 @@ const Page = () => {
     isOpenAddEmployee,
     { open: openAddEmployee, close: closeAddEmployee },
   ] = useDisclosure(false);
-  const [isOpenAddRole, { open: openAddRole, close: closeAddRole }] =
     useDisclosure(false);
   
   const employees = useSelector((state: any) => state.employees);
@@ -33,7 +30,6 @@ const Page = () => {
     employee: null,
   });
 
-  // Filter employees by name based on search query
   const filteredEmployees = employees?.employees?.filter((employee: any) =>
     employee.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -99,17 +95,6 @@ const Page = () => {
             </span>
             <h1 className="text-base font-medium text-white">New Employee</h1>
           </button>
-          <button
-            onClick={openAddRole}
-            className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-          >
-            <span className="text-2xl">
-              <SolarUserPlusBold />
-            </span>
-            <h1 className="text-base font-medium text-white">
-              Add another role
-            </h1>
-          </button>
         </div>
       </div>
 
@@ -151,7 +136,6 @@ const Page = () => {
           })
         }
       />
-      <NewRoleModal isOpen={isOpenAddRole} onClose={closeAddRole} />
     </div>
   );
 };

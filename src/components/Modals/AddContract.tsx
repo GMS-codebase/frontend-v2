@@ -26,8 +26,9 @@ const AddContract: React.FC<AddContractProps> = ({
   const [installmentsInput, setInstallmentsInput] = useState(0);
   const [selectedTrade, setSelectedTrade] = useState<any>();
   const [traineesNumber, setTraineesNumber] = useState(0);
+  const [installmentsError, setInstallmentsError] = useState("");
   const [paymentType, setPaymentType] = useState<"instant" | "installments">(
-    "instant",
+    "instant"
   );
   const [formData, setFormData] = useState<{
     name: string;
@@ -44,6 +45,21 @@ const AddContract: React.FC<AddContractProps> = ({
     tradeTrainees: [],
   });
 
+  const validateAddingInstallment = () => {
+    const currentTotal = formData.installments?.reduce(
+      (sum, value) => sum + value,
+      0
+    );
+    console.log((currentTotal || 0 )+ installmentsInput > 100)
+    if ((currentTotal || 0) + installmentsInput > 100) {
+      setInstallmentsError(
+        "The total value of installments can not exceed 100%"
+      );
+      return true;
+    } else {
+      return false;
+    }
+  };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -58,10 +74,9 @@ const AddContract: React.FC<AddContractProps> = ({
         trade_id: trd.trade.uuid,
         numberOfTrainees: trd.trainees,
       })),
-      installments: formData.installments,
+      installments:
+        formData.paymentType === "instant" ? [100] : formData.installments,
     };
-    console.log(newData);
-
     const submitForm = new FormData();
     submitForm.append("name", newData.name);
     submitForm.append("contract", newData.contract as Blob);
@@ -254,14 +269,17 @@ const AddContract: React.FC<AddContractProps> = ({
                           max={100}
                           placeholder="Installment Percentage eg:10%"
                           value={installmentsInput}
-                          onChange={(e) =>
-                            setInstallmentsInput(parseInt(e.target.value))
-                          }
+                          onChange={(e) => {
+                            setInstallmentsInput(parseInt(e.target.value));
+                            installmentsError && setInstallmentsError("");
+                          }}
                           className="flex-grow outline-none bg-transparent py-1"
                         />
                         <span
                           className=" bg-blue-500 bg-opacity-15 py-1 rounded-2xl px-2  flex gap-1"
                           onClick={() => {
+                            setInstallmentsError("");
+                            if (validateAddingInstallment()) return;
                             setFormData((prev) => ({
                               ...prev,
                               installments: [
@@ -287,6 +305,9 @@ const AddContract: React.FC<AddContractProps> = ({
                       </div>
                     ))}
                   </div>
+                  {installmentsError && (
+                    <p className="text-red-500 text-sm">{installmentsError}</p>
+                  )}
                 </div>
               )}
             </div>
@@ -308,7 +329,7 @@ const AddContract: React.FC<AddContractProps> = ({
                           value={selectedTrade}
                           onChange={(value) =>
                             setSelectedTrade(
-                              trades.find((trade) => trade.uuid === value),
+                              trades.find((trade) => trade.uuid === value)
                             )
                           }
                           data={trades.map((trade) => ({
@@ -383,8 +404,7 @@ const AddContract: React.FC<AddContractProps> = ({
                                 ...prev,
                                 tradeTrainees: prev.tradeTrainees.filter(
                                   (trade) =>
-                                    trade.trade.uuid !==
-                                    tradeTrainee.trade.uuid,
+                                    trade.trade.uuid !== tradeTrainee.trade.uuid
                                 ),
                               }))
                             }

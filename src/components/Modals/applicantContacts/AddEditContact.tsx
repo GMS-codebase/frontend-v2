@@ -389,7 +389,32 @@ const AddEditContact = ({
                   )}
                 </div>
 
-                <div className="w-full">
+                <div className="">
+                  <label
+                    htmlFor="position"
+                    className="block text-xs font-bold text-gray-700"
+                  >
+                    Position
+                  </label>
+                  <div className="w-full relative">
+                    <span className="absolute left-2 top-[10px]">
+                      <HiOutlineMail />
+                    </span>
+                    <input
+                      type="text"
+                      name="position"
+                      value={formData.position}
+                      placeholder="Type in your position"
+                      onChange={handleChange}
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    />
+                  </div>
+                  {errors.position && (
+                    <p className="text-red-500 text-sm">{errors.position}</p>
+                  )}
+                </div>
+
+                {/* <div className="w-full">
                   <label
                     htmlFor="position"
                     className="block text-xs font-bold text-gray-700"
@@ -429,7 +454,7 @@ const AddEditContact = ({
                   {errors.position && (
                     <p className="text-red-500 text-sm">{errors.position}</p>
                   )}
-                </div>
+                </div> */}
                 <div className="w-full flex justify-center mt-4 gap-4 font-bold">
                   <button
                     onClick={prevStep}
