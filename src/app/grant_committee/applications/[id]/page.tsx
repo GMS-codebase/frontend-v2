@@ -30,6 +30,7 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id
   )[0];
+  const [nullifyLoading, setNullifyLoading] = useState<any>();
   const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [isOpenAddDue, setIsOpenAddDue] = useState(false);
   const openAddDue = () => setIsOpenAddDue(true);
@@ -124,6 +125,19 @@ const Page = () => {
   };
 
   const [downloading, setDownloading] = useState(false);
+  const nullifyDecision = async (stageId: string, type: string) => {
+    setNullifyLoading(type);
+    try {
+      await authorizedApi.patch(`/applications/nullify/${id}/${stageId}`);
+    } catch (error) {
+      console.log(error);
+      notifications.show({
+        message: "Error while nullifying the decisions",
+        color: "red",
+      });
+    }
+    setNullifyLoading(null);
+  };
 
   if (applications.loading) {
     return (
@@ -197,22 +211,21 @@ const Page = () => {
             )}
           </div>
         </div>
-
         <div className="flex justify-between items-center mt-5">
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
-            <div className="flex gap-6 justify-start items-start">
+            <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
                 Application number
               </p>
               <p>{application?.applicationNumber}</p>
             </div>
-            <div className="flex gap-6 justify-start items-start font-semibold">
+            <div className="flex gap-3 justify-start items-center font-semibold">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
                 Finished answering
               </p>
               <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
             </div>
-            <div className="flex gap-6 justify-start items-start">
+            <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
                 Submitted
               </p>
@@ -220,19 +233,19 @@ const Page = () => {
             </div>
           </div>
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
-            <div className="flex gap-6 justify-start items-start">
+            <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Call
               </p>
               <p>{application?.call.title}</p>
             </div>
-            <div className="flex gap-6 justify-start items-start">
+            <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Window
               </p>
               <p>{application?.window.title}</p>
             </div>
-            <div className="flex gap-6 justify-start items-start">
+            <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Application submission deadline
               </p>
@@ -240,7 +253,6 @@ const Page = () => {
             </div>
           </div>
         </div>
-
         <div className="flex flex-col gap-6 mt-6">
           <div className="flex flex-col gap-4 font-semibold">
             <h2 className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start w-fit">
@@ -248,37 +260,30 @@ const Page = () => {
             </h2>
             <div>{application?.description}</div>
           </div>
-
-          <div className="flex px-4 py-2 gap-2 bg-[#005DE9] rounded-full text-white items-center justify-start w-fit">
-            <span>
-              <SolarFolder2Bold />
-            </span>
-            <div className="">Apply for Appeal</div>
-          </div>
         </div>
       </div>
-      <div className="flex gap-2 p-5">
+      <div className="flex gap-6">
         <div className="flex bg-white rounded-2xl w-[70%] gap-4 p-5">
           <div className="flex flex-col gap-4 w-full">
             <div className="font-semibold text-2xl">Questions and answers</div>
             <div className="flex font-semibold">
               <div
                 onClick={() => setCurrentComponent("Project")}
-                className={`cursor-pointer w-1/2 ${
+                className={`cursor-pointer w-1/2 transition-all duration-200 ${
                   currentComponent === "Project"
-                    ? "bg-[#005DE9] bg-opacity-10"
+                    ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
                     : ""
-                } h-16 flex items-center justify-center`}
+                } py-2.5  flex items-center justify-center`}
               >
                 Project Funding Application
               </div>
               <div
                 onClick={() => setCurrentComponent("IndicativeBudget")}
-                className={`cursor-pointer w-1/2 ${
+                className={`cursor-pointer w-1/2 transition-all duration-200  ${
                   currentComponent === "IndicativeBudget"
-                    ? "bg-[#C50000] bg-opacity-10"
+                    ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
                     : ""
-                } h-16 flex items-center justify-center`}
+                } py-2.5  flex items-center justify-center`}
               >
                 Indicative Budget
               </div>
@@ -303,6 +308,24 @@ const Page = () => {
                 >
                   View details
                 </button>
+                {!application?.grantCommitteeDecision && (
+                  <button
+                    onClick={() => {
+                      nullifyDecision(
+                        application.stages.find(
+                          (stage: any) => stage.name === "EVALUATION"
+                        ).uuid,
+                        "EVALUATION"
+                      );
+                    }}
+                    disabled={nullifyLoading === "EVALUATION"}
+                    className="font-medium bg-red-100 text-red-500 w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                  >
+                    {nullifyLoading === "EVALUATION"
+                      ? "Loading..."
+                      : "Nullify Decision"}
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -331,6 +354,24 @@ const Page = () => {
                 >
                   View details
                 </button>
+                {!application?.grantCommitteeDecision && (
+                  <button
+                    onClick={() => {
+                      nullifyDecision(
+                        application.stages.find(
+                          (stage: any) => stage.name === "DUE_DILIGENCY"
+                        ).uuid,
+                        "DUE_DILIGENCY"
+                      );
+                    }}
+                    disabled={nullifyLoading === "DUE_DILIGENCY"}
+                    className="font-medium bg-red-100 text-red-500 w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                  >
+                    {nullifyLoading === "DUE_DILIGENCY"
+                      ? "Loading..."
+                      : "Nullify Decision"}
+                  </button>
+                )}
               </div>
             )}
           </div>
