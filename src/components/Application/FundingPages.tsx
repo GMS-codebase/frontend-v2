@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Select } from "@mantine/core";
 import { Comments } from "@/types";
+import { handleDownloadFile } from "@/utils/funcs";
 
 export const FirstPageQuestions = ({
   data,
@@ -22,6 +23,7 @@ export const FirstPageQuestions = ({
     }
   };
 
+  console.log("data --> ",data);
   return (
     <>
       <div className="">
@@ -574,7 +576,7 @@ export function TrainingEquipments({
         </p>
         {commentsData ? (
           <>
-            <button className="bg-primary rounded-2xl py-2 w-full text-white font-bold">
+            <button onClick={()=> handleDownloadFile(data?.trainingEquipmentAttachment, "applications")} className="bg-primary rounded-2xl py-2 w-full text-white font-bold">
               Download File
             </button>
             {renderCommentsSection("trainingEquipmentAttachmentComment")}
@@ -885,7 +887,7 @@ export const LastPageQuestions = ({
         </p>
         {commentData ? (
           <>
-            <button className="bg-primary rounded-2xl  my-2 text-white font-semibold w-full py-2">
+            <button onClick={()=> handleDownloadFile(data?.previousFinancialReportAttachment, "applications")} className="bg-primary rounded-2xl  my-2 text-white font-semibold w-full py-2">
               Download File
             </button>
             <div className="mt-2">
