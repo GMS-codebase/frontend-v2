@@ -145,6 +145,7 @@ const RegisterModal = ({
             message: "Employee is created successfully",
             color: "blue",
           });
+          console.log(res.data.data);
           dispatch({
             type: ADD_EMPLOYEE_SUCCESS,
             payload: res.data?.data?.data,
