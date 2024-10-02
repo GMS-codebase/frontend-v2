@@ -91,9 +91,9 @@ function Page() {
           className="opacity-90"
         />
       </div>
-    <div className="absolute top-0 left-0 w-full  py-6 flex items-center justify-between z-20">
+    <div className="absolute top-0 left-0 w-full px py-6 flex items-center justify-between z-20">
   {/* Buttons on the left */}
-  <div className="flex gap-4 ml-5">
+  <div className="flex gap-4 ml-0">
     <button
       className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
       onClick={openLogin}
