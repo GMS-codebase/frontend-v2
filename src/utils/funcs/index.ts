@@ -22,7 +22,7 @@ import {
   GET_WINDOWS_SUCCESS,
 } from "@/actions/WindowsActions";
 import { Dispatch, UnknownAction } from "redux";
-import { authorizedApi } from "../api";
+import { authorizedApi, unauthorizedApi } from "../api";
 import {
   GET_APPLICATIONS_ERROR,
   GET_APPLICATIONS_LOADING,
@@ -177,6 +177,35 @@ export const getRoles = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_ROLES_ERROR, payload: err.response.data.error });
     });
 };
+
+
+export const handleDownloadFile = async (file: any, service:string) => {
+  try {
+    console.log("attachment --> ", file);
+    const filename = file.split("/").pop();
+    console.log(filename);
+    const response = await unauthorizedApi.get(
+      `/admin/download/${service}/${filename}`,
+      {
+        responseType: "blob",
+      },
+    );
+    const blob = new Blob([response.data], {
+      type: response.headers["content-type"],
+    });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename || "downloaded-file.jpg";
+    document.body.appendChild(link);
+    link.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(link);
+  } catch (error) {
+    console.error("Error downloading file:", error);
+  };
+}
+
 export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_APPLICANTS_LOADING });
   authorizedApi
@@ -358,5 +387,5 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
         type: GET_PROFILE_ERROR,
         payload: err.response.data.error ?? "Network Error",
       });
-    });
-};
+    })
+}
