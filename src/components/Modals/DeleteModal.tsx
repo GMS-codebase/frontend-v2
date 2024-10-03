@@ -26,7 +26,7 @@ const actionMappings = {
   subwindows: DELETE_SUB_WINDOW_SUCCESS,
   calls: DELETE_CALL_SUCCESS,
   contacts: DELETE_CONTACT_SUCCESS,
-  employees:DELETE_EMPLOYEE_SUCCESS
+  employees: DELETE_EMPLOYEE_SUCCESS,
 };
 
 const routeMappings = {
@@ -36,7 +36,7 @@ const routeMappings = {
   subwindows: "/sub-window",
   calls: "/call",
   contacts: "/contacts",
-  employees:"/employees"
+  employees: "/employees",
 };
 const DeleteModal = ({
   isOpenModal,
@@ -49,7 +49,14 @@ const DeleteModal = ({
   closeModal: () => void;
   id: string;
   windowId?: string;
-  type: "windows" | "sectors" | "trades" | "subwindows" | "calls" | "contacts" | "employees";
+  type:
+    | "windows"
+    | "sectors"
+    | "trades"
+    | "subwindows"
+    | "calls"
+    | "contacts"
+    | "employees";
 }) => {
   const dispatch = useDispatch();
   const [deleteId, setDeleteId] = useState(id);

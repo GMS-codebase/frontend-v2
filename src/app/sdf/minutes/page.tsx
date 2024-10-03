@@ -18,10 +18,10 @@ const Page = () => {
   });
 
   const { minutes, loading: loadingMinutes } = useSelector(
-    (state: any) => state.minutes
+    (state: any) => state.minutes,
   );
   const { applicationsForContractSigning: applications, loading } = useSelector(
-    (state: any) => state.applications
+    (state: any) => state.applications,
   );
   const minuteColumns: ColumnDef<any>[] = [
     {
@@ -150,8 +150,8 @@ const Page = () => {
               minutes.find(
                 (min: any) =>
                   min.application.uuid == app.uuid &&
-                  min.approval_status.toUpperCase() === "APPROVED"
-              ) === null
+                  min.approval_status.toUpperCase() === "APPROVED",
+              ) === null,
           )}
           noDataMessage="No Applications ready for minutes negotiation"
         />

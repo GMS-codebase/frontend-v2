@@ -29,7 +29,7 @@ const Page = () => {
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id
+    (application: any) => application.uuid === id,
   )[0];
   const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -201,7 +201,7 @@ const Page = () => {
                   `/admin/applicant-details/${id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -369,7 +369,7 @@ const Page = () => {
                 !application?.evaluationDecisions.find(
                   (ev: any) =>
                     ev.employee.user_id.toString() ===
-                    profile?.userProfile?.data.uuid.toString()
+                    profile?.userProfile?.data.uuid.toString(),
                 ) && (
                   <>
                     <div
@@ -418,7 +418,7 @@ const Page = () => {
                     !application.duediligencyDecisions.find(
                       (dec: any) =>
                         dec?.employee?.user_id ===
-                        profile?.userProfile?.data.uuid
+                        profile?.userProfile?.data.uuid,
                     ) && (
                       <div
                         onClick={() => {

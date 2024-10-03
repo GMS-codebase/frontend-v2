@@ -12,7 +12,7 @@ import { VscEye } from "react-icons/vsc";
 
 const Page = () => {
   const { applications, loading } = useSelector(
-    (state: any) => state.applications
+    (state: any) => state.applications,
   );
   const filtersContainerRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +32,7 @@ const Page = () => {
               .split(".")
               .reduce((obj, property) => obj?.[property], app);
           })
-          .filter(Boolean)
+          .filter(Boolean),
       ),
     ];
   };
@@ -42,7 +42,7 @@ const Page = () => {
       stages: getUniqueValues("currentStage"),
       windows: getUniqueValues("window.title"),
     }),
-    [applications]
+    [applications],
   );
 
   const formatStage = (stage: string) => {
@@ -153,7 +153,7 @@ const Page = () => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase())
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
       )
       .filter((app: any) => {
         const { stage, window } = selectedFilters;
