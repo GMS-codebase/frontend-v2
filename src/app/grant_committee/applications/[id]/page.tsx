@@ -28,7 +28,7 @@ const Page = () => {
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id
+    (application: any) => application.uuid === id,
   )[0];
   const [nullifyLoading, setNullifyLoading] = useState<any>();
   const [decisionsLoading, setDecisionsLoading] = useState(false);
@@ -161,7 +161,7 @@ const Page = () => {
                   `/admin/applicant-details/${id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -313,9 +313,9 @@ const Page = () => {
                     onClick={() => {
                       nullifyDecision(
                         application.stages.find(
-                          (stage: any) => stage.name === "EVALUATION"
+                          (stage: any) => stage.name === "EVALUATION",
                         ).uuid,
-                        "EVALUATION"
+                        "EVALUATION",
                       );
                     }}
                     disabled={nullifyLoading === "EVALUATION"}
@@ -359,9 +359,9 @@ const Page = () => {
                     onClick={() => {
                       nullifyDecision(
                         application.stages.find(
-                          (stage: any) => stage.name === "DUE_DILIGENCY"
+                          (stage: any) => stage.name === "DUE_DILIGENCY",
                         ).uuid,
-                        "DUE_DILIGENCY"
+                        "DUE_DILIGENCY",
                       );
                     }}
                     disabled={nullifyLoading === "DUE_DILIGENCY"}
@@ -423,7 +423,7 @@ const Page = () => {
                 (decision: any, index: any) => ({
                   evaluator: application.evaluators[index],
                   evaluationDecision: decision,
-                })
+                }),
               )
             : []
         }

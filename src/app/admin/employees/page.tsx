@@ -18,11 +18,11 @@ const Page = () => {
     isOpenAddEmployee,
     { open: openAddEmployee, close: closeAddEmployee },
   ] = useDisclosure(false);
-    useDisclosure(false);
-  
+  useDisclosure(false);
+
   const employees = useSelector((state: any) => state.employees);
   const dispatch = useDispatch();
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpenEmployee, setIsOpenEmployee] = useState({
     openUpdate: false,
@@ -31,7 +31,7 @@ const Page = () => {
   });
 
   const filteredEmployees = employees?.employees?.filter((employee: any) =>
-    employee.name.toLowerCase().includes(searchQuery.toLowerCase())
+    employee.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const columns: ColumnDef<any>[] = [

@@ -24,15 +24,14 @@ const RemoveTradeFromSectorModal = ({
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const {id} = useParams()
-
+  const { id } = useParams();
 
   const onDelete = () => {
     setLoading(true);
     authorizedApi
-      .put(`/Sectors/${id}/remove-trade`,{
+      .put(`/Sectors/${id}/remove-trade`, {
         tradeId,
-        windowId
+        windowId,
       })
       .then(() => {
         notifications.show({
