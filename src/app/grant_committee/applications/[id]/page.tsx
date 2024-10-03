@@ -128,7 +128,8 @@ const Page = () => {
   const nullifyDecision = async (stageId: string, type: string) => {
     setNullifyLoading(type);
     try {
-      await authorizedApi.patch(`/applications/nullify/${id}/${stageId}`);
+      await authorizedApi.patch(`/application/nullify/${id}/${stageId}`);
+      refetch();
     } catch (error) {
       console.log(error);
       notifications.show({
@@ -313,7 +314,7 @@ const Page = () => {
                     onClick={() => {
                       nullifyDecision(
                         application.stages.find(
-                          (stage: any) => stage.name === "EVALUATION"
+                          (stage: any) => stage.stage === "EVALUATION"
                         ).uuid,
                         "EVALUATION"
                       );
@@ -359,7 +360,7 @@ const Page = () => {
                     onClick={() => {
                       nullifyDecision(
                         application.stages.find(
-                          (stage: any) => stage.name === "DUE_DILIGENCY"
+                          (stage: any) => stage.stage === "DUE_DILIGENCY"
                         ).uuid,
                         "DUE_DILIGENCY"
                       );
@@ -375,30 +376,34 @@ const Page = () => {
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-2">
-            <h3 className="font-semibold">Grant Committee</h3>
-            <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-              {!application?.grantCommitteeDecision ? "Pending" : "Finished"}
-            </div>
+          {application?.stages?.find(
+            (stage: any) => stage.stage === "GRANT_COMMITTEE"
+          ) && (
+            <div className="flex flex-col gap-2">
+              <h3 className="font-semibold">Grant Committee</h3>
+              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
+                {!application?.grantCommitteeDecision ? "Pending" : "Finished"}
+              </div>
 
-            {application?.grantCommitteeDecision ? (
-              <div className="flex flex-col gap-2 mt-4">
-                <button
-                  onClick={openGrantCommitteeDetails}
-                  className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+              {application?.grantCommitteeDecision ? (
+                <div className="flex flex-col gap-2 mt-4">
+                  <button
+                    onClick={openGrantCommitteeDetails}
+                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                  >
+                    View details
+                  </button>
+                </div>
+              ) : (
+                <div
+                  onClick={openGrantCommitteeMakeDecision}
+                  className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
                 >
-                  View details
-                </button>
-              </div>
-            ) : (
-              <div
-                onClick={openGrantCommitteeMakeDecision}
-                className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
-              >
-                <p>Make a decision</p>
-              </div>
-            )}
-          </div>
+                  <p>Make a decision</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
       <DueDiligenceModal
@@ -416,17 +421,7 @@ const Page = () => {
       <EvaluationDetails
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
-        evaluations={
-          application?.evaluationDecisions?.length &&
-          application?.evaluators?.length
-            ? application.evaluationDecisions.map(
-                (decision: any, index: any) => ({
-                  evaluator: application.evaluators[index],
-                  evaluationDecision: decision,
-                })
-              )
-            : []
-        }
+        evaluations={application?.evaluationDecisions}
       />
     </div>
   );
