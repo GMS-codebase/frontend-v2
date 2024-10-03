@@ -23,7 +23,7 @@ export const FirstPageQuestions = ({
     }
   };
 
-  console.log("data --> ",data);
+  console.log("data --> ", data);
   return (
     <>
       <div className="">
@@ -380,8 +380,18 @@ export const TrainingProgress = ({
         </p>
         {commentsData ? (
           <>
-            <button onClick={()=> handleDownloadFile(data?.trainingManualAttachment, "applications")}  className={`w-full h-12 ${data?.trainingManualAttachment ? "bg-primary":"bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}>
-              {data?.trainingManualAttachment ? "Download File":"No Manual Found"}
+            <button
+              onClick={() =>
+                handleDownloadFile(
+                  data?.trainingManualAttachment,
+                  "applications",
+                )
+              }
+              className={`w-full h-12 ${data?.trainingManualAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
+            >
+              {data?.trainingManualAttachment
+                ? "Download File"
+                : "No Manual Found"}
             </button>
             {renderCommentsSection("trainingManualComment")}
           </>
@@ -576,8 +586,18 @@ export function TrainingEquipments({
         </p>
         {commentsData ? (
           <>
-            <button onClick={()=> handleDownloadFile(data?.trainingEquipmentAttachment, "applications")} className={`w-full h-12 ${data?.trainingEquipmentAttachment ? "bg-primary":"bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}>
-              {data?.trainingEquipmentAttachment ? "Download File":"No Attachment Found!"}
+            <button
+              onClick={() =>
+                handleDownloadFile(
+                  data?.trainingEquipmentAttachment,
+                  "applications",
+                )
+              }
+              className={`w-full h-12 ${data?.trainingEquipmentAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
+            >
+              {data?.trainingEquipmentAttachment
+                ? "Download File"
+                : "No Attachment Found!"}
             </button>
             {renderCommentsSection("trainingEquipmentAttachmentComment")}
           </>
@@ -632,7 +652,7 @@ export const Staff = ({
   commentData?: any;
   setCommentData?: any;
 }) => {
-  console.log(data.staffs)
+  console.log(data.staffs);
   const [staffInputs, setStaffInputs] = useState({
     number: "",
     position: "",
@@ -663,7 +683,11 @@ export const Staff = ({
     if (!validateStaffInputs()) {
       return;
     }
-    handleArrayOfObjectsChange("staffs", staffInputs, data?.staffs?.length || 0);
+    handleArrayOfObjectsChange(
+      "staffs",
+      staffInputs,
+      data?.staffs?.length || 0,
+    );
     setStaffInputs({
       number: "",
       position: "",
@@ -756,27 +780,25 @@ export const Staff = ({
               )}
             </div>
             <div className="relative">
-             <Select
-  name="available"
-  value={staffInputs.available}
-  onChange={(value: string | null) =>
-    setStaffInputs((prev) => ({
-      ...prev,
-      available: value ?? "", // Handle `null` case by assigning an empty string
-    }))
-  }
-  data={[
-    { value: "available", label: "Available" },
-    { value: "hired", label: "To Be Hired" },
-  ]}
-  className="mt-1 block w-full pl-5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-  placeholder="Select Availability"
-/>
+              <Select
+                name="available"
+                value={staffInputs.available}
+                onChange={(value: string | null) =>
+                  setStaffInputs((prev) => ({
+                    ...prev,
+                    available: value ?? "", // Handle `null` case by assigning an empty string
+                  }))
+                }
+                data={[
+                  { value: "available", label: "Available" },
+                  { value: "hired", label: "To Be Hired" },
+                ]}
+                className="mt-1 block w-full pl-5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Select Availability"
+              />
 
               {errors.available && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.available}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.available}</p>
               )}
             </div>
           </div>
@@ -795,7 +817,7 @@ export const Staff = ({
           <table className="w-full mt-4 border-collapse border border-gray-200">
             <thead>
               <tr className="bg-gray-100">
-              <th className="border p-2">Position</th>
+                <th className="border p-2">Position</th>
                 <th className="border p-2">Number of Staff</th>
                 <th className="border p-2">Qualification</th>
                 <th className="border p-2">Status</th>
@@ -807,7 +829,9 @@ export const Staff = ({
                   <td className="border p-2">{item.position}</td>
                   <td className="border p-2">{item.number}</td>
                   <td className="border p-2">{item.qualification}</td>
-                  <td className="border p-2">{item.available?.toUpperCase()}</td>
+                  <td className="border p-2">
+                    {item.available?.toUpperCase()}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -887,8 +911,18 @@ export const LastPageQuestions = ({
         </p>
         {commentData ? (
           <>
-            <button onClick={()=> handleDownloadFile(data?.previousFinancialReportAttachment, "applications")} className="bg-primary rounded-2xl  my-2 text-white font-semibold w-full py-2">
-             {data?.previousFinancialReportAttachment ? "Download File":"No Report Found!"}
+            <button
+              onClick={() =>
+                handleDownloadFile(
+                  data?.previousFinancialReportAttachment,
+                  "applications",
+                )
+              }
+              className="bg-primary rounded-2xl  my-2 text-white font-semibold w-full py-2"
+            >
+              {data?.previousFinancialReportAttachment
+                ? "Download File"
+                : "No Report Found!"}
             </button>
             <div className="mt-2">
               <h4 className="text-md font-semibold text-gray-700">Comment</h4>

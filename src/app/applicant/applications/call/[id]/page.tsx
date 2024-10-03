@@ -29,7 +29,7 @@ const Page = () => {
   const { myApplications } = useSelector((state: any) => state.applications);
   console.log(myApplications);
   const existingApplication = myApplications.find(
-    (app: any) => app?.call?.uuid === callId
+    (app: any) => app?.call?.uuid === callId,
   );
   const [
     isOpenCreateProfile,
@@ -54,7 +54,7 @@ const Page = () => {
       openCreateApplication();
     } else {
       router.push(
-        `/applicant/applications/call/${callId}/${existingApplication.uuid}/apply`
+        `/applicant/applications/call/${callId}/${existingApplication.uuid}/apply`,
       );
     }
   };
@@ -69,7 +69,7 @@ const Page = () => {
         `/admin/download/calls/${filename}`,
         {
           responseType: "blob",
-        }
+        },
       );
       const blob = new Blob([response.data], {
         type: response.headers["content-type"],

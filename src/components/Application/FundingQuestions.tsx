@@ -37,7 +37,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     const fetchApplicationData = async () => {
       try {
         const response = await authorizedApi.get(
-          `/application/get-application/${applicationId}`
+          `/application/get-application/${applicationId}`,
         );
         const applicationData = response.data.data.data;
         const trades: any = applicationData.trades.map((trade: any) => ({
@@ -72,7 +72,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const handleArrayOfObjectsChange = (
     inputName: string,
     value: any,
-    index: number
+    index: number,
   ) => {
     setData &&
       setData((prev: any) => {
