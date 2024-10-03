@@ -49,6 +49,7 @@ const MinutesActions = ({
               </div>
             </Menu.Item>
           )}
+          {isNew && <p>No Actions</p>}
         </Menu.Dropdown>
       </Menu>
 
