@@ -1,5 +1,6 @@
 import { Comments } from "@/types";
 import { ApplicationQuestions } from "@/types/application";
+import { handleDownloadFile } from "@/utils/funcs";
 import React, { useState, ChangeEvent } from "react";
 
 interface FundingQuestionsProps {
@@ -56,8 +57,8 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
         </p>
         {commentData ? (
           <div className="mt-2">
-            <button className="w-full h-12 bg-primary text-white rounded-full">
-              Download Budget Summary
+            <button disabled={data?.budgetSummaryAttachment === null} onClick={()=> handleDownloadFile(data?.budgetSummaryAttachment, "applications")} className={`w-full h-12 ${data?.budgetSummaryAttachment ? "bg-primary":"bg-gray-600"} text-white rounded-full`}>
+              {data?.budgetSummaryAttachment ? "Download Budget Summary" : "No Budget Summary Attached"}
             </button>
             <div className="mt-2">
               <p>Comment</p>

@@ -126,7 +126,7 @@ const Page = () => {
             />
           </div>
           <div className="my-5">
-            <CustomBarChart data={weeklyData} maxValue={100} />
+            {/* <CustomBarChart data={weeklyData} maxValue={100} /> */}
           </div>
         </div>
       </div>

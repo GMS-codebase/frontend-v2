@@ -18,6 +18,7 @@ interface FundingQuestionsProps {
   setData?: React.Dispatch<React.SetStateAction<any>>;
   comments?: Comments;
   setComments?: React.Dispatch<React.SetStateAction<Comments>>;
+  goToBudget?: () => void;
 }
 
 const FundingQuestions: React.FC<FundingQuestionsProps> = ({
@@ -25,13 +26,12 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   setData,
   comments,
   setComments,
+  goToBudget,
 }) => {
   const { applicationId } = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
-
-
 
   useEffect(() => {
     const fetchApplicationData = async () => {
@@ -140,6 +140,8 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
+    } else if (currentStep === steps.length - 1 && goToBudget) {
+      goToBudget();
     }
   };
 
@@ -151,19 +153,22 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
           onClick={handlePrev}
           disabled={currentStep === 0}
           className={`px-10 py-2 rounded-full text-white ${
-            currentStep === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-primary hover:bg-blue-600"
+            currentStep === 0
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-primary hover:bg-blue-600"
           }`}
         >
           Prev
         </button>
         <button
           onClick={handleNext}
-          disabled={currentStep === steps.length - 1}
           className={`px-10 py-2 rounded-full text-white ${
-            currentStep === steps.length - 1 ? "bg-gray-400 cursor-not-allowed" : "bg-primary hover:bg-blue-600"
+            currentStep === steps.length - 1
+              ? "bg-primary hover:bg-blue-600"
+              : "bg-primary hover:bg-blue-600"
           }`}
         >
-          Next
+          {currentStep === steps.length - 1 ? "Go to Budget" : "Next"}
         </button>
       </div>
     </div>

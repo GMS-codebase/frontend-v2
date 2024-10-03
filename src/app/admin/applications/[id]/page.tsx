@@ -105,7 +105,7 @@ const Page = () => {
       case "IndicativeBudget":
         return (
           <BudgetQuestions
-            data={application?.projectFunding}
+            data={application?.budget}
             commentData={commentsData}
             setCommentData={setCommentsData}
           />
