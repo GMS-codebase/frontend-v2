@@ -25,14 +25,14 @@ function Page() {
   const { calls, loading: loadingCalls } = useSelector(
     (state: any) => state.calls,
   );
-const sortedCalls = calls
-  ? [...calls]
-      .filter((call: any) => new Date(call.endDate) > new Date()) 
-      .sort(
-        (a: any, b: any) =>
-          new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
-      )
-  : [];
+  const sortedCalls = calls
+    ? [...calls]
+        .filter((call: any) => new Date(call.endDate) > new Date())
+        .sort(
+          (a: any, b: any) =>
+            new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
+        )
+    : [];
 
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
@@ -58,8 +58,6 @@ const sortedCalls = calls
     }
   }, [token, openSetPassword]);
 
-
-
   return (
     <div className="relative h-screen">
       <div className="absolute inset-0 bg-white opacity-60 z-10"></div>
@@ -73,28 +71,25 @@ const sortedCalls = calls
           className="opacity-90"
         />
       </div>
-    <div className="absolute top-0 left-0 w-full  py-6 flex items-center justify-between z-20">
-  
-  <div className="flex gap-4 ml-5">
-    <button
-      className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
-      onClick={openLogin}
-    >
-      Login
-    </button>
-    <button
-      className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
-      onClick={openRegister}
-    >
-      Register
-    </button>
-  </div>
-  <div className="ml-auto">
-    <Image src={logo} alt="logo" width={360} height={360} />
-  </div>
-</div>
-
-
+      <div className="absolute top-0 left-0 w-full  py-6 flex items-center justify-between z-20">
+        <div className="flex gap-4 ml-5">
+          <button
+            className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
+            onClick={openLogin}
+          >
+            Login
+          </button>
+          <button
+            className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
+            onClick={openRegister}
+          >
+            Register
+          </button>
+        </div>
+        <div className="ml-auto">
+          <Image src={logo} alt="logo" width={360} height={360} />
+        </div>
+      </div>
 
       <div className="absolute flex justify-center flex-col items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-30 w-full">
         <h1 className="font-extrabold text-black text-2xl w-[50%] md:text-4xl">
