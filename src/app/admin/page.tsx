@@ -40,7 +40,7 @@ const transformedData = {
             backgroundColor: "#FF5722",
             fill: true,
         },
-    ],
+    ]
 };
 
 const Page = () => {
@@ -56,12 +56,9 @@ const Page = () => {
     const totalApplicants = companyApplicants + schoolApplicants;
       const [selectedOption, setSelectedOption] = useState("Option 1");
 
-    // Handle change event for select input
      const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedOption(event.target.value);
     };
-
-
 
     return (
         <div className="w-full text-secondaryText pb-20 overflow-y-auto">
