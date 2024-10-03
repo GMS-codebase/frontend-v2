@@ -1,9 +1,7 @@
-type BarChartData = {
-  day: string;
-  value: number;
-};
-
 interface CustomBarChartProps {
-  data: BarChartData[];
+  data: {
+    day: string;
+    value: number;
+  }[];
   maxValue: number;
 }

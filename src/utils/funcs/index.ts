@@ -137,7 +137,7 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/Sectors")
     .then((res) => {
-      console.log(res.data.data.data)
+      console.log(res.data.data.data);
       dispatch({ type: GET_SECTORS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
@@ -178,8 +178,7 @@ export const getRoles = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 
-
-export const handleDownloadFile = async (file: any, service:string) => {
+export const handleDownloadFile = async (file: any, service: string) => {
   try {
     console.log("attachment --> ", file);
     const filename = file.split("/").pop();
@@ -203,8 +202,8 @@ export const handleDownloadFile = async (file: any, service:string) => {
     document.body.removeChild(link);
   } catch (error) {
     console.error("Error downloading file:", error);
-  };
-}
+  }
+};
 
 export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_APPLICANTS_LOADING });
@@ -387,5 +386,5 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
         type: GET_PROFILE_ERROR,
         payload: err.response.data.error ?? "Network Error",
       });
-    })
-}
+    });
+};

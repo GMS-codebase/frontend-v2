@@ -27,13 +27,13 @@ const Page = () => {
   });
 
   const { contracts, loading: loadingContracts } = useSelector(
-    (state: any) => state.contracts
+    (state: any) => state.contracts,
   );
   const { minutes, loading: loadingMinutes } = useSelector(
-    (state: any) => state.minutes
+    (state: any) => state.minutes,
   );
   const { applicationsForContractSigning: applications, loading } = useSelector(
-    (state: any) => state.applications
+    (state: any) => state.applications,
   );
   // console.log(applications);
   // console.log(contracts);
@@ -60,7 +60,7 @@ const Page = () => {
         `/admin/download/contracts/${filename}`,
         {
           responseType: "blob",
-        }
+        },
       );
       const blob = new Blob([response.data], {
         type: response.headers["content-type"],

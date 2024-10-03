@@ -4,70 +4,70 @@ import { Gauge } from "@mui/x-charts/Gauge";
 import Typography from "@mui/material/Typography";
 
 export default function BasicGauges() {
-    // Sample values for companies and schools
-    const companyApplicants = 60;
-    const schoolApplicants = 80;
+  // Sample values for companies and schools
+  const companyApplicants = 60;
+  const schoolApplicants = 80;
 
-    // Total number of applicants
-    const totalApplicants = companyApplicants + schoolApplicants;
+  // Total number of applicants
+  const totalApplicants = companyApplicants + schoolApplicants;
 
-    // Calculate the percentage of companies
-    const companyPercentage = (companyApplicants / totalApplicants) * 100;
+  // Calculate the percentage of companies
+  const companyPercentage = (companyApplicants / totalApplicants) * 100;
 
-    return (
-        <Stack direction="column" spacing={2} alignItems="center">
-            <div style={{ position: "relative", display: "inline-block" }}>
-                <Gauge
-                    width={200}
-                    height={200}
-                    value={companyPercentage} // Value as percentage of companies
-                    startAngle={-90}
-                    endAngle={90}
-                    sx={{
-                        "& .MuiGauge-progress": { stroke: "#005DE9" }, // Blue for companies
-                        "& .MuiGauge-track": { stroke: "#65E500" }, // Cream for schools
-                    }}
-                />
-                {/* Display total applicants in the center */}
-                <Typography
-                    variant="h6"
-                    component="div"
-                    style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                    }}
-                >
-                    {totalApplicants}
-                </Typography>
-            </div>
+  return (
+    <Stack direction="column" spacing={2} alignItems="center">
+      <div style={{ position: "relative", display: "inline-block" }}>
+        <Gauge
+          width={200}
+          height={200}
+          value={companyPercentage} // Value as percentage of companies
+          startAngle={-90}
+          endAngle={90}
+          sx={{
+            "& .MuiGauge-progress": { stroke: "#005DE9" }, // Blue for companies
+            "& .MuiGauge-track": { stroke: "#65E500" }, // Cream for schools
+          }}
+        />
+        {/* Display total applicants in the center */}
+        <Typography
+          variant="h6"
+          component="div"
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          {totalApplicants}
+        </Typography>
+      </div>
 
-            {/* Legend to explain colors */}
-            <Stack direction="row" spacing={2} alignItems="center">
-                <div style={{ display: "flex", alignItems: "center" }}>
-                    <div
-                        style={{
-                            width: 20,
-                            height: 20,
-                            backgroundColor: "#005DE9",
-                            marginRight: 8,
-                        }}
-                    />
-                    <Typography>Companies</Typography>
-                </div>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                    <div
-                        style={{
-                            width: 20,
-                            height: 20,
-                            backgroundColor: "#65E500",
-                            marginRight: 8,
-                        }}
-                    />
-                    <Typography>Schools</Typography>
-                </div>
-            </Stack>
-        </Stack>
-    );
+      {/* Legend to explain colors */}
+      <Stack direction="row" spacing={2} alignItems="center">
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div
+            style={{
+              width: 20,
+              height: 20,
+              backgroundColor: "#005DE9",
+              marginRight: 8,
+            }}
+          />
+          <Typography>Companies</Typography>
+        </div>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div
+            style={{
+              width: 20,
+              height: 20,
+              backgroundColor: "#65E500",
+              marginRight: 8,
+            }}
+          />
+          <Typography>Schools</Typography>
+        </div>
+      </Stack>
+    </Stack>
+  );
 }
