@@ -25,12 +25,15 @@ function Page() {
   const { calls, loading: loadingCalls } = useSelector(
     (state: any) => state.calls,
   );
-  const sortedCalls = calls
-    ? [...calls].sort(
+const sortedCalls = calls
+  ? [...calls]
+      .filter((call: any) => new Date(call.endDate) > new Date()) 
+      .sort(
         (a: any, b: any) =>
           new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
       )
-    : [];
+  : [];
+
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
   const [isOpenLogin, { open: openLogin, close: closeLogin }] =
@@ -55,28 +58,7 @@ function Page() {
     }
   }, [token, openSetPassword]);
 
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleSubscribe = () => {
-    if (!email) {
-      return;
-    }
-    setLoading(true);
-    unauthorizedApi
-      .post("/subscriptions/subscribe", { email })
-      .then((res) => {
-        console.log(res.data);
-        notifications.show({
-          message: "SUbscribed Successfully!",
-          color: "blue",
-        });
-      })
-      .catch((e) => {
-        console.log("error", e);
-      })
-      .finally(() => setLoading(false));
-  };
 
   return (
     <div className="relative h-screen">
@@ -92,7 +74,7 @@ function Page() {
         />
       </div>
     <div className="absolute top-0 left-0 w-full  py-6 flex items-center justify-between z-20">
-  {/* Buttons on the left */}
+  
   <div className="flex gap-4 ml-5">
     <button
       className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
@@ -107,8 +89,6 @@ function Page() {
       Register
     </button>
   </div>
-  
-  {/* Logo on the right */}
   <div className="ml-auto">
     <Image src={logo} alt="logo" width={360} height={360} />
   </div>
