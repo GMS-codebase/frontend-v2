@@ -19,7 +19,7 @@ import { useParams } from "next/navigation";
 import AddSectorTrade from "@/components/Modals/sectors/AddSectorTrade";
 import RemoveTradeFromSectorModal from "@/components/Modals/sectors/RemoveTradeFromSector";
 import AddEditSector from "@/components/Modals/sectors/AddEditSector";
-import { Trade, Sector, Window,TradeSector } from "@/types";
+import { Trade, Sector, Window, TradeSector } from "@/types";
 import { authorizedApi } from "@/utils/api";
 
 const Page = () => {
@@ -30,9 +30,12 @@ const Page = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedTrade, setSelectedTrade] = useState<TradeSector | null>(null);
 
-  const [isAddSector, { open: openAddSector, close: closeAddSector }] = useDisclosure(false);
-  const [isRemoveTrade, { open: openRemoveTrade, close: closeRemoveTrade }] = useDisclosure(false);
-  const [isUpdateSector, { open: openUpdateSector, close: closeUpdateSector }] = useDisclosure(false);
+  const [isAddSector, { open: openAddSector, close: closeAddSector }] =
+    useDisclosure(false);
+  const [isRemoveTrade, { open: openRemoveTrade, close: closeRemoveTrade }] =
+    useDisclosure(false);
+  const [isUpdateSector, { open: openUpdateSector, close: closeUpdateSector }] =
+    useDisclosure(false);
 
   // Redux selectors
   const sectors = useSelector((state: any) => state.sectors);
@@ -49,7 +52,7 @@ const Page = () => {
     setError(null);
     try {
       const response = await authorizedApi.get(`/Sectors/${id}/trades`);
-      console.log(response.data.data)
+      console.log(response.data.data);
       setTrades(response.data.data.data);
     } catch (err: any) {
       console.error("Error fetching trades:", err);
@@ -67,75 +70,87 @@ const Page = () => {
   const filteredTrades = useMemo(() => {
     return trades?.filter(
       (tradeSector) =>
-        tradeSector.trade.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tradeSector.trade.shortname.toLowerCase().includes(searchQuery.toLowerCase())
+        tradeSector.trade.title
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        tradeSector.trade.shortname
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()),
     );
   }, [trades, searchQuery]);
 
-  const columns: ColumnDef<TradeSector>[] = useMemo(() => [
-    {
-      accessorKey: "name",
-      header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original.trade.title}</div>,
-    },
-    {
-      accessorKey: "shortname",
-      header: "Short Name",
-      cell: ({ row }) => <div className="w-full">{row.original.trade.shortname}</div>,
-    },
-    {
-      accessorKey: "description",
-      header: "Description",
-      cell: ({ row }) => (
-        <div className="truncate">
-          {row.original.trade.description?.length > 50
-            ? `${row.original.trade.description?.slice(0, 50)}...`
-            : row.original.trade.description}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "window",
-      header: "Window",
-      cell: ({ row }) => <div>{row.original.theWindow.title}</div>,
-    },
-    {
-      accessorKey: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <Menu shadow="lg" width={300}>
-          <Menu.Target>
-            <button
-              style={{
-                background: "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-              }}
-              className="p-3 rounded-full border text-white hover:bg-red-100"
-            >
-              <HiDotsHorizontal size={25} color="white" />
-            </button>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Label>
-              <h1 className="text-lg">Actions</h1>
-            </Menu.Label>
-            <Menu.Divider />
-            <Menu.Item>
-              <div
-                className="w-full py-1 flex text-base items-center gap-3 text-[#576074] cursor-pointer"
-                onClick={() => {
-                  setSelectedTrade(row.original);
-                  openRemoveTrade();
+  const columns: ColumnDef<TradeSector>[] = useMemo(
+    () => [
+      {
+        accessorKey: "name",
+        header: "Name",
+        cell: ({ row }) => (
+          <div className="w-full">{row.original.trade.title}</div>
+        ),
+      },
+      {
+        accessorKey: "shortname",
+        header: "Short Name",
+        cell: ({ row }) => (
+          <div className="w-full">{row.original.trade.shortname}</div>
+        ),
+      },
+      {
+        accessorKey: "description",
+        header: "Description",
+        cell: ({ row }) => (
+          <div className="truncate">
+            {row.original.trade.description?.length > 50
+              ? `${row.original.trade.description?.slice(0, 50)}...`
+              : row.original.trade.description}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "window",
+        header: "Window",
+        cell: ({ row }) => <div>{row.original.theWindow.title}</div>,
+      },
+      {
+        accessorKey: "actions",
+        header: "Actions",
+        cell: ({ row }) => (
+          <Menu shadow="lg" width={300}>
+            <Menu.Target>
+              <button
+                style={{
+                  background:
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
                 }}
+                className="p-3 rounded-full border text-white hover:bg-red-100"
               >
-                <RiDeleteBinLine size={21} color="#576074" />
-                Remove
-              </div>
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-      ),
-    },
-  ], [openRemoveTrade]);
+                <HiDotsHorizontal size={25} color="white" />
+              </button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>
+                <h1 className="text-lg">Actions</h1>
+              </Menu.Label>
+              <Menu.Divider />
+              <Menu.Item>
+                <div
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074] cursor-pointer"
+                  onClick={() => {
+                    setSelectedTrade(row.original);
+                    openRemoveTrade();
+                  }}
+                >
+                  <RiDeleteBinLine size={21} color="#576074" />
+                  Remove
+                </div>
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        ),
+      },
+    ],
+    [openRemoveTrade],
+  );
 
   return (
     <div className="bg-white rounded-2xl py-10">
@@ -160,7 +175,7 @@ const Page = () => {
                 <span>Title</span>
               </div>
               <div className="flex flex-col gap-6 justify-start items-start">
-                <h1 className="font-bold text-xl">{sector?.name   || "N/A"}</h1>
+                <h1 className="font-bold text-xl">{sector?.name || "N/A"}</h1>
               </div>
             </div>
             {/* Sector Description */}
@@ -170,7 +185,9 @@ const Page = () => {
                 <span>Description</span>
               </div>
               <div className="flex flex-col gap-6 justify-start items-start">
-                <h1 className="font-semibold">{sector?.description || "N/A"}</h1>
+                <h1 className="font-semibold">
+                  {sector?.description || "N/A"}
+                </h1>
               </div>
             </div>
           </div>
@@ -235,17 +252,17 @@ const Page = () => {
         </div>
         <AddSectorTrade
           isOpenAddSectorTrade={isAddSector}
-          closeAddSectorTrade={()=>{
-            fetchTrades()
-            closeAddSector()
+          closeAddSectorTrade={() => {
+            fetchTrades();
+            closeAddSector();
           }}
         />
         <RemoveTradeFromSectorModal
           tradeId={selectedTrade?.trade?.uuid || ""}
           windowId={selectedTrade?.theWindow.uuid || ""}
-          closeModal={()=>{
-            fetchTrades()
-            closeRemoveTrade()
+          closeModal={() => {
+            fetchTrades();
+            closeRemoveTrade();
           }}
           isOpenModal={isRemoveTrade}
         />

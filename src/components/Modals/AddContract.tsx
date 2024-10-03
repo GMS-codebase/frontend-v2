@@ -28,7 +28,7 @@ const AddContract: React.FC<AddContractProps> = ({
   const [traineesNumber, setTraineesNumber] = useState(0);
   const [installmentsError, setInstallmentsError] = useState("");
   const [paymentType, setPaymentType] = useState<"instant" | "installments">(
-    "instant"
+    "instant",
   );
   const [formData, setFormData] = useState<{
     name: string;
@@ -48,12 +48,12 @@ const AddContract: React.FC<AddContractProps> = ({
   const validateAddingInstallment = () => {
     const currentTotal = formData.installments?.reduce(
       (sum, value) => sum + value,
-      0
+      0,
     );
-    console.log((currentTotal || 0 )+ installmentsInput > 100)
+    console.log((currentTotal || 0) + installmentsInput > 100);
     if ((currentTotal || 0) + installmentsInput > 100) {
       setInstallmentsError(
-        "The total value of installments can not exceed 100%"
+        "The total value of installments can not exceed 100%",
       );
       return true;
     } else {
@@ -329,7 +329,7 @@ const AddContract: React.FC<AddContractProps> = ({
                           value={selectedTrade}
                           onChange={(value) =>
                             setSelectedTrade(
-                              trades.find((trade) => trade.uuid === value)
+                              trades.find((trade) => trade.uuid === value),
                             )
                           }
                           data={trades.map((trade) => ({
@@ -404,7 +404,8 @@ const AddContract: React.FC<AddContractProps> = ({
                                 ...prev,
                                 tradeTrainees: prev.tradeTrainees.filter(
                                   (trade) =>
-                                    trade.trade.uuid !== tradeTrainee.trade.uuid
+                                    trade.trade.uuid !==
+                                    tradeTrainee.trade.uuid,
                                 ),
                               }))
                             }

@@ -67,7 +67,7 @@ const AddMinute: React.FC<AddMinuteProps> = ({
           name: "",
           amount: "",
         });
-        getMinutes(dispatch)
+        getMinutes(dispatch);
         closeAddMinute();
       })
       .catch((err: any) => {
