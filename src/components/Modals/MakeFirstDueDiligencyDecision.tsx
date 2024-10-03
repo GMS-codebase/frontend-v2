@@ -26,9 +26,11 @@ const MakeFirstDueDiligencyDecision = ({
   isOpenModal,
   closeModal,
   application,
+  afterMakeDecision,
 }: {
   isOpenModal: boolean;
   closeModal: () => void;
+  afterMakeDecision: () => void;
   application: any;
 }) => {
   const [loading, setLoading] = useState(false);
@@ -46,7 +48,7 @@ const MakeFirstDueDiligencyDecision = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ) => {
     const { name, value, files } = e.target as HTMLInputElement;
     setFormData((prevData) => ({
@@ -91,7 +93,7 @@ const MakeFirstDueDiligencyDecision = ({
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        },
+        }
       );
 
       notifications.show({
@@ -108,7 +110,7 @@ const MakeFirstDueDiligencyDecision = ({
         decision: "",
         attachment: null,
       });
-
+      afterMakeDecision();
       closeModal();
     } catch (error: any) {
       console.error(error);
@@ -143,7 +145,7 @@ const MakeFirstDueDiligencyDecision = ({
             Due Diligence Decision Details
           </h1>
         </div>
-        <div className="w-full flex flex-col items-center mt-10 overflow-hidden">
+        <div className="w-full flex flex-col items-center mt-10 overflow-hidden modal">
           <form
             onSubmit={handleSubmit}
             className="w-full overflow-y-auto flex flex-col gap-4 px-2"
@@ -225,7 +227,7 @@ const MakeFirstDueDiligencyDecision = ({
               (field, idx) => (
                 <div key={idx} className="py-1 w-full">
                   <label
-                    className="block text-sm text-gray-600"
+                    className="block text-sm text-gray-600 capitalize"
                     htmlFor={field}
                   >
                     {field.replace(/([A-Z])/g, " $1")}:
@@ -236,10 +238,10 @@ const MakeFirstDueDiligencyDecision = ({
                     value={formData[field as keyof FormData] as string}
                     onChange={handleChange}
                     rows={4}
-                    className="mt-2 p-2 w-full border border-primary resize-none rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
+                    className="mt-1 block w-full p-6 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
                   />
                 </div>
-              ),
+              )
             )}
 
             <div className="py-4 w-full">

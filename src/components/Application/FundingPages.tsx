@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Select } from "@mantine/core";
 import { Comments } from "@/types";
+import { handleDownloadFile } from "@/utils/funcs";
 
 export const FirstPageQuestions = ({
   data,
@@ -22,6 +23,7 @@ export const FirstPageQuestions = ({
     }
   };
 
+  console.log("data --> ",data);
   return (
     <>
       <div className="">
@@ -378,8 +380,8 @@ export const TrainingProgress = ({
         </p>
         {commentsData ? (
           <>
-            <button className="bg-primary rounded-2xl  my-2 text-white font-semibold w-full py-2">
-              Download File
+            <button onClick={()=> handleDownloadFile(data?.trainingManualAttachment, "applications")}  className={`w-full h-12 ${data?.trainingManualAttachment ? "bg-primary":"bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}>
+              {data?.trainingManualAttachment ? "Download File":"No Manual Found"}
             </button>
             {renderCommentsSection("trainingManualComment")}
           </>
@@ -574,8 +576,8 @@ export function TrainingEquipments({
         </p>
         {commentsData ? (
           <>
-            <button className="bg-primary rounded-2xl py-2 w-full text-white font-bold">
-              Download File
+            <button onClick={()=> handleDownloadFile(data?.trainingEquipmentAttachment, "applications")} className={`w-full h-12 ${data?.trainingEquipmentAttachment ? "bg-primary":"bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}>
+              {data?.trainingEquipmentAttachment ? "Download File":"No Attachment Found!"}
             </button>
             {renderCommentsSection("trainingEquipmentAttachmentComment")}
           </>
@@ -885,8 +887,8 @@ export const LastPageQuestions = ({
         </p>
         {commentData ? (
           <>
-            <button className="bg-primary rounded-2xl  my-2 text-white font-semibold w-full py-2">
-              Download File
+            <button onClick={()=> handleDownloadFile(data?.previousFinancialReportAttachment, "applications")} className="bg-primary rounded-2xl  my-2 text-white font-semibold w-full py-2">
+             {data?.previousFinancialReportAttachment ? "Download File":"No Report Found!"}
             </button>
             <div className="mt-2">
               <h4 className="text-md font-semibold text-gray-700">Comment</h4>

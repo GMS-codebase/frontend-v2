@@ -136,7 +136,7 @@ const Page = () => {
           />
         </div>
 
-        {contacts.contacts.length < 1 && <button
+        {contacts.myContacts.length < 1 && <button
           onClick={openAddEditContact}
           className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
         >
