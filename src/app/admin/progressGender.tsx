@@ -58,7 +58,6 @@ const ProgressGender: React.FC<ProgressGenderProps> = ({
                 width={200}
                 height={200}
                 value={malePercentage} // Using boys percentage for gauge value
-                displayValue={false} // Hide default value text
                 cornerRadius="50%"
                 sx={(theme) => ({
                     [`& .${gaugeClasses.valueText}`]: {
