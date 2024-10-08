@@ -233,7 +233,11 @@ const Page = () => {
 
                       {/* Adding AdminAction component */}
                   </div>
-                  <Dash col1="Sectors" col2="Applicants" data={applicantData} />
+                  <Dash
+                      col1="Number of Applications "
+                      col2="Number of Applicants"
+                      data={applicantData}
+                  />
               </div>
               <div className="bg-white p-6 rounded-2sm">
                   <div className="flex justify-between items-center">
@@ -295,7 +299,11 @@ const Page = () => {
 
                       {/* Adding AdminAction component */}
                   </div>
-                  <Dash col1="Sectors" col2="Applicants" data={applicantData} />
+                  <Dash
+                      col1="Approved Applications "
+                      col2="Rejected Applicants"
+                      data={applicantData}
+                  />
               </div>
               <div className="bg-white p-6 rounded-2xl">
                   <div className="flex justify-between  items-center">
