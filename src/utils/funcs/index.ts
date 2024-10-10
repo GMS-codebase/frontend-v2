@@ -9,6 +9,7 @@ import {
   GET_SECTORS_SUCCESS,
 } from "@/actions/SectorsActions";
 import {
+  GET_SECTOR_TRADES_SUCCESS,
   GET_TRADES_ERROR,
   GET_TRADES_LOADING,
   GET_TRADES_SUCCESS,
@@ -121,7 +122,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -144,6 +145,23 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_SECTORS_ERROR, payload: err.response.data.error });
     });
 };
+
+export const getSectorTrades = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_SECTORS_LOADING });
+  authorizedApi
+    .get("/Sectors/sector/trades")
+    .then((res) => {
+      console.log(res.data.data.data);
+      dispatch({
+        type: GET_SECTOR_TRADES_SUCCESS,
+        payload: res.data.data.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_SECTORS_ERROR, payload: err.response.data.error });
+    });
+};
+
 export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_TRADES_LOADING });
   authorizedApi
@@ -187,7 +205,7 @@ export const handleDownloadFile = async (file: any, service: string) => {
       `/admin/download/${service}/${filename}`,
       {
         responseType: "blob",
-      },
+      }
     );
     const blob = new Blob([response.data], {
       type: response.headers["content-type"],
@@ -270,7 +288,7 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplicationsForContracts = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
