@@ -35,7 +35,7 @@ const Page = () => {
     sectors?.sectors?.filter(
       (sector: any) =>
         sector?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        sector?.shortname?.toLowerCase().includes(searchQuery.toLowerCase()),
+        sector?.shortname?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
   const columns: ColumnDef<any>[] = [
     {
@@ -154,7 +154,11 @@ const Page = () => {
           columns={columns}
           data={filteredSectors}
           loading={sectors.loading}
-          noDataMessage={"No Sectors Available"}
+          noDataMessage={
+            searchQuery
+              ? `No trades matching ${searchQuery} found`
+              : "No Sectors Available"
+          }
         />
       </div>
       <AddEditSector

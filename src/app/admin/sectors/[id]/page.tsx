@@ -14,13 +14,14 @@ import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
 import { Menu } from "@mantine/core";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "next/navigation";
 import AddSectorTrade from "@/components/Modals/sectors/AddSectorTrade";
 import RemoveTradeFromSectorModal from "@/components/Modals/sectors/RemoveTradeFromSector";
 import AddEditSector from "@/components/Modals/sectors/AddEditSector";
 import { Trade, Sector, Window, TradeSector } from "@/types";
 import { authorizedApi } from "@/utils/api";
+import { getSectors } from "@/utils/funcs";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,12 +41,12 @@ const Page = () => {
   // Redux selectors
   const sectors = useSelector((state: any) => state.sectors);
   const windows = useSelector((state: any) => state.windows);
+  const dispatch = useDispatch();
 
   // Find the current sector
   const sector: Sector | undefined = useMemo(() => {
     return sectors.sectors.find((sec: Sector) => sec.uuid === id);
   }, [sectors, id]);
-
   // Fetch trades using useEffect
   const fetchTrades = async () => {
     setLoading(true);
@@ -63,6 +64,7 @@ const Page = () => {
   };
   useEffect(() => {
     if (id) {
+      getSectors(dispatch);
       fetchTrades();
     }
   }, [id]);
@@ -75,7 +77,7 @@ const Page = () => {
           .includes(searchQuery.toLowerCase()) ||
         tradeSector.trade.shortname
           .toLowerCase()
-          .includes(searchQuery.toLowerCase()),
+          .includes(searchQuery.toLowerCase())
     );
   }, [trades, searchQuery]);
 
@@ -149,7 +151,7 @@ const Page = () => {
         ),
       },
     ],
-    [openRemoveTrade],
+    [openRemoveTrade]
   );
 
   return (

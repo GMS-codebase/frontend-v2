@@ -45,7 +45,7 @@ const CreateApplication = ({
   }, [call]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -93,7 +93,7 @@ const CreateApplication = ({
           description: formData.description,
           sectors: formData.sectors,
           trades: formData.trades,
-        },
+        }
       );
       notifications.show({
         title: "Success",
@@ -101,7 +101,7 @@ const CreateApplication = ({
         color: "green",
       });
       router.push(
-        `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`,
+        `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`
       );
       closeCreatingApplication();
     } catch (error: any) {
@@ -114,6 +114,9 @@ const CreateApplication = ({
     setLoading(false);
   };
   const windows = useSelector((state: any) => state.windows.windows);
+  const sectors = useSelector((state: any) => state.sectors.sectors);
+
+  console.log(call);
 
   const windowOptions =
     call?.windows.map((window: any) => ({
@@ -126,7 +129,7 @@ const CreateApplication = ({
         .filter((subWindow: any) =>
           windows
             .find((win: any) => win.uuid === formData.window)
-            ?.subWindows.some((subWin: any) => subWin.uuid === subWindow.uuid),
+            ?.subWindows.some((subWin: any) => subWin.uuid === subWindow.uuid)
         )
         .map((subWindow: any) => ({
           label: subWindow.title,
@@ -135,15 +138,18 @@ const CreateApplication = ({
     : [];
 
   const sectorOptions = formData.subwindow
-    ? call.sectors
+    ? sectors
+        .filter((sec: any) =>
+          call.sectors.some((sect: any) => sect.uuid === sec.uuid)
+        )
         .filter((sector: any) =>
           windows.map((window: any) =>
             window.subWindows
               .find((subWin: any) => subWin.uuid === formData.subwindow)
               ?.sectors.some(
-                (subWindowSector: any) => subWindowSector.uuid === sector.uuid,
-              ),
-          ),
+                (subWindowSector: any) => subWindowSector.uuid === sector.uuid
+              )
+          )
         )
         .map((sector: any) => ({
           label: sector.name,
@@ -152,14 +158,22 @@ const CreateApplication = ({
     : [];
 
   const tradesOptions =
-    call?.sectors
-      .filter((sector: any) => formData.sectors.includes(sector.uuid))
-      .flatMap((sector: any) =>
-        sector.trades.map((trade: any) => ({
-          label: trade.title,
-          value: trade.uuid,
-        })),
-      ) || [];
+    [
+      ...new Map(
+        sectors
+          .filter((sec: any) =>
+            call?.sectors.some((sect: any) => sect.uuid === sec.uuid)
+          )
+          .filter((sector: any) => formData?.sectors?.includes(sector.uuid))
+          .flatMap((sector: any) =>
+            sector?.trades?.map((trade: any) => ({
+              label: trade.trade.title,
+              value: trade.trade.uuid,
+            }))
+          )
+          .map((trade: any) => [trade.value, trade]) 
+      ).values(),
+    ] ;
 
   return (
     <Modal
@@ -200,7 +214,7 @@ const CreateApplication = ({
                         window: value,
                         subwindow: null,
                         sectors: [],
-                      }) as any,
+                      }) as any
                   )
                 }
                 data={windowOptions}
@@ -233,7 +247,7 @@ const CreateApplication = ({
                         ...prevData,
                         subwindow: value,
                         sectors: [],
-                      }) as any,
+                      }) as any
                   )
                 }
                 data={subwindowOptions}
@@ -294,7 +308,7 @@ const CreateApplication = ({
                     trades: value,
                   }))
                 }
-                data={tradesOptions}
+                data={tradesOptions as any}
                 placeholder="Select or type in a trade"
                 required
               />
