@@ -7,20 +7,13 @@ import {
   SolarBookmarkBold,
 } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
-import { HiDotsHorizontal } from "react-icons/hi";
 import { DataTable } from "@/components/core/data-table";
-import { tradesData as data } from "@/utils/constants/dummy";
 import { CiEdit, CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
 import AddEditWindowSubwindow from "@/components/Modals/windows/AddEditWindowSubwindow";
-import UpdateWindow from "@/components/Modals/UpdateWindow";
 import { useSelector } from "react-redux";
 import { useParams } from "next/navigation";
-import { authorizedApi } from "@/utils/api";
 import AddEditWindow from "@/components/Modals/windows/AddEditWindow";
-import { Menu } from "@mantine/core";
-import { FiEye } from "react-icons/fi";
-import { RiDeleteBinLine } from "react-icons/ri";
 import DeleteModal from "@/components/Modals/DeleteModal";
 
 const Page = () => {
