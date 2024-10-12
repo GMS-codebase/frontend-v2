@@ -1,21 +1,24 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomBarChart from "@/components/core/charts/CustomBarChart";
 import {
   SolarBenzeneRingBroken,
   SolarCalendarBold,
   SolarFileBold,
 } from "@/components/core/icons";
-import { Select } from "@mantine/core";
+import { Select, Skeleton } from "@mantine/core";
 import dashVector from "@/assets/Vectors/dashVector.png";
 import DashboardLineChart from "@/components/core/charts/DashboardLineChart";
 import Image from "next/image";
 import ProgressGender from "./progressGender";
 import BasicGauges from "./BasicGauges";
 import Dash from "./dash";
-import AdminAction from "@/components/Actions/AdminAction"; // Importing the AdminAction component
+import AdminAction from "@/components/Actions/AdminAction";
+import { authorizedApi } from "@/utils/api";
+import { useDispatch, useSelector } from "react-redux";
+import { getDashboardData } from "@/utils/funcs";
 
-// Data for line chart and bar chart
 const lineChartData = [
   { day: "Mon", completed: 60, ongoing: 30 },
   { day: "Tue", completed: 70, ongoing: 50 },
@@ -47,82 +50,75 @@ const transformedData = {
 };
 
 const Page = () => {
-  const boysCount = 20;
-  const girlsCount = 15;
-  const totalCount = boysCount + girlsCount;
-
   const startDate = "2023-05-01";
   const endDate = "2023-12-31";
-
+  const {data: dashboardData, loading} = useSelector((state: any)=> state.dashboard);
   const companyApplicants = 12345;
   const schoolApplicants = 11123;
   const totalApplicants = companyApplicants + schoolApplicants;
   const [selectedOption, setSelectedOption] = useState("Option 1");
-
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedOption(event.target.value);
   };
-
+  const [call, setCall] = useState("");
+  const {calls} = useSelector((state: any)=> state.calls);
+  const [stage, setStage] = useState("");
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      await getDashboardData(dispatch,call, stage);
+    };
+    fetchDashboardData();
+  }, [call, dispatch, stage]);
   return (
     <div className="w-full text-secondaryText pb-20 overflow-y-auto">
-      <div className="flex flex-col mb-4">
+      {loading ? 
+      <Skeleton w={"100%"} h={1000}/> :
+      <>
+        <div className="flex flex-col mb-4">
         <div className="flex justify-between">
           <p>Evaluation</p>
-          <div className="text-md gap-2 flex">
+          <div className="text-md gap-2 flex self-end">
             <div className="rounded-full border-black-1">
-              <select className="p-2 border border-1 border-black rounded-full text-md">
-                <option value="select-level">
-                  SDF CALL 5 FOR GRANT PROPOSALS
-                </option>
-                <option value="select-level">
-                  SDF CALL 5 FOR GRANT PROPOSALS
-                </option>
-                <option value="select-level">
-                  SDF CALL 5 FOR GRANT PROPOSALS
-                </option>
-                <option value="select-level">
-                  SDF CALL 5 FOR GRANT PROPOSALS
-                </option>
+              <select value={call} onChange={((e: any)=> setCall(e.target.value))} className="p-2 border border-1 border-black rounded-full text-md">
+                {calls.map((call: any, index: number)=> 
+                <option key={index} value={call.uuid}>
+                  {call.title}
+                </option>)}
               </select>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Flexbox layout for the main section */}
       <div className="mt-8 flex flex-wrap gap-6">
         <div className="bg-white p-6 rounded-2xl flex-grow">
           <h2 className="text-lg font-semibold mb-4">
             Applicants per Priority Sector
           </h2>
-          {[
-            { name: "Culinary Programs", count: 32 },
-            { name: "Tech Innovators", count: 14 },
-            { name: "Masonry Internships", count: 20 },
-            { name: "Culinary Workshops", count: 8 },
-          ].map((sector, index) => (
+          {dashboardData?.sectorWithNumberOfAPplicants?.length ? dashboardData?.sectorWithNumberOfAPplicants?.map((sector: any, index: any) => (
             <div
               key={index}
               className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2"
             >
-              <span className="text-base">{sector.name}</span>
+              <span className="text-base">{sector?.sector}</span>
               <span className="text-base bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
-                {sector.count}
+                {sector?.applicantsCount}
               </span>
             </div>
-          ))}
+          )): <h3 className="w-full text-center mt-10">No Priority Sector Found!</h3>}
         </div>
 
         <div className="bg-white p-6 rounded-2xl flex-grow relative">
           <div className="flex justify-between items-center mb-8">
-            <p className="text-xl font-medium">SDF Graduates Per Year</p>
+            <p className="text-xl font-medium">Selected Applicants</p>
             <div className="rounded-full border-black-1">
               <select className="p-2 border border-1 border-gray-400  text-gray-400 rounded-full text-md">
                 <option value="select-level">evaluation </option>
               </select>
             </div>
           </div>
-          <p className="text-primary text-7xl font-extrabold">13’032</p>
+          <p className="text-primary text-7xl font-extrabold text-center">{dashboardData?.totalApplicants}</p>
           <Image
             src={dashVector}
             alt="dash vector"
@@ -140,13 +136,13 @@ const Page = () => {
             </div>
           </div>
           <div className="flex flex-col gap-3">
-            <BasicGauges />
+            <BasicGauges totalApplicants={dashboardData?.totalApplicants}/>
             <div className="flex justify-between items-center text-sm">
               <div className="flex items-center p-2">
                 <p className="text-[#005DE9] text-md font-bold">
                   Companies{" "}
                   <span className="bg-slate-200 text-sm  px-2 text-[#005DE9] rounded-3xl font-medium ">
-                    {companyApplicants}
+                    {dashboardData?.totalApplicants}
                   </span>
                 </p>
               </div>
@@ -154,7 +150,7 @@ const Page = () => {
                 <p className="text-[#65E500] text-md">
                   Schools{" "}
                   <span className="bg-slate-200 text-[#65E500] text-sm font-medium px-2 rounded-3xl">
-                    {schoolApplicants}
+                    {0}
                   </span>
                 </p>
               </div>
@@ -188,9 +184,7 @@ const Page = () => {
           </div>
           <div className="my-5">
             <ProgressGender
-              boysCount={boysCount}
-              girlsCount={girlsCount}
-              totalCount={totalCount}
+              callId={call}
               startDate={startDate}
               endDate={endDate}
             />
@@ -214,8 +208,6 @@ const Page = () => {
             <div className="text-xl">
               <AdminAction call={null} setIsCall={() => {}} />{" "}
             </div>
-
-            {/* Adding AdminAction component */}
           </div>
           <Dash />
         </div>
@@ -233,14 +225,11 @@ const Page = () => {
                   </select>
                 </div>
               </div>
-
               <div>
                 <AdminAction call={null} setIsCall={() => {}} />{" "}
               </div>
             </div>
           </div>
-
-          {/* Dash component */}
           <Dash />
         </div>
         <div className="bg-white p-6 rounded-2xl">
@@ -262,8 +251,6 @@ const Page = () => {
                 <AdminAction call={null} setIsCall={() => {}} />{" "}
               </div>
             </div>
-
-            {/* Adding AdminAction component */}
           </div>
           <Dash />
         </div>
@@ -281,13 +268,10 @@ const Page = () => {
                   </select>
                 </div>
               </div>
-
               <div>
                 <AdminAction call={null} setIsCall={() => {}} />{" "}
               </div>
             </div>
-
-            {/* Adding AdminAction component */}
           </div>
           <Dash />
         </div>
@@ -299,7 +283,6 @@ const Page = () => {
                 <AdminAction call={null} setIsCall={() => {}} />{" "}
               </div>
             </div>
-            {/* Adding AdminAction component */}
           </div>
           <Dash />
         </div>
@@ -328,12 +311,11 @@ const Page = () => {
                 <AdminAction call={null} setIsCall={() => {}} />{" "}
               </div>
             </div>
-
-            {/* Adding AdminAction component */}
           </div>
           <Dash />
         </div>
       </div>
+      </>}
     </div>
   );
 };

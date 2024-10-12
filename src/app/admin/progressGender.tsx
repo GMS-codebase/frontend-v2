@@ -5,13 +5,12 @@ import Male from "../../assets/Vectors/ion_male.svg";
 import Female from "../../assets/Vectors/icon-park-outline_female.svg";
 
 import Image from "next/image";
+import { authorizedApi } from "@/utils/api";
 
 interface ProgressGenderProps {
-  boysCount: number; // Count of boys
-  girlsCount: number; // Count of girls
-  totalCount: number; // Total count (boys + girls)
   startDate: string; // Start date in 'YYYY-MM-DD' format
   endDate: string; // End date in 'YYYY-MM-DD' format
+  callId: string;
 }
 
 const calculateDaysRemaining = (startDate: string, endDate: string) => {
@@ -29,12 +28,24 @@ const calculateDaysRemaining = (startDate: string, endDate: string) => {
 };
 
 const ProgressGender: React.FC<ProgressGenderProps> = ({
-  boysCount,
-  girlsCount,
-  totalCount,
   startDate,
   endDate,
+  callId
 }) => {
+  const [data, setData] = useState<any>({});
+  const [loading, setLoading] = useState(true);
+  useEffect(()=>{
+    authorizedApi.get(`/trainees/dashboard/traines_by_genders/${callId}?currentStage=EVALUATION`)
+      .then((res)=>{
+        setData(res.data.sectorSummary[0]);
+      })
+      .catch((err)=>{
+        console.log(err);
+      })
+      .finally(()=>{
+        setLoading(false);
+      })
+  },[callId, loading])
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [hoveredSegment, setHoveredSegment] = useState<
     "male" | "female" | null
@@ -44,17 +55,19 @@ const ProgressGender: React.FC<ProgressGenderProps> = ({
     const { remainingDays } = calculateDaysRemaining(startDate, endDate);
     setDaysRemaining(remainingDays);
   }, [startDate, endDate]);
-
+  const male = data?.male ?? 0;
+  const female = data?.female ?? 0;
+  const totalCount = male + female;
   // Calculate male and female percentages
-  const malePercentage = totalCount > 0 ? (boysCount / totalCount) * 100 : 0;
-  const femalePercentage = totalCount > 0 ? (girlsCount / totalCount) * 100 : 0;
+  const malePercentage = totalCount > 0 ? (male / totalCount) * 100 : "None";
+  const femalePercentage = totalCount > 0 ? (female / totalCount) * 100 : "None";
 
   return (
     <div className="relative flex items-center justify-center flex-col">
       <Gauge
         width={200}
         height={200}
-        value={malePercentage}
+        value={Number(malePercentage)}
         cornerRadius="50%"
         sx={(theme) => ({
           [`& .${gaugeClasses.valueText}`]: {
@@ -91,13 +104,13 @@ const ProgressGender: React.FC<ProgressGenderProps> = ({
           <span>
             <Image src={Male} alt="male" />
           </span>
-          Male: {malePercentage.toFixed(0)}%
+          Male: {malePercentage !== "None" ? `${malePercentage}%` : malePercentage}
         </div>
         <div className="flex gap-2">
           <span>
             <Image src={Female} alt="female" />
           </span>
-          Female: {femalePercentage.toFixed(0)}%
+          Female: {malePercentage !== "None" ? `${femalePercentage}%` : femalePercentage}
         </div>
       </div>
 
@@ -108,18 +121,16 @@ const ProgressGender: React.FC<ProgressGenderProps> = ({
           onMouseEnter={() => setHoveredSegment("male")}
           onMouseLeave={() => setHoveredSegment(null)}
         >
-          Boys Count: {boysCount}
+          Boys Count: {male}
         </div>
         <div
           className="text-purple-600"
           onMouseEnter={() => setHoveredSegment("female")}
           onMouseLeave={() => setHoveredSegment(null)}
         >
-          Girls Count: {girlsCount}
+          Girls Count: {female}
         </div>
       </div>
-
-      {/* Days remaining display */}
       <div className="mt-2 text-gray-600">
         {daysRemaining > 0 ? `Days Remaining: ${daysRemaining}` : "Event Ended"}
       </div>

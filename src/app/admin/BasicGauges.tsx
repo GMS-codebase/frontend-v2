@@ -3,16 +3,13 @@ import Stack from "@mui/material/Stack";
 import { Gauge } from "@mui/x-charts/Gauge";
 import Typography from "@mui/material/Typography";
 
-export default function BasicGauges() {
+export default function BasicGauges({totalApplicants}: {totalApplicants: number}) {
   // Sample values for companies and schools
-  const companyApplicants = 60;
-  const schoolApplicants = 80;
-
+  const companyApplicants = 0;
   // Total number of applicants
-  const totalApplicants = companyApplicants + schoolApplicants;
 
   // Calculate the percentage of companies
-  const companyPercentage = (companyApplicants / totalApplicants) * 100;
+  const companyPercentage = (totalApplicants / totalApplicants) * 100;
 
   return (
     <Stack direction="column" spacing={2} alignItems="center">
@@ -20,15 +17,14 @@ export default function BasicGauges() {
         <Gauge
           width={200}
           height={200}
-          value={companyPercentage} // Value as percentage of companies
+          value={null} // Value as percentage of companies
           startAngle={-90}
           endAngle={90}
           sx={{
-            "& .MuiGauge-progress": { stroke: "#005DE9" }, // Blue for companies
-            "& .MuiGauge-track": { stroke: "#65E500" }, // Cream for schools
+            "& .MuiGauge-progress": { stroke: "#005DE9" },
+            "& .MuiGauge-track": { stroke: "#65E500" },
           }}
         />
-        {/* Display total applicants in the center */}
         <Typography
           variant="h6"
           component="div"

@@ -85,6 +85,7 @@ import {
   GET_ROLES_SUCCESS,
   GET_ROLES_ERROR,
 } from "@/actions/RolesActions";
+import { GET_DASHBOARD_ERROR, GET_DASHBOARD_LOADING, GET_DASHBOARD_SUCCESS } from "@/actions/DashboardActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -142,6 +143,19 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
     })
     .catch((err) => {
       dispatch({ type: GET_SECTORS_ERROR, payload: err.response.data.error });
+    });
+};
+export const getDashboardData = async (dispatch: Dispatch<UnknownAction>, call: string, stage: string) => {
+  dispatch({ type: GET_DASHBOARD_LOADING });
+  authorizedApi
+    .get(`/application/dashboard1?callUuid=${call}&currentStage=${stage}`)
+    .then((res) => {
+      console.log("dashboard --===> ",res.data);
+      // console.log("entries: ", )
+      dispatch({ type: GET_DASHBOARD_SUCCESS, payload: res.data });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_DASHBOARD_ERROR, payload: err.response?.error ?? "Network Error" });
     });
 };
 export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
