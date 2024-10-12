@@ -48,9 +48,16 @@ const transformedData = {
 
 
   const applicantData = [
-      { col1Data: 112, col2Data: 1090 },
-      { col1Data: 207, col2Data: 123 },
-      { col1Data: 345, col2Data: 149 },
+      { sector: "Manufacturing Sector", col1Data: 112, col2Data: 1090 },
+      { sector: "Hospitality & Tourism Sector", col1Data: 207, col2Data: 123 },
+      { sector: "Transport & Logistics Sector", col1Data: 345, col2Data: 149 },
+      { sector: "Agriculture Sector", col1Data: 112, col2Data: 1090 },
+      { sector: "Energy Sector", col1Data: 207, col2Data: 123 },
+      { sector: "Mining Sector", col1Data: 345, col2Data: 149 },
+      { sector: "ICT & Digital Skills Sector", col1Data: 112, col2Data: 1090 },
+      { sector: "Construction Sector", col1Data: 207, col2Data: 123 },
+      { sector: "Other Sector", col1Data: 345, col2Data: 149 },
+      { sector: "Total  Application", col1Data: 345, col2Data: 149 },
   ];
 
 const Page = () => {
@@ -79,17 +86,21 @@ const Page = () => {
                       <div className="rounded-full border-black-1">
                           <select className="p-2 border border-1 border-black rounded-full text-md">
                               <option value="select-level">
-                                  SDF CALL 5 FOR GRANT PROPOSALS
+                                  SDF CALL 1 FOR GRANT PROPOSALS
                               </option>
                               <option value="select-level">
-                                  SDF CALL 5 FOR GRANT PROPOSALS
+                                  SDF CALL 2 FOR GRANT PROPOSALS
                               </option>
                               <option value="select-level">
-                                  SDF CALL 5 FOR GRANT PROPOSALS
+                                  SDF CALL 3 FOR GRANT PROPOSALS
                               </option>
                               <option value="select-level">
-                                  SDF CALL 5 FOR GRANT PROPOSALS
+                                  SDF CALL 4 FOR GRANT PROPOSALS
                               </option>
+                              <option value="select-level">
+                                  SDF CALL 4 FOR GRANT PROPOSALS
+                              </option>
+                              <option value="select-level">NEET 1</option>
                           </select>
                       </div>
                   </div>
@@ -234,6 +245,7 @@ const Page = () => {
                       {/* Adding AdminAction component */}
                   </div>
                   <Dash
+                      sector="Priority sectors"
                       col1="Number of Applications "
                       col2="Number of Applicants"
                       data={applicantData}
@@ -247,13 +259,22 @@ const Page = () => {
 
                       <div className="text-md gap-4 flex items-center justify-center">
                           <div className="rounded-full bg-slate-400 bg-opacity-10">
-                              <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                              <div className="flex items-center justify-around px-4 py-2 rounded-full w-full">
                                   <span className="text-gray-400">
                                       <SolarBenzeneRingBroken />
                                   </span>
-                                  <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
+                                  <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none px-6">
                                       <option value="select-stage">
-                                          select stage
+                                          Evaluation
+                                      </option>
+                                      <option value="select-stage">
+                                          Due Diligence
+                                      </option>
+                                      <option value="select-stage">
+                                          Grant Committee
+                                      </option>
+                                      <option value="select-stage">
+                                          Contract Signing
                                       </option>
                                   </select>
                               </div>
@@ -267,8 +288,9 @@ const Page = () => {
 
                   {/* Dash component */}
                   <Dash
-                      col1="Approved Applications"
-                      col2="Rejected Applications"
+                      sector="Priority sectors"
+                      col1="Number of Applications "
+                      col2="Number of Applicants"
                       data={applicantData}
                   />
               </div>
@@ -280,13 +302,22 @@ const Page = () => {
 
                       <div className="text-md gap-4 flex items-center justify-center">
                           <div className="rounded-full bg-slate-400 bg-opacity-10">
-                              <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                              <div className="flex items-center justify-around px-4 py-2 gap-2 rounded-full w-full">
                                   <span className="text-gray-400">
                                       <SolarBenzeneRingBroken />
                                   </span>
-                                  <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
+                                  <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none px-6">
                                       <option value="select-stage">
-                                          select stage
+                                          Evaluation
+                                      </option>
+                                      <option value="select-stage">
+                                          Due Diligence
+                                      </option>
+                                      <option value="select-stage">
+                                          Grant Committee
+                                      </option>
+                                      <option value="select-stage">
+                                          Contract Signing
                                       </option>
                                   </select>
                               </div>
@@ -300,8 +331,9 @@ const Page = () => {
                       {/* Adding AdminAction component */}
                   </div>
                   <Dash
-                      col1="Approved Applications "
-                      col2="Rejected Applicants"
+                      sector="Priority sectors"
+                      col1="Number of Applications "
+                      col2="Number of Applicants"
                       data={applicantData}
                   />
               </div>
@@ -312,13 +344,22 @@ const Page = () => {
                       </div>
                       <div className="text-md gap-4 flex items-center justify-center">
                           <div className="rounded-full bg-slate-400 bg-opacity-10">
-                              <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                              <div className="flex items-center justify-around px-4 py-2 gap-2 rounded-full w-full">
                                   <span className="text-gray-400">
                                       <SolarBenzeneRingBroken />
                                   </span>
-                                  <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
+                                  <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none px-6">
                                       <option value="select-stage">
-                                          select stage
+                                          Evaluation
+                                      </option>
+                                      <option value="select-stage">
+                                          Due Diligence
+                                      </option>
+                                      <option value="select-stage">
+                                          Grant Committee
+                                      </option>
+                                      <option value="select-stage">
+                                          Contract Signing
                                       </option>
                                   </select>
                               </div>
@@ -331,22 +372,50 @@ const Page = () => {
 
                       {/* Adding AdminAction component */}
                   </div>
-                  <Dash col1="Male" col2="Female" data={applicantData} />
+                  <Dash
+                      sector="Priority sectors"
+                      col1="Male"
+                      col2="Female"
+                      data={applicantData}
+                  />
               </div>
               <div className="bg-white p-6 rounded-2xl">
-                  <div className="flex justify-between">
-                      <div className="text-md  items-center">
+                  <div className="flex justify-between items-center">
+                      <div className="text-md flex justify-between items-center">
                           <p>Number of graduates trainees before 2025</p>
                       </div>
 
                       <div className="text-md gap-4 flex items-center justify-center">
+                          <div className="rounded-full bg-slate-400 bg-opacity-10 ">
+                              <div className="flex items-center justify-around px-4 py-2 gap-2 rounded-full w-full">
+                                  <span className="text-gray-400">
+                                      <SolarBenzeneRingBroken />
+                                  </span>
+                                  <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none px-6">
+                                      <option value="select-stage">
+                                          Ongoing
+                                      </option>
+                                      <option value="select-stage">
+                                          Completed
+                                      </option>
+                                      <option value="select-stage">
+                                          Graduated
+                                      </option>
+                                  </select>
+                              </div>
+                          </div>
                           <div>
                               <AdminAction call={null} setIsCall={() => {}} />{" "}
                           </div>
                       </div>
                       {/* Adding AdminAction component */}
                   </div>
-                  <Dash col1="Male" col2="Female" data={applicantData} />
+                  <Dash
+                      sector="Priority sectors"
+                       col1="Male"
+                      col2="Female"
+                      data={applicantData}
+                  />
               </div>
               <div className="bg-white p-6 rounded-2xl">
                   <div className="flex justify-between  items-center">
@@ -361,13 +430,28 @@ const Page = () => {
                               <p>Ending date</p>
                           </div>
                           <div className="rounded-full bg-slate-400 bg-opacity-10">
-                              <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                              <div className="flex items-center justify-around px-4 py-2 gap-2 rounded-full w-full">
                                   <span className="text-gray-400">
                                       <SolarBenzeneRingBroken />
                                   </span>
-                                  <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
+                                  <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none px-6">
                                       <option value="select-stage">
-                                          select stage
+                                          SDF Call 1
+                                      </option>
+                                      <option value="select-stage">
+                                          SDF Call 2
+                                      </option>
+                                      <option value="select-stage">
+                                          SDF Call 3
+                                      </option>
+                                      <option value="select-stage">
+                                          SDF Call 4
+                                      </option>
+                                      <option value="select-stage">
+                                          SDF Call 5
+                                      </option>
+                                      <option value="select-stage">
+                                          NEET 1
                                       </option>
                                   </select>
                               </div>
@@ -380,7 +464,7 @@ const Page = () => {
 
                       {/* Adding AdminAction component */}
                   </div>
-                  <Dash col1="Male" col2="Female" data={applicantData} />
+                  <Dash  sector="Priority sectors"col1="Male" col2="Female" data={applicantData} />
               </div>
           </div>
       </div>
