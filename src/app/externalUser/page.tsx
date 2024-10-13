@@ -17,7 +17,6 @@ const weeklyData = [
   { day: "Sun", completed: 30, ongoing: 10 },
 ];
 
-
 const lineChartData = {
   labels: ["2017", "2018", "2019", "2020", "2021", "2022", "2023"],
   datasets: [

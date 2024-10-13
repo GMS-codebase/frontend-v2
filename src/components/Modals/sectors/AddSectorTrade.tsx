@@ -69,16 +69,14 @@ const AddSectorTrade = ({
     }));
   };
 
-
-
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (!validateForm()) return;
     setLoading(true);
     try {
       await authorizedApi.put(`/Sectors/${id}/assign-trade`, {
-        tradeId:formData.trade,
-        windows:formData.windows,
+        tradeId: formData.trade,
+        windows: formData.windows,
       });
       // dispatch({
       //   type: ADD_TRADE_SECTOR_SUCCESS,

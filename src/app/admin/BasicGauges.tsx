@@ -1,3 +1,11 @@
+
+
+
+
+
+
+
+
 import * as React from "react";
 import Stack from "@mui/material/Stack";
 import { Gauge } from "@mui/x-charts/Gauge";
@@ -20,12 +28,17 @@ export default function BasicGauges() {
                 <Gauge
                     width={200}
                     height={200}
-                    value={companyPercentage} // Value as percentage of companies
                     startAngle={-90}
                     endAngle={90}
                     sx={{
-                        "& .MuiGauge-progress": { stroke: "#005DE9" }, // Blue for companies
-                        "& .MuiGauge-track": { stroke: "#65E500" }, // Cream for schools
+                        "& .MuiGauge-progress": {
+                            stroke: "#005DE9", // Blue for companies (progress)
+                            strokeWidth: 20, // Control the thickness of the progress
+                        },
+                        "& .MuiGauge-track": {
+                            stroke: "#90EE90", // Green for schools (remaining track)
+                            strokeWidth: 20, // Control the thickness of the track
+                        },
                     }}
                 />
                 {/* Display total applicants in the center */}
@@ -34,12 +47,16 @@ export default function BasicGauges() {
                     component="div"
                     style={{
                         position: "absolute",
-                        top: "50%",
+                        top: "60%",
                         left: "50%",
                         transform: "translate(-50%, -50%)",
                     }}
                 >
-                    {totalApplicants}
+                    <div className="flex flex-col justify-center items-center">
+                        <p> {totalApplicants}</p>
+
+                        <p className="text-sm">Applicants</p>
+                    </div>
                 </Typography>
             </div>
 
@@ -61,7 +78,7 @@ export default function BasicGauges() {
                         style={{
                             width: 20,
                             height: 20,
-                            backgroundColor: "#65E500",
+                            backgroundColor: "#90EE90",
                             marginRight: 8,
                         }}
                     />
