@@ -314,7 +314,7 @@ const Page = () => {
                     onClick={() => {
                       nullifyDecision(
                         application.stages.find(
-                          (stage: any) => stage.stage === "EVALUATION"
+                          (stage: any) => stage.stage === "EVALUATION",
                         ).uuid,
                         "EVALUATION",
                       );
@@ -360,7 +360,7 @@ const Page = () => {
                     onClick={() => {
                       nullifyDecision(
                         application.stages.find(
-                          (stage: any) => stage.stage === "DUE_DILIGENCY"
+                          (stage: any) => stage.stage === "DUE_DILIGENCY",
                         ).uuid,
                         "DUE_DILIGENCY",
                       );
@@ -377,7 +377,7 @@ const Page = () => {
             )}
           </div>
           {application?.stages?.find(
-            (stage: any) => stage.stage === "GRANT_COMMITTEE"
+            (stage: any) => stage.stage === "GRANT_COMMITTEE",
           ) && (
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Grant Committee</h3>
