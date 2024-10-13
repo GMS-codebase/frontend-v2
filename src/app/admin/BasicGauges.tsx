@@ -3,13 +3,17 @@ import Stack from "@mui/material/Stack";
 import { Gauge } from "@mui/x-charts/Gauge";
 import Typography from "@mui/material/Typography";
 
-export default function BasicGauges({totalApplicants}: {totalApplicants: number}) {
+export default function BasicGauges({
+  totalApplicants,
+}: {
+  totalApplicants: number;
+}) {
   // Sample values for companies and schools
-  const companyApplicants = 0;
-  // Total number of applicants
+  const companyApplicants = 60;
+  const schoolApplicants = 80;
 
   // Calculate the percentage of companies
-  const companyPercentage = (totalApplicants / totalApplicants) * 100;
+  const companyPercentage = (companyApplicants / totalApplicants) * 100;
 
   return (
     <Stack direction="column" spacing={2} alignItems="center">
@@ -17,12 +21,17 @@ export default function BasicGauges({totalApplicants}: {totalApplicants: number}
         <Gauge
           width={200}
           height={200}
-          value={null} // Value as percentage of companies
           startAngle={-90}
           endAngle={90}
           sx={{
-            "& .MuiGauge-progress": { stroke: "#005DE9" },
-            "& .MuiGauge-track": { stroke: "#65E500" },
+            "& .MuiGauge-progress": {
+              stroke: "#005DE9",
+              strokeWidth: 20,
+            },
+            "& .MuiGauge-track": {
+              stroke: "#90EE90",
+              strokeWidth: 20,
+            },
           }}
         />
         <Typography
@@ -30,16 +39,19 @@ export default function BasicGauges({totalApplicants}: {totalApplicants: number}
           component="div"
           style={{
             position: "absolute",
-            top: "50%",
+            top: "60%",
             left: "50%",
             transform: "translate(-50%, -50%)",
           }}
         >
-          {totalApplicants}
+          <div className="flex flex-col justify-center items-center">
+            <p> {totalApplicants}</p>
+
+            <p className="text-sm">Applicants</p>
+          </div>
         </Typography>
       </div>
 
-      {/* Legend to explain colors */}
       <Stack direction="row" spacing={2} alignItems="center">
         <div style={{ display: "flex", alignItems: "center" }}>
           <div
@@ -57,7 +69,7 @@ export default function BasicGauges({totalApplicants}: {totalApplicants: number}
             style={{
               width: 20,
               height: 20,
-              backgroundColor: "#65E500",
+              backgroundColor: "#90EE90",
               marginRight: 8,
             }}
           />

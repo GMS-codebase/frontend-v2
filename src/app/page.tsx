@@ -71,8 +71,11 @@ function Page() {
           className="opacity-90"
         />
       </div>
-      <div className="absolute top-0 left-0 w-full  py-6 flex items-center justify-between z-20">
-        <div className="flex gap-4 ml-5">
+      <div className="absolute  w-full  py-6 flex items-center justify-between px-6 z-20">
+        <div className="">
+          <Image src={logo} alt="logo" width={360} height={360} />
+        </div>
+        <div className="flex gap-4 ">
           <button
             className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
             onClick={openLogin}
@@ -85,9 +88,6 @@ function Page() {
           >
             Register
           </button>
-        </div>
-        <div className="ml-auto">
-          <Image src={logo} alt="logo" width={360} height={360} />
         </div>
       </div>
 
