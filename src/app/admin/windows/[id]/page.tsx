@@ -9,14 +9,11 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { DataTable } from "@/components/core/data-table";
-import { tradesData as data } from "@/utils/constants/dummy";
 import { CiEdit, CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
 import AddEditWindowSubwindow from "@/components/Modals/windows/AddEditWindowSubwindow";
-import UpdateWindow from "@/components/Modals/UpdateWindow";
 import { useSelector } from "react-redux";
 import { useParams, useRouter } from "next/navigation";
-import { authorizedApi } from "@/utils/api";
 import AddEditWindow from "@/components/Modals/windows/AddEditWindow";
 import { Menu } from "@mantine/core";
 import { FiEye } from "react-icons/fi";
@@ -39,10 +36,10 @@ const Page = () => {
     useDisclosure(false);
   const windows = useSelector((state: any) => state.windows);
   const window = windows.windows?.filter(
-    (window: any) => window.uuid === windowId,
+    (window: any) => window.uuid === windowId
   )[0];
   const filteredSubWindows = window?.subWindows.filter((subW: any) =>
-    subW.title.toLowerCase().includes(searchQuery.toLowerCase()),
+    subW.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const [selectedSubWindow, setSelectedSubWindow] = useState<any>();
   const columns: ColumnDef<any>[] = [
@@ -88,7 +85,7 @@ const Page = () => {
                 <div
                   onClick={() =>
                     navigate.push(
-                      `/admin/windows/${window?.uuid}/${row.original?.uuid}`,
+                      `/admin/windows/${window?.uuid}/${row.original?.uuid}`
                     )
                   }
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
@@ -127,7 +124,7 @@ const Page = () => {
       ),
     },
   ];
-  return  window?.uuid ?  (
+  return window?.uuid ? (
     <div className="bg-white rounded-2xl py-10">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-6  text-black">
@@ -210,6 +207,7 @@ const Page = () => {
               <DataTable
                 columns={columns}
                 data={filteredSubWindows ?? []}
+                loading={!filteredSubWindows}
                 noDataMessage={
                   searchQuery
                     ? "No Sub Windows found matching " + searchQuery
@@ -244,9 +242,11 @@ const Page = () => {
         />
       </div>
     </div>
-  ):(<div className="flex items-center justify-center h-full">
-    <p>Loading</p>
-  </div>);
+  ) : (
+    <div className="flex items-center justify-center h-full">
+      <p>Loading</p>
+    </div>
+  );
 };
 
 export default Page;

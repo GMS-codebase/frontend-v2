@@ -22,9 +22,9 @@ export type Trade = {
   uuid: string;
 };
 export type TradeSector = {
-  trade:Trade;
-  sector:Sector;
-  theWindow:Window
+  trade: Trade;
+  sector: Sector;
+  theWindow: Window;
   uuid: string;
 };
 export type Sector = {
