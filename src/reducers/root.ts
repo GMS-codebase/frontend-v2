@@ -31,7 +31,7 @@ const rootReducer = combineReducers({
   minutes: MinutesReducer,
   empStages: EmpStagesReducer,
   roles: RolesReducer,
-  dashboard: DashboardReducer
+  dashboard: DashboardReducer,
 });
 
 export default rootReducer;

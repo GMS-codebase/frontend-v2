@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";
-import Group from "../../assets/Vectors/Group.svg";
+import Group from "../../assets/Vectors/Vector.svg";
 import Male from "../../assets/Vectors/ion_male.svg";
 import Female from "../../assets/Vectors/icon-park-outline_female.svg";
 
@@ -30,22 +30,25 @@ const calculateDaysRemaining = (startDate: string, endDate: string) => {
 const ProgressGender: React.FC<ProgressGenderProps> = ({
   startDate,
   endDate,
-  callId
+  callId,
 }) => {
   const [data, setData] = useState<any>({});
   const [loading, setLoading] = useState(true);
-  useEffect(()=>{
-    authorizedApi.get(`/trainees/dashboard/traines_by_genders/${callId}?currentStage=EVALUATION`)
-      .then((res)=>{
+  useEffect(() => {
+    authorizedApi
+      .get(
+        `/trainees/dashboard/traines_by_genders/${callId}?currentStage=EVALUATION`,
+      )
+      .then((res) => {
         setData(res.data.sectorSummary[0]);
       })
-      .catch((err)=>{
+      .catch((err) => {
         console.log(err);
       })
-      .finally(()=>{
+      .finally(() => {
         setLoading(false);
-      })
-  },[callId, loading])
+      });
+  }, [callId, loading]);
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [hoveredSegment, setHoveredSegment] = useState<
     "male" | "female" | null
@@ -60,7 +63,8 @@ const ProgressGender: React.FC<ProgressGenderProps> = ({
   const totalCount = male + female;
   // Calculate male and female percentages
   const malePercentage = totalCount > 0 ? (male / totalCount) * 100 : "None";
-  const femalePercentage = totalCount > 0 ? (female / totalCount) * 100 : "None";
+  const femalePercentage =
+    totalCount > 0 ? (female / totalCount) * 100 : "None";
 
   return (
     <div className="relative flex items-center justify-center flex-col">
@@ -104,13 +108,17 @@ const ProgressGender: React.FC<ProgressGenderProps> = ({
           <span>
             <Image src={Male} alt="male" />
           </span>
-          Male: {malePercentage !== "None" ? `${malePercentage}%` : malePercentage}
+          Male:{" "}
+          {malePercentage !== "None" ? `${malePercentage}%` : malePercentage}
         </div>
         <div className="flex gap-2">
           <span>
             <Image src={Female} alt="female" />
           </span>
-          Female: {malePercentage !== "None" ? `${femalePercentage}%` : femalePercentage}
+          Female:{" "}
+          {malePercentage !== "None"
+            ? `${femalePercentage}%`
+            : femalePercentage}
         </div>
       </div>
 

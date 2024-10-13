@@ -85,7 +85,13 @@ import {
   GET_ROLES_SUCCESS,
   GET_ROLES_ERROR,
 } from "@/actions/RolesActions";
-import { GET_DASHBOARD_ERROR, GET_DASHBOARD_LOADING, GET_DASHBOARD_SUCCESS } from "@/actions/DashboardActions";
+import {
+  GET_DASHBOARD_ERROR,
+  GET_DASHBOARD_LOADING,
+  GET_DASHBOARD_SUCCESS,
+  GET_PRIORITY_SECTORS_DATA,
+} from "@/actions/DashboardActions";
+import { prioritySectors } from "../constants";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -145,18 +151,44 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_SECTORS_ERROR, payload: err.response.data.error });
     });
 };
-export const getDashboardData = async (dispatch: Dispatch<UnknownAction>, call: string, stage: string) => {
-  dispatch({ type: GET_DASHBOARD_LOADING });
-  authorizedApi
-    .get(`/application/dashboard1?callUuid=${call}&currentStage=${stage}`)
-    .then((res) => {
-      console.log("dashboard --===> ",res.data);
-      // console.log("entries: ", )
-      dispatch({ type: GET_DASHBOARD_SUCCESS, payload: res.data });
-    })
-    .catch((err) => {
-      dispatch({ type: GET_DASHBOARD_ERROR, payload: err.response?.error ?? "Network Error" });
+export const getDashboardData = async (
+  dispatch: Dispatch<UnknownAction>,
+  call: string,
+  stage: string,
+) => {
+  try {
+    dispatch({ type: GET_DASHBOARD_LOADING });
+    const dashboardResponse = await authorizedApi.get(
+      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`,
+    );
+    console.log("dashboard --===> ", dashboardResponse.data);
+    dispatch({ type: GET_DASHBOARD_SUCCESS, payload: dashboardResponse.data });
+    for (const sector of prioritySectors) {
+      try {
+        const sectorResponse = await authorizedApi.get(
+          `/Sectors/${sector?.id}/count/applications/count/applicants`,
+        );
+        console.log("sectors data --===> ", sectorResponse.data);
+        dispatch({
+          type: GET_PRIORITY_SECTORS_DATA,
+          payload: {
+            sectorName: sector.sector,
+            data: sectorResponse.data.data.data,
+          },
+        });
+      } catch (err: any) {
+        dispatch({
+          type: GET_DASHBOARD_ERROR,
+          payload: err.response?.error ?? "Network Error",
+        });
+      }
+    }
+  } catch (err: any) {
+    dispatch({
+      type: GET_DASHBOARD_ERROR,
+      payload: err.response?.error ?? "Network Error",
     });
+  }
 };
 export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_TRADES_LOADING });
