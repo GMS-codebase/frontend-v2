@@ -140,6 +140,21 @@ export const getMyApplicantProfile = async (
       dispatch({ type: SET_APPLICANT_ERROR, payload: err.response.data.error });
     });
 };
+export const getSectorTrades = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_SECTORS_LOADING });
+  authorizedApi
+    .get("/Sectors/sector/trades")
+    .then((res) => {
+      console.log(res.data.data.data);
+      dispatch({
+        type: GET_SECTOR_TRADES_SUCCESS,
+        payload: res.data.data.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_SECTORS_ERROR, payload: err.response.data.error });
+    });
+};
 export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_SECTORS_LOADING });
   authorizedApi
@@ -162,14 +177,12 @@ export const getDashboardData = async (
     const dashboardResponse = await authorizedApi.get(
       `/application/dashboard1?callUuid=${call}&currentStage=${stage}`,
     );
-    console.log("dashboard --===> ", dashboardResponse.data);
     dispatch({ type: GET_DASHBOARD_SUCCESS, payload: dashboardResponse.data });
     for (const sector of prioritySectors) {
       try {
         const sectorResponse = await authorizedApi.get(
           `/Sectors/${sector?.id}/count/applications/count/applicants`,
         );
-        console.log("sectors data --===> ", sectorResponse.data);
         dispatch({
           type: GET_PRIORITY_SECTORS_DATA,
           payload: {
