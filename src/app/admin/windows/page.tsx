@@ -25,12 +25,10 @@ const Page = () => {
     useDisclosure(false);
 
   const windows = useSelector((state: any) => state.windows);
-  console.log("Windows Data:", windows); // Debugging line
-
   const [selectedWindow, setSelectedWindow] = useState<any>("");
 
   const filteredWindows =
-    windows.windows?.filter((trade: any) => {
+    windows?.windows?.filter((trade: any) => {
       const query = searchQuery.toLowerCase();
       return (
         trade?.title?.toLowerCase().includes(query) ||
@@ -150,20 +148,16 @@ const Page = () => {
         </button>
       </div>
       <div className="w-full h-full">
-        {windows?.windows ? (
-          <DataTable
-            columns={columns}
-            data={filteredWindows}
-            loading={windows.loading}
-            noDataMessage={
-              searchQuery
-                ? `No Windows related to "${searchQuery}" found`
-                : "No Windows Added So Far"
-            }
-          />
-        ) : (
-          <div>Loading...</div> // Optional: Add a loading indicator
-        )}
+        <DataTable
+          columns={columns}
+          data={filteredWindows}
+          loading={windows.loading}
+          noDataMessage={
+            searchQuery
+              ? `No Windows related to "${searchQuery}" found`
+              : "No Windows Added So Far"
+          }
+        />
       </div>
       <AddEditWindow
         isOpenAddEditWindow={isOpenCreateEdit}
