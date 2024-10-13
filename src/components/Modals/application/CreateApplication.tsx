@@ -173,7 +173,7 @@ const CreateApplication = ({
           )
           .map((trade: any) => [trade.value, trade]) 
       ).values(),
-    ] || [];
+    ] ;
 
   return (
     <Modal
