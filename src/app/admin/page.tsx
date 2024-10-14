@@ -56,7 +56,7 @@ const Page = () => {
   const startDate = "2023-05-01";
   const endDate = "2023-12-31";
   const { data: dashboardData, loading } = useSelector(
-    (state: any) => state.dashboard,
+    (state: any) => state.dashboard
   );
   const { sectorsData } = useSelector((state: any) => state.dashboard);
   const companyApplicants = 12345;
@@ -109,7 +109,22 @@ const Page = () => {
       col1Data: sectorsData["Mining"]?.countApplicants,
       col2Data: sectorsData["Mining"]?.countApplicants,
     },
-  ]
+    {
+      sector: "ICT & Digital Skills",
+      col1Data: sectorsData["Mining"]?.countApplicants,
+      col2Data: sectorsData["Mining"]?.countApplicants,
+    },
+    {
+      sector: "Construction",
+      col1Data: sectorsData["Mining"]?.countApplicants,
+      col2Data: sectorsData["Mining"]?.countApplicants,
+    },
+    {
+      sector: "Other",
+      col1Data: sectorsData["Mining"]?.countApplicants,
+      col2Data: sectorsData["Mining"]?.countApplicants,
+    },
+  ];
   return (
     <div className="w-full text-secondaryText pb-20 overflow-y-auto">
       {loading ? (
@@ -160,6 +175,15 @@ const Page = () => {
                 },
                 {
                   sector: "Mining",
+                },
+                {
+                  sector: "ICT & Digital Skills",
+                },
+                {
+                  sector: "Construction",
+                },
+                {
+                  sector: "Other",
                 },
               ]?.map((sector: any, index: any) => (
                 <div
@@ -293,7 +317,11 @@ const Page = () => {
                         <SolarBenzeneRingBroken />
                       </span>
                       <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
-                        <option value="select-stage">select stage</option>
+                        <option value="select-stage">All</option>
+                        <option value="select-stage">Evaluation</option>
+                        <option value="select-stage">Due Diligency</option>
+                        <option value="select-stage">Grant Committee</option>
+                        <option value="select-stage">Contract Signing</option>
                       </select>
                     </div>
                   </div>
@@ -318,7 +346,11 @@ const Page = () => {
                         <SolarBenzeneRingBroken />
                       </span>
                       <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
-                        <option value="select-stage">select stage</option>
+                        <option value="select-stage">All</option>
+                        <option value="select-stage">Evaluation</option>
+                        <option value="select-stage">Due Diligency</option>
+                        <option value="select-stage">Grant Committee</option>
+                        <option value="select-stage">Contract Signing</option>
                       </select>
                     </div>
                   </div>
@@ -344,7 +376,11 @@ const Page = () => {
                         <SolarBenzeneRingBroken />
                       </span>
                       <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
-                        <option value="select-stage">select stage</option>
+                        <option value="select-stage">All</option>
+                        <option value="select-stage">Evaluation</option>
+                        <option value="select-stage">Due Diligency</option>
+                        <option value="select-stage">Grant Committee</option>
+                        <option value="select-stage">Contract Signing</option>
                       </select>
                     </div>
                   </div>
@@ -362,6 +398,19 @@ const Page = () => {
             <div className="bg-white p-6 rounded-2xl">
               <div className="flex justify-between">
                 <p>Number of graduates trainees before 2025</p>
+                <div className="rounded-full bg-slate-400 bg-opacity-10">
+                  <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                    <span className="text-gray-400">
+                      <SolarBenzeneRingBroken />
+                    </span>
+                    <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
+                      <option value="select-stage">All</option>
+                      <option value="select-stage">Ongoing</option>
+                      <option value="select-stage">Completed</option>
+                      <option value="select-stage">Graduated</option>
+                    </select>
+                  </div>
+                </div>
                 <div className="text-md gap-4 flex items-center justify-center">
                   <div>
                     <AdminAction call={null} setIsCall={() => {}} />{" "}
@@ -390,7 +439,11 @@ const Page = () => {
                         <SolarBenzeneRingBroken />
                       </span>
                       <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
-                        <option value="select-stage">select stage</option>
+                        {calls.map((call: any, index: number) => (
+                          <option key={index} value={call.uuid}>
+                            {call.title}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
