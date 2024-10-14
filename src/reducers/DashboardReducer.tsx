@@ -1,18 +1,9 @@
 import {
-  ADD_CALL_SUCCESS,
-  GET_CALLS_ERROR,
-  GET_CALLS_SUCCESS,
-  GET_CALLS_LOADING,
-  UPDATE_CALL_SUCCESS,
-  DELETE_CALL_SUCCESS,
-} from "@/actions/CallsActions";
-import {
   GET_DASHBOARD_ERROR,
   GET_DASHBOARD_LOADING,
   GET_DASHBOARD_SUCCESS,
   GET_PRIORITY_SECTORS_DATA,
 } from "@/actions/DashboardActions";
-import { Window } from "@/types";
 
 const initialState = {
   loading: false,
