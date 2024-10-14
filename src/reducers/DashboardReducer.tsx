@@ -53,6 +53,18 @@ const initialState = {
       countApplicants: 0,
       countApplications: 0,
     },
+    "ICT & Digital Skills": {
+      countApplicants: 0,
+      countApplications: 0,
+    },
+    Construction:{
+      countApplicants: 0,
+      countApplications: 0,
+    },
+    Other:{
+      countApplicants: 0,
+      countApplications: 0,
+    }
   },
 };
 
