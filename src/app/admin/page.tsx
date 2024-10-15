@@ -198,7 +198,7 @@ const Page = () => {
               ))}
             </div>
 
-            <div className="bg-white p-6 rounded-2xl flex-grow relative">
+            {/* <div className="bg-white p-6 rounded-2xl flex-grow relative">
               <div className="flex justify-between items-center mb-8">
                 <p className="text-xl font-medium">Selected Applicants</p>
                 <div className="rounded-full border-black-1">
@@ -215,6 +215,22 @@ const Page = () => {
                 alt="dash vector"
                 className="absolute right-0 bottom-0 rounded-b-2xl"
               />
+            </div> */}
+            <div className=" bg-white rounded-2xl shadow p-6 flex-grow">
+              <div className="flex justify-end ">
+                <div className="rounded-full border-black-1">
+                  <select className="p-2 border border-1 border-gray-400  text-gray-400 rounded-full text-md">
+                    <option value="select-level">evaluation</option>
+                  </select>
+                </div>
+              </div>
+              <div className="my-5">
+                <ProgressGender
+                  callId={call}
+                  startDate={startDate}
+                  endDate={endDate}
+                />
+              </div>
             </div>
             <div className="bg-white rounded-2xl flex-grow p-4">
               <div className="flex justify-between">
@@ -253,7 +269,7 @@ const Page = () => {
 
           <p className="my-3">Overview</p>
           <div className="flex items-center gap-2">
-            <div className="w-3/5 bg-white rounded-2xl shadow p-3">
+            <div className="w-full bg-white rounded-2xl shadow p-3">
               <div className="flex justify-between">
                 <p className="text-xl font-medium">SDF Graduates Per Year</p>
                 <div className="rounded-full border-black-1">
@@ -262,25 +278,7 @@ const Page = () => {
                   </select>
                 </div>
               </div>
-
               <DashboardLineChart data={transformedData} />
-            </div>
-
-            <div className="w-2/5 bg-white rounded-2xl shadow p-3">
-              <div className="flex justify-end ">
-                <div className="rounded-full border-black-1">
-                  <select className="p-2 border border-1 border-gray-400  text-gray-400 rounded-full text-md">
-                    <option value="select-level">evaluation</option>
-                  </select>
-                </div>
-              </div>
-              <div className="my-5">
-                <ProgressGender
-                  callId={call}
-                  startDate={startDate}
-                  endDate={endDate}
-                />
-              </div>
             </div>
           </div>
           <div className=" flex justify-between items-center">
@@ -310,65 +308,6 @@ const Page = () => {
             <div className="bg-white p-6 rounded-2sm">
               <div className="flex justify-between">
                 <p>Applications</p>
-                <div className="text-md gap-4 flex items-center justify-center">
-                  <div className="rounded-full bg-slate-400 bg-opacity-10">
-                    <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
-                      <span className="text-gray-400">
-                        <SolarBenzeneRingBroken />
-                      </span>
-                      <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
-                        <option value="select-stage">All</option>
-                        <option value="select-stage">Evaluation</option>
-                        <option value="select-stage">Due Diligency</option>
-                        <option value="select-stage">Grant Committee</option>
-                        <option value="select-stage">Contract Signing</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <AdminAction call={null} setIsCall={() => {}} />{" "}
-                  </div>
-                </div>
-              </div>
-              <Dash
-                col1="Applicants"
-                col2="Applications"
-                data={dashTablesData}
-              />
-            </div>
-            <div className="bg-white p-6 rounded-2xl">
-              <div className="flex justify-between">
-                <p>Applicants</p>
-                <div className="text-md gap-4 flex items-center justify-center">
-                  <div className="rounded-full bg-slate-400 bg-opacity-10">
-                    <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
-                      <span className="text-gray-400">
-                        <SolarBenzeneRingBroken />
-                      </span>
-                      <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
-                        <option value="select-stage">All</option>
-                        <option value="select-stage">Evaluation</option>
-                        <option value="select-stage">Due Diligency</option>
-                        <option value="select-stage">Grant Committee</option>
-                        <option value="select-stage">Contract Signing</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <AdminAction call={null} setIsCall={() => {}} />{" "}
-                  </div>
-                </div>
-              </div>
-              <Dash
-                col1="Applicants"
-                col2="Applications"
-                data={dashTablesData}
-              />
-            </div>
-            <div className="bg-white p-6 rounded-2xl">
-              <div className="flex justify-between">
-                <p>Selected Trainees</p>
                 <div className="text-md gap-4 flex items-center justify-center">
                   <div className="rounded-full bg-slate-400 bg-opacity-10">
                     <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
