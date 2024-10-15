@@ -49,7 +49,7 @@ const adminRoutes: Route[] = [
     icon: <Icons.SolarBellBold />,
   },
   {
-    label: "Employees",
+    label: "Users",
     path: "/admin/employees",
     icon: <Icons.SolarUsersGroupRoundedBold />,
   },
