@@ -404,10 +404,10 @@ export const TrainingProgress = ({
               <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl font-bold">+</span>
               </div>
-              {files.trainingManual ? (
+              {files.trainingManualAttachment ? (
                 <div className="text-center">
                   <p className="text-xl font-medium text-gray-700">
-                    {files.trainingManual.name}
+                    {files.trainingManualAttachment.name}
                   </p>
                   <p className="text-sm text-gray-500">File selected</p>
                 </div>
@@ -420,11 +420,11 @@ export const TrainingProgress = ({
             </label>
             <input
               id="file-upload-trainingManual"
-              name="trainingManual"
+              name="trainingManualAttachment"
               type="file"
               accept=".pdf"
               style={{ display: "none" }}
-              onChange={(e) => handleFileChange(e, "trainingManual")}
+              onChange={(e) => handleFileChange(e, "trainingManualAttachment")}
             />
           </div>
         )}
