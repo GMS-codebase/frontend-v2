@@ -328,88 +328,34 @@ const Page = () => {
                   </div>
                 </div>
               </div>
-              <Dash
-                col1="Applicants"
-                col2="Applications"
-                data={dashTablesData}
-              />
-            </div>
-            <div className="bg-white p-6 rounded-2xl">
-              <div className="flex justify-between">
-                <p>Applicants</p>
-                <div className="text-md gap-4 flex items-center justify-center">
-                  <div className="rounded-full bg-slate-400 bg-opacity-10">
-                    <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
-                      <span className="text-gray-400">
-                        <SolarBenzeneRingBroken />
-                      </span>
-                      <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
-                        <option value="select-stage">All</option>
-                        <option value="select-stage">Evaluation</option>
-                        <option value="select-stage">Due Diligency</option>
-                        <option value="select-stage">Grant Committee</option>
-                        <option value="select-stage">Contract Signing</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <AdminAction call={null} setIsCall={() => {}} />{" "}
-                  </div>
-                </div>
-              </div>
-              <Dash
-                col1="Applicants"
-                col2="Applications"
-                data={dashTablesData}
-              />
-            </div>
-            <div className="bg-white p-6 rounded-2xl">
-              <div className="flex justify-between">
-                <p>Selected Trainees</p>
-                <div className="text-md gap-4 flex items-center justify-center">
-                  <div className="rounded-full bg-slate-400 bg-opacity-10">
-                    <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
-                      <span className="text-gray-400">
-                        <SolarBenzeneRingBroken />
-                      </span>
-                      <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
-                        <option value="select-stage">All</option>
-                        <option value="select-stage">Evaluation</option>
-                        <option value="select-stage">Due Diligency</option>
-                        <option value="select-stage">Grant Committee</option>
-                        <option value="select-stage">Contract Signing</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <AdminAction call={null} setIsCall={() => {}} />{" "}
-                  </div>
-                </div>
-              </div>
-              <Dash
-                col1="Applicants"
-                col2="Applications"
-                data={dashTablesData}
-              />
+              <Dash col1="Selected" col2="Rejected" data={dashTablesData} />
             </div>
             <div className="bg-white p-6 rounded-2xl">
               <div className="flex justify-between gap-3 w-full">
-                <p className="w-full">Number of graduates trainees before 2025</p>
+                <p className="w-full">
+                  Number of graduates trainees before 2025
+                </p>
                 <div className="rounded-full bg-slate-400 bg-opacity-10 w-[40%] px-3">
-                    <label htmlFor="call" className="w-full flex items-center py-2 gap-2 rounded-full">
-                      <span id="call" className="text-gray-400">
-                        <SolarBenzeneRingBroken />
-                      </span>
-                      <select id="call" className="w-full px-0 rounded-full text-md bg-transparent outline-none border-none appearance-none">
-                        {calls.map((call: any, index: number) => (
-                          <option key={index} value={call.uuid}>
-                            {call.title}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
+                  <label
+                    htmlFor="call"
+                    className="w-full flex items-center py-2 gap-2 rounded-full"
+                  >
+                    <span id="call" className="text-gray-400">
+                      <SolarBenzeneRingBroken />
+                    </span>
+                    <select
+                      id="call"
+                      className="w-full px-0 rounded-full text-md bg-transparent outline-none border-none appearance-none"
+                    >
+                      <option value="call1">Call 1</option>
+                      <option value="call1">Call 2</option>
+                      <option value="call1">Call 3</option>
+                      <option value="call1">Call 4</option>
+                      <option value="call1">Call 5</option>
+                      <option value="call1">NEET 1</option>
+                    </select>
+                  </label>
+                </div>
                 <div className="text-md gap-4 flex items-center justify-center">
                   <div>
                     <AdminAction call={null} setIsCall={() => {}} />{" "}
@@ -439,18 +385,18 @@ const Page = () => {
                     <p className="text-xs">Ending date</p>
                   </div>
                   <div className="rounded-full bg-slate-400 bg-opacity-10">
-                  <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
-                    <span className="text-gray-400">
-                      <SolarBenzeneRingBroken />
-                    </span>
-                    <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none text-xs">
-                      <option value="select-stage">All</option>
-                      <option value="select-stage">Ongoing</option>
-                      <option value="select-stage">Completed</option>
-                      <option value="select-stage">Graduated</option>
-                    </select>
+                    <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                      <span className="text-gray-400">
+                        <SolarBenzeneRingBroken />
+                      </span>
+                      <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none text-xs">
+                        <option value="select-stage">All</option>
+                        <option value="select-stage">Ongoing</option>
+                        <option value="select-stage">Completed</option>
+                        <option value="select-stage">Graduated</option>
+                      </select>
+                    </div>
                   </div>
-                </div>
                   <div>
                     <AdminAction call={null} setIsCall={() => {}} />{" "}
                   </div>
@@ -461,7 +407,7 @@ const Page = () => {
                 col2="Applications"
                 data={dashTablesData}
               />
-            </div>                                                                                                                                                               
+            </div>
           </div>
         </>
       )}
