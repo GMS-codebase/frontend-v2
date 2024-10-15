@@ -31,7 +31,7 @@ const Page = () => {
   });
 
   const filteredEmployees = employees?.employees?.filter((employee: any) =>
-    employee.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    employee?.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const columns: ColumnDef<any>[] = [
