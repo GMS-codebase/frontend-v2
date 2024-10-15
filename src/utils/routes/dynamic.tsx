@@ -49,7 +49,7 @@ const dynamicRoutes: Route[] = [
     icon: <Icons.SolarBellBold />,
   },
   {
-    label: "Employees",
+    label: "Users",
     path: "/dynamic/employees",
     icon: <Icons.SolarUsersGroupRoundedBold />,
   },
