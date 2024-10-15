@@ -75,7 +75,7 @@ const AssignedStage = ({
                 open({
                   openDelete: false,
                   openMakeManager: true,
-                  level: stage.name,
+                  level: stage?.name,
                 })
               }
               className="w-full py-1 flex text-sm items-center gap-3 text-[#576074]"
