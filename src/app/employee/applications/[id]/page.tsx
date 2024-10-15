@@ -199,7 +199,7 @@ const Page = () => {
               setDownloading(true);
               try {
                 const response = await authorizedApi.get(
-                  `/admin/applicant-details/${application?.applicant?.uuid}`,
+                  `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
                   },
