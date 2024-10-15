@@ -31,6 +31,7 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id,
   )[0];
+  console.log("applications --> ", applications);
   const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [
@@ -198,7 +199,7 @@ const Page = () => {
               setDownloading(true);
               try {
                 const response = await authorizedApi.get(
-                  `/admin/applicant-details/${id}`,
+                  `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
                   },
