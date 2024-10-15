@@ -267,7 +267,7 @@ const Page = () => {
             </div>
           </div>
 
-          <p className="my-3">Overview</p>
+          {/* <p className="my-3">Overview</p>
           <div className="flex items-center gap-2">
             <div className="w-full bg-white rounded-2xl shadow p-3">
               <div className="flex justify-between">
@@ -280,7 +280,7 @@ const Page = () => {
               </div>
               <DashboardLineChart data={transformedData} />
             </div>
-          </div>
+          </div> */}
           <div className=" flex justify-between items-center">
             <div>Priority Sector Analysis</div>
             <div className="flex gap-2 bg-[#005de9] px-24 py-2 rounded-full text-white items-center justify-center p-4 mt-4">
@@ -330,6 +330,56 @@ const Page = () => {
               </div>
               <Dash col1="Selected" col2="Rejected" data={dashTablesData} />
             </div>
+            <div className="bg-white p-6 rounded-2sm">
+              <div className="flex justify-between">
+                <p>Applicants</p>
+                <div className="text-md gap-4 flex items-center justify-center">
+                  <div className="rounded-full bg-slate-400 bg-opacity-10">
+                    <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                      <span className="text-gray-400">
+                        <SolarBenzeneRingBroken />
+                      </span>
+                      <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
+                        <option value="select-stage">All</option>
+                        <option value="select-stage">Evaluation</option>
+                        <option value="select-stage">Due Diligency</option>
+                        <option value="select-stage">Grant Committee</option>
+                        <option value="select-stage">Contract Signing</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <AdminAction call={null} setIsCall={() => {}} />{" "}
+                  </div>
+                </div>
+              </div>
+              <Dash col1="Selected" col2="Rejected" data={dashTablesData} />
+            </div>
+            <div className="bg-white p-6 rounded-2sm">
+              <div className="flex justify-between">
+                <p>Selected Trainees</p>
+                <div className="text-md gap-4 flex items-center justify-center">
+                  <div className="rounded-full bg-slate-400 bg-opacity-10">
+                    <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                      <span className="text-gray-400">
+                        <SolarBenzeneRingBroken />
+                      </span>
+                      <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
+                        <option value="select-stage">All</option>
+                        <option value="select-stage">Evaluation</option>
+                        <option value="select-stage">Due Diligency</option>
+                        <option value="select-stage">Grant Committee</option>
+                        <option value="select-stage">Contract Signing</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <AdminAction call={null} setIsCall={() => {}} />{" "}
+                  </div>
+                </div>
+              </div>
+              <Dash col1="Male" col2="Female" data={dashTablesData} />
+            </div>
             <div className="bg-white p-6 rounded-2xl">
               <div className="flex justify-between gap-3 w-full">
                 <p className="w-full">
@@ -363,8 +413,8 @@ const Page = () => {
                 </div>
               </div>
               <Dash
-                col1="Applicants"
-                col2="Applications"
+                col1="Male"
+                col2="Female"
                 data={dashTablesData}
               />
             </div>
@@ -403,8 +453,8 @@ const Page = () => {
                 </div>
               </div>
               <Dash
-                col1="Applicants"
-                col2="Applications"
+                col1="Male"
+                col2="Female"
                 data={dashTablesData}
               />
             </div>
