@@ -80,5 +80,5 @@ export interface AssessmentEquipment {
 // Enum for Staff availability
 export enum AvailableOrHired {
   AVAILABLE = "AVAILABLE",
-  HIRED = "HIRED",
+  HIRED = "To be hired",
 }
