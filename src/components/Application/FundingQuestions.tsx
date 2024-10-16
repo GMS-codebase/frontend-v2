@@ -19,7 +19,7 @@ interface FundingQuestionsProps {
   comments?: Comments;
   setComments?: React.Dispatch<React.SetStateAction<Comments>>;
   goToBudget?: () => void;
-  showComments?:boolean;
+  showComments?: boolean;
 }
 
 const FundingQuestions: React.FC<FundingQuestionsProps> = ({
@@ -28,7 +28,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   comments,
   setComments,
   goToBudget,
-  showComments
+  showComments,
 }) => {
   const { applicationId } = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});

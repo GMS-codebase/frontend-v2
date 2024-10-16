@@ -304,7 +304,9 @@ const Page = () => {
         </div>
       </div>
       <div className="flex gap-6">
-        <div className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMISSION" ? "w-full": "w-[70%]"} gap-4 p-5`}>
+        <div
+          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMISSION" ? "w-full" : "w-[70%]"} gap-4 p-5`}
+        >
           <div className="flex flex-col gap-4 w-full">
             <div className="font-semibold text-2xl">Questions and answers</div>
             <div className="flex font-semibold">
@@ -332,35 +334,33 @@ const Page = () => {
             <div className="mt-4 w-full">{renderComponent()}</div>
             {(application?.evaluators.length === 0 ||
               application?.evaluators[0].user_id ===
-                profile?.userProfile?.data.uuid) && application?.currentStage !== "SUBMISSION" && (
-              <div className="w-full flex justify-center mt-4 space-x-4">
-                <button
-                  type="button"
-                  className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleAddComments}
-                  disabled={loading}
-                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  {loading ? "Loading..." : "Save Comments"}
-                </button>
-              </div>
-            )}
+                profile?.userProfile?.data.uuid) &&
+              application?.currentStage !== "SUBMISSION" && (
+                <div className="w-full flex justify-center mt-4 space-x-4">
+                  <button
+                    type="button"
+                    className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAddComments}
+                    disabled={loading}
+                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    {loading ? "Loading..." : "Save Comments"}
+                  </button>
+                </div>
+              )}
           </div>
         </div>
         {decisionsLoading ? (
           <div className="flex  h-[500px] items-center justify-center bg-white w-[30%] rounded-2xl p-5 gap-4">
             <p>Loading ....</p>
           </div>
-        ) : 
-        application?.currentStage === "SUBMISSION" ? (
-          <div>
-
-          </div>
+        ) : application?.currentStage === "SUBMISSION" ? (
+          <div></div>
         ) : (
           <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
             <h2 className="font-bold">Decision</h2>

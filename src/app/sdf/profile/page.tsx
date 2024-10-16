@@ -11,9 +11,7 @@ import { Upload } from "solar-icon-set";
 import Profile from "@/components/Profile";
 const Page = () => {
   const [activeSection, setActiveSection] = useState("contact");
-  return (
-    <Profile/>
-  );
+  return <Profile />;
 };
 
 export default Page;
