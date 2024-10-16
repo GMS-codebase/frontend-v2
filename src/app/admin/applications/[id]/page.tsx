@@ -244,7 +244,9 @@ const Page = () => {
         </div>
       </div>
       <div className="flex gap-2 p-5">
-        <div className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMISSION" ? "w-full":"w-[70%]"}  gap-4 p-5`}>
+        <div
+          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMISSION" ? "w-full" : "w-[70%]"}  gap-4 p-5`}
+        >
           <div className="flex flex-col gap-4 w-full">
             <div className="font-semibold text-2xl">Questions and answers</div>
             <div className="flex font-semibold">
@@ -274,76 +276,75 @@ const Page = () => {
         </div>
 
         {application?.currentStage === "SUBMISSION" ? (
-          <div>
+          <div></div>
+        ) : (
+          <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
+            <h2 className="font-bold">Decision</h2>
+            <div className="flex flex-col gap-2">
+              <h3 className="font-semibold">Evaluation Stage</h3>
+              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
+                {application?.currentStage === "EVALUATION"
+                  ? "Pending"
+                  : "Finished"}
+              </div>
+              {application?.evaluationDecisions && (
+                <div className="flex flex-col gap-2 mt-4">
+                  <button
+                    onClick={openEvaluationDetails}
+                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                  >
+                    View details
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <h3 className="font-bold">Due Diligence Stage</h3>
+              <div
+                className={`font-medium  ${
+                  application?.status === "APPROVED" ||
+                  application?.currentStage !== "EVALUATION"
+                    ? "bg-[#4BC500] text-[#4BC500]"
+                    : application?.status === "PENDING"
+                      ? "bg-red-600 text-red-600"
+                      : ""
+                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+              >
+                {application?.currentStage !== "EVALUATION" &&
+                application?.currentStage !== "DUE_DILIGENCY"
+                  ? "APPROVED"
+                  : application?.status}
+              </div>
+              {application?.currentStage !== "DUE_DILIGENCY" && (
+                <div className="flex flex-col gap-2 mt-4">
+                  <button
+                    onClick={openAddDue}
+                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                  >
+                    View details
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <h3 className="font-semibold">Grant Committee</h3>
+              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
+                {!application?.grantCommitteeDecision ? "Pending" : "Finished"}
+              </div>
 
-          </div>
-        ) : <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
-        <h2 className="font-bold">Decision</h2>
-        <div className="flex flex-col gap-2">
-          <h3 className="font-semibold">Evaluation Stage</h3>
-          <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-            {application?.currentStage === "EVALUATION"
-              ? "Pending"
-              : "Finished"}
-          </div>
-          {application?.evaluationDecisions && (
-            <div className="flex flex-col gap-2 mt-4">
-              <button
-                onClick={openEvaluationDetails}
-                className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-              >
-                View details
-              </button>
+              {application?.grantCommitteeDecision && (
+                <div className="flex flex-col gap-2 mt-4">
+                  <button
+                    onClick={openGrantCommitteeDetails}
+                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                  >
+                    View details
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <div className="flex flex-col gap-2">
-          <h3 className="font-bold">Due Diligence Stage</h3>
-          <div
-            className={`font-medium  ${
-              application?.status === "APPROVED" ||
-              application?.currentStage !== "EVALUATION"
-                ? "bg-[#4BC500] text-[#4BC500]"
-                : application?.status === "PENDING"
-                  ? "bg-red-600 text-red-600"
-                  : ""
-            } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-          >
-            {application?.currentStage !== "EVALUATION" &&
-            application?.currentStage !== "DUE_DILIGENCY"
-              ? "APPROVED"
-              : application?.status}
           </div>
-          {application?.currentStage !== "DUE_DILIGENCY" && (
-            <div className="flex flex-col gap-2 mt-4">
-              <button
-                onClick={openAddDue}
-                className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-              >
-                View details
-              </button>
-            </div>
-          )}
-        </div>
-        <div className="flex flex-col gap-2">
-          <h3 className="font-semibold">Grant Committee</h3>
-          <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-            {!application?.grantCommitteeDecision ? "Pending" : "Finished"}
-          </div>
-
-          {application?.grantCommitteeDecision && (
-            <div className="flex flex-col gap-2 mt-4">
-              <button
-                onClick={openGrantCommitteeDetails}
-                className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-              >
-                View details
-              </button>
-            </div>
-          )}
-        </div>
-      </div>}
-        
+        )}
       </div>
       <DueDiligenceModal
         application={application}
