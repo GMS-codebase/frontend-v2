@@ -8,13 +8,13 @@ export const FirstPageQuestions = ({
   handleInputChange,
   commentData,
   setCommentData,
-  showComments
+  showComments,
 }: {
   data: any;
   handleInputChange: any;
   commentData?: Comments;
   setCommentData?: any;
-  showComments?:boolean;
+  showComments?: boolean;
 }) => {
   const handleCommentChange = (inputName: string, value: any) => {
     if (setCommentData) {
@@ -199,7 +199,7 @@ export const TrainingProgress = ({
   trades,
   commentsData,
   setCommentsData,
-  showComments
+  showComments,
 }: {
   data: any;
   files: any;
@@ -208,7 +208,7 @@ export const TrainingProgress = ({
   trades: any;
   commentsData?: Comments;
   setCommentsData?: any;
-  showComments?:boolean;
+  showComments?: boolean;
 }) => {
   const [trainingProcessInputs, setTrainingProcessInputs] = useState({
     trade: "",
@@ -445,7 +445,7 @@ export function TrainingEquipments({
   trades,
   commentsData,
   setCommentsData,
-  showComments
+  showComments,
 }: {
   data: any;
   files: any;
@@ -454,7 +454,7 @@ export function TrainingEquipments({
   trades: any;
   commentsData?: Comments;
   setCommentsData?: any;
-  showComments?:boolean
+  showComments?: boolean;
 }) {
   const [trainingEquipments, setTrainingEquipments] = useState({
     trade: "",
@@ -605,7 +605,8 @@ export function TrainingEquipments({
                 ? "Download File"
                 : "No Attachment Found!"}
             </button>
-            {showComments && renderCommentsSection("trainingEquipmentAttachmentComment")}
+            {showComments &&
+              renderCommentsSection("trainingEquipmentAttachmentComment")}
           </>
         ) : (
           <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
@@ -652,13 +653,13 @@ export const Staff = ({
   handleArrayOfObjectsChange,
   commentData,
   setCommentData,
-  showComments
+  showComments,
 }: {
   data: any;
   handleArrayOfObjectsChange: any;
   commentData?: any;
   setCommentData?: any;
-  showComments?:boolean;
+  showComments?: boolean;
 }) => {
   const [staffInputs, setStaffInputs] = useState({
     number: "",
@@ -871,7 +872,7 @@ export const LastPageQuestions = ({
   handleFileChange,
   commentData,
   setCommentData,
-  showComments
+  showComments,
 }: {
   data: any;
   handleInputChange: any;
@@ -879,7 +880,7 @@ export const LastPageQuestions = ({
   handleFileChange: any;
   commentData?: Comments;
   setCommentData?: any;
-  showComments?:boolean;
+  showComments?: boolean;
 }) => {
   return (
     <>
