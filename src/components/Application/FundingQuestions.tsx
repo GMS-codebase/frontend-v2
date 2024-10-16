@@ -19,6 +19,7 @@ interface FundingQuestionsProps {
   comments?: Comments;
   setComments?: React.Dispatch<React.SetStateAction<Comments>>;
   goToBudget?: () => void;
+  showComments?:boolean;
 }
 
 const FundingQuestions: React.FC<FundingQuestionsProps> = ({
@@ -27,12 +28,13 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   comments,
   setComments,
   goToBudget,
+  showComments
 }) => {
   const { applicationId } = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
-
+  console.log("comments --> ", showComments);
   useEffect(() => {
     const fetchApplicationData = async () => {
       try {
@@ -92,6 +94,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       handleInputChange={handleInputChange}
       commentData={comments}
       setCommentData={setComments}
+      showComments={showComments}
     />,
     <TrainingProgress
       key="progress"
@@ -102,6 +105,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       trades={applicationTrades}
       commentsData={comments}
       setCommentsData={setComments}
+      showComments={showComments}
     />,
     <TrainingEquipments
       key="equipments"
@@ -112,6 +116,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       trades={applicationTrades}
       commentsData={comments}
       setCommentsData={setComments}
+      showComments={showComments}
     />,
     <Staff
       key="staff"
@@ -119,6 +124,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       handleArrayOfObjectsChange={handleArrayOfObjectsChange}
       commentData={comments}
       setCommentData={setComments}
+      showComments={showComments}
     />,
     <LastPageQuestions
       key="last"
@@ -128,6 +134,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       handleFileChange={handleFileChange}
       commentData={comments}
       setCommentData={setComments}
+      showComments={showComments}
     />,
   ];
 
