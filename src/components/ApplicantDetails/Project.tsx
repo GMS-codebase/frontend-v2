@@ -1,17 +1,5 @@
-// import React from "react";
-// import TextArea from "@/components/ApplicantDetails/TextArea";
-// import { SolarDownloadMinimalisticBold } from "@/components/core/icons";
-
-// const Project: React.FC<ProjectProps> = ({ onNext }) => {
-//     return (
-
-// };
-
-// export default Project;
-// File: components/ApplicantDetails/Project.tsx
-// File: components/ApplicantDetails/Project.tsx
-import React, { useState } from "react";
-import TextArea from "@/components/ApplicantDetails/TextArea"; // adjust the path as necessary
+import React, { ChangeEvent, useState } from "react";
+import TextArea from "@/components/ApplicantDetails/TextArea";
 import { SolarDownloadMinimalisticBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
@@ -19,13 +7,24 @@ import { applicationData as data } from "@/utils/constants/dummy";
 import { applicationDatas as datas } from "@/utils/constants/dummy";
 import { beneficiaryData as bdata } from "@/utils/constants/dummy";
 import { technicalData as tdata } from "@/utils/constants/dummy";
-import { Suitcase } from "solar-icon-set";
+import NextPrevButtons from "../core/NextPrevButtons";
+import { Comments } from "@/types";
 type ProjectStepProps = {
   handleNext: () => void;
-  handlePrevious?: () => void;
+  handlePrevious: () => void;
+  data: any;
+  setComments: React.Dispatch<any>;
+  commentsData: Comments;
+  handleChangeComment: (e: any) => void;
 };
-
-const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
+const Project1: React.FC<ProjectStepProps> = ({
+  handleNext,
+  data,
+  commentsData,
+  setComments,
+  handlePrevious,
+  handleChangeComment,
+}) => {
   return (
     <div className="flex flex-col gap-4 ">
       <div className="flex flex-col gap-3">
@@ -36,16 +35,17 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
             application.
           </p>
           <div className="text-gray-400">
-            <TextArea
-              readOnly
-              defaultText="The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era."
-            />
+            <TextArea readOnly defaultText={data?.title} />
           </div>
         </div>
         <div className="flex flex-col gap-2">
           <h3>Comment</h3>
           <div>
-            <TextArea />
+            <TextArea
+              name="titleComment"
+              value={commentsData.titleComment}
+              onChange={handleChangeComment}
+            />
           </div>
         </div>
       </div>
@@ -68,7 +68,11 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
         <div className="flex flex-col gap-2">
           <h3>Comment</h3>
           <div>
-            <TextArea />
+            <TextArea
+              name="activitiesComment"
+              value={commentsData.activitiesComment}
+              onChange={handleChangeComment}
+            />
           </div>
         </div>
       </div>
@@ -92,7 +96,11 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
         <div className="flex flex-col gap-2">
           <h3 className="font-light">Comment</h3>
           <div>
-            <TextArea />
+            <TextArea
+              name="trainingPremisesComment"
+              value={commentsData.trainingPremisesComment}
+              onChange={handleChangeComment}
+            />
           </div>
         </div>
       </div>
@@ -119,25 +127,15 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
         <div className="flex flex-col gap-2">
           <h3>Comment</h3>
           <div>
-            <TextArea />
+            <TextArea readOnly />
           </div>
         </div>
       </div>
-      <div className="flex gap-4">
-        <button
-          className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md cursor-not-allowed"
-          disabled
-        >
-          <span>Prev</span>
-        </button>
-        <button
-          className="flex gap-2 bg-blue-500 text-white px-4 py-2 rounded-md"
-          onClick={handleNext}
-        >
-          <p>Next</p>
-          <span>i</span>
-        </button>
-      </div>
+      <NextPrevButtons
+        handleNext={handleNext}
+        handlePrev={() => {}}
+        isFirst={true}
+      />
     </div>
   );
 };
@@ -145,6 +143,10 @@ const Project1: React.FC<ProjectStepProps> = ({ handleNext }) => {
 const Project2: React.FC<ProjectStepProps> = ({
   handleNext,
   handlePrevious,
+  data,
+  commentsData,
+  setComments,
+  handleChangeComment,
 }) => {
   const columns: ColumnDef<any>[] = [
     {
@@ -218,26 +220,27 @@ const Project2: React.FC<ProjectStepProps> = ({
           data={datas}
         />
       </div>
-      <div className="flex gap-4">
-        <button
-          className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
-          onClick={handlePrevious}
-        >
-          <span>Prev</span>
-        </button>
-        <button
-          className="flex gap-2 bg-blue-500 text-white px-4 py-2 rounded-md"
-          onClick={handleNext}
-        >
-          <span>Next</span>
-        </button>
+      <div className="flex flex-col gap-2">
+        <h3>Comment</h3>
+        <div>
+          <TextArea
+            name="trainingManualComment"
+            value={commentsData.trainingManualComment}
+            onChange={handleChangeComment}
+          />
+        </div>
       </div>
+      <NextPrevButtons handleNext={handleNext} handlePrev={handlePrevious} />
     </div>
   );
 };
 const Project3: React.FC<ProjectStepProps> = ({
   handleNext,
   handlePrevious,
+  data,
+  commentsData,
+  setComments,
+  handleChangeComment,
 }) => {
   const handleDownload = () => {
     const data = `
@@ -272,6 +275,16 @@ const Project3: React.FC<ProjectStepProps> = ({
         <div className="flex items-center justify-start  font-normal">
           <TextArea readOnly defaultText="144" />
         </div>
+        <div className="flex flex-col gap-2">
+          <h3>Comment</h3>
+          <div>
+            <TextArea
+              name="titleComment"
+              value={commentsData.titleComment}
+              onChange={handleChangeComment}
+            />
+          </div>
+        </div>
       </div>
       <div>
         <div className="flex flex-col gap-2">
@@ -292,6 +305,16 @@ const Project3: React.FC<ProjectStepProps> = ({
             </span>
             <p>Download</p>
           </div>
+          <div className="flex flex-col gap-2">
+            <h3>Comment</h3>
+            <div>
+              <TextArea
+                name="titleComment"
+                value={commentsData.titleComment}
+                onChange={handleChangeComment}
+              />
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex flex-col gap-2">
@@ -308,26 +331,27 @@ const Project3: React.FC<ProjectStepProps> = ({
           />
         </div>
       </div>
-      <div className="flex gap-4">
-        <button
-          className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
-          onClick={handlePrevious}
-        >
-          <span>Prev</span>
-        </button>
-        <button
-          className="flex gap-2 bg-blue-500 text-white px-4 py-2 rounded-md"
-          onClick={handleNext}
-        >
-          <span>Next</span>
-        </button>
+      <div className="flex flex-col gap-2">
+        <h3>Comment</h3>
+        <div>
+          <TextArea
+            name="titleComment"
+            value={commentsData.titleComment}
+            onChange={handleChangeComment}
+          />
+        </div>
       </div>
+      <NextPrevButtons handleNext={handleNext} handlePrev={handlePrevious} />
     </div>
   );
 };
 const Project4: React.FC<ProjectStepProps> = ({
   handleNext,
   handlePrevious,
+  data,
+  commentsData,
+  setComments,
+  handleChangeComment,
 }) => {
   const columns: ColumnDef<any>[] = [
     {
@@ -379,20 +403,17 @@ const Project4: React.FC<ProjectStepProps> = ({
           data={data}
         />
       </div>
-      <div className="flex gap-4">
-        <button
-          className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
-          onClick={handlePrevious}
-        >
-          <span>Prev</span>
-        </button>
-        <button
-          className="flex gap-2 bg-blue-500 text-white px-4 py-2 rounded-md"
-          onClick={handleNext}
-        >
-          <span>Next</span>
-        </button>
+      <div className="flex flex-col gap-2">
+        <h3>Comment</h3>
+        <div>
+          <TextArea
+            name="titleComment"
+            value={commentsData.titleComment}
+            onChange={handleChangeComment}
+          />
+        </div>
       </div>
+      <NextPrevButtons handleNext={handleNext} handlePrev={handlePrevious} />
     </div>
   );
 };
@@ -400,6 +421,10 @@ const Project4: React.FC<ProjectStepProps> = ({
 const Project5: React.FC<ProjectStepProps> = ({
   handleNext,
   handlePrevious,
+  data,
+  commentsData,
+  setComments,
+  handleChangeComment,
 }) => {
   const handleDownload = () => {
     const data = `
@@ -488,20 +513,17 @@ const Project5: React.FC<ProjectStepProps> = ({
           data={bdata}
         />
       </div>
-      <div className="flex gap-4">
-        <button
-          className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
-          onClick={handlePrevious}
-        >
-          <span>Prev</span>
-        </button>
-        <button
-          className="flex gap-2 bg-blue-500 text-white px-4 py-2 rounded-md"
-          onClick={handleNext}
-        >
-          <span>Next</span>
-        </button>
+      <div className="flex flex-col gap-2">
+        <h3>Comment</h3>
+        <div>
+          <TextArea
+            name="titleComment"
+            value={commentsData.titleComment}
+            onChange={handleChangeComment}
+          />
+        </div>
       </div>
+      <NextPrevButtons handleNext={handleNext} handlePrev={handlePrevious} />
     </div>
   );
 };
@@ -509,6 +531,10 @@ const Project5: React.FC<ProjectStepProps> = ({
 const Project6: React.FC<ProjectStepProps> = ({
   handleNext,
   handlePrevious,
+  data,
+  commentsData,
+  setComments,
+  handleChangeComment,
 }) => {
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -516,20 +542,17 @@ const Project6: React.FC<ProjectStepProps> = ({
       <div className="w-full flex justify-start items-center">
         <TextArea readOnly defaultText="250" />
       </div>
-      <div className="flex gap-4 w-full">
-        <button
-          className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
-          onClick={handlePrevious}
-        >
-          <span>Prev</span>
-        </button>
-        <button
-          className="flex gap-2 bg-blue-500 text-white px-4 py-2 rounded-md"
-          onClick={handleNext}
-        >
-          <span>Next</span>
-        </button>
+      <div className="flex flex-col gap-2">
+        <h3>Comment</h3>
+        <div>
+          <TextArea
+            name="titleComment"
+            value={commentsData.trainingEquipmentComment}
+            onChange={handleChangeComment}
+          />
+        </div>
       </div>
+      <NextPrevButtons handleNext={handleNext} handlePrev={handlePrevious} />
     </div>
   );
 };
@@ -537,6 +560,10 @@ const Project6: React.FC<ProjectStepProps> = ({
 const Project7: React.FC<ProjectStepProps> = ({
   handleNext,
   handlePrevious,
+  data,
+  commentsData,
+  setComments,
+  handleChangeComment,
 }) => {
   const columns: ColumnDef<any>[] = [
     {
@@ -598,28 +625,20 @@ const Project7: React.FC<ProjectStepProps> = ({
           data={tdata}
         />
       </div>
-      <div className="flex gap-4">
-        <button
-          className="flex gap-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
-          onClick={handlePrevious}
-        >
-          <span>Prev</span>
-        </button>
-        <button
-          className="flex gap-2 bg-blue-500 text-white px-4 py-2 rounded-md cursor-not-allowed"
-          disabled
-          onClick={handleNext}
-        >
-          <span>Next</span>
-        </button>
-      </div>
+      <NextPrevButtons handleNext={handleNext} handlePrev={handlePrevious} />
     </div>
   );
 };
 
-// Similarly, create Project3, Project4, etc.
-
-const Project: React.FC = () => {
+const Project = ({
+  data,
+  setComments,
+  commentsData,
+}: {
+  data: any;
+  setComments: React.Dispatch<any>;
+  commentsData: Comments;
+}) => {
   const [currentStep, setCurrentStep] = useState(1);
 
   const handleNext = () => {
@@ -629,39 +648,105 @@ const Project: React.FC = () => {
   const handlePrevious = () => {
     setCurrentStep((prev) => prev - 1);
   };
-
+  const handleChangeComment = (e: any) => {
+    const { name, value } = e.target;
+    setComments((prevComments: Comments) => ({
+      ...prevComments,
+      [name]: value,
+    }));
+  };
   switch (currentStep) {
     case 1:
-      return <Project1 handleNext={handleNext} />;
+      return (
+        <Project1
+          handleChangeComment={handleChangeComment}
+          handlePrevious={handlePrevious}
+          handleNext={handleNext}
+          data={data}
+          setComments={setComments}
+          commentsData={commentsData}
+        />
+      );
     case 2:
       return (
-        <Project2 handleNext={handleNext} handlePrevious={handlePrevious} />
+        <Project2
+          handleChangeComment={handleChangeComment}
+          handleNext={handleNext}
+          handlePrevious={handlePrevious}
+          data={data}
+          setComments={setComments}
+          commentsData={commentsData}
+        />
       );
     case 3:
       return (
-        <Project3 handleNext={handleNext} handlePrevious={handlePrevious} />
+        <Project3
+          handleChangeComment={handleChangeComment}
+          handleNext={handleNext}
+          handlePrevious={handlePrevious}
+          data={data}
+          setComments={setComments}
+          commentsData={commentsData}
+        />
       );
     case 4:
       return (
-        <Project4 handleNext={handleNext} handlePrevious={handlePrevious} />
+        <Project4
+          handleChangeComment={handleChangeComment}
+          handleNext={handleNext}
+          handlePrevious={handlePrevious}
+          data={data}
+          setComments={setComments}
+          commentsData={commentsData}
+        />
       );
     case 5:
       return (
-        <Project5 handleNext={handleNext} handlePrevious={handlePrevious} />
+        <Project5
+          handleChangeComment={handleChangeComment}
+          handleNext={handleNext}
+          handlePrevious={handlePrevious}
+          data={data}
+          setComments={setComments}
+          commentsData={commentsData}
+        />
       );
 
     case 6:
       return (
-        <Project6 handleNext={handleNext} handlePrevious={handlePrevious} />
+        <Project6
+          handleChangeComment={handleChangeComment}
+          handleNext={handleNext}
+          handlePrevious={handlePrevious}
+          data={data}
+          setComments={setComments}
+          commentsData={commentsData}
+        />
       );
     case 7:
       return (
-        <Project7 handleNext={handleNext} handlePrevious={handlePrevious} />
+        <Project7
+          handleChangeComment={handleChangeComment}
+          handleNext={handleNext}
+          handlePrevious={handlePrevious}
+          data={data}
+          setComments={setComments}
+          commentsData={commentsData}
+        />
       );
 
     // Add more cases for Project3, Project4, etc.
     default:
-      return <Project1 handleNext={handleNext} />;
+      return (
+        <Project1
+          handleChangeComment={handleChangeComment}
+          handlePrevious={handlePrevious}
+          handleNext={handleNext}
+          data={data}
+          setComments={setComments}
+          commentsData={commentsData}
+        />
+      );
   }
 };
 

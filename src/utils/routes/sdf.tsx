@@ -1,0 +1,38 @@
+"use client";
+import * as Icons from "@/components/core/icons";
+import { Route } from "@/types";
+
+const sdfRoutes: Route[] = [
+  {
+    label: "Contracts",
+    path: "/sdf/contracts",
+    icon: <Icons.SolarDocumentBold />,
+  },
+  {
+    label: "Applicants",
+    path: "/sdf/applicants",
+    icon: <Icons.SolarFileBold />,
+  },
+  {
+    label: "Applications",
+    path: "/sdf/applications",
+    icon: <Icons.SolarFolderWithFilesBold />,
+  },
+  {
+    label: "Minutes",
+    path: "/sdf/minutes",
+    icon: <Icons.SolarDocumentBold />,
+  },
+  {
+    label: "M&E Reports",
+    path: "/sdf/reports/m_and_e",
+    icon: <Icons.SolarFileBold />,
+  },
+  {
+    label: "Profile",
+    path: "/sdf/profile",
+    icon: <Icons.SolarUserCircleBold />,
+  },
+];
+
+export default sdfRoutes;

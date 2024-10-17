@@ -1,8 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 body {
   background-color: #fff;
+}
+* {
+  font-family: "Urbanist", sans-serif;
+  user-select: none;
 }
 .m_5df29311,
 .m_fd1ab0aa {
@@ -42,6 +47,26 @@ body {
   background-color: transparent;
 }
 
+textarea::-webkit-scrollbar {
+  width: 6px;
+  background-color: transparent;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: #005de917;
+  border-radius: 10px;
+}
+
+.modal::-webkit-scrollbar {
+  width: 6px;
+  background-color: transparent;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background: #005de917;
+  border-radius: 10px;
+}
+
 .sidebar-container::-webkit-scrollbar-thumb {
   background: #005de917;
   border-radius: 10px;
@@ -64,4 +89,28 @@ body {
 .data-table::-webkit-scrollbar {
   height: 5px;
   margin-top: 4px;
+}
+
+.calls-list-cont::-webkit-scrollbar {
+  background: #000f230d;
+}
+.calls-list-cont::-webkit-scrollbar-thumb {
+  background: #000f23;
+  border-radius: 10px;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.chart-container {
+  border-radius: 16px; /* Adjust the radius as needed */
+  overflow: hidden; /* This ensures the chart respects the border radius */
+}
+
+canvas[role="img"] {
+  font-family: "Urbanist", sans-serif !important;
+}
+.m_60c222c7 {
+  align-items: center !important;
 }

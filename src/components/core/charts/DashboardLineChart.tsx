@@ -43,38 +43,37 @@ const DashboardLineChart: React.FC<DashboardLineChartProps> = ({ data }) => {
     responsive: true,
     plugins: {
       legend: {
-        display: false,
+        display: true, // Display the legend
       },
     },
     scales: {
       x: {
         grid: {
-          display: false,
+          display: false, // Hide vertical grid lines
         },
       },
       y: {
         grid: {
-          borderDash: [],
-          color: "#C9CBCD",
+          display: false, // Hide horizontal grid lines
         },
       },
     },
     elements: {
       line: {
         tension: 0.5,
-        borderWidth: 0,
+        borderWidth: 0, // Remove line border
       },
       point: {
-        radius: 0,
+        radius: 0, // Remove points on the line
       },
     },
   };
 
   const modifiedData = {
     ...data,
-    datasets: data.datasets.map((dataset) => ({
+    datasets: data.datasets.map((dataset, index) => ({
       ...dataset,
-      fill: true,
+      fill: true, // Enable background fill
       backgroundColor: (context: any) => {
         const chart = context.chart;
         const { ctx, chartArea } = chart;
@@ -89,13 +88,21 @@ const DashboardLineChart: React.FC<DashboardLineChartProps> = ({ data }) => {
           0,
           chartArea.bottom,
         );
-        gradientBg.addColorStop(0.5, "rgba(0, 123, 255, 1)");
-        gradientBg.addColorStop(0, "rgba(0, 123, 255, 1)");
-        gradientBg.addColorStop(1, "rgba(0, 123, 255, 0)");
+
+        // Set gradient colors based on the index of the dataset
+        if (index === 0) {
+          gradientBg.addColorStop(0.5, "rgba(0, 123, 255, 1)"); // Blue gradient
+          gradientBg.addColorStop(0, "rgba(0, 123, 255, 0.2)");
+          gradientBg.addColorStop(1, "rgba(0, 123, 255, 0)");
+        } else {
+          gradientBg.addColorStop(0.5, "rgba(255, 165, 0, 1)"); // Orange gradient
+          gradientBg.addColorStop(0, "rgba(255, 165, 0, 0.2)");
+          gradientBg.addColorStop(1, "rgba(255, 165, 0, 0)");
+        }
 
         return gradientBg;
       },
-      borderColor: dataset.borderColor || "rgba(0, 123, 255, 1)",
+      borderColor: "transparent", // Set the line border to transparent
     })),
   };
 

@@ -1,6 +1,10 @@
+import { ADD_SECTOR_SUCCESS } from "@/actions/SectorsActions";
+import { authorizedApi } from "@/utils/api";
 import { Modal } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { useDispatch } from "react-redux";
 import { Folder2, Subtitles } from "solar-icon-set";
 
 const AddSector = ({
@@ -10,9 +14,11 @@ const AddSector = ({
   isOpenAddSector: boolean;
   closeAddSector: () => void;
 }) => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    title: "",
+    name: "",
     description: "",
+    shortname: "",
   });
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
@@ -25,8 +31,31 @@ const AddSector = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log("Form Data: ", formData);
+    authorizedApi
+      .post("/Sectors", formData)
+      .then((res) => {
+        notifications.show({
+          message: "Sector is created successfully",
+          color: "blue",
+        });
+        dispatch({
+          type: ADD_SECTOR_SUCCESS,
+          payload: res.data?.data,
+        });
+        setFormData({
+          name: "",
+          description: "",
+          shortname: "",
+        });
+        closeAddSector();
+      })
+      .catch((err) => {
+        if (err.response)
+          notifications.show({
+            message: err.response?.data?.message ?? "Failed to create sector!",
+            color: "red",
+          });
+      });
   };
 
   return (
@@ -38,7 +67,7 @@ const AddSector = ({
         closeOnClickOutside={false}
         withCloseButton={false}
       >
-        <div className="w-[80vh] h-[500px] relative bg-white rounded-3xl pt-10 pb-6 flex flex-col items-center">
+        <div className="w-[40vw] max-h-[90vh] relative bg-white rounded-3xl pt-10 pb-6 flex flex-col items-center">
           <button
             className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
             onClick={closeAddSector}
@@ -54,12 +83,12 @@ const AddSector = ({
           <div className="w-4/5 flex flex-col items-center mt-10 overflow-hidden">
             <form
               onSubmit={handleSubmit}
-              className="w-full h-[60vh] overflow-y-auto flex flex-col gap-2 px-2"
+              className="w-full overflow-y-auto flex flex-col gap-2 px-2"
             >
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
                   <label
-                    htmlFor="SectorTitle"
+                    htmlFor="title"
                     className="block text-lg font-bold text-gray-700"
                   >
                     Title
@@ -70,9 +99,33 @@ const AddSector = ({
                     </span>
                     <input
                       type="text"
-                      name="SectorTitle"
-                      value={formData.title}
+                      name="name"
+                      value={formData.name}
                       placeholder="Sector title"
+                      onChange={handleChange}
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="w-full flex justify-between gap-3">
+                <div className="w-full">
+                  <label
+                    htmlFor="title"
+                    className="block text-lg font-bold text-gray-700"
+                  >
+                    Short name
+                  </label>
+                  <div className="w-full relative">
+                    <span className="absolute left-2 top-[10px]">
+                      <Folder2 />
+                    </span>
+                    <input
+                      type="text"
+                      name="shortname"
+                      value={formData.shortname}
+                      placeholder="Sector short name"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
                       required
@@ -104,7 +157,7 @@ const AddSector = ({
                 </div>
               </div>
 
-              <div className="w-full flex justify-center mt-4 space-x-4">
+              <div className="w-full flex justify-center mt-4 pb-2 space-x-4">
                 <button
                   type="button"
                   onClick={closeAddSector}
@@ -113,7 +166,7 @@ const AddSector = ({
                   Cancel
                 </button>
                 <button
-                  type="button"
+                  type="submit"
                   className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Create

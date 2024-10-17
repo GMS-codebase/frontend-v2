@@ -1,5 +1,4 @@
 import { useDisclosure } from "@mantine/hooks";
-``;
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Menu, Button, Text, rem } from "@mantine/core";
 import { FiEye } from "react-icons/fi";
@@ -14,7 +13,6 @@ const SectorsActions = ({
   setIsSector: (sector: any) => void;
   sector: any;
 }) => {
-  console.log("sector update --> ", sector);
   return (
     <div className="">
       <Menu shadow="lg" width={300}>
@@ -36,7 +34,7 @@ const SectorsActions = ({
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
             <Link
-              href={"/admin/sectors/sector"}
+              href={`/admin/sectors/${sector.uuid}`}
               className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
             >
               <FiEye size={21} color="#576074" />
@@ -55,6 +53,12 @@ const SectorsActions = ({
             >
               <CiEdit size={21} color="#576074" />
               Edit Sector
+            </div>
+          </Menu.Item>
+          <Menu.Item>
+            <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+              <RiDeleteBinLine size={21} color="#576074" />
+              Acivate
             </div>
           </Menu.Item>
           <Menu.Item>
