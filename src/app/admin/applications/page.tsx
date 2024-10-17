@@ -78,11 +78,13 @@ const Page = () => {
   );
 
   const filteredApplications =
-    applications?.applications?.filter((application: any) =>
-      application?.applicant?.name
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase()),
-    ) ?? [];
+    applications?.applications
+      ?.filter((app: any) => app.stages.length > 0)
+      ?.filter((application: any) =>
+        application?.applicant?.name
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase())
+      ) ?? [];
 
   const handleScroll = (direction: "left" | "right") => {
     if (filtersContainerRef.current) {
