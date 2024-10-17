@@ -2464,7 +2464,428 @@ export const callsData = [
     status: "CLOSED",
   },
 ];
-
+export const calls = [
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+  {
+    title: "SDF CALL 5 FOR GRANT PROPOSALS",
+    description: `Rwanda TVET Board (RTB) informs the general public that the
+                    SDF call (5) for grant proposals has been launched. In the
+                    attachment below is the published call for proposal.
+                    Interested applicants are requested to register in the
+                    system and fill the application form specific to the window
+                    they wish to apply for. Thereafter, applications should be
+                    submitted before the deadline.`,
+  },
+];
 export const sectorsData = [
   {
     name: "Transport &Logistics",
@@ -2636,51 +3057,61 @@ export const applicantsData = [
   {
     name: "Jean Bosco",
     email: "jean.bosco@example.com",
+    institution: "ACOFOPRO LTD",
     phone: "+250789123456",
   },
   {
     name: "Alice Uwamahoro",
     email: "alice.uwamahoro@example.com",
+    institution: "ACOFOPRO LTD",
     phone: "+250783654789",
   },
   {
     name: "Eric Ndayisaba",
     email: "eric.ndayisaba@example.com",
+    institution: "ACOFOPRO LTD",
     phone: "+250722345678",
   },
   {
     name: "Clementine Mukarugema",
     email: "clementine.mukarugema@example.com",
+    institution: "ACOFOPRO LTD",
     phone: "+250788234567",
   },
   {
     name: "David Kamanzi",
     email: "david.kamanzi@example.com",
+    institution: "ACOFOPRO LTD",
     phone: "+250785678234",
   },
   {
     name: "Esther Niyigena",
     email: "esther.niyigena@example.com",
+    institution: "ACOFOPRO LTD",
     phone: "+250787234567",
   },
   {
     name: "Patrick Munyaneza",
     email: "patrick.munyaneza@example.com",
+    institution: "ACOFOPRO LTD",
     phone: "+250788765432",
   },
   {
     name: "Marie Ange Umuhoza",
     email: "marieange.umuhoza@example.com",
+    institution: "ACOFOPRO LTD",
     phone: "+250789876543",
   },
   {
     name: "Claude Tuyisenge",
     email: "claude.tuyisenge@example.com",
+    institution: "ACOFOPRO LTD",
     phone: "+250783456789",
   },
   {
     name: "Olivia Uwase",
     email: "olivia.uwase@example.com",
+    institution: "ACOFOPRO LTD",
     phone: "+250782345678",
   },
 ];
@@ -4072,6 +4503,27 @@ export const employee = [
     title: "ICT & Digital Skills Specialist",
   },
 ];
+
+export const ContractDetails = [
+  {
+    title: "First Installment",
+    amount: "14363666.50",
+    percentage: "50",
+    paid: "YES",
+  },
+  {
+    title: "Second Installment",
+    amount: "14363666.50",
+    percentage: "50",
+    paid: "YES",
+  },
+  {
+    title: "Third Installment",
+    amount: "14363666.50",
+    percentage: "50",
+    paid: "YES",
+  },
+];
 export const applicationsData = [
   {
     applicationNumber: "GMS-APP-0001924",
@@ -4081,6 +4533,116 @@ export const applicationsData = [
       name: "Apprenticeships and Internships",
     },
     sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
     stage: "DueDiligency",
   },
   {
@@ -4101,6 +4663,116 @@ export const applicationsData = [
       name: "Apprenticeships and Internships",
     },
     sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
+    stage: "DueDiligency",
+  },
+  {
+    applicationNumber: "GMS-APP-0001924",
+    applicantName: "ACOFOPRO LTD",
+    window: {
+      number: 3,
+      name: "Apprenticeships and Internships",
+    },
+    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
     stage: "DueDiligency",
   },
   {
@@ -4112,6 +4784,8 @@ export const applicationsData = [
     },
     sector: "Manufacturing",
     stage: "DueDiligency",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
   },
   {
     applicationNumber: "GMS-APP-0001924",
@@ -4121,186 +4795,8 @@ export const applicationsData = [
       name: "Apprenticeships and Internships",
     },
     sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
-    stage: "DueDiligency",
-  },
-  {
-    applicationNumber: "GMS-APP-0001924",
-    applicantName: "ACOFOPRO LTD",
-    window: {
-      number: 3,
-      name: "Apprenticeships and Internships",
-    },
-    sector: "Manufacturing",
+    trade:
+      "MIG/MAG (Metal inert/active gas) welding and TIG (Tungsten Inert Gas ) welding process",
     stage: "DueDiligency",
   },
 ];
@@ -4445,5 +4941,103 @@ export const meReports = [
     call: "Assess program sustainability",
     description:
       "Evaluate the sustainability of the program, including long-term viability and strategies for maintaining program success over time.",
+  },
+];
+
+export const applicantContacts = [
+  {
+    id: 1,
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    gender: "Male",
+    institution: "Tech University",
+    phoneNumber: "+1234567890",
+    position: "Software Engineer",
+  },
+  {
+    id: 2,
+    firstName: "Jane",
+    lastName: "Smith",
+    email: "jane.smith@example.com",
+    gender: "Female",
+    institution: "Creative Institute",
+    phoneNumber: "+1987654321",
+    position: "Graphic Designer",
+  },
+  {
+    id: 3,
+    firstName: "Michael",
+    lastName: "Johnson",
+    email: "michael.johnson@example.com",
+    gender: "Male",
+    institution: "Business College",
+    phoneNumber: "+1122334455",
+    position: "Marketing Manager",
+  },
+  {
+    id: 4,
+    firstName: "Emily",
+    lastName: "Davis",
+    email: "emily.davis@example.com",
+    gender: "Female",
+    institution: "Health Institute",
+    phoneNumber: "+2233445566",
+    position: "Nurse",
+  },
+  {
+    id: 5,
+    firstName: "David",
+    lastName: "Wilson",
+    email: "david.wilson@example.com",
+    gender: "Male",
+    institution: "Engineering Academy",
+    phoneNumber: "+3344556677",
+    position: "Civil Engineer",
+  },
+  {
+    id: 6,
+    firstName: "Sarah",
+    lastName: "Lee",
+    email: "sarah.lee@example.com",
+    gender: "Female",
+    institution: "Arts School",
+    phoneNumber: "+4455667788",
+    position: "Art Director",
+  },
+  {
+    id: 7,
+    firstName: "Chris",
+    lastName: "Brown",
+    email: "chris.brown@example.com",
+    gender: "Male",
+    institution: "Science Center",
+    phoneNumber: "+5566778899",
+    position: "Research Scientist",
+  },
+  {
+    id: 8,
+    firstName: "Anna",
+    lastName: "Williams",
+    email: "anna.williams@example.com",
+    gender: "Female",
+    institution: "Media University",
+    phoneNumber: "+6677889900",
+    position: "Journalist",
+  },
+];
+
+export const callData = [
+  {
+    number: "GMS-APP-0001924",
+    window: "WINDOW 3 : Apprenticeships and Internships",
+    sector: "Manufacturing",
+    currentStage: "DueDiligency",
+  },
+  {
+    number: "GMS-APP-0001924",
+    window: "WINDOW 3 : Apprenticeships and Internships",
+    sector: "Manufacturing",
+    currentStage: "DueDiligency",
   },
 ];

@@ -1,6 +1,6 @@
-import { Checkbox, Modal, Select, Stepper } from "@mantine/core";
+import { Checkbox, Modal, MultiSelect, Select, Stepper } from "@mantine/core";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import SideVector1 from "@/assets/Vectors/sidevecto.svg";
 import SideVector2 from "@/assets/Vectors/sidevector2.svg";
@@ -12,6 +12,11 @@ import {
   SolarSuitcaseLinear,
   SolarUserCircleOutline,
 } from "../core/icons";
+import { authorizedApi } from "@/utils/api";
+import { ClipLoader } from "react-spinners";
+import { notifications } from "@mantine/notifications";
+import { useDispatch, useSelector } from "react-redux";
+import { getEmployees } from "@/utils/funcs";
 type FormData = {
   firstName: string;
   lastName: string;
@@ -22,9 +27,11 @@ type FormData = {
   isInternal: undefined | boolean;
 };
 const AssignStage = ({
+  employee,
   isAssignStage,
   closeAssignStage,
 }: {
+  employee: any;
   isAssignStage: boolean;
   closeAssignStage: () => void;
 }) => {
@@ -37,11 +44,43 @@ const AssignStage = ({
     position: "",
     isInternal: undefined,
   });
+  const [stage, setStage] = useState("");
+  const [sectorId, setSectorId] = useState<any>("");
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const [reload, setReload] = useState(false);
+  const { sectors } = useSelector((state: any) => state.sectors);
+  const MultiSelectSectors = sectors.map((sector: any) => {
+    return { value: sector.uuid, label: sector.name };
+  });
+  useEffect(() => {}, [reload]);
   const handleSubmit = (e: { preventDefault: () => void }) => {
+    setLoading(true);
     e.preventDefault();
-    console.log("Form Data: ", formData);
+    authorizedApi
+      .post("/admin/employee/assign/stage", {
+        emp_id: employee[0]?.uuid,
+        emp_stage: stage,
+        sectorIds: sectorId,
+      })
+      .then((res) => {
+        console.log("assigning stage --> ", res.data);
+        getEmployees(dispatch);
+        notifications.show({
+          message: "Stage assigned successfully",
+          color: "blue",
+        });
+        setReload(!reload);
+        closeAssignStage();
+      })
+      .catch((err) => {
+        notifications.show({
+          message: err.response?.data?.message,
+          color: "red",
+        });
+      })
+      .finally(() => setLoading(false));
   };
-
   return (
     <Modal
       size={""}
@@ -96,20 +135,11 @@ const AssignStage = ({
                 </span>
                 <Select
                   name="position"
-                  value={formData.position}
-                  onChange={(value: any) =>
-                    setFormData((prevData) => ({
-                      ...prevData,
-                      position: value,
-                    }))
-                  }
+                  value={stage}
+                  onChange={(value: any) => setStage(value)}
                   data={[
-                    { value: "CEO", label: "CEO" },
-                    { value: "CTO", label: "CTO" },
-                    {
-                      value: "Marketing Manager",
-                      label: "Marketing Manager",
-                    },
+                    { value: "EVALUATION", label: "Evaluation" },
+                    { value: "DUE_DILIGENCY", label: "DueDiligency" },
                   ]}
                   placeholder="Select stage"
                   className="text-base"
@@ -118,7 +148,38 @@ const AssignStage = ({
               </div>
             </div>
 
-            <div className="w-full flex justify-center mt-10 space-x-4">
+            <div className="w-full">
+              <label
+                htmlFor="trade"
+                className="block text-base font-medium text-black"
+              >
+                Sectors
+              </label>
+              <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <span className="absolute left-2 top-3 text-black text-lg">
+                  <SolarSuitcaseLinear />
+                </span>
+                <MultiSelect
+                  name="sectors"
+                  disabled={!MultiSelectSectors}
+                  onChange={setSectorId}
+                  data={
+                    MultiSelectSectors
+                      ? MultiSelectSectors
+                      : [
+                          {
+                            value: "NO SECTOR",
+                            label: "No Sectors Created!",
+                          },
+                        ]
+                  }
+                  placeholder="Select or type in a sector"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="w-full flex justify-center mt-10 space-x-4 pb-2">
               <button
                 type="button"
                 onClick={closeAssignStage}
@@ -127,11 +188,10 @@ const AssignStage = ({
                 Cancel
               </button>
               <button
-                onClick={closeAssignStage}
-                type="button"
+                type="submit"
                 className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
-                Assign
+                {loading ? <ClipLoader color="white" size={23} /> : "Assign"}
               </button>
             </div>
           </form>

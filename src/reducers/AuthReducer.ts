@@ -1,4 +1,11 @@
-import { LOGIN, LOGOUT, SET_PERMISSIONS } from "@/actions/AuthActions";
+import {
+  LOGIN,
+  LOGOUT,
+  SET_APPLICANT_PROFILE,
+  SET_PERMISSIONS,
+  SET_USER_PROFILE,
+} from "@/actions/AuthActions";
+import { deleteCookie, setCookie } from "cookies-next";
 
 const initialState = {
   userProfile: null,
@@ -8,6 +15,7 @@ const initialState = {
   permissions: [],
   auth_expire_time: {},
   token_expire_time: null,
+  applicantProfile: null,
 };
 
 type Action = {
@@ -26,7 +34,20 @@ export default function authReducer(state = initialState, action: Action) {
         auth_expire_time: action.payload.auth_expire_time,
         token_expire_time: action.payload.token_expire_time,
       };
+    case SET_USER_PROFILE:
+      return {
+        ...state,
+        userProfile: action.payload,
+      };
+    case SET_APPLICANT_PROFILE:
+      return {
+        ...state,
+        applicantProfile: action.payload,
+      };
     case LOGOUT:
+      deleteCookie("auth_token");
+      deleteCookie("auth_USER");
+      deleteCookie("token");
       return initialState;
     case SET_PERMISSIONS:
       return {
