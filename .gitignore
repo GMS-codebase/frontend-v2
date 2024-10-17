@@ -20,7 +20,8 @@
 .DS_Store
 *.pem
 
-.env
+.env*
+*env*
 
 # debug
 npm-debug.log*
