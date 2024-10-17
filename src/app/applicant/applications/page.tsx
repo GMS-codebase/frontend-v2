@@ -43,7 +43,7 @@ const Page = () => {
       accessorKey: "currentStage",
       header: "Current Stage",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.currentStage}</div>
+        <div className="truncate">{row.original?.currentStage || "-"}</div>
       ),
     },
     {
@@ -70,7 +70,11 @@ const Page = () => {
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
                 <Link
-                  href={`/applicant/applications/application/${row.original.uuid}`}
+                  href={
+                    row.original.stages.length > 0
+                      ? `/admin/applications/${row.original.uuid}`
+                      : `/admin/applications/${row.original.call.uuid}/${row.original.uuid}/apply`
+                  }
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <FiEye size={21} color="#576074" />

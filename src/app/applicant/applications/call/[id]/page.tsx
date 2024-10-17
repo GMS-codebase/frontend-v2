@@ -29,7 +29,7 @@ const Page = () => {
   const { myApplications } = useSelector((state: any) => state.applications);
   console.log(myApplications);
   const existingApplication = myApplications.find(
-    (app: any) => app?.call?.uuid === callId,
+    (app: any) => app?.call?.uuid === callId && app.stages.length === 0
   );
   const [
     isOpenCreateProfile,
@@ -37,13 +37,22 @@ const Page = () => {
   ] = useDisclosure(false);
   const [isOpenAddContact, { open: openAddContact, close: closeAddContact }] =
     useDisclosure(false);
+  const [applyLoading, setApplyLoading] = useState(false);
   const [
     isOpenCreateApplication,
     { open: openCreateApplication, close: closeCreateApplication },
   ] = useDisclosure(false);
   const router = useRouter();
   const handleApply = () => {
-    if (!profile.applicantProfile || !profile.applicantProfile.business_name) {
+    setApplyLoading(true);
+    if (existingApplication) {
+      router.push(
+        `/applicant/applications/application/${existingApplication.uuid}`
+      );
+    } else if (
+      !profile.applicantProfile ||
+      !profile.applicantProfile.business_name
+    ) {
       openAddProfile();
     } else if (
       !contacts.loading &&
@@ -54,9 +63,10 @@ const Page = () => {
       openCreateApplication();
     } else {
       router.push(
-        `/applicant/applications/call/${callId}/${existingApplication.uuid}/apply`,
+        `/applicant/applications/call/${callId}/${existingApplication.uuid}/apply`
       );
     }
+    // setApplyLoading(false);
   };
   const [loading, setLoading] = useState(false);
   const handleDownloadInstructions = async () => {
@@ -69,7 +79,7 @@ const Page = () => {
         `/admin/download/calls/${filename}`,
         {
           responseType: "blob",
-        },
+        }
       );
       const blob = new Blob([response.data], {
         type: response.headers["content-type"],
@@ -188,12 +198,19 @@ const Page = () => {
               {call?.description}
             </div>
           </div>
-          <div
+          <button
             onClick={handleApply}
+            disabled={applyLoading}
             className="flex gap-2 text-white bg-[#005DE9] px-4 py-2 rounded-full  w-full font-bold items-center justify-center cursor-pointer"
           >
-            <p>Apply</p>
-          </div>
+            <p>
+              {applyLoading
+                ? "Loading...."
+                : existingApplication
+                  ? "Continue Application"
+                  : "Apply"}
+            </p>
+          </button>
         </div>
       </div>
       <CompleteProfile
