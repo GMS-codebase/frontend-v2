@@ -20,7 +20,7 @@ interface DonutChartProps {
 }
 
 // Define the data for the donut chart
-const getData = (daysLeft: number): ChartData<"doughnut"> => ({
+const getData = (daysLeft: any): ChartData<"doughnut"> => ({
   labels: ["Days Left", "Unused"],
   datasets: [
     {
@@ -82,7 +82,7 @@ const centerTextPlugin: Plugin<"doughnut"> = {
 };
 
 // DonutChart Component
-const DonutChart: React.FC<DonutChartProps> = ({ daysLeft = 5 }) => {
+const DonutChart: React.FC<DonutChartProps> = ({ daysLeft }) => {
   const data = getData(daysLeft);
   return (
     <Doughnut data={data} options={options} plugins={[centerTextPlugin]} />

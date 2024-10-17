@@ -44,22 +44,12 @@ const adminRoutes: Route[] = [
     icon: <Icons.SolarDocumentBold />,
   },
   {
-    label: "Appeals Reports",
-    path: "/admin/reports/appeals",
-    icon: <Icons.SolarShieldWarningBold />,
-  },
-  {
-    label: "Submission Reports",
-    path: "/admin/reports/submission",
-    icon: <Icons.SolarPaperclipRounded2Bold />,
-  },
-  {
     label: "Notifications",
     path: "/admin/notifications",
     icon: <Icons.SolarBellBold />,
   },
   {
-    label: "Employees",
+    label: "Users",
     path: "/admin/employees",
     icon: <Icons.SolarUsersGroupRoundedBold />,
   },
@@ -72,6 +62,11 @@ const adminRoutes: Route[] = [
     label: "M&E Reports",
     path: "/admin/reports/m_and_e",
     icon: <Icons.SolarFileBold />,
+  },
+  {
+    label: "roles",
+    path: "/admin/roles",
+    icon: <Icons.SolarUsersGroupTwoRoundedBold />,
   },
   {
     label: "Profile",

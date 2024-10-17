@@ -1,6 +1,10 @@
+import { UPDATE_SECTOR_SUCCESS } from "@/actions/SectorsActions";
+import { authorizedApi } from "@/utils/api";
 import { Modal } from "@mantine/core";
-import { useState } from "react";
+import { notifications } from "@mantine/notifications";
+import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { useDispatch } from "react-redux";
 import { Folder2, Subtitles } from "solar-icon-set";
 
 const UpdateSector = ({
@@ -12,11 +16,17 @@ const UpdateSector = ({
   closeUpdateSector: () => void;
   sector: any;
 }) => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
+    name: sector?.name ?? "",
+    description: sector?.description ?? "",
   });
-
+  useEffect(() => {
+    setFormData({
+      name: sector?.name ?? "",
+      description: sector?.description ?? "",
+    });
+  }, [sector]);
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -24,10 +34,34 @@ const UpdateSector = ({
       [name]: value,
     }));
   };
-
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log("Form Data: ", formData);
+    authorizedApi
+      .put(`/Sectors/${sector?.uuid}`, formData)
+      .then((res) => {
+        notifications.show({
+          message: "Sector is updated successfully",
+          color: "blue",
+        });
+        dispatch({
+          type: UPDATE_SECTOR_SUCCESS,
+          payload: {
+            data: res.data?.data,
+            id: sector?.uuid,
+          },
+        });
+        setFormData({
+          name: "",
+          description: "",
+        });
+        closeUpdateSector();
+      })
+      .catch((err) => {
+        notifications.show({
+          message: err.response?.data?.message ?? "Failed to update sector!",
+          color: "red",
+        });
+      });
   };
 
   return (
@@ -70,8 +104,8 @@ const UpdateSector = ({
                   </span>
                   <input
                     type="text"
-                    name="SectorTitle"
-                    value={formData.title}
+                    name="name"
+                    value={formData.name}
                     placeholder="Sector title"
                     onChange={handleChange}
                     className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
@@ -113,10 +147,10 @@ const UpdateSector = ({
                 Cancel
               </button>
               <button
-                type="button"
+                type="submit"
                 className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
-                Create
+                Save
               </button>
             </div>
           </form>

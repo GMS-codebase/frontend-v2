@@ -51,22 +51,18 @@ export interface IPaginatedQuery {
 
 export enum ERole {
   ADMIN = "ADMIN",
-  STAFF = "STAFF",
-  STUDENT = "STUDENT",
-  TEACHER = "TEACHER",
-  DS = "DS",
-  PM = "PM",
-  ACCOUNTANT = "ACCOUNTANT",
+  APPLICANT = "APPLICANT",
+  EMPLOYEE = "EMPLOYEE",
 }
 
 export type Role =
   | "ADMIN"
-  | "STAFF"
-  | "STUDENT"
-  | "TEACHER"
-  | "DS"
-  | "PM"
-  | "ACCOUNTANT";
+  | "APPLICANT"
+  | "EMPLOYEE"
+  | "NORMAL_EMPLOYEE"
+  | "SDF_SECRETARIATE"
+  | "GRANT_COMMITTEE"
+  | "DYNAMIC";
 
 export interface PageProps {
   params?: { [key: string]: string };

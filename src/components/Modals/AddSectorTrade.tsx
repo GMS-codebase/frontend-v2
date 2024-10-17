@@ -3,7 +3,9 @@ import { useState } from "react";
 import { HiOutlineMail } from "react-icons/hi";
 import { IoMdClose } from "react-icons/io";
 import { Folder2, Subtitles } from "solar-icon-set";
+
 import { SolarSuitcaseLinear, SolarWindowFrameLinear } from "../core/icons";
+import { useSelector } from "react-redux";
 const AddSectorTrade = ({
   isOpenAddSectorTrade,
   closeAddSectorTrade,
@@ -11,6 +13,10 @@ const AddSectorTrade = ({
   isOpenAddSectorTrade: boolean;
   closeAddSectorTrade: () => void;
 }) => {
+  const { windows } = useSelector((state: any) => state.windows);
+  const { trades } = useSelector((state: any) => state.trades);
+
+  console.log(windows, trades);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -26,7 +32,6 @@ const AddSectorTrade = ({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log("Form Data: ", formData);
   };
 
   return (

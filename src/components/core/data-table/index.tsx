@@ -1,7 +1,7 @@
 "use client";
 
 import { PaginationState } from "@/types/data-table.type";
-import { Input, Pagination, Select } from "@mantine/core";
+import { Input, Pagination, Select, Skeleton } from "@mantine/core";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -29,12 +29,13 @@ interface Props {
   actionElement?: React.ReactNode;
   minW?: string;
   tableClass?: string;
+  buttonElement?: React.ReactNode;
   renderCustomElement?: (table: Table<any>) => React.ReactNode;
   noDataMessage?: React.ReactNode;
   loading?: boolean;
   loader?: React.ReactNode;
   limit?: number;
-  tableWidth?: string;
+  tableWidth?: string | number;
 }
 
 export function DataTable({
@@ -45,6 +46,7 @@ export function DataTable({
   paginationProps,
   actionElement,
   minW,
+  buttonElement,
   tableClass,
   renderCustomElement,
   noDataMessage,
@@ -62,7 +64,7 @@ export function DataTable({
   const [rowSelection, setRowSelection] = React.useState({});
   const [{ pageIndex, pageSize }, setPagination] = React.useState({
     pageIndex: paginationProps?.paginateOpts.page ?? 0,
-    pageSize: paginationProps?.paginateOpts.limit ?? limit ?? 8,
+    pageSize: paginationProps?.paginateOpts.limit ?? limit ?? 10,
   });
 
   const pagination = React.useMemo(
@@ -131,13 +133,56 @@ export function DataTable({
           <div></div>
         )}
         {actionElement && actionElement}
+        {buttonElement && buttonElement}
       </div>
       {loading ? (
-        loader ?? <TableSkeleton columns={columns} />
+        (loader ?? (
+          <div className={`${tableClass} w-full overflow-auto data-table`}>
+            <table className={`w-full table-row-spacing`}>
+              <thead className="text-mainPurple">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr className="bg-[#005DE914] text-xl" key={headerGroup.id}>
+                    {headerGroup.headers.map((header, i) => (
+                      <td
+                        className={clsx(
+                          "p-2 font-medium py-5 whitespace-nowrap text-xl text-primary ",
+                          i === 0 && "pl-4",
+                          i === headerGroup.headers.length - 1 && "pr-4",
+                        )}
+                        key={header.id}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {[...Array(10)].map((_, index) => (
+                  <tr key={index} className="">
+                    {columns.map((column, i) => (
+                      <td key={i} className="px-4 py-5">
+                        <Skeleton height={20} />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))
       ) : (
         <>
           <div className={`${tableClass} w-full overflow-auto data-table`}>
-            <table className={`w-full table-row-spacing`}>
+            <table
+              className={`table-row-spacing`}
+              style={{ width: tableWidth ?? "100%" }}
+            >
               <thead className="text-mainPurple">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr className="bg-[#005DE914] text-xl" key={headerGroup.id}>
@@ -208,7 +253,7 @@ export function DataTable({
             <Pagination
               total={
                 isPaginated
-                  ? paginationProps?.paginateOpts?.totalPages ?? 1
+                  ? (paginationProps?.paginateOpts?.totalPages ?? 1)
                   : table?.getPageCount()
               }
               onNextPage={() => {
@@ -242,7 +287,7 @@ export function DataTable({
             />
             <div className="flex md:flex-row flex-col text-sm items-center gap-2 justify-center">
               <h1 className="text-lg font-medium text-[#B5B7C0]">
-                Showing data 1 to 8 of {table.getRowCount()} entries
+                Showing data 1 to 10 of {table.getRowCount()} entries
               </h1>
             </div>
           </div>
