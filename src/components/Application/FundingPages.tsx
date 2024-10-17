@@ -11,7 +11,7 @@ export const FirstPageQuestions = ({
   showComments,
 }: {
   data: any;
-  handleInputChange: any;
+  handleInputChange?: any;
   commentData?: Comments;
   setCommentData?: any;
   showComments?: boolean;
@@ -203,8 +203,8 @@ export const TrainingProgress = ({
 }: {
   data: any;
   files: any;
-  handleFileChange: any;
-  handleArrayOfObjectsChange: any;
+  handleFileChange?: any;
+  handleArrayOfObjectsChange?: any;
   trades: any;
   commentsData?: Comments;
   setCommentsData?: any;
@@ -449,8 +449,8 @@ export function TrainingEquipments({
 }: {
   data: any;
   files: any;
-  handleFileChange: any;
-  handleArrayOfObjectsChange: any;
+  handleFileChange?: any;
+  handleArrayOfObjectsChange?: any;
   trades: any;
   commentsData?: Comments;
   setCommentsData?: any;
@@ -656,7 +656,7 @@ export const Staff = ({
   showComments,
 }: {
   data: any;
-  handleArrayOfObjectsChange: any;
+  handleArrayOfObjectsChange?: any;
   commentData?: any;
   setCommentData?: any;
   showComments?: boolean;
@@ -875,9 +875,9 @@ export const LastPageQuestions = ({
   showComments,
 }: {
   data: any;
-  handleInputChange: any;
+  handleInputChange?: any;
   files: any;
-  handleFileChange: any;
+  handleFileChange?: any;
   commentData?: Comments;
   setCommentData?: any;
   showComments?: boolean;

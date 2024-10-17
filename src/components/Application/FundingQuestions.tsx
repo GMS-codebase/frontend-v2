@@ -39,7 +39,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     const fetchApplicationData = async () => {
       try {
         const response = await authorizedApi.get(
-          `/application/get-application/${applicationId}`,
+          `/application/get-application/${applicationId}`
         );
         const applicationData = response.data.data.data;
         const trades: any = applicationData.trades.map((trade: any) => ({
@@ -74,7 +74,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const handleArrayOfObjectsChange = (
     inputName: string,
     value: any,
-    index: number,
+    index: number
   ) => {
     setData &&
       setData((prev: any) => {
@@ -91,7 +91,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     <FirstPageQuestions
       key="first"
       data={data}
-      handleInputChange={handleInputChange}
+      {...(setData && { handleInputChange })}
       commentData={comments}
       setCommentData={setComments}
       showComments={showComments}
@@ -100,8 +100,8 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       key="progress"
       data={data}
       files={files}
-      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
-      handleFileChange={handleFileChange}
+      {...(setData && { handleArrayOfObjectsChange })}
+      {...(setData && { handleFileChange })}
       trades={applicationTrades}
       commentsData={comments}
       setCommentsData={setComments}
@@ -111,8 +111,8 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       key="equipments"
       data={data}
       files={files}
-      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
-      handleFileChange={handleFileChange}
+      {...(setData && { handleArrayOfObjectsChange })}
+      {...(setData && { handleFileChange })}
       trades={applicationTrades}
       commentsData={comments}
       setCommentsData={setComments}
@@ -121,7 +121,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     <Staff
       key="staff"
       data={data}
-      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
+      {...(setData && { handleArrayOfObjectsChange })}
       commentData={comments}
       setCommentData={setComments}
       showComments={showComments}
@@ -129,9 +129,9 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     <LastPageQuestions
       key="last"
       data={data}
-      handleInputChange={handleInputChange}
+      {...(setData && { handleInputChange })}
       files={files}
-      handleFileChange={handleFileChange}
+      {...(setData && { handleFileChange })}
       commentData={comments}
       setCommentData={setComments}
       showComments={showComments}

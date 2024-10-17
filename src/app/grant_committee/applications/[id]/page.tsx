@@ -22,22 +22,28 @@ import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDe
 import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
 import { getApplications } from "@/utils/funcs";
+import NullifyModal from "@/components/Modals/Nullify";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id,
+    (application: any) => application.uuid === id
   )[0];
   const [nullifyLoading, setNullifyLoading] = useState<any>();
   const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [isOpenAddDue, setIsOpenAddDue] = useState(false);
+  const [selectedStage, setSelectedStage] = useState<any>();
   const openAddDue = () => setIsOpenAddDue(true);
   const closeAddDue = () => setIsOpenAddDue(false);
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
+  ] = useDisclosure(false);
+  const [
+    isOpenNullifyModal,
+    { open: openNullifyModal, close: closeNullifyModal },
   ] = useDisclosure(false);
   const [
     isOpenGrantCommitteeDetails,
@@ -162,7 +168,7 @@ const Page = () => {
                   `/admin/applicant-details/${id}`,
                   {
                     responseType: "blob",
-                  },
+                  }
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -312,19 +318,16 @@ const Page = () => {
                 {!application?.grantCommitteeDecision && (
                   <button
                     onClick={() => {
-                      nullifyDecision(
+                      setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage.stage === "EVALUATION",
-                        ).uuid,
-                        "EVALUATION",
+                          (stage: any) => stage.stage === "EVALUATION"
+                        )
                       );
+                      openNullifyModal();
                     }}
-                    disabled={nullifyLoading === "EVALUATION"}
                     className="font-medium bg-red-100 text-red-500 w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
                   >
-                    {nullifyLoading === "EVALUATION"
-                      ? "Loading..."
-                      : "Nullify Decision"}
+                    Nullify Decision
                   </button>
                 )}
               </div>
@@ -358,26 +361,23 @@ const Page = () => {
                 {!application?.grantCommitteeDecision && (
                   <button
                     onClick={() => {
-                      nullifyDecision(
+                      setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage.stage === "DUE_DILIGENCY",
-                        ).uuid,
-                        "DUE_DILIGENCY",
+                          (stage: any) => stage.stage === "DUE_DILIGENCY"
+                        )
                       );
+                      openNullifyModal();
                     }}
-                    disabled={nullifyLoading === "DUE_DILIGENCY"}
                     className="font-medium bg-red-100 text-red-500 w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
                   >
-                    {nullifyLoading === "DUE_DILIGENCY"
-                      ? "Loading..."
-                      : "Nullify Decision"}
+                    Nullify Decision
                   </button>
                 )}
               </div>
             )}
           </div>
           {application?.stages?.find(
-            (stage: any) => stage.stage === "GRANT_COMMITTEE",
+            (stage: any) => stage.stage === "GRANT_COMMITTEE"
           ) && (
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Grant Committee</h3>
@@ -422,6 +422,12 @@ const Page = () => {
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
         evaluations={application?.evaluationDecisions}
+      />
+      <NullifyModal
+        closeModal={closeNullifyModal}
+        isOpenModal={isOpenNullifyModal}
+        onAfterNullify={() => refetch()}
+        stage={selectedStage}
       />
     </div>
   );
