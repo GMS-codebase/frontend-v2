@@ -53,7 +53,7 @@ const Page = () => {
     budgetSummaryAttachment: undefined,
   });
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (type: "submit" | "save") => {
     setLoading(true);
     const submitData = new FormData();
 
@@ -153,7 +153,7 @@ const Page = () => {
 
     try {
       const res = await authorizedApi.post(
-        `/application/fillApplication/${applicationId}`,
+        `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${applicationId}`,
         submitData,
       );
       notifications.show({
@@ -231,7 +231,9 @@ const Page = () => {
           <p>Questions and answers</p>
           <button
             className="bg-primary text-white p-3 rounded-full"
-            onClick={handleSubmit}
+            onClick={() => {
+              handleSubmit("save");
+            }}
             disabled={!allFieldsFilled || loading}
           >
             <IoIosSave />
@@ -270,7 +272,9 @@ const Page = () => {
           </button>
           <button
             type="button"
-            onClick={handleSubmit}
+            onClick={() => {
+              handleSubmit("submit");
+            }}
             disabled={loading}
             className={`w-full px-4 py-2 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 bg-primary text-white
               `}

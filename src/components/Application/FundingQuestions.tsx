@@ -19,6 +19,7 @@ interface FundingQuestionsProps {
   comments?: Comments;
   setComments?: React.Dispatch<React.SetStateAction<Comments>>;
   goToBudget?: () => void;
+  showComments?: boolean;
 }
 
 const FundingQuestions: React.FC<FundingQuestionsProps> = ({
@@ -27,12 +28,13 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   comments,
   setComments,
   goToBudget,
+  showComments,
 }) => {
   const { applicationId } = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
-
+  console.log("comments --> ", showComments);
   useEffect(() => {
     const fetchApplicationData = async () => {
       try {
@@ -89,45 +91,50 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     <FirstPageQuestions
       key="first"
       data={data}
-      handleInputChange={handleInputChange}
+      {...(setData && { handleInputChange })}
       commentData={comments}
       setCommentData={setComments}
+      showComments={showComments}
     />,
     <TrainingProgress
       key="progress"
       data={data}
       files={files}
-      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
-      handleFileChange={handleFileChange}
+      {...(setData && { handleArrayOfObjectsChange })}
+      {...(setData && { handleFileChange })}
       trades={applicationTrades}
       commentsData={comments}
       setCommentsData={setComments}
+      showComments={showComments}
     />,
     <TrainingEquipments
       key="equipments"
       data={data}
       files={files}
-      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
-      handleFileChange={handleFileChange}
+      {...(setData && { handleArrayOfObjectsChange })}
+      {...(setData && { handleFileChange })}
       trades={applicationTrades}
       commentsData={comments}
       setCommentsData={setComments}
+      showComments={showComments}
     />,
     <Staff
       key="staff"
       data={data}
-      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
+      {...(setData && { handleArrayOfObjectsChange })}
       commentData={comments}
       setCommentData={setComments}
+      showComments={showComments}
     />,
     <LastPageQuestions
       key="last"
       data={data}
-      handleInputChange={handleInputChange}
+      {...(setData && { handleInputChange })}
       files={files}
-      handleFileChange={handleFileChange}
+      {...(setData && { handleFileChange })}
       commentData={comments}
       setCommentData={setComments}
+      showComments={showComments}
     />,
   ];
 

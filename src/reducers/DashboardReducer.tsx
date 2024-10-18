@@ -48,14 +48,14 @@ const initialState = {
       countApplicants: 0,
       countApplications: 0,
     },
-    Construction:{
+    Construction: {
       countApplicants: 0,
       countApplications: 0,
     },
-    Other:{
+    Other: {
       countApplicants: 0,
       countApplications: 0,
-    }
+    },
   },
 };
 
