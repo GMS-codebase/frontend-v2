@@ -167,7 +167,7 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable
           columns={columns}
-          data={applications}
+          data={applications.filter((app: any) => app.stages.length > 0)}
           tableWidth={1800}
           loading={loading}
           noDataMessage={"No Applications So Far"}

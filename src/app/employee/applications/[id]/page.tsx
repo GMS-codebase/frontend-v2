@@ -16,8 +16,6 @@ import EditEvalModal from "@/components/Modals/EditEvalModal";
 import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import { useDisclosure } from "@mantine/hooks";
 import BudgetQuestions from "@/components/Application/BudgetQuestions";
-import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
-import DueDiligenceModal from "@/components/Modals/DueDiigence";
 import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import { getApplications } from "@/utils/funcs";
@@ -114,6 +112,7 @@ const Page = () => {
       case "Project":
         return (
           <FundingQuestions
+            showComments={application?.currentStage !== "SUBMISSION"}
             data={application?.projectFunding}
             setComments={
               application?.evaluators.length === 0 ||
@@ -128,6 +127,7 @@ const Page = () => {
       case "IndicativeBudget":
         return (
           <BudgetQuestions
+            showComments={application?.currentStage !== "SUBMISSION"}
             data={application?.budget}
             commentData={commentsData}
             setCommentData={
@@ -304,7 +304,9 @@ const Page = () => {
         </div>
       </div>
       <div className="flex gap-6">
-        <div className="flex bg-white rounded-2xl w-[70%] gap-4 p-5">
+        <div
+          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMISSION" ? "w-full" : "w-[70%]"} gap-4 p-5`}
+        >
           <div className="flex flex-col gap-4 w-full">
             <div className="font-semibold text-2xl">Questions and answers</div>
             <div className="flex font-semibold">
@@ -332,30 +334,33 @@ const Page = () => {
             <div className="mt-4 w-full">{renderComponent()}</div>
             {(application?.evaluators.length === 0 ||
               application?.evaluators[0].user_id ===
-                profile?.userProfile?.data.uuid) && (
-              <div className="w-full flex justify-center mt-4 space-x-4">
-                <button
-                  type="button"
-                  className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleAddComments}
-                  disabled={loading}
-                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  {loading ? "Loading..." : "Save Comments"}
-                </button>
-              </div>
-            )}
+                profile?.userProfile?.data.uuid) &&
+              application?.currentStage !== "SUBMISSION" && (
+                <div className="w-full flex justify-center mt-4 space-x-4">
+                  <button
+                    type="button"
+                    className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAddComments}
+                    disabled={loading}
+                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    {loading ? "Loading..." : "Save Comments"}
+                  </button>
+                </div>
+              )}
           </div>
         </div>
         {decisionsLoading ? (
           <div className="flex  h-[500px] items-center justify-center bg-white w-[30%] rounded-2xl p-5 gap-4">
             <p>Loading ....</p>
           </div>
+        ) : application?.currentStage === "SUBMISSION" ? (
+          <div></div>
         ) : (
           <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
             <h2 className="font-bold">Decision</h2>
@@ -364,7 +369,7 @@ const Page = () => {
               <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
                 {application?.currentStage === "EVALUATION"
                   ? "Pending"
-                  : "Finished"}
+                  : "Approved"}
               </div>
               {application?.evaluationDecisions.length < 3 &&
                 !application?.evaluationDecisions.find(
