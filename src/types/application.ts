@@ -11,6 +11,7 @@ export interface ApplicationQuestions {
   trainingEquipment?: TrainingEquipment[];
   identificationEmployee?: string;
   staffs?: Staff[];
+  staffAttachments: string;
   sustainability?: string;
   contributionFromApplicant?: string;
 
@@ -40,6 +41,7 @@ export interface ApplicationQuestions {
   MOUsAttachment?: File[];
   assessmentEquipmentAttachment?: File;
   budgetSummaryAttachment?: File;
+  budgetLines?: any[];
 }
 
 export interface AssessmentAndCertificationProcess {

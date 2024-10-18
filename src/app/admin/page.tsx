@@ -56,7 +56,7 @@ const Page = () => {
   const startDate = "2023-05-01";
   const endDate = "2023-12-31";
   const { data: dashboardData, loading } = useSelector(
-    (state: any) => state.dashboard
+    (state: any) => state.dashboard,
   );
   const { sectorsData } = useSelector((state: any) => state.dashboard);
   const companyApplicants = 12345;
@@ -395,11 +395,7 @@ const Page = () => {
                   </div>
                 </div>
               </div>
-              <Dash
-                col1="Male"
-                col2="Female"
-                data={dashTablesData}
-              />
+              <Dash col1="Male" col2="Female" data={dashTablesData} />
             </div>
             <div className="bg-white p-6 rounded-2xl">
               <div className=" justify-center items-center">
@@ -435,11 +431,7 @@ const Page = () => {
                   </div>
                 </div>
               </div>
-              <Dash
-                col1="Male"
-                col2="Female"
-                data={dashTablesData}
-              />
+              <Dash col1="Male" col2="Female" data={dashTablesData} />
             </div>
           </div>
         </>

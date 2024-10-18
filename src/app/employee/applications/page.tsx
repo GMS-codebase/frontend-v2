@@ -148,6 +148,7 @@ const Page = () => {
 
   const filteredApplications = useMemo(() => {
     return applications
+      .filter((app: any) => app.stages.length > 0)
       .filter(
         (app: any) =>
           app.applicationNumber

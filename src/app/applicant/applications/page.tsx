@@ -16,7 +16,7 @@ import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
 const Page = () => {
-  const navigate = useRouter 
+  const navigate = useRouter;
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
@@ -43,7 +43,7 @@ const Page = () => {
       accessorKey: "currentStage",
       header: "Current Stage",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.currentStage}</div>
+        <div className="truncate">{row.original?.currentStage || "-"}</div>
       ),
     },
     {
@@ -70,7 +70,11 @@ const Page = () => {
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
                 <Link
-                  href={`/applicant/applications/application/${row.original.uuid}`}
+                  href={
+                    row.original.stages.length > 0
+                      ? `/admin/applications/${row.original.uuid}`
+                      : `/admin/applications/${row.original.call.uuid}/${row.original.uuid}/apply`
+                  }
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <FiEye size={21} color="#576074" />
@@ -101,7 +105,7 @@ const Page = () => {
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">Latest applications</h2>
           <div className="flex gap-2"></div>
-          <div className="relative w-[25rem]">
+          {/* <div className="relative w-[25rem]">
             <span className="absolute top-4 left-2">
               <CiSearch size={25} />
             </span>
@@ -110,13 +114,7 @@ const Page = () => {
               className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
               placeholder="Search"
             />
-          </div>
-          <div className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center">
-            <span>
-              <SolarFileBold />
-            </span>
-            <div>Export as PDF</div>
-          </div>
+          </div> */}
         </div>
         <div className="w-full h-full">
           <DataTable

@@ -81,7 +81,7 @@ const Page = () => {
     applications?.applications?.filter((application: any) =>
       application?.applicant?.name
         ?.toLowerCase()
-        .includes(searchQuery.toLowerCase())
+        .includes(searchQuery.toLowerCase()),
     ) ?? [];
 
   const handleScroll = (direction: "left" | "right") => {
@@ -118,7 +118,7 @@ const Page = () => {
             <FiChevronLeft size={25} />
           </button>
 
-           <div
+          <div
             ref={filtersContainerRef}
             className="flex items-center gap-3 overflow-x-hidden scrollbar-hide"
             style={{ scrollBehavior: "smooth", maxWidth: "calc(4 * 11rem)" }}
@@ -170,7 +170,6 @@ const Page = () => {
             </div>
           </div>
 
-
           <button
             onClick={() => handleScroll("right")}
             className="p-2 bg-white shadow-lg rounded-full ml-2"
@@ -188,7 +187,7 @@ const Page = () => {
         ) : (
           <DataTable
             columns={columns}
-            data={filteredApplications} 
+            data={filteredApplications}
             tableWidth={1800}
           />
         )}

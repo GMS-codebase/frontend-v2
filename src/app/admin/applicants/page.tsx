@@ -15,7 +15,7 @@ import { FiChevronLeft, FiChevronRight, FiEye } from "react-icons/fi";
 import { CiSearch } from "react-icons/ci";
 const Page = () => {
   const [isOpenCall, { open, close }] = useDisclosure(false);
-  const [searchTerm, setSearchTerm] = useState<string>(""); 
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const filtersContainerRef = useRef<HTMLDivElement>(null);
   const columns: ColumnDef<any>[] = [
     {
@@ -81,9 +81,9 @@ const Page = () => {
   ];
   const applicants = useSelector((state: any) => state.applicants);
   const ApplicantsWithProfile = applicants?.applicants?.filter(
-    (applicant: any) => applicant.has_completed_profile
+    (applicant: any) => applicant.has_completed_profile,
   );
-  console.log("applicants with profile", applicants)
+  console.log("applicants with profile", applicants);
   const filteredApplicants = ApplicantsWithProfile?.filter(
     (applicant: any) =>
       applicant.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -91,7 +91,7 @@ const Page = () => {
       applicant.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       applicant.businesses[0]?.businessName
         ?.toLowerCase()
-        .includes(searchTerm.toLowerCase())
+        .includes(searchTerm.toLowerCase()),
   );
   const FilterDropDown = ({
     placeholderText,
