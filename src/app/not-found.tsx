@@ -21,7 +21,10 @@ const NotFound = () => {
           </div>
         </div>
 
-        <div onClick={()=> navigate.back()} className="text-white bg-primary  py-4 font-semibold  rounded-full text-center cursor-pointer w-fit flex items-center justify-center  m-auto px-24 mt-8 text-xl">
+        <div
+          onClick={() => navigate.back()}
+          className="text-white bg-primary  py-4 font-semibold  rounded-full text-center cursor-pointer w-fit flex items-center justify-center  m-auto px-24 mt-8 text-xl"
+        >
           Got to back
         </div>
       </div>
