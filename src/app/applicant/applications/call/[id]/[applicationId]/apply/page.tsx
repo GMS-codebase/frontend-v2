@@ -74,7 +74,7 @@ const Page = () => {
     MOUsAttachment: [],
     assessmentEquipmentAttachment: undefined,
     budgetSummaryAttachment: undefined,
-    staffAttachments: "",
+    staffAttachment: "",
   });
 
   const handleSubmit = async (type: "submit" | "save") => {
@@ -149,8 +149,8 @@ const Page = () => {
         "trainingManualAttachment",
         data.trainingManualAttachment,
       );
-    if (data.staffAttachments)
-      submitData.append("staffAttachments", String([data.staffAttachments]));
+    if (data.staffAttachment)
+      submitData.append("staffAttachment", String([data.staffAttachment]));
     if (data.budgetLines)
       submitData.append("budgetLines", JSON.stringify(data.budgetLines));
     if (data.trainingEquipmentAttachment)
@@ -216,7 +216,7 @@ const Page = () => {
       identificationMember: "",
       assessmentAndCertificationProcess: [],
       assessmentEquipment: [],
-      staffAttachments: "",
+      staffAttachment: "",
       recruitmentCandidatesNumber: "",
       assessorsAndFacilitators: "",
       contribution: "",

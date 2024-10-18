@@ -256,8 +256,8 @@ const MakeFirstDueDiligencyDecision = ({
                               ),
                             )
                           }
-                          data={application.trades.map((trade: any) => ({
-                            value: trade.uuid,
+                          data={application?.trades?.map((trade: any) => ({
+                            value: trade.title,
                             label: trade.title,
                           }))}
                           placeholder="Select trade"
