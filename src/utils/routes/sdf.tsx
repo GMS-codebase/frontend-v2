@@ -24,7 +24,7 @@ const sdfRoutes: Route[] = [
     icon: <Icons.SolarDocumentBold />,
   },
   {
-    label: "M&E Reports",
+    label: "M&E and OSHE Reports",
     path: "/sdf/reports/m_and_e",
     icon: <Icons.SolarFileBold />,
   },

@@ -8,11 +8,13 @@ export const FirstPageQuestions = ({
   handleInputChange,
   commentData,
   setCommentData,
+  showComments,
 }: {
   data: any;
-  handleInputChange: any;
+  handleInputChange?: any;
   commentData?: Comments;
   setCommentData?: any;
+  showComments?: boolean;
 }) => {
   const handleCommentChange = (inputName: string, value: any) => {
     if (setCommentData) {
@@ -38,7 +40,7 @@ export const FirstPageQuestions = ({
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!commentData}
         />
-        {commentData && (
+        {showComments && commentData && (
           <div className="mt-2 ">
             <label htmlFor="" className="font-medium text-sm">
               Comment
@@ -72,7 +74,7 @@ export const FirstPageQuestions = ({
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!commentData}
         />
-        {commentData && (
+        {showComments && commentData && (
           <div className="mt-2">
             <label htmlFor="" className="font-medium text-sm">
               Comment
@@ -101,7 +103,7 @@ export const FirstPageQuestions = ({
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!commentData}
         />
-        {commentData && (
+        {showComments && commentData && (
           <div className="mt-2">
             <label htmlFor="" className="font-medium text-sm">
               Comment
@@ -132,7 +134,7 @@ export const FirstPageQuestions = ({
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!commentData}
         />
-        {commentData && (
+        {showComments && commentData && (
           <div className="mt-2">
             <label htmlFor="" className="font-medium text-sm">
               Comment
@@ -165,7 +167,7 @@ export const FirstPageQuestions = ({
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!commentData}
         />
-        {commentData && (
+        {showComments && commentData && (
           <div className="mt-2">
             <label htmlFor="" className="font-medium text-sm">
               Comment
@@ -197,14 +199,16 @@ export const TrainingProgress = ({
   trades,
   commentsData,
   setCommentsData,
+  showComments,
 }: {
   data: any;
   files: any;
-  handleFileChange: any;
-  handleArrayOfObjectsChange: any;
+  handleFileChange?: any;
+  handleArrayOfObjectsChange?: any;
   trades: any;
   commentsData?: Comments;
   setCommentsData?: any;
+  showComments?: boolean;
 }) => {
   const [trainingProcessInputs, setTrainingProcessInputs] = useState({
     trade: "",
@@ -393,7 +397,7 @@ export const TrainingProgress = ({
                 ? "Download File"
                 : "No Manual Found"}
             </button>
-            {renderCommentsSection("trainingManualComment")}
+            {showComments && renderCommentsSection("trainingManualComment")}
           </>
         ) : (
           <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
@@ -404,10 +408,10 @@ export const TrainingProgress = ({
               <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl font-bold">+</span>
               </div>
-              {files.trainingManual ? (
+              {files.trainingManualAttachment ? (
                 <div className="text-center">
                   <p className="text-xl font-medium text-gray-700">
-                    {files.trainingManual.name}
+                    {files.trainingManualAttachment.name}
                   </p>
                   <p className="text-sm text-gray-500">File selected</p>
                 </div>
@@ -420,11 +424,11 @@ export const TrainingProgress = ({
             </label>
             <input
               id="file-upload-trainingManual"
-              name="trainingManual"
+              name="trainingManualAttachment"
               type="file"
               accept=".pdf"
               style={{ display: "none" }}
-              onChange={(e) => handleFileChange(e, "trainingManual")}
+              onChange={(e) => handleFileChange(e, "trainingManualAttachment")}
             />
           </div>
         )}
@@ -441,14 +445,16 @@ export function TrainingEquipments({
   trades,
   commentsData,
   setCommentsData,
+  showComments,
 }: {
   data: any;
   files: any;
-  handleFileChange: any;
-  handleArrayOfObjectsChange: any;
+  handleFileChange?: any;
+  handleArrayOfObjectsChange?: any;
   trades: any;
   commentsData?: Comments;
   setCommentsData?: any;
+  showComments?: boolean;
 }) {
   const [trainingEquipments, setTrainingEquipments] = useState({
     trade: "",
@@ -599,7 +605,8 @@ export function TrainingEquipments({
                 ? "Download File"
                 : "No Attachment Found!"}
             </button>
-            {renderCommentsSection("trainingEquipmentAttachmentComment")}
+            {showComments &&
+              renderCommentsSection("trainingEquipmentAttachmentComment")}
           </>
         ) : (
           <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
@@ -646,18 +653,19 @@ export const Staff = ({
   handleArrayOfObjectsChange,
   commentData,
   setCommentData,
+  showComments,
 }: {
   data: any;
-  handleArrayOfObjectsChange: any;
+  handleArrayOfObjectsChange?: any;
   commentData?: any;
   setCommentData?: any;
+  showComments?: boolean;
 }) => {
-  console.log(data.staffs);
   const [staffInputs, setStaffInputs] = useState({
     number: "",
     position: "",
     qualification: "",
-    available: "", // Updated key to match table field
+    available: "",
   });
 
   const [errors, setErrors] = useState({
@@ -673,7 +681,7 @@ export const Staff = ({
       number: number ? "" : "Staff number is required.",
       position: position ? "" : "Position is required.",
       qualification: qualification ? "" : "Qualification is required.",
-      available: available ? "" : "Availability is required.", // Validate available
+      available: available ? "" : "Availability is required.",
     };
     setErrors(newErrors);
     return Object.values(newErrors).every((error) => !error);
@@ -692,7 +700,7 @@ export const Staff = ({
       number: "",
       position: "",
       qualification: "",
-      available: "", // Clear available after submission
+      available: "",
     });
     setErrors({
       number: "",
@@ -838,7 +846,7 @@ export const Staff = ({
           </table>
         </>
       )}
-      {commentData && (
+      {showComments && commentData && (
         <div className="mt-2">
           <label htmlFor="" className="font-medium text-sm">
             Comment
@@ -864,13 +872,15 @@ export const LastPageQuestions = ({
   handleFileChange,
   commentData,
   setCommentData,
+  showComments,
 }: {
   data: any;
-  handleInputChange: any;
+  handleInputChange?: any;
   files: any;
-  handleFileChange: any;
+  handleFileChange?: any;
   commentData?: Comments;
   setCommentData?: any;
+  showComments?: boolean;
 }) => {
   return (
     <>
@@ -884,9 +894,9 @@ export const LastPageQuestions = ({
           value={(data && data.sustainability) || ""}
           onChange={(e) => handleInputChange("sustainability", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData}
+          disabled={!!commentData || showComments}
         />
-        {commentData && (
+        {showComments && commentData && (
           <div className="mt-2">
             <h4 className="text-md font-semibold text-gray-700">Comment</h4>
             <textarea
@@ -909,7 +919,7 @@ export const LastPageQuestions = ({
         <p className="text-sm text-gray-600">
           Provide the financial report of the previous year.
         </p>
-        {commentData ? (
+        {showComments && commentData ? (
           <>
             <button
               onClick={() =>
@@ -991,7 +1001,7 @@ export const LastPageQuestions = ({
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!commentData}
         />
-        {commentData && (
+        {showComments && commentData && (
           <div className="mt-2">
             <h4 className="text-md font-semibold text-gray-700">Comment</h4>
             <textarea

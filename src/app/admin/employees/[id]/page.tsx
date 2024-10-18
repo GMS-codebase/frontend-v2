@@ -166,7 +166,7 @@ const EmployeeDetails = () => {
             <div>Edit</div>
           </button>
         </div>
-        <div className="grid grid-cols-2 gap-y-6 justify-between w-11/12 font-semibold">
+        <div className="grid grid-cols-2 gap-y-6 justify-between Apw-11/12 font-semibold">
           <div className="flex items-center gap-3">
             <div className="flex gap-2 bg-gray-400 bg-opacity-10 px-4 w-fit py-2 rounded-full items-center justify-center">
               <div>Name</div>
