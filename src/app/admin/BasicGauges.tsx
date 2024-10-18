@@ -15,7 +15,6 @@ export default function BasicGauges({
   const tradeUnionApplicants = 50;
   const cooperativeApplicants = 20;
 
-
   const companyPercentage = (companyApplicants / totalApplicants) * 100;
   const schoolPercentage = (schoolApplicants / totalApplicants) * 100;
   const ngoPercentage = (ngoApplicants / totalApplicants) * 100;
@@ -28,7 +27,7 @@ export default function BasicGauges({
       <div style={{ position: "relative", display: "inline-block" }}>
         <GaugeChart
           id="gauge-chart5"
-          nrOfLevels={6} 
+          nrOfLevels={6}
           // arcsLength={[
           //   companyPercentage / 100,
           //   schoolPercentage / 100,
@@ -36,19 +35,19 @@ export default function BasicGauges({
           //   associationPercentage / 100,
           //   tradeUnionPercentage / 100,
           //   cooperativePercentage / 100,
-          // ]} 
+          // ]}
           colors={[
-            "#005DE9", 
+            "#005DE9",
             "#90EE90",
-            "#EA4228", 
-            "#FFAA33", 
-            "#00C49A", 
-            "#FF69B4", 
+            "#EA4228",
+            "#FFAA33",
+            "#00C49A",
+            "#FF69B4",
           ]}
-          percent={0.5} 
+          percent={0.5}
           arcPadding={0.02}
-          hideText={true} 
-          needleColor="transparent" 
+          hideText={true}
+          needleColor="transparent"
           needleBaseColor="transparent"
         />
         <Typography
@@ -68,7 +67,11 @@ export default function BasicGauges({
         </Typography>
       </div>
 
-      <Stack direction="column" spacing={2} className="grid grid-cols-2 gap-x-10" >
+      <Stack
+        direction="column"
+        spacing={2}
+        className="grid grid-cols-2 gap-x-10"
+      >
         <div className="flex items-center">
           <div className="w-4 h-4 mr-2 bg-[#005DE9]" />
           <Typography>Companies</Typography>

@@ -93,11 +93,10 @@ const Page = () => {
     contributionComment: application?.projectFunding?.contributionComment || "",
   });
 
-const goToBudget = () => {
-  console.log("Switching to Indicative Budget"); 
-  setCurrentComponent("IndicativeBudget");
-};
-
+  const goToBudget = () => {
+    console.log("Switching to Indicative Budget");
+    setCurrentComponent("IndicativeBudget");
+  };
 
   const renderComponent = () => {
     switch (currentComponent) {
@@ -107,6 +106,7 @@ const goToBudget = () => {
             data={application?.projectFunding}
             setComments={setCommentsData}
             comments={commentsData}
+            goToBudget={goToBudget}
             showComments={application?.currentStage !== "SUBMISSION"}
           />
         );
@@ -124,7 +124,6 @@ const goToBudget = () => {
         return null;
     }
   };
-  
 
   const [downloading, setDownloading] = useState(false);
 
