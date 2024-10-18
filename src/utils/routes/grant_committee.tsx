@@ -29,7 +29,7 @@ const grant_committeeRoutes: Route[] = [
     icon: <Icons.SolarDocumentsBold />,
   },
   {
-    label: "M&E Reports",
+    label: "M&E and OSHE Reports",
     path: "/grant_committee/reports/m_and_e",
     icon: <Icons.SolarFileBold />,
   },

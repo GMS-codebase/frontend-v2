@@ -19,6 +19,7 @@ interface FundingQuestionsProps {
   comments?: Comments;
   setComments?: React.Dispatch<React.SetStateAction<Comments>>;
   goToBudget?: () => void;
+  showComments?: boolean;
 }
 
 const FundingQuestions: React.FC<FundingQuestionsProps> = ({
@@ -27,12 +28,12 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   comments,
   setComments,
   goToBudget,
+  showComments,
 }) => {
   const { applicationId , id} = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
-
   useEffect(() => {
     const fetchApplicationData = async () => {
       try {
@@ -40,6 +41,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
           `/application/get-application/${applicationId ?? id}`,
         );
         const applicationData = response.data.data.data;
+        console.log("appplication data -- ", applicationData);
         const trades: any = applicationData.trades.map((trade: any) => ({
           label: trade.title,
           value: trade.uuid,
@@ -96,45 +98,52 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     <FirstPageQuestions
       key="first"
       data={data}
-      handleInputChange={handleInputChange}
+      {...(setData && { handleInputChange })}
       commentData={comments}
       setCommentData={setComments}
+      showComments={showComments}
     />,
     <TrainingProgress
       key="progress"
       data={data}
       files={files}
-      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
-      handleFileChange={handleFileChange}
+      {...(setData && { handleArrayOfObjectsChange })}
+      {...(setData && { handleFileChange })}
       trades={applicationTrades}
       commentsData={comments}
       setCommentsData={setComments}
+      showComments={showComments}
     />,
     <TrainingEquipments
       key="equipments"
       data={data}
       files={files}
-      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
-      handleFileChange={handleFileChange}
+      {...(setData && { handleArrayOfObjectsChange })}
+      {...(setData && { handleFileChange })}
       trades={applicationTrades}
       commentsData={comments}
       setCommentsData={setComments}
+      showComments={showComments}
     />,
     <Staff
       key="staff"
       data={data}
+      files={files}
+      handleFileChange={handleFileChange}
       handleArrayOfObjectsChange={handleArrayOfObjectsChange}
       commentData={comments}
       setCommentData={setComments}
+      showComments={showComments}
     />,
     <LastPageQuestions
       key="last"
       data={data}
-      handleInputChange={handleInputChange}
+      {...(setData && { handleInputChange })}
       files={files}
-      handleFileChange={handleFileChange}
+      {...(setData && { handleFileChange })}
       commentData={comments}
       setCommentData={setComments}
+      showComments={showComments}
     />,
   ];
 
