@@ -402,7 +402,7 @@ const CompleteProfile = ({
                       htmlFor="is_private"
                       className="block text-xs font-bold text-gray-700"
                     >
-                      Is Internal
+                      Is Private
                     </label>
                     <div className="mt-1 pl-1 flex flex-col gap-2">
                       <Checkbox

@@ -1,12 +1,17 @@
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useDispatch } from "react-redux";
-import { SolarCheckCircleBold, SolarUploadBold } from "../core/icons";
+import {
+  SolarAddSquareBold,
+  SolarCheckCircleBold,
+  SolarUploadBold,
+} from "../core/icons";
 import { SolarDocumentsBold } from "@/components/core/icons/index";
 import TextArea from "../ApplicantDetails/TextArea";
 import { Modal, Select } from "@mantine/core";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
+import { BsPerson } from "react-icons/bs";
 interface FormData {
   financeInfo: string;
   ohsInfo: string;
@@ -15,6 +20,7 @@ interface FormData {
   comment: string;
   decision: string;
   attachment: File | null;
+  tradeTrainees: any;
 }
 
 const decisions = [
@@ -33,6 +39,8 @@ const MakeFirstDueDiligencyDecision = ({
   afterMakeDecision: () => void;
   application: any;
 }) => {
+  const [selectedTrade, setSelectedTrade] = useState<any>();
+  const [traineesNumber, setTraineesNumber] = useState(0);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     financeInfo: "",
@@ -42,6 +50,7 @@ const MakeFirstDueDiligencyDecision = ({
     comment: "",
     decision: "",
     attachment: null,
+    tradeTrainees: null,
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -109,6 +118,7 @@ const MakeFirstDueDiligencyDecision = ({
         comment: "",
         decision: "",
         attachment: null,
+        tradeTrainees: null,
       });
       afterMakeDecision();
       closeModal();
@@ -220,6 +230,124 @@ const MakeFirstDueDiligencyDecision = ({
                   style={{ display: "none" }}
                   required
                 />
+              </div>
+            </div>
+
+            <div className="space-y-3 mb-4">
+              <div>
+                <div className="w-full">
+                  <label
+                    htmlFor="trade"
+                    className="block  font-bold text-gray-700"
+                  >
+                    Trade/Number of trainees
+                  </label>
+                  <div className="w-full  flex items-center  bg-gray2  rounded-2xl">
+                    <div className="flex-grow  flex items-center gap-2 border-r border-r-gray h-full  p-2">
+                      <BsPerson className="w-5 h-5" />
+                      <div className="flex-grow">
+                        <Select
+                          name="trade"
+                          value={selectedTrade}
+                          onChange={(value) =>
+                            setSelectedTrade(
+                              application.trades.find(
+                                (trade: any) => trade.uuid === value,
+                              ),
+                            )
+                          }
+                          data={application.trades.map((trade: any) => ({
+                            value: trade.uuid,
+                            label: trade.title,
+                          }))}
+                          placeholder="Select trade"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex-grow flex items-center gap-2 p-2">
+                      <BsPerson className="w-5 h-5" />
+                      <input
+                        type="number"
+                        name="trainees"
+                        value={traineesNumber}
+                        placeholder="Number of trainees"
+                        className="outline-none flex-grow  bg-transparent"
+                        onChange={(e) =>
+                          setTraineesNumber(parseInt(e.target.value))
+                        }
+                      />
+                      <button
+                        className=" bg-blue-500 bg-opacity-15 py-1 rounded-2xl px-2  flex gap-1"
+                        disabled={
+                          !selectedTrade ||
+                          traineesNumber === 0 ||
+                          traineesNumber == undefined
+                        }
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            tradeTrainees: [
+                              ...prev.tradeTrainees,
+                              {
+                                trade: selectedTrade,
+                                trainees: traineesNumber,
+                              },
+                            ],
+                          }))
+                        }
+                      >
+                        <SolarAddSquareBold className="mt-[1px] w-5 h-5 text-blue-500" />
+                        <div className="text-blue-500">Add</div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <table className="mt-3">
+                  <thead>
+                    <tr>
+                      <th className="px-4 py-2 text-sm font-medium text-gray-700">
+                        Trade
+                      </th>
+                      <th className="px-4 py-2 text-sm font-medium text-gray-700">
+                        Number of Trainees
+                      </th>
+                      <th className="px-4 py-2 text-sm font-medium text-gray-700">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {formData.tradeTrainees?.map(
+                      (tradeTrainee: any, index: any) => (
+                        <tr key={index}>
+                          <td className="px-4 py-2 text-sm">
+                            {tradeTrainee.trade.title}
+                          </td>
+                          <td className="px-4 py-2 text-sm">
+                            {tradeTrainee.trainees}
+                          </td>
+                          <td className="px-4 py-2 text-sm">
+                            <button
+                              className="bg-primary px-2 text-sm py-1 text-white font-medium rounded-full"
+                              onClick={() =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  tradeTrainees: prev.tradeTrainees.filter(
+                                    (trade: any) =>
+                                      trade.trade.uuid !==
+                                      tradeTrainee.trade.uuid,
+                                  ),
+                                }))
+                              }
+                            >
+                              Remove
+                            </button>
+                          </td>
+                        </tr>
+                      ),
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
 
