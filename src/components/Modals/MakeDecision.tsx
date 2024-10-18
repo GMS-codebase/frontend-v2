@@ -1,6 +1,7 @@
 import { Modal, Select } from "@mantine/core";
 import { IoMdClose } from "react-icons/io";
-import { SolarDocumentBold } from "@/components/core/icons";
+import { SolarDocumentBold, SolarAddSquareBold } from "@/components/core/icons";
+import { BsPerson } from "react-icons/bs";
 import { useState, useEffect } from "react";
 import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
@@ -14,7 +15,10 @@ interface MakeDecisionProps {
   defaultData?: {
     decision: string;
     comment: string;
+    tradeTrainees?: { trade: any; trainees: number }[];
   };
+  firstEvaluationModal?: boolean;
+  application?: { trades: { uuid: string; title: string }[] };
 }
 
 const MakeDecision = ({
@@ -23,28 +27,32 @@ const MakeDecision = ({
   onMakeDecision,
   type,
   defaultData,
+  firstEvaluationModal,
+  application,
 }: MakeDecisionProps) => {
   const [formData, setFormData] = useState({
     decision: "",
     comment: "",
+    tradeTrainees: [] as { trade: any; trainees: number }[],
   });
   const { id } = useParams<{ id: string }>();
-
   const [errors, setErrors] = useState({
     decision: "",
     comment: "",
+    tradeTrainees: "",
   });
-
   const [loading, setLoading] = useState(false);
+
+  const [selectedTrade, setSelectedTrade] = useState<any>(null);
+  const [traineesNumber, setTraineesNumber] = useState<number | undefined>(0);
 
   useEffect(() => {
     if (defaultData) {
-      console.log(defaultData);
-      setFormData(defaultData);
+      setFormData(defaultData as any);
     }
   }, [defaultData]);
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
+  const handleChange = (e: { target: { name: string; value: any } }) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -60,7 +68,7 @@ const MakeDecision = ({
 
   const validate = () => {
     let valid = true;
-    const newErrors = { decision: "", comment: "" };
+    const newErrors = { decision: "", comment: "", tradeTrainees: "" };
 
     if (!formData.decision) {
       newErrors.decision = "Decision is required.";
@@ -72,13 +80,17 @@ const MakeDecision = ({
       valid = false;
     }
 
+    if (firstEvaluationModal && formData.tradeTrainees.length === 0) {
+      newErrors.tradeTrainees = "At least one trade/trainee entry is required.";
+      valid = false;
+    }
+
     setErrors(newErrors);
     return valid;
   };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-
     if (!validate()) return;
 
     setLoading(true);
@@ -88,9 +100,10 @@ const MakeDecision = ({
           ? `/application/evaluation/make-decision/${id}`
           : `/application/${id}/due-diligency-form/make-decision`;
 
-      type === "Evaluation"
-        ? await authorizedApi.patch(endpoint, formData)
-        : await authorizedApi.post(endpoint, formData);
+      const apiMethod =
+        type === "Evaluation" ? authorizedApi.patch : authorizedApi.post;
+
+      await apiMethod(endpoint, formData);
 
       notifications.show({
         message: defaultData
@@ -108,6 +121,30 @@ const MakeDecision = ({
       });
     }
     setLoading(false);
+  };
+
+  const addTradeTrainee = () => {
+    setFormData(
+      (prev) =>
+        ({
+          ...prev,
+          tradeTrainees: [
+            ...prev.tradeTrainees,
+            { trade: selectedTrade, trainees: traineesNumber },
+          ],
+        }) as any
+    );
+    setSelectedTrade(null);
+    setTraineesNumber(0);
+  };
+
+  const removeTradeTrainee = (uuid: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      tradeTrainees: prev.tradeTrainees.filter(
+        (entry) => entry.trade.uuid !== uuid
+      ),
+    }));
   };
 
   return (
@@ -133,46 +170,28 @@ const MakeDecision = ({
             onSubmit={handleSubmit}
             className="w-full overflow-y-auto flex flex-col gap-4 px-2"
           >
-            <div className="w-full flex justify-between gap-3">
-              <div className="w-full">
-                <label
-                  htmlFor="decision"
-                  className="block text-xs font-bold text-gray-700"
-                >
-                  Decision
-                </label>
-                <div className="w-full relative">
-                  <span className="absolute left-2 top-[10px]">
-                    <SolarDocumentBold />
-                  </span>
-                  <Select
-                    name="decision"
-                    value={formData.decision}
-                    onChange={(value: any) => {
-                      setFormData((prevData) => ({
-                        ...prevData,
-                        decision: value,
-                      }));
-                      if (errors.decision) {
-                        setErrors((prevData) => ({
-                          ...prevData,
-                          decision: "",
-                        }));
-                      }
-                    }}
-                    data={[
-                      { label: "Approve", value: "APPROVED" },
-                      { label: "Reject", value: "REJECTED" },
-                    ]}
-                    className="mt-1 block w-full pl-6 text-gray-400 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Select your decision"
-                    required
-                  />
-                </div>
-                {errors.decision && (
-                  <p className="text-red-500 text-sm">{errors.decision}</p>
-                )}
-              </div>
+            <div className="w-full">
+              <label
+                htmlFor="decision"
+                className="block text-xs font-bold text-gray-700"
+              >
+                Decision
+              </label>
+              <Select
+                name="decision"
+                value={formData.decision}
+                onChange={(value: any) =>
+                  setFormData((prev) => ({ ...prev, decision: value }))
+                }
+                data={[
+                  { label: "Approve", value: "APPROVED" },
+                  { label: "Reject", value: "REJECTED" },
+                ]}
+                placeholder="Select your decision"
+              />
+              {errors.decision && (
+                <p className="text-red-500 text-sm">{errors.decision}</p>
+              )}
             </div>
 
             <div className="w-full">
@@ -182,32 +201,100 @@ const MakeDecision = ({
               >
                 Comment
               </label>
-              <div className="w-full relative">
-                <textarea
-                  name="comment"
-                  value={formData.comment}
-                  placeholder="Provide a comment"
-                  onChange={handleChange}
-                  className="mt-1 block w-full pb-28 pt-2 pl-8 px-6 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
-                />
-              </div>
+              <textarea
+                name="comment"
+                value={formData.comment}
+                onChange={handleChange}
+                placeholder="Provide a comment"
+                className="mt-1 block w-full pb-28 pt-2 pl-8 bg-[#000F230A] rounded-2xl"
+              />
               {errors.comment && (
                 <p className="text-red-500 text-sm">{errors.comment}</p>
               )}
             </div>
 
-            <div className="w-full flex justify-center mt-4 space-x-4">
+            {firstEvaluationModal && formData.decision === "APPROVED" && (
+              <div className="space-y-3 mb-4">
+                <p>Trades and Trainees</p>
+                <div className="w-full flex gap-2">
+                  <Select
+                    value={selectedTrade?.uuid || ""}
+                    onChange={(value) =>
+                      setSelectedTrade(
+                        application?.trades.find((t) => t.uuid === value)
+                      )
+                    }
+                    data={application?.trades.map((t) => ({
+                      value: t.uuid,
+                      label: t.title,
+                    }))}
+                    placeholder="Select trade"
+                  />
+                  <input
+                    type="number"
+                    value={traineesNumber || ""}
+                    onChange={(e) =>
+                      setTraineesNumber(parseInt(e.target.value))
+                    }
+                    placeholder="Number of trainees"
+                    className="outline-none flex-grow bg-transparent"
+                  />
+                  <button
+                    type="button"
+                    onClick={addTradeTrainee}
+                    disabled={!selectedTrade || !traineesNumber}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-full"
+                  >
+                    Add
+                  </button>
+                </div>
+                {formData.tradeTrainees.length > 0 && (
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Trade</th>
+                        <th>Trainees</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData.tradeTrainees.map((entry, index) => (
+                        <tr key={index}>
+                          <td>{entry.trade.title}</td>
+                          <td>{entry.trainees}</td>
+                          <td>
+                            <button
+                              onClick={() =>
+                                removeTradeTrainee(entry.trade.uuid)
+                              }
+                              className="text-red-500"
+                            >
+                              Remove
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+                {errors.tradeTrainees && (
+                  <p className="text-red-500 text-sm">{errors.tradeTrainees}</p>
+                )}
+              </div>
+            )}
+
+            <div className="flex justify-center mt-4 space-x-4">
               <button
                 type="button"
                 onClick={close}
-                className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="px-4 py-3 bg-black text-white rounded-full"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="px-4 py-3 bg-blue-500 text-white rounded-full"
               >
                 {loading
                   ? "Loading.."
