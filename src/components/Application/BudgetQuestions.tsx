@@ -265,19 +265,19 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
             </table>
             {data?.budgetLines?.length > 0 && (
               <div className=" mt-5">
-                <hr className="w-full border border-gray-100"/>
+                <hr className="w-full border border-gray-100" />
                 <div className="w-full flex items-center justify-between mt-3">
-                <h1>Total</h1>
-                <p className="font-extrabold">
-                  {data?.budgetLines?.reduce(
-                    (acc: number, curr: any) => acc + Number.parseInt(curr.amount || "0", 10),
-                    0
-                  ) || "N/A"}
-                </p>
-              </div>
+                  <h1>Total</h1>
+                  <p className="font-extrabold">
+                    {data?.budgetLines?.reduce(
+                      (acc: number, curr: any) =>
+                        acc + Number.parseInt(curr.amount || "0", 10),
+                      0,
+                    ) || "N/A"}
+                  </p>
+                </div>
               </div>
             )}
-
           </div>
         )}
       </div>
