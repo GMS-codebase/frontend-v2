@@ -290,7 +290,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
           executed without a grant.
         </p>
         <textarea
-          value={data.contribution || ""}
+          value={data?.contribution || ""}
           onChange={(e) => handleInputChange("contribution", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           readOnly={commentData ? true : false}

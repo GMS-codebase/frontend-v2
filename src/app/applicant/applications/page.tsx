@@ -72,8 +72,8 @@ const Page = () => {
                 <Link
                   href={
                     row.original.stages.length > 0
-                      ? `/admin/applications/${row.original.uuid}`
-                      : `/admin/applications/${row.original.call.uuid}/${row.original.uuid}/apply`
+                      ? `/applicant/applications/${row.original.uuid}`
+                      : `/applicant/applications/${row.original.call.uuid}/${row.original.uuid}/apply`
                   }
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
