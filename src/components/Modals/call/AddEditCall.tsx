@@ -147,6 +147,17 @@ const AddEditCall = ({
               color: "blue",
             });
             console.log(res.data);
+            setFormData({
+              title: "",
+              description: "",
+              startDate: "",
+              endDate: "",
+              appealDays: "",
+              windows: [],
+              subWindows: [],
+              sectors: [],
+              attachment: null,
+            });
             closeAddEditCall();
           })
           .catch((err) => {
@@ -171,6 +182,17 @@ const AddEditCall = ({
                 ? "Call updated successfully!"
                 : "Call created successfully!",
               color: "blue",
+            });
+            setFormData({
+              title: "",
+              description: "",
+              startDate: "",
+              endDate: "",
+              appealDays: "",
+              windows: [],
+              subWindows: [],
+              sectors: [],
+              attachment: null,
             });
             closeAddEditCall();
           })

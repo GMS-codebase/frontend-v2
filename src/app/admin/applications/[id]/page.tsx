@@ -130,7 +130,7 @@ const Page = () => {
               setDownloading(true);
               try {
                 const response = await authorizedApi.get(
-                  `/admin/applicant-details/${id}`,
+                  `/admin/applicant-details/${application?.applicant?.uuid}`,
                   {
                     responseType: "blob",
                   },

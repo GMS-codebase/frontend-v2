@@ -26,6 +26,13 @@ const Page = () => {
       ),
     },
     {
+      accessorKey: "call",
+      header: "Call Title",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.call?.title}</div>
+      ),
+    },
+    {
       accessorKey: "window",
       header: "Window",
       cell: ({ row }) => (
