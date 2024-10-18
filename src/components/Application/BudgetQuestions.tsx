@@ -57,14 +57,14 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
         <p className="text-sm text-gray-600">
           Attach a file related to the budget summary
         </p>
-        {commentData ? (
+        {commentData || !setData ? (
           <div className="mt-2">
             <button
               disabled={data?.budgetSummaryAttachment === null}
               onClick={() =>
                 handleDownloadFile(
                   data?.budgetSummaryAttachment,
-                  "applications",
+                  "applications"
                 )
               }
               className={`w-full h-12 ${data?.budgetSummaryAttachment ? "bg-primary" : "bg-gray-600"} text-white rounded-full`}
@@ -73,7 +73,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                 ? "Download Budget Summary"
                 : "No Budget Summary Attached"}
             </button>
-            {showComments && (
+            {showComments && !setData && (
               <div className="mt-2">
                 <p>Comment</p>
                 <textarea
@@ -82,7 +82,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                   onChange={(e) =>
                     handleCommentChange(
                       "budgetSummaryAttachmentComment",
-                      e.target.value,
+                      e.target.value
                     )
                   }
                   className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
@@ -138,7 +138,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
           value={data.contribution || ""}
           onChange={(e) => handleInputChange("contribution", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          readOnly={commentData ? true : false}
+          disabled={!commentData || !setData}
           placeholder="Describe your contribution"
         />
         {showComments && commentData && (
