@@ -20,7 +20,7 @@ import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
 import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
-import { getApplications } from "@/utils/funcs";
+import { getApplications, handleDownloadFile } from "@/utils/funcs";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
@@ -31,6 +31,7 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id,
   )[0];
+  console.log("application infooo"+ JSON.stringify(application))
   console.log("applications --> ", applications);
   const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -71,6 +72,10 @@ const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
+  const goToBudget = () => {
+  console.log("Switching to Indicative Budget"); 
+  setCurrentComponent("IndicativeBudget");
+};
   const [commentsData, setCommentsData] = useState<Comments>({
     titleComment: application?.projectFunding?.titleComment || "",
     activitiesComment: application?.projectFunding?.activitiesComment || "",
@@ -123,6 +128,7 @@ const Page = () => {
                 : undefined
             }
             comments={commentsData}
+            goToBudget={goToBudget}
           />
         );
       case "IndicativeBudget":
@@ -188,6 +194,7 @@ const Page = () => {
     );
   }
 
+  console.log("application information -> ", application)
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -292,6 +299,33 @@ const Page = () => {
               </p>
               <p>2022/02.18 02:00:00</p>
             </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Application name
+              </p>
+              <p>{application?.applicant.name}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+              Institution name
+              </p>
+     <p>{application?.applicant?.businesses && application?.applicant?.businesses[0]?.businessName}</p>
+            </div>
+            <div
+            className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
+            onClick={()=> handleDownloadFile(application?.applicant?.businesses[0]?.businessCertificate, "business_certificates")} 
+          >
+            {downloading ? (
+              <p>Loading ....</p>
+            ) : (
+              <>
+                <span>
+                  <SolarPen2Bold />
+                </span>
+                <div>Download Certificate</div>
+              </>
+            )}
+          </div>
           </div>
         </div>
         <div className="flex flex-col gap-6 mt-6">

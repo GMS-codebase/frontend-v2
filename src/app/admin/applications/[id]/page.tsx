@@ -92,6 +92,13 @@ const Page = () => {
       application?.projectFunding.budgetSummaryAttachmentComment || "",
     contributionComment: application?.projectFunding.contributionComment || "",
   });
+
+const goToBudget = () => {
+  console.log("Switching to Indicative Budget"); 
+  setCurrentComponent("IndicativeBudget");
+};
+
+
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":
@@ -100,6 +107,7 @@ const Page = () => {
             data={application?.projectFunding}
             setComments={setCommentsData}
             comments={commentsData}
+            goToBudget={goToBudget}
           />
         );
       case "IndicativeBudget":
@@ -114,6 +122,7 @@ const Page = () => {
         return null;
     }
   };
+  
 
   const [downloading, setDownloading] = useState(false);
 

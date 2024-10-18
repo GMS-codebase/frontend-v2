@@ -170,18 +170,18 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
 export const getDashboardData = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string,
+  stage: string
 ) => {
   try {
     dispatch({ type: GET_DASHBOARD_LOADING });
     const dashboardResponse = await authorizedApi.get(
-      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`,
+      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`
     );
     dispatch({ type: GET_DASHBOARD_SUCCESS, payload: dashboardResponse.data });
     for (const sector of prioritySectors) {
       try {
         const sectorResponse = await authorizedApi.get(
-          `/Sectors/${sector?.id}/count/applications/count/applicants`,
+          `/Sectors/${sector?.id}/count/applications/count/applicants`
         );
         dispatch({
           type: GET_PRIORITY_SECTORS_DATA,
@@ -244,7 +244,7 @@ export const handleDownloadFile = async (file: any, service: string) => {
     const filename = file.split("/").pop();
     console.log(filename);
     const response = await unauthorizedApi.get(
-      `/admin/download/${service}/${filename}`,
+      `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
         responseType: "blob",
       }

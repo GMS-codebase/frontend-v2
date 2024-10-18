@@ -28,7 +28,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   setComments,
   goToBudget,
 }) => {
-  const { applicationId } = useParams();
+  const { applicationId , id} = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
@@ -37,7 +37,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     const fetchApplicationData = async () => {
       try {
         const response = await authorizedApi.get(
-          `/application/get-application/${applicationId}`,
+          `/application/get-application/${applicationId ?? id}`,
         );
         const applicationData = response.data.data.data;
         const trades: any = applicationData.trades.map((trade: any) => ({
@@ -52,6 +52,13 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
 
     fetchApplicationData();
   }, [applicationId]);
+
+  // Automatically call goToBudget when the last step is reached
+  useEffect(() => {
+    if (currentStep === steps.length - 1 && goToBudget) {
+      goToBudget(); // Automatically switch to IndicativeBudget
+    }
+  }, [currentStep, goToBudget]);
 
   const handleInputChange = (inputName: string, value: any) => {
     setData &&
@@ -140,8 +147,6 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
-    } else if (currentStep === steps.length - 1 && goToBudget) {
-      goToBudget();
     }
   };
 
@@ -161,7 +166,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
           Prev
         </button>
         <button
-          onClick={handleNext}
+          onClick={currentStep === steps.length - 1 ? goToBudget : handleNext}
           className={`px-10 py-2 rounded-full text-white ${
             currentStep === steps.length - 1
               ? "bg-primary hover:bg-blue-600"
