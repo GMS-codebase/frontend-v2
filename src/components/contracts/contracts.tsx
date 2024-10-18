@@ -32,9 +32,9 @@ const Contracts = ({
             <Skeleton width={330} height={200} />
             <Skeleton width={330} height={200} />
           </div>
-        ) : !data ? (
-          <div className="">
-            <h1>No Contracts Created!</h1>
+        ) : !!data ? (
+          <div className="w-full flex items-center mt-10">
+            <h1 className="w-full text-center">No Contracts Signed!</h1>
           </div>
         ) : (
           data.map((contract: any) => (

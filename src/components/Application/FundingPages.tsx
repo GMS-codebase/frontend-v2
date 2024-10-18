@@ -650,12 +650,16 @@ export function TrainingEquipments({
 
 export const Staff = ({
   data,
+  files,
+  handleFileChange,
   handleArrayOfObjectsChange,
   commentData,
   setCommentData,
   showComments,
 }: {
   data: any;
+  files: any;
+  handleFileChange: any;
   handleArrayOfObjectsChange: any;
   commentData?: any;
   setCommentData?: any;
@@ -719,6 +723,20 @@ export const Staff = ({
     }
   };
 
+  const renderCommentsSection = (field: string) => (
+    <div className="mt-4">
+      <h4 className="text-md font-semibold text-gray-700">Comment</h4>
+      <textarea
+        value={commentData?.[field as keyof Comments] || ""}
+        onChange={(e) =>
+          setCommentData &&
+          setCommentData({ ...commentData, [field]: e.target.value })
+        }
+        className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
+        disabled={!setCommentData}
+      />
+    </div>
+  );
   return (
     <div className="">
       <h3 className="text-lg font-bold">Staff Information</h3>
@@ -794,12 +812,12 @@ export const Staff = ({
                 onChange={(value: string | null) =>
                   setStaffInputs((prev) => ({
                     ...prev,
-                    available: value ?? "", // Handle `null` case by assigning an empty string
+                    available: value ?? "",
                   }))
                 }
                 data={[
                   { value: "available", label: "Available" },
-                  { value: "hired", label: "To Be Hired" },
+                  { value: "to be hired", label: "To Be Hired" },
                 ]}
                 className="mt-1 block w-full pl-5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Select Availability"
@@ -858,6 +876,56 @@ export const Staff = ({
             }
             className="p-2 border rounded-2xl bg-gray-100 outline-none w-full"
             disabled={!setCommentData}
+          />
+        </div>
+      )}
+
+      <h3 className="text-lg font-bold">Staffs CVs Attachment</h3>
+      <p className="text-sm text-gray-600">
+        Please attach the document containing the cvs of the staffs
+      </p>
+      {commentData ? (
+        <>
+          <button
+            onClick={() =>
+              handleDownloadFile(data?.staffAttachments, "applications")
+            }
+            className={`w-full h-12 ${data?.staffAttachments ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
+          >
+            {data?.staffAttachments ? "Download File" : "No Attachment Found!"}
+          </button>
+          {showComments && renderCommentsSection("staffAttachmentsComment")}
+        </>
+      ) : (
+        <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
+          <label
+            htmlFor="file-upload-staffAttachments"
+            className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+          >
+            <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+              <span className="text-2xl font-bold">+</span>
+            </div>
+            {files.staffAttachments ? (
+              <div className="text-center">
+                <p className="text-xl font-medium text-gray-700">
+                  {files.staffAttachments.name}
+                </p>
+                <p className="text-sm text-gray-500">File selected</p>
+              </div>
+            ) : (
+              <div className="text-center">
+                <p className="text-md text-gray-500">Upload file</p>
+                <p className="text-md text-gray-400">or drag and drop</p>
+              </div>
+            )}
+          </label>
+          <input
+            id="file-upload-staffAttachments"
+            name="staffAttachments"
+            type="file"
+            accept=".pdf"
+            style={{ display: "none" }}
+            onChange={(e) => handleFileChange(e, "staffAttachments")}
           />
         </div>
       )}

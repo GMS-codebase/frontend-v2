@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Project7 from "@/components/ApplicantDetails/Project7";
 import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
 import Questions from "@/components/Application/Questions";
@@ -22,8 +22,31 @@ const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
+
   const { id, applicationId } = useParams();
   const [loading, setLoading] = useState(false);
+  const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
+  const [currentStep, setCurrentStep] = useState(0);
+  useEffect(() => {
+    const fetchApplicationData = async () => {
+      try {
+        const response = await authorizedApi.get(
+          `/application/get-application/${applicationId}`,
+        );
+        const applicationData = response.data.data.data;
+        console.log("appplication data -- ", applicationData);
+        const trades: any = applicationData.trades.map((trade: any) => ({
+          label: trade.title,
+          value: trade.title,
+        }));
+        setApplicationTrades(trades);
+      } catch (error) {
+        console.error("Error fetching application data:", error);
+      }
+    };
+
+    fetchApplicationData();
+  }, [applicationId]);
   const [data, setData] = useState<ApplicationQuestions>({
     title: "",
     activitiesAndOutcomes: "",
@@ -51,6 +74,7 @@ const Page = () => {
     MOUsAttachment: [],
     assessmentEquipmentAttachment: undefined,
     budgetSummaryAttachment: undefined,
+    staffAttachments: "",
   });
 
   const handleSubmit = async () => {
@@ -125,6 +149,10 @@ const Page = () => {
         "trainingManualAttachment",
         data.trainingManualAttachment,
       );
+    if (data.staffAttachments)
+      submitData.append("staffAttachments", String([data.staffAttachments]));
+    if (data.budgetLines)
+      submitData.append("budgetLines", JSON.stringify(data.budgetLines));
     if (data.trainingEquipmentAttachment)
       submitData.append(
         "trainingEquipmentAttachment",
@@ -151,6 +179,7 @@ const Page = () => {
         data.budgetSummaryAttachment,
       );
 
+    console.log("final data -->", data);
     try {
       const res = await authorizedApi.post(
         `/application/fillApplication/${applicationId}`,
@@ -187,6 +216,7 @@ const Page = () => {
       identificationMember: "",
       assessmentAndCertificationProcess: [],
       assessmentEquipment: [],
+      staffAttachments: "",
       recruitmentCandidatesNumber: "",
       assessorsAndFacilitators: "",
       contribution: "",
@@ -213,7 +243,13 @@ const Page = () => {
           />
         );
       case "IndicativeBudget":
-        return <BudgetQuestions data={data} setData={setData} />;
+        return (
+          <BudgetQuestions
+            trades={applicationTrades}
+            data={data}
+            setData={setData}
+          />
+        );
       default:
         return null;
     }
