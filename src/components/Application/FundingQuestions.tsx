@@ -34,7 +34,6 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
-  console.log("comments --> ", showComments);
   useEffect(() => {
     const fetchApplicationData = async () => {
       try {
@@ -42,6 +41,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
           `/application/get-application/${applicationId}`,
         );
         const applicationData = response.data.data.data;
+        console.log("appplication data -- ", applicationData);
         const trades: any = applicationData.trades.map((trade: any) => ({
           label: trade.title,
           value: trade.uuid,
@@ -121,7 +121,9 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     <Staff
       key="staff"
       data={data}
-      {...(setData && { handleArrayOfObjectsChange })}
+      files={files}
+      handleFileChange={handleFileChange}
+      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
       commentData={comments}
       setCommentData={setComments}
       showComments={showComments}
