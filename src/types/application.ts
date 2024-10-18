@@ -11,7 +11,7 @@ export interface ApplicationQuestions {
   trainingEquipment?: TrainingEquipment[];
   identificationEmployee?: string;
   staffs?: Staff[];
-  staffAttachments: string;
+  staffAttachment: string;
   sustainability?: string;
   contributionFromApplicant?: string;
 
