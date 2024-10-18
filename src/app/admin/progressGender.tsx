@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { PieChart } from '@mui/x-charts/PieChart';
+import { PieChart } from "@mui/x-charts/PieChart";
 import Group from "../../assets/Vectors/Vector.svg";
 import Male from "../../assets/Vectors/ion_male.svg";
 import Female from "../../assets/Vectors/icon-park-outline_female.svg";
@@ -8,8 +8,8 @@ import Image from "next/image";
 import { authorizedApi } from "@/utils/api";
 
 interface ProgressGenderProps {
-  startDate: string; 
-  endDate: string; 
+  startDate: string;
+  endDate: string;
   callId: string;
 }
 
@@ -67,30 +67,27 @@ const ProgressGender: React.FC<ProgressGenderProps> = ({
 
   return (
     <div className="relative flex items-center justify-center flex-col">
-   <div className="">
-         <PieChart
-     width={300}
-     height={300}
-    className="flex items-center ml-24"
-    
-  series={[
-        {
-          data: [
-            { id: 1, value: 15,color:"#005DE9" },
-            { id: 2, value: 20,color:"#FF00A8" },
-          ],
-        },
-      ]}
-      />
-   </div>
+      <div className="">
+        <PieChart
+          width={300}
+          height={300}
+          className="flex items-center ml-24"
+          series={[
+            {
+              data: [
+                { id: 1, value: 15, color: "#005DE9" },
+                { id: 2, value: 20, color: "#FF00A8" },
+              ],
+            },
+          ]}
+        />
+      </div>
 
       {/* Overlay for total count and text */}
       <div className="absolute inset-0 m-0 flex  flex-col items-center justify-center mb-20">
-
-          {/* <Image src={Group} alt="sign" /> */}
+        {/* <Image src={Group} alt="sign" /> */}
         <div className="text-3xl  font-bold text-white">{totalCount}</div>
         <div className="text-sm text-white">in this level</div>
-
       </div>
 
       {/* Male and Female Percentages */}

@@ -235,9 +235,7 @@ const Page = () => {
             </div>
             <div className="bg-white rounded-2xl flex-grow p-4">
               <div className="flex justify-between">
-                <h2 className="text-lg font-semibold mb-8">
-                  Total Applicants
-                </h2>
+                <h2 className="text-lg font-semibold mb-8">Total Applicants</h2>
                 <div className="rounded-full border-black-1">
                   <select className="py-2 px-4 border border-1 rounded-full border-gray-400  text-gray-400 text-md">
                     <option value="select-level">All</option>
@@ -361,7 +359,7 @@ const Page = () => {
                   </div>
                 </div>
               </div>
-              <Dash col1="Number" data={dashTablesData} showSingleRow={true}/>
+              <Dash col1="Number" data={dashTablesData} showSingleRow={true} />
             </div>
             <div className="bg-white p-6 rounded-2xl">
               <div className="flex justify-between gap-3 w-full">

@@ -8,7 +8,7 @@ interface DashProps {
     col1Data: string | number;
     col2Data?: string | number;
   }>;
-  showSingleRow?: boolean;  
+  showSingleRow?: boolean;
 }
 
 const Dash: React.FC<DashProps> = ({ col1, col2, data, showSingleRow }) => {

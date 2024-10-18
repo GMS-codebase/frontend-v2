@@ -30,7 +30,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   goToBudget,
   showComments,
 }) => {
-  const { applicationId , id} = useParams();
+  const { applicationId, id } = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
