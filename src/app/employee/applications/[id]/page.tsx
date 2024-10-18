@@ -369,8 +369,8 @@ const Page = () => {
               <h3 className="font-semibold">Evaluation Stage</h3>
               <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
                 {application?.currentStage === "EVALUATION"
-                  ? "Pending"
-                  : "Approved"}
+                  ? "PENDING"
+                  : "APPROVED"}
               </div>
               {application?.evaluationDecisions.length < 3 &&
                 !application?.evaluationDecisions.find(
