@@ -16,7 +16,7 @@ import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
 const Page = () => {
-  const navigate = useRouter();
+  const navigate = useRouter;
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
@@ -27,9 +27,9 @@ const Page = () => {
     },
     {
       accessorKey: "call",
-      header: "Call",
+      header: "Call Title",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.call.title}</div>
+        <div className="truncate">{row.original.call?.title}</div>
       ),
     },
     {

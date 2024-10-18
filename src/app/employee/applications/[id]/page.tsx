@@ -29,7 +29,7 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id,
   )[0];
-  console.log("applications --> ", applications);
+  console.log("applications --> ", application);
   const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [
@@ -127,6 +127,7 @@ const Page = () => {
       case "IndicativeBudget":
         return (
           <BudgetQuestions
+            trades={application.trades}
             showComments={application?.currentStage !== "SUBMISSION"}
             data={application?.budget}
             commentData={commentsData}
