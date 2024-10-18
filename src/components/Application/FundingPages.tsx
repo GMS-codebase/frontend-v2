@@ -38,7 +38,7 @@ export const FirstPageQuestions = ({
           value={data?.title || ""}
           onChange={(e) => handleInputChange("title", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData}
+          disabled={!!commentData || !handleInputChange}
         />
         {showComments && commentData && (
           <div className="mt-2 ">
@@ -72,7 +72,7 @@ export const FirstPageQuestions = ({
             handleInputChange("activitiesAndOutcomes", e.target.value)
           }
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData}
+          disabled={!!commentData || !handleInputChange}
         />
         {showComments && commentData && (
           <div className="mt-2">
@@ -101,7 +101,7 @@ export const FirstPageQuestions = ({
             handleInputChange("readinessExecute", e.target.value)
           }
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData}
+          disabled={!!commentData || !handleInputChange}
         />
         {showComments && commentData && (
           <div className="mt-2">
@@ -132,7 +132,7 @@ export const FirstPageQuestions = ({
           value={data?.role || ""}
           onChange={(e) => handleInputChange("role", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData}
+          disabled={!!commentData || !handleInputChange}
         />
         {showComments && commentData && (
           <div className="mt-2">
@@ -165,7 +165,7 @@ export const FirstPageQuestions = ({
             handleInputChange("identificationEmployee", e.target.value)
           }
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData}
+          disabled={!!commentData || !handleInputChange}
         />
         {showComments && commentData && (
           <div className="mt-2">
@@ -178,7 +178,7 @@ export const FirstPageQuestions = ({
               onChange={(e) =>
                 handleCommentChange(
                   "identificationEmployeeComment",
-                  e.target.value,
+                  e.target.value
                 )
               }
               className="mt-2 p-2 border rounded-2xl bg-gray-100 outline-none w-full"
@@ -232,7 +232,7 @@ export const TrainingProgress = ({
     handleArrayOfObjectsChange(
       "trainingProcess",
       trainingProcessInputs,
-      data?.trainingProcess?.length || 0,
+      data?.trainingProcess?.length || 0
     );
     setTrainingProcessInputs({
       trade: "",
@@ -343,7 +343,9 @@ export const TrainingProgress = ({
           from few days to 6 months, estimate the training duration with respect
           to the training content/modules to be offered.
         </p>
-        {!commentsData && renderTrainingProcessInputs()}
+        {handleArrayOfObjectsChange &&
+          !commentsData &&
+          renderTrainingProcessInputs()}
         {data?.trainingProcess?.length > 0 && (
           <table className="w-full mt-4 border-collapse border border-gray-200">
             <thead>
@@ -382,13 +384,13 @@ export const TrainingProgress = ({
           Please attach a detailed description of the content (training manual)
           of the proposed training.
         </p>
-        {commentsData ? (
+        {commentsData || !handleFileChange ? (
           <>
             <button
               onClick={() =>
                 handleDownloadFile(
                   data?.trainingManualAttachment,
-                  "applications",
+                  "applications"
                 )
               }
               className={`w-full h-12 ${data?.trainingManualAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
@@ -475,7 +477,7 @@ export function TrainingEquipments({
     handleArrayOfObjectsChange(
       "trainingEquipment",
       trainingEquipments,
-      data?.trainingEquipment?.length || 0,
+      data?.trainingEquipment?.length || 0
     );
     setTrainingEquipments({
       trade: "",
@@ -559,7 +561,9 @@ export function TrainingEquipments({
           List down the equipment available to facilitate this training. [Name
           of equipment/Number/Related Trade]
         </p>
-        {!commentsData && renderTrainingEquipmentsInputs()}
+        {handleArrayOfObjectsChange &&
+          !commentsData &&
+          renderTrainingEquipmentsInputs()}
         {data?.trainingEquipment?.length > 0 && (
           <table className="w-full mt-4 border-collapse border border-gray-200">
             <thead>
@@ -590,13 +594,13 @@ export function TrainingEquipments({
           Please attach the proof of ownership (Notarized list of equipment,
           Original Invoices (EBM for locally purchased equipment).)
         </p>
-        {commentsData ? (
+        {commentsData || !handleArrayOfObjectsChange ? (
           <>
             <button
               onClick={() =>
                 handleDownloadFile(
                   data?.trainingEquipmentAttachment,
-                  "applications",
+                  "applications"
                 )
               }
               className={`w-full h-12 ${data?.trainingEquipmentAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
@@ -694,7 +698,7 @@ export const Staff = ({
     handleArrayOfObjectsChange(
       "staffs",
       staffInputs,
-      data?.staffs?.length || 0,
+      data?.staffs?.length || 0
     );
     setStaffInputs({
       number: "",
@@ -719,13 +723,15 @@ export const Staff = ({
     }
   };
 
+  console.log("arry of change ->", handleArrayOfObjectsChange);
+
   return (
     <div className="">
       <h3 className="text-lg font-bold">Staff Information</h3>
       <p className="text-sm text-gray-600">
         Add details of the staff involved in the training process.
       </p>
-      {!commentData && (
+      {handleArrayOfObjectsChange && commentData && (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-2">
             <div className="relative">
@@ -890,12 +896,16 @@ export const LastPageQuestions = ({
           How will your project (the planned training activity) continue after
           this funding?
         </p>
-        <textarea
-          value={(data && data.sustainability) || ""}
-          onChange={(e) => handleInputChange("sustainability", e.target.value)}
-          className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData || showComments}
-        />
+        {
+          <textarea
+            value={(data && data.sustainability) || ""}
+            onChange={(e) =>
+              handleInputChange("sustainability", e.target.value)
+            }
+            className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
+            disabled={!!commentData || showComments || !handleInputChange}
+          />
+        }
         {showComments && commentData && (
           <div className="mt-2">
             <h4 className="text-md font-semibold text-gray-700">Comment</h4>
@@ -919,13 +929,13 @@ export const LastPageQuestions = ({
         <p className="text-sm text-gray-600">
           Provide the financial report of the previous year.
         </p>
-        {showComments && commentData ? (
+        {(showComments && commentData) || !handleFileChange ? (
           <>
             <button
               onClick={() =>
                 handleDownloadFile(
                   data?.previousFinancialReportAttachment,
-                  "applications",
+                  "applications"
                 )
               }
               className="bg-primary rounded-2xl  my-2 text-white font-semibold w-full py-2"
@@ -934,21 +944,23 @@ export const LastPageQuestions = ({
                 ? "Download File"
                 : "No Report Found!"}
             </button>
-            <div className="mt-2">
-              <h4 className="text-md font-semibold text-gray-700">Comment</h4>
-              <textarea
-                value={commentData.previousFinancialReportComment || ""}
-                onChange={(e) =>
-                  setCommentData &&
-                  setCommentData({
-                    ...commentData,
-                    previousFinancialReportComment: e.target.value,
-                  })
-                }
-                className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-                disabled={!setCommentData}
-              />
-            </div>
+            {commentData && (
+              <div className="mt-2">
+                <h4 className="text-md font-semibold text-gray-700">Comment</h4>
+                <textarea
+                  value={commentData?.previousFinancialReportComment || ""}
+                  onChange={(e) =>
+                    setCommentData &&
+                    setCommentData({
+                      ...commentData,
+                      previousFinancialReportComment: e.target.value,
+                    })
+                  }
+                  className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
+                  disabled={!setCommentData}
+                />
+              </div>
+            )}
           </>
         ) : (
           <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
@@ -999,7 +1011,7 @@ export const LastPageQuestions = ({
             handleInputChange("contributionFromApplicant", e.target.value)
           }
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData}
+          disabled={!!commentData || !handleInputChange}
         />
         {showComments && commentData && (
           <div className="mt-2">
