@@ -89,20 +89,21 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
       trainingProcessInputs,
       data?.budgetLines?.length || 0,
     );
-    console.log("data in budget --> ", data);
     setTrainingProcessInputs({
       trade: "",
       amount: 0,
       budgetLine: "",
     });
   };
+  console.log("trades in budget --> ", trades);
 
+  const formatedTrades = trades?.length && trades[0].uuid ? trades?.map((trade)=> trade.title) : trades
   const renderTrainingProcessInputs = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
         <Select
           name="budgetLine"
-          value={trainingProcessInputs.budgetLine}
+          value={trainingProcessInputs?.budgetLine ?? ""}
           onChange={(selectedOption: any) =>
             setTrainingProcessInputs((prev) => ({
               ...prev,
@@ -139,14 +140,14 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
         />
         <Select
           name="trade"
-          value={trainingProcessInputs.trade}
+          value={trainingProcessInputs?.trade ?? ""}
           onChange={(selectedOption: any) =>
             setTrainingProcessInputs((prev) => ({
               ...prev,
               trade: selectedOption || "",
             }))
           }
-          data={trades}
+          data={formatedTrades}
           className="mt-1 block w-full pl-5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           placeholder="Select Trade"
         />
@@ -251,16 +252,18 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                 </tr>
               </thead>
               <tbody>
-                {(data?.budgetLines || []).map((item: any, index: any) => (
+                {(data?.budgetLines || []).map((item: any, index: any) => {
+                  console.log("data --> ",data,"trades --> ", trades,"Item -->", item);
+                  return (
                   <tr key={index}>
                     <td className="border p-2">{item.budgetLine || "N/A"}</td>
                     <td className="border p-2">{item.amount || "N/A"}</td>
                     <td className="border p-2">
-                      {trades.find((trade: any) => trade.value === item.trade)
-                        ?.label || "N/A"}
+                      {trades.find((trade: any) => trade.title === item?.trade?.title)
+                        ?.title || "N/A"}
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
             {data?.budgetLines?.length > 0 && (
