@@ -189,14 +189,17 @@ const Page = () => {
         message: "Application filled successfully!",
         color: "blue",
       });
+      setLoading(false);
       router.push("/applicant/applications");
     } catch (err: any) {
+      console.log(err);
       notifications.show({
         message: err.response?.data?.message ?? "Failed to submit the form!",
         color: "red",
       });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleReset = () => {
