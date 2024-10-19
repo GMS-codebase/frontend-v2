@@ -70,7 +70,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
 
   const [trainingProcessInputs, setTrainingProcessInputs] = useState({
     trade: "",
-    amount: "",
+    amount: 0,
     budgetLine: "",
   });
 
@@ -92,7 +92,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
     console.log("data in budget --> ", data);
     setTrainingProcessInputs({
       trade: "",
-      amount: "",
+      amount: 0,
       budgetLine: "",
     });
   };
@@ -126,13 +126,13 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
           placeholder="Select Budget Line"
         />
         <input
-          type="text"
+          type="number"
           placeholder="Amount"
           value={trainingProcessInputs.amount}
           onChange={(e) =>
             setTrainingProcessInputs((prev) => ({
               ...prev,
-              amount: e.target.value,
+              amount: Number(e.target.value),
             }))
           }
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
