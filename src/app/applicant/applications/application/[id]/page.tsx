@@ -45,7 +45,12 @@ const Page = () => {
           />
         );
       case "IndicativeBudget":
-        return <BudgetQuestions trades={existingApplication?.trades} data={existingApplication?.budget} />;
+        return (
+          <BudgetQuestions
+            trades={existingApplication?.trades}
+            data={existingApplication?.budget}
+          />
+        );
       default:
         return null;
     }
