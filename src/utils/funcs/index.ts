@@ -244,7 +244,7 @@ export const handleDownloadFile = async (file: any, service: string) => {
     const filename = file.split("/").pop();
     console.log(filename);
     const response = await unauthorizedApi.get(
-      `/admin/download/${service}/${filename}`,
+      `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
         responseType: "blob",
       },
