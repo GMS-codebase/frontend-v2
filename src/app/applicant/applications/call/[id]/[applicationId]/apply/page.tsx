@@ -150,7 +150,7 @@ const Page = () => {
         data.trainingManualAttachment,
       );
     if (data.staffAttachment)
-      submitData.append("staffAttachment", String([data.staffAttachment]));
+      submitData.append("staffAttachment", data.staffAttachment);
     if (data.budgetLines)
       submitData.append("budgetLines", JSON.stringify(data.budgetLines));
     if (data.trainingEquipmentAttachment)
