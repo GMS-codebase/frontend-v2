@@ -95,9 +95,10 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
       budgetLine: "",
     });
   };
-  console.log("trades in budget --> ", trades);
-
-  const formatedTrades = trades?.length && trades[0].uuid ? trades?.map((trade)=> trade.title) : trades
+  const formatedTrades =
+    trades?.length && trades[0].uuid
+      ? trades?.map((trade) => trade.title)
+      : trades;
   const renderTrainingProcessInputs = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
@@ -253,17 +254,18 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
               </thead>
               <tbody>
                 {(data?.budgetLines || []).map((item: any, index: any) => {
-                  console.log("data --> ",data,"trades --> ", trades,"Item -->", item);
                   return (
-                  <tr key={index}>
-                    <td className="border p-2">{item.budgetLine || "N/A"}</td>
-                    <td className="border p-2">{item.amount || "N/A"}</td>
-                    <td className="border p-2">
-                      {trades.find((trade: any) => trade.title === item?.trade?.title)
-                        ?.title || "N/A"}
-                    </td>
-                  </tr>
-                )})}
+                    <tr key={index}>
+                      <td className="border p-2">{item.budgetLine || "N/A"}</td>
+                      <td className="border p-2">{item.amount || "N/A"}</td>
+                      <td className="border p-2">
+                        {trades.find(
+                          (trade: any) => trade.title === item?.trade?.title,
+                        )?.title || "N/A"}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
             {data?.budgetLines?.length > 0 && (

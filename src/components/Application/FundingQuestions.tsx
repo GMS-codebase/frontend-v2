@@ -41,7 +41,6 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
           `/application/get-application/${applicationId ?? id}`,
         );
         const applicationData = response.data.data.data;
-        console.log("appplication data -- ", applicationData);
         const trades: any = applicationData.trades.map((trade: any) => ({
           label: trade.title,
           value: trade.title,

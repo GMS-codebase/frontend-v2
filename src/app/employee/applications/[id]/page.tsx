@@ -23,15 +23,11 @@ const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
   const stagesArr = stages?.map((stage: any) => stage?.stage);
-  console.log(stages, stagesArr);
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id,
   )[0];
-  console.log("applications --> ", application);
-  console.log("application infooo" + JSON.stringify(application));
-  console.log("applications --> ", applications);
   const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [
@@ -72,7 +68,6 @@ const Page = () => {
     "Project" | "IndicativeBudget"
   >("Project");
   const goToBudget = () => {
-    console.log("Switching to Indicative Budget");
     setCurrentComponent("IndicativeBudget");
   };
   const [commentsData, setCommentsData] = useState<Comments>({
@@ -176,13 +171,10 @@ const Page = () => {
   };
   const refetch = async () => {
     setDecisionsLoading(true);
-    console.log(decisionsLoading);
-    console.timeStamp();
     try {
       await getApplications(dispatch);
     } finally {
       setDecisionsLoading(false);
-      console.timeEnd();
     }
   };
 
@@ -196,7 +188,6 @@ const Page = () => {
     );
   }
 
-  console.log("application information -> ", application);
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -237,7 +228,6 @@ const Page = () => {
                   type: "success",
                 });
               } catch (error) {
-                console.error("Download error:", error);
                 notifications.show({
                   title: "Download Failed",
                   message:
