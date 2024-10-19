@@ -27,13 +27,7 @@ const Page = () => {
   const existingApplication = myApplications.find(
     (app: any) => app?.uuid === callId,
   );
-  console.log(
-    myApplications,
-    existingApplication,
-    callId,
-    existingApplication?.currentStage == "CONTRACT_SIGNING" ||
-      existingApplication?.currentStage === "FINISH_GRANT_APPROVAL",
-  );
+  console.log("existing application --> ", existingApplication);
   const router = useRouter();
   const renderComponent = () => {
     switch (currentComponent) {

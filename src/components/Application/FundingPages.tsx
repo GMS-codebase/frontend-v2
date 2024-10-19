@@ -356,22 +356,24 @@ export const TrainingProgress = ({
               </tr>
             </thead>
             <tbody>
-              {(data?.trainingProcess || []).map((item: any, index: any) => (
-                <tr key={index}>
-                  <td className="border p-2">
-                    {trades.find((trade: any) => trade.value === item.trade)
-                      ?.label || "N/A"}
-                  </td>
-                  <td className="border p-2">{item.moduleName}</td>
-                  <td className="border p-2">
-                    {new Date(item.from).toLocaleDateString()}
-                  </td>
-                  <td className="border p-2">
-                    {new Date(item.to).toLocaleDateString()}
-                  </td>
-                  <td className="border p-2">{item.numberOfHours}</td>
-                </tr>
-              ))}
+              {(data?.trainingProcess || []).map((item: any, index: any) => {
+                return (
+                  <tr key={index}>
+                    <td className="border p-2">
+                      {trades.find((trade: any) => trade.value === item?.trade?.title)
+                        ?.label || "N/A"}
+                    </td>
+                    <td className="border p-2">{item.moduleName}</td>
+                    <td className="border p-2">
+                      {new Date(item.from).toLocaleDateString()}
+                    </td>
+                    <td className="border p-2">
+                      {new Date(item.to).toLocaleDateString()}
+                    </td>
+                    <td className="border p-2">{item.numberOfHours}</td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         )}
@@ -575,8 +577,8 @@ export function TrainingEquipments({
                   <td className="border p-2">{item.nameOfEquipment}</td>
                   <td className="border p-2">{item.numberOfEquipment}</td>
                   <td className="border p-2">
-                    {trades.find((trade: any) => trade.value === item.trade)
-                      ?.label || "N/A"}
+                  {trades.find((trade: any) => trade.value === item?.trade?.title)
+                        ?.label || "N/A"}
                   </td>
                 </tr>
               ))}
