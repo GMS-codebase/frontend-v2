@@ -60,13 +60,13 @@ const Page = () => {
     ) {
       openAddContact();
     } else if (!existingApplication) {
+      setApplyLoading(false);
       openCreateApplication();
     } else {
       router.push(
         `/applicant/applications/call/${callId}/${existingApplication.uuid}/apply`,
       );
     }
-    // setApplyLoading(false);
   };
   const [loading, setLoading] = useState(false);
   const handleDownloadInstructions = async () => {

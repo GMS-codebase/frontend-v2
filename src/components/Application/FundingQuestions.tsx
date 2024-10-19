@@ -44,7 +44,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
         console.log("appplication data -- ", applicationData);
         const trades: any = applicationData.trades.map((trade: any) => ({
           label: trade.title,
-          value: trade.uuid,
+          value: trade.title,
         }));
         setApplicationTrades(trades);
       } catch (error) {
