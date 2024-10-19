@@ -25,7 +25,6 @@ export const FirstPageQuestions = ({
     }
   };
 
-  console.log("data --> ", data);
   return (
     <>
       <div className="">
@@ -360,8 +359,9 @@ export const TrainingProgress = ({
                 return (
                   <tr key={index}>
                     <td className="border p-2">
-                      {trades.find((trade: any) => trade.value === item?.trade?.title)
-                        ?.label || "N/A"}
+                      {trades.find(
+                        (trade: any) => trade.value === item?.trade?.title,
+                      )?.label || "N/A"}
                     </td>
                     <td className="border p-2">{item.moduleName}</td>
                     <td className="border p-2">
@@ -372,7 +372,7 @@ export const TrainingProgress = ({
                     </td>
                     <td className="border p-2">{item.numberOfHours}</td>
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
@@ -577,8 +577,9 @@ export function TrainingEquipments({
                   <td className="border p-2">{item.nameOfEquipment}</td>
                   <td className="border p-2">{item.numberOfEquipment}</td>
                   <td className="border p-2">
-                  {trades.find((trade: any) => trade.value === item?.trade?.title)
-                        ?.label || "N/A"}
+                    {trades.find(
+                      (trade: any) => trade.value === item?.trade?.title,
+                    )?.label || "N/A"}
                   </td>
                 </tr>
               ))}
