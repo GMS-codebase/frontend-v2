@@ -43,7 +43,7 @@ const RemoveFromStage = ({
         sector_name: selectedSector,
       })
       .then((res) => {
-        console.log(res);
+
         getEmployees(dispatch);
         notifications.show({
           message: "Stage removed successfully",
@@ -53,7 +53,7 @@ const RemoveFromStage = ({
         closeModal();
       })
       .catch((err) => {
-        console.log("errorrrr --> ", err);
+
         notifications.show({
           title: "Failed to remove from stage",
           message: err.response.data.message ?? "",

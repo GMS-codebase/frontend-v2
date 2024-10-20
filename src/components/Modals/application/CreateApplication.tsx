@@ -116,7 +116,7 @@ const CreateApplication = ({
   const windows = useSelector((state: any) => state.windows.windows);
   const sectors = useSelector((state: any) => state.sectors.sectors);
 
-  console.log(call);
+
 
   const windowOptions =
     call?.windows.map((window: any) => ({

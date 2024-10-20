@@ -46,7 +46,7 @@ const AddMinute: React.FC<AddMinuteProps> = ({
       applicantId: data.applicant.uuid,
       applicationId: data?.uuid,
     };
-    console.log(JSON.stringify(formData.file));
+
     const submitForm = new FormData();
     submitForm.append("minutesNegotiation", newData.minute as Blob);
     submitForm.append("applicantId", newData.applicantId);

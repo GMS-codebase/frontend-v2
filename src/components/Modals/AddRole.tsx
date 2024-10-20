@@ -86,7 +86,7 @@ const AddRoleModal: React.FC<AddRoleModalProps> = ({
       .post("/roles/create-role", formData)
       .then((res) => {
         getRoles(dispatch);
-        console.log(res.data);
+
         notifications.show({
           message: "Role created successfully",
           color: "blue",
@@ -94,7 +94,7 @@ const AddRoleModal: React.FC<AddRoleModalProps> = ({
         closeAddEditRole();
       })
       .catch((err) => {
-        console.log(err.response);
+
         notifications.show({
           title: "Failed to create role",
           message: err.response.data.message ?? "",
