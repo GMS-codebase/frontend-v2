@@ -27,7 +27,7 @@ const AddEditCall = ({
 }) => {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
-  const windows = useSelector((state: any) => state.windows);
+
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
@@ -43,7 +43,8 @@ const AddEditCall = ({
     sectors: [],
     attachment: null,
   });
-
+  const windows = useSelector((state: any) => state.windows);
+  const { sectors } = useSelector((state: any) => state.sectors);
   let MultiWindowData =
     windows?.windows?.map((window: any) => ({
       value: window.uuid,
@@ -58,7 +59,7 @@ const AddEditCall = ({
           window.subWindows?.map((subWindow: any) => ({
             value: subWindow?.uuid,
             label: subWindow?.title,
-          })),
+          }))
         ) || [];
     return subWindowData;
   };
@@ -68,14 +69,24 @@ const AddEditCall = ({
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid),
+            selectedSubWindows.includes(subWindow.uuid)
           )
-          .flatMap((subWindow: any) =>
-            subWindow.sectors?.map((sector: any) => ({
-              value: sector?.uuid,
-              label: sector?.name,
-            })),
-          ) || [],
+          .flatMap(
+            (subWindow: any) =>
+              subWindow.sectors
+                ?.map((sector: any) => {
+                  const matchingSector = sectors.find(
+                    (s: any) => s.uuid === sector.uuid && s.trades.length > 0
+                  );
+                  return matchingSector
+                    ? {
+                        value: matchingSector.uuid,
+                        label: matchingSector.name,
+                      }
+                    : null;
+                })
+                .filter(Boolean) || []
+          ) || []
     );
     return sectorData;
   };
@@ -84,11 +95,11 @@ const AddEditCall = ({
   const MultiSectorData = getSectorData();
   useEffect(() => {
     if (defaultData) {
-      console.log(defaultData);
+
       setFormData(defaultData);
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
       setSelectedSubWindows(
-        defaultData.subWindows.map((item: any) => item.uuid),
+        defaultData.subWindows.map((item: any) => item.uuid)
       );
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
     }

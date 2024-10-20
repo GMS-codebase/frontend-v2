@@ -145,7 +145,7 @@ export const getSectorTrades = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/Sectors/sector/trades")
     .then((res) => {
-      console.log(res.data.data.data);
+
       dispatch({
         type: GET_SECTOR_TRADES_SUCCESS,
         payload: res.data.data.data,
@@ -160,7 +160,7 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/Sectors")
     .then((res) => {
-      console.log(res.data.data.data);
+
       dispatch({ type: GET_SECTORS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
@@ -240,9 +240,9 @@ export const getRoles = async (dispatch: Dispatch<UnknownAction>) => {
 
 export const handleDownloadFile = async (file: any, service: string) => {
   try {
-    console.log("attachment --> ", file);
+
     const filename = file.split("/").pop();
-    console.log(filename);
+
     const response = await unauthorizedApi.get(
       `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
@@ -367,14 +367,14 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/application/all-application")
     .then((res) => {
-      console.log(res.data.data);
+
       dispatch({
         type: GET_MY_APPLICATIONS_SUCCESS,
         payload: res.data.data.data,
       });
     })
     .catch((err) => {
-      console.log(err);
+
       dispatch({
         type: GET_MY_APPLICATIONS_ERROR,
         payload: err.response.data.error,

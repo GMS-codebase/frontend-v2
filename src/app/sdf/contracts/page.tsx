@@ -35,8 +35,8 @@ const Page = () => {
   const { applicationsForContractSigning: applications, loading } = useSelector(
     (state: any) => state.applications,
   );
-  // console.log(applications);
-  // console.log(contracts);
+
+
   // const filteredApplications = applications.filter(
   //   (app: any) =>
   //     app.stages.some(
@@ -53,9 +53,9 @@ const Page = () => {
   const handleDownloadInstructions = async (file: any) => {
     setLoadingDownload(true);
     try {
-      console.log("attachment --> ", file);
+
       const filename = file.split("\\").pop();
-      console.log(filename);
+
       const response = await unauthorizedApi.get(
         `/admin/download/contracts/${filename}`,
         {

@@ -27,7 +27,7 @@ const Page = () => {
   const contacts = useSelector((state: any) => state.contacts);
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
   const { myApplications } = useSelector((state: any) => state.applications);
-  console.log(myApplications);
+
   const existingApplication = myApplications.find(
     (app: any) => app?.call?.uuid === callId && app.stages.length === 0,
   );
@@ -72,9 +72,9 @@ const Page = () => {
   const handleDownloadInstructions = async () => {
     setLoading(true);
     try {
-      console.log("attachment --> ", call.attachment);
+
       const filename = call.attachment.split("/").pop();
-      console.log(filename);
+
       const response = await unauthorizedApi.get(
         `/admin/download/calls/${filename}`,
         {

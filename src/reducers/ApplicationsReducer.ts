@@ -60,8 +60,8 @@ export default function ApplicationsReducer(
           action.payload,
       };
     case GET_MY_APPLICATIONS_SUCCESS:
-      console.log(action.payload);
-      console.log("added my own applications");
+
+
       return {
         ...state,
         loading: false,
