@@ -25,7 +25,6 @@ export const FirstPageQuestions = ({
     }
   };
 
-
   return (
     <>
       <div className="">
@@ -242,7 +241,12 @@ export const TrainingProgress = ({
       numberOfHours: "",
     });
   };
+  const formatedTrades =
+    trades?.length && trades[0].uuid
+      ? trades?.map((trade: any) => trade.title)
+      : trades;
 
+  console.log(data)
   const renderTrainingProcessInputs = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
@@ -358,22 +362,30 @@ export const TrainingProgress = ({
               </tr>
             </thead>
             <tbody>
-              {(data?.trainingProcess || []).map((item: any, index: any) => (
-                <tr key={index}>
-                  <td className="border p-2">
-                    {trades.find((trade: any) => trade.value === item.trade)
-                      ?.label || "N/A"}
-                  </td>
-                  <td className="border p-2">{item.moduleName}</td>
-                  <td className="border p-2">
-                    {new Date(item.from).toLocaleDateString()}
-                  </td>
-                  <td className="border p-2">
-                    {new Date(item.to).toLocaleDateString()}
-                  </td>
-                  <td className="border p-2">{item.numberOfHours}</td>
-                </tr>
-              ))}
+              {(data?.trainingProcess || []).map((item: any, index: any) => {
+                console.log("Trades --> ", trades, " Item --> ", item);
+                return (
+                  <tr key={index}>
+                    <td className="border p-2">
+                      {item.uuid
+                        ? trades.find(
+                            (trade: any) => trade.value === item?.trade?.uuid
+                          )?.label
+                        : trades.find(
+                            (trade: any) => trade.value === item?.trade
+                          )?.label}
+                    </td>
+                    <td className="border p-2">{item.moduleName}</td>
+                    <td className="border p-2">
+                      {new Date(item.from).toLocaleDateString()}
+                    </td>
+                    <td className="border p-2">
+                      {new Date(item.to).toLocaleDateString()}
+                    </td>
+                    <td className="border p-2">{item.numberOfHours}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}
@@ -413,9 +425,9 @@ export const TrainingProgress = ({
               {files.trainingManualAttachment ? (
                 <div className="text-center">
                   <p className="text-xl font-medium text-gray-700">
-                    {files.trainingManualAttachment.name}
+                    {files?.trainingManualAttachment?.name}
                   </p>
-                  <p className="text-sm text-gray-500">File selected</p>
+                  <p className="text-sm text-gray-500">{"File selected"}</p>
                 </div>
               ) : (
                 <div className="text-center">
@@ -579,8 +591,12 @@ export function TrainingEquipments({
                   <td className="border p-2">{item.nameOfEquipment}</td>
                   <td className="border p-2">{item.numberOfEquipment}</td>
                   <td className="border p-2">
-                    {trades.find((trade: any) => trade.value === item.trade)
-                      ?.label || "N/A"}
+                    {item.uuid
+                      ? trades.find(
+                          (trade: any) => trade.value === item?.trade?.uuid
+                        )?.label
+                      : trades.find((trade: any) => trade.value === item?.trade)
+                          ?.label}
                   </td>
                 </tr>
               ))}
@@ -654,13 +670,17 @@ export function TrainingEquipments({
 
 export const Staff = ({
   data,
+  files,
+  handleFileChange,
   handleArrayOfObjectsChange,
   commentData,
   setCommentData,
   showComments,
 }: {
   data: any;
-  handleArrayOfObjectsChange?: any;
+  files: any;
+  handleFileChange: any;
+  handleArrayOfObjectsChange: any;
   commentData?: any;
   setCommentData?: any;
   showComments?: boolean;
@@ -723,15 +743,13 @@ export const Staff = ({
     }
   };
 
-
-
   return (
     <div className="">
       <h3 className="text-lg font-bold">Staff Information</h3>
       <p className="text-sm text-gray-600">
         Add details of the staff involved in the training process.
       </p>
-      {handleArrayOfObjectsChange && commentData && (
+      {handleArrayOfObjectsChange && !commentData && (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-2">
             <div className="relative">
@@ -800,12 +818,12 @@ export const Staff = ({
                 onChange={(value: string | null) =>
                   setStaffInputs((prev) => ({
                     ...prev,
-                    available: value ?? "", // Handle `null` case by assigning an empty string
+                    available: value ?? "",
                   }))
                 }
                 data={[
                   { value: "available", label: "Available" },
-                  { value: "hired", label: "To Be Hired" },
+                  { value: "to be hired", label: "To Be Hired" },
                 ]}
                 className="mt-1 block w-full pl-5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Select Availability"
@@ -864,6 +882,56 @@ export const Staff = ({
             }
             className="p-2 border rounded-2xl bg-gray-100 outline-none w-full"
             disabled={!setCommentData}
+          />
+        </div>
+      )}
+
+      <h3 className="text-lg font-bold">Staffs CVs Attachment</h3>
+      <p className="text-sm text-gray-600">
+        Please attach the document containing the cvs of the staffs
+      </p>
+      {commentData ? (
+        <>
+          <button
+            onClick={() =>
+              handleDownloadFile(data?.staffAttachment, "applications")
+            }
+            className={`w-full h-12 ${data?.staffAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
+          >
+            {data?.staffAttachment ? "Download File" : "No Attachment Found!"}
+          </button>
+          {/* {showComments && renderCommentsSection("staffAttachmentComment")} */}
+        </>
+      ) : (
+        <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
+          <label
+            htmlFor="file-upload-staffAttachment"
+            className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+          >
+            <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+              <span className="text-2xl font-bold">+</span>
+            </div>
+            {files.staffAttachment ? (
+              <div className="text-center">
+                <p className="text-xl font-medium text-gray-700">
+                  {files.staffAttachment.name}
+                </p>
+                <p className="text-sm text-gray-500">File selected</p>
+              </div>
+            ) : (
+              <div className="text-center">
+                <p className="text-md text-gray-500">Upload file</p>
+                <p className="text-md text-gray-400">or drag and drop</p>
+              </div>
+            )}
+          </label>
+          <input
+            id="file-upload-staffAttachment"
+            name="staffAttachment"
+            type="file"
+            accept=".pdf"
+            style={{ display: "none" }}
+            onChange={(e) => handleFileChange(e, "staffAttachment")}
           />
         </div>
       )}
@@ -944,7 +1012,7 @@ export const LastPageQuestions = ({
                 ? "Download File"
                 : "No Report Found!"}
             </button>
-            {commentData && (
+            {showComments && commentData && (
               <div className="mt-2">
                 <h4 className="text-md font-semibold text-gray-700">Comment</h4>
                 <textarea

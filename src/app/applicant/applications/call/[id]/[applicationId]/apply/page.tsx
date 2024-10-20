@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Project7 from "@/components/ApplicantDetails/Project7";
 import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
 import Questions from "@/components/Application/Questions";
@@ -22,8 +22,31 @@ const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
+
   const { id, applicationId } = useParams();
   const [loading, setLoading] = useState(false);
+  const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
+  const [currentStep, setCurrentStep] = useState(0);
+  useEffect(() => {
+    const fetchApplicationData = async () => {
+      try {
+        const response = await authorizedApi.get(
+          `/application/get-application/${applicationId}`,
+        );
+        const applicationData = response.data.data.data;
+        console.log("appplication data -- ", applicationData);
+        const trades: any = applicationData.trades.map((trade: any) => ({
+          label: trade.title,
+          value: trade.title,
+        }));
+        setApplicationTrades(trades);
+      } catch (error) {
+        console.error("Error fetching application data:", error);
+      }
+    };
+
+    fetchApplicationData();
+  }, [applicationId]);
   const [data, setData] = useState<ApplicationQuestions>({
     title: "",
     activitiesAndOutcomes: "",
@@ -51,6 +74,7 @@ const Page = () => {
     MOUsAttachment: [],
     assessmentEquipmentAttachment: undefined,
     budgetSummaryAttachment: undefined,
+    staffAttachment: "",
   });
 
   const handleSubmit = async (type: "submit" | "save") => {
@@ -67,12 +91,12 @@ const Page = () => {
     if (data.trainingProcess && data.trainingProcess.length > 0)
       submitData.append(
         "trainingProcess",
-        JSON.stringify(data.trainingProcess)
+        JSON.stringify(data.trainingProcess),
       );
     if (data.trainingEquipment && data.trainingEquipment.length > 0)
       submitData.append(
         "trainingEquipment",
-        JSON.stringify(data.trainingEquipment)
+        JSON.stringify(data.trainingEquipment),
       );
     if (data.identificationEmployee)
       submitData.append("identificationEmployee", data.identificationEmployee);
@@ -83,12 +107,12 @@ const Page = () => {
     if (data.contributionFromApplicant)
       submitData.append(
         "contributionFromApplicant",
-        data.contributionFromApplicant
+        data.contributionFromApplicant,
       );
     if (data.recruitmentTrainerNumber)
       submitData.append(
         "recruitmentTrainerNumber",
-        data.recruitmentTrainerNumber
+        data.recruitmentTrainerNumber,
       );
     if (data.identificationMember)
       submitData.append("identificationMember", data.identificationMember);
@@ -98,22 +122,22 @@ const Page = () => {
     )
       submitData.append(
         "assessmentAndCertificationProcess",
-        JSON.stringify(data.assessmentAndCertificationProcess)
+        JSON.stringify(data.assessmentAndCertificationProcess),
       );
     if (data.assessmentEquipment && data.assessmentEquipment.length > 0)
       submitData.append(
         "assessmentEquipment",
-        JSON.stringify(data.assessmentEquipment)
+        JSON.stringify(data.assessmentEquipment),
       );
     if (data.recruitmentCandidatesNumber)
       submitData.append(
         "recruitmentCandidatesNumber",
-        data.recruitmentCandidatesNumber
+        data.recruitmentCandidatesNumber,
       );
     if (data.assessorsAndFacilitators)
       submitData.append(
         "assessorsAndFacilitators",
-        data.assessorsAndFacilitators
+        data.assessorsAndFacilitators,
       );
     if (data.contribution) submitData.append("contribution", data.contribution);
     if (data.roleAttachment)
@@ -123,17 +147,21 @@ const Page = () => {
     if (data.trainingManualAttachment)
       submitData.append(
         "trainingManualAttachment",
-        data.trainingManualAttachment
+        data.trainingManualAttachment,
       );
+    if (data.staffAttachment)
+      submitData.append("staffAttachment", data.staffAttachment);
+    if (data.budgetLines)
+      submitData.append("budgetLines", JSON.stringify(data.budgetLines));
     if (data.trainingEquipmentAttachment)
       submitData.append(
         "trainingEquipmentAttachment",
-        data.trainingEquipmentAttachment
+        data.trainingEquipmentAttachment,
       );
     if (data.previousFinancialReportAttachment)
       submitData.append(
         "previousFinancialReportAttachment",
-        data.previousFinancialReportAttachment
+        data.previousFinancialReportAttachment,
       );
     if (data.MOUsAttachment && data.MOUsAttachment.length > 0) {
       data.MOUsAttachment.forEach((file, index) => {
@@ -143,31 +171,35 @@ const Page = () => {
     if (data.assessmentEquipmentAttachment)
       submitData.append(
         "assessmentEquipmentAttachment",
-        data.assessmentEquipmentAttachment
+        data.assessmentEquipmentAttachment,
       );
     if (data.budgetSummaryAttachment)
       submitData.append(
         "budgetSummaryAttachment",
-        data.budgetSummaryAttachment
+        data.budgetSummaryAttachment,
       );
 
+    console.log("final data -->", data);
     try {
       const res = await authorizedApi.post(
         `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${applicationId}`,
-        submitData
+        submitData,
       );
       notifications.show({
         message: "Application filled successfully!",
         color: "blue",
       });
+      setLoading(false);
       router.push("/applicant/applications");
     } catch (err: any) {
+      console.log(err);
       notifications.show({
         message: err.response?.data?.message ?? "Failed to submit the form!",
         color: "red",
       });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleReset = () => {
@@ -187,6 +219,7 @@ const Page = () => {
       identificationMember: "",
       assessmentAndCertificationProcess: [],
       assessmentEquipment: [],
+      staffAttachment: "",
       recruitmentCandidatesNumber: "",
       assessorsAndFacilitators: "",
       contribution: "",
@@ -213,7 +246,13 @@ const Page = () => {
           />
         );
       case "IndicativeBudget":
-        return <BudgetQuestions data={data} setData={setData} />;
+        return (
+          <BudgetQuestions
+            trades={applicationTrades}
+            data={data}
+            setData={setData}
+          />
+        );
       default:
         return null;
     }

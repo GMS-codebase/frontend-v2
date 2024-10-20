@@ -29,7 +29,7 @@ const Page = () => {
   const { myApplications } = useSelector((state: any) => state.applications);
 
   const existingApplication = myApplications.find(
-    (app: any) => app?.call?.uuid === callId && app.stages.length === 0
+    (app: any) => app?.call?.uuid === callId && app.stages.length === 0,
   );
   const [
     isOpenCreateProfile,
@@ -47,7 +47,7 @@ const Page = () => {
     setApplyLoading(true);
     if (existingApplication) {
       router.push(
-        `/applicant/applications/application/${existingApplication.uuid}`
+        `/applicant/applications/application/${existingApplication.uuid}`,
       );
     } else if (
       !profile.applicantProfile ||
@@ -60,13 +60,13 @@ const Page = () => {
     ) {
       openAddContact();
     } else if (!existingApplication) {
+      setApplyLoading(false);
       openCreateApplication();
     } else {
       router.push(
-        `/applicant/applications/call/${callId}/${existingApplication.uuid}/apply`
+        `/applicant/applications/call/${callId}/${existingApplication.uuid}/apply`,
       );
     }
-    // setApplyLoading(false);
   };
   const [loading, setLoading] = useState(false);
   const handleDownloadInstructions = async () => {
@@ -79,7 +79,7 @@ const Page = () => {
         `/admin/download/calls/${filename}`,
         {
           responseType: "blob",
-        }
+        },
       );
       const blob = new Blob([response.data], {
         type: response.headers["content-type"],

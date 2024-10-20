@@ -32,14 +32,18 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   application,
   showComments,
 }) => {
+  const { applicationId, id } = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [currentStep, setCurrentStep] = useState(0);
-
+  useEffect(() => {
+    if (currentStep === steps.length - 1 && goToBudget) {
+      goToBudget();
+    }
+  }, [currentStep, goToBudget]);
   const trades: any = application?.trades.map((trade: any) => ({
     label: trade.title,
     value: trade.uuid,
   }));
-
   const handleInputChange = (inputName: string, value: any) => {
     setData &&
       setData((prev: any) => ({
@@ -47,7 +51,6 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
         [inputName]: value,
       }));
   };
-
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
     const file = e.target.files?.[0];
     if (file && setData) {
@@ -55,7 +58,6 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       setData((prev: any) => ({ ...prev, [key]: file }));
     }
   };
-
   const handleArrayOfObjectsChange = (
     inputName: string,
     value: any,
@@ -71,7 +73,6 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
         };
       });
   };
-
   const steps = [
     <FirstPageQuestions
       key="first"
@@ -106,7 +107,9 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     <Staff
       key="staff"
       data={data}
-      {...(setData && { handleArrayOfObjectsChange })}
+      files={files}
+      handleFileChange={handleFileChange}
+      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
       commentData={comments}
       setCommentData={setComments}
       showComments={showComments}
@@ -132,8 +135,6 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
-    } else if (currentStep === steps.length - 1 && goToBudget) {
-      goToBudget();
     }
   };
 
@@ -153,7 +154,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
           Prev
         </button>
         <button
-          onClick={handleNext}
+          onClick={currentStep === steps.length - 1 ? goToBudget : handleNext}
           className={`px-10 py-2 rounded-full text-white ${
             currentStep === steps.length - 1
               ? "bg-primary hover:bg-blue-600"
