@@ -16,7 +16,6 @@ const DueDiligenceModal = ({
   onSaveComment?: (updatedText: string) => void;
   application: any;
 }) => {
-
   const [text, setText] = useState(
     "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era.",
   );

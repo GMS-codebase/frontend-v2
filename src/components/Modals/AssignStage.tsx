@@ -64,7 +64,6 @@ const AssignStage = ({
         sectorIds: sectorId,
       })
       .then((res) => {
-
         getEmployees(dispatch);
         notifications.show({
           message: "Stage assigned successfully",

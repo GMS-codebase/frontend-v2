@@ -92,7 +92,6 @@ const AddSectorTrade = ({
       });
       closeAddSectorTrade();
     } catch (error: any) {
-
       notifications.show({
         message: error.response?.data?.message ?? "Failed to assign trade!",
         color: "red",

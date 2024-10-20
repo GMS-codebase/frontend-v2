@@ -177,7 +177,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
               onClick={() =>
                 handleDownloadFile(
                   data?.budgetSummaryAttachment,
-                  "applications"
+                  "applications",
                 )
               }
               className={`w-full h-12 ${data?.budgetSummaryAttachment ? "bg-primary" : "bg-gray-600"} text-white rounded-full`}
@@ -186,23 +186,6 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                 ? "Download Budget Summary"
                 : "No Budget Summary Attached"}
             </button>
-            {showComments && !setData && (
-              <div className="mt-2">
-                <p>Comment</p>
-                <textarea
-                  value={commentData?.budgetSummaryAttachmentComment || ""}
-                  disabled={!setCommentData}
-                  onChange={(e) =>
-                    handleCommentChange(
-                      "budgetSummaryAttachmentComment",
-                      e.target.value
-                    )
-                  }
-                  className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-                  placeholder="Add your comment"
-                />
-              </div>
-            )}
           </div>
         ) : (
           <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
@@ -262,8 +245,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                       <td className="border p-2">
                         {item.uuid
                           ? trades.find(
-                              (trade: any) =>
-                                trade.value === item?.trade?.uuid,
+                              (trade: any) => trade.value === item?.trade?.uuid,
                             )?.title
                           : trades.find(
                               (trade: any) => trade.value === item?.trade,
@@ -289,6 +271,23 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                 </div>
               </div>
             )}
+          </div>
+        )}
+        {showComments && !setData && (
+          <div className="mt-2">
+            <p>Comment</p>
+            <textarea
+              value={commentData?.budgetSummaryAttachmentComment || ""}
+              disabled={!setCommentData}
+              onChange={(e) =>
+                handleCommentChange(
+                  "budgetSummaryAttachmentComment",
+                  e.target.value,
+                )
+              }
+              className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
+              placeholder="Add your comment"
+            />
           </div>
         )}
       </div>

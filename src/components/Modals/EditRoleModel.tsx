@@ -85,7 +85,6 @@ const EditRoleModal: React.FC<AddRoleModalProps> = ({
         closeAddEditRole();
       })
       .catch((err) => {
-
         notifications.show({
           title: "Failed to update role",
           message: err.response.data.message ?? "",
