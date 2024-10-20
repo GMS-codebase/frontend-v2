@@ -29,7 +29,7 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id,
   )[0];
-  console.log(application);
+
   const [isOpenAddDue, setIsOpenAddDue] = useState(false);
   const openAddDue = () => setIsOpenAddDue(true);
   const closeAddDue = () => setIsOpenAddDue(false);
@@ -48,8 +48,8 @@ const Page = () => {
       close: closeGrantCommitteeMakeDecision,
     },
   ] = useDisclosure(false);
-  console.log(application);
-  console.log(profile);
+
+
 
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
@@ -286,7 +286,7 @@ const Page = () => {
               <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
                 {application?.currentStage === "EVALUATION"
                   ? "Pending"
-                  : "Finished"}
+                  : "APPROVED"}
               </div>
               {application?.evaluationDecisions && (
                 <div className="flex flex-col gap-2 mt-4">
@@ -330,7 +330,7 @@ const Page = () => {
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Grant Committee</h3>
               <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                {!application?.grantCommitteeDecision ? "Pending" : "Finished"}
+                {!application?.grantCommitteeDecision ? "Pending" : "APPROVED"}
               </div>
 
               {application?.grantCommitteeDecision && (
@@ -357,7 +357,7 @@ const Page = () => {
         closeModal={closeGrantCommitteeMakeDecision}
         isOpen={isOpenGrantCommitteeMakeDecision}
         onMakeDecision={() => {
-          console.log("Decisions made");
+
         }}
         trades={application?.trades}
       />

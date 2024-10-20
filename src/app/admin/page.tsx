@@ -71,7 +71,7 @@ const Page = () => {
   const [stage, setStage] = useState("");
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log("dashboard data --> ", dashboardData?.sectorSummary);
+
     const fetchDashboardData = async () => {
       await getDashboardData(dispatch, call, stage);
     };
