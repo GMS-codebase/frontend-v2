@@ -2,8 +2,10 @@
 import React from "react";
 import Image from "next/image";
 import img from "../assets/Images/404.svg";
+import { useRouter } from "next/navigation";
 
 const NotFound = () => {
+  const navigate = useRouter();
   return (
     <>
       <div className="w-full h-full flex flex-col  align-middle rounded-3xl bg-white p-8 relative">
@@ -19,7 +21,10 @@ const NotFound = () => {
           </div>
         </div>
 
-        <div className="text-white bg-primary  py-4 font-semibold  rounded-full text-center cursor-pointer w-fit flex items-center justify-center  m-auto px-24 mt-8 text-xl">
+        <div
+          onClick={() => navigate.back()}
+          className="text-white bg-primary  py-4 font-semibold  rounded-full text-center cursor-pointer w-fit flex items-center justify-center  m-auto px-24 mt-8 text-xl"
+        >
           Got to back
         </div>
       </div>

@@ -29,7 +29,7 @@ const Page = () => {
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id
+    (application: any) => application.uuid === id,
   )[0];
   const [nullifyLoading, setNullifyLoading] = useState<any>();
   const [decisionsLoading, setDecisionsLoading] = useState(false);
@@ -120,6 +120,7 @@ const Page = () => {
       case "IndicativeBudget":
         return (
           <BudgetQuestions
+            trades={application?.trades}
             data={application?.projectFunding}
             commentData={commentsData}
             setCommentData={setCommentsData}
@@ -168,7 +169,7 @@ const Page = () => {
                   `/admin/applicant-details/${id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -320,8 +321,8 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage.stage === "EVALUATION"
-                        )
+                          (stage: any) => stage.stage === "EVALUATION",
+                        ),
                       );
                       openNullifyModal();
                     }}
@@ -363,8 +364,8 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage.stage === "DUE_DILIGENCY"
-                        )
+                          (stage: any) => stage.stage === "DUE_DILIGENCY",
+                        ),
                       );
                       openNullifyModal();
                     }}
@@ -377,7 +378,7 @@ const Page = () => {
             )}
           </div>
           {application?.stages?.find(
-            (stage: any) => stage.stage === "GRANT_COMMITTEE"
+            (stage: any) => stage.stage === "GRANT_COMMITTEE",
           ) && (
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Grant Committee</h3>

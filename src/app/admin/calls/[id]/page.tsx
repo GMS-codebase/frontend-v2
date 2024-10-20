@@ -60,9 +60,6 @@ const Page = () => {
                 className="flex gap-2 p-2 bg-danger rounded-full text-white px-4  py-2 items-center justify-center"
                 onClick={openCloseCall}
               >
-                <span>
-                  <SolarPen2Bold />
-                </span>
                 <div>Close Call</div>
               </div>
             </div>

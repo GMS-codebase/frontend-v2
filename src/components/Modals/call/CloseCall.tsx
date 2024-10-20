@@ -25,9 +25,9 @@ const CloseCallModal = ({
     setLoading(true);
     setError(null);
     try {
-      await authorizedApi.patch(`/application/nullify`);
+      await authorizedApi.post(`/call/close-call-manually/${id}`);
       notifications.show({
-        message: "Decision nullified successfully",
+        message: "Call closed successfully",
         color: "blue",
       });
       closeModal();

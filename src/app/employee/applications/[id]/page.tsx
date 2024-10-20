@@ -18,7 +18,7 @@ import { useDisclosure } from "@mantine/hooks";
 import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
-import { getApplications } from "@/utils/funcs";
+import { getApplications, handleDownloadFile } from "@/utils/funcs";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
@@ -60,6 +60,9 @@ const Page = () => {
     isDataEditable: false,
     isCommented: false,
   });
+  const goToBudget = () => {
+    setCurrentComponent("IndicativeBudget");
+  };
   const [commentsData, setCommentsData] = useState<Comments>({
     titleComment: application?.projectFunding?.titleComment || "",
     activitiesComment: application?.projectFunding?.activitiesComment || "",
@@ -122,11 +125,13 @@ const Page = () => {
             data={application?.projectFunding}
             setComments={!properties.isCommented ? setCommentsData : undefined}
             comments={commentsData}
+            goToBudget={goToBudget}
           />
         );
       case "IndicativeBudget":
         return (
           <BudgetQuestions
+            trades={application.trades}
             showComments={application?.currentStage !== "SUBMISSION"}
             data={application?.budget}
             commentData={commentsData}
@@ -159,13 +164,10 @@ const Page = () => {
   };
   const refetch = async () => {
     setDecisionsLoading(true);
-
-    console.timeStamp();
     try {
       await getApplications(dispatch);
     } finally {
       setDecisionsLoading(false);
-      console.timeEnd();
     }
   };
 
@@ -219,7 +221,6 @@ const Page = () => {
                   type: "success",
                 });
               } catch (error) {
-                console.error("Download error:", error);
                 notifications.show({
                   title: "Download Failed",
                   message:
@@ -282,6 +283,41 @@ const Page = () => {
                 Application submission deadline
               </p>
               <p>2022/02.18 02:00:00</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Application name
+              </p>
+              <p>{application?.applicant.name}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Institution name
+              </p>
+              <p>
+                {application?.applicant?.businesses &&
+                  application?.applicant?.businesses[0]?.businessName}
+              </p>
+            </div>
+            <div
+              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
+              onClick={() =>
+                handleDownloadFile(
+                  application?.applicant?.businesses[0]?.businessCertificate,
+                  "business_certificates",
+                )
+              }
+            >
+              {downloading ? (
+                <p>Loading ....</p>
+              ) : (
+                <>
+                  <span>
+                    <SolarPen2Bold />
+                  </span>
+                  <div>Download Certificate</div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -357,8 +393,8 @@ const Page = () => {
               <h3 className="font-semibold">Evaluation Stage</h3>
               <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
                 {application?.currentStage === "EVALUATION"
-                  ? "Pending"
-                  : "Approved"}
+                  ? "PENDING"
+                  : "APPROVED"}
               </div>
               {application?.evaluationDecisions.length < 3 &&
                 !application?.evaluationDecisions.find(

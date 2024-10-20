@@ -25,14 +25,7 @@ const Page = () => {
     "Project" | "IndicativeBudget"
   >("Project");
   const existingApplication = myApplications.find(
-    (app: any) => app?.uuid === callId
-  );
-
-    myApplications,
-    existingApplication,
-    callId,
-    existingApplication?.currentStage == "CONTRACT_SIGNING" ||
-      existingApplication?.currentStage === "FINISH_GRANT_APPROVAL"
+    (app: any) => app?.uuid === callId,
   );
   const router = useRouter();
   const renderComponent = () => {
@@ -45,7 +38,12 @@ const Page = () => {
           />
         );
       case "IndicativeBudget":
-        return <BudgetQuestions data={existingApplication?.budget} />;
+        return (
+          <BudgetQuestions
+            trades={existingApplication?.trades}
+            data={existingApplication?.budget}
+          />
+        );
       default:
         return null;
     }
@@ -138,7 +136,7 @@ const Page = () => {
                       {existingApplication?.call &&
                         format(
                           existingApplication?.call?.startDate,
-                          "dd MMMM yyyy"
+                          "dd MMMM yyyy",
                         )}
                     </p>
                   </div>
@@ -154,7 +152,7 @@ const Page = () => {
                       {existingApplication?.call &&
                         format(
                           existingApplication?.call?.endDate,
-                          "dd MMMM yyyy"
+                          "dd MMMM yyyy",
                         )}
                     </p>
                   </div>
