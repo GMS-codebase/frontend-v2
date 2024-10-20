@@ -105,8 +105,6 @@ const Page = () => {
 
   const applications = useSelector((state: any) => state.applications);
 
-
-
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">

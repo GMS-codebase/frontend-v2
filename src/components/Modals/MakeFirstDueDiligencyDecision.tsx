@@ -57,7 +57,7 @@ const MakeFirstDueDiligencyDecision = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value, files } = e.target as HTMLInputElement;
     setFormData((prevData) => ({
@@ -103,7 +103,7 @@ const MakeFirstDueDiligencyDecision = ({
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       notifications.show({
@@ -326,7 +326,7 @@ const MakeFirstDueDiligencyDecision = ({
                                 {
                                   application?.trades.find(
                                     (trade: any) =>
-                                      trade.uuid === tradeTrainee.trade
+                                      trade.uuid === tradeTrainee.trade,
                                   ).title
                                 }
                               </td>
@@ -342,7 +342,7 @@ const MakeFirstDueDiligencyDecision = ({
                                       tradeTrainees: prev.tradeTrainees.filter(
                                         (trade: any) =>
                                           trade.trade.uuid !==
-                                          tradeTrainee.trade.uuid
+                                          tradeTrainee.trade.uuid,
                                       ),
                                     }))
                                   }
@@ -351,7 +351,7 @@ const MakeFirstDueDiligencyDecision = ({
                                 </button>
                               </td>
                             </tr>
-                          )
+                          ),
                         )}
                       </tbody>
                     </table>
@@ -378,7 +378,7 @@ const MakeFirstDueDiligencyDecision = ({
                     className="mt-1 block w-full p-6 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
                   />
                 </div>
-              )
+              ),
             )}
 
             <div className="py-4 w-full">

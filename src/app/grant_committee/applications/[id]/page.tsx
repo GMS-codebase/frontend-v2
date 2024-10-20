@@ -138,7 +138,6 @@ const Page = () => {
       await authorizedApi.patch(`/application/nullify/${id}/${stageId}`);
       refetch();
     } catch (error) {
-
       notifications.show({
         message: "Error while nullifying the decisions",
         color: "red",
@@ -255,9 +254,15 @@ const Page = () => {
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
-                Application submission deadline
+                Application submission date
               </p>
-              <p>2022/02.18 02:00:00</p>
+              <p>{new Date(application?.doneAt)?.toLocaleDateString()}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Applicant&apos;s Phone Number
+              </p>
+              <p>{application?.applicant?.phone}</p>
             </div>
           </div>
         </div>

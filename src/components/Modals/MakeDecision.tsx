@@ -41,7 +41,7 @@ const MakeDecision = ({
     trades: "",
   });
   const [loading, setLoading] = useState(false);
-
+  console.log("make decision application and trades --> ", application);
   const [selectedTrade, setSelectedTrade] = useState<any>(null);
   const [traineesNumber, setTraineesNumber] = useState<number | undefined>(0);
 
@@ -137,7 +137,7 @@ const MakeDecision = ({
             ...prev.trades,
             { trade: selectedTrade, trainees: traineesNumber },
           ],
-        }) as any
+        }) as any,
     );
     setSelectedTrade(null);
     setTraineesNumber(0);
@@ -226,11 +226,7 @@ const MakeDecision = ({
                 <div className="w-full flex gap-2">
                   <Select
                     value={selectedTrade}
-                    onChange={(value) =>
-                      setSelectedTrade(
-                        value
-                      )
-                    }
+                    onChange={(value) => setSelectedTrade(value)}
                     data={application?.trades.map((t) => ({
                       value: t.uuid,
                       label: t.title,
@@ -271,7 +267,11 @@ const MakeDecision = ({
                           <td>
                             {" "}
                             <div className="flex items-center justify-center">
-                              {application?.trades.find((t) => t.uuid === entry.trade)?.title}
+                              {
+                                application?.trades.find(
+                                  (t) => t.uuid === entry.trade,
+                                )?.title
+                              }
                             </div>{" "}
                           </td>
                           <td>

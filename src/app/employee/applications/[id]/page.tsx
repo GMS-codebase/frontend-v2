@@ -26,8 +26,9 @@ const Page = () => {
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application?.uuid === id
+    (application: any) => application?.uuid === id,
   )[0];
+  console.log("application --> ", application);
   const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [
@@ -106,7 +107,7 @@ const Page = () => {
     if (application) {
       const hasComments = Object.entries(application.projectFunding || {}).some(
         ([key, value]) =>
-          key.includes("Comment") && value != null && value !== ""
+          key.includes("Comment") && value != null && value !== "",
       );
       setProperties({
         isDataEditable:
@@ -195,7 +196,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -264,6 +265,21 @@ const Page = () => {
               </p>
               <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
             </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Institution name
+              </p>
+              <p>
+                {application?.applicant?.businesses &&
+                  application?.applicant?.businesses[0]?.businessName}
+              </p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Applicant&apos;s Phone Number
+              </p>
+              <p>{application?.applicant?.phone}</p>
+            </div>
           </div>
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
             <div className="flex gap-3 justify-start items-center">
@@ -280,24 +296,15 @@ const Page = () => {
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
-                Application submission deadline
+                Application submission date
               </p>
-              <p>2022/02.18 02:00:00</p>
+              <p>{new Date(application?.doneAt)?.toLocaleDateString()}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Application name
               </p>
               <p>{application?.applicant.name}</p>
-            </div>
-            <div className="flex gap-3 justify-start items-center">
-              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
-                Institution name
-              </p>
-              <p>
-                {application?.applicant?.businesses &&
-                  application?.applicant?.businesses[0]?.businessName}
-              </p>
             </div>
             <div
               className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
@@ -400,7 +407,7 @@ const Page = () => {
                 !application?.evaluationDecisions.find(
                   (ev: any) =>
                     ev.employee.user_id.toString() ===
-                    profile?.userProfile?.data.uuid.toString()
+                    profile?.userProfile?.data.uuid.toString(),
                 ) && (
                   <>
                     <div
@@ -449,7 +456,7 @@ const Page = () => {
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>
                         dec?.employee?.user_id ===
-                        profile?.userProfile?.data.uuid
+                        profile?.userProfile?.data.uuid,
                     ) && (
                       <div
                         onClick={() => {

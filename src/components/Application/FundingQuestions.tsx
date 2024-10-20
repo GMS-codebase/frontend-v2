@@ -42,8 +42,9 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   }, [currentStep, goToBudget]);
   const trades: any = application?.trades.map((trade: any) => ({
     label: trade.title,
-    value: trade.uuid,
+    value: trade.title,
   }));
+  console.log("application trades --> ", trades);
   const handleInputChange = (inputName: string, value: any) => {
     setData &&
       setData((prev: any) => ({
@@ -61,7 +62,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const handleArrayOfObjectsChange = (
     inputName: string,
     value: any,
-    index: number
+    index: number,
   ) => {
     setData &&
       setData((prev: any) => {
