@@ -20,6 +20,7 @@ interface FundingQuestionsProps {
   setComments?: React.Dispatch<React.SetStateAction<Comments>>;
   goToBudget?: () => void;
   showComments?: boolean;
+  application?: any;
 }
 
 const FundingQuestions: React.FC<FundingQuestionsProps> = ({
@@ -28,32 +29,16 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   comments,
   setComments,
   goToBudget,
+  application,
   showComments,
 }) => {
-  const { applicationId } = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
-  const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
-  console.log("comments --> ", showComments);
-  useEffect(() => {
-    const fetchApplicationData = async () => {
-      try {
-        const response = await authorizedApi.get(
-          `/application/get-application/${applicationId}`
-        );
-        const applicationData = response.data.data.data;
-        const trades: any = applicationData.trades.map((trade: any) => ({
-          label: trade.title,
-          value: trade.uuid,
-        }));
-        setApplicationTrades(trades);
-      } catch (error) {
-        console.error("Error fetching application data:", error);
-      }
-    };
 
-    fetchApplicationData();
-  }, [applicationId]);
+  const trades: any = application?.trades.map((trade: any) => ({
+    label: trade.title,
+    value: trade.uuid,
+  }));
 
   const handleInputChange = (inputName: string, value: any) => {
     setData &&
@@ -102,7 +87,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       files={files}
       {...(setData && { handleArrayOfObjectsChange })}
       {...(setData && { handleFileChange })}
-      trades={applicationTrades}
+      trades={trades}
       commentsData={comments}
       setCommentsData={setComments}
       showComments={showComments}
@@ -113,7 +98,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       files={files}
       {...(setData && { handleArrayOfObjectsChange })}
       {...(setData && { handleFileChange })}
-      trades={applicationTrades}
+      trades={trades}
       commentsData={comments}
       setCommentsData={setComments}
       showComments={showComments}

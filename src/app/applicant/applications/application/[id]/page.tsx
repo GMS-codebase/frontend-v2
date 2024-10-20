@@ -27,7 +27,7 @@ const Page = () => {
   const existingApplication = myApplications.find(
     (app: any) => app?.uuid === callId
   );
-  console.log(
+
     myApplications,
     existingApplication,
     callId,

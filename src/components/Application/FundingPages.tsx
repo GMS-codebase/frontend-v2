@@ -25,7 +25,7 @@ export const FirstPageQuestions = ({
     }
   };
 
-  console.log("data --> ", data);
+
   return (
     <>
       <div className="">
@@ -723,7 +723,7 @@ export const Staff = ({
     }
   };
 
-  console.log("arry of change ->", handleArrayOfObjectsChange);
+
 
   return (
     <div className="">

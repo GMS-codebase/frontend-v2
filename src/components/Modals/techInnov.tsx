@@ -22,9 +22,9 @@ const CallModal = ({
   const handleDownloadInstructions = async () => {
     setLoading(true);
     try {
-      console.log("attachment --> ", call.attachment);
+
       const filename = call.attachment.split("/").pop();
-      console.log(filename);
+
       const response = await unauthorizedApi.get(
         `/admin/download/calls/${filename}`,
         {
