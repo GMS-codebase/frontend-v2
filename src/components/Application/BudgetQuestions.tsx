@@ -254,14 +254,17 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
               </thead>
               <tbody>
                 {(data?.budgetLines || []).map((item: any, index: any) => {
+                  console.log("Trades --> ", trades, " Item --> ", item);
                   return (
                     <tr key={index}>
                       <td className="border p-2">{item.budgetLine || "N/A"}</td>
                       <td className="border p-2">{item.amount || "N/A"}</td>
                       <td className="border p-2">
-                        {trades.find(
-                          (trade: any) => trade.title === item?.trade?.title,
-                        )?.title || "N/A"}
+                      {item.uuid ? trades.find(
+                        (trade: any) => trade.title === item?.trade?.title,
+                      )?.title : trades.find(
+                        (trade: any) => trade.value === item?.trade,
+                      )?.label}
                       </td>
                     </tr>
                   );
