@@ -83,7 +83,7 @@ const Page = () => {
   const ApplicantsWithProfile = applicants?.applicants?.filter(
     (applicant: any) => applicant.has_completed_profile,
   );
-  console.log("applicants with profile", applicants);
+
   const filteredApplicants = ApplicantsWithProfile?.filter(
     (applicant: any) =>
       applicant.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||

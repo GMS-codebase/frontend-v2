@@ -20,6 +20,7 @@ interface FundingQuestionsProps {
   setComments?: React.Dispatch<React.SetStateAction<Comments>>;
   goToBudget?: () => void;
   showComments?: boolean;
+  application?: any;
 }
 
 const FundingQuestions: React.FC<FundingQuestionsProps> = ({
@@ -28,39 +29,21 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   comments,
   setComments,
   goToBudget,
+  application,
   showComments,
 }) => {
   const { applicationId, id } = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
-  const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   useEffect(() => {
-    const fetchApplicationData = async () => {
-      try {
-        const response = await authorizedApi.get(
-          `/application/get-application/${applicationId ?? id}`,
-        );
-        const applicationData = response.data.data.data;
-        const trades: any = applicationData.trades.map((trade: any) => ({
-          label: trade.title,
-          value: trade.title,
-        }));
-        setApplicationTrades(trades);
-      } catch (error) {
-        console.error("Error fetching application data:", error);
-      }
-    };
-
-    fetchApplicationData();
-  }, [applicationId]);
-
-  // Automatically call goToBudget when the last step is reached
-  useEffect(() => {
     if (currentStep === steps.length - 1 && goToBudget) {
-      goToBudget(); // Automatically switch to IndicativeBudget
+      goToBudget();
     }
   }, [currentStep, goToBudget]);
-
+  const trades: any = application?.trades.map((trade: any) => ({
+    label: trade.title,
+    value: trade.uuid,
+  }));
   const handleInputChange = (inputName: string, value: any) => {
     setData &&
       setData((prev: any) => ({
@@ -68,7 +51,6 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
         [inputName]: value,
       }));
   };
-
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
     const file = e.target.files?.[0];
     if (file && setData) {
@@ -76,11 +58,10 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       setData((prev: any) => ({ ...prev, [key]: file }));
     }
   };
-
   const handleArrayOfObjectsChange = (
     inputName: string,
     value: any,
-    index: number,
+    index: number
   ) => {
     setData &&
       setData((prev: any) => {
@@ -92,7 +73,6 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
         };
       });
   };
-
   const steps = [
     <FirstPageQuestions
       key="first"
@@ -108,7 +88,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       files={files}
       {...(setData && { handleArrayOfObjectsChange })}
       {...(setData && { handleFileChange })}
-      trades={applicationTrades}
+      trades={trades}
       commentsData={comments}
       setCommentsData={setComments}
       showComments={showComments}
@@ -119,7 +99,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       files={files}
       {...(setData && { handleArrayOfObjectsChange })}
       {...(setData && { handleFileChange })}
-      trades={applicationTrades}
+      trades={trades}
       commentsData={comments}
       setCommentsData={setComments}
       showComments={showComments}

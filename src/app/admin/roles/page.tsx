@@ -19,7 +19,7 @@ const rolesData = [
 
 const Page = () => {
   const { roles, loading } = useSelector((state: any) => state.roles);
-  console.log(roles);
+
   const [isOpenAddEditRole, setIsOpenAddEditRole] = useState(false);
 
   const openModal = () => {
