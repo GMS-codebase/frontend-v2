@@ -241,7 +241,12 @@ export const TrainingProgress = ({
       numberOfHours: "",
     });
   };
+  const formatedTrades =
+    trades?.length && trades[0].uuid
+      ? trades?.map((trade: any) => trade.title)
+      : trades;
 
+  console.log(formatedTrades);
   const renderTrainingProcessInputs = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
@@ -356,12 +361,15 @@ export const TrainingProgress = ({
             </thead>
             <tbody>
               {(data?.trainingProcess || []).map((item: any, index: any) => {
+                console.log("Trades --> ", trades, " Item --> ", item);
                 return (
                   <tr key={index}>
                     <td className="border p-2">
-                      {trades.find(
+                      {item.uuid ? trades.find(
                         (trade: any) => trade.value === item?.trade?.title,
-                      )?.label || "N/A"}
+                      )?.label : trades.find(
+                        (trade: any) => trade.value === item?.trade,
+                      )?.label}
                     </td>
                     <td className="border p-2">{item.moduleName}</td>
                     <td className="border p-2">
@@ -577,9 +585,11 @@ export function TrainingEquipments({
                   <td className="border p-2">{item.nameOfEquipment}</td>
                   <td className="border p-2">{item.numberOfEquipment}</td>
                   <td className="border p-2">
-                    {trades.find(
-                      (trade: any) => trade.value === item?.trade?.title,
-                    )?.label || "N/A"}
+                  {item.uuid ? trades.find(
+                        (trade: any) => trade.value === item?.trade?.title,
+                      )?.label : trades.find(
+                        (trade: any) => trade.value === item?.trade,
+                      )?.label}
                   </td>
                 </tr>
               ))}
