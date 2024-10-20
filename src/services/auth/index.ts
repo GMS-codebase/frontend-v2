@@ -28,7 +28,7 @@ class AuthService {
       const response = await unauthorizedApi.post("/auth/login", data);
       setCookie("token", response.data.data.data);
       const tokenData: { role: string } = jwtDecode(response.data.data.data);
-      console.log(tokenData);
+
       push(tokenData.role);
     } catch (error: any) {
       notifications.show({

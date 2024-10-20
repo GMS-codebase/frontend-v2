@@ -105,7 +105,7 @@ const Page = () => {
 
   const applications = useSelector((state: any) => state.applications);
 
-  console.log("applications --> ", applications);
+
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
