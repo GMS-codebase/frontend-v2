@@ -50,7 +50,7 @@ const AddContract: React.FC<AddContractProps> = ({
       (sum, value) => sum + value,
       0,
     );
-    console.log((currentTotal || 0) + installmentsInput > 100);
+
     if ((currentTotal || 0) + installmentsInput > 100) {
       setInstallmentsError(
         "The total value of installments can not exceed 100%",

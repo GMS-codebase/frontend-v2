@@ -251,12 +251,12 @@ const MakeFirstDueDiligencyDecision = ({
                           value={selectedTrade}
                           onChange={(value) =>
                             setSelectedTrade(
-                              application.trades.find(
+                              application?.trades.find(
                                 (trade: any) => trade.uuid === value
                               )
                             )
                           }
-                          data={application.trades.map((trade: any) => ({
+                          data={application?.trades.map((trade: any) => ({
                             value: trade.uuid,
                             label: trade.title,
                           }))}

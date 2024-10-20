@@ -29,7 +29,7 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id,
   )[0];
-  console.log(application);
+
   const [loading, setLoading] = useState(false);
   const [isOpenAddDue, setIsOpenAddDue] = useState(false);
   const openAddDue = () => setIsOpenAddDue(true);
@@ -49,8 +49,8 @@ const Page = () => {
       close: closeGrantCommitteeMakeDecision,
     },
   ] = useDisclosure(false);
-  console.log(application);
-  console.log(profile);
+
+
 
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
@@ -348,7 +348,7 @@ const Page = () => {
         closeModal={closeGrantCommitteeMakeDecision}
         isOpen={isOpenGrantCommitteeMakeDecision}
         onMakeDecision={() => {
-          console.log("Decisions made");
+
         }}
         trades={application?.trades}
       />

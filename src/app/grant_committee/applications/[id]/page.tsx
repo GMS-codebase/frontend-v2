@@ -137,7 +137,7 @@ const Page = () => {
       await authorizedApi.patch(`/application/nullify/${id}/${stageId}`);
       refetch();
     } catch (error) {
-      console.log(error);
+
       notifications.show({
         message: "Error while nullifying the decisions",
         color: "red",
