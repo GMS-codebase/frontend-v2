@@ -27,7 +27,6 @@ const Page = () => {
   const existingApplication = myApplications.find(
     (app: any) => app?.uuid === callId,
   );
-  console.log("existing application --> ", existingApplication);
   const router = useRouter();
   const renderComponent = () => {
     switch (currentComponent) {

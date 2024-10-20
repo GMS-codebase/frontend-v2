@@ -53,7 +53,7 @@ const Page = () => {
     setError(null);
     try {
       const response = await authorizedApi.get(`/Sectors/${id}/trades`);
-      console.log(response.data.data);
+
       setTrades(response.data.data.data);
     } catch (err: any) {
       console.error("Error fetching trades:", err);

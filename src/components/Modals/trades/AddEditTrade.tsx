@@ -103,7 +103,7 @@ const AddEditTrade = ({
             : "Trade is created successfully",
           color: "blue",
         });
-        console.log(res.data.data);
+
         dispatch({
           type: defaultData ? UPDATE_TRADE_SUCCESS : ADD_TRADE_SUCCESS,
           payload: res.data?.data,
