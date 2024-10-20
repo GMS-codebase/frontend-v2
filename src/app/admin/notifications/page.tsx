@@ -142,9 +142,7 @@ const Page = () => {
           });
         }
       })
-      .catch((error) => {
-
-      })
+      .catch((error) => {})
       .finally(() => setIsSubmitting(false));
   };
 

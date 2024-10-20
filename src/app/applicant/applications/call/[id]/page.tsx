@@ -72,7 +72,6 @@ const Page = () => {
   const handleDownloadInstructions = async () => {
     setLoading(true);
     try {
-
       const filename = call.attachment.split("/").pop();
 
       const response = await unauthorizedApi.get(

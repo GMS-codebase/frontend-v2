@@ -42,7 +42,6 @@ const AddRoleUser: React.FC<AddRoleModalProps> = ({
         closeAddRoleUser();
       })
       .catch((err) => {
-
         notifications.show({
           title: "Failed to add role",
           message: err.response.data.message ?? "",

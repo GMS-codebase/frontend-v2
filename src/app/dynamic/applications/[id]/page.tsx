@@ -46,8 +46,6 @@ const Page = () => {
     },
   ] = useDisclosure(false);
 
-
-
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
@@ -214,11 +212,17 @@ const Page = () => {
               </p>
               <p>{application?.window.title}</p>
             </div>
-            <div className="flex gap-6 justify-start items-start">
+            <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
-                Application submission deadline
+                Application submission date
               </p>
-              <p>2022/02.18 02:00:00</p>
+              <p>{new Date(application?.doneAt)?.toLocaleDateString()}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Applicant&apos;s Phone Number
+              </p>
+              <p>{application?.applicant?.phone}</p>
             </div>
           </div>
         </div>
@@ -344,9 +348,7 @@ const Page = () => {
         applicationId={id}
         closeModal={closeGrantCommitteeMakeDecision}
         isOpen={isOpenGrantCommitteeMakeDecision}
-        onMakeDecision={() => {
-
-        }}
+        onMakeDecision={() => {}}
         trades={application?.trades}
       />
       <EvaluationDetails

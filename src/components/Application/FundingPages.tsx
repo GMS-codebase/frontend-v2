@@ -177,7 +177,7 @@ export const FirstPageQuestions = ({
               onChange={(e) =>
                 handleCommentChange(
                   "identificationEmployeeComment",
-                  e.target.value
+                  e.target.value,
                 )
               }
               className="mt-2 p-2 border rounded-2xl bg-gray-100 outline-none w-full"
@@ -231,7 +231,7 @@ export const TrainingProgress = ({
     handleArrayOfObjectsChange(
       "trainingProcess",
       trainingProcessInputs,
-      data?.trainingProcess?.length || 0
+      data?.trainingProcess?.length || 0,
     );
     setTrainingProcessInputs({
       trade: "",
@@ -246,7 +246,7 @@ export const TrainingProgress = ({
       ? trades?.map((trade: any) => trade.title)
       : trades;
 
-  console.log(data)
+  console.log(data);
   const renderTrainingProcessInputs = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
@@ -368,11 +368,11 @@ export const TrainingProgress = ({
                   <tr key={index}>
                     <td className="border p-2">
                       {item.uuid
-                        ? trades.find(
-                            (trade: any) => trade.value === item?.trade?.uuid
+                        ? trades?.find(
+                            (trade: any) => trade?.value === item?.trade?.uuid,
                           )?.label
-                        : trades.find(
-                            (trade: any) => trade.value === item?.trade
+                        : trades?.find(
+                            (trade: any) => trade?.value === item?.trade,
                           )?.label}
                     </td>
                     <td className="border p-2">{item.moduleName}</td>
@@ -402,7 +402,7 @@ export const TrainingProgress = ({
               onClick={() =>
                 handleDownloadFile(
                   data?.trainingManualAttachment,
-                  "applications"
+                  "applications",
                 )
               }
               className={`w-full h-12 ${data?.trainingManualAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
@@ -489,7 +489,7 @@ export function TrainingEquipments({
     handleArrayOfObjectsChange(
       "trainingEquipment",
       trainingEquipments,
-      data?.trainingEquipment?.length || 0
+      data?.trainingEquipment?.length || 0,
     );
     setTrainingEquipments({
       trade: "",
@@ -592,11 +592,12 @@ export function TrainingEquipments({
                   <td className="border p-2">{item.numberOfEquipment}</td>
                   <td className="border p-2">
                     {item.uuid
-                      ? trades.find(
-                          (trade: any) => trade.value === item?.trade?.uuid
+                      ? trades?.find(
+                          (trade: any) => trade.value === item?.trade?.uuid,
                         )?.label
-                      : trades.find((trade: any) => trade.value === item?.trade)
-                          ?.label}
+                      : trades?.find(
+                          (trade: any) => trade.value === item?.trade,
+                        )?.label}
                   </td>
                 </tr>
               ))}
@@ -616,7 +617,7 @@ export function TrainingEquipments({
               onClick={() =>
                 handleDownloadFile(
                   data?.trainingEquipmentAttachment,
-                  "applications"
+                  "applications",
                 )
               }
               className={`w-full h-12 ${data?.trainingEquipmentAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
@@ -718,7 +719,7 @@ export const Staff = ({
     handleArrayOfObjectsChange(
       "staffs",
       staffInputs,
-      data?.staffs?.length || 0
+      data?.staffs?.length || 0,
     );
     setStaffInputs({
       number: "",
@@ -870,21 +871,6 @@ export const Staff = ({
           </table>
         </>
       )}
-      {showComments && commentData && (
-        <div className="mt-2">
-          <label htmlFor="" className="font-medium text-sm">
-            Comment
-          </label>
-          <textarea
-            value={commentData.staffComment || ""}
-            onChange={(e) =>
-              handleCommentChange("staffComment", e.target.value)
-            }
-            className="p-2 border rounded-2xl bg-gray-100 outline-none w-full"
-            disabled={!setCommentData}
-          />
-        </div>
-      )}
 
       <h3 className="text-lg font-bold">Staffs CVs Attachment</h3>
       <p className="text-sm text-gray-600">
@@ -900,6 +886,21 @@ export const Staff = ({
           >
             {data?.staffAttachment ? "Download File" : "No Attachment Found!"}
           </button>
+          {showComments && (
+            <div className="mt-2">
+              <label htmlFor="" className="font-medium text-sm">
+                Comment
+              </label>
+              <textarea
+                value={commentData.staffComment || ""}
+                onChange={(e) =>
+                  handleCommentChange("staffComment", e.target.value)
+                }
+                className="p-2 border rounded-2xl bg-gray-100 outline-none w-full"
+                disabled={!setCommentData}
+              />
+            </div>
+          )}
           {/* {showComments && renderCommentsSection("staffAttachmentComment")} */}
         </>
       ) : (
@@ -1003,7 +1004,7 @@ export const LastPageQuestions = ({
               onClick={() =>
                 handleDownloadFile(
                   data?.previousFinancialReportAttachment,
-                  "applications"
+                  "applications",
                 )
               }
               className="bg-primary rounded-2xl  my-2 text-white font-semibold w-full py-2"

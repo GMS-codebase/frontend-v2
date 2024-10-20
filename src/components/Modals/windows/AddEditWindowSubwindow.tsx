@@ -45,7 +45,6 @@ const AddEditWindowSubwindow = ({
 
   useEffect(() => {
     if (defaultData) {
-
       setFormData({
         title: defaultData.title,
         description: defaultData.description,

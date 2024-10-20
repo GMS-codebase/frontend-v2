@@ -24,6 +24,7 @@ const Page = () => {
   >("Project");
 
   const { id, applicationId } = useParams();
+  const [application, setApplication] = useState<any>();
   const [loading, setLoading] = useState(false);
   const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
@@ -39,6 +40,7 @@ const Page = () => {
           label: trade.title,
           value: trade.title,
         }));
+        setApplication(applicationData);
         setApplicationTrades(trades);
       } catch (error) {
         console.error("Error fetching application data:", error);
@@ -47,6 +49,7 @@ const Page = () => {
 
     fetchApplicationData();
   }, [applicationId]);
+  console.log("applications tradeas --> ", applicationTrades);
   const [data, setData] = useState<ApplicationQuestions>({
     title: "",
     activitiesAndOutcomes: "",
@@ -240,6 +243,7 @@ const Page = () => {
       case "Project":
         return (
           <FundingQuestions
+            application={application}
             data={data}
             setData={setData}
             goToBudget={() => setCurrentComponent("IndicativeBudget")}
