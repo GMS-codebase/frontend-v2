@@ -25,7 +25,6 @@ export const FirstPageQuestions = ({
     }
   };
 
-  console.log("data --> ", data);
   return (
     <>
       <div className="">
@@ -38,7 +37,7 @@ export const FirstPageQuestions = ({
           value={data?.title || ""}
           onChange={(e) => handleInputChange("title", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData}
+          disabled={!!commentData || !handleInputChange}
         />
         {showComments && commentData && (
           <div className="mt-2 ">
@@ -72,7 +71,7 @@ export const FirstPageQuestions = ({
             handleInputChange("activitiesAndOutcomes", e.target.value)
           }
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData}
+          disabled={!!commentData || !handleInputChange}
         />
         {showComments && commentData && (
           <div className="mt-2">
@@ -101,7 +100,7 @@ export const FirstPageQuestions = ({
             handleInputChange("readinessExecute", e.target.value)
           }
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData}
+          disabled={!!commentData || !handleInputChange}
         />
         {showComments && commentData && (
           <div className="mt-2">
@@ -132,7 +131,7 @@ export const FirstPageQuestions = ({
           value={data?.role || ""}
           onChange={(e) => handleInputChange("role", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData}
+          disabled={!!commentData || !handleInputChange}
         />
         {showComments && commentData && (
           <div className="mt-2">
@@ -165,7 +164,7 @@ export const FirstPageQuestions = ({
             handleInputChange("identificationEmployee", e.target.value)
           }
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData}
+          disabled={!!commentData || !handleInputChange}
         />
         {showComments && commentData && (
           <div className="mt-2">
@@ -178,7 +177,7 @@ export const FirstPageQuestions = ({
               onChange={(e) =>
                 handleCommentChange(
                   "identificationEmployeeComment",
-                  e.target.value,
+                  e.target.value
                 )
               }
               className="mt-2 p-2 border rounded-2xl bg-gray-100 outline-none w-full"
@@ -232,7 +231,7 @@ export const TrainingProgress = ({
     handleArrayOfObjectsChange(
       "trainingProcess",
       trainingProcessInputs,
-      data?.trainingProcess?.length || 0,
+      data?.trainingProcess?.length || 0
     );
     setTrainingProcessInputs({
       trade: "",
@@ -242,7 +241,12 @@ export const TrainingProgress = ({
       numberOfHours: "",
     });
   };
+  const formatedTrades =
+    trades?.length && trades[0].uuid
+      ? trades?.map((trade: any) => trade.title)
+      : trades;
 
+  console.log(data)
   const renderTrainingProcessInputs = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
@@ -343,7 +347,9 @@ export const TrainingProgress = ({
           from few days to 6 months, estimate the training duration with respect
           to the training content/modules to be offered.
         </p>
-        {!commentsData && renderTrainingProcessInputs()}
+        {handleArrayOfObjectsChange &&
+          !commentsData &&
+          renderTrainingProcessInputs()}
         {data?.trainingProcess?.length > 0 && (
           <table className="w-full mt-4 border-collapse border border-gray-200">
             <thead>
@@ -356,22 +362,30 @@ export const TrainingProgress = ({
               </tr>
             </thead>
             <tbody>
-              {(data?.trainingProcess || []).map((item: any, index: any) => (
-                <tr key={index}>
-                  <td className="border p-2">
-                    {trades.find((trade: any) => trade.value === item.trade)
-                      ?.label || "N/A"}
-                  </td>
-                  <td className="border p-2">{item.moduleName}</td>
-                  <td className="border p-2">
-                    {new Date(item.from).toLocaleDateString()}
-                  </td>
-                  <td className="border p-2">
-                    {new Date(item.to).toLocaleDateString()}
-                  </td>
-                  <td className="border p-2">{item.numberOfHours}</td>
-                </tr>
-              ))}
+              {(data?.trainingProcess || []).map((item: any, index: any) => {
+                console.log("Trades --> ", trades, " Item --> ", item);
+                return (
+                  <tr key={index}>
+                    <td className="border p-2">
+                      {item.uuid
+                        ? trades.find(
+                            (trade: any) => trade.value === item?.trade?.uuid
+                          )?.label
+                        : trades.find(
+                            (trade: any) => trade.value === item?.trade
+                          )?.label}
+                    </td>
+                    <td className="border p-2">{item.moduleName}</td>
+                    <td className="border p-2">
+                      {new Date(item.from).toLocaleDateString()}
+                    </td>
+                    <td className="border p-2">
+                      {new Date(item.to).toLocaleDateString()}
+                    </td>
+                    <td className="border p-2">{item.numberOfHours}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}
@@ -382,13 +396,13 @@ export const TrainingProgress = ({
           Please attach a detailed description of the content (training manual)
           of the proposed training.
         </p>
-        {commentsData ? (
+        {commentsData || !handleFileChange ? (
           <>
             <button
               onClick={() =>
                 handleDownloadFile(
                   data?.trainingManualAttachment,
-                  "applications",
+                  "applications"
                 )
               }
               className={`w-full h-12 ${data?.trainingManualAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
@@ -411,9 +425,9 @@ export const TrainingProgress = ({
               {files.trainingManualAttachment ? (
                 <div className="text-center">
                   <p className="text-xl font-medium text-gray-700">
-                    {files.trainingManualAttachment.name}
+                    {files?.trainingManualAttachment?.name}
                   </p>
-                  <p className="text-sm text-gray-500">File selected</p>
+                  <p className="text-sm text-gray-500">{"File selected"}</p>
                 </div>
               ) : (
                 <div className="text-center">
@@ -475,7 +489,7 @@ export function TrainingEquipments({
     handleArrayOfObjectsChange(
       "trainingEquipment",
       trainingEquipments,
-      data?.trainingEquipment?.length || 0,
+      data?.trainingEquipment?.length || 0
     );
     setTrainingEquipments({
       trade: "",
@@ -559,7 +573,9 @@ export function TrainingEquipments({
           List down the equipment available to facilitate this training. [Name
           of equipment/Number/Related Trade]
         </p>
-        {!commentsData && renderTrainingEquipmentsInputs()}
+        {handleArrayOfObjectsChange &&
+          !commentsData &&
+          renderTrainingEquipmentsInputs()}
         {data?.trainingEquipment?.length > 0 && (
           <table className="w-full mt-4 border-collapse border border-gray-200">
             <thead>
@@ -575,8 +591,12 @@ export function TrainingEquipments({
                   <td className="border p-2">{item.nameOfEquipment}</td>
                   <td className="border p-2">{item.numberOfEquipment}</td>
                   <td className="border p-2">
-                    {trades.find((trade: any) => trade.value === item.trade)
-                      ?.label || "N/A"}
+                    {item.uuid
+                      ? trades.find(
+                          (trade: any) => trade.value === item?.trade?.uuid
+                        )?.label
+                      : trades.find((trade: any) => trade.value === item?.trade)
+                          ?.label}
                   </td>
                 </tr>
               ))}
@@ -590,13 +610,13 @@ export function TrainingEquipments({
           Please attach the proof of ownership (Notarized list of equipment,
           Original Invoices (EBM for locally purchased equipment).)
         </p>
-        {commentsData ? (
+        {commentsData || !handleArrayOfObjectsChange ? (
           <>
             <button
               onClick={() =>
                 handleDownloadFile(
                   data?.trainingEquipmentAttachment,
-                  "applications",
+                  "applications"
                 )
               }
               className={`w-full h-12 ${data?.trainingEquipmentAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
@@ -698,7 +718,7 @@ export const Staff = ({
     handleArrayOfObjectsChange(
       "staffs",
       staffInputs,
-      data?.staffs?.length || 0,
+      data?.staffs?.length || 0
     );
     setStaffInputs({
       number: "",
@@ -723,27 +743,13 @@ export const Staff = ({
     }
   };
 
-  const renderCommentsSection = (field: string) => (
-    <div className="mt-4">
-      <h4 className="text-md font-semibold text-gray-700">Comment</h4>
-      <textarea
-        value={commentData?.[field as keyof Comments] || ""}
-        onChange={(e) =>
-          setCommentData &&
-          setCommentData({ ...commentData, [field]: e.target.value })
-        }
-        className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-        disabled={!setCommentData}
-      />
-    </div>
-  );
   return (
     <div className="">
       <h3 className="text-lg font-bold">Staff Information</h3>
       <p className="text-sm text-gray-600">
         Add details of the staff involved in the training process.
       </p>
-      {!commentData && (
+      {handleArrayOfObjectsChange && !commentData && (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-2">
             <div className="relative">
@@ -888,27 +894,27 @@ export const Staff = ({
         <>
           <button
             onClick={() =>
-              handleDownloadFile(data?.staffAttachments, "applications")
+              handleDownloadFile(data?.staffAttachment, "applications")
             }
-            className={`w-full h-12 ${data?.staffAttachments ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
+            className={`w-full h-12 ${data?.staffAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
           >
-            {data?.staffAttachments ? "Download File" : "No Attachment Found!"}
+            {data?.staffAttachment ? "Download File" : "No Attachment Found!"}
           </button>
-          {showComments && renderCommentsSection("staffAttachmentsComment")}
+          {/* {showComments && renderCommentsSection("staffAttachmentComment")} */}
         </>
       ) : (
         <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
           <label
-            htmlFor="file-upload-staffAttachments"
+            htmlFor="file-upload-staffAttachment"
             className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
           >
             <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
               <span className="text-2xl font-bold">+</span>
             </div>
-            {files.staffAttachments ? (
+            {files.staffAttachment ? (
               <div className="text-center">
                 <p className="text-xl font-medium text-gray-700">
-                  {files.staffAttachments.name}
+                  {files.staffAttachment.name}
                 </p>
                 <p className="text-sm text-gray-500">File selected</p>
               </div>
@@ -920,12 +926,12 @@ export const Staff = ({
             )}
           </label>
           <input
-            id="file-upload-staffAttachments"
-            name="staffAttachments"
+            id="file-upload-staffAttachment"
+            name="staffAttachment"
             type="file"
             accept=".pdf"
             style={{ display: "none" }}
-            onChange={(e) => handleFileChange(e, "staffAttachments")}
+            onChange={(e) => handleFileChange(e, "staffAttachment")}
           />
         </div>
       )}
@@ -958,12 +964,16 @@ export const LastPageQuestions = ({
           How will your project (the planned training activity) continue after
           this funding?
         </p>
-        <textarea
-          value={(data && data.sustainability) || ""}
-          onChange={(e) => handleInputChange("sustainability", e.target.value)}
-          className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData || showComments}
-        />
+        {
+          <textarea
+            value={(data && data.sustainability) || ""}
+            onChange={(e) =>
+              handleInputChange("sustainability", e.target.value)
+            }
+            className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
+            disabled={!!commentData || showComments || !handleInputChange}
+          />
+        }
         {showComments && commentData && (
           <div className="mt-2">
             <h4 className="text-md font-semibold text-gray-700">Comment</h4>
@@ -987,13 +997,13 @@ export const LastPageQuestions = ({
         <p className="text-sm text-gray-600">
           Provide the financial report of the previous year.
         </p>
-        {showComments && commentData ? (
+        {(showComments && commentData) || !handleFileChange ? (
           <>
             <button
               onClick={() =>
                 handleDownloadFile(
                   data?.previousFinancialReportAttachment,
-                  "applications",
+                  "applications"
                 )
               }
               className="bg-primary rounded-2xl  my-2 text-white font-semibold w-full py-2"
@@ -1002,21 +1012,23 @@ export const LastPageQuestions = ({
                 ? "Download File"
                 : "No Report Found!"}
             </button>
-            <div className="mt-2">
-              <h4 className="text-md font-semibold text-gray-700">Comment</h4>
-              <textarea
-                value={commentData.previousFinancialReportComment || ""}
-                onChange={(e) =>
-                  setCommentData &&
-                  setCommentData({
-                    ...commentData,
-                    previousFinancialReportComment: e.target.value,
-                  })
-                }
-                className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-                disabled={!setCommentData}
-              />
-            </div>
+            {showComments && commentData && (
+              <div className="mt-2">
+                <h4 className="text-md font-semibold text-gray-700">Comment</h4>
+                <textarea
+                  value={commentData?.previousFinancialReportComment || ""}
+                  onChange={(e) =>
+                    setCommentData &&
+                    setCommentData({
+                      ...commentData,
+                      previousFinancialReportComment: e.target.value,
+                    })
+                  }
+                  className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
+                  disabled={!setCommentData}
+                />
+              </div>
+            )}
           </>
         ) : (
           <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
@@ -1067,7 +1079,7 @@ export const LastPageQuestions = ({
             handleInputChange("contributionFromApplicant", e.target.value)
           }
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData}
+          disabled={!!commentData || !handleInputChange}
         />
         {showComments && commentData && (
           <div className="mt-2">

@@ -34,7 +34,7 @@ const AddRoleUser: React.FC<AddRoleModalProps> = ({
       .patch(`/roles/add-new-user/${role}`, formData)
       .then((res) => {
         getRoles(dispatch);
-        console.log(res.data);
+
         notifications.show({
           message: "User added successfully",
           color: "blue",
@@ -42,7 +42,7 @@ const AddRoleUser: React.FC<AddRoleModalProps> = ({
         closeAddRoleUser();
       })
       .catch((err) => {
-        console.log(err.response);
+
         notifications.show({
           title: "Failed to add role",
           message: err.response.data.message ?? "",

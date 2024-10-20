@@ -74,7 +74,7 @@ const Page = () => {
     MOUsAttachment: [],
     assessmentEquipmentAttachment: undefined,
     budgetSummaryAttachment: undefined,
-    staffAttachments: "",
+    staffAttachment: "",
   });
 
   const handleSubmit = async (type: "submit" | "save") => {
@@ -149,8 +149,8 @@ const Page = () => {
         "trainingManualAttachment",
         data.trainingManualAttachment,
       );
-    if (data.staffAttachments)
-      submitData.append("staffAttachments", String([data.staffAttachments]));
+    if (data.staffAttachment)
+      submitData.append("staffAttachment", data.staffAttachment);
     if (data.budgetLines)
       submitData.append("budgetLines", JSON.stringify(data.budgetLines));
     if (data.trainingEquipmentAttachment)
@@ -189,14 +189,17 @@ const Page = () => {
         message: "Application filled successfully!",
         color: "blue",
       });
+      setLoading(false);
       router.push("/applicant/applications");
     } catch (err: any) {
+      console.log(err);
       notifications.show({
         message: err.response?.data?.message ?? "Failed to submit the form!",
         color: "red",
       });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleReset = () => {
@@ -216,7 +219,7 @@ const Page = () => {
       identificationMember: "",
       assessmentAndCertificationProcess: [],
       assessmentEquipment: [],
-      staffAttachments: "",
+      staffAttachment: "",
       recruitmentCandidatesNumber: "",
       assessorsAndFacilitators: "",
       contribution: "",

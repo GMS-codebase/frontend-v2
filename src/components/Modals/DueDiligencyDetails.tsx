@@ -37,7 +37,7 @@ const DueDiligencyDetails = ({
   const handleSave = () => {
     onSaveComment && onSaveComment(text);
   };
-  console.log(decisions);
+
   return (
     <>
       <Modal
