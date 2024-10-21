@@ -246,7 +246,7 @@ export const TrainingProgress = ({
       ? trades?.map((trade: any) => trade.title)
       : trades;
 
-  console.log(data);
+  console.log(formatedTrades);
   const renderTrainingProcessInputs = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
@@ -363,14 +363,14 @@ export const TrainingProgress = ({
             </thead>
             <tbody>
               {(data?.trainingProcess || []).map((item: any, index: any) => {
-                console.log("Trades --> ", trades, " Item --> ", item);
+                console.log("Trades --> ", trades, " Item --> ", item, "item uuid --> ", item?.uuid);
                 return (
                   <tr key={index}>
                     <td className="border p-2">
-                      {item.uuid
+                      {item?.uuid
                         ? trades?.find(
-                            (trade: any) => trade?.value === item?.trade?.uuid,
-                          )?.label
+                            (trade: any) => trade?.value === item?.trade?.title,
+                          )?.value
                         : trades?.find(
                             (trade: any) => trade?.value === item?.trade,
                           )?.label}
@@ -591,13 +591,13 @@ export function TrainingEquipments({
                   <td className="border p-2">{item.nameOfEquipment}</td>
                   <td className="border p-2">{item.numberOfEquipment}</td>
                   <td className="border p-2">
-                    {item.uuid
-                      ? trades?.find(
-                          (trade: any) => trade.value === item?.trade?.uuid,
-                        )?.label
-                      : trades?.find(
-                          (trade: any) => trade.value === item?.trade,
-                        )?.label}
+                  {item?.uuid
+                          ? trades.find(
+                              (trade: any) => trade.value === item?.trade?.title,
+                            )?.value
+                          : trades.find(
+                              (trade: any) => trade.value === item?.trade,
+                            )?.label}
                   </td>
                 </tr>
               ))}
