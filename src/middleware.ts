@@ -18,6 +18,7 @@ function getRolePath(role: Role): string {
     case "dynamic":
       return "/dynamic";
     case "normal_employee":
+      return "/employee";
     case "employee":
       return "/employee";
     case "grant_committee":
