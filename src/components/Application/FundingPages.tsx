@@ -363,7 +363,14 @@ export const TrainingProgress = ({
             </thead>
             <tbody>
               {(data?.trainingProcess || []).map((item: any, index: any) => {
-                console.log("Trades --> ", trades, " Item --> ", item, "item uuid --> ", item?.uuid);
+                console.log(
+                  "Trades --> ",
+                  trades,
+                  " Item --> ",
+                  item,
+                  "item uuid --> ",
+                  item?.uuid,
+                );
                 return (
                   <tr key={index}>
                     <td className="border p-2">
@@ -591,13 +598,12 @@ export function TrainingEquipments({
                   <td className="border p-2">{item.nameOfEquipment}</td>
                   <td className="border p-2">{item.numberOfEquipment}</td>
                   <td className="border p-2">
-                  {item?.uuid
-                          ? trades.find(
-                              (trade: any) => trade.value === item?.trade?.title,
-                            )?.value
-                          : trades.find(
-                              (trade: any) => trade.value === item?.trade,
-                            )?.label}
+                    {item?.uuid
+                      ? trades.find(
+                          (trade: any) => trade.value === item?.trade?.title,
+                        )?.value
+                      : trades.find((trade: any) => trade.value === item?.trade)
+                          ?.label}
                   </td>
                 </tr>
               ))}

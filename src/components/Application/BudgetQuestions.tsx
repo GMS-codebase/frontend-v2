@@ -245,7 +245,8 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                       <td className="border p-2">
                         {item?.uuid
                           ? trades.find(
-                              (trade: any) => trade.title === item?.trade?.title,
+                              (trade: any) =>
+                                trade.title === item?.trade?.title,
                             )?.title
                           : trades.find(
                               (trade: any) => trade.value === item?.trade,
