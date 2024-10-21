@@ -44,7 +44,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     label: trade.title,
     value: trade.title,
   }));
-  console.log("application trades --> ", trades);
+  console.log("application trades --> ", application);
   const handleInputChange = (inputName: string, value: any) => {
     setData &&
       setData((prev: any) => ({
