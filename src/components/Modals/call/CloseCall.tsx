@@ -33,7 +33,7 @@ const CloseCallModal = ({
       closeModal();
     } catch (error: any) {
       setError(
-        error.response?.data?.message ?? "Error while nullifying decision"
+        error.response?.data?.message ?? "Error while nullifying decision",
       );
       notifications.show({ message: error.message, color: "red" });
     } finally {
@@ -95,7 +95,7 @@ const CloseCallModal = ({
               disabled={loading}
               className="w-full px-4 py-3 bg-primary text-white rounded-full shadow-sm  2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Loading..." : "Close Call Decision"}
+              {loading ? "Loading..." : "Close Call"}
             </button>
           </div>
         </div>

@@ -60,7 +60,6 @@ const Page = () => {
     ) {
       openAddContact();
     } else if (!existingApplication) {
-      setApplyLoading(false);
       openCreateApplication();
     } else {
       router.push(
@@ -72,7 +71,6 @@ const Page = () => {
   const handleDownloadInstructions = async () => {
     setLoading(true);
     try {
-
       const filename = call.attachment.split("/").pop();
 
       const response = await unauthorizedApi.get(

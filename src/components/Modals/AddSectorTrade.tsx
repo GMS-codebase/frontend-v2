@@ -16,7 +16,6 @@ const AddSectorTrade = ({
   const { windows } = useSelector((state: any) => state.windows);
   const { trades } = useSelector((state: any) => state.trades);
 
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",

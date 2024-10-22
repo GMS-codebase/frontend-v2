@@ -24,7 +24,6 @@ const Page = () => {
 
   const [selectedRoleData, setSelectedRoleData] = useState<any>(null);
   const openModal = (data: any) => {
-
     setSelectedRoleData(data);
     open();
   };

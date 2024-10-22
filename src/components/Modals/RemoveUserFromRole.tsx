@@ -26,7 +26,6 @@ const RemoveUserFromRole = ({
     authorizedApi
       .delete(`/roles/removeUser/${role}/${user?.uuid}`)
       .then((res) => {
-
         getRoles(dispatch);
         notifications.show({
           message: "User removed successfully",
@@ -35,7 +34,6 @@ const RemoveUserFromRole = ({
         closeModal();
       })
       .catch((err) => {
-
         notifications.show({
           title: "Failed to remove user",
           message: err.response?.data?.message ?? "",

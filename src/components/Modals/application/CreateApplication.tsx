@@ -116,8 +116,6 @@ const CreateApplication = ({
   const windows = useSelector((state: any) => state.windows.windows);
   const sectors = useSelector((state: any) => state.sectors.sectors);
 
-
-
   const windowOptions =
     call?.windows.map((window: any) => ({
       label: window.title,
@@ -167,7 +165,7 @@ const CreateApplication = ({
         .flatMap((sector: any) =>
           sector?.trades?.map((trade: any) => ({
             label: trade.trade.title,
-            value: trade.trade.uuid,
+            value: trade.uuid,
           })),
         )
         .map((trade: any) => [trade.value, trade]),
