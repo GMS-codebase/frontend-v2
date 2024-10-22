@@ -25,7 +25,7 @@ const Page = () => {
     "Project" | "IndicativeBudget"
   >("Project");
   const existingApplication = myApplications.find(
-    (app: any) => app?.uuid === callId
+    (app: any) => app?.uuid === callId,
   );
   const router = useRouter();
   const renderComponent = () => {
@@ -137,7 +137,7 @@ const Page = () => {
                       {existingApplication?.call &&
                         format(
                           existingApplication?.call?.startDate,
-                          "dd MMMM yyyy"
+                          "dd MMMM yyyy",
                         )}
                     </p>
                   </div>
@@ -153,7 +153,7 @@ const Page = () => {
                       {existingApplication?.call &&
                         format(
                           existingApplication?.call?.endDate,
-                          "dd MMMM yyyy"
+                          "dd MMMM yyyy",
                         )}
                     </p>
                   </div>
