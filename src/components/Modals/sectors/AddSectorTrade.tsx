@@ -40,7 +40,7 @@ const AddSectorTrade = ({
 
   const windowOptions = windows.windows
     .filter((window: any) =>
-      window.subWindows.filter((subWindow: any) =>
+      window?.subWindows?.filter((subWindow: any) =>
         subWindow.sectors.filter((sec: any) => sec.uuid === id),
       ),
     )
