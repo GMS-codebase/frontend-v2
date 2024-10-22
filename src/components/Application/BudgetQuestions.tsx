@@ -10,7 +10,7 @@ interface FundingQuestionsProps {
   commentData?: Comments;
   setCommentData?: React.Dispatch<React.SetStateAction<Comments>>;
   showComments?: boolean;
-  application?:any
+  application?: any;
 }
 
 const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
@@ -19,14 +19,14 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
   commentData,
   setCommentData,
   showComments,
-  application
+  application,
 }) => {
   const trades: any = application?.trades.map((trade: any) => ({
     label: trade.trade.title,
     value: trade.trade.title,
   }));
-  console.log(trades)
-  console.log(data.budgetLines)
+  console.log(trades);
+  console.log(data.budgetLines);
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
 
   const handleArrayOfObjectsChange = (
@@ -103,7 +103,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
   };
   const formatedTrades =
     trades?.length && trades[0].uuid
-      ? trades?.map((trade:any) => trade.title)
+      ? trades?.map((trade: any) => trade.title)
       : trades;
   const renderTrainingProcessInputs = () => (
     <div className="space-y-4">
@@ -251,7 +251,8 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                       <td className="border p-2">
                         {item?.uuid
                           ? trades.find(
-                              (trade: any) => trade.label === item?.trade?.title,
+                              (trade: any) =>
+                                trade.label === item?.trade?.title,
                             )?.label
                           : trades.find(
                               (trade: any) => trade.value === item?.trade,

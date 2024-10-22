@@ -26,8 +26,8 @@ const Page = () => {
   const { id, applicationId } = useParams();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const {applications} = useSelector((state:any)=>state.applications)
-  const application = applications.find((ap:any)=>ap.uuid == applicationId)
+  const { applications } = useSelector((state: any) => state.applications);
+  const application = applications.find((ap: any) => ap.uuid == applicationId);
 
   console.log("application ", application);
   const [data, setData] = useState<ApplicationQuestions>({
@@ -217,7 +217,7 @@ const Page = () => {
     });
   };
 
-  console.log("application data", application)
+  console.log("application data", application);
   const calls = useSelector((state: any) => state.calls);
   const renderComponent = () => {
     switch (currentComponent) {

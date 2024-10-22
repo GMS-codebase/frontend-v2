@@ -160,9 +160,9 @@ const MakeGrantCommitteeDecision = ({
   };
 
   const addTradeTrainee = () => {
-    setFormData((prev:any) => {
+    setFormData((prev: any) => {
       const existingTradeIndex = prev.trades.findIndex(
-        (trade:any) => trade.trade === selectedTrade
+        (trade: any) => trade.trade === selectedTrade,
       );
       if (existingTradeIndex !== -1) {
         const updatedTrades = [...prev.trades];
@@ -184,7 +184,6 @@ const MakeGrantCommitteeDecision = ({
     setSelectedTrade(null);
     setTraineesNumber(0);
   };
-  
 
   const removeTradeTrainee = (uuid: string) => {
     setFormData((prev) => ({
@@ -192,7 +191,6 @@ const MakeGrantCommitteeDecision = ({
       trades: prev.trades.filter((entry) => entry.trade.uuid !== uuid),
     }));
   };
-
 
   return (
     <Modal
@@ -248,8 +246,7 @@ const MakeGrantCommitteeDecision = ({
               </div>
             </div>
 
-
-            { formData.decision === "APPROVED" && (
+            {formData.decision === "APPROVED" && (
               <div className="space-y-3 mb-4 w-full">
                 <p className="block text-xs font-bold text-gray-700">
                   {" "}
@@ -259,7 +256,7 @@ const MakeGrantCommitteeDecision = ({
                   <Select
                     value={selectedTrade}
                     onChange={(value) => setSelectedTrade(value)}
-                    data={application?.trades.map((t:any) => ({
+                    data={application?.trades.map((t: any) => ({
                       value: t.trade.uuid,
                       label: t.trade.title,
                     }))}
@@ -294,14 +291,14 @@ const MakeGrantCommitteeDecision = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {formData.trades.map((entry:any, index) => (
+                      {formData.trades.map((entry: any, index) => (
                         <tr key={index}>
                           <td>
                             {" "}
                             <div className="flex items-center justify-center">
                               {
                                 application?.trades.find(
-                                  (t:any) => t.trade.uuid === entry.trade,
+                                  (t: any) => t.trade.uuid === entry.trade,
                                 )?.trade.title
                               }
                             </div>{" "}

@@ -137,11 +137,11 @@ const MakeFirstDueDiligencyDecision = ({
   };
 
   const addTradeTrainee = () => {
-    console.log({selectedTrade,traineesNumber})
-    console.log(formData)
-    setFormData((prev:any) => {
+    console.log({ selectedTrade, traineesNumber });
+    console.log(formData);
+    setFormData((prev: any) => {
       const existingTradeIndex = prev?.trades?.findIndex(
-        (trade:any) => trade.trade === selectedTrade
+        (trade: any) => trade.trade === selectedTrade,
       );
       if (existingTradeIndex !== -1) {
         const updatedTrades = [...(prev.trades || [])];
@@ -163,12 +163,12 @@ const MakeFirstDueDiligencyDecision = ({
     setSelectedTrade(null);
     setTraineesNumber(0);
   };
-  
 
   const removeTradeTrainee = (uuid: string) => {
     setFormData((prev) => ({
       ...prev,
-      trades: prev.trades?.filter((entry:any) => entry.trade.uuid !== uuid) || [],
+      trades:
+        prev.trades?.filter((entry: any) => entry.trade.uuid !== uuid) || [],
     }));
   };
 
