@@ -128,9 +128,9 @@ const MakeDecision = ({
   };
 
   const addTradeTrainee = () => {
-    setFormData((prev:any) => {
+    setFormData((prev: any) => {
       const existingTradeIndex = prev.trades.findIndex(
-        (trade:any) => trade.trade === selectedTrade
+        (trade: any) => trade.trade === selectedTrade,
       );
       if (existingTradeIndex !== -1) {
         const updatedTrades = [...prev.trades];
@@ -152,7 +152,6 @@ const MakeDecision = ({
     setSelectedTrade(null);
     setTraineesNumber(0);
   };
-  
 
   const removeTradeTrainee = (uuid: string) => {
     setFormData((prev) => ({
@@ -238,7 +237,7 @@ const MakeDecision = ({
                   <Select
                     value={selectedTrade}
                     onChange={(value) => setSelectedTrade(value)}
-                    data={application?.trades.map((t:any) => ({
+                    data={application?.trades.map((t: any) => ({
                       value: t.trade.uuid,
                       label: t.trade.title,
                     }))}
@@ -273,14 +272,14 @@ const MakeDecision = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {formData.trades.map((entry:any, index) => (
+                      {formData.trades.map((entry: any, index) => (
                         <tr key={index}>
                           <td>
                             {" "}
                             <div className="flex items-center justify-center">
                               {
                                 application?.trades.find(
-                                  (t:any) => t.trade.uuid === entry.trade,
+                                  (t: any) => t.trade.uuid === entry.trade,
                                 )?.trade.title
                               }
                             </div>{" "}

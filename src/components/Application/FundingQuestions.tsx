@@ -135,8 +135,8 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
-    } else if (currentStep === steps.length -1 && goToBudget){
-      goToBudget()
+    } else if (currentStep === steps.length - 1 && goToBudget) {
+      goToBudget();
     }
   };
 

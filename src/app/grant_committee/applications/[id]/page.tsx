@@ -112,11 +112,11 @@ const Page = () => {
       case "Project":
         return (
           <FundingQuestions
-          application={application}
+            application={application}
             data={application?.projectFunding}
             comments={commentsData}
             showComments={true}
-            goToBudget={()=>setCurrentComponent("IndicativeBudget")}
+            goToBudget={() => setCurrentComponent("IndicativeBudget")}
           />
         );
       case "IndicativeBudget":
