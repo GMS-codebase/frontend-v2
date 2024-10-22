@@ -60,7 +60,6 @@ const Page = () => {
     ) {
       openAddContact();
     } else if (!existingApplication) {
-      setApplyLoading(false);
       openCreateApplication();
     } else {
       router.push(

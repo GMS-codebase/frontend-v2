@@ -165,7 +165,7 @@ const CreateApplication = ({
         .flatMap((sector: any) =>
           sector?.trades?.map((trade: any) => ({
             label: trade.trade.title,
-            value: trade.trade.uuid,
+            value: trade.uuid,
           })),
         )
         .map((trade: any) => [trade.value, trade]),

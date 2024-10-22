@@ -79,7 +79,7 @@ const NullifyModal = ({
           <div className="w-full flex flex-col items-center">
             <Image src={deleteSvg} alt="vector" width={200} height={50} />
             <h1 className="text-2xl font-extrabold text-center">
-              Are you sure you want to nullify this {stage.stage} decision?
+              Are you sure you want to nullify this {stage?.stage} decision?
             </h1>
             <h2 className="text-[#000F2369] text-lg font-medium text-center">
               This action may affect related records or data.
