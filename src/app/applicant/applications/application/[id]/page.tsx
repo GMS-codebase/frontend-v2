@@ -33,6 +33,7 @@ const Page = () => {
       case "Project":
         return (
           <FundingQuestions
+            application={existingApplication}
             data={existingApplication?.projectFunding}
             goToBudget={() => setCurrentComponent("IndicativeBudget")}
           />

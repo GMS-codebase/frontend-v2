@@ -20,7 +20,7 @@ interface FormData {
   comment: string;
   decision: string;
   attachment: File | null;
-  tradeTrainees: any;
+  trades: any;
 }
 
 const decisions = [
@@ -50,14 +50,14 @@ const MakeFirstDueDiligencyDecision = ({
     comment: "",
     decision: "",
     attachment: null,
-    tradeTrainees: null,
+    trades: [],
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value, files } = e.target as HTMLInputElement;
     setFormData((prevData) => ({
@@ -89,7 +89,7 @@ const MakeFirstDueDiligencyDecision = ({
       submitData.append("ohsinfo", formData.ohsInfo);
       submitData.append("equipmentinfo", formData.equipmentInfo);
       submitData.append("workPlaceInfo", formData.workPlaceInfo);
-      submitData.append("trades", formData.tradeTrainees);
+      submitData.append("trades", formData.trades);
       submitData.append("comment", formData.comment);
       submitData.append("decision", formData.decision);
       if (formData.attachment) {
@@ -103,7 +103,7 @@ const MakeFirstDueDiligencyDecision = ({
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       notifications.show({
@@ -119,7 +119,7 @@ const MakeFirstDueDiligencyDecision = ({
         comment: "",
         decision: "",
         attachment: null,
-        tradeTrainees: null,
+        trades: null,
       });
       afterMakeDecision();
       closeModal();
@@ -134,6 +134,42 @@ const MakeFirstDueDiligencyDecision = ({
     } finally {
       setLoading(false);
     }
+  };
+
+  const addTradeTrainee = () => {
+    console.log({ selectedTrade, traineesNumber });
+    console.log(formData);
+    setFormData((prev: any) => {
+      const existingTradeIndex = prev?.trades?.findIndex(
+        (trade: any) => trade.trade === selectedTrade,
+      );
+      if (existingTradeIndex !== -1) {
+        const updatedTrades = [...(prev.trades || [])];
+        updatedTrades[existingTradeIndex].trainees = traineesNumber;
+        return {
+          ...prev,
+          trades: updatedTrades,
+        };
+      } else {
+        return {
+          ...prev,
+          trades: [
+            ...(prev.trades || []),
+            { trade: selectedTrade, trainees: traineesNumber },
+          ],
+        };
+      }
+    });
+    setSelectedTrade(null);
+    setTraineesNumber(0);
+  };
+
+  const removeTradeTrainee = (uuid: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      trades:
+        prev.trades?.filter((entry: any) => entry.trade.uuid !== uuid) || [],
+    }));
   };
 
   return (
@@ -251,8 +287,8 @@ const MakeFirstDueDiligencyDecision = ({
                             value={selectedTrade}
                             onChange={(value) => setSelectedTrade(value)}
                             data={application?.trades?.map((trade: any) => ({
-                              value: trade.uuid,
-                              label: trade.title,
+                              value: trade.trade.uuid,
+                              label: trade.trade.title,
                             }))}
                             placeholder="Select trade"
                           />
@@ -278,24 +314,7 @@ const MakeFirstDueDiligencyDecision = ({
                           //   traineesNumber === 0 ||
                           //   traineesNumber == undefined
                           // }
-                          onClick={() => {
-                            console.log({
-                              trade: selectedTrade,
-                              trainees: traineesNumber,
-                            });
-                            setFormData((prev) => ({
-                              ...prev,
-                              tradeTrainees: [
-                                ...(prev.tradeTrainees || []),
-                                {
-                                  trade: selectedTrade,
-                                  trainees: traineesNumber,
-                                },
-                              ],
-                            }));
-                            setSelectedTrade(null);
-                            setTraineesNumber(0);
-                          }}
+                          onClick={addTradeTrainee}
                         >
                           <SolarAddSquareBold className="mt-[1px] w-5 h-5 text-blue-500" />
                           <div className="text-blue-500">Add</div>
@@ -303,7 +322,7 @@ const MakeFirstDueDiligencyDecision = ({
                       </div>
                     </div>
                   </div>
-                  {formData.tradeTrainees && (
+                  {formData.trades.length > 0 && (
                     <table className="mt-3">
                       <thead>
                         <tr>
@@ -319,15 +338,15 @@ const MakeFirstDueDiligencyDecision = ({
                         </tr>
                       </thead>
                       <tbody>
-                        {formData.tradeTrainees?.map(
+                        {formData.trades?.map(
                           (tradeTrainee: any, index: any) => (
                             <tr key={index}>
                               <td className="px-4 py-2 text-sm">
                                 {
                                   application?.trades.find(
                                     (trade: any) =>
-                                      trade.uuid === tradeTrainee.trade
-                                  ).title
+                                      trade.trade.uuid === tradeTrainee.trade,
+                                  ).trade.title
                                 }
                               </td>
                               <td className="px-4 py-2 text-sm">
@@ -339,10 +358,10 @@ const MakeFirstDueDiligencyDecision = ({
                                   onClick={() =>
                                     setFormData((prev) => ({
                                       ...prev,
-                                      tradeTrainees: prev.tradeTrainees.filter(
+                                      trades: prev.trades.filter(
                                         (trade: any) =>
                                           trade.trade.uuid !==
-                                          tradeTrainee.trade.uuid
+                                          tradeTrainee.trade.uuid,
                                       ),
                                     }))
                                   }
@@ -351,7 +370,7 @@ const MakeFirstDueDiligencyDecision = ({
                                 </button>
                               </td>
                             </tr>
-                          )
+                          ),
                         )}
                       </tbody>
                     </table>
@@ -378,7 +397,7 @@ const MakeFirstDueDiligencyDecision = ({
                     className="mt-1 block w-full p-6 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
                   />
                 </div>
-              )
+              ),
             )}
 
             <div className="py-4 w-full">

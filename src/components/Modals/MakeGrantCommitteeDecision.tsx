@@ -13,20 +13,19 @@ import {
 import TextArea2 from "../textarea2";
 import TextArea from "../ApplicantDetails/TextArea";
 import { Upload } from "solar-icon-set";
+import { AiOutlineDelete } from "react-icons/ai";
 
 interface Props {
   isOpen: boolean;
   closeModal: () => void;
   onMakeDecision: () => void;
-  applicationId: string;
-  trades: { uuid: string; title: string }[];
+  application: any;
 }
 
 interface FormData {
   decision: string;
   description: string;
-  trades: string[];
-  numberOfTrainees: string;
+  trades: any[];
   attachment: File | null;
 }
 
@@ -34,7 +33,6 @@ interface FormErrors {
   decision?: string;
   trades?: string;
   description?: string;
-  numberOfTrainees?: string;
   attachment?: string;
 }
 
@@ -42,17 +40,17 @@ const MakeGrantCommitteeDecision = ({
   isOpen,
   closeModal,
   onMakeDecision,
-  applicationId,
-  trades,
+  application,
 }: Props) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState<FormData>({
     decision: "",
     description: "",
     trades: [],
-    numberOfTrainees: "",
     attachment: null,
   });
+  const [selectedTrade, setSelectedTrade] = useState<any>(null);
+  const [traineesNumber, setTraineesNumber] = useState<number | undefined>(0);
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
 
@@ -118,10 +116,6 @@ const MakeGrantCommitteeDecision = ({
       newErrors.description = "Description is required.";
       isValid = false;
     }
-    if (!formData.numberOfTrainees) {
-      newErrors.numberOfTrainees = "Number of trainees is required.";
-      isValid = false;
-    }
     if (!formData.attachment) {
       newErrors.attachment = "Attachment is required.";
       isValid = false;
@@ -141,14 +135,13 @@ const MakeGrantCommitteeDecision = ({
     formDataToSubmit.append("decision", formData.decision);
     formDataToSubmit.append("comment", formData.description);
     formDataToSubmit.append("trades", JSON.stringify(formData.trades));
-    formDataToSubmit.append("numberOfTrainees", formData.numberOfTrainees);
     if (formData.attachment) {
       formDataToSubmit.append("attachment", formData.attachment);
     }
 
     try {
       await authorizedApi.post(
-        `/application/grant-committee/decision/${applicationId}`,
+        `/application/grant-committee/decision/${application.uuid}`,
         formDataToSubmit,
       );
       notifications.show({
@@ -166,10 +159,38 @@ const MakeGrantCommitteeDecision = ({
     setLoading(false);
   };
 
-  const multiSelectData = trades?.map((trade) => ({
-    value: trade.uuid,
-    label: trade.title,
-  }));
+  const addTradeTrainee = () => {
+    setFormData((prev: any) => {
+      const existingTradeIndex = prev.trades.findIndex(
+        (trade: any) => trade.trade === selectedTrade,
+      );
+      if (existingTradeIndex !== -1) {
+        const updatedTrades = [...prev.trades];
+        updatedTrades[existingTradeIndex].trainees = traineesNumber;
+        return {
+          ...prev,
+          trades: updatedTrades,
+        };
+      } else {
+        return {
+          ...prev,
+          trades: [
+            ...prev.trades,
+            { trade: selectedTrade, trainees: traineesNumber },
+          ],
+        };
+      }
+    });
+    setSelectedTrade(null);
+    setTraineesNumber(0);
+  };
+
+  const removeTradeTrainee = (uuid: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      trades: prev.trades.filter((entry) => entry.trade.uuid !== uuid),
+    }));
+  };
 
   return (
     <Modal
@@ -225,54 +246,93 @@ const MakeGrantCommitteeDecision = ({
               </div>
             </div>
 
-            <div className="w-full">
-              <label
-                htmlFor="trade"
-                className="block text-base font-medium text-black"
-              >
-                Choose Trades
-              </label>
-              <div className="mt-1 pl-6 relative w-full bg-[#000F230A] py-1 block rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                <span className="absolute left-2 top-3 text-black text-lg">
-                  <SolarDocumentsBold />
-                </span>
-                <div className="flex items-center justify-between ">
-                  <MultiSelect
-                    name="trades"
-                    disabled={!multiSelectData?.length}
-                    onChange={(value) => handleSelectChange("trades", value)}
-                    data={multiSelectData}
-                    placeholder="Select or type in a trade"
-                    className="w-full"
-                    required
-                  />
-                </div>
-              </div>
-              {errors.trades && (
-                <p className="text-red-500 text-xs">{errors.trades}</p>
-              )}
-            </div>
-
-            <div className="flex flex-col mt-4">
-              <label
-                htmlFor="numberOfTrainees"
-                className="block font-semibold text-sm text-gray-700"
-              >
-                Number of Trainees
-              </label>
-              <input
-                type="number"
-                className="bg-gray-100 w-full p-2 rounded-2xl outline-none border"
-                name="numberOfTrainees"
-                value={formData.numberOfTrainees}
-                onChange={handleChange}
-              />
-              {errors.numberOfTrainees && (
-                <p className="text-red-500 text-xs">
-                  {errors.numberOfTrainees}
+            {formData.decision === "APPROVED" && (
+              <div className="space-y-3 mb-4 w-full">
+                <p className="block text-xs font-bold text-gray-700">
+                  {" "}
+                  Trades and Trainees
                 </p>
-              )}
-            </div>
+                <div className="w-full flex gap-2">
+                  <Select
+                    value={selectedTrade}
+                    onChange={(value) => setSelectedTrade(value)}
+                    data={application?.trades.map((t: any) => ({
+                      value: t.trade.uuid,
+                      label: t.trade.title,
+                    }))}
+                    placeholder="Select trade"
+                    className="bg-gray-100 rounded-full py-0.5"
+                  />
+                  <input
+                    type="number"
+                    value={traineesNumber || ""}
+                    onChange={(e) =>
+                      setTraineesNumber(parseInt(e.target.value))
+                    }
+                    placeholder="Number of trainees"
+                    className="outline-none flex-grow bg-gray-100 rounded-full px-3"
+                  />
+                  <button
+                    type="button"
+                    onClick={addTradeTrainee}
+                    disabled={!selectedTrade || !traineesNumber}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-full"
+                  >
+                    Add
+                  </button>
+                </div>
+                {formData.trades.length > 0 && (
+                  <table className="w-full">
+                    <thead>
+                      <tr>
+                        <th>Trade</th>
+                        <th>Trainees</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData.trades.map((entry: any, index) => (
+                        <tr key={index}>
+                          <td>
+                            {" "}
+                            <div className="flex items-center justify-center">
+                              {
+                                application?.trades.find(
+                                  (t: any) => t.trade.uuid === entry.trade,
+                                )?.trade.title
+                              }
+                            </div>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <div className="flex items-center justify-center">
+                              {entry.trainees}
+                            </div>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <div className="flex items-center justify-center">
+                              {" "}
+                              <button
+                                onClick={() =>
+                                  removeTradeTrainee(entry.trade.uuid)
+                                }
+                                className="text-red-500"
+                              >
+                                <AiOutlineDelete />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+                {errors.trades && (
+                  <p className="text-red-500 text-sm">{errors.trades}</p>
+                )}
+              </div>
+            )}
 
             <div className="flex flex-col mt-4">
               <label

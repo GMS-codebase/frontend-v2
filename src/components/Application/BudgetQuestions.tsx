@@ -10,7 +10,7 @@ interface FundingQuestionsProps {
   commentData?: Comments;
   setCommentData?: React.Dispatch<React.SetStateAction<Comments>>;
   showComments?: boolean;
-  trades: any[];
+  application?: any;
 }
 
 const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
@@ -19,8 +19,14 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
   commentData,
   setCommentData,
   showComments,
-  trades,
+  application,
 }) => {
+  const trades: any = application?.trades.map((trade: any) => ({
+    label: trade.trade.title,
+    value: trade.trade.title,
+  }));
+  console.log(trades);
+  console.log(data.budgetLines);
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
 
   const handleArrayOfObjectsChange = (
@@ -97,7 +103,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
   };
   const formatedTrades =
     trades?.length && trades[0].uuid
-      ? trades?.map((trade) => trade.title)
+      ? trades?.map((trade: any) => trade.title)
       : trades;
   const renderTrainingProcessInputs = () => (
     <div className="space-y-4">
@@ -177,7 +183,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
               onClick={() =>
                 handleDownloadFile(
                   data?.budgetSummaryAttachment,
-                  "applications"
+                  "applications",
                 )
               }
               className={`w-full h-12 ${data?.budgetSummaryAttachment ? "bg-primary" : "bg-gray-600"} text-white rounded-full`}
@@ -186,23 +192,6 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                 ? "Download Budget Summary"
                 : "No Budget Summary Attached"}
             </button>
-            {showComments && !setData && (
-              <div className="mt-2">
-                <p>Comment</p>
-                <textarea
-                  value={commentData?.budgetSummaryAttachmentComment || ""}
-                  disabled={!setCommentData}
-                  onChange={(e) =>
-                    handleCommentChange(
-                      "budgetSummaryAttachmentComment",
-                      e.target.value
-                    )
-                  }
-                  className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-                  placeholder="Add your comment"
-                />
-              </div>
-            )}
           </div>
         ) : (
           <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
@@ -260,11 +249,11 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                       <td className="border p-2">{item.budgetLine || "N/A"}</td>
                       <td className="border p-2">{item.amount || "N/A"}</td>
                       <td className="border p-2">
-                        {item.uuid
+                        {item?.uuid
                           ? trades.find(
                               (trade: any) =>
-                                trade.value === item?.trade?.uuid,
-                            )?.title
+                                trade.label === item?.trade?.title,
+                            )?.label
                           : trades.find(
                               (trade: any) => trade.value === item?.trade,
                             )?.label}
@@ -291,6 +280,23 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
             )}
           </div>
         )}
+        {showComments && !setData && (
+          <div className="mt-2">
+            <p>Comment</p>
+            <textarea
+              value={commentData?.budgetSummaryAttachmentComment || ""}
+              disabled={!setCommentData}
+              onChange={(e) =>
+                handleCommentChange(
+                  "budgetSummaryAttachmentComment",
+                  e.target.value,
+                )
+              }
+              className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
+              placeholder="Add your comment"
+            />
+          </div>
+        )}
       </div>
       <div className="">
         <h3 className="text-lg font-bold">Contribution</h3>
@@ -304,7 +310,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
           value={data?.contribution || ""}
           onChange={(e) => handleInputChange("contribution", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!commentData || !setData}
+          disabled={!!commentData || !setData}
           placeholder="Describe your contribution"
         />
         {showComments && commentData && (

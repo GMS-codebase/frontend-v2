@@ -112,18 +112,20 @@ const Page = () => {
       case "Project":
         return (
           <FundingQuestions
+            application={application}
             data={application?.projectFunding}
-            setComments={setCommentsData}
             comments={commentsData}
+            showComments={true}
+            goToBudget={() => setCurrentComponent("IndicativeBudget")}
           />
         );
       case "IndicativeBudget":
         return (
           <BudgetQuestions
-            trades={application?.trades}
-            data={application?.projectFunding}
+            application={application}
+            data={application?.budget}
             commentData={commentsData}
-            setCommentData={setCommentsData}
+            showComments={true}
           />
         );
       default:
@@ -138,7 +140,6 @@ const Page = () => {
       await authorizedApi.patch(`/application/nullify/${id}/${stageId}`);
       refetch();
     } catch (error) {
-
       notifications.show({
         message: "Error while nullifying the decisions",
         color: "red",
@@ -255,9 +256,15 @@ const Page = () => {
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
-                Application submission deadline
+                Application submission date
               </p>
-              <p>2022/02.18 02:00:00</p>
+              <p>{new Date(application?.doneAt)?.toLocaleDateString()}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Applicant&apos;s Phone Number
+              </p>
+              <p>{application?.applicant?.phone}</p>
             </div>
           </div>
         </div>
@@ -321,7 +328,7 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage.stage === "EVALUATION",
+                          (stage: any) => stage?.stage === "EVALUATION",
                         ),
                       );
                       openNullifyModal();
@@ -364,7 +371,7 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage.stage === "DUE_DILIGENCY",
+                          (stage: any) => stage?.stage === "DUE_DILIGENCY",
                         ),
                       );
                       openNullifyModal();
@@ -378,12 +385,12 @@ const Page = () => {
             )}
           </div>
           {application?.stages?.find(
-            (stage: any) => stage.stage === "GRANT_COMMITTEE",
+            (stage: any) => stage?.stage === "GRANT_COMMITTEE",
           ) && (
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Grant Committee</h3>
               <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                {!application?.grantCommitteeDecision ? "Pending" : "Finished"}
+                {!application?.grantCommitteeDecision ? "Pending" : "APPROVED"}
               </div>
 
               {application?.grantCommitteeDecision ? (
@@ -413,11 +420,10 @@ const Page = () => {
         close={closeAddDue}
       />
       <MakeGrantCommitteeDecision
-        applicationId={id}
+        application={application}
         closeModal={closeGrantCommitteeMakeDecision}
         isOpen={isOpenGrantCommitteeMakeDecision}
         onMakeDecision={refetch}
-        trades={application?.trades}
       />
       <EvaluationDetails
         opened={isOpenEvaluationDetails}
