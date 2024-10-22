@@ -38,7 +38,7 @@ const Page = () => {
   const window = windows.windows?.filter(
     (window: any) => window.uuid === windowId,
   )[0];
-  const filteredSubWindows = window?.subWindows.filter((subW: any) =>
+  const filteredSubWindows = window?.subWindows?.filter((subW: any) =>
     subW.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
   const [selectedSubWindow, setSelectedSubWindow] = useState<any>();
