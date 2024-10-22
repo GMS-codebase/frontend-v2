@@ -47,7 +47,7 @@ const AssignedStage = ({
   return (
     <div className="w-full flex justify-between items-center bg-[#000F230A] p-3 rounded-xl">
       <div>
-        <h1 className="font-bold text-lg">{stage.stage}</h1>
+        <h1 className="font-bold text-lg">{stage?.stage}</h1>
         <p className="text-sm text-gray-500">
           Sectors: {stage.sectors.join(", ")}
         </p>
@@ -140,7 +140,7 @@ const EmployeeDetails = () => {
 
   //   const handleRemoveSector = (stage: any, sector: any) => {
   //     const updatedStages = employeeStages.emp_stages.filter(
-  //       (s: any) => !(s.stage === stage.stage && s.sector === sector),
+  //       (s: any) => !(s.stage === stage?.stage && s.sector === sector),
   //     );
   //     setEmployeesStages({
   //       ...employeeStages,
