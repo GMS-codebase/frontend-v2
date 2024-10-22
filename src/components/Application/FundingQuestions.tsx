@@ -35,14 +35,14 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const { applicationId, id } = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [currentStep, setCurrentStep] = useState(0);
-  useEffect(() => {
-    if (currentStep === steps.length - 1 && goToBudget) {
-      goToBudget();
-    }
-  }, [currentStep, goToBudget]);
+  // useEffect(() => {
+  //   if (currentStep === steps.length - 1 && goToBudget) {
+  //     goToBudget();
+  //   }
+  // }, [currentStep, goToBudget]);
   const trades: any = application?.trades.map((trade: any) => ({
-    label: trade.title,
-    value: trade.uuid,
+    label: trade.trade.title,
+    value: trade.trade.title,
   }));
   const handleInputChange = (inputName: string, value: any) => {
     setData &&
@@ -61,7 +61,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const handleArrayOfObjectsChange = (
     inputName: string,
     value: any,
-    index: number
+    index: number,
   ) => {
     setData &&
       setData((prev: any) => {
@@ -135,6 +135,8 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
+    } else if (currentStep === steps.length - 1 && goToBudget) {
+      goToBudget();
     }
   };
 

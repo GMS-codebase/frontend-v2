@@ -42,9 +42,7 @@ const ProgressGender: React.FC<ProgressGenderProps> = ({
       .then((res) => {
         setData(res.data.sectorSummary[0]);
       })
-      .catch((err) => {
-
-      })
+      .catch((err) => {})
       .finally(() => {
         setLoading(false);
       });

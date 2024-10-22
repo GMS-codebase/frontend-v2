@@ -71,7 +71,6 @@ const Page = () => {
   const [stage, setStage] = useState("");
   const dispatch = useDispatch();
   useEffect(() => {
-
     const fetchDashboardData = async () => {
       await getDashboardData(dispatch, call, stage);
     };

@@ -36,7 +36,6 @@ const Page = () => {
     (state: any) => state.applications,
   );
 
-
   // const filteredApplications = applications.filter(
   //   (app: any) =>
   //     app.stages.some(
@@ -53,7 +52,6 @@ const Page = () => {
   const handleDownloadInstructions = async (file: any) => {
     setLoadingDownload(true);
     try {
-
       const filename = file.split("\\").pop();
 
       const response = await unauthorizedApi.get(
