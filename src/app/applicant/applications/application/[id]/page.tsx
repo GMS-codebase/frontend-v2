@@ -41,7 +41,7 @@ const Page = () => {
       case "IndicativeBudget":
         return (
           <BudgetQuestions
-            trades={existingApplication?.trades}
+            application={existingApplication as any}
             data={existingApplication?.budget}
           />
         );
