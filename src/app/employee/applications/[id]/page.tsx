@@ -132,7 +132,7 @@ const Page = () => {
       case "IndicativeBudget":
         return (
           <BudgetQuestions
-            trades={application.trades}
+            application={application}
             showComments={application?.currentStage !== "SUBMISSION"}
             data={application?.budget}
             commentData={commentsData}

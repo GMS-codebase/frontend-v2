@@ -17,7 +17,7 @@ interface MakeDecisionProps {
     trades?: { trade: any; trainees: number }[];
   };
   firstEvaluationModal?: boolean;
-  application?: { trades: { uuid: string; title: string }[] };
+  application?: any;
 }
 
 const MakeDecision = ({
@@ -41,7 +41,6 @@ const MakeDecision = ({
     trades: "",
   });
   const [loading, setLoading] = useState(false);
-  console.log("make decision application and trades --> ", application);
   const [selectedTrade, setSelectedTrade] = useState<any>(null);
   const [traineesNumber, setTraineesNumber] = useState<number | undefined>(0);
 
@@ -129,19 +128,31 @@ const MakeDecision = ({
   };
 
   const addTradeTrainee = () => {
-    setFormData(
-      (prev) =>
-        ({
+    setFormData((prev:any) => {
+      const existingTradeIndex = prev.trades.findIndex(
+        (trade:any) => trade.trade === selectedTrade
+      );
+      if (existingTradeIndex !== -1) {
+        const updatedTrades = [...prev.trades];
+        updatedTrades[existingTradeIndex].trainees = traineesNumber;
+        return {
+          ...prev,
+          trades: updatedTrades,
+        };
+      } else {
+        return {
           ...prev,
           trades: [
             ...prev.trades,
             { trade: selectedTrade, trainees: traineesNumber },
           ],
-        }) as any,
-    );
+        };
+      }
+    });
     setSelectedTrade(null);
     setTraineesNumber(0);
   };
+  
 
   const removeTradeTrainee = (uuid: string) => {
     setFormData((prev) => ({
@@ -227,9 +238,9 @@ const MakeDecision = ({
                   <Select
                     value={selectedTrade}
                     onChange={(value) => setSelectedTrade(value)}
-                    data={application?.trades.map((t) => ({
-                      value: t.uuid,
-                      label: t.title,
+                    data={application?.trades.map((t:any) => ({
+                      value: t.trade.uuid,
+                      label: t.trade.title,
                     }))}
                     placeholder="Select trade"
                     className="bg-gray-100 rounded-full py-0.5"
@@ -262,15 +273,15 @@ const MakeDecision = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {formData.trades.map((entry, index) => (
+                      {formData.trades.map((entry:any, index) => (
                         <tr key={index}>
                           <td>
                             {" "}
                             <div className="flex items-center justify-center">
                               {
                                 application?.trades.find(
-                                  (t) => t.uuid === entry.trade,
-                                )?.title
+                                  (t:any) => t.trade.uuid === entry.trade,
+                                )?.trade.title
                               }
                             </div>{" "}
                           </td>
