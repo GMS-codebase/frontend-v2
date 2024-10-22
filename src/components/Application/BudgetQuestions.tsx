@@ -10,7 +10,7 @@ interface FundingQuestionsProps {
   commentData?: Comments;
   setCommentData?: React.Dispatch<React.SetStateAction<Comments>>;
   showComments?: boolean;
-  trades: any[];
+  application?:any
 }
 
 const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
@@ -19,8 +19,14 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
   commentData,
   setCommentData,
   showComments,
-  trades,
+  application
 }) => {
+  const trades: any = application?.trades.map((trade: any) => ({
+    label: trade.trade.title,
+    value: trade.trade.title,
+  }));
+  console.log(trades)
+  console.log(data.budgetLines)
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
 
   const handleArrayOfObjectsChange = (
@@ -97,7 +103,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
   };
   const formatedTrades =
     trades?.length && trades[0].uuid
-      ? trades?.map((trade) => trade.title)
+      ? trades?.map((trade:any) => trade.title)
       : trades;
   const renderTrainingProcessInputs = () => (
     <div className="space-y-4">
@@ -245,8 +251,8 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                       <td className="border p-2">
                         {item?.uuid
                           ? trades.find(
-                              (trade: any) => trade.title === item?.trade?.title,
-                            )?.title
+                              (trade: any) => trade.label === item?.trade?.title,
+                            )?.label
                           : trades.find(
                               (trade: any) => trade.value === item?.trade,
                             )?.label}
@@ -303,7 +309,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
           value={data?.contribution || ""}
           onChange={(e) => handleInputChange("contribution", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!commentData || !setData}
+          disabled={!!commentData || !setData}
           placeholder="Describe your contribution"
         />
         {showComments && commentData && (

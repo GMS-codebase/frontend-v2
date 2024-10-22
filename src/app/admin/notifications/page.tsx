@@ -142,7 +142,13 @@ const Page = () => {
           });
         }
       })
-      .catch((error) => {})
+      .catch((error) => {
+        console.log(error)
+        notifications.show({
+          message: error.response.data.message,
+          color: "red",
+        });
+      })
       .finally(() => setIsSubmitting(false));
   };
 

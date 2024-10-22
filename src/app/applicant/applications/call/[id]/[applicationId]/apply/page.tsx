@@ -24,32 +24,12 @@ const Page = () => {
   >("Project");
 
   const { id, applicationId } = useParams();
-  const [application, setApplication] = useState<any>();
   const [loading, setLoading] = useState(false);
-  const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
-  useEffect(() => {
-    const fetchApplicationData = async () => {
-      try {
-        const response = await authorizedApi.get(
-          `/application/get-application/${applicationId}`,
-        );
-        const applicationData = response.data.data.data;
-        console.log("appplication data -- ", applicationData);
-        const trades: any = applicationData.trades.map((trade: any) => ({
-          label: trade.title,
-          value: trade.title,
-        }));
-        setApplication(applicationData);
-        setApplicationTrades(trades);
-      } catch (error) {
-        console.error("Error fetching application data:", error);
-      }
-    };
+  const {applications} = useSelector((state:any)=>state.applications)
+  const application = applications.find((ap:any)=>ap.uuid == applicationId)
 
-    fetchApplicationData();
-  }, [applicationId]);
-  console.log("applications tradeas --> ", applicationTrades);
+  console.log("application ", application);
   const [data, setData] = useState<ApplicationQuestions>({
     title: "",
     activitiesAndOutcomes: "",
@@ -237,6 +217,7 @@ const Page = () => {
     });
   };
 
+  console.log("application data", application)
   const calls = useSelector((state: any) => state.calls);
   const renderComponent = () => {
     switch (currentComponent) {
@@ -252,7 +233,7 @@ const Page = () => {
       case "IndicativeBudget":
         return (
           <BudgetQuestions
-            trades={applicationTrades}
+            application={application}
             data={data}
             setData={setData}
           />
