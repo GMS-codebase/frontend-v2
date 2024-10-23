@@ -104,7 +104,6 @@ const Page = () => {
       case "IndicativeBudget":
         return (
           <BudgetQuestions
-            // trades={application?.trades}
             application={application}
             data={application?.projectFunding}
             commentData={commentsData}
@@ -350,12 +349,10 @@ const Page = () => {
         close={closeAddDue}
       />
       <MakeGrantCommitteeDecision
-        // applicationId={id}
+        application={application}
         closeModal={closeGrantCommitteeMakeDecision}
         isOpen={isOpenGrantCommitteeMakeDecision}
         onMakeDecision={() => {}}
-        // trades={application?.trades}
-        application={application}
       />
       <EvaluationDetails
         opened={isOpenEvaluationDetails}
