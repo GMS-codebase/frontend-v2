@@ -11,8 +11,6 @@ interface DeleteConfirmProps {
 }
 
 const DeleteConfirm = ({ isOpen, onClose, onConfirm }: DeleteConfirmProps) => {
-
-
   return (
     <Modal
       size=""
@@ -22,7 +20,10 @@ const DeleteConfirm = ({ isOpen, onClose, onConfirm }: DeleteConfirmProps) => {
       withCloseButton={false}
     >
       <div className="w-[550px] h-[300px] relative bg-white rounded-3xl p-4 pt-10 pb-4 flex flex-col items-center">
-        <button className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg" onClick={onClose}>
+        <button
+          className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
+          onClick={onClose}
+        >
           <IoMdClose size={25} color={"#000"} />
         </button>
         <Image
@@ -40,7 +41,9 @@ const DeleteConfirm = ({ isOpen, onClose, onConfirm }: DeleteConfirmProps) => {
           height={50}
         />
         <div className="w-4/5 flex flex-col items-center mt-4 overflow-hidden">
-          <h1 className="text-2xl font-extrabold text-center">Confirm Deletion</h1>
+          <h1 className="text-2xl font-extrabold text-center">
+            Confirm Deletion
+          </h1>
           <h2 className="text-[#000F2369] text-lg font-medium text-center mt-2">
             Are you sure you want to delete this trade?
           </h2>
