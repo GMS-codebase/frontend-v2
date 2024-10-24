@@ -29,6 +29,10 @@ const MakeDecision = ({
   firstEvaluationModal,
   application,
 }: MakeDecisionProps) => {
+  const [prompt, setPrompt] = useState({
+    opened: false,
+    trade: "",
+  });
   const [formData, setFormData] = useState({
     decision: "",
     comment: "",
@@ -151,6 +155,7 @@ const MakeDecision = ({
       ...prev,
       trades: prev.trades.filter((entry) => entry.trade.uuid == uuid),
     }));
+    setPrompt({ opened: false, trade: "" });
   };
 
   return (
@@ -290,7 +295,10 @@ const MakeDecision = ({
                               <button
                                 type="button"
                                 onClick={() =>
-                                  removeTradeTrainee(entry.trade.uuid)
+                                  setPrompt({
+                                    opened: true,
+                                    trade: entry.trade,
+                                  })
                                 }
                                 className="text-red-500"
                               >
@@ -302,6 +310,28 @@ const MakeDecision = ({
                       ))}
                     </tbody>
                   </table>
+                )}
+                                {prompt.opened && (
+                  <div className="flex items-center justify-between gap-2">
+                    <h1 className="text-base font-bold">
+                      {" "}
+                      Are you sure you want to remove this trade?
+                    </h1>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => removeTradeTrainee(prompt.trade)}
+                        className="bg-primary text-white px-4 py-2 rounded-full"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        onClick={() => setPrompt({ opened: false, trade: "" })}
+                        className="bg-danger text-white px-4 py-2 rounded-full"
+                      >
+                        No
+                      </button>
+                    </div>
+                  </div>
                 )}
                 {errors.trades && (
                   <p className="text-red-500 text-sm">{errors.trades}</p>

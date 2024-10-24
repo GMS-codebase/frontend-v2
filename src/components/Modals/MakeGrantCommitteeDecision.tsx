@@ -42,6 +42,10 @@ const MakeGrantCommitteeDecision = ({
   onMakeDecision,
   application,
 }: Props) => {
+  const [prompt, setPrompt] = useState({
+    opened: false,
+    trade: "",
+  });
   const dispatch = useDispatch();
   const [formData, setFormData] = useState<FormData>({
     decision: "",
@@ -116,10 +120,6 @@ const MakeGrantCommitteeDecision = ({
       newErrors.description = "Description is required.";
       isValid = false;
     }
-    if (!formData.attachment) {
-      newErrors.attachment = "Attachment is required.";
-      isValid = false;
-    }
 
     setErrors(newErrors);
     return isValid;
@@ -190,6 +190,7 @@ const MakeGrantCommitteeDecision = ({
       ...prev,
       trades: prev.trades.filter((entry) => entry.trade.uuid !== uuid),
     }));
+    setPrompt({ opened: false, trade: "" });
   };
 
   return (
@@ -315,7 +316,10 @@ const MakeGrantCommitteeDecision = ({
                               {" "}
                               <button
                                 onClick={() =>
-                                  removeTradeTrainee(entry.trade.uuid)
+                                  setPrompt({
+                                    opened: true,
+                                    trade: entry.trade.uuid,
+                                  })
                                 }
                                 className="text-red-500"
                               >
@@ -327,6 +331,28 @@ const MakeGrantCommitteeDecision = ({
                       ))}
                     </tbody>
                   </table>
+                )}
+                {prompt.opened && (
+                  <div className="flex items-center justify-between gap-2">
+                    <h1 className="text-base font-bold">
+                      {" "}
+                      Are you sure you want to remove this trade?
+                    </h1>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => removeTradeTrainee(prompt.trade)}
+                        className="bg-primary text-white px-4 py-2 rounded-full"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        onClick={() => setPrompt({ opened: false, trade: "" })}
+                        className="bg-danger text-white px-4 py-2 rounded-full"
+                      >
+                        No
+                      </button>
+                    </div>
+                  </div>
                 )}
                 {errors.trades && (
                   <p className="text-red-500 text-sm">{errors.trades}</p>
@@ -355,7 +381,7 @@ const MakeGrantCommitteeDecision = ({
                 htmlFor="fileUpload"
                 className="block text-xs font-bold text-gray-700"
               >
-                Attachment
+                Attachment (Optional)
               </label>
               <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <label
