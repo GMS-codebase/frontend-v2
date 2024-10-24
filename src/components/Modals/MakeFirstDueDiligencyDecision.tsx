@@ -383,15 +383,15 @@ const MakeFirstDueDiligencyDecision = ({
                       </h1>
                       <div className="flex gap-2">
                         <button
-                          onClick={() =>{
+                          onClick={() => {
                             setFormData((prev) => ({
                               ...prev,
                               trades: prev.trades.filter(
                                 (trade: any) =>
                                   trade.trade.uuid !== prompt.trade,
                               ),
-                            }))
-                            setPrompt({ opened: false, trade: "" })
+                            }));
+                            setPrompt({ opened: false, trade: "" });
                           }}
                           className="bg-primary text-white px-4 py-2 rounded-full"
                         >

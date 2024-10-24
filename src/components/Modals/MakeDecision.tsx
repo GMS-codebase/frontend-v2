@@ -311,7 +311,7 @@ const MakeDecision = ({
                     </tbody>
                   </table>
                 )}
-                                {prompt.opened && (
+                {prompt.opened && (
                   <div className="flex items-center justify-between gap-2">
                     <h1 className="text-base font-bold">
                       {" "}
