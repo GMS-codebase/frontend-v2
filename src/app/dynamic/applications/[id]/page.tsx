@@ -102,8 +102,8 @@ const Page = () => {
           <BudgetQuestions
             application={application}
             data={application?.projectFunding}
-            commentData={commentsData}
-            setCommentData={setCommentsData}
+            comments={commentsData}
+            setComments={setCommentsData}
           />
         );
       default:
