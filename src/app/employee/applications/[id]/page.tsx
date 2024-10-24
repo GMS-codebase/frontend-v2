@@ -124,7 +124,7 @@ const Page = () => {
         return (
           <FundingQuestions
             application={application}
-            // showComments={application?.currentStage !== "SUBMISSION"}
+            // showComments={application?.currentStage !== "SUBMITTED"}
             data={application?.projectFunding}
             setComments={!properties.isCommented ? setCommentsData : undefined}
             comments={commentsData}
@@ -135,7 +135,7 @@ const Page = () => {
         return (
           <BudgetQuestions
             application={application}
-            // showComments={application?.currentStage !== "SUBMISSION"}
+            // showComments={application?.currentStage !== "SUBMITTED"}
             data={application?.budget}
             comments={commentsData}
             setComments={!properties.isCommented ? setCommentsData : undefined}
@@ -212,24 +212,23 @@ const Page = () => {
     setLoading(true);
     try {
       if (
-        !commentsData.previousFinancialReportComment ||
-        !commentsData.activitiesComment ||
-        !commentsData.assessmentEquipmentComment ||
-        !commentsData.budgetSummaryAttachmentComment ||
-        !commentsData.contributionComment ||
-        !commentsData.contributionFromApplicantComment ||
-        !commentsData.identificationEmployeeComment ||
-        !commentsData.identificationMemberComment ||
-        !commentsData.institutionComment ||
-        !commentsData.readinessExecuteComment ||
-        !commentsData.recruitmentCandidatesNumberComment
+        // !commentsData.previousFinancialReportComment ||
+        // !commentsData.activitiesComment ||
+        // !commentsData.assessmentEquipmentComment ||
+        // !commentsData.budgetSummaryAttachmentComment ||
+        // !commentsData.contributionComment ||
+        // !commentsData.contributionFromApplicantComment ||
+        // !commentsData.identificationEmployeeComment ||
+        // !commentsData.identificationMemberComment ||
+        !commentsData.titleComment
+        // !commentsData.identificationEmployeeComment ||
+        // !commentsData.institutionComment
       ) {
         notifications.show({
           message: "Please fill all comments data!",
           color: "red",
           duration: 10000,
         });
-        console.log("commentsData --> ", commentsData);
         return setLoading(false);
       }
       await authorizedApi.patch(`/application/comment/${id}`, commentsData);
@@ -422,7 +421,7 @@ const Page = () => {
       </div>
       <div className="flex gap-6">
         <div
-          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMISSION" ? "w-full" : "w-[70%]"} gap-4 p-5`}
+          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 p-5`}
         >
           <div className="flex flex-col gap-4 w-full">
             <div className="font-semibold text-2xl">Questions and answers</div>
@@ -450,7 +449,7 @@ const Page = () => {
             </div>
             <div className="mt-4 w-full">{renderComponent()}</div>
             {!properties.isCommented &&
-              application?.currentStage !== "SUBMISSION" && (
+              application?.currentStage !== "SUBMITTED" && (
                 <div className="w-full flex justify-center mt-4 space-x-4">
                   <button
                     type="button"
@@ -474,7 +473,7 @@ const Page = () => {
           <div className="flex  h-[500px] items-center justify-center bg-white w-[30%] rounded-2xl p-5 gap-4">
             <p>Loading ....</p>
           </div>
-        ) : application?.currentStage === "SUBMISSION" ? (
+        ) : application?.currentStage === "SUBMITTED" ? (
           <div></div>
         ) : (
           <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
