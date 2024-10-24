@@ -288,7 +288,7 @@ const MakeDecision = ({
                             <div className="flex items-center justify-center">
                               {" "}
                               <button
-                              type="button"
+                                type="button"
                                 onClick={() =>
                                   removeTradeTrainee(entry.trade.uuid)
                                 }

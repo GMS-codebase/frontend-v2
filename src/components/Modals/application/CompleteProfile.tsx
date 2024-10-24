@@ -107,11 +107,24 @@ const CompleteProfile = ({
     return Object.keys(newErrors).length === 0;
   };
   const ProvincesOptions = Provinces();
-  const DistrictOptions = formData.province ?  Districts(formData.province) : [];
-  const SectorOptions = formData.district && formData.province? Sectors(formData.province,formData.district):[];
-  const CellOptions =formData.sector  &&  formData.district && formData.province ?  Cells(formData.province,formData.district,formData.sector):[];
-  const VillageOptions = formData.cell && formData.sector  &&  formData.district && formData.province ? Villages(formData.province,formData.district,formData.sector,formData.cell) : [];
-
+  const DistrictOptions = formData.province ? Districts(formData.province) : [];
+  const SectorOptions =
+    formData.district && formData.province
+      ? Sectors(formData.province, formData.district)
+      : [];
+  const CellOptions =
+    formData.sector && formData.district && formData.province
+      ? Cells(formData.province, formData.district, formData.sector)
+      : [];
+  const VillageOptions =
+    formData.cell && formData.sector && formData.district && formData.province
+      ? Villages(
+          formData.province,
+          formData.district,
+          formData.sector,
+          formData.cell,
+        )
+      : [];
 
   const handleNext = () => {
     if (validate()) {
@@ -123,13 +136,18 @@ const CompleteProfile = ({
     setActiveTab((current) => (current > 0 ? current - 1 : current));
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
-      ...(name === "province" && { district: "", sector: "", cell: "", village: "" }),
+      ...(name === "province" && {
+        district: "",
+        sector: "",
+        cell: "",
+        village: "",
+      }),
       ...(name === "district" && { sector: "", cell: "", village: "" }),
       ...(name === "sector" && { cell: "", village: "" }),
       ...(name === "cell" && { village: "" }),
@@ -217,12 +235,12 @@ const CompleteProfile = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="  my-4 text-center w-full">
-            <h1 className="text-2xl font-extrabold">Complete your profile</h1>
-            <h2 className="text-[#000F2369] text-lg font-medium 5">
-              Provide the below details to complete. Provide the below details
-              to complete.
-            </h2>
-          </div>
+          <h1 className="text-2xl font-extrabold">Complete your profile</h1>
+          <h2 className="text-[#000F2369] text-lg font-medium 5">
+            Provide the below details to complete. Provide the below details to
+            complete.
+          </h2>
+        </div>
 
         <div className="w-11/12 flex flex-col items-center mt-4 overflow-hidden">
           {activeTab === 1 && (
@@ -294,8 +312,8 @@ const CompleteProfile = ({
                       <Folder2 />
                     </span>
                     <Select
-                    defaultValue={null}
-                    clearable={true}
+                      defaultValue={null}
+                      clearable={true}
                       name="business_type"
                       value={formData.business_type}
                       onChange={(value: any) => {
@@ -705,129 +723,154 @@ const CompleteProfile = ({
             </div>
           )}
           {activeTab === 3 && (
-    <div className="w-full overflow-y-auto flex flex-col gap-2">
-    <div className="w-full flex justify-between gap-3">
-      <div className="w-full">
-        <label htmlFor="province" className="block text-xs font-bold text-gray-700">
-          Province
-        </label>
-        <select
-          name="province"
-          value={formData.province}
-          onChange={handleChange}
-          className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
-        >
-          <option value="">Select Province</option>
-          {ProvincesOptions.map((option: string, index: number) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        {errors.province && <p className="text-red-500 text-sm">{errors.province}</p>}
-      </div>
+            <div className="w-full overflow-y-auto flex flex-col gap-2">
+              <div className="w-full flex justify-between gap-3">
+                <div className="w-full">
+                  <label
+                    htmlFor="province"
+                    className="block text-xs font-bold text-gray-700"
+                  >
+                    Province
+                  </label>
+                  <select
+                    name="province"
+                    value={formData.province}
+                    onChange={handleChange}
+                    className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                  >
+                    <option value="">Select Province</option>
+                    {ProvincesOptions.map((option: string, index: number) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.province && (
+                    <p className="text-red-500 text-sm">{errors.province}</p>
+                  )}
+                </div>
 
-      <div className="w-full">
-        <label htmlFor="district" className="block text-xs font-bold text-gray-700">
-          District
-        </label>
-        <select
-          name="district"
-          value={formData.district}
-          onChange={handleChange}
-          className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
-        >
-          <option value="">Select District</option>
-          {DistrictOptions.map((option: string, index: number) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        {errors.district && <p className="text-red-500 text-sm">{errors.district}</p>}
-      </div>
-    </div>
+                <div className="w-full">
+                  <label
+                    htmlFor="district"
+                    className="block text-xs font-bold text-gray-700"
+                  >
+                    District
+                  </label>
+                  <select
+                    name="district"
+                    value={formData.district}
+                    onChange={handleChange}
+                    className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                  >
+                    <option value="">Select District</option>
+                    {DistrictOptions.map((option: string, index: number) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.district && (
+                    <p className="text-red-500 text-sm">{errors.district}</p>
+                  )}
+                </div>
+              </div>
 
-    <div className="w-full flex justify-between gap-3">
-      <div className="w-full">
-        <label htmlFor="sector" className="block text-xs font-bold text-gray-700">
-          Sector
-        </label>
-        <select
-          name="sector"
-          value={formData.sector}
-          onChange={handleChange}
-          className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
-        >
-          <option value="">Select Sector</option>
-          {SectorOptions.map((option: string, index: number) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        {errors.sector && <p className="text-red-500 text-sm">{errors.sector}</p>}
-      </div>
+              <div className="w-full flex justify-between gap-3">
+                <div className="w-full">
+                  <label
+                    htmlFor="sector"
+                    className="block text-xs font-bold text-gray-700"
+                  >
+                    Sector
+                  </label>
+                  <select
+                    name="sector"
+                    value={formData.sector}
+                    onChange={handleChange}
+                    className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                  >
+                    <option value="">Select Sector</option>
+                    {SectorOptions.map((option: string, index: number) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.sector && (
+                    <p className="text-red-500 text-sm">{errors.sector}</p>
+                  )}
+                </div>
 
-      <div className="w-full">
-        <label htmlFor="cell" className="block text-xs font-bold text-gray-700">
-          Cell
-        </label>
-        <select
-          name="cell"
-          value={formData.cell}
-          onChange={handleChange}
-          className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
-        >
-          <option value="">Select Cell</option>
-          {CellOptions.map((option: string, index: number) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        {errors.cell && <p className="text-red-500 text-sm">{errors.cell}</p>}
-      </div>
-    </div>
+                <div className="w-full">
+                  <label
+                    htmlFor="cell"
+                    className="block text-xs font-bold text-gray-700"
+                  >
+                    Cell
+                  </label>
+                  <select
+                    name="cell"
+                    value={formData.cell}
+                    onChange={handleChange}
+                    className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                  >
+                    <option value="">Select Cell</option>
+                    {CellOptions.map((option: string, index: number) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.cell && (
+                    <p className="text-red-500 text-sm">{errors.cell}</p>
+                  )}
+                </div>
+              </div>
 
-    <div className="w-full">
-      <label htmlFor="village" className="block text-xs font-bold text-gray-700">
-        Village
-      </label>
-      <select
-        name="village"
-        value={formData.village}
-        onChange={handleChange}
-        className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
-      >
-        <option value="">Select Village</option>
-        {VillageOptions.map((option: string, index: number) => (
-          <option key={index} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-      {errors.village && <p className="text-red-500 text-sm">{errors.village}</p>}
-    </div>
+              <div className="w-full">
+                <label
+                  htmlFor="village"
+                  className="block text-xs font-bold text-gray-700"
+                >
+                  Village
+                </label>
+                <select
+                  name="village"
+                  value={formData.village}
+                  onChange={handleChange}
+                  className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                >
+                  <option value="">Select Village</option>
+                  {VillageOptions.map((option: string, index: number) => (
+                    <option key={index} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                {errors.village && (
+                  <p className="text-red-500 text-sm">{errors.village}</p>
+                )}
+              </div>
 
-    <div className="w-full flex justify-center mt-10 space-x-4">
-      <button
-        type="button"
-        onClick={handlePrev}
-        className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      >
-        Prev
-      </button>
-      <button
-        onClick={handleSubmit}
-        type="button"
-        disabled={loading}
-        className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      >
-        {loading ? "Loading" : "Save"}
-      </button>
-    </div>
-  </div>
+              <div className="w-full flex justify-center mt-10 space-x-4">
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Prev
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  type="button"
+                  disabled={loading}
+                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  {loading ? "Loading" : "Save"}
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </div>

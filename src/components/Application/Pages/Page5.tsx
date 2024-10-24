@@ -2,10 +2,6 @@ import React from "react";
 import { Comments } from "@/types";
 import { handleDownloadFile } from "@/utils/funcs";
 
-
-
-
-
 export const Page5 = ({
   data,
   setData,
@@ -13,7 +9,7 @@ export const Page5 = ({
   setComments,
 }: {
   data: any;
-  setData?:any
+  setData?: any;
   comments?: Comments;
   setComments?: any;
 }) => {
@@ -28,9 +24,7 @@ export const Page5 = ({
         {
           <textarea
             value={(data && data.sustainability) || ""}
-            onChange={(e) =>
-              setData("sustainability", e.target.value)
-            }
+            onChange={(e) => setData("sustainability", e.target.value)}
             className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
             disabled={!!comments || !setData}
           />
@@ -58,7 +52,7 @@ export const Page5 = ({
         <p className="text-sm text-gray-600">
           Provide the financial report of the previous year.
         </p>
-        {(comments) || !setData ? (
+        {comments || !setData ? (
           <>
             <button
               onClick={() =>
@@ -121,7 +115,10 @@ export const Page5 = ({
               accept=".pdf"
               style={{ display: "none" }}
               onChange={(e) =>
-                setData( "previousFinancialReportAttachment",e.target.files ? e.target.files[0]:null)
+                setData(
+                  "previousFinancialReportAttachment",
+                  e.target.files ? e.target.files[0] : null,
+                )
               }
             />
           </div>
@@ -136,13 +133,11 @@ export const Page5 = ({
         </p>
         <textarea
           value={(data && data.contributionFromApplicant) || ""}
-          onChange={(e) =>
-            setData("contributionFromApplicant", e.target.value)
-          }
+          onChange={(e) => setData("contributionFromApplicant", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!comments || !setData}
         />
-        { comments && (
+        {comments && (
           <div className="mt-2">
             <h4 className="text-md font-semibold text-gray-700">Comment</h4>
             <textarea

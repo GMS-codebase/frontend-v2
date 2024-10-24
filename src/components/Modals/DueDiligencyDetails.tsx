@@ -16,14 +16,14 @@ const DueDiligencyDetails = ({
   close,
   isEditing,
   onSaveComment,
-  viewer
+  viewer,
 }: {
   decisions: any;
   application: any;
   opened: boolean;
   close: () => void;
   isEditing?: boolean;
-  viewer?:string
+  viewer?: string;
   onSaveComment?: (updatedText: string) => void;
 }) => {
   const [

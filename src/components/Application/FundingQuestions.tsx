@@ -36,11 +36,10 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   }));
 
   const handleChange = (input: string, value: any) => {
-    errors[input] && setErrors((prev:any)=>({...prev,[input]:null}))
+    errors[input] && setErrors((prev: any) => ({ ...prev, [input]: null }));
     setData && setData((prev: any) => ({ ...prev, [input]: value }));
   };
 
-  
   const steps = [
     <Page1
       key="first"
@@ -51,7 +50,12 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     />,
     <Page2
       key="progress"
-      type={application?.window?.title?.includes("3") && application?.subWindow?.title?.includes("2") ? "assessment":"training"}
+      type={
+        application?.window?.title?.includes("3") &&
+        application?.subWindow?.title?.includes("2")
+          ? "assessment"
+          : "training"
+      }
       data={data}
       {...(setData && { setData: handleChange })}
       trades={trades}
@@ -90,11 +94,11 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   };
 
   const handleNext = async () => {
-      if (currentStep < steps.length - 1) {
-        setCurrentStep((prev) => prev + 1);
-      } else if (currentStep === steps.length - 1 && goToBudget) {
-        goToBudget();
-      }
+    if (currentStep < steps.length - 1) {
+      setCurrentStep((prev) => prev + 1);
+    } else if (currentStep === steps.length - 1 && goToBudget) {
+      goToBudget();
+    }
   };
 
   return (
