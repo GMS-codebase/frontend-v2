@@ -3,165 +3,177 @@ import { ApplicationQuestions } from "@/types/application";
 import { handleDownloadFile } from "@/utils/funcs";
 import { Select } from "@mantine/core";
 import React, { useState, ChangeEvent } from "react";
+import { FaDownload } from "react-icons/fa6";
 
-interface FundingQuestionsProps {
+interface Props {
   data: any;
   setData?: React.Dispatch<React.SetStateAction<ApplicationQuestions>>;
-  commentData?: Comments;
-  setCommentData?: React.Dispatch<React.SetStateAction<Comments>>;
-  showComments?: boolean;
+  comments?: Comments;
+  setComments?: React.Dispatch<React.SetStateAction<Comments>>;
   application?: any;
 }
 
-const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
+const BudgetQuestions: React.FC<Props> = ({
   data,
   setData,
-  commentData,
-  setCommentData,
-  showComments,
+  comments,
+  setComments,
   application,
 }) => {
-  const trades: any = application?.trades.map((trade: any) => ({
+  const trades: any = application?.trades?.map((trade: any) => ({
     label: trade.trade.title,
     value: trade.trade.title,
   }));
-  console.log(trades);
-  console.log(data.budgetLines);
-  const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
+  const [budgetLineInputs, setBudgetLineInputs] = useState({
+    trade: "",
+    amount: 0,
+    budgetLine: "",
+  });
+  const [errors, setErrors] = useState({
+    trade: "",
+    amount: "",
+    budgetLine: "",
+  });
 
-  const handleArrayOfObjectsChange = (
-    inputName: string,
-    value: any,
-    index: number,
-  ) => {
+  const handleArrayOfObjectsChange = (inputName: string, value: any) => {
     setData &&
       setData((prev: any) => {
         const newData = [...(prev[inputName] || [])];
-        newData[index] = value;
+        const existingIndex = newData.findIndex(
+          (item: any) =>
+            item.trade === value.trade && item.budgetLine === value.budgetLine,
+        );
+
+        if (existingIndex !== -1) {
+          // Update the amount of the existing entry
+          newData[existingIndex].amount += value.amount;
+        } else {
+          // Add new entry
+          newData.push(value);
+        }
+
         return {
           ...prev,
           [inputName]: newData,
         };
       });
   };
-  const handleInputChange = (inputName: string, value: any) => {
-    if (setData) {
-      setData((prev: ApplicationQuestions) => ({
-        ...prev,
-        [inputName]: value,
-      }));
-    }
+
+  const validateBudgetLineInputs = () => {
+    const newErrors = {
+      trade: budgetLineInputs.trade ? "" : "Trade is required.",
+      amount:
+        budgetLineInputs.amount > 0 ? "" : "Amount must be greater than zero.",
+      budgetLine: budgetLineInputs.budgetLine ? "" : "Budget line is required.",
+    };
+    setErrors(newErrors);
+    return !newErrors.trade && !newErrors.amount && !newErrors.budgetLine;
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFiles((prev) => ({ ...prev, [key]: file }));
-      setData &&
-        setData((prev: ApplicationQuestions) => ({
-          ...prev,
-          [key]: file,
-        }));
-    }
-  };
-
-  const handleCommentChange = (inputName: string, value: any) => {
-    if (setCommentData) {
-      setCommentData((prev: Comments) => ({
-        ...prev,
-        [inputName]: value,
-      }));
-    }
-  };
-
-  const [trainingProcessInputs, setTrainingProcessInputs] = useState({
-    trade: "",
-    amount: 0,
-    budgetLine: "",
-  });
-
-  const validateTrainingProcessInputs = () => {
-    const { trade, amount, budgetLine } = trainingProcessInputs;
-    return trade && amount && budgetLine;
-  };
-
-  const addTrainingProcess = () => {
-    if (!validateTrainingProcessInputs()) {
-      alert("Please fill in all fields before adding.");
+  const addBudgetLine = () => {
+    if (!validateBudgetLineInputs()) {
       return;
     }
-    handleArrayOfObjectsChange(
-      "budgetLines",
-      trainingProcessInputs,
-      data?.budgetLines?.length || 0,
-    );
-    setTrainingProcessInputs({
+    handleArrayOfObjectsChange("budgetLines", budgetLineInputs);
+    setBudgetLineInputs({
       trade: "",
       amount: 0,
       budgetLine: "",
     });
   };
-  const formatedTrades =
-    trades?.length && trades[0].uuid
-      ? trades?.map((trade: any) => trade.title)
-      : trades;
-  const renderTrainingProcessInputs = () => (
+
+  const renderBudgetLineInputs = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
-        <Select
-          name="budgetLine"
-          value={trainingProcessInputs?.budgetLine ?? ""}
-          onChange={(selectedOption: any) =>
-            setTrainingProcessInputs((prev) => ({
-              ...prev,
-              budgetLine: selectedOption || "",
-            }))
-          }
-          data={[
-            "Occupation, safety, health and environmental at Workplace (OSHE)",
-            "Refreshment",
-            "Consumables",
-            "Trainees Facilitation Fees",
-            "Trainers Allowances",
-            "Graduation Fees ",
-            "Stationeries",
-            "Certificates",
-            "Insurance Cost for trainees",
-            "Other Related Training Cost (Communication fees, Mission Allowances, Public Awareness, Cleaning & Security)",
-            "Other (Specify)",
-          ]}
-          className="mt-1 block w-full pl-5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          placeholder="Select Budget Line"
-        />
-        <input
-          type="number"
-          placeholder="Amount"
-          value={trainingProcessInputs.amount}
-          onChange={(e) =>
-            setTrainingProcessInputs((prev) => ({
-              ...prev,
-              amount: Number(e.target.value),
-            }))
-          }
-          className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-        />
-        <Select
-          name="trade"
-          value={trainingProcessInputs?.trade ?? ""}
-          onChange={(selectedOption: any) =>
-            setTrainingProcessInputs((prev) => ({
-              ...prev,
-              trade: selectedOption || "",
-            }))
-          }
-          data={formatedTrades}
-          className="mt-1 block w-full pl-5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          placeholder="Select Trade"
-        />
+        <div>
+          <label
+            htmlFor="budgetLine"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Budget Line
+          </label>
+          <Select
+            name="budgetLine"
+            value={budgetLineInputs.budgetLine ?? ""}
+            onChange={(selectedOption: any) =>
+              setBudgetLineInputs((prev) => ({
+                ...prev,
+                budgetLine: selectedOption || "",
+              }))
+            }
+            data={[
+              "Occupation, safety, health and environmental at Workplace (OSHE)",
+              "Refreshment",
+              "Consumables",
+              "Trainees Facilitation Fees",
+              "Trainers Allowances",
+              "Graduation Fees",
+              "Stationeries",
+              "Certificates",
+              "Insurance Cost for trainees",
+              "Other Related Training Cost (Communication fees, Mission Allowances, Public Awareness, Cleaning & Security)",
+              "Other (Specify)",
+            ]}
+            className="border pt-2 mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Select Budget Line"
+          />
+          {errors.budgetLine && (
+            <p className="text-red-600 text-sm">{errors.budgetLine}</p>
+          )}
+        </div>
+        <div>
+          <label
+            htmlFor="amount"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Amount
+          </label>
+          <input
+            id="amount"
+            type="number"
+            placeholder="Amount"
+            value={budgetLineInputs.amount}
+            onChange={(e) =>
+              setBudgetLineInputs((prev) => ({
+                ...prev,
+                amount: Number(e.target.value),
+              }))
+            }
+            className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
+          />
+          {errors.amount && (
+            <p className="text-red-600 text-sm">{errors.amount}</p>
+          )}
+        </div>
+        <div>
+          <label
+            htmlFor="trade"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Trade
+          </label>
+          <Select
+            id="trade"
+            name="trade"
+            value={budgetLineInputs.trade ?? ""}
+            onChange={(selectedOption: any) =>
+              setBudgetLineInputs((prev) => ({
+                ...prev,
+                trade: selectedOption || "",
+              }))
+            }
+            data={trades}
+            className="border pt-2 mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Select Trade"
+          />
+          {errors.trade && (
+            <p className="text-red-600 text-sm">{errors.trade}</p>
+          )}
+        </div>
       </div>
       <div className="flex justify-end">
         <button
-          onClick={addTrainingProcess}
+          onClick={addBudgetLine}
           className="mt-2 p-2 bg-primary text-white px-20 rounded-2xl"
         >
           Add
@@ -169,6 +181,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
       </div>
     </div>
   );
+
   return (
     <div className="space-y-2">
       <div className="">
@@ -176,7 +189,7 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
         <p className="text-sm text-gray-600">
           Attach a file related to the budget summary
         </p>
-        {commentData || !setData ? (
+        {comments || !setData ? (
           <div className="mt-2">
             <button
               disabled={data?.budgetSummaryAttachment === null}
@@ -202,10 +215,10 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
               <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                 <span className="text-2xl font-bold">+</span>
               </div>
-              {files.budgetSummaryAttachment ? (
+              {data.budgetSummaryAttachment ? (
                 <div className="text-center">
                   <p className="text-xl font-medium text-gray-700">
-                    {files.budgetSummaryAttachment.name}
+                    {data.budgetSummaryAttachment.name}
                   </p>
                   <p className="text-sm text-gray-500">File selected</p>
                 </div>
@@ -222,15 +235,27 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
               type="file"
               accept=".pdf"
               style={{ display: "none" }}
-              onChange={(e) => handleFileChange(e, "budgetSummaryAttachment")}
+              onChange={(e) =>
+                setData((prev: any) => ({
+                  ...prev,
+                  budgetSummaryAttachment: e.target.files
+                    ? e.target.files[0]
+                    : null,
+                }))
+              }
             />
           </div>
         )}
       </div>
-      <div className="p-4">
-        <h3 className="text-lg font-bold">Budget Line</h3>
-        <p className="text-sm text-gray-600"></p>
-        {!commentData && renderTrainingProcessInputs()}
+      <div>
+        <div className="flex items-center justify-between py-2">
+          <h3 className="text-lg font-bold">Budget Line</h3>
+          <div className=" text-white bg-primary rounded-full px-10 flex items-center gap-2 py-2 cursor-pointer">
+            <FaDownload />
+            <p>Template</p>
+          </div>
+        </div>
+        {!comments && setData && renderBudgetLineInputs()}
         {data?.budgetLines?.length > 0 && (
           <div className="w-full mt-4">
             <table className="w-full border-collapse border border-gray-200">
@@ -242,29 +267,25 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
                 </tr>
               </thead>
               <tbody>
-                {(data?.budgetLines || []).map((item: any, index: any) => {
-                  console.log("Trades --> ", trades, " Item --> ", item);
-                  return (
-                    <tr key={index}>
-                      <td className="border p-2">{item.budgetLine || "N/A"}</td>
-                      <td className="border p-2">{item.amount || "N/A"}</td>
-                      <td className="border p-2">
-                        {item?.uuid
-                          ? trades.find(
-                              (trade: any) =>
-                                trade.label === item?.trade?.title,
-                            )?.label
-                          : trades.find(
-                              (trade: any) => trade.value === item?.trade,
-                            )?.label}
-                      </td>
-                    </tr>
-                  );
-                })}
+                {(data?.budgetLines || []).map((item: any, index: any) => (
+                  <tr key={index}>
+                    <td className="border p-2">{item.budgetLine || "N/A"}</td>
+                    <td className="border p-2">{item.amount || "N/A"}</td>
+                    <td className="border p-2">
+                      {item?.uuid
+                        ? trades.find(
+                            (trade: any) => trade.label === item?.trade?.title,
+                          )?.label
+                        : trades.find(
+                            (trade: any) => trade.value === item?.trade,
+                          )?.label}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
             {data?.budgetLines?.length > 0 && (
-              <div className=" mt-5">
+              <div className="mt-5">
                 <hr className="w-full border border-gray-100" />
                 <div className="w-full flex items-center justify-between mt-3">
                   <h1>Total</h1>
@@ -280,17 +301,18 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
             )}
           </div>
         )}
-        {showComments && !setData && (
+        {!setData && comments && (
           <div className="mt-2">
             <p>Comment</p>
             <textarea
-              value={commentData?.budgetSummaryAttachmentComment || ""}
-              disabled={!setCommentData}
+              value={comments?.budgetSummaryAttachmentComment || ""}
+              disabled={!setComments}
               onChange={(e) =>
-                handleCommentChange(
-                  "budgetSummaryAttachmentComment",
-                  e.target.value,
-                )
+                setComments &&
+                setComments((prev: any) => ({
+                  ...prev,
+                  budgetSummaryAttachmentComment: e.target.value,
+                }))
               }
               className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
               placeholder="Add your comment"
@@ -308,19 +330,26 @@ const BudgetQuestions: React.FC<FundingQuestionsProps> = ({
         </p>
         <textarea
           value={data?.contribution || ""}
-          onChange={(e) => handleInputChange("contribution", e.target.value)}
+          onChange={(e) =>
+            setData &&
+            setData((prev: any) => ({ ...prev, contribution: e.target.value }))
+          }
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          disabled={!!commentData || !setData}
+          disabled={!!comments || !setData}
           placeholder="Describe your contribution"
         />
-        {showComments && commentData && (
+        {comments && (
           <>
             <p className="text-sm text-gray-600">Comment</p>
             <textarea
-              value={commentData?.contributionComment || ""}
-              disabled={!setCommentData}
+              value={comments?.contributionComment || ""}
+              disabled={!setComments}
               onChange={(e) =>
-                handleCommentChange("contributionComment", e.target.value)
+                setComments &&
+                setComments((prev: any) => ({
+                  ...prev,
+                  contributionComment: e.target.value,
+                }))
               }
               className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
               placeholder="Add your comment"

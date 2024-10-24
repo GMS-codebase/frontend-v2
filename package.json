@@ -8,7 +8,8 @@
     "start": "next start -p 5600",
     "lint": "next lint",
     "format": "npx prettier --write ./",
-    "prepare": "husky"
+    "prepare": "husky",
+    "clean:next": "rimraf .next"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
