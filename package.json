@@ -8,7 +8,8 @@
     "start": "next start -p 5600",
     "lint": "next lint",
     "format": "npx prettier --write ./",
-    "prepare": "husky"
+    "prepare": "husky",
+    "clean:next": "rimraf .next"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -47,6 +48,7 @@
     "recharts": "^2.12.7",
     "redux": "^5.0.1",
     "redux-devtools-extension": "^2.13.9",
+    "rwanda": "^2.1.6",
     "solar-icon-set": "^1.0.0",
     "tabler-icons": "^1.35.0"
   },
