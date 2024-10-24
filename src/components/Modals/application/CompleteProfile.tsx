@@ -6,7 +6,7 @@ import { IoMdClose } from "react-icons/io";
 import { User } from "solar-icon-set";
 import { Upload } from "solar-icon-set";
 import { CalendarMinimalistic, Folder2, ShieldWarning } from "solar-icon-set";
-
+import { Provinces, Districts, Sectors, Cells, Villages } from "rwanda";
 type FormData = {
   tin: string;
   year_of_placement: string;
@@ -186,6 +186,48 @@ const CompleteProfile = ({
           setLoading(false);
         });
     }
+  };
+
+  const handleProvinceChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      province: value,
+      district: "",
+      sector: "",
+      cell: "",
+      village: "",
+    }));
+  };
+
+  const handleDistrictChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      district: value,
+      sector: "",
+      cell: "",
+      village: "",
+    }));
+  };
+
+  const handleSectorChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      sector: value,
+      cell: "",
+      village: "",
+    }));
+  };
+
+  const handleCellChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      cell: value,
+      village: "",
+    }));
   };
 
   return (
@@ -750,20 +792,27 @@ const CompleteProfile = ({
                   >
                     Province
                   </label>
-                  <div className="w-full relative">
+                  <div className="w-full relative pr-3">
                     <span className="absolute left-2 top-[10px]">
                       <Folder2 />
                     </span>
-                    <input
-                      type="text"
+                    <select
                       name="province"
+                      id="intara"
+                      className="mt-1 block w-full pl-8 px-3  py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      onChange={handleProvinceChange}
                       value={formData.province}
-                      placeholder="Province"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       required
-                    />
+                    >
+                      <option>Select</option>
+                      {Provinces().map((province: string) => (
+                        <option key={province} value={province}>
+                          {province}
+                        </option>
+                      ))}
+                    </select>
                   </div>
+
                   {errors.province && (
                     <p className="text-red-500 text-sm">{errors.province}</p>
                   )}
@@ -779,15 +828,22 @@ const CompleteProfile = ({
                     <span className="absolute left-2 top-[10px]">
                       <User />
                     </span>
-                    <input
-                      type="text"
-                      name="district"
+                    <select
+                      name="province"
+                      id="district"
+                      className="mt-1 block w-full pl-8 px-3  py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      onChange={handleDistrictChange}
                       value={formData.district}
-                      placeholder="District"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      disabled={!formData.province}
                       required
-                    />
+                    >
+                      <option>Select</option>
+                      {Districts(formData.province)?.map((district: string) => (
+                        <option key={district} value={district}>
+                          {district}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   {errors.district && (
                     <p className="text-red-500 text-sm">{errors.district}</p>
@@ -806,15 +862,24 @@ const CompleteProfile = ({
                     <span className="absolute left-2 top-[10px]">
                       <Folder2 />
                     </span>
-                    <input
-                      type="text"
+                    <select
                       name="sector"
+                      id="sector"
+                      className="mt-1 block w-full pl-8 px-3  py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      onChange={handleSectorChange}
                       value={formData.sector}
-                      placeholder="sector"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      disabled={!formData.district}
                       required
-                    />
+                    >
+                      <option>Select</option>
+                      {Sectors(formData.province, formData.district)?.map(
+                        (sector: string) => (
+                          <option key={sector} value={sector}>
+                            {sector}
+                          </option>
+                        ),
+                      )}
+                    </select>
                   </div>
                   {errors.sector && (
                     <p className="text-red-500 text-sm">{errors.sector}</p>
@@ -831,15 +896,26 @@ const CompleteProfile = ({
                     <span className="absolute left-2 top-[10px]">
                       <Folder2 />
                     </span>
-                    <input
-                      type="text"
+                    <select
                       name="cell"
+                      id="cell"
+                      className="mt-1 block w-full pl-8 px-3  py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      onChange={handleCellChange}
                       value={formData.cell}
-                      placeholder="Cell"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      disabled={!formData.sector}
                       required
-                    />
+                    >
+                      <option>Select</option>
+                      {Cells(
+                        formData.province,
+                        formData.district,
+                        formData.sector,
+                      )?.map((cell: string) => (
+                        <option key={cell} value={cell}>
+                          {cell}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   {errors.cell && (
                     <p className="text-red-500 text-sm">{errors.cell}</p>
@@ -849,7 +925,7 @@ const CompleteProfile = ({
 
               <div className="w-full">
                 <label
-                  htmlFor="address"
+                  htmlFor="village"
                   className="block text-xs font-bold text-gray-700"
                 >
                   Village
@@ -858,15 +934,32 @@ const CompleteProfile = ({
                   <span className="absolute left-2 top-[10px]">
                     <Folder2 />
                   </span>
-                  <input
-                    type="village"
+                  <select
                     name="village"
+                    id="village"
+                    className="mt-1 block w-full pl-8 px-3  py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        village: e.target.value,
+                      }))
+                    }
                     value={formData.village}
-                    placeholder="Village"
-                    onChange={handleChange}
-                    className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     required
-                  />
+                    disabled={!formData.cell}
+                  >
+                    <option>Select</option>
+                    {Villages(
+                      formData.province,
+                      formData.district,
+                      formData.sector,
+                      formData.cell,
+                    )?.map((village: string) => (
+                      <option key={village} value={village}>
+                        {village}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 {errors.village && (
                   <p className="text-red-500 text-sm">{errors.village}</p>
