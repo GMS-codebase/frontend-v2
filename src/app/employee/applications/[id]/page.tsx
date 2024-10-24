@@ -149,6 +149,15 @@ const Page = () => {
   const handleAddComments = async () => {
     setLoading(true);
     try {
+      if (!commentsData.previousFinancialReportComment || !commentsData.activitiesComment || !commentsData.assessmentEquipmentComment || !commentsData.budgetSummaryAttachmentComment || !commentsData.contributionComment || !commentsData.contributionFromApplicantComment || !commentsData.identificationEmployeeComment || !commentsData.identificationMemberComment || !commentsData.institutionComment || !commentsData.readinessExecuteComment || !commentsData.recruitmentCandidatesNumberComment) {
+        notifications.show({
+          message: "Please fill all comments data!",
+          color: "red",
+          duration: 10000,
+        });
+        console.log("commentsData --> ", commentsData);
+        return setLoading(false);
+      }
       await authorizedApi.patch(`/application/comment/${id}`, commentsData);
       notifications.show({
         message: "Comments Added Successfully!",
