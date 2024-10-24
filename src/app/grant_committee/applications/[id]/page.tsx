@@ -124,7 +124,7 @@ const Page = () => {
           <BudgetQuestions
             application={application}
             data={application?.budget}
-            commentData={commentsData}
+            comments={commentsData}
             showComments={true}
           />
         );

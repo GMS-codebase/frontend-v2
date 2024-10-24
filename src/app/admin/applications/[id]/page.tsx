@@ -113,8 +113,8 @@ const Page = () => {
           <BudgetQuestions
             application={application}
             data={application?.budget}
-            commentData={commentsData}
-            setCommentData={setCommentsData}
+            comments={commentsData}
+            setComments={setCommentsData}
             showComments={application?.currentStage !== "SUBMISSION"}
           />
         );
