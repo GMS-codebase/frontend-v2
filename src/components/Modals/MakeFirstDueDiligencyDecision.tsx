@@ -39,6 +39,10 @@ const MakeFirstDueDiligencyDecision = ({
   afterMakeDecision: () => void;
   application: any;
 }) => {
+  const [prompt, setPrompt] = useState({
+    opened: false,
+    trade: "",
+  });
   const [selectedTrade, setSelectedTrade] = useState<any>();
   const [traineesNumber, setTraineesNumber] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -356,14 +360,10 @@ const MakeFirstDueDiligencyDecision = ({
                                 <button
                                   className="bg-primary px-2 text-sm py-1 text-white font-medium rounded-full"
                                   onClick={() =>
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      trades: prev.trades.filter(
-                                        (trade: any) =>
-                                          trade.trade.uuid !==
-                                          tradeTrainee.trade.uuid,
-                                      ),
-                                    }))
+                                    setPrompt({
+                                      opened: true,
+                                      trade: tradeTrainee.trade,
+                                    })
                                   }
                                 >
                                   Remove
@@ -374,6 +374,42 @@ const MakeFirstDueDiligencyDecision = ({
                         )}
                       </tbody>
                     </table>
+                  )}
+                  {prompt.opened && (
+                    <div className="flex items-center justify-between gap-2">
+                      <h1 className="text-base font-bold">
+                        {" "}
+                        Are you sure you want to remove this trade?
+                      </h1>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() =>{
+                            setFormData((prev) => ({
+                              ...prev,
+                              trades: prev.trades.filter(
+                                (trade: any) =>
+                                  trade.trade.uuid !== prompt.trade,
+                              ),
+                            }))
+                            setPrompt({ opened: false, trade: "" })
+                          }}
+                          className="bg-primary text-white px-4 py-2 rounded-full"
+                        >
+                          Yes
+                        </button>
+                        <button
+                          onClick={() =>
+                            setPrompt({ opened: false, trade: "" })
+                          }
+                          className="bg-danger text-white px-4 py-2 rounded-full"
+                        >
+                          No
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  {errors.trades && (
+                    <p className="text-red-500 text-sm">{errors.trades}</p>
                   )}
                 </div>
               </div>

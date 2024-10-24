@@ -204,7 +204,7 @@ const Page = () => {
           </div>
           <div className="mt-4 w-full">{renderComponent()}</div>
         </div>
-        {application?.currentStage === "SUBMISSION" ? (
+        {application?.currentStage === "SUBMITTED" ? (
           <div></div>
         ) : (
           <div className="flex flex-col bg-white min-w-[30%] rounded-2xl p-5 gap-4">
