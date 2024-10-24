@@ -7,10 +7,9 @@ import Link from "next/link";
 import { Call } from "@/types";
 import ProgressCircle from "./ProgressBar";
 
-
 const CallsList = () => {
   const calls = useSelector((state: any) => state.calls);
-  const {myApplications} = useSelector((state:any)=>state.applications)
+  const { myApplications } = useSelector((state: any) => state.applications);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isScrollable, setIsScrollable] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -48,25 +47,24 @@ const CallsList = () => {
     };
   }, []);
 
-
   const CallCard = ({ call }: { call: Call }) => {
     return (
       <div className="flex flex-shrink-0 gap-2 w-[600px] bg-[#005DE9] bg-opacity-10 rounded-3xl p-5">
         <div className="flex flex-col gap-4 flex-grow">
           <h2 className="font-semibold text-[#005DE9]">{call.title}</h2>
           <div className="font-medium ">{call.description}</div>
-<div className="flex flex-col  items-start gap-2">
-<Link href={`/applicant/applications/call/${call.uuid}`}>
-            <div className="flex gap-2 p-2 bg-[#005DE9] font-normal rounded-full text-white px-4 py-2 items-center justify-start w-fit">
-              View details
-            </div>
-          </Link>
-          {/* {myApplications.find((app:any)=>app.call.uuid === call.uuid)  && <Link href={`/applicant/applications/call/${call.uuid}`}>
+          <div className="flex flex-col  items-start gap-2">
+            <Link href={`/applicant/applications/call/${call.uuid}`}>
+              <div className="flex gap-2 p-2 bg-[#005DE9] font-normal rounded-full text-white px-4 py-2 items-center justify-start w-fit">
+                View details
+              </div>
+            </Link>
+            {/* {myApplications.find((app:any)=>app.call.uuid === call.uuid)  && <Link href={`/applicant/applications/call/${call.uuid}`}>
             <div className="flex gap-2 p-2 bg-[#005DE9] bg-opacity-10 font-normal rounded-full  px-4 py-2 items-center justify-start w-fit">
               Continue Application
             </div>
           </Link>}  */}
-</div>
+          </div>
         </div>
         <div className="w-[45%]  text-[6px] font-bold">
           <ProgressCircle
@@ -81,7 +79,6 @@ const CallsList = () => {
     );
   };
 
-  
   const handleNext = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollLeft += 300;

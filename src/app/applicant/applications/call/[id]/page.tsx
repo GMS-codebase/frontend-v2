@@ -97,10 +97,12 @@ const Page = () => {
     }
   };
 
-  if(calls.loading){
-    return <div className="w-full h-full flex items-center justify-center">
-      <p>Loading</p>
-    </div>
+  if (calls.loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p>Loading</p>
+      </div>
+    );
   }
   return (
     <div className="bg-white rounded-2xl p-10 ">

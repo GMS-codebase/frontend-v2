@@ -9,7 +9,7 @@ export function Page3({
   trades,
   commentsData,
   setCommentsData,
-  type = "training" // Default to "training"
+  type = "training", // Default to "training"
 }: {
   data: any;
   setData?: any;
@@ -39,14 +39,16 @@ export function Page3({
     if (!validateTrainingEquipments()) {
       return;
     }
-    console.log(data)
+    console.log(data);
     setData(
       type === "assessment" ? "assessmentEquipment" : "trainingEquipment",
       [
-        ...(type === "assessment" ? data.assessmentEquipment : data.trainingEquipment),
+        ...(type === "assessment"
+          ? data.assessmentEquipment
+          : data.trainingEquipment),
         trainingEquipments,
-      ]
-    );    
+      ],
+    );
 
     setTrainingEquipments({
       trade: "",
@@ -55,12 +57,14 @@ export function Page3({
     });
   };
 
-
   const renderTrainingEquipmentsInputs = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
         <div>
-          <label htmlFor="nameOfEquipment" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="nameOfEquipment"
+            className="block text-sm font-medium text-gray-700"
+          >
             Name of Equipment
           </label>
           <input
@@ -78,7 +82,10 @@ export function Page3({
           />
         </div>
         <div>
-          <label htmlFor="numberOfEquipment" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="numberOfEquipment"
+            className="block text-sm font-medium text-gray-700"
+          >
             Number of Equipment
           </label>
           <input
@@ -96,7 +103,10 @@ export function Page3({
           />
         </div>
         <div>
-          <label htmlFor="trade" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="trade"
+            className="block text-sm font-medium text-gray-700"
+          >
             Trade
           </label>
           <Select
@@ -145,12 +155,16 @@ export function Page3({
   return (
     <>
       <div className="">
-        <h3 className="text-lg font-bold capitalize" >{type} Equipment</h3>
+        <h3 className="text-lg font-bold capitalize">{type} Equipment</h3>
         <p className="text-sm text-gray-600">
-          List down the equipment available to facilitate this {type}. [Name of equipment/Number/Related Trade]
+          List down the equipment available to facilitate this {type}. [Name of
+          equipment/Number/Related Trade]
         </p>
         {setData && !commentsData && renderTrainingEquipmentsInputs()}
-        {(type !== "assessment" ? data?.trainingEquipment:data.assessmentEquipment)?.length > 0 && (
+        {(type !== "assessment"
+          ? data?.trainingEquipment
+          : data.assessmentEquipment
+        )?.length > 0 && (
           <div className="w-full overflow-y-auto">
             <table className="min-w-full w-fit mt-4 border-collapse border border-gray-200">
               <thead>
@@ -161,14 +175,21 @@ export function Page3({
                 </tr>
               </thead>
               <tbody>
-                {((type !== "assessment" ? data?.trainingEquipment:data.assessmentEquipment)).map((item: any, index: any) => (
+                {(type !== "assessment"
+                  ? data?.trainingEquipment
+                  : data.assessmentEquipment
+                ).map((item: any, index: any) => (
                   <tr key={index}>
                     <td className="border p-2">{item.nameOfEquipment}</td>
                     <td className="border p-2">{item.numberOfEquipment}</td>
                     <td className="border p-2">
                       {item?.uuid
-                        ? trades.find((trade: any) => trade.value === item?.trade?.title)?.value
-                        : trades.find((trade: any) => trade.value === item?.trade)?.label}
+                        ? trades.find(
+                            (trade: any) => trade.value === item?.trade?.title,
+                          )?.value
+                        : trades.find(
+                            (trade: any) => trade.value === item?.trade,
+                          )?.label}
                     </td>
                   </tr>
                 ))}
@@ -178,9 +199,12 @@ export function Page3({
         )}
       </div>
       <div className="">
-        <h3 className="text-lg font-bold capitalize">{type} Equipment - (Continued)</h3>
+        <h3 className="text-lg font-bold capitalize">
+          {type} Equipment - (Continued)
+        </h3>
         <p className="text-sm text-gray-600">
-          Please attach the proof of ownership (Notarized list of equipment, Original Invoices (EBM for locally purchased equipment).)
+          Please attach the proof of ownership (Notarized list of equipment,
+          Original Invoices (EBM for locally purchased equipment).)
         </p>
         {commentsData || !setData ? (
           <>
@@ -197,7 +221,12 @@ export function Page3({
                 ? "Download File"
                 : "No Attachment Found!"}
             </button>
-            {commentsData && renderCommentsSection(type === "assessment" ? "assessmentEquipmentAttachmentComment":"trainingEquipmentAttachmentComment")}
+            {commentsData &&
+              renderCommentsSection(
+                type === "assessment"
+                  ? "assessmentEquipmentAttachmentComment"
+                  : "trainingEquipmentAttachmentComment",
+              )}
           </>
         ) : (
           <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
@@ -208,10 +237,19 @@ export function Page3({
               <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl font-bold">+</span>
               </div>
-              {(type === "assessment" ?data.assessmentEquipmentAttachment: data.trainingEquipmentAttachment) ? (
+              {(
+                type === "assessment"
+                  ? data.assessmentEquipmentAttachment
+                  : data.trainingEquipmentAttachment
+              ) ? (
                 <div className="text-center">
                   <p className="text-xl font-medium text-gray-700">
-                    {(type === "assessment" ?data.assessmentEquipmentAttachment: data.trainingEquipmentAttachment).name}
+                    {
+                      (type === "assessment"
+                        ? data.assessmentEquipmentAttachment
+                        : data.trainingEquipmentAttachment
+                      ).name
+                    }
                   </p>
                   <p className="text-sm text-gray-500">File selected</p>
                 </div>
@@ -229,7 +267,12 @@ export function Page3({
               accept=".pdf"
               style={{ display: "none" }}
               onChange={(e) =>
-                setData(type !== "assessment" ? "trainingEquipmentAttachment":"assessmentEquipmentAttachment",e.target.files ? e.target.files[0]:null)
+                setData(
+                  type !== "assessment"
+                    ? "trainingEquipmentAttachment"
+                    : "assessmentEquipmentAttachment",
+                  e.target.files ? e.target.files[0] : null,
+                )
               }
             />
           </div>

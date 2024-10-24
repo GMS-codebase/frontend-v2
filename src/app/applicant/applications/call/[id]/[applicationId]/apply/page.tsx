@@ -56,7 +56,7 @@ const Page = () => {
     MOUsAttachment: [],
     assessmentEquipmentAttachment: undefined,
     budgetSummaryAttachment: undefined,
-    budgetLines:[],
+    budgetLines: [],
     staffAttachment: "",
   });
 
@@ -65,28 +65,51 @@ const Page = () => {
       setData((prevData) => ({
         ...prevData,
         title: application.projectFunding?.title || prevData.title,
-        activitiesAndOutcomes: application.projectFunding?.activitiesAndOutcomes || prevData.activitiesAndOutcomes,
-        readinessExecute: application.projectFunding?.readinessExecute || prevData.readinessExecute,
+        activitiesAndOutcomes:
+          application.projectFunding?.activitiesAndOutcomes ||
+          prevData.activitiesAndOutcomes,
+        readinessExecute:
+          application.projectFunding?.readinessExecute ||
+          prevData.readinessExecute,
         role: application.projectFunding?.role || prevData.role,
-        institution: application.projectFunding?.institution || prevData.institution,
-        sustainability: application.projectFunding?.sustainability || prevData.sustainability,
-        recruitmentTrainerNumber: application.projectFunding?.recruitmentTrainerNumber || prevData.recruitmentTrainerNumber,
-        identificationMember: application.projectFunding?.identificationMember || prevData.identificationMember,
-        assessorsAndFacilitators: application.projectFunding?.assessorsAndFacilitators || prevData.assessorsAndFacilitators,
-        staffAttachment: application.projectFunding?.staffAttachment || prevData.staffAttachment,
-        trainingProcess: application.projectFunding?.trainingProcess || prevData.trainingProcess,
-        trainingEquipment: application.projectFunding?.trainingEquipment || prevData.trainingEquipment,
-        assessmentAndCertificationProcess: application.projectFunding?.assessmentAndCertificationProcess || prevData.assessmentAndCertificationProcess,
-        assessmentEquipment: application.projectFunding?.assessmentEquipment || prevData.assessmentEquipment,
-        budgetSummaryAttachment: application.budget?.budgetSummaryAttachment || prevData.budgetSummaryAttachment,
-        contributionFromApplicant: application.budget?.contributionFromApplicant || prevData.contributionFromApplicant,
+        institution:
+          application.projectFunding?.institution || prevData.institution,
+        sustainability:
+          application.projectFunding?.sustainability || prevData.sustainability,
+        recruitmentTrainerNumber:
+          application.projectFunding?.recruitmentTrainerNumber ||
+          prevData.recruitmentTrainerNumber,
+        identificationMember:
+          application.projectFunding?.identificationMember ||
+          prevData.identificationMember,
+        assessorsAndFacilitators:
+          application.projectFunding?.assessorsAndFacilitators ||
+          prevData.assessorsAndFacilitators,
+        staffAttachment:
+          application.projectFunding?.staffAttachment ||
+          prevData.staffAttachment,
+        trainingProcess:
+          application.projectFunding?.trainingProcess ||
+          prevData.trainingProcess,
+        trainingEquipment:
+          application.projectFunding?.trainingEquipment ||
+          prevData.trainingEquipment,
+        assessmentAndCertificationProcess:
+          application.projectFunding?.assessmentAndCertificationProcess ||
+          prevData.assessmentAndCertificationProcess,
+        assessmentEquipment:
+          application.projectFunding?.assessmentEquipment ||
+          prevData.assessmentEquipment,
+        budgetSummaryAttachment:
+          application.budget?.budgetSummaryAttachment ||
+          prevData.budgetSummaryAttachment,
+        contributionFromApplicant:
+          application.budget?.contributionFromApplicant ||
+          prevData.contributionFromApplicant,
         budgetLines: application.budget?.budgetLines || prevData.budgetLines,
       }));
     }
   }, [application]);
-
-
-
 
   const handleReset = () => {
     setData({
@@ -145,7 +168,6 @@ const Page = () => {
     }
   };
 
-
   return (
     <div>
       <div className="flex flex-col gap-4 w-full bg-white p-4 rounded-2xl ">
@@ -154,13 +176,18 @@ const Page = () => {
           <button
             className="bg-primary text-white py-3 px-10 flex items-center gap-2 rounded-full "
             onClick={() => {
-              handleSubmit("save",setLoading,data,application);
+              handleSubmit("save", setLoading, data, application);
             }}
             disabled={loading === "save"}
           >
-            {loading === "save" ? <p>Loading...</p>:<>
-              <IoIosSave />
-              <p className="">Save Draft</p></>}
+            {loading === "save" ? (
+              <p>Loading...</p>
+            ) : (
+              <>
+                <IoIosSave />
+                <p className="">Save Draft</p>
+              </>
+            )}
           </button>
         </div>
         <div className="flex font-semibold">
@@ -197,7 +224,9 @@ const Page = () => {
           <button
             type="button"
             onClick={() => {
-              handleSubmit("submit",setLoading,data,application,()=>router.push("/applicant/applications"));
+              handleSubmit("submit", setLoading, data, application, () =>
+                router.push("/applicant/applications"),
+              );
             }}
             disabled={loading}
             className={`w-full px-4 py-2 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 bg-primary text-white

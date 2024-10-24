@@ -10,7 +10,6 @@ export const Page1 = ({
   setData?: any;
   comments?: Comments;
   setComments?: any;
-  
 }) => {
   const handleCommentChange = (inputName: string, value: any) => {
     if (setComments) {
@@ -63,9 +62,7 @@ export const Page1 = ({
         </p>
         <textarea
           value={data?.activitiesAndOutcomes || ""}
-          onChange={(e) =>
-            setData("activitiesAndOutcomes", e.target.value)
-          }
+          onChange={(e) => setData("activitiesAndOutcomes", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!comments || !setData}
         />
@@ -92,9 +89,7 @@ export const Page1 = ({
         </p>
         <textarea
           value={data?.readinessExecute || ""}
-          onChange={(e) =>
-            setData("readinessExecute", e.target.value)
-          }
+          onChange={(e) => setData("readinessExecute", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!comments || !setData}
         />
@@ -156,9 +151,7 @@ export const Page1 = ({
         <input
           type="number"
           value={data?.identificationEmployee || ""}
-          onChange={(e) =>
-            setData("identificationEmployee", e.target.value)
-          }
+          onChange={(e) => setData("identificationEmployee", e.target.value)}
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!comments || !setData}
         />
