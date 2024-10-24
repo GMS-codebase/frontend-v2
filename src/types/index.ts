@@ -84,8 +84,8 @@ export type Comments = {
   recruitmentCandidatesNumberComment: string;
   assessorsAndFacilitatorsComment: string;
   budgetSummaryAttachmentComment: string;
-  contributionComment: string;
-  budgetLinesComment: string;
+  contributionComment?: string;
+  budgetLinesComment?: string;
 };
 
 export type Call = {

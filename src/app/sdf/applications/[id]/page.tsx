@@ -90,6 +90,8 @@ const Page = () => {
     budgetSummaryAttachmentComment:
       application?.projectFunding.budgetSummaryAttachmentComment || "",
     contributionComment: application?.projectFunding.contributionComment || "",
+    assessmentComment: application?.projectFunding?.assessmentComment || "",
+    budgetLinesComment: application?.budget?.budgetLinesComment,
   });
   const renderComponent = () => {
     switch (currentComponent) {

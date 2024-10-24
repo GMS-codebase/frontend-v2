@@ -106,6 +106,8 @@ const Page = () => {
     budgetSummaryAttachmentComment:
       application?.projectFunding.budgetSummaryAttachmentComment || "",
     contributionComment: application?.projectFunding.contributionComment || "",
+    assessmentComment: application?.projectFunding?.assessmentComment || "",
+    budgetLinesComment: application?.budget?.budgetLinesComment,
   });
   const renderComponent = () => {
     switch (currentComponent) {
@@ -115,7 +117,7 @@ const Page = () => {
             application={application}
             data={application?.projectFunding}
             comments={commentsData}
-            showComments={true}
+            // showComments={true}
             goToBudget={() => setCurrentComponent("IndicativeBudget")}
           />
         );
@@ -125,7 +127,7 @@ const Page = () => {
             application={application}
             data={application?.budget}
             comments={commentsData}
-            showComments={true}
+            // showComments={true}
           />
         );
       default:
