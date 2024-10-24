@@ -47,6 +47,7 @@
     "recharts": "^2.12.7",
     "redux": "^5.0.1",
     "redux-devtools-extension": "^2.13.9",
+    "rwanda": "^2.1.6",
     "solar-icon-set": "^1.0.0",
     "tabler-icons": "^1.35.0"
   },
