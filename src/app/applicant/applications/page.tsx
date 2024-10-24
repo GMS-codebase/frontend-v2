@@ -2,13 +2,9 @@
 
 import React from "react";
 import CallsList from "../../../components/CallsList/page";
-import { SolarFileBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import { callData as data } from "@/utils/constants/dummy";
-import { CiSearch } from "react-icons/ci";
 import { useSelector } from "react-redux";
-import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 import { Menu } from "@mantine/core";
@@ -16,7 +12,6 @@ import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
 const Page = () => {
-  const navigate = useRouter;
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",

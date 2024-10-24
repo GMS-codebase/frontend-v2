@@ -90,6 +90,8 @@ const Page = () => {
     budgetSummaryAttachmentComment:
       application?.projectFunding.budgetSummaryAttachmentComment || "",
     contributionComment: application?.projectFunding.contributionComment || "",
+    assessmentComment: application?.projectFunding?.assessmentComment || "",
+    budgetLinesComment: application?.budget?.budgetLinesComment,
   });
   const renderComponent = () => {
     switch (currentComponent) {
@@ -106,8 +108,8 @@ const Page = () => {
           <BudgetQuestions
             application={application}
             data={application?.projectFunding}
-            commentData={commentsData}
-            setCommentData={setCommentsData}
+            comments={commentsData}
+            setComments={setCommentsData}
           />
         );
       default:
