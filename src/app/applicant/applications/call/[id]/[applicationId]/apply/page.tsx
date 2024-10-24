@@ -260,7 +260,7 @@ const Page = () => {
             }}
             disabled={!allFieldsFilled || loading}
           >
-            <IoIosSave className="mt-1"/>
+            <IoIosSave className="mt-1" />
             <h1> Save progress</h1>
           </button>
         </div>

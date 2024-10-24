@@ -137,7 +137,7 @@ const MakeDecision = ({
   const addTradeTrainee = () => {
     setFormData((prev: any) => {
       const existingTradeIndex = prev.trades.findIndex(
-        (trade: any) => trade.trade === selectedTrade
+        (trade: any) => trade.trade === selectedTrade,
       );
       if (existingTradeIndex !== -1) {
         const updatedTrades = [...prev.trades];
@@ -287,7 +287,7 @@ const MakeDecision = ({
                             <div className="flex items-center justify-center">
                               {
                                 application?.trades.find(
-                                  (t: any) => t.trade.uuid === entry.trade
+                                  (t: any) => t.trade.uuid === entry.trade,
                                 )?.trade.title
                               }
                             </div>{" "}
