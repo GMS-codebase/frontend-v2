@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import {
-  SolarPen2Bold,
   SolarAddFolderBold,
   SolarShieldWarningBold,
   SolarClockSquareBold,
@@ -16,6 +15,9 @@ import MinutesNegotiation from "@/components/Application/MinutesNegotiation";
 import ProgressCircle from "@/components/CallsList/ProgressBar";
 import FundingQuestions from "@/components/Application/FundingQuestions";
 import BudgetQuestions from "@/components/Application/BudgetQuestions";
+import EvaluationDetails from "@/components/Modals/EvaluationDetails";
+import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
+import { useDisclosure } from "@mantine/hooks";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
@@ -24,25 +26,32 @@ const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
-  const existingApplication = myApplications.find(
+  const application = myApplications.find(
     (app: any) => app?.uuid === callId,
   );
-  const router = useRouter();
+  const [
+    isOpenEvaluationDetails,
+    { open: openEvaluationDetails, close: closeEvaluationDetails },
+  ] = useDisclosure (false);
+  const [
+    isOpenDueDiligencyDetails,
+    { open: openDueDiligencyDetails, close: closeDueDiligencyDetails },
+  ] = useDisclosure(false);
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":
         return (
           <FundingQuestions
-            application={existingApplication}
-            data={existingApplication?.projectFunding}
+            application={application}
+            data={application?.projectFunding}
             goToBudget={() => setCurrentComponent("IndicativeBudget")}
           />
         );
       case "IndicativeBudget":
         return (
           <BudgetQuestions
-            application={existingApplication as any}
-            data={existingApplication?.budget}
+            application={application as any}
+            data={application?.budget}
           />
         );
       default:
@@ -85,7 +94,7 @@ const Page = () => {
                 <div>Title</div>
               </div>
               <p className="text-xl font-bold">
-                {existingApplication?.call?.title}
+                {application?.call?.title}
               </p>
             </div>
             <div className="flex gap-4 items-center ">
@@ -96,7 +105,7 @@ const Page = () => {
                 <div>Appeal Days</div>
               </div>
               <div className="text-xl font-bold">
-                {existingApplication?.call?.appealDays} Days
+                {application?.call?.appealDays} Days
               </div>
             </div>
             <div className="flex gap-4 items-center  ">
@@ -107,7 +116,7 @@ const Page = () => {
                 <div>Status</div>
               </div>
               <div className="text-xl font-bold">
-                {existingApplication?.call?.status}
+                {application?.call?.status}
               </div>
             </div>
           </div>
@@ -123,8 +132,8 @@ const Page = () => {
                 activeColor="#005DE9"
                 bgColor="#fff"
                 baseColor="#EAEAFC"
-                endDate={existingApplication?.call?.endDate}
-                startDate={existingApplication?.call?.startDate}
+                endDate={application?.call?.endDate}
+                startDate={application?.call?.startDate}
               />
               <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4   rounded-3xl items-center justify-center font-semibold gap-2">
                 <div className="flex gap-2 items-center  w-full ">
@@ -134,9 +143,9 @@ const Page = () => {
                   <div>
                     <p>Start date</p>
                     <p>
-                      {existingApplication?.call &&
+                      {application?.call &&
                         format(
-                          existingApplication?.call?.startDate,
+                          application?.call?.startDate,
                           "dd MMMM yyyy",
                         )}
                     </p>
@@ -150,9 +159,9 @@ const Page = () => {
                   <div>
                     <p>End Date</p>
                     <p>
-                      {existingApplication?.call &&
+                      {application?.call &&
                         format(
-                          existingApplication?.call?.endDate,
+                          application?.call?.endDate,
                           "dd MMMM yyyy",
                         )}
                     </p>
@@ -170,12 +179,16 @@ const Page = () => {
             <p>Description</p>
           </div>
           <div className=" font-semibold text-gray-400">
-            {existingApplication?.call?.description}
+            {application?.call?.description}
           </div>
         </div>
       </div>
-      <div className={` bg-white rounded-2xl  w-full  p-5`}>
-        <div className="flex flex-col gap-4 w-full">
+      {application?.currentStage == "CONTRACT_SIGNING" ||
+      application?.currentStage === "FINISH_GRANT_APPROVAL" &&  (
+        <MinutesNegotiation />
+      )}
+      <div className={` w-full  flex gap-6`}>
+        <div className="flex flex-col gap-4 w-full bg-white p-5 rounded-2xl">
           <div className="font-semibold text-2xl">Questions and answers</div>
           <div className="flex font-semibold">
             <div
@@ -201,14 +214,71 @@ const Page = () => {
           </div>
           <div className="mt-4 w-full">{renderComponent()}</div>
         </div>
+        { application?.currentStage === "SUBMISSION" ? (
+          <div></div>
+        ) : (
+          <div className="flex flex-col bg-white min-w-[30%] rounded-2xl p-5 gap-4">
+            <h2 className="font-bold">Decision</h2>
+            <div className="flex flex-col gap-2">
+              <h3 className="font-semibold">Evaluation Stage</h3>
+              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
+                {application?.currentStage === "EVALUATION"
+                  ? "PENDING"
+                  : "APPROVED"}
+              </div>
+                <div className="flex flex-col gap-2 mt-4">
+                  <button
+                    onClick={openEvaluationDetails}
+                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                  >
+                    View details
+                  </button>
+                </div>
+            </div>
+            {application?.currentStage !== "EVALUATION" &&  (
+                <div className="flex flex-col gap-2">
+                  <h3 className="font-bold">Due Diligence Stage</h3>
+                  <div
+                    className={`font-medium  ${
+                      application?.status === "APPROVED" ||
+                      application?.currentStage !== "EVALUATION"
+                        ? "bg-[#4BC500] text-[#4BC500]"
+                        : application?.status === "PENDING"
+                          ? "bg-red-600 text-red-600"
+                          : ""
+                    } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+                  >
+                    {application?.currentStage !== "EVALUATION" &&
+                    application?.currentStage !== "DUE_DILIGENCY"
+                      ? "APPROVED"
+                      : application?.status}
+                  </div>
+                    <div className="flex flex-col gap-2 mt-4">
+                      <button
+                        onClick={openDueDiligencyDetails}
+                        className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                      >
+                        View details
+                      </button>
+                    </div>
+                </div>
+              )}
+          </div>
+        )}
       </div>
-
-      {existingApplication?.currentStage == "CONTRACT_SIGNING" ||
-      existingApplication?.currentStage === "FINISH_GRANT_APPROVAL" ? (
-        <MinutesNegotiation />
-      ) : (
-        <></>
-      )}
+      <EvaluationDetails
+        opened={isOpenEvaluationDetails}
+        close={closeEvaluationDetails}
+        evaluations={application?.evaluationDecisions || []}
+        viewer="applicant"
+      />
+      <DueDiligencyDetails
+        application={application}
+        opened={isOpenDueDiligencyDetails}
+        close={closeDueDiligencyDetails}
+        viewer="applicant"
+        decisions={application?.duediligencyDecisions}
+      />
     </div>
   );
 };

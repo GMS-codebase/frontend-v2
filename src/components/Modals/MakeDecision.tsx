@@ -100,14 +100,7 @@ const MakeDecision = ({
 
       const apiMethod =
         type === "Evaluation" ? authorizedApi.patch : authorizedApi.post;
-      const submitData = {
-        ...formData,
-        trades: formData.trades.map((t) => ({
-          trade: t.trade.uuid,
-          trainees: t.trainees,
-        })),
-      };
-      await apiMethod(endpoint, submitData);
+      await apiMethod(endpoint, formData);
 
       notifications.show({
         message: defaultData
@@ -156,7 +149,7 @@ const MakeDecision = ({
   const removeTradeTrainee = (uuid: string) => {
     setFormData((prev) => ({
       ...prev,
-      trades: prev.trades.filter((entry) => entry.trade.uuid !== uuid),
+      trades: prev.trades.filter((entry) => entry.trade.uuid == uuid),
     }));
   };
 
@@ -295,6 +288,7 @@ const MakeDecision = ({
                             <div className="flex items-center justify-center">
                               {" "}
                               <button
+                              type="button"
                                 onClick={() =>
                                   removeTradeTrainee(entry.trade.uuid)
                                 }
