@@ -516,7 +516,7 @@ const RegisterModal = ({
                           },
                           {
                             value: "SDF_SECRETARIATE",
-                            label: "SDF Secretariat",
+                            label: "SDF Secretariate",
                           },
                           {
                             value: "GRANT_COMMITTEE",
