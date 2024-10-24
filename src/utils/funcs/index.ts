@@ -445,12 +445,16 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 
-
-const validateQuestions = async (data:any,window?: number, subwindow?: number): Promise<string | null> => {
+const validateQuestions = async (
+  data: any,
+  window?: number,
+  subwindow?: number,
+): Promise<string | null> => {
   // Common validation messages
   const commonMessages = {
     title: "The title is required.",
-    activitiesAndOutcomes: "Please provide the activities and expected outcomes.",
+    activitiesAndOutcomes:
+      "Please provide the activities and expected outcomes.",
     readinessExecute: "Indicate the readiness for execution.",
     role: "Specify the role in the project.",
     identificationEmployee: "Employee identification details are mandatory.",
@@ -472,35 +476,52 @@ const validateQuestions = async (data:any,window?: number, subwindow?: number): 
   if (!data.activitiesAndOutcomes) return commonMessages.activitiesAndOutcomes;
   if (!data.readinessExecute) return commonMessages.readinessExecute;
   if (!data.role) return commonMessages.role;
-  if (!data.identificationEmployee) return commonMessages.identificationEmployee;
+  if (!data.identificationEmployee)
+    return commonMessages.identificationEmployee;
   if (!data.sustainability) return commonMessages.sustainability;
-  if(isAssessmentWindow) {
+  if (isAssessmentWindow) {
     if (!data.assessmentProcess) return commonMessages.assessmentProcess;
-    if (!data.assessmentEquipment ) return commonMessages.assessmentEquipment;
-    if (!data.assessmentEquipmentAttachment ) return commonMessages.assessmentEquipmentAttachment;
+    if (!data.assessmentEquipment) return commonMessages.assessmentEquipment;
+    if (!data.assessmentEquipmentAttachment)
+      return commonMessages.assessmentEquipmentAttachment;
   } else {
     if (!data.trainingProcess) return commonMessages.trainingProcess;
-    if (!data.trainingManualAttachment ) return commonMessages.trainingManualAttachment;
-    if (!data.trainingEquipment ) return commonMessages.trainingEquipment;
-    if (!data.trainingEquipmentAttachment ) return commonMessages.trainingEquipmentAttachment;
+    if (!data.trainingManualAttachment)
+      return commonMessages.trainingManualAttachment;
+    if (!data.trainingEquipment) return commonMessages.trainingEquipment;
+    if (!data.trainingEquipmentAttachment)
+      return commonMessages.trainingEquipmentAttachment;
   }
   if (!data.staffs) return commonMessages.staffs;
   if (!data.staffAttachment) return commonMessages.staffAttachment;
-  if (!data.previousFinancialReportAttachment) return commonMessages.previousFinancialReportAttachment;
-  if (!data.contributionFromApplicant) return commonMessages.contributionFromApplicant;
+  if (!data.previousFinancialReportAttachment)
+    return commonMessages.previousFinancialReportAttachment;
+  if (!data.contributionFromApplicant)
+    return commonMessages.contributionFromApplicant;
   return null;
 };
 
-
-
-export const   handleSubmit = async (type: "submit" | "save",setLoading:(type:any)=>void,data:any,application:any,callback?:()=>void) => {
-  const error = type === "save" ? undefined :validateQuestions(data,application.window.title.includes("3") && 3 ,application.subWindow.title.includes("2") && 2)
-  if(error) {
+export const handleSubmit = async (
+  type: "submit" | "save",
+  setLoading: (type: any) => void,
+  data: any,
+  application: any,
+  callback?: () => void,
+) => {
+  const error =
+    type === "save"
+      ? undefined
+      : validateQuestions(
+          data,
+          application.window.title.includes("3") && 3,
+          application.subWindow.title.includes("2") && 2,
+        );
+  if (error) {
     notifications.show({
-      message:error,
-      color:"red"
-    })
-    return 
+      message: error,
+      color: "red",
+    });
+    return;
   }
   setLoading(type);
   const submitData = new FormData();
@@ -512,10 +533,7 @@ export const   handleSubmit = async (type: "submit" | "save",setLoading:(type:an
   if (data.role) submitData.append("role", data.role);
   if (data.institution) submitData.append("institution", data.institution);
   if (data.trainingProcess && data.trainingProcess.length > 0)
-    submitData.append(
-      "trainingProcess",
-      JSON.stringify(data.trainingProcess),
-    );
+    submitData.append("trainingProcess", JSON.stringify(data.trainingProcess));
   if (data.trainingEquipment && data.trainingEquipment.length > 0)
     submitData.append(
       "trainingEquipment",
@@ -587,7 +605,7 @@ export const   handleSubmit = async (type: "submit" | "save",setLoading:(type:an
       data.previousFinancialReportAttachment,
     );
   if (data.MOUsAttachment && data.MOUsAttachment.length > 0) {
-    data.MOUsAttachment.forEach((file:any, index:any) => {
+    data.MOUsAttachment.forEach((file: any, index: any) => {
       submitData.append(`MOUsAttachment[${index}]`, file);
     });
   }
@@ -597,10 +615,7 @@ export const   handleSubmit = async (type: "submit" | "save",setLoading:(type:an
       data.assessmentEquipmentAttachment,
     );
   if (data.budgetSummaryAttachment)
-    submitData.append(
-      "budgetSummaryAttachment",
-      data.budgetSummaryAttachment,
-    );
+    submitData.append("budgetSummaryAttachment", data.budgetSummaryAttachment);
 
   console.log("final data -->", data);
   try {
@@ -613,7 +628,7 @@ export const   handleSubmit = async (type: "submit" | "save",setLoading:(type:an
       color: "blue",
     });
     setLoading(false);
-    callback && callback()
+    callback && callback();
   } catch (err: any) {
     console.log(err);
     notifications.show({

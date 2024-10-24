@@ -75,7 +75,7 @@ export type Comments = {
   sustainabilityComment: string;
   previousFinancialReportComment: string;
   trainingPremisesComment: string;
-  assessmentComment:string;
+  assessmentComment: string;
   contributionFromApplicantComment: string;
   recruitmentTrainerComment: string;
   MOUsAttachmentComment: string;
@@ -85,7 +85,7 @@ export type Comments = {
   assessorsAndFacilitatorsComment: string;
   budgetSummaryAttachmentComment: string;
   contributionComment: string;
-  budgetLinesComment:string
+  budgetLinesComment: string;
 };
 
 export type Call = {

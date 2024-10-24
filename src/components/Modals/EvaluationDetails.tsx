@@ -23,11 +23,14 @@ const EvaluationDetails = ({
   viewer?: string;
   onSaveComment?: (updatedText: string) => void;
 }) => {
-  const [isOpenEditDecision, { open: openEditDecision, close: closeEditDecision }] = useDisclosure(false);
+  const [
+    isOpenEditDecision,
+    { open: openEditDecision, close: closeEditDecision },
+  ] = useDisclosure(false);
   const [selectedDecision, setSelectedDecision] = useState<any>();
   const profile = useSelector((state: any) => state.auth);
   const [text, setText] = useState(
-    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era."
+    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era.",
   );
 
   const handleSave = () => {
@@ -80,13 +83,14 @@ const EvaluationDetails = ({
                           evaluation?.decision === "APPROVED"
                             ? "bg-lime-500 bg-opacity-10 text-green-500"
                             : evaluation?.decision === "REJECTED"
-                            ? "bg-red-500 bg-opacity-10 text-danger"
-                            : ""
+                              ? "bg-red-500 bg-opacity-10 text-danger"
+                              : ""
                         }`}
                       >
                         {evaluation?.decision}
                       </p>
-                      {evaluation?.employee?.user_id === profile?.userProfile?.data?.uuid && (
+                      {evaluation?.employee?.user_id ===
+                        profile?.userProfile?.data?.uuid && (
                         <button
                           className="bg-primary p-2 rounded-full text-white font-bold"
                           onClick={() => {
@@ -99,7 +103,9 @@ const EvaluationDetails = ({
                       )}
                     </div>
                     <div className="p-2 mt-2 w-full">
-                      <label className="block text-sm text-gray-600">Comment:</label>
+                      <label className="block text-sm text-gray-600">
+                        Comment:
+                      </label>
                       <textarea
                         value={evaluation?.comment}
                         disabled

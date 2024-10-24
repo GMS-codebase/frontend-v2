@@ -45,7 +45,7 @@ export const Page4 = ({
     if (!validateStaffInputs()) {
       return;
     }
-    setData("staffs", [...data.staffs,staffInputs]);
+    setData("staffs", [...data.staffs, staffInputs]);
     setStaffInputs({
       number: "",
       position: "",
@@ -79,7 +79,9 @@ export const Page4 = ({
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-2">
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-700">Staff Number</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Staff Number
+              </label>
               <input
                 type="number"
                 placeholder="Number"
@@ -99,7 +101,9 @@ export const Page4 = ({
               )}
             </div>
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-700">Position</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Position
+              </label>
               <input
                 type="text"
                 placeholder="Position"
@@ -119,7 +123,9 @@ export const Page4 = ({
               )}
             </div>
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-700">Qualification</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Qualification
+              </label>
               <input
                 type="text"
                 placeholder="Qualification"
@@ -135,11 +141,15 @@ export const Page4 = ({
                 }`}
               />
               {errors.qualification && (
-                <p className="text-red-500 text-sm mt-1">{errors.qualification}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.qualification}
+                </p>
               )}
             </div>
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-700">Availability</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Availability
+              </label>
               <Select
                 name="available"
                 value={staffInputs.available}
@@ -153,7 +163,7 @@ export const Page4 = ({
                   { value: "available", label: "Available" },
                   { value: "to be hired", label: "To Be Hired" },
                 ]}
-            className="border pt-2 mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="border pt-2 mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Select Availability"
               />
               {errors.available && (
@@ -202,7 +212,7 @@ export const Page4 = ({
       <p className="text-sm text-gray-600">
         Please attach the document containing the cvs of the staffs
       </p>
-      {comments  ? (
+      {comments ? (
         <>
           <button
             onClick={() =>
@@ -257,7 +267,12 @@ export const Page4 = ({
             type="file"
             accept=".pdf"
             style={{ display: "none" }}
-            onChange={(e) => setData("staffAttachment", e.target.files && e.target.files[0] as any)}
+            onChange={(e) =>
+              setData(
+                "staffAttachment",
+                e.target.files && (e.target.files[0] as any),
+              )
+            }
           />
         </div>
       )}

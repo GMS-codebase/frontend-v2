@@ -29,19 +29,21 @@ const BudgetQuestions: React.FC<Props> = ({
     amount: 0,
     budgetLine: "",
   });
-  const [errors, setErrors] = useState({ trade: "", amount: "", budgetLine: "" });
+  const [errors, setErrors] = useState({
+    trade: "",
+    amount: "",
+    budgetLine: "",
+  });
 
-  const handleArrayOfObjectsChange = (
-    inputName: string,
-    value: any,
-  ) => {
+  const handleArrayOfObjectsChange = (inputName: string, value: any) => {
     setData &&
       setData((prev: any) => {
         const newData = [...(prev[inputName] || [])];
         const existingIndex = newData.findIndex(
-          (item: any) => item.trade === value.trade && item.budgetLine === value.budgetLine
+          (item: any) =>
+            item.trade === value.trade && item.budgetLine === value.budgetLine,
         );
-  
+
         if (existingIndex !== -1) {
           // Update the amount of the existing entry
           newData[existingIndex].amount += value.amount;
@@ -49,45 +51,45 @@ const BudgetQuestions: React.FC<Props> = ({
           // Add new entry
           newData.push(value);
         }
-  
+
         return {
           ...prev,
           [inputName]: newData,
         };
       });
   };
-  
+
   const validateBudgetLineInputs = () => {
     const newErrors = {
       trade: budgetLineInputs.trade ? "" : "Trade is required.",
-      amount: budgetLineInputs.amount > 0 ? "" : "Amount must be greater than zero.",
+      amount:
+        budgetLineInputs.amount > 0 ? "" : "Amount must be greater than zero.",
       budgetLine: budgetLineInputs.budgetLine ? "" : "Budget line is required.",
     };
     setErrors(newErrors);
     return !newErrors.trade && !newErrors.amount && !newErrors.budgetLine;
   };
-  
+
   const addBudgetLine = () => {
     if (!validateBudgetLineInputs()) {
       return;
     }
-    handleArrayOfObjectsChange(
-      "budgetLines",
-      budgetLineInputs,
-    );
+    handleArrayOfObjectsChange("budgetLines", budgetLineInputs);
     setBudgetLineInputs({
       trade: "",
       amount: 0,
       budgetLine: "",
     });
   };
-  
 
   const renderBudgetLineInputs = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
         <div>
-          <label htmlFor="budgetLine" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="budgetLine"
+            className="block text-sm font-medium text-gray-700"
+          >
             Budget Line
           </label>
           <Select
@@ -115,10 +117,15 @@ const BudgetQuestions: React.FC<Props> = ({
             className="border pt-2 mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             placeholder="Select Budget Line"
           />
-          {errors.budgetLine && <p className="text-red-600 text-sm">{errors.budgetLine}</p>}
+          {errors.budgetLine && (
+            <p className="text-red-600 text-sm">{errors.budgetLine}</p>
+          )}
         </div>
         <div>
-          <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="amount"
+            className="block text-sm font-medium text-gray-700"
+          >
             Amount
           </label>
           <input
@@ -134,10 +141,15 @@ const BudgetQuestions: React.FC<Props> = ({
             }
             className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           />
-          {errors.amount && <p className="text-red-600 text-sm">{errors.amount}</p>}
+          {errors.amount && (
+            <p className="text-red-600 text-sm">{errors.amount}</p>
+          )}
         </div>
         <div>
-          <label htmlFor="trade" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="trade"
+            className="block text-sm font-medium text-gray-700"
+          >
             Trade
           </label>
           <Select
@@ -154,7 +166,9 @@ const BudgetQuestions: React.FC<Props> = ({
             className="border pt-2 mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             placeholder="Select Trade"
           />
-          {errors.trade && <p className="text-red-600 text-sm">{errors.trade}</p>}
+          {errors.trade && (
+            <p className="text-red-600 text-sm">{errors.trade}</p>
+          )}
         </div>
       </div>
       <div className="flex justify-end">
@@ -221,7 +235,14 @@ const BudgetQuestions: React.FC<Props> = ({
               type="file"
               accept=".pdf"
               style={{ display: "none" }}
-              onChange={(e) => setData((prev:any)=>({...prev,budgetSummaryAttachment:e.target.files ? e.target.files[0] : null }))}
+              onChange={(e) =>
+                setData((prev: any) => ({
+                  ...prev,
+                  budgetSummaryAttachment: e.target.files
+                    ? e.target.files[0]
+                    : null,
+                }))
+              }
             />
           </div>
         )}
@@ -252,8 +273,12 @@ const BudgetQuestions: React.FC<Props> = ({
                     <td className="border p-2">{item.amount || "N/A"}</td>
                     <td className="border p-2">
                       {item?.uuid
-                        ? trades.find((trade: any) => trade.label === item?.trade?.title)?.label
-                        : trades.find((trade: any) => trade.value === item?.trade)?.label}
+                        ? trades.find(
+                            (trade: any) => trade.label === item?.trade?.title,
+                          )?.label
+                        : trades.find(
+                            (trade: any) => trade.value === item?.trade,
+                          )?.label}
                     </td>
                   </tr>
                 ))}
@@ -276,13 +301,19 @@ const BudgetQuestions: React.FC<Props> = ({
             )}
           </div>
         )}
-        { !setData && comments && (
+        {!setData && comments && (
           <div className="mt-2">
             <p>Comment</p>
             <textarea
               value={comments?.budgetSummaryAttachmentComment || ""}
               disabled={!setComments}
-              onChange={(e) => setComments &&  setComments((prev:any)=>({...prev,budgetSummaryAttachmentComment:e.target.value }))}
+              onChange={(e) =>
+                setComments &&
+                setComments((prev: any) => ({
+                  ...prev,
+                  budgetSummaryAttachmentComment: e.target.value,
+                }))
+              }
               className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
               placeholder="Add your comment"
             />
@@ -299,7 +330,10 @@ const BudgetQuestions: React.FC<Props> = ({
         </p>
         <textarea
           value={data?.contribution || ""}
-          onChange={(e) => setData && setData((prev:any)=>({...prev,contribution:e.target.value }))}
+          onChange={(e) =>
+            setData &&
+            setData((prev: any) => ({ ...prev, contribution: e.target.value }))
+          }
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!comments || !setData}
           placeholder="Describe your contribution"
@@ -310,7 +344,13 @@ const BudgetQuestions: React.FC<Props> = ({
             <textarea
               value={comments?.contributionComment || ""}
               disabled={!setComments}
-              onChange={(e) => setComments &&  setComments((prev:any)=>({...prev,contributionComment:e.target.value }))}
+              onChange={(e) =>
+                setComments &&
+                setComments((prev: any) => ({
+                  ...prev,
+                  contributionComment: e.target.value,
+                }))
+              }
               className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
               placeholder="Add your comment"
             />

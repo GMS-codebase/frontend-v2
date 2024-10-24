@@ -26,13 +26,11 @@ const Page = () => {
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
-  const application = myApplications.find(
-    (app: any) => app?.uuid === callId,
-  );
+  const application = myApplications.find((app: any) => app?.uuid === callId);
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
-  ] = useDisclosure (false);
+  ] = useDisclosure(false);
   const [
     isOpenDueDiligencyDetails,
     { open: openDueDiligencyDetails, close: closeDueDiligencyDetails },
@@ -93,9 +91,7 @@ const Page = () => {
                 </span>
                 <div>Title</div>
               </div>
-              <p className="text-xl font-bold">
-                {application?.call?.title}
-              </p>
+              <p className="text-xl font-bold">{application?.call?.title}</p>
             </div>
             <div className="flex gap-4 items-center ">
               <div className="flex gap-2  bg-gray-400 bg-opacity-10 rounded-full px-4  py-2 items-center justify-center font-semibold">
@@ -144,10 +140,7 @@ const Page = () => {
                     <p>Start date</p>
                     <p>
                       {application?.call &&
-                        format(
-                          application?.call?.startDate,
-                          "dd MMMM yyyy",
-                        )}
+                        format(application?.call?.startDate, "dd MMMM yyyy")}
                     </p>
                   </div>
                 </div>
@@ -160,10 +153,7 @@ const Page = () => {
                     <p>End Date</p>
                     <p>
                       {application?.call &&
-                        format(
-                          application?.call?.endDate,
-                          "dd MMMM yyyy",
-                        )}
+                        format(application?.call?.endDate, "dd MMMM yyyy")}
                     </p>
                   </div>
                 </div>
@@ -184,9 +174,9 @@ const Page = () => {
         </div>
       </div>
       {application?.currentStage == "CONTRACT_SIGNING" ||
-      application?.currentStage === "FINISH_GRANT_APPROVAL" &&  (
-        <MinutesNegotiation />
-      )}
+        (application?.currentStage === "FINISH_GRANT_APPROVAL" && (
+          <MinutesNegotiation />
+        ))}
       <div className={` w-full  flex gap-6`}>
         <div className="flex flex-col gap-4 w-full bg-white p-5 rounded-2xl">
           <div className="font-semibold text-2xl">Questions and answers</div>
@@ -214,7 +204,7 @@ const Page = () => {
           </div>
           <div className="mt-4 w-full">{renderComponent()}</div>
         </div>
-        { application?.currentStage === "SUBMISSION" ? (
+        {application?.currentStage === "SUBMISSION" ? (
           <div></div>
         ) : (
           <div className="flex flex-col bg-white min-w-[30%] rounded-2xl p-5 gap-4">
@@ -226,43 +216,43 @@ const Page = () => {
                   ? "PENDING"
                   : "APPROVED"}
               </div>
+              <div className="flex flex-col gap-2 mt-4">
+                <button
+                  onClick={openEvaluationDetails}
+                  className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                >
+                  View details
+                </button>
+              </div>
+            </div>
+            {application?.currentStage !== "EVALUATION" && (
+              <div className="flex flex-col gap-2">
+                <h3 className="font-bold">Due Diligence Stage</h3>
+                <div
+                  className={`font-medium  ${
+                    application?.status === "APPROVED" ||
+                    application?.currentStage !== "EVALUATION"
+                      ? "bg-[#4BC500] text-[#4BC500]"
+                      : application?.status === "PENDING"
+                        ? "bg-red-600 text-red-600"
+                        : ""
+                  } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+                >
+                  {application?.currentStage !== "EVALUATION" &&
+                  application?.currentStage !== "DUE_DILIGENCY"
+                    ? "APPROVED"
+                    : application?.status}
+                </div>
                 <div className="flex flex-col gap-2 mt-4">
                   <button
-                    onClick={openEvaluationDetails}
+                    onClick={openDueDiligencyDetails}
                     className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
                   >
                     View details
                   </button>
                 </div>
-            </div>
-            {application?.currentStage !== "EVALUATION" &&  (
-                <div className="flex flex-col gap-2">
-                  <h3 className="font-bold">Due Diligence Stage</h3>
-                  <div
-                    className={`font-medium  ${
-                      application?.status === "APPROVED" ||
-                      application?.currentStage !== "EVALUATION"
-                        ? "bg-[#4BC500] text-[#4BC500]"
-                        : application?.status === "PENDING"
-                          ? "bg-red-600 text-red-600"
-                          : ""
-                    } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-                  >
-                    {application?.currentStage !== "EVALUATION" &&
-                    application?.currentStage !== "DUE_DILIGENCY"
-                      ? "APPROVED"
-                      : application?.status}
-                  </div>
-                    <div className="flex flex-col gap-2 mt-4">
-                      <button
-                        onClick={openDueDiligencyDetails}
-                        className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                      >
-                        View details
-                      </button>
-                    </div>
-                </div>
-              )}
+              </div>
+            )}
           </div>
         )}
       </div>

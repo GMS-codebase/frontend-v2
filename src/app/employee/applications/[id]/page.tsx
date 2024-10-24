@@ -138,9 +138,7 @@ const Page = () => {
             // showComments={application?.currentStage !== "SUBMISSION"}
             data={application?.budget}
             comments={commentsData}
-            setComments={
-              !properties.isCommented ? setCommentsData : undefined
-            }
+            setComments={!properties.isCommented ? setCommentsData : undefined}
           />
         );
       default:
@@ -152,46 +150,64 @@ const Page = () => {
     // Common validation messages for comments
     const commentMessages = {
       titleComment: "The title comment is required.",
-      activitiesComment: "Please provide comments on the activities and expected outcomes.",
-      readinessExecuteComment: "Comments indicating readiness for execution are required.",
+      activitiesComment:
+        "Please provide comments on the activities and expected outcomes.",
+      readinessExecuteComment:
+        "Comments indicating readiness for execution are required.",
       roleComment: "Specify comments regarding the role in the project.",
-      identificationEmployeeComment: "Comments on employee identification details are mandatory.",
-      trainingProcessComment: "A description of the training process is required in comments.",
-      trainingManualAttachmentComment: "Please upload comments on the training manual attachment.",
-      trainingEquipmentComment: "Comments on training equipment details are required.",
-      trainingEquipmentAttachmentComment: "Attach comments regarding the equipment documentation.",
-      assessmentProcessComment: "A description of the assessment process is required in comments.",
-      assessmentEquipmentComment: "Comments on assessment equipment details are required.",
-      assessmentEquipmentAttachmentComment: "Attach comments regarding the equipment documentation.",
+      identificationEmployeeComment:
+        "Comments on employee identification details are mandatory.",
+      trainingProcessComment:
+        "A description of the training process is required in comments.",
+      trainingManualAttachmentComment:
+        "Please upload comments on the training manual attachment.",
+      trainingEquipmentComment:
+        "Comments on training equipment details are required.",
+      trainingEquipmentAttachmentComment:
+        "Attach comments regarding the equipment documentation.",
+      assessmentProcessComment:
+        "A description of the assessment process is required in comments.",
+      assessmentEquipmentComment:
+        "Comments on assessment equipment details are required.",
+      assessmentEquipmentAttachmentComment:
+        "Attach comments regarding the equipment documentation.",
       staffComment: "Comments regarding staff information are required.",
-      staffAttachmentComment: "Upload comments on the staff-related attachment.",
+      staffAttachmentComment:
+        "Upload comments on the staff-related attachment.",
       sustainabilityComment: "Provide comments on the sustainability plan.",
-      previousFinancialReportComment: "Upload comments on the previous financial report.",
-      contributionFromApplicantComment: "Specify comments regarding the applicant’s contribution.",
+      previousFinancialReportComment:
+        "Upload comments on the previous financial report.",
+      contributionFromApplicantComment:
+        "Specify comments regarding the applicant’s contribution.",
     };
-  
+
     if (!commentsData.titleComment) return commentMessages.titleComment;
-    if (!commentsData.activitiesComment) return commentMessages.activitiesComment;
-    if (!commentsData.readinessExecuteComment) return commentMessages.readinessExecuteComment;
+    if (!commentsData.activitiesComment)
+      return commentMessages.activitiesComment;
+    if (!commentsData.readinessExecuteComment)
+      return commentMessages.readinessExecuteComment;
     if (!commentsData.roleComment) return commentMessages.roleComment;
-    if (!commentsData.identificationEmployeeComment) return commentMessages.identificationEmployeeComment;
-    if (!commentsData.sustainabilityComment) return commentMessages.sustainabilityComment;
+    if (!commentsData.identificationEmployeeComment)
+      return commentMessages.identificationEmployeeComment;
+    if (!commentsData.sustainabilityComment)
+      return commentMessages.sustainabilityComment;
     if (!commentsData.staffComment) return commentMessages.staffComment;
-    if (!commentsData.previousFinancialReportComment) return commentMessages.previousFinancialReportComment;
-    if (!commentsData.contributionFromApplicantComment) return commentMessages.contributionFromApplicantComment;
-  
+    if (!commentsData.previousFinancialReportComment)
+      return commentMessages.previousFinancialReportComment;
+    if (!commentsData.contributionFromApplicantComment)
+      return commentMessages.contributionFromApplicantComment;
+
     return null;
   };
 
   const handleAddComments = async () => {
-
     const validationError = await validateComments();
     if (validationError) {
       notifications.show({
         message: validationError,
         color: "red",
       });
-      return 
+      return;
     }
     setLoading(true);
     try {
