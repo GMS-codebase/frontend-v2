@@ -63,7 +63,6 @@ const Page = () => {
   const handleSubmit = async (type: "submit" | "save") => {
     setLoading(true);
     const submitData = new FormData();
-
     if (data.title) submitData.append("title", data.title);
     if (data.activitiesAndOutcomes)
       submitData.append("activitiesAndOutcomes", data.activitiesAndOutcomes);
@@ -254,13 +253,15 @@ const Page = () => {
         <div className="font-semibold text-2xl flex justify-between items-center">
           <p>Questions and answers</p>
           <button
-            className="bg-primary text-white p-3 rounded-full"
+            type="button"
+            className="bg-primary text-white text-lg p-3 gap-3 cursor-pointer flex rounded-lg"
             onClick={() => {
               handleSubmit("save");
             }}
             disabled={!allFieldsFilled || loading}
           >
-            <IoIosSave />
+            <IoIosSave className="mt-1"/>
+            <h1> Save progress</h1>
           </button>
         </div>
         <div className="flex font-semibold">
