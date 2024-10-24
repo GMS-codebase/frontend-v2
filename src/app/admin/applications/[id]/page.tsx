@@ -89,6 +89,8 @@ const Page = () => {
     budgetSummaryAttachmentComment:
       application?.projectFunding?.budgetSummaryAttachmentComment || "",
     contributionComment: application?.projectFunding?.contributionComment || "",
+    assessmentComment:application?.projectFunding?.assessmentComment || "",
+    budgetLinesComment:application?.budget?.budgetLinesComment
   });
 
   const goToBudget = () => {
@@ -105,7 +107,7 @@ const Page = () => {
             setComments={setCommentsData}
             comments={commentsData}
             goToBudget={goToBudget}
-            showComments={application?.currentStage !== "SUBMISSION"}
+            // showComments={application?.currentStage !== "SUBMISSION"}
           />
         );
       case "IndicativeBudget":
@@ -115,7 +117,7 @@ const Page = () => {
             data={application?.budget}
             comments={commentsData}
             setComments={setCommentsData}
-            showComments={application?.currentStage !== "SUBMISSION"}
+            // showComments={application?.currentStage !== "SUBMISSION"}
           />
         );
       default:
