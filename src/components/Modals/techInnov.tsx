@@ -87,7 +87,7 @@ const CallModal = ({
               <div>
                 {loading
                   ? "Downloading . . ."
-                  : "View application instructions"}
+                  : "Download application instructions"}
               </div>
             </div>
           </div>

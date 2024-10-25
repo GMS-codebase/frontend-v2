@@ -56,12 +56,12 @@ const Page = () => {
                 </span>
                 <div>Edit Call</div>
               </div>
-              <div
+             {call?.status !== "CLOSED" && <div
                 className="flex gap-2 p-2 bg-danger rounded-full text-white px-4  py-2 items-center justify-center"
                 onClick={openCloseCall}
               >
                 <div>Close Call</div>
-              </div>
+              </div>}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2">
