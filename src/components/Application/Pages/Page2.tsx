@@ -2,6 +2,7 @@ import { Comments } from "@/types";
 import { handleDownloadFile } from "@/utils/funcs";
 import { Select } from "@mantine/core";
 import { useState } from "react";
+import { FaDownload } from "react-icons/fa";
 
 export const Page2 = ({
   data,
@@ -9,18 +10,17 @@ export const Page2 = ({
   commentsData,
   trades,
   setCommentsData,
-  errors,
-  setErrors,
   type = "training",
+  application
 }: {
   data: any;
   setData?: any;
   trades: any;
   commentsData?: Comments;
   setCommentsData?: any;
-  errors?: { [key: string]: string };
-  setErrors?: (errors: { [key: string]: string }) => void;
+
   type?: "training" | "assessment";
+  application:any
 }) => {
   const [trainingProcessInputs, setTrainingProcessInputs] = useState({
     trade: "",
@@ -129,11 +129,21 @@ export const Page2 = ({
             id="from"
             type="date"
             placeholder="From Date"
+            min={
+              new Date(
+                typeof application.call.endDate === "string"
+                  ? new Date(application.call.endDate).getTime() + 24 * 60 * 60 * 1000
+                  : application.call.endDate.getTime() + 24 * 60 * 60 * 1000
+              )
+                .toISOString()
+                .split("T")[0]
+            }
             value={trainingProcessInputs.from}
             onChange={(e) =>
               setTrainingProcessInputs((prev) => ({
                 ...prev,
                 from: e.target.value,
+                to:""
               }))
             }
             className="mt-2 px-2 py-2.5 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
@@ -149,7 +159,14 @@ export const Page2 = ({
           <input
             id="to"
             type="date"
-            placeholder="To Date"
+            placeholder="To Date" 
+            min={
+              trainingProcessInputs.from
+                ? new Date(trainingProcessInputs.from)
+                    .toISOString()
+                    .split("T")[0]
+                : ""
+            }
             value={trainingProcessInputs.to}
             onChange={(e) =>
               setTrainingProcessInputs((prev) => ({
@@ -186,7 +203,7 @@ export const Page2 = ({
       <div className="flex justify-end">
         <button
           onClick={addTrainingProcess}
-          className="mt-2 px-2 py-2.5 bg-primary text-white px-20 rounded-2xl"
+          className="mt-2  py-2.5 bg-primary text-white px-20 rounded-2xl"
         >
           Add
         </button>
@@ -251,6 +268,7 @@ export const Page2 = ({
             id="from"
             type="date"
             placeholder="From Date"
+            min={new Date(application.call.endDate).getTime()}
             value={trainingProcessInputs.from}
             onChange={(e) =>
               setTrainingProcessInputs((prev) => ({
@@ -272,6 +290,7 @@ export const Page2 = ({
             id="to"
             type="date"
             placeholder="To Date"
+
             value={trainingProcessInputs.to}
             onChange={(e) =>
               setTrainingProcessInputs((prev) => ({
@@ -323,11 +342,6 @@ export const Page2 = ({
         value={commentsData?.[field as keyof Comments] || ""}
         onChange={(e) => {
           setCommentsData?.({ ...commentsData, [field]: e.target.value });
-          if (errors?.[field]) {
-            const newErrors = { ...errors };
-            delete newErrors[field];
-            setErrors?.(newErrors);
-          }
         }}
         className="mt-2 px-2 py-2.5 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
         disabled={!setCommentsData}
@@ -394,7 +408,13 @@ export const Page2 = ({
       </div>
       {type !== "assessment" && (
         <div>
+          <div className="flex items-center justify-between py-2">
           <h3 className="text-lg font-bold">Training Manual</h3>
+          <div className=" text-white bg-primary rounded-full px-10 flex items-center gap-2 py-2 cursor-pointer">
+            <FaDownload />
+            <p>Download Template</p>
+          </div>
+        </div>
           <p className="text-sm text-gray-600">
             Please attach a detailed description of the content (training
             manual) of the proposed training.

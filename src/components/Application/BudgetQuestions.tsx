@@ -252,7 +252,7 @@ const BudgetQuestions: React.FC<Props> = ({
           <h3 className="text-lg font-bold">Budget Line</h3>
           <div className=" text-white bg-primary rounded-full px-10 flex items-center gap-2 py-2 cursor-pointer">
             <FaDownload />
-            <p>Template</p>
+            <p>Download Template</p>
           </div>
         </div>
         {!comments && setData && renderBudgetLineInputs()}

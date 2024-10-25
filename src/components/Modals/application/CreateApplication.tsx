@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
 import { Modal, MultiSelect, Select } from "@mantine/core";
@@ -7,6 +7,7 @@ import { Folder2, Subtitles } from "solar-icon-set";
 import { IoMdClose } from "react-icons/io";
 import { SolarSuitcaseLinear } from "@/components/core/icons";
 import { useRouter } from "next/navigation";
+import { getMyApplications } from "@/utils/funcs";
 
 const CreateApplication = ({
   isOpenCreatingApplication,
@@ -26,6 +27,7 @@ const CreateApplication = ({
     sectors: [] as string[],
     trades: [] as string[],
   });
+  const dispatch = useDispatch()
 
   const [errors, setErrors] = useState({
     window: "",
@@ -100,7 +102,8 @@ const CreateApplication = ({
         message: "Application created successfully!",
         color: "green",
       });
-      router.push(
+      await getMyApplications(dispatch)
+      router.push( 
         `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`,
       );
       closeCreatingApplication();
@@ -163,8 +166,8 @@ const CreateApplication = ({
         )
         .filter((sector: any) => formData?.sectors?.includes(sector.uuid))
         .flatMap((sector: any) =>
-          sector?.trades?.map((trade: any) => ({
-            label: trade.trade.title,
+          sector?.trades.filter((trade:any)=>trade.theWindow.uuid === formData.window )?.map((trade: any) => ({
+            label: trade.trade.title + "(" + sector.name +")",
             value: trade.uuid,
           })),
         )
