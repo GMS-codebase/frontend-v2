@@ -27,7 +27,7 @@ const CreateApplication = ({
     sectors: [] as string[],
     trades: [] as string[],
   });
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const [errors, setErrors] = useState({
     window: "",
@@ -102,8 +102,8 @@ const CreateApplication = ({
         message: "Application created successfully!",
         color: "green",
       });
-      await getMyApplications(dispatch)
-      router.push( 
+      await getMyApplications(dispatch);
+      router.push(
         `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`,
       );
       closeCreatingApplication();
@@ -166,10 +166,12 @@ const CreateApplication = ({
         )
         .filter((sector: any) => formData?.sectors?.includes(sector.uuid))
         .flatMap((sector: any) =>
-          sector?.trades.filter((trade:any)=>trade.theWindow.uuid === formData.window )?.map((trade: any) => ({
-            label: trade.trade.title + "(" + sector.name +")",
-            value: trade.uuid,
-          })),
+          sector?.trades
+            .filter((trade: any) => trade.theWindow.uuid === formData.window)
+            ?.map((trade: any) => ({
+              label: trade.trade.title + "(" + sector.name + ")",
+              value: trade.uuid,
+            })),
         )
         .map((trade: any) => [trade.value, trade]),
     ).values(),
