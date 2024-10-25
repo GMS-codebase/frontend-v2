@@ -120,7 +120,7 @@ const Page = () => {
               <p>
                 {loading
                   ? "Downloading . . ."
-                  : "View application instructions"}
+                  : "Download application instructions"}
               </p>
             </div>
           </div>
