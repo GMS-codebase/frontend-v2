@@ -414,7 +414,8 @@ const CompleteProfile = ({
                     htmlFor="fileUpload"
                     className="block text-xs font-bold text-gray-700"
                   >
-                    Attachment (Recognized Registration Certificate/ Accreditation)
+                    Attachment (Recognized Registration Certificate/
+                    Accreditation)
                   </label>
                   <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ">
                     <label

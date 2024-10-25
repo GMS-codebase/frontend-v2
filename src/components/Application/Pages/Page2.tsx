@@ -11,7 +11,7 @@ export const Page2 = ({
   trades,
   setCommentsData,
   type = "training",
-  application
+  application,
 }: {
   data: any;
   setData?: any;
@@ -20,7 +20,7 @@ export const Page2 = ({
   setCommentsData?: any;
 
   type?: "training" | "assessment";
-  application:any
+  application: any;
 }) => {
   const [trainingProcessInputs, setTrainingProcessInputs] = useState({
     trade: "",
@@ -132,8 +132,9 @@ export const Page2 = ({
             min={
               new Date(
                 typeof application.call.endDate === "string"
-                  ? new Date(application.call.endDate).getTime() + 24 * 60 * 60 * 1000
-                  : application.call.endDate.getTime() + 24 * 60 * 60 * 1000
+                  ? new Date(application.call.endDate).getTime() +
+                    24 * 60 * 60 * 1000
+                  : application.call.endDate.getTime() + 24 * 60 * 60 * 1000,
               )
                 .toISOString()
                 .split("T")[0]
@@ -143,7 +144,7 @@ export const Page2 = ({
               setTrainingProcessInputs((prev) => ({
                 ...prev,
                 from: e.target.value,
-                to:""
+                to: "",
               }))
             }
             className="mt-2 px-2 py-2.5 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
@@ -159,7 +160,7 @@ export const Page2 = ({
           <input
             id="to"
             type="date"
-            placeholder="To Date" 
+            placeholder="To Date"
             min={
               trainingProcessInputs.from
                 ? new Date(trainingProcessInputs.from)
@@ -290,7 +291,6 @@ export const Page2 = ({
             id="to"
             type="date"
             placeholder="To Date"
-
             value={trainingProcessInputs.to}
             onChange={(e) =>
               setTrainingProcessInputs((prev) => ({
@@ -409,12 +409,12 @@ export const Page2 = ({
       {type !== "assessment" && (
         <div>
           <div className="flex items-center justify-between py-2">
-          <h3 className="text-lg font-bold">Training Manual</h3>
-          <div className=" text-white bg-primary rounded-full px-10 flex items-center gap-2 py-2 cursor-pointer">
-            <FaDownload />
-            <p>Download Template</p>
+            <h3 className="text-lg font-bold">Training Manual</h3>
+            <div className=" text-white bg-primary rounded-full px-10 flex items-center gap-2 py-2 cursor-pointer">
+              <FaDownload />
+              <p>Download Template</p>
+            </div>
           </div>
-        </div>
           <p className="text-sm text-gray-600">
             Please attach a detailed description of the content (training
             manual) of the proposed training.
