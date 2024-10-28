@@ -48,7 +48,7 @@ const MakeFirstDueDiligencyDecision = ({
     comment: "",
     decision: "",
     attachment: null,
-    traineeNumber:""
+    traineeNumber: "",
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -241,16 +241,16 @@ const MakeFirstDueDiligencyDecision = ({
                       Accepted Trainee Number
                     </label>
                     <div className="flex-grow flex items-center gap-2 p-2 bg-gray2">
-                        <BsPerson className="w-5 h-5" />
-                        <input
-                          type="number"
-                          name="traineeNumber"
-                          value={formData.traineeNumber}
-                          placeholder="Number of trainees"
-                          className="outline-none flex-grow  bg-transparent"
-                          onChange={handleChange}
-                        />
-                      </div>
+                      <BsPerson className="w-5 h-5" />
+                      <input
+                        type="number"
+                        name="traineeNumber"
+                        value={formData.traineeNumber}
+                        placeholder="Number of trainees"
+                        className="outline-none flex-grow  bg-transparent"
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
