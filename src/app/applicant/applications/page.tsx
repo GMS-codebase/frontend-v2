@@ -12,6 +12,26 @@ import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
 const Page = () => {
+  const getApplicationStatus = (application: any) => {
+    if (
+      application?.currentStage === "EVALUATION" &&
+      !application?.call?.closedEvaluation
+    ) {
+      return "PENDING";
+    } else if (
+      application?.currentStage === "DUE_DILIGENCY" &&
+      !application?.call?.closedDueDiligency
+    ) {
+      return "PENDING";
+    } else if (
+      application?.currentStage === "GRANT_COMMITTEE" &&
+      !application?.call?.closedGrantCommittee
+    ) {
+      return "PENDING";
+    } else {
+      return application?.currentStage;
+    }
+  };
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
@@ -45,7 +65,9 @@ const Page = () => {
       accessorKey: "currentStage",
       header: "Current Stage",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.currentStage || "-"}</div>
+        <div className="truncate">
+          {getApplicationStatus(row.original) || "-"}
+        </div>
       ),
     },
     {
