@@ -512,15 +512,15 @@ const RegisterModal = ({
                         data={[
                           {
                             value: "NORMAL_EMPLOYEE",
-                            label: "normal-employee",
+                            label: "Normal Employee",
                           },
                           {
                             value: "SDF_SECRETARIATE",
-                            label: "SDF-secretariat",
+                            label: "SDF Secretariate",
                           },
                           {
                             value: "GRANT_COMMITTEE",
-                            label: "grand-committee",
+                            label: "Grand Committee",
                           },
                         ]}
                         placeholder="Select your employee-role"
