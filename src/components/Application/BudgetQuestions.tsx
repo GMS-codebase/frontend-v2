@@ -20,17 +20,11 @@ const BudgetQuestions: React.FC<Props> = ({
   setComments,
   application,
 }) => {
-  const trades: any = application?.trades?.map((trade: any) => ({
-    label: trade.trade.title,
-    value: trade.trade.title,
-  }));
   const [budgetLineInputs, setBudgetLineInputs] = useState({
-    trade: "",
     amount: 0,
     budgetLine: "",
   });
   const [errors, setErrors] = useState({
-    trade: "",
     amount: "",
     budgetLine: "",
   });
@@ -41,17 +35,13 @@ const BudgetQuestions: React.FC<Props> = ({
         const newData = [...(prev[inputName] || [])];
         const existingIndex = newData.findIndex(
           (item: any) =>
-            item.trade === value.trade && item.budgetLine === value.budgetLine,
+            item.budgetLine === value.budgetLine,
         );
-
         if (existingIndex !== -1) {
-          // Update the amount of the existing entry
           newData[existingIndex].amount += value.amount;
         } else {
-          // Add new entry
           newData.push(value);
         }
-
         return {
           ...prev,
           [inputName]: newData,
@@ -61,13 +51,12 @@ const BudgetQuestions: React.FC<Props> = ({
 
   const validateBudgetLineInputs = () => {
     const newErrors = {
-      trade: budgetLineInputs.trade ? "" : "Trade is required.",
       amount:
         budgetLineInputs.amount > 0 ? "" : "Amount must be greater than zero.",
       budgetLine: budgetLineInputs.budgetLine ? "" : "Budget line is required.",
     };
     setErrors(newErrors);
-    return !newErrors.trade && !newErrors.amount && !newErrors.budgetLine;
+    return  !newErrors.amount && !newErrors.budgetLine;
   };
 
   const addBudgetLine = () => {
@@ -76,7 +65,6 @@ const BudgetQuestions: React.FC<Props> = ({
     }
     handleArrayOfObjectsChange("budgetLines", budgetLineInputs);
     setBudgetLineInputs({
-      trade: "",
       amount: 0,
       budgetLine: "",
     });
@@ -143,31 +131,6 @@ const BudgetQuestions: React.FC<Props> = ({
           />
           {errors.amount && (
             <p className="text-red-600 text-sm">{errors.amount}</p>
-          )}
-        </div>
-        <div>
-          <label
-            htmlFor="trade"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Trade
-          </label>
-          <Select
-            id="trade"
-            name="trade"
-            value={budgetLineInputs.trade ?? ""}
-            onChange={(selectedOption: any) =>
-              setBudgetLineInputs((prev) => ({
-                ...prev,
-                trade: selectedOption || "",
-              }))
-            }
-            data={trades}
-            className="border pt-2 mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Select Trade"
-          />
-          {errors.trade && (
-            <p className="text-red-600 text-sm">{errors.trade}</p>
           )}
         </div>
       </div>
@@ -263,7 +226,6 @@ const BudgetQuestions: React.FC<Props> = ({
                 <tr className="bg-gray-100">
                   <th className="border p-2">Budget Line</th>
                   <th className="border p-2">Amount</th>
-                  <th className="border p-2">Trade</th>
                 </tr>
               </thead>
               <tbody>
@@ -271,15 +233,6 @@ const BudgetQuestions: React.FC<Props> = ({
                   <tr key={index}>
                     <td className="border p-2">{item.budgetLine || "N/A"}</td>
                     <td className="border p-2">{item.amount || "N/A"}</td>
-                    <td className="border p-2">
-                      {item?.uuid
-                        ? trades.find(
-                            (trade: any) => trade.label === item?.trade?.title,
-                          )?.label
-                        : trades.find(
-                            (trade: any) => trade.value === item?.trade,
-                          )?.label}
-                    </td>
                   </tr>
                 ))}
               </tbody>

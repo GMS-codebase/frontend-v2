@@ -27,7 +27,7 @@ function Page() {
   );
   const sortedCalls = calls
     ? [...calls]
-        .filter((call: any) => new Date(call.endDate) > new Date())
+        .filter((call: any) => new Date(call.endDate) > new Date() && call.status === "OPEN")
         .sort(
           (a: any, b: any) =>
             new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
