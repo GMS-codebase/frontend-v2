@@ -29,6 +29,10 @@ const MakeDecision = ({
   firstEvaluationModal,
   application,
 }: MakeDecisionProps) => {
+  const [prompt, setPrompt] = useState({
+    opened: false,
+    trade: "",
+  });
   const [formData, setFormData] = useState({
     decision: "",
     comment: "",

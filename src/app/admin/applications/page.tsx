@@ -84,6 +84,7 @@ const Page = () => {
         .includes(searchQuery.toLowerCase()),
     ) ?? [];
 
+  console.log("filteredApplications", filteredApplications);
   const handleScroll = (direction: "left" | "right") => {
     if (filtersContainerRef.current) {
       const scrollAmount = 100;

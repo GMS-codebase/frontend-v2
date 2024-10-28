@@ -42,6 +42,10 @@ const MakeGrantCommitteeDecision = ({
   onMakeDecision,
   application,
 }: Props) => {
+  const [prompt, setPrompt] = useState({
+    opened: false,
+    trade: "",
+  });
   const dispatch = useDispatch();
   const [formData, setFormData] = useState<FormData>({
     decision: "",
@@ -112,10 +116,6 @@ const MakeGrantCommitteeDecision = ({
     }
     if (!formData.description) {
       newErrors.description = "Description is required.";
-      isValid = false;
-    }
-    if (!formData.attachment) {
-      newErrors.attachment = "Attachment is required.";
       isValid = false;
     }
 
@@ -253,7 +253,7 @@ const MakeGrantCommitteeDecision = ({
                 htmlFor="fileUpload"
                 className="block text-xs font-bold text-gray-700"
               >
-                Attachment
+                Attachment (Optional)
               </label>
               <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <label
