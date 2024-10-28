@@ -53,7 +53,7 @@ const MakeGrantCommitteeDecision = ({
   const [loading, setLoading] = useState(false);
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -70,7 +70,7 @@ const MakeGrantCommitteeDecision = ({
 
   const handleSelectChange = (
     name: keyof FormData,
-    value: FormData[keyof FormData]
+    value: FormData[keyof FormData],
   ) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -140,7 +140,7 @@ const MakeGrantCommitteeDecision = ({
     try {
       await authorizedApi.post(
         `/application/grant-committee/decision/${application.uuid}`,
-        formDataToSubmit
+        formDataToSubmit,
       );
       notifications.show({
         message: "Application filled successfully!",

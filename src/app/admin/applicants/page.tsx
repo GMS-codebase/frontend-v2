@@ -73,9 +73,10 @@ const Page = () => {
     },
   ];
   const applicants = useSelector((state: any) => state.applicants);
-  console.log(applicants)
+  console.log(applicants);
   const ApplicantsWithProfile = applicants?.applicants?.filter(
-    (applicant: any) => applicant.has_completed_profile || applicant.applications.length > 0
+    (applicant: any) =>
+      applicant.has_completed_profile || applicant.applications.length > 0,
   );
 
   const filteredApplicants = ApplicantsWithProfile?.filter(
@@ -85,7 +86,7 @@ const Page = () => {
       applicant.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       applicant.businesses[0]?.businessName
         ?.toLowerCase()
-        .includes(searchTerm.toLowerCase())
+        .includes(searchTerm.toLowerCase()),
   );
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
