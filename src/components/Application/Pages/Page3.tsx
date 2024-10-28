@@ -6,28 +6,25 @@ import { handleDownloadFile } from "@/utils/funcs";
 export function Page3({
   data,
   setData,
-  trades,
   commentsData,
   setCommentsData,
   type = "training", // Default to "training"
 }: {
   data: any;
   setData?: any;
-  trades: any;
   commentsData?: Comments;
   setCommentsData?: any;
   type?: "training" | "assessment"; // Type parameter
 }) {
   const [trainingEquipments, setTrainingEquipments] = useState({
-    trade: "",
     nameOfEquipment: "",
     numberOfEquipment: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
 
   const validateTrainingEquipments = () => {
-    const { trade, nameOfEquipment, numberOfEquipment } = trainingEquipments;
-    if (!trade || !nameOfEquipment || !numberOfEquipment) {
+    const { nameOfEquipment, numberOfEquipment } = trainingEquipments;
+    if (!nameOfEquipment || !numberOfEquipment) {
       setErrorMessage("Please fill in all fields before adding.");
       return false;
     }
@@ -51,7 +48,6 @@ export function Page3({
     );
 
     setTrainingEquipments({
-      trade: "",
       nameOfEquipment: "",
       numberOfEquipment: "",
     });
@@ -102,28 +98,6 @@ export function Page3({
             className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           />
         </div>
-        <div>
-          <label
-            htmlFor="trade"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Trade
-          </label>
-          <Select
-            id="trade"
-            name="trade"
-            value={trainingEquipments.trade}
-            onChange={(selectedOption) =>
-              setTrainingEquipments((prev) => ({
-                ...prev,
-                trade: selectedOption || "",
-              }))
-            }
-            data={trades}
-            className="border pt-2 mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Select Trade"
-          />
-        </div>
       </div>
       {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
       <div className="flex justify-end">
@@ -171,7 +145,6 @@ export function Page3({
                 <tr className="bg-gray-100">
                   <th className="border p-2">Name</th>
                   <th className="border p-2">Number of Equipment</th>
-                  <th className="border p-2">Selected Trade</th>
                 </tr>
               </thead>
               <tbody>
@@ -182,15 +155,6 @@ export function Page3({
                   <tr key={index}>
                     <td className="border p-2">{item.nameOfEquipment}</td>
                     <td className="border p-2">{item.numberOfEquipment}</td>
-                    <td className="border p-2">
-                      {item?.uuid
-                        ? trades.find(
-                            (trade: any) => trade.value === item?.trade?.title,
-                          )?.value
-                        : trades.find(
-                            (trade: any) => trade.value === item?.trade,
-                          )?.label}
-                    </td>
                   </tr>
                 ))}
               </tbody>
