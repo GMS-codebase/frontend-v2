@@ -80,7 +80,7 @@ const Page = () => {
               )}
             </div>
           </div>
-          <div className="flex  w-4/5  font-semibold ">
+          <div className="flex    font-semibold ">
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Business Name</div>
@@ -98,7 +98,7 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <div className="flex  w-4/5  font-semibold ">
+          <div className="flex    font-semibold ">
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Phone</div>
@@ -112,7 +112,7 @@ const Page = () => {
               <div className="mt-2 ml-4">{applicant?.email}</div>
             </div>
           </div>
-          <div className="flex  w-4/5  font-semibold ">
+          <div className="flex    font-semibold ">
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>TIN</div>
@@ -130,7 +130,7 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <div className="flex  w-4/5  font-semibold ">
+          <div className="flex    font-semibold ">
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>PO Box</div>
@@ -146,7 +146,7 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <div className="flex  w-4/5  font-semibold ">
+          <div className="flex    font-semibold ">
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Bank Account</div>
@@ -162,7 +162,7 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <div className="flex  w-4/5  font-semibold ">
+          <div className="flex    font-semibold items-start ">
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Number of Employee</div>
@@ -171,14 +171,14 @@ const Page = () => {
                 {applicant?.businesses[0]?.employeeNumber}
               </div>
             </div>
-            <div className="flex w-1/2">
-              <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
+            <div className="flex w-1/2 items-start">
+              <div className="w-fit  flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Address</div>
               </div>
               <div className="mt-2 ml-4">{applicant?.address} </div>
             </div>
           </div>
-          <div className="flex  w-4/5  font-semibold ">
+          <div className="flex    font-semibold ">
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Business Name</div>

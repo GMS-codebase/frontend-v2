@@ -27,7 +27,7 @@ const Page = () => {
   const { id, applicationId } = useParams();
   const [loading, setLoading] = useState<any>();
   const [currentStep, setCurrentStep] = useState(0);
-  const { applications, loading: applicationsLoading } = useSelector(
+  const { applications,myApplications, loading: applicationsLoading } = useSelector(
     (state: any) => state.applications,
   );
   const application = applications.find((ap: any) => ap.uuid == applicationId);
@@ -174,6 +174,8 @@ const Page = () => {
   };
 
   if (applicationsLoading || !application) {
+    console.log(applications)
+    console.log(myApplications)
     return (
       <div className="w-full h-full flex items-center justify-center">
         <p>Loading...</p>
@@ -181,7 +183,8 @@ const Page = () => {
     );
   }
 
-  console.log(application);
+  console.log(applications)
+  console.log(myApplications)
 
   return (
     <div>

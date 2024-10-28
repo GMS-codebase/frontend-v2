@@ -28,10 +28,17 @@ const Page = () => {
       ),
     },
     {
-      accessorKey: "window",
-      header: "Window",
+      accessorKey: "sector",
+      header: "Sector",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.window.title}</div>
+        <div className="truncate">{row.original.sectors[0].name}</div>
+      ),
+    },
+    {
+      accessorKey: "trade",
+      header: "Trade",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.trades[0].trade.title}</div>
       ),
     },
     {
@@ -84,6 +91,7 @@ const Page = () => {
   ];
   const myApplications = useSelector((state: any) => state.applications);
   const calls = useSelector((state: any) => state.calls);
+  console.log(myApplications)
 
   return (
     <div className="w-full  flex flex-col gap-4">
