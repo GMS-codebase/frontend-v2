@@ -91,7 +91,7 @@ const Page = () => {
   ];
   const myApplications = useSelector((state: any) => state.applications);
   const calls = useSelector((state: any) => state.calls);
-  console.log(myApplications)
+  console.log(myApplications);
 
   return (
     <div className="w-full  flex flex-col gap-4">

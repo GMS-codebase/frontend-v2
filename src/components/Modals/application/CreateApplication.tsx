@@ -276,10 +276,13 @@ const CreateApplication = ({
                 name="sectors"
                 value={formData.sectors}
                 onChange={(value) =>
-                  setFormData((prevData) => ({
-                    ...prevData,
-                    sectors: value ,
-                  }) as any)
+                  setFormData(
+                    (prevData) =>
+                      ({
+                        ...prevData,
+                        sectors: value,
+                      }) as any,
+                  )
                 }
                 data={sectorOptions}
                 placeholder="Select or type in a sector"
@@ -305,10 +308,13 @@ const CreateApplication = ({
                 name="trades"
                 value={formData.trades}
                 onChange={(value) =>
-                  setFormData((prevData) => ({
-                    ...prevData,
-                    trades: value,
-                  }) as any)
+                  setFormData(
+                    (prevData) =>
+                      ({
+                        ...prevData,
+                        trades: value,
+                      }) as any,
+                  )
                 }
                 data={tradesOptions as any}
                 placeholder="Select or type in a trade"

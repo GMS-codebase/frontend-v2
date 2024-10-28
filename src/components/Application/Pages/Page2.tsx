@@ -29,8 +29,7 @@ export const Page2 = ({
   const [addTrainingError, setAddTrainingError] = useState("");
 
   const validateTrainingProcessInputs = (): string | null => {
-    const {moduleName, from, to, numberOfHours } =
-      trainingProcessInputs;
+    const { moduleName, from, to, numberOfHours } = trainingProcessInputs;
     let missingFields = [];
     if (!moduleName) missingFields.push("Module Name");
     if (!from) missingFields.push("From Date");
@@ -211,9 +210,7 @@ export const Page2 = ({
             ? "Please fill in the details for the assessment process."
             : "Keep in mind that the training period for window 1 should range from a few days to 6 months. Estimate the duration based on the content/modules to be offered."}
         </p>
-        {setData &&
-          !commentsData &&
-          (renderInputs())}
+        {setData && !commentsData && renderInputs()}
         {data?.trainingProcess?.length > 0 && (
           <div className="w-full overflow-x-auto">
             <table className="min-w-full w-fit mt-4 border-collapse border border-gray-200">

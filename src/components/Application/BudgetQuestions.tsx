@@ -34,8 +34,7 @@ const BudgetQuestions: React.FC<Props> = ({
       setData((prev: any) => {
         const newData = [...(prev[inputName] || [])];
         const existingIndex = newData.findIndex(
-          (item: any) =>
-            item.budgetLine === value.budgetLine,
+          (item: any) => item.budgetLine === value.budgetLine,
         );
         if (existingIndex !== -1) {
           newData[existingIndex].amount += value.amount;
@@ -56,7 +55,7 @@ const BudgetQuestions: React.FC<Props> = ({
       budgetLine: budgetLineInputs.budgetLine ? "" : "Budget line is required.",
     };
     setErrors(newErrors);
-    return  !newErrors.amount && !newErrors.budgetLine;
+    return !newErrors.amount && !newErrors.budgetLine;
   };
 
   const addBudgetLine = () => {
