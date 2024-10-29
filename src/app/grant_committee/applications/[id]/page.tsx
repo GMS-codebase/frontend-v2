@@ -421,7 +421,7 @@ const Page = () => {
           )}
         </div>
       </div>
-            <DueDiligencyDetails
+      <DueDiligencyDetails
         application={application}
         opened={isOpenDueDiligencyDetails}
         close={closeDueDiligencyDetails}
