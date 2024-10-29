@@ -96,6 +96,14 @@ const Page = () => {
       setLoading(false);
     }
   };
+
+  if (calls.loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p>Loading</p>
+      </div>
+    );
+  }
   return (
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">
@@ -161,23 +169,23 @@ const Page = () => {
                   endDate={call?.endDate}
                   startDate={call?.startDate}
                 />
-                <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4   rounded-3xl items-center justify-center font-semibold gap-2">
-                  <div className="flex gap-2 items-center  w-full ">
+                <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-5 py-5   rounded-3xl items-center justify-center gap-2">
+                  <div className="flex gap-2 items-start  w-full ">
                     <span className="text-[#005DE9]">
-                      <SolarCalendarBold />
+                      <SolarCalendarBold className="w-7 h-7" />
                     </span>
                     <div>
-                      <p>Start date</p>
+                      <p className="font-semibold">Start date</p>
                       <p>{call && format(call?.startDate, "dd MMMM yyyy")}</p>
                     </div>
                   </div>
 
-                  <div className="flex flex-row gap-2 items-center  w-full ">
+                  <div className="flex flex-row gap-2 items-start  w-full ">
                     <span className="text-[#005DE9]">
-                      <SolarCalendarBold />
+                      <SolarCalendarBold className="w-7 h-7" />
                     </span>
                     <div>
-                      <p>End Date</p>
+                      <p className="font-semibold">End Date</p>
                       <p>{call && format(call?.endDate, "dd MMMM yyyy")}</p>
                     </div>
                   </div>

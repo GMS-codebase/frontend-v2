@@ -1,17 +1,11 @@
 import { ApplicationQuestions } from "@/types/application";
-import { Select } from "@mantine/core";
 import React, { useState, useEffect, ChangeEvent } from "react";
-import { useSelector } from "react-redux";
-import {
-  TrainingProgress,
-  TrainingEquipments,
-  Staff,
-  LastPageQuestions,
-  FirstPageQuestions,
-} from "./FundingPages";
-import { useParams } from "next/navigation";
-import { authorizedApi } from "@/utils/api";
 import { Comments } from "@/types";
+import { Page1 } from "./Pages/Page1";
+import { Page2 } from "./Pages/Page2";
+import { Page3 } from "./Pages/Page3";
+import { Page4 } from "./Pages/Page4";
+import { Page5 } from "./Pages/Page5";
 
 interface FundingQuestionsProps {
   data: ApplicationQuestions;
@@ -32,97 +26,64 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   application,
   showComments,
 }) => {
-  const { applicationId, id } = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [currentStep, setCurrentStep] = useState(0);
-  // useEffect(() => {
-  //   if (currentStep === steps.length - 1 && goToBudget) {
-  //     goToBudget();
-  //   }
-  // }, [currentStep, goToBudget]);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
   const trades: any = application?.trades.map((trade: any) => ({
     label: trade.trade.title,
     value: trade.trade.title,
   }));
-  const handleInputChange = (inputName: string, value: any) => {
-    setData &&
-      setData((prev: any) => ({
-        ...prev,
-        [inputName]: value,
-      }));
+
+  const handleChange = (input: string, value: any) => {
+    errors[input] && setErrors((prev: any) => ({ ...prev, [input]: null }));
+    setData && setData((prev: any) => ({ ...prev, [input]: value }));
   };
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
-    const file = e.target.files?.[0];
-    if (file && setData) {
-      setFiles((prev) => ({ ...prev, [key]: file }));
-      setData((prev: any) => ({ ...prev, [key]: file }));
-    }
-  };
-  const handleArrayOfObjectsChange = (
-    inputName: string,
-    value: any,
-    index: number,
-  ) => {
-    setData &&
-      setData((prev: any) => {
-        const newData = [...(prev[inputName] || [])];
-        newData[index] = value;
-        return {
-          ...prev,
-          [inputName]: newData,
-        };
-      });
-  };
+
   const steps = [
-    <FirstPageQuestions
+    <Page1
       key="first"
       data={data}
-      {...(setData && { handleInputChange })}
-      commentData={comments}
-      setCommentData={setComments}
-      showComments={showComments}
+      {...(setData && { setData: handleChange })}
+      comments={comments}
+      setComments={setComments}
     />,
-    <TrainingProgress
+    <Page2
       key="progress"
+      type={
+        application?.window?.title?.includes("3") &&
+        application?.subWindow?.title?.includes("2")
+          ? "assessment"
+          : "training"
+      }
       data={data}
-      files={files}
-      {...(setData && { handleArrayOfObjectsChange })}
-      {...(setData && { handleFileChange })}
+      {...(setData && { setData: handleChange })}
       trades={trades}
       commentsData={comments}
       setCommentsData={setComments}
-      showComments={showComments}
     />,
-    <TrainingEquipments
+    <Page3
       key="equipments"
       data={data}
-      files={files}
-      {...(setData && { handleArrayOfObjectsChange })}
-      {...(setData && { handleFileChange })}
+      {...(setData && { setData: handleChange })}
       trades={trades}
       commentsData={comments}
       setCommentsData={setComments}
-      showComments={showComments}
     />,
-    <Staff
+    <Page4
       key="staff"
       data={data}
       files={files}
-      handleFileChange={handleFileChange}
-      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
-      commentData={comments}
-      setCommentData={setComments}
-      showComments={showComments}
+      {...(setData && { setData: handleChange })}
+      comments={comments}
+      setComments={setComments}
     />,
-    <LastPageQuestions
+    <Page5
       key="last"
       data={data}
-      {...(setData && { handleInputChange })}
-      files={files}
-      {...(setData && { handleFileChange })}
-      commentData={comments}
-      setCommentData={setComments}
-      showComments={showComments}
+      {...(setData && { setData: handleChange })}
+      comments={comments}
+      setComments={setComments}
     />,
   ];
 
@@ -132,7 +93,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else if (currentStep === steps.length - 1 && goToBudget) {
