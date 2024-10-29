@@ -219,6 +219,48 @@ const CompleteProfile = ({
     }
   };
 
+  const handleProvinceChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      province: value,
+      district: "",
+      sector: "",
+      cell: "",
+      village: "",
+    }));
+  };
+
+  const handleDistrictChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      district: value,
+      sector: "",
+      cell: "",
+      village: "",
+    }));
+  };
+
+  const handleSectorChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      sector: value,
+      cell: "",
+      village: "",
+    }));
+  };
+
+  const handleCellChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      cell: value,
+      village: "",
+    }));
+  };
+
   return (
     <Modal
       size={"xl"}
