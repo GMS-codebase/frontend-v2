@@ -58,7 +58,6 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       }
       data={data}
       {...(setData && { setData: handleChange })}
-      trades={trades}
       commentsData={comments}
       setCommentsData={setComments}
       application={application}
@@ -67,7 +66,6 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       key="equipments"
       data={data}
       {...(setData && { setData: handleChange })}
-      trades={trades}
       commentsData={comments}
       setCommentsData={setComments}
     />,
