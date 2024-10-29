@@ -78,56 +78,56 @@ const Page = () => {
   }, [call, dispatch, stage]);
 
   const dashTablesData = [
-      {
-          sector: "Manufacturing",
-          col1Data: sectorsData["Manufacturing"]?.countApplicants,
-          col2Data: sectorsData["Manufacturing"]?.countApplicants,
-      },
-      {
-          sector: "Hospitality & Tourism",
-          col1Data: sectorsData["Hospitality & Tourism"]?.countApplicants,
-          col2Data: sectorsData["Hospitality & Tourism"]?.countApplicants,
-      },
-      {
-          sector: "Transport & Logistics",
-          col1Data: sectorsData["Transport & Logistics"]?.countApplicants,
-          col2Data: sectorsData["Transport & Logistics"]?.countApplicants,
-      },
-      {
-          sector: "Agriculture",
-          col1Data: sectorsData["Agriculture"]?.countApplicants,
-          col2Data: sectorsData["Agriculture"]?.countApplicants,
-      },
-      {
-          sector: "Energy",
-          col1Data: sectorsData["Energy"]?.countApplicants,
-          col2Data: sectorsData["Energy"]?.countApplicants,
-      },
-      {
-          sector: "Mining",
-          col1Data: sectorsData["Mining"]?.countApplicants,
-          col2Data: sectorsData["Mining"]?.countApplicants,
-      },
-      {
-          sector: "ICT & Digital Skills",
-          col1Data: sectorsData["Mining"]?.countApplicants,
-          col2Data: sectorsData["Mining"]?.countApplicants,
-      },
-      {
-          sector: "Construction",
-          col1Data: sectorsData["Mining"]?.countApplicants,
-          col2Data: sectorsData["Mining"]?.countApplicants,
-      },
-      {
-          sector: "Other",
-          col1Data: sectorsData["Mining"]?.countApplicants,
-          col2Data: sectorsData["Mining"]?.countApplicants,
-      },
-      {
-          sector: "Total Application",
-          col1Data: sectorsData["Mining"]?.countApplicants,
-          col2Data: sectorsData["Mining"]?.countApplicants,
-      },
+    {
+      sector: "Manufacturing",
+      col1Data: sectorsData["Manufacturing"]?.countApplicants,
+      col2Data: sectorsData["Manufacturing"]?.countApplicants,
+    },
+    {
+      sector: "Hospitality & Tourism",
+      col1Data: sectorsData["Hospitality & Tourism"]?.countApplicants,
+      col2Data: sectorsData["Hospitality & Tourism"]?.countApplicants,
+    },
+    {
+      sector: "Transport & Logistics",
+      col1Data: sectorsData["Transport & Logistics"]?.countApplicants,
+      col2Data: sectorsData["Transport & Logistics"]?.countApplicants,
+    },
+    {
+      sector: "Agriculture",
+      col1Data: sectorsData["Agriculture"]?.countApplicants,
+      col2Data: sectorsData["Agriculture"]?.countApplicants,
+    },
+    {
+      sector: "Energy",
+      col1Data: sectorsData["Energy"]?.countApplicants,
+      col2Data: sectorsData["Energy"]?.countApplicants,
+    },
+    {
+      sector: "Mining",
+      col1Data: sectorsData["Mining"]?.countApplicants,
+      col2Data: sectorsData["Mining"]?.countApplicants,
+    },
+    {
+      sector: "ICT & Digital Skills",
+      col1Data: sectorsData["Mining"]?.countApplicants,
+      col2Data: sectorsData["Mining"]?.countApplicants,
+    },
+    {
+      sector: "Construction",
+      col1Data: sectorsData["Mining"]?.countApplicants,
+      col2Data: sectorsData["Mining"]?.countApplicants,
+    },
+    {
+      sector: "Other",
+      col1Data: sectorsData["Mining"]?.countApplicants,
+      col2Data: sectorsData["Mining"]?.countApplicants,
+    },
+    {
+      sector: "Total",
+      col1Data: sectorsData["Mining"]?.countApplicants,
+      col2Data: sectorsData["Mining"]?.countApplicants,
+    },
   ];
 
   return (
@@ -189,8 +189,7 @@ const Page = () => {
                 },
                 {
                   sector: "Other",
-                  },
-               
+                },
               ]?.map((sector: any, index: any) => (
                 <div
                   key={index}
