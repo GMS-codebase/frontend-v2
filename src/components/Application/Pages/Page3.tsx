@@ -55,7 +55,7 @@ export function Page3({
 
   const renderTrainingEquipmentsInputs = () => (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-5">
         <div>
           <label
             htmlFor="nameOfEquipment"

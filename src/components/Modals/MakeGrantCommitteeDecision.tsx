@@ -57,7 +57,7 @@ const MakeGrantCommitteeDecision = ({
   const [loading, setLoading] = useState(false);
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -74,7 +74,7 @@ const MakeGrantCommitteeDecision = ({
 
   const handleSelectChange = (
     name: keyof FormData,
-    value: FormData[keyof FormData],
+    value: FormData[keyof FormData]
   ) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -105,12 +105,11 @@ const MakeGrantCommitteeDecision = ({
   const validate = () => {
     const newErrors: FormErrors = {};
     let isValid = true;
-
     if (!formData.decision) {
       newErrors.decision = "Decision is required.";
       isValid = false;
     }
-    if (formData.traineeNumber && formData.decision === "APPROVED") {
+    if (!formData.traineeNumber && formData.decision === "APPROVED") {
       newErrors.traineeNumber = "Please provide the accepted trainees.";
       isValid = false;
     }
@@ -118,13 +117,14 @@ const MakeGrantCommitteeDecision = ({
       newErrors.description = "Description is required.";
       isValid = false;
     }
-
+    console.log(newErrors)
     setErrors(newErrors);
     return isValid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Submitting")
 
     if (!validate()) return;
 
@@ -140,7 +140,7 @@ const MakeGrantCommitteeDecision = ({
     try {
       await authorizedApi.post(
         `/application/grant-committee/decision/${application.uuid}`,
-        formDataToSubmit,
+        formDataToSubmit
       );
       notifications.show({
         message: "Application filled successfully!",
@@ -159,13 +159,13 @@ const MakeGrantCommitteeDecision = ({
 
   return (
     <Modal
-      size={"xl"}
+      size={""}
       opened={isOpen}
       onClose={closeModal}
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-full max-h-[90vh] relative bg-white rounded-3xl pt-6 pb-6 flex flex-col items-center overflow-y-auto">
+      <div className="w-[45vw] max-h-[90vh] relative bg-white rounded-3xl p-10 flex flex-col items-center ">
         <button
           className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
           onClick={closeModal}
@@ -175,118 +175,126 @@ const MakeGrantCommitteeDecision = ({
         <div className="w-full flex flex-col items-center">
           <h1 className="text-2xl font-extrabold">Make decision</h1>
         </div>
-        <div className="w-4/5 flex flex-col items-center mt-10 ">
+        <div className=" flex flex-col items-center overflow-y-auto   w-full ">
           <form
-            className="w-full overflow-y-auto flex flex-col gap-4 px-2"
+            className="w-full  space-y-4  px-2"
             onSubmit={handleSubmit}
           >
-            <div className="w-full flex justify-between gap-3">
-              <div className="w-full">
+            <div className="w-full h-full space-y-3">
+              <div className="w-full flex justify-between gap-3">
+                <div className="w-full">
+                  <label
+                    htmlFor="WindowTitle"
+                    className="block font-semibold text-sm text-gray-700"
+                  >
+                    Decision
+                  </label>
+                  <div className="w-full relative">
+                    <span className="absolute left-2 top-[10px]">
+                      <SolarDocumentsBold />
+                    </span>
+                    <Select
+                      name="decision"
+                      value={formData.decision}
+                      onChange={(value) =>
+                        handleSelectChange("decision", value)
+                      }
+                      data={[
+                        { label: "Approve", value: "APPROVED" },
+                        { label: "Reject", value: "REJECTED" },
+                      ]}
+                      className="mt-1 block w-full pl-6 text-gray-400 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      placeholder="Select your decision"
+                      required
+                    />
+                    {errors.decision && (
+                      <p className="text-red-500 text-xs">{errors.decision}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {formData.decision === "APPROVED" && (
+                <div className="space-y-3 mb-4 w-full">
+                  <p className="block text-xs font-bold text-gray-700">
+                    Accepted Trainees
+                  </p>
+                  <div className="w-full flex gap-2">
+                    <input
+                      type="number"
+                      name="traineeNumber"
+                      value={formData.traineeNumber}
+                      onChange={handleChange}
+                      placeholder="Number of trainees"
+                      className="outline-none flex-grow bg-gray-100 rounded-full p-3"
+                    />
+                  </div>
+                  {errors.traineeNumber && (
+                    <p className="text-red-500 text-sm">
+                      {errors.traineeNumber}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <div className="flex flex-col mt-4">
                 <label
-                  htmlFor="WindowTitle"
+                  htmlFor="description"
                   className="block font-semibold text-sm text-gray-700"
                 >
-                  Decision
+                  Description
                 </label>
-                <div className="w-full relative">
-                  <span className="absolute left-2 top-[10px]">
-                    <SolarDocumentsBold />
-                  </span>
-                  <Select
-                    name="decision"
-                    value={formData.decision}
-                    onChange={(value) => handleSelectChange("decision", value)}
-                    data={[
-                      { label: "Approve", value: "APPROVED" },
-                      { label: "Reject", value: "REJECTED" },
-                    ]}
-                    className="mt-1 block w-full pl-6 text-gray-400 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Select your decision"
-                    required
-                  />
-                  {errors.decision && (
-                    <p className="text-red-500 text-xs">{errors.decision}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {formData.decision === "APPROVED" && (
-              <div className="space-y-3 mb-4 w-full">
-                <p className="block text-xs font-bold text-gray-700">
-                  Accepted Trainees
-                </p>
-                <div className="w-full flex gap-2">
-                  <input
-                    type="number"
-                    name="traineeNumber"
-                    value={formData.traineeNumber}
-                    onChange={handleChange}
-                    placeholder="Number of trainees"
-                    className="outline-none flex-grow bg-gray-100 rounded-full px-3"
-                  />
-                </div>
-                {errors.traineeNumber && (
-                  <p className="text-red-500 text-sm">{errors.traineeNumber}</p>
+                <TextArea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                />
+                {errors.description && (
+                  <p className="text-red-500 text-xs">{errors.description}</p>
                 )}
               </div>
-            )}
-
-            <div className="flex flex-col mt-4">
-              <label
-                htmlFor="description"
-                className="block font-semibold text-sm text-gray-700"
-              >
-                Description
-              </label>
-              <TextArea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-              />
-              {errors.description && (
-                <p className="text-red-500 text-xs">{errors.description}</p>
-              )}
-            </div>
-            <div className="w-full">
-              <label
-                htmlFor="fileUpload"
-                className="block text-xs font-bold text-gray-700"
-              >
-                Attachment (Optional)
-              </label>
-              <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <div className="w-full">
                 <label
-                  htmlFor="attachment"
-                  className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+                  htmlFor="fileUpload"
+                  className="block text-xs font-bold text-gray-700"
                 >
-                  <Upload className="text-[#005DE9] w-64 h-64" />
-                  {formData.attachment ? (
-                    <div className="text-center">
-                      <p className="text-md font-medium text-gray-700">
-                        {formData.attachment.name}
-                      </p>
-                      <p className="text-sm text-gray-500">File selected</p>
-                    </div>
-                  ) : (
-                    <div className="text-center">
-                      <p className="text-md text-gray-500">Upload file</p>
-                      <p className="text-md text-gray-400">or drag and drop</p>
-                    </div>
-                  )}
+                  Attachment (Optional)
                 </label>
-                <input
-                  id="attachment"
-                  type="file"
-                  accept=".pdf"
-                  onChange={handleFileChange}
-                  className="mt-1 hidden w-full text-gray-400 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  required
-                />
+                <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                  <label
+                    htmlFor="attachment"
+                    className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+                  >
+                    <Upload className="text-[#005DE9] w-64 h-64" />
+                    {formData.attachment ? (
+                      <div className="text-center">
+                        <p className="text-md font-medium text-gray-700">
+                          {formData.attachment.name}
+                        </p>
+                        <p className="text-sm text-gray-500">File selected</p>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <p className="text-md text-gray-500">Upload file</p>
+                        <p className="text-md text-gray-400">
+                          or drag and drop
+                        </p>
+                      </div>
+                    )}
+                  </label>
+                  <input
+                    id="attachment"
+                    type="file"
+                    accept=".pdf"
+                    onChange={handleFileChange}
+                    className="mt-1 hidden w-full text-gray-400 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    required
+                  />
+                </div>
+                {errors.attachment && (
+                  <p className="text-red-500 text-xs">{errors.attachment}</p>
+                )}
               </div>
-              {errors.attachment && (
-                <p className="text-red-500 text-xs">{errors.attachment}</p>
-              )}
             </div>
             <div className="grid grid-cols-2 gap-5  mt-6">
               <button
