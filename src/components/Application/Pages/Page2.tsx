@@ -8,14 +8,12 @@ export const Page2 = ({
   data,
   setData,
   commentsData,
-  trades,
   setCommentsData,
   type = "training",
   application,
 }: {
   data: any;
   setData?: any;
-  trades: any;
   commentsData?: Comments;
   setCommentsData?: any;
 
@@ -23,7 +21,6 @@ export const Page2 = ({
   application: any;
 }) => {
   const [trainingProcessInputs, setTrainingProcessInputs] = useState({
-    trade: "",
     moduleName: "",
     from: "",
     to: "",
@@ -32,11 +29,8 @@ export const Page2 = ({
   const [addTrainingError, setAddTrainingError] = useState("");
 
   const validateTrainingProcessInputs = (): string | null => {
-    const { trade, moduleName, from, to, numberOfHours } =
-      trainingProcessInputs;
+    const { moduleName, from, to, numberOfHours } = trainingProcessInputs;
     let missingFields = [];
-
-    if (!trade) missingFields.push("Trade");
     if (!moduleName) missingFields.push("Module Name");
     if (!from) missingFields.push("From Date");
     if (!to) missingFields.push("To Date");
@@ -62,7 +56,6 @@ export const Page2 = ({
       trainingProcessInputs,
     ]);
     setTrainingProcessInputs({
-      trade: "",
       moduleName: "",
       from: "",
       to: "",
@@ -72,31 +65,9 @@ export const Page2 = ({
     console.log(data.trainingProcess);
   };
 
-  const renderTrainingProcessInputs = () => (
+  const renderInputs = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
-        <div>
-          <label
-            htmlFor="trade"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Trade
-          </label>
-          <Select
-            id="trade"
-            name="trade"
-            value={trainingProcessInputs.trade}
-            onChange={(selectedOption) =>
-              setTrainingProcessInputs((prev) => ({
-                ...prev,
-                trade: selectedOption || "",
-              }))
-            }
-            data={trades}
-            className="border pt-2 mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Select Trade"
-          />
-        </div>
         <div>
           <label
             htmlFor="moduleName"
@@ -131,10 +102,10 @@ export const Page2 = ({
             placeholder="From Date"
             min={
               new Date(
-                typeof application.call.endDate === "string"
-                  ? new Date(application.call.endDate).getTime() +
+                typeof application?.call?.endDate === "string"
+                  ? new Date(application?.call?.endDate).getTime() +
                     24 * 60 * 60 * 1000
-                  : application.call.endDate.getTime() + 24 * 60 * 60 * 1000,
+                  : application?.call?.endDate.getTime() + 24 * 60 * 60 * 1000,
               )
                 .toISOString()
                 .split("T")[0]
@@ -212,129 +183,6 @@ export const Page2 = ({
     </div>
   );
 
-  const renderAssessmentProcessInputs = () => (
-    <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-2">
-        <div>
-          <label
-            htmlFor="trade"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Trade
-          </label>
-          <Select
-            id="trade"
-            name="trade"
-            value={trainingProcessInputs.trade}
-            onChange={(selectedOption) =>
-              setTrainingProcessInputs((prev) => ({
-                ...prev,
-                trade: selectedOption || "",
-              }))
-            }
-            data={trades}
-            className="border pt-2 mt-2  w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Select Trade"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="moduleName"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Name of Module
-          </label>
-          <input
-            id="moduleName"
-            type="text"
-            placeholder="Name of Module"
-            value={trainingProcessInputs.moduleName}
-            onChange={(e) =>
-              setTrainingProcessInputs((prev) => ({
-                ...prev,
-                moduleName: e.target.value,
-              }))
-            }
-            className="mt-2 px-2 py-2.5 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="from"
-            className="block text-sm font-medium text-gray-700"
-          >
-            From Date
-          </label>
-          <input
-            id="from"
-            type="date"
-            placeholder="From Date"
-            min={new Date(application.call.endDate).getTime()}
-            value={trainingProcessInputs.from}
-            onChange={(e) =>
-              setTrainingProcessInputs((prev) => ({
-                ...prev,
-                from: e.target.value,
-              }))
-            }
-            className="mt-2 px-2 py-2.5 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="to"
-            className="block text-sm font-medium text-gray-700"
-          >
-            To Date
-          </label>
-          <input
-            id="to"
-            type="date"
-            placeholder="To Date"
-            value={trainingProcessInputs.to}
-            onChange={(e) =>
-              setTrainingProcessInputs((prev) => ({
-                ...prev,
-                to: e.target.value,
-              }))
-            }
-            className="mt-2 px-2 py-2.5 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="numberOfHours"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Number of Hours
-          </label>
-          <input
-            id="numberOfHours"
-            type="number"
-            placeholder="Number of Hours"
-            value={trainingProcessInputs.numberOfHours}
-            onChange={(e) =>
-              setTrainingProcessInputs((prev) => ({
-                ...prev,
-                numberOfHours: e.target.value,
-              }))
-            }
-            className="mt-2 px-2 py-2.5 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          />
-        </div>
-      </div>
-      {addTrainingError && <p className="text-red-600">{addTrainingError}</p>}
-      <div className="flex justify-end">
-        <button
-          onClick={addTrainingProcess}
-          className="mt-2  py-2.5 bg-primary text-white px-20 rounded-full"
-        >
-          Add Assessment
-        </button>
-      </div>
-    </div>
-  );
-
   const renderCommentsSection = (field: string) => (
     <div className="mt-4">
       <h4 className="text-md font-semibold text-gray-700">Comment</h4>
@@ -362,17 +210,12 @@ export const Page2 = ({
             ? "Please fill in the details for the assessment process."
             : "Keep in mind that the training period for window 1 should range from a few days to 6 months. Estimate the duration based on the content/modules to be offered."}
         </p>
-        {setData &&
-          !commentsData &&
-          (type === "assessment"
-            ? renderAssessmentProcessInputs()
-            : renderTrainingProcessInputs())}
+        {setData && !commentsData && renderInputs()}
         {data?.trainingProcess?.length > 0 && (
           <div className="w-full overflow-x-auto">
             <table className="min-w-full w-fit mt-4 border-collapse border border-gray-200">
               <thead>
                 <tr className="bg-gray-100">
-                  <th className="border p-2">Trade</th>
                   <th className="border p-2">Module Name</th>
                   <th className="border p-2">From Date</th>
                   <th className="border p-2">To Date</th>
@@ -382,15 +225,6 @@ export const Page2 = ({
               <tbody>
                 {(data?.trainingProcess || []).map((item: any, index: any) => (
                   <tr key={index}>
-                    <td className="border p-2">
-                      {item?.uuid
-                        ? trades?.find(
-                            (trade: any) => trade?.value === item?.trade?.title,
-                          )?.value
-                        : trades?.find(
-                            (trade: any) => trade?.value === item?.trade,
-                          )?.label}
-                    </td>
                     <td className="border p-2">{item.moduleName}</td>
                     <td className="border p-2">
                       {new Date(item.from).toLocaleDateString()}

@@ -12,6 +12,33 @@ import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
 const Page = () => {
+  const getApplicationStatus = (application: any) => {
+    if (
+      application?.currentStage === "EVALUATION" &&
+      !application?.call?.closedEvaluation
+    ) {
+      return "EVALUATION IN PROGRESS";
+    } else if (
+      application?.currentStage === "DUE_DILIGENCY" &&
+      !application?.call?.closedDueDiligency
+    ) {
+      return "DUE DILIGENCY IN  PROGRESS";
+    } else if (
+      application?.currentStage === "GRANT_COMMITTEE" &&
+      !application?.call?.closedGrantCommittee
+    ) {
+      return "GRANT COMMITTEE IN PROGRESS";
+    } else if (
+      application?.currentStage === "CONTRACT_SIGNING" &&
+      (!application?.call?.closedGrantCommittee ||
+        !application?.call?.closedDueDiligency ||
+        !application?.call?.closedEvaluation)
+    ) {
+      return "CONTRACT SIGNING IN PROGRESS";
+    } else {
+      return application?.currentStage;
+    }
+  };
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
@@ -28,17 +55,26 @@ const Page = () => {
       ),
     },
     {
-      accessorKey: "window",
-      header: "Window",
+      accessorKey: "sector",
+      header: "Sector",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.window.title}</div>
+        <div className="truncate">{row.original.sectors[0].name}</div>
+      ),
+    },
+    {
+      accessorKey: "trade",
+      header: "Trade",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.trades[0].trade.title}</div>
       ),
     },
     {
       accessorKey: "currentStage",
       header: "Current Stage",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.currentStage || "-"}</div>
+        <div className="truncate">
+          {getApplicationStatus(row.original) || "-"}
+        </div>
       ),
     },
     {
@@ -84,6 +120,7 @@ const Page = () => {
   ];
   const myApplications = useSelector((state: any) => state.applications);
   const calls = useSelector((state: any) => state.calls);
+  console.log(myApplications);
 
   return (
     <div className="w-full  flex flex-col gap-4">

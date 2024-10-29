@@ -24,8 +24,8 @@ const CreateApplication = ({
     window: null,
     subwindow: null,
     description: "",
-    sectors: [] as string[],
-    trades: [] as string[],
+    sectors: "",
+    trades: "",
   });
   const dispatch = useDispatch();
 
@@ -93,8 +93,8 @@ const CreateApplication = ({
           window: formData.window,
           subwindow: formData.subwindow,
           description: formData.description,
-          sectors: formData.sectors,
-          trades: formData.trades,
+          sectors: [formData.sectors],
+          trades: [formData.trades],
         },
       );
       notifications.show({
@@ -272,14 +272,17 @@ const CreateApplication = ({
               <span className="absolute left-2 top-3 text-black text-lg">
                 <SolarSuitcaseLinear />
               </span>
-              <MultiSelect
+              <Select
                 name="sectors"
                 value={formData.sectors}
                 onChange={(value) =>
-                  setFormData((prevData) => ({
-                    ...prevData,
-                    sectors: value,
-                  }))
+                  setFormData(
+                    (prevData) =>
+                      ({
+                        ...prevData,
+                        sectors: value,
+                      }) as any,
+                  )
                 }
                 data={sectorOptions}
                 placeholder="Select or type in a sector"
@@ -301,14 +304,17 @@ const CreateApplication = ({
               <span className="absolute left-2 top-3 text-black text-lg">
                 <SolarSuitcaseLinear />
               </span>
-              <MultiSelect
+              <Select
                 name="trades"
                 value={formData.trades}
                 onChange={(value) =>
-                  setFormData((prevData) => ({
-                    ...prevData,
-                    trades: value,
-                  }))
+                  setFormData(
+                    (prevData) =>
+                      ({
+                        ...prevData,
+                        trades: value,
+                      }) as any,
+                  )
                 }
                 data={tradesOptions as any}
                 placeholder="Select or type in a trade"

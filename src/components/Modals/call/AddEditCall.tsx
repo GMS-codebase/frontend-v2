@@ -27,7 +27,7 @@ const AddEditCall = ({
 }) => {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
-
+  const [errors, setErrors] = useState<any>();
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
@@ -269,6 +269,7 @@ const AddEditCall = ({
                         required
                       />
                     </div>
+                    {}
                   </div>
                 </div>
 
@@ -283,8 +284,7 @@ const AddEditCall = ({
                     <span className="absolute left-2 top-[10px]">
                       <Subtitles />
                     </span>
-                    <input
-                      type="text"
+                    <textarea
                       name="description"
                       value={formData.description}
                       placeholder="Add description"
