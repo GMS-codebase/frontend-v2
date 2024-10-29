@@ -44,7 +44,7 @@ const Page = () => {
   //     .get(query)
   //     .then((response) => {
   //       const applicants = JSON.stringify(response.data.data.data) == "{}" ? [] : response.data.data.data;
-  //       console.log("concerned applicants", applicants, response.data.data.data);
+
   //       // Search logic for name, institution, email, phone
   //       const searchFilteredApplicants = applicants.filter((applicant: any) => {
   //         return (
@@ -58,7 +58,7 @@ const Page = () => {
   //       setFilteredApplicants(searchFilteredApplicants);
   //     })
   //     .catch((error) => {
-  //       console.log(error);
+
   //     })
   //     .finally(() => setLoading(false));
   // };
@@ -144,6 +144,10 @@ const Page = () => {
       })
       .catch((error) => {
         console.log(error);
+        notifications.show({
+          message: error.response.data.message,
+          color: "red",
+        });
       })
       .finally(() => setIsSubmitting(false));
   };

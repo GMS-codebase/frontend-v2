@@ -40,7 +40,7 @@ const Page = () => {
   const filteredSectors = subWindow?.sectors.filter((sector: any) =>
     sector?.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-  console.log(subWindow);
+
   const [selectedSubWindow, setSelectedSubWindow] = useState<any>();
   const columns: ColumnDef<any>[] = [
     {

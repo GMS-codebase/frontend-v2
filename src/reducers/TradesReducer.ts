@@ -61,7 +61,7 @@ export default function TradesReducer(state = initialState, action: Action) {
         trades: state.trades.map((trade: Trade) =>
           trade.uuid == action.payload.uuid
             ? { ...trade, ...action.payload }
-            : trade
+            : trade,
         ),
         error: null,
         isError: false,
@@ -71,7 +71,7 @@ export default function TradesReducer(state = initialState, action: Action) {
       return {
         ...state,
         trades: state.trades.filter(
-          (trade: Trade) => trade.uuid !== action.payload.id
+          (trade: Trade) => trade.uuid !== action.payload.id,
         ),
         error: null,
         isError: false,

@@ -47,7 +47,7 @@ const AssignedStage = ({
   return (
     <div className="w-full flex justify-between items-center bg-[#000F230A] p-3 rounded-xl">
       <div>
-        <h1 className="font-bold text-lg">{stage.stage}</h1>
+        <h1 className="font-bold text-lg">{stage?.stage}</h1>
         <p className="text-sm text-gray-500">
           Sectors: {stage.sectors.join(", ")}
         </p>
@@ -140,7 +140,7 @@ const EmployeeDetails = () => {
 
   //   const handleRemoveSector = (stage: any, sector: any) => {
   //     const updatedStages = employeeStages.emp_stages.filter(
-  //       (s: any) => !(s.stage === stage.stage && s.sector === sector),
+  //       (s: any) => !(s.stage === stage?.stage && s.sector === sector),
   //     );
   //     setEmployeesStages({
   //       ...employeeStages,
@@ -166,7 +166,7 @@ const EmployeeDetails = () => {
             <div>Edit</div>
           </button>
         </div>
-        <div className="grid grid-cols-2 gap-y-6 justify-between w-11/12 font-semibold">
+        <div className="grid grid-cols-2 gap-y-6 justify-between Apw-11/12 font-semibold">
           <div className="flex items-center gap-3">
             <div className="flex gap-2 bg-gray-400 bg-opacity-10 px-4 w-fit py-2 rounded-full items-center justify-center">
               <div>Name</div>

@@ -27,9 +27,9 @@ const Page = () => {
   const contacts = useSelector((state: any) => state.contacts);
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
   const { myApplications } = useSelector((state: any) => state.applications);
-  console.log(myApplications);
+
   const existingApplication = myApplications.find(
-    (app: any) => app?.call?.uuid === callId,
+    (app: any) => app?.call?.uuid === callId && app.stages.length === 0,
   );
   const [
     isOpenCreateProfile,
@@ -37,13 +37,22 @@ const Page = () => {
   ] = useDisclosure(false);
   const [isOpenAddContact, { open: openAddContact, close: closeAddContact }] =
     useDisclosure(false);
+  const [applyLoading, setApplyLoading] = useState(false);
   const [
     isOpenCreateApplication,
     { open: openCreateApplication, close: closeCreateApplication },
   ] = useDisclosure(false);
   const router = useRouter();
   const handleApply = () => {
-    if (!profile.applicantProfile || !profile.applicantProfile.business_name) {
+    setApplyLoading(true);
+    if (existingApplication) {
+      router.push(
+        `/applicant/applications/application/${existingApplication.uuid}`,
+      );
+    } else if (
+      !profile.applicantProfile ||
+      !profile.applicantProfile.business_name
+    ) {
       openAddProfile();
     } else if (
       !contacts.loading &&
@@ -62,9 +71,8 @@ const Page = () => {
   const handleDownloadInstructions = async () => {
     setLoading(true);
     try {
-      console.log("attachment --> ", call.attachment);
       const filename = call.attachment.split("/").pop();
-      console.log(filename);
+
       const response = await unauthorizedApi.get(
         `/admin/download/calls/${filename}`,
         {
@@ -88,6 +96,14 @@ const Page = () => {
       setLoading(false);
     }
   };
+
+  if (calls.loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p>Loading</p>
+      </div>
+    );
+  }
   return (
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">
@@ -153,23 +169,23 @@ const Page = () => {
                   endDate={call?.endDate}
                   startDate={call?.startDate}
                 />
-                <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4   rounded-3xl items-center justify-center font-semibold gap-2">
-                  <div className="flex gap-2 items-center  w-full ">
+                <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-5 py-5   rounded-3xl items-center justify-center gap-2">
+                  <div className="flex gap-2 items-start  w-full ">
                     <span className="text-[#005DE9]">
-                      <SolarCalendarBold />
+                      <SolarCalendarBold className="w-7 h-7" />
                     </span>
                     <div>
-                      <p>Start date</p>
+                      <p className="font-semibold">Start date</p>
                       <p>{call && format(call?.startDate, "dd MMMM yyyy")}</p>
                     </div>
                   </div>
 
-                  <div className="flex flex-row gap-2 items-center  w-full ">
+                  <div className="flex flex-row gap-2 items-start  w-full ">
                     <span className="text-[#005DE9]">
-                      <SolarCalendarBold />
+                      <SolarCalendarBold className="w-7 h-7" />
                     </span>
                     <div>
-                      <p>End Date</p>
+                      <p className="font-semibold">End Date</p>
                       <p>{call && format(call?.endDate, "dd MMMM yyyy")}</p>
                     </div>
                   </div>
@@ -188,12 +204,19 @@ const Page = () => {
               {call?.description}
             </div>
           </div>
-          <div
+          <button
             onClick={handleApply}
+            disabled={applyLoading}
             className="flex gap-2 text-white bg-[#005DE9] px-4 py-2 rounded-full  w-full font-bold items-center justify-center cursor-pointer"
           >
-            <p>Apply</p>
-          </div>
+            <p>
+              {applyLoading
+                ? "Loading...."
+                : existingApplication
+                  ? "Continue Application"
+                  : "Apply"}
+            </p>
+          </button>
         </div>
       </div>
       <CompleteProfile

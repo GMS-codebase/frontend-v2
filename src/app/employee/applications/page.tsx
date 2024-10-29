@@ -147,21 +147,26 @@ const Page = () => {
   };
 
   const filteredApplications = useMemo(() => {
-    return applications
-      .filter(
-        (app: any) =>
-          app.applicationNumber
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-      .filter((app: any) => {
-        const { stage, window } = selectedFilters;
-        return (
-          (stage === "All" || formatStage(app.currentStage) === stage) &&
-          (window === "All" || app.window?.title === window)
-        );
-      });
+    return (
+      applications
+        // .filter((app: any) => app.stages.length > 0)
+        .filter(
+          (app: any) =>
+            app.applicationNumber
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()) ||
+            app.applicant?.name
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()),
+        )
+        .filter((app: any) => {
+          const { stage, window } = selectedFilters;
+          return (
+            (stage === "All" || formatStage(app.currentStage) === stage) &&
+            (window === "All" || app.window?.title === window)
+          );
+        })
+    );
   }, [applications, searchTerm, selectedFilters]);
 
   return (

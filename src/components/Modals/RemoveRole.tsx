@@ -22,13 +22,12 @@ const RemoveRole = ({
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const handleRemove = () => {
-    console.log("role", role);
     setIsLoading(true);
     authorizedApi
       .delete(`/roles/${role.uuid}`)
       .then((res) => {
         getRoles(dispatch);
-        console.log(res.data);
+
         notifications.show({
           message: "Role is removed successfully",
           color: "blue",
@@ -36,7 +35,6 @@ const RemoveRole = ({
         closeModal();
       })
       .catch((err) => {
-        console.log(err.response);
         notifications.show({
           title: "Failed to remove role",
           message: err.response.data.message ?? "",

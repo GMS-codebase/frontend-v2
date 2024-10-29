@@ -5,7 +5,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 
 const ApplicantTable = ({ data }: { data: any }) => {
-  console.log("applicant info", data);
   const [activeTable, setActiveTable] = useState("contacts");
   const [isOpenCall, setIsOpenCall] = useState({
     openUpdate: false,

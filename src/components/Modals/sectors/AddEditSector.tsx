@@ -102,7 +102,7 @@ const AddEditSector = ({
             : "Sector is created successfully",
           color: "blue",
         });
-        console.log(res.data.data);
+
         dispatch({
           type: defaultData ? UPDATE_SECTOR_SUCCESS : ADD_SECTOR_SUCCESS,
           payload: res.data?.data?.data,

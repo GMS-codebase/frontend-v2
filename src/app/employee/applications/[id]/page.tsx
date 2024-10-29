@@ -16,22 +16,19 @@ import EditEvalModal from "@/components/Modals/EditEvalModal";
 import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import { useDisclosure } from "@mantine/hooks";
 import BudgetQuestions from "@/components/Application/BudgetQuestions";
-import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
-import DueDiligenceModal from "@/components/Modals/DueDiigence";
 import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
-import { getApplications } from "@/utils/funcs";
+import { getApplications, handleDownloadFile } from "@/utils/funcs";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
   const stagesArr = stages?.map((stage: any) => stage?.stage);
-  console.log(stages, stagesArr);
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id,
+    (application: any) => application?.uuid === id,
   )[0];
-  console.log("applications --> ", applications);
+  console.log("application --> ", application);
   const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [
@@ -57,20 +54,16 @@ const Page = () => {
     "Evaluation" | "Due Diligence"
   >();
   const dispatch = useDispatch();
-
-  const [isOpenAddDue, setIsOpenAddDue] = useState(false);
-  const [isOpenAddEval, setIsOpenAddEval] = useState(false);
-  const [isOpenEditEval, setIsOpenEditEval] = useState(false);
-  const [savedData, setSavedData] = useState({ title: "", description: "" });
-
-  const [isEditing, setIsEditing] = useState(false);
-
-  const openEditModal = () => setIsOpenEditEval(true);
-  const closeEditEval = () => setIsOpenEditEval(false);
-
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
+  const [properties, setProperties] = useState({
+    isDataEditable: false,
+    isCommented: false,
+  });
+  const goToBudget = () => {
+    setCurrentComponent("IndicativeBudget");
+  };
   const [commentsData, setCommentsData] = useState<Comments>({
     titleComment: application?.projectFunding?.titleComment || "",
     activitiesComment: application?.projectFunding?.activitiesComment || "",
@@ -108,35 +101,44 @@ const Page = () => {
     budgetSummaryAttachmentComment:
       application?.budget?.budgetSummaryAttachmentComment || "",
     contributionComment: application?.budget?.contributionComment || "",
+    assessmentComment: application?.projectFunding?.assessmentComment || "",
+    budgetLinesComment: application?.budget?.budgetLinesComment || "",
   });
+  console.log(application);
+  useEffect(() => {
+    if (application) {
+      const hasComments = Object.entries(application.projectFunding || {}).some(
+        ([key, value]) =>
+          key.includes("Comment") && value != null && value !== "",
+      );
+      setProperties({
+        isDataEditable:
+          application.isSubmitted || application.stages.length === 0,
+        isCommented: hasComments,
+      });
+    }
+  }, [application]);
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":
         return (
           <FundingQuestions
+            application={application}
+            // showComments={application?.currentStage !== "SUBMISSION"}
             data={application?.projectFunding}
-            setComments={
-              application?.evaluators.length === 0 ||
-              application?.evaluators[0].user_id ===
-                profile?.userProfile?.data.uuid
-                ? setCommentsData
-                : undefined
-            }
+            setComments={!properties.isCommented ? setCommentsData : undefined}
             comments={commentsData}
+            goToBudget={goToBudget}
           />
         );
       case "IndicativeBudget":
         return (
           <BudgetQuestions
+            application={application}
+            // showComments={application?.currentStage !== "SUBMISSION"}
             data={application?.budget}
-            commentData={commentsData}
-            setCommentData={
-              application?.evaluators.length === 0 ||
-              application?.evaluators[0].user_id ===
-                profile?.userProfile?.data.uuid
-                ? setCommentsData
-                : undefined
-            }
+            comments={commentsData}
+            setComments={!properties.isCommented ? setCommentsData : undefined}
           />
         );
       default:
@@ -144,7 +146,69 @@ const Page = () => {
     }
   };
 
+  const validateComments = async (): Promise<string | null> => {
+    // Common validation messages for comments
+    const commentMessages = {
+      titleComment: "The title comment is required.",
+      activitiesComment:
+        "Please provide comments on the activities and expected outcomes.",
+      readinessExecuteComment:
+        "Comments indicating readiness for execution are required.",
+      roleComment: "Specify comments regarding the role in the project.",
+      identificationEmployeeComment:
+        "Comments on employee identification details are mandatory.",
+      trainingProcessComment:
+        "A description of the training process is required in comments.",
+      trainingManualAttachmentComment:
+        "Please upload comments on the training manual attachment.",
+      trainingEquipmentComment:
+        "Comments on training equipment details are required.",
+      trainingEquipmentAttachmentComment:
+        "Attach comments regarding the equipment documentation.",
+      assessmentProcessComment:
+        "A description of the assessment process is required in comments.",
+      assessmentEquipmentComment:
+        "Comments on assessment equipment details are required.",
+      assessmentEquipmentAttachmentComment:
+        "Attach comments regarding the equipment documentation.",
+      staffComment: "Comments regarding staff information are required.",
+      staffAttachmentComment:
+        "Upload comments on the staff-related attachment.",
+      sustainabilityComment: "Provide comments on the sustainability plan.",
+      previousFinancialReportComment:
+        "Upload comments on the previous financial report.",
+      contributionFromApplicantComment:
+        "Specify comments regarding the applicant’s contribution.",
+    };
+
+    if (!commentsData.titleComment) return commentMessages.titleComment;
+    if (!commentsData.activitiesComment)
+      return commentMessages.activitiesComment;
+    if (!commentsData.readinessExecuteComment)
+      return commentMessages.readinessExecuteComment;
+    if (!commentsData.roleComment) return commentMessages.roleComment;
+    if (!commentsData.identificationEmployeeComment)
+      return commentMessages.identificationEmployeeComment;
+    if (!commentsData.sustainabilityComment)
+      return commentMessages.sustainabilityComment;
+    if (!commentsData.staffComment) return commentMessages.staffComment;
+    if (!commentsData.previousFinancialReportComment)
+      return commentMessages.previousFinancialReportComment;
+    if (!commentsData.contributionFromApplicantComment)
+      return commentMessages.contributionFromApplicantComment;
+
+    return null;
+  };
+
   const handleAddComments = async () => {
+    const validationError = await validateComments();
+    if (validationError) {
+      notifications.show({
+        message: validationError,
+        color: "red",
+      });
+      return;
+    }
     setLoading(true);
     try {
       await authorizedApi.patch(`/application/comment/${id}`, commentsData);
@@ -152,6 +216,7 @@ const Page = () => {
         message: "Comments Added Successfully!",
         color: "blue",
       });
+      refetch();
     } catch (err: any) {
       notifications.show({
         message: err.response?.data?.message ?? "Failed to submit the form!",
@@ -160,21 +225,12 @@ const Page = () => {
     }
     setLoading(false);
   };
-  const handleUpdate = (updatedData: {
-    title: string;
-    description: string;
-  }) => {
-    setSavedData(updatedData);
-  };
   const refetch = async () => {
     setDecisionsLoading(true);
-    console.log(decisionsLoading);
-    console.timeStamp();
     try {
       await getApplications(dispatch);
     } finally {
       setDecisionsLoading(false);
-      console.timeEnd();
     }
   };
 
@@ -228,7 +284,6 @@ const Page = () => {
                   type: "success",
                 });
               } catch (error) {
-                console.error("Download error:", error);
                 notifications.show({
                   title: "Download Failed",
                   message:
@@ -272,6 +327,21 @@ const Page = () => {
               </p>
               <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
             </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Institution name
+              </p>
+              <p>
+                {application?.applicant?.businesses &&
+                  application?.applicant?.businesses[0]?.businessName}
+              </p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Applicant&apos;s Phone Number
+              </p>
+              <p>{application?.applicant?.phone}</p>
+            </div>
           </div>
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
             <div className="flex gap-3 justify-start items-center">
@@ -288,9 +358,35 @@ const Page = () => {
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
-                Application submission deadline
+                Application submission date
               </p>
-              <p>2022/02.18 02:00:00</p>
+              <p>{new Date(application?.doneAt)?.toLocaleDateString()}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Application name
+              </p>
+              <p>{application?.applicant.name}</p>
+            </div>
+            <div
+              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
+              onClick={() =>
+                handleDownloadFile(
+                  application?.applicant?.businesses[0]?.businessCertificate,
+                  "business_certificates",
+                )
+              }
+            >
+              {downloading ? (
+                <p>Loading ....</p>
+              ) : (
+                <>
+                  <span>
+                    <SolarPen2Bold />
+                  </span>
+                  <div>Download Certificate</div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -304,7 +400,9 @@ const Page = () => {
         </div>
       </div>
       <div className="flex gap-6">
-        <div className="flex bg-white rounded-2xl w-[70%] gap-4 p-5">
+        <div
+          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMISSION" ? "w-full" : "w-[70%]"} gap-4 p-5`}
+        >
           <div className="flex flex-col gap-4 w-full">
             <div className="font-semibold text-2xl">Questions and answers</div>
             <div className="flex font-semibold">
@@ -330,32 +428,33 @@ const Page = () => {
               </div>
             </div>
             <div className="mt-4 w-full">{renderComponent()}</div>
-            {(application?.evaluators.length === 0 ||
-              application?.evaluators[0].user_id ===
-                profile?.userProfile?.data.uuid) && (
-              <div className="w-full flex justify-center mt-4 space-x-4">
-                <button
-                  type="button"
-                  className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleAddComments}
-                  disabled={loading}
-                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  {loading ? "Loading..." : "Save Comments"}
-                </button>
-              </div>
-            )}
+            {!properties.isCommented &&
+              application?.currentStage !== "SUBMISSION" && (
+                <div className="w-full flex justify-center mt-4 space-x-4">
+                  <button
+                    type="button"
+                    className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAddComments}
+                    disabled={loading}
+                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    {loading ? "Loading..." : "Save Comments"}
+                  </button>
+                </div>
+              )}
           </div>
         </div>
         {decisionsLoading ? (
           <div className="flex  h-[500px] items-center justify-center bg-white w-[30%] rounded-2xl p-5 gap-4">
             <p>Loading ....</p>
           </div>
+        ) : application?.currentStage === "SUBMISSION" ? (
+          <div></div>
         ) : (
           <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
             <h2 className="font-bold">Decision</h2>
@@ -363,8 +462,8 @@ const Page = () => {
               <h3 className="font-semibold">Evaluation Stage</h3>
               <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
                 {application?.currentStage === "EVALUATION"
-                  ? "Pending"
-                  : "Finished"}
+                  ? "PENDING"
+                  : "APPROVED"}
               </div>
               {application?.evaluationDecisions.length < 3 &&
                 !application?.evaluationDecisions.find(
@@ -416,7 +515,7 @@ const Page = () => {
                       : application?.status}
                   </div>
                   {application?.duediligencyDecisions?.length < 4 &&
-                    !application.duediligencyDecisions.find(
+                    !application?.duediligencyDecisions.find(
                       (dec: any) =>
                         dec?.employee?.user_id ===
                         profile?.userProfile?.data.uuid,
@@ -467,19 +566,12 @@ const Page = () => {
       />
       <MakeDecision
         type={selectedStage as any}
+        firstEvaluationModal={application?.evaluationDecisions.length === 0}
+        application={application}
         isOpen={isOpenMakeDecision}
         close={closeMakeDecision}
         onMakeDecision={() => refetch()}
       />
-
-      {isOpenEditEval && (
-        <EditEvalModal
-          isOpenEditEval={isOpenEditEval}
-          closeEditEval={closeEditEval}
-          formData={savedData}
-          onUpdate={handleUpdate}
-        />
-      )}
       <EvaluationDetails
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
