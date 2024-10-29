@@ -264,6 +264,8 @@ const Page = () => {
     );
   }
 
+  console.log(application)
+
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
