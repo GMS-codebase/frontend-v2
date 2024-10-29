@@ -64,7 +64,7 @@ const Page = () => {
         });
       });
   };
-  console.log(call)
+  console.log(call);
   return (
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">
@@ -198,31 +198,33 @@ const Page = () => {
                   }
                   className={`${call?.closedEvaluation ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full`}
                 >
-                  {call?.closedEvaluation ? "Open":"Close"}
+                  {call?.closedEvaluation ? "Open" : "Close"}
                 </button>
               </div>
               <div className="flex justify-between items-center bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 <h1>Due Diligency Stage</h1>
                 <button
-                disabled={ !call?.closedEvaluation}
+                  disabled={!call?.closedEvaluation}
                   onClick={() =>
                     SetCloseStage({ opened: true, stage: "DUE_DILIGENCY" })
                   }
                   className={`${call?.closedDueDiligency ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  {call?.closedDueDiligency ? "Open":"Close"}
+                  {call?.closedDueDiligency ? "Open" : "Close"}
                 </button>
               </div>
               <div className="flex justify-between items-center bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 <h1>Grant Committee Stage</h1>
                 <button
-                disabled={!call?.closedDueDiligency || !call?.closedEvaluation}
+                  disabled={
+                    !call?.closedDueDiligency || !call?.closedEvaluation
+                  }
                   onClick={() =>
                     SetCloseStage({ opened: true, stage: "GRANT_COMMITTEE" })
                   }
                   className={`${call?.closedGrantCommittee ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  {call?.closedGrantCommittee ? "Open":"Close"}
+                  {call?.closedGrantCommittee ? "Open" : "Close"}
                 </button>
               </div>
             </div>

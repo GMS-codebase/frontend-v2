@@ -30,7 +30,9 @@ const Page = () => {
       return "GRANT COMMITTEE IN PROGRESS";
     } else if (
       application?.currentStage === "CONTRACT_SIGNING" &&
-      (!application?.call?.closedGrantCommittee || !application?.call?.closedDueDiligency ||  !application?.call?.closedEvaluation)
+      (!application?.call?.closedGrantCommittee ||
+        !application?.call?.closedDueDiligency ||
+        !application?.call?.closedEvaluation)
     ) {
       return "CONTRACT SIGNING IN PROGRESS";
     } else {

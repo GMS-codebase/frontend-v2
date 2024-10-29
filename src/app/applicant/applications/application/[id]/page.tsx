@@ -42,9 +42,13 @@ const Page = () => {
           <FundingQuestions
             application={application}
             data={application?.projectFunding}
-            comments={ application?.stages.find(
-              (stage: any) => stage.stage === "EVALUATION"
-            ).status ? application?.projectFunding:undefined}      
+            comments={
+              application?.stages.find(
+                (stage: any) => stage.stage === "EVALUATION",
+              ).status
+                ? application?.projectFunding
+                : undefined
+            }
             goToBudget={() => setCurrentComponent("IndicativeBudget")}
           />
         );
@@ -219,7 +223,7 @@ const Page = () => {
                 <div
                   className={`font-medium  ${
                     application?.stages.find(
-                      (stage: any) => stage.stage === "EVALUATION"
+                      (stage: any) => stage.stage === "EVALUATION",
                     ).status === "APPROVED"
                       ? "bg-[#4BC500] text-[#4BC500]"
                       : application?.status === "PENDING"
@@ -229,7 +233,7 @@ const Page = () => {
                 >
                   {
                     application?.stages.find(
-                      (stage: any) => stage.stage === "EVALUATION"
+                      (stage: any) => stage.stage === "EVALUATION",
                     ).status
                   }
                 </div>
@@ -249,7 +253,7 @@ const Page = () => {
                 <div
                   className={`font-medium  ${
                     application?.stages.find(
-                      (stage: any) => stage.stage === "DUE_DILIGENCY"
+                      (stage: any) => stage.stage === "DUE_DILIGENCY",
                     ).status
                       ? "bg-[#4BC500] text-[#4BC500]"
                       : application?.status === "PENDING"
@@ -259,7 +263,7 @@ const Page = () => {
                 >
                   {
                     application?.stages.find(
-                      (stage: any) => stage.stage === "DUE_DILIGENCY"
+                      (stage: any) => stage.stage === "DUE_DILIGENCY",
                     ).status
                   }
                 </div>
