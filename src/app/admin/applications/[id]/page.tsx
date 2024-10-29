@@ -29,7 +29,7 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id,
   )[0];
-  console.log(application);
+
   const [isOpenAddDue, setIsOpenAddDue] = useState(false);
   const openAddDue = () => setIsOpenAddDue(true);
   const closeAddDue = () => setIsOpenAddDue(false);
@@ -48,50 +48,56 @@ const Page = () => {
       close: closeGrantCommitteeMakeDecision,
     },
   ] = useDisclosure(false);
-  console.log(application);
-  console.log(profile);
 
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
   const [commentsData, setCommentsData] = useState<Comments>({
-    titleComment: application?.projectFunding.titleComment || "",
-    activitiesComment: application?.projectFunding.activitiesComment || "",
+    titleComment: application?.projectFunding?.titleComment || "",
+    activitiesComment: application?.projectFunding?.activitiesComment || "",
     readinessExecuteComment:
-      application?.projectFunding.readinessExecuteComment || "",
-    roleComment: application?.projectFunding.roleComment || "",
-    institutionComment: application?.projectFunding.institutionComment || "",
+      application?.projectFunding?.readinessExecuteComment || "",
+    roleComment: application?.projectFunding?.roleComment || "",
+    institutionComment: application?.projectFunding?.institutionComment || "",
     trainingManualComment:
-      application?.projectFunding.trainingManualComment || "",
+      application?.projectFunding?.trainingManualComment || "",
     trainingEquipmentComment:
-      application?.projectFunding.trainingEquipmentComment || "",
+      application?.projectFunding?.trainingEquipmentComment || "",
     identificationEmployeeComment:
-      application?.projectFunding.identificationEmployeeComment || "",
-    staffComment: application?.projectFunding.staffComment || "",
+      application?.projectFunding?.identificationEmployeeComment || "",
+    staffComment: application?.projectFunding?.staffComment || "",
     sustainabilityComment:
-      application?.projectFunding.sustainabilityComment || "",
+      application?.projectFunding?.sustainabilityComment || "",
     previousFinancialReportComment:
-      application?.projectFunding.previousFinancialReportComment || "",
+      application?.projectFunding?.previousFinancialReportComment || "",
     trainingPremisesComment:
-      application?.projectFunding.trainingPremisesComment || "",
+      application?.projectFunding?.trainingPremisesComment || "",
     contributionFromApplicantComment:
-      application?.projectFunding.contributionFromApplicantComment || "",
+      application?.projectFunding?.contributionFromApplicantComment || "",
     recruitmentTrainerComment:
-      application?.projectFunding.recruitmentTrainerComment || "",
+      application?.projectFunding?.recruitmentTrainerComment || "",
     MOUsAttachmentComment:
-      application?.projectFunding.MOUsAttachmentComment || "",
+      application?.projectFunding?.MOUsAttachmentComment || "",
     identificationMemberComment:
-      application?.projectFunding.identificationMemberComment || "",
+      application?.projectFunding?.identificationMemberComment || "",
     assessmentEquipmentComment:
-      application?.projectFunding.assessmentEquipmentComment || "",
+      application?.projectFunding?.assessmentEquipmentComment || "",
     recruitmentCandidatesNumberComment:
-      application?.projectFunding.recruitmentCandidatesNumberComment || "",
+      application?.projectFunding?.recruitmentCandidatesNumberComment || "",
     assessorsAndFacilitatorsComment:
-      application?.projectFunding.assessorsAndFacilitatorsComment || "",
+      application?.projectFunding?.assessorsAndFacilitatorsComment || "",
     budgetSummaryAttachmentComment:
-      application?.projectFunding.budgetSummaryAttachmentComment || "",
-    contributionComment: application?.projectFunding.contributionComment || "",
+      application?.projectFunding?.budgetSummaryAttachmentComment || "",
+    contributionComment: application?.projectFunding?.contributionComment || "",
+    assessmentComment: application?.projectFunding?.assessmentComment || "",
+    budgetLinesComment: application?.budget?.budgetLinesComment,
   });
+
+  const goToBudget = () => {
+    console.log("Switching to Indicative Budget");
+    setCurrentComponent("IndicativeBudget");
+  };
+
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":
@@ -100,14 +106,18 @@ const Page = () => {
             data={application?.projectFunding}
             setComments={setCommentsData}
             comments={commentsData}
+            goToBudget={goToBudget}
+            // showComments={application?.currentStage !== "SUBMISSION"}
           />
         );
       case "IndicativeBudget":
         return (
           <BudgetQuestions
+            application={application}
             data={application?.budget}
-            commentData={commentsData}
-            setCommentData={setCommentsData}
+            comments={commentsData}
+            setComments={setCommentsData}
+            // showComments={application?.currentStage !== "SUBMISSION"}
           />
         );
       default:
@@ -128,7 +138,7 @@ const Page = () => {
               setDownloading(true);
               try {
                 const response = await authorizedApi.get(
-                  `/admin/applicant-details/${id}`,
+                  `/admin/applicant-details/${application?.applicant?.uuid}`,
                   {
                     responseType: "blob",
                   },
@@ -216,11 +226,17 @@ const Page = () => {
               </p>
               <p>{application?.window.title}</p>
             </div>
-            <div className="flex gap-6 justify-start items-start">
+            <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
-                Application submission deadline
+                Application submission date
               </p>
-              <p>2022/02.18 02:00:00</p>
+              <p>{new Date(application?.doneAt)?.toLocaleDateString()}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Applicant&apos;s Phone Number
+              </p>
+              <p>{application?.applicant?.phone}</p>
             </div>
           </div>
         </div>
@@ -232,17 +248,12 @@ const Page = () => {
             </h2>
             <div>{application?.description}</div>
           </div>
-
-          <div className="flex px-4 py-2 gap-2 bg-[#005DE9] rounded-full text-white items-center justify-start w-fit">
-            <span>
-              <SolarFolder2Bold />
-            </span>
-            <div className="">Apply for Appeal</div>
-          </div>
         </div>
       </div>
       <div className="flex gap-2 p-5">
-        <div className="flex bg-white rounded-2xl w-[70%] gap-4 p-5">
+        <div
+          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMISSION" ? "w-full" : "w-[70%]"}  gap-4 p-5`}
+        >
           <div className="flex flex-col gap-4 w-full">
             <div className="font-semibold text-2xl">Questions and answers</div>
             <div className="flex font-semibold">
@@ -270,72 +281,77 @@ const Page = () => {
             <div className="mt-4 w-full">{renderComponent()}</div>
           </div>
         </div>
-        <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
-          <h2 className="font-bold">Decision</h2>
-          <div className="flex flex-col gap-2">
-            <h3 className="font-semibold">Evaluation Stage</h3>
-            <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-              {application?.currentStage === "EVALUATION"
-                ? "Pending"
-                : "Finished"}
-            </div>
-            {application?.evaluationDecisions && (
-              <div className="flex flex-col gap-2 mt-4">
-                <button
-                  onClick={openEvaluationDetails}
-                  className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                >
-                  View details
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="flex flex-col gap-2">
-            <h3 className="font-bold">Due Diligence Stage</h3>
-            <div
-              className={`font-medium  ${
-                application?.status === "APPROVED" ||
-                application?.currentStage !== "EVALUATION"
-                  ? "bg-[#4BC500] text-[#4BC500]"
-                  : application?.status === "PENDING"
-                    ? "bg-red-600 text-red-600"
-                    : ""
-              } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-            >
-              {application?.currentStage !== "EVALUATION" &&
-              application?.currentStage !== "DUE_DILIGENCY"
-                ? "APPROVED"
-                : application?.status}
-            </div>
-            {application?.currentStage !== "DUE_DILIGENCY" && (
-              <div className="flex flex-col gap-2 mt-4">
-                <button
-                  onClick={openAddDue}
-                  className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                >
-                  View details
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="flex flex-col gap-2">
-            <h3 className="font-semibold">Grant Committee</h3>
-            <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-              {!application?.grantCommitteeDecision ? "Pending" : "Finished"}
-            </div>
 
-            {application?.grantCommitteeDecision && (
-              <div className="flex flex-col gap-2 mt-4">
-                <button
-                  onClick={openGrantCommitteeDetails}
-                  className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                >
-                  View details
-                </button>
+        {application?.currentStage === "SUBMISSION" ? (
+          <div></div>
+        ) : (
+          <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
+            <h2 className="font-bold">Decision</h2>
+            <div className="flex flex-col gap-2">
+              <h3 className="font-semibold">Evaluation Stage</h3>
+              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
+                {application?.currentStage === "EVALUATION"
+                  ? "Pending"
+                  : "APPROVED"}
               </div>
-            )}
+              {application?.evaluationDecisions && (
+                <div className="flex flex-col gap-2 mt-4">
+                  <button
+                    onClick={openEvaluationDetails}
+                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                  >
+                    View details
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <h3 className="font-bold">Due Diligence Stage</h3>
+              <div
+                className={`font-medium  ${
+                  application?.status === "APPROVED" ||
+                  application?.currentStage !== "EVALUATION"
+                    ? "bg-[#4BC500] text-[#4BC500]"
+                    : application?.status === "PENDING"
+                      ? "bg-red-600 text-red-600"
+                      : ""
+                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+              >
+                {application?.currentStage !== "EVALUATION" &&
+                application?.currentStage !== "DUE_DILIGENCY"
+                  ? "APPROVED"
+                  : application?.status}
+              </div>
+              {application?.currentStage !== "DUE_DILIGENCY" && (
+                <div className="flex flex-col gap-2 mt-4">
+                  <button
+                    onClick={openAddDue}
+                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                  >
+                    View details
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <h3 className="font-semibold">Grant Committee</h3>
+              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
+                {!application?.grantCommitteeDecision ? "Pending" : "APPROVED"}
+              </div>
+
+              {application?.grantCommitteeDecision && (
+                <div className="flex flex-col gap-2 mt-4">
+                  <button
+                    onClick={openGrantCommitteeDetails}
+                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                  >
+                    View details
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <DueDiligenceModal
         application={application}
@@ -343,13 +359,10 @@ const Page = () => {
         close={closeAddDue}
       />
       <MakeGrantCommitteeDecision
-        applicationId={id}
+        application={application}
         closeModal={closeGrantCommitteeMakeDecision}
         isOpen={isOpenGrantCommitteeMakeDecision}
-        onMakeDecision={() => {
-          console.log("Decisions made");
-        }}
-        trades={application?.trades}
+        onMakeDecision={() => {}}
       />
       <EvaluationDetails
         opened={isOpenEvaluationDetails}

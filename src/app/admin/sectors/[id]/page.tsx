@@ -53,7 +53,7 @@ const Page = () => {
     setError(null);
     try {
       const response = await authorizedApi.get(`/Sectors/${id}/trades`);
-      console.log(response.data.data);
+
       setTrades(response.data.data.data);
     } catch (err: any) {
       console.error("Error fetching trades:", err);
@@ -77,7 +77,7 @@ const Page = () => {
           .includes(searchQuery.toLowerCase()) ||
         tradeSector.trade.shortname
           .toLowerCase()
-          .includes(searchQuery.toLowerCase())
+          .includes(searchQuery.toLowerCase()),
     );
   }, [trades, searchQuery]);
 
@@ -151,7 +151,7 @@ const Page = () => {
         ),
       },
     ],
-    [openRemoveTrade]
+    [openRemoveTrade],
   );
 
   return (

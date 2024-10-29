@@ -29,7 +29,7 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id,
   )[0];
-  console.log(application);
+
   const [loading, setLoading] = useState(false);
   const [isOpenAddDue, setIsOpenAddDue] = useState(false);
   const openAddDue = () => setIsOpenAddDue(true);
@@ -49,8 +49,6 @@ const Page = () => {
       close: closeGrantCommitteeMakeDecision,
     },
   ] = useDisclosure(false);
-  console.log(application);
-  console.log(profile);
 
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
@@ -92,6 +90,8 @@ const Page = () => {
     budgetSummaryAttachmentComment:
       application?.projectFunding.budgetSummaryAttachmentComment || "",
     contributionComment: application?.projectFunding.contributionComment || "",
+    assessmentComment: application?.projectFunding?.assessmentComment || "",
+    budgetLinesComment: application?.budget?.budgetLinesComment,
   });
   const renderComponent = () => {
     switch (currentComponent) {
@@ -106,9 +106,10 @@ const Page = () => {
       case "IndicativeBudget":
         return (
           <BudgetQuestions
+            application={application}
             data={application?.projectFunding}
-            commentData={commentsData}
-            setCommentData={setCommentsData}
+            comments={commentsData}
+            setComments={setCommentsData}
           />
         );
       default:
@@ -217,11 +218,17 @@ const Page = () => {
               </p>
               <p>{application?.window.title}</p>
             </div>
-            <div className="flex gap-6 justify-start items-start">
+            <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
-                Application submission deadline
+                Application submission date
               </p>
-              <p>2022/02.18 02:00:00</p>
+              <p>{new Date(application?.doneAt)?.toLocaleDateString()}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Applicant&apos;s Phone Number
+              </p>
+              <p>{application?.applicant?.phone}</p>
             </div>
           </div>
         </div>
@@ -344,13 +351,10 @@ const Page = () => {
         close={closeAddDue}
       />
       <MakeGrantCommitteeDecision
-        applicationId={id}
+        application={application}
         closeModal={closeGrantCommitteeMakeDecision}
         isOpen={isOpenGrantCommitteeMakeDecision}
-        onMakeDecision={() => {
-          console.log("Decisions made");
-        }}
-        trades={application?.trades}
+        onMakeDecision={() => {}}
       />
       <EvaluationDetails
         opened={isOpenEvaluationDetails}
