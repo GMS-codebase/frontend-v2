@@ -15,7 +15,6 @@ const ContractsActions = ({
   data: any;
   isNew?: boolean;
 }) => {
-  console.log(data);
   return (
     <div className="">
       <Menu shadow="lg" width={300}>

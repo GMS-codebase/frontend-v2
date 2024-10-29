@@ -14,7 +14,7 @@ const Page = () => {
   const applicant = applicants.applicants.filter(
     (app: Applicant) => app.uuid === id,
   )[0];
-  console.log(applicant);
+
   return (
     <div className="">
       <div className="bg-white rounded-2xl p-10 mb-10 flex flex-col gap-6">

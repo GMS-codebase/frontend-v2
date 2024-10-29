@@ -21,10 +21,9 @@ const Page = () => {
   const { id: roleId } = useParams();
   const roles = useSelector((state: any) => state.roles);
   const role = roles?.roles?.filter((role: any) => role.uuid === roleId)[0];
-  console.log(role);
+
   const [selectedRoleData, setSelectedRoleData] = useState<any>(null);
   const openModal = (data: any) => {
-    console.log(data);
     setSelectedRoleData(data);
     open();
   };

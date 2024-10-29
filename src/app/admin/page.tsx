@@ -56,7 +56,7 @@ const Page = () => {
   const startDate = "2023-05-01";
   const endDate = "2023-12-31";
   const { data: dashboardData, loading } = useSelector(
-    (state: any) => state.dashboard
+    (state: any) => state.dashboard,
   );
   const { sectorsData } = useSelector((state: any) => state.dashboard);
   const companyApplicants = 12345;
@@ -71,7 +71,6 @@ const Page = () => {
   const [stage, setStage] = useState("");
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log("dashboard data --> ", dashboardData?.sectorSummary);
     const fetchDashboardData = async () => {
       await getDashboardData(dispatch, call, stage);
     };
@@ -79,52 +78,58 @@ const Page = () => {
   }, [call, dispatch, stage]);
 
   const dashTablesData = [
-    {
-      sector: "Manufacturing",
-      col1Data: sectorsData["Manufacturing"]?.countApplicants,
-      col2Data: sectorsData["Manufacturing"]?.countApplicants,
-    },
-    {
-      sector: "Hospitality & Tourism",
-      col1Data: sectorsData["Hospitality & Tourism"]?.countApplicants,
-      col2Data: sectorsData["Hospitality & Tourism"]?.countApplicants,
-    },
-    {
-      sector: "Transport & Logistics",
-      col1Data: sectorsData["Transport & Logistics"]?.countApplicants,
-      col2Data: sectorsData["Transport & Logistics"]?.countApplicants,
-    },
-    {
-      sector: "Agriculture",
-      col1Data: sectorsData["Agriculture"]?.countApplicants,
-      col2Data: sectorsData["Agriculture"]?.countApplicants,
-    },
-    {
-      sector: "Energy",
-      col1Data: sectorsData["Energy"]?.countApplicants,
-      col2Data: sectorsData["Energy"]?.countApplicants,
-    },
-    {
-      sector: "Mining",
-      col1Data: sectorsData["Mining"]?.countApplicants,
-      col2Data: sectorsData["Mining"]?.countApplicants,
-    },
-    {
-      sector: "ICT & Digital Skills",
-      col1Data: sectorsData["Mining"]?.countApplicants,
-      col2Data: sectorsData["Mining"]?.countApplicants,
-    },
-    {
-      sector: "Construction",
-      col1Data: sectorsData["Mining"]?.countApplicants,
-      col2Data: sectorsData["Mining"]?.countApplicants,
-    },
-    {
-      sector: "Other",
-      col1Data: sectorsData["Mining"]?.countApplicants,
-      col2Data: sectorsData["Mining"]?.countApplicants,
-    },
+      {
+          sector: "Manufacturing",
+          col1Data: sectorsData["Manufacturing"]?.countApplicants,
+          col2Data: sectorsData["Manufacturing"]?.countApplicants,
+      },
+      {
+          sector: "Hospitality & Tourism",
+          col1Data: sectorsData["Hospitality & Tourism"]?.countApplicants,
+          col2Data: sectorsData["Hospitality & Tourism"]?.countApplicants,
+      },
+      {
+          sector: "Transport & Logistics",
+          col1Data: sectorsData["Transport & Logistics"]?.countApplicants,
+          col2Data: sectorsData["Transport & Logistics"]?.countApplicants,
+      },
+      {
+          sector: "Agriculture",
+          col1Data: sectorsData["Agriculture"]?.countApplicants,
+          col2Data: sectorsData["Agriculture"]?.countApplicants,
+      },
+      {
+          sector: "Energy",
+          col1Data: sectorsData["Energy"]?.countApplicants,
+          col2Data: sectorsData["Energy"]?.countApplicants,
+      },
+      {
+          sector: "Mining",
+          col1Data: sectorsData["Mining"]?.countApplicants,
+          col2Data: sectorsData["Mining"]?.countApplicants,
+      },
+      {
+          sector: "ICT & Digital Skills",
+          col1Data: sectorsData["Mining"]?.countApplicants,
+          col2Data: sectorsData["Mining"]?.countApplicants,
+      },
+      {
+          sector: "Construction",
+          col1Data: sectorsData["Mining"]?.countApplicants,
+          col2Data: sectorsData["Mining"]?.countApplicants,
+      },
+      {
+          sector: "Other",
+          col1Data: sectorsData["Mining"]?.countApplicants,
+          col2Data: sectorsData["Mining"]?.countApplicants,
+      },
+      {
+          sector: "Total Application",
+          col1Data: sectorsData["Mining"]?.countApplicants,
+          col2Data: sectorsData["Mining"]?.countApplicants,
+      },
   ];
+
   return (
     <div className="w-full text-secondaryText pb-20 overflow-y-auto">
       {loading ? (
@@ -184,7 +189,8 @@ const Page = () => {
                 },
                 {
                   sector: "Other",
-                },
+                  },
+               
               ]?.map((sector: any, index: any) => (
                 <div
                   key={index}
@@ -216,7 +222,7 @@ const Page = () => {
                 className="absolute right-0 bottom-0 rounded-b-2xl"
               />
             </div> */}
-            <div className=" bg-white rounded-2xl shadow p-6 flex-grow">
+            <div className=" bg-white rounded-2xl w-[25%] p-6 flex-grow">
               <div className="flex justify-end ">
                 <div className="rounded-full border-black-1">
                   <select className="p-2 border border-1 border-gray-400  text-gray-400 rounded-full text-md">
@@ -234,35 +240,15 @@ const Page = () => {
             </div>
             <div className="bg-white rounded-2xl flex-grow p-4">
               <div className="flex justify-between">
-                <h2 className="text-lg font-semibold mb-8">
-                  Total Applications
-                </h2>
+                <h2 className="text-lg font-semibold mb-8">Total Applicants</h2>
                 <div className="rounded-full border-black-1">
                   <select className="py-2 px-4 border border-1 rounded-full border-gray-400  text-gray-400 text-md">
                     <option value="select-level">All</option>
                   </select>
                 </div>
               </div>
-              <div className="flex flex-col gap-3">
+              <div className="h-[90%] rounded-lg flex flex-col gap-3">
                 <BasicGauges totalApplicants={dashboardData?.totalApplicants} />
-                <div className="flex justify-between items-center text-sm">
-                  <div className="flex items-center p-2">
-                    <p className="text-[#005DE9] text-md font-bold">
-                      Companies{" "}
-                      <span className="bg-slate-200 text-sm  px-2 text-[#005DE9] rounded-3xl font-medium ">
-                        {dashboardData?.totalApplicants}
-                      </span>
-                    </p>
-                  </div>
-                  <div className="flex items-center p-2">
-                    <p className="text-[#65E500] text-md">
-                      Schools{" "}
-                      <span className="bg-slate-200 text-[#65E500] text-sm font-medium px-2 rounded-3xl">
-                        {dashboardData?.totalApplicants}
-                      </span>
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -378,7 +364,7 @@ const Page = () => {
                   </div>
                 </div>
               </div>
-              <Dash col1="Male" col2="Female" data={dashTablesData} />
+              <Dash col1="Number" data={dashTablesData} showSingleRow={true} />
             </div>
             <div className="bg-white p-6 rounded-2xl">
               <div className="flex justify-between gap-3 w-full">
@@ -412,23 +398,19 @@ const Page = () => {
                   </div>
                 </div>
               </div>
-              <Dash
-                col1="Male"
-                col2="Female"
-                data={dashTablesData}
-              />
+              <Dash col1="Male" col2="Female" data={dashTablesData} />
             </div>
             <div className="bg-white p-6 rounded-2xl">
-              <div className="flex justify-between">
-                <p>Trainees</p>
-                <div className="text-md gap-2 flex items-center justify-center">
-                  <div className="flex gap-2 rounded-full bg-slate-400 bg-opacity-10 items-center justify-center py-2 px-3">
+              <div className=" justify-center items-center">
+                <p>Number of Trainees Starting from 2025</p>
+                <div className="text-md gap-2 flex my-2 ">
+                  <div className="flex gap-2 rounded-full bg-slate-400 bg-opacity-10 items-center justify-center py-2 px-5">
                     <span className="text-gray-400">
                       <SolarCalendarBold />
                     </span>
                     <p className="text-xs">Starting date</p>
                   </div>
-                  <div className="flex gap-2 rounded-full bg-slate-400 bg-opacity-10 items-center justify-center py-2 px-3">
+                  <div className="flex gap-2 rounded-full bg-slate-400 bg-opacity-10 items-center justify-center py-2 px-5">
                     <span className="text-gray-400">
                       <SolarCalendarBold />
                     </span>
@@ -452,11 +434,7 @@ const Page = () => {
                   </div>
                 </div>
               </div>
-              <Dash
-                col1="Male"
-                col2="Female"
-                data={dashTablesData}
-              />
+              <Dash col1="Male" col2="Female" data={dashTablesData} />
             </div>
           </div>
         </>
