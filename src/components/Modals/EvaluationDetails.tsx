@@ -67,10 +67,13 @@ const EvaluationDetails = ({
               </span>
             </h1>
             <div className="flex gap-6 justify-start items-center">
-                      <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-                        Approved trainees
-                      </p>
-                      <p className="text-xl">{ evaluations?.length && [...evaluations].reverse()[0]?.numberOfTrainees}</p>
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
+                Approved trainees
+              </p>
+              <p className="text-xl">
+                {evaluations?.length &&
+                  [...evaluations].reverse()[0]?.numberOfTrainees}
+              </p>
             </div>
             {evaluations &&
               [...evaluations].reverse().map((evaluation: any, i: number) => {

@@ -57,7 +57,7 @@ const MakeGrantCommitteeDecision = ({
   const [loading, setLoading] = useState(false);
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -74,7 +74,7 @@ const MakeGrantCommitteeDecision = ({
 
   const handleSelectChange = (
     name: keyof FormData,
-    value: FormData[keyof FormData]
+    value: FormData[keyof FormData],
   ) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -117,14 +117,14 @@ const MakeGrantCommitteeDecision = ({
       newErrors.description = "Description is required.";
       isValid = false;
     }
-    console.log(newErrors)
+    console.log(newErrors);
     setErrors(newErrors);
     return isValid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitting")
+    console.log("Submitting");
 
     if (!validate()) return;
 
@@ -140,7 +140,7 @@ const MakeGrantCommitteeDecision = ({
     try {
       await authorizedApi.post(
         `/application/grant-committee/decision/${application.uuid}`,
-        formDataToSubmit
+        formDataToSubmit,
       );
       notifications.show({
         message: "Application filled successfully!",
@@ -176,10 +176,7 @@ const MakeGrantCommitteeDecision = ({
           <h1 className="text-2xl font-extrabold">Make decision</h1>
         </div>
         <div className=" flex flex-col items-center overflow-y-auto   w-full ">
-          <form
-            className="w-full  space-y-4  px-2"
-            onSubmit={handleSubmit}
-          >
+          <form className="w-full  space-y-4  px-2" onSubmit={handleSubmit}>
             <div className="w-full h-full space-y-3">
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
