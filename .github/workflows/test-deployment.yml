@@ -22,7 +22,7 @@ jobs:
 
       - name: Create environment variables
         run: |
-          chmod +x scripts/create_test_env.sh
+          chmod +x scripts/create_staging_env.sh
           ./scripts/create_staging_env.sh
 
       - name: Build Next.js app
