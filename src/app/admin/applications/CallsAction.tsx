@@ -1,5 +1,4 @@
 import { useDisclosure } from "@mantine/hooks";
-``;
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Menu, Button, Text, rem } from "@mantine/core";
 import Link from "next/link";
