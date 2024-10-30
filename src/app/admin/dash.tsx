@@ -19,7 +19,7 @@ const Dash: React.FC<DashProps> = ({ col1, col2, data, showSingleRow }) => {
       {/* Headers */}
       <div className="flex justify-between text-black font-bold mb-2">
         <span className="w-1/3">Priority sectors</span>
-        <span className="w-1/4">{col1}</span>
+        <span className="w-1/8">{col1}</span>
         {col2 && <span className="w-1/4 text-center">{col2}</span>}
       </div>
 
