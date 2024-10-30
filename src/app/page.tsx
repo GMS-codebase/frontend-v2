@@ -109,7 +109,7 @@ function Page() {
           style={{ scrollbarWidth: "none" }}
         >
           <div className="flex space-x-4">
-            {sortedCalls &&
+            {sortedCalls.length ?
               sortedCalls.map((call: any) => (
                 <div
                   key={call.id}
@@ -133,7 +133,9 @@ function Page() {
                     View details
                   </button>
                 </div>
-              ))}
+              )): <h2 className="text-black w-full text-base text-center md:text-xl mt-4 font-normal">
+              Unfortunately there is no open call.
+            </h2>}
           </div>
         </div>
       </div>
