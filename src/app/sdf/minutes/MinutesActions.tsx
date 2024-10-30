@@ -1,4 +1,4 @@
-  import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Menu } from "@mantine/core";
 import { RiDeleteBinLine } from "react-icons/ri";
@@ -17,8 +17,10 @@ const MinutesActions = ({
   data: any;
   status: string;
 }) => {
-  const [isOpenAddContract, { open: openContract, close: closeContract }] = useDisclosure(false);
-  const [isOpenAddMinute, { open: openMinute, close: closeMinute }] = useDisclosure(false);
+  const [isOpenAddContract, { open: openContract, close: closeContract }] =
+    useDisclosure(false);
+  const [isOpenAddMinute, { open: openMinute, close: closeMinute }] =
+    useDisclosure(false);
 
   return (
     <div>
@@ -39,9 +41,12 @@ const MinutesActions = ({
             <h1 className="text-lg">Actions</h1>
           </Menu.Label>
           <Menu.Divider />
-          
+
           {status === "ready" && (
-            <Menu.Item onClick={openMinute} className="w-full py-1 text-[#576074]">
+            <Menu.Item
+              onClick={openMinute}
+              className="w-full py-1 text-[#576074]"
+            >
               <div className="flex items-center gap-3 py-1">
                 <Upload size={21} />
                 <span>Upload Minute Negotiation</span>
@@ -51,19 +56,30 @@ const MinutesActions = ({
 
           {status === "uploaded" && (
             <>
-              <Menu.Item onClick={() => setIsMinute(data)} className="w-full py-1 text-[#576074]">
+              <Menu.Item
+                onClick={() => setIsMinute(data)}
+                className="w-full py-1 text-[#576074]"
+              >
                 <div className="flex items-center gap-3 py-1">
                   <VscEye size={21} />
                   <span>View</span>
                 </div>
               </Menu.Item>
-              <Menu.Item onClick={openMinute} className="w-full py-1 text-[#576074]">
+              <Menu.Item
+                onClick={openMinute}
+                className="w-full py-1 text-[#576074]"
+              >
                 <div className="flex items-center gap-3 py-1">
                   <CiEdit size={21} />
                   <span>Update</span>
                 </div>
               </Menu.Item>
-              <Menu.Item onClick={() => {/* Delete functionality */}} className="w-full py-1 text-red-600">
+              <Menu.Item
+                onClick={() => {
+                  /* Delete functionality */
+                }}
+                className="w-full py-1 text-red-600"
+              >
                 <div className="flex items-center gap-3 py-1">
                   <RiDeleteBinLine size={21} />
                   <span>Delete</span>
@@ -74,13 +90,19 @@ const MinutesActions = ({
 
           {status === "approved" && (
             <>
-              <Menu.Item onClick={() => setIsMinute(data)} className="w-full py-1 text-[#576074]">
+              <Menu.Item
+                onClick={() => setIsMinute(data)}
+                className="w-full py-1 text-[#576074]"
+              >
                 <div className="flex items-center gap-3 py-1">
                   <VscEye size={21} />
                   <span>View</span>
                 </div>
               </Menu.Item>
-              <Menu.Item onClick={openContract} className="w-full py-1 text-[#576074]">
+              <Menu.Item
+                onClick={openContract}
+                className="w-full py-1 text-[#576074]"
+              >
                 <div className="flex items-center gap-3 py-1">
                   <Upload size={21} />
                   <span>Upload Signed Meeting Minutes</span>
@@ -90,7 +112,10 @@ const MinutesActions = ({
           )}
 
           {status === "rejected" && (
-            <Menu.Item onClick={() => setIsMinute(data)} className="w-full py-1 text-[#576074]">
+            <Menu.Item
+              onClick={() => setIsMinute(data)}
+              className="w-full py-1 text-[#576074]"
+            >
               <div className="flex items-center gap-3 py-1">
                 <VscEye size={21} />
                 <span>View meeting minutes</span>
