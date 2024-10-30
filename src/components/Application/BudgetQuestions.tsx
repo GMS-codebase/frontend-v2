@@ -90,7 +90,6 @@ const BudgetQuestions: React.FC<Props> = ({
             }
             data={[
               "Occupation, safety, health and environmental at Workplace (OSHE)",
-              "Refreshment",
               "Consumables",
               "Trainees Facilitation Fees",
               "Trainers Allowances",
