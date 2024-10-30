@@ -5,6 +5,8 @@ import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
 import { useParams } from "next/navigation";
 import { AiOutlineDelete } from "react-icons/ai";
+import DeleteConfirm from "./DeleteConfirm";
+import { useDisclosure } from "@mantine/hooks";
 
 interface MakeDecisionProps {
   isOpen: boolean;
@@ -35,11 +37,16 @@ const MakeDecision = ({
     trades: [] as { trade: any; trainees: number }[],
   });
   const { id } = useParams<{ id: string }>();
+  const [tradeToDelete, setTradeToDelete] = useState<any | null>(null);
   const [errors, setErrors] = useState({
     decision: "",
     comment: "",
     trades: "",
   });
+  const [
+    isOpenDeleteModal,
+    { open: openDeleteModal, close: closeDeleteModal },
+  ] = useDisclosure(false);
   const [loading, setLoading] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<any>(null);
   const [traineesNumber, setTraineesNumber] = useState<number | undefined>(0);
@@ -151,6 +158,7 @@ const MakeDecision = ({
       ...prev,
       trades: prev.trades.filter((entry) => entry.trade.uuid == uuid),
     }));
+    closeDeleteModal();
   };
 
   return (
@@ -332,6 +340,13 @@ const MakeDecision = ({
           </form>
         </div>
       </div>
+      <DeleteConfirm
+        isOpen={isOpenDeleteModal}
+        onClose={closeDeleteModal}
+        onConfirm={() => {
+          removeTradeTrainee(tradeToDelete);
+        }}
+      />
     </Modal>
   );
 };
