@@ -212,7 +212,7 @@ const Page = () => {
           />
         </div>
       </div>
-      <div className="flex mb-5 ">
+      <div className="flex mb-5">
         <button
           className={`w-full text-center py-3  ${activeTab === "applications" ? "bg-[#005DE90A] border-b-2 border-b-[#005DE9] text-[#005DE9]" : "bg-[#000F2303] text-black"}`}
           onClick={() => setActiveTab("applications")}

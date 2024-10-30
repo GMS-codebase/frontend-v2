@@ -94,7 +94,7 @@ const Page = () => {
       header: "Minute Approval Status",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.approval_status?.toUpperCase()}
+          {row.original?.terms?.toUpperCase()}
         </div>
       ),
     },
@@ -286,7 +286,7 @@ const Page = () => {
                 !minutes.find(
                   (min: any) =>
                     min.application.uuid === app.uuid &&
-                    min.terms.toUpperCase() === "PENDING",
+                    min.terms === "PENDING",
                 ),
             )}
             loading={loading}
@@ -304,7 +304,7 @@ const Page = () => {
                 minutes.find(
                   (min: any) =>
                     min.application.uuid == app.uuid &&
-                    min.terms.toUpperCase() === "APPROVED",
+                    min.terms === "APPROVED",
                 ) === null,
             )}
             noDataMessage="No Approved minute negotiation"
@@ -319,7 +319,7 @@ const Page = () => {
               minutes.find(
                 (min: any) =>
                   min.application.uuid === app.uuid &&
-                  min.terms.toUpperCase() === "REJECTED",
+                  min.terms === "REJECTED",
               ),
             )}
             loading={loading}
