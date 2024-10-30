@@ -18,29 +18,35 @@ const Page = () => {
   });
 
   const { minutes, loading: loadingMinutes } = useSelector(
-    (state: any) => state.minutes
+    (state: any) => state.minutes,
   );
   const { applicationsForContractSigning: applications, loading } = useSelector(
-    (state: any) => state.applications
+    (state: any) => state.applications,
   );
-  console.log("applicatioons",applications)
-  console.log("minutes",minutes)
+  console.log("applicatioons", applications);
+  console.log("minutes", minutes);
 
   const minuteColumns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
       header: "Applicant Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.name}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.name}</div>
+      ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.phone}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.phone}</div>
+      ),
     },
     {
       accessorKey: "email",
       header: "Applicant Email",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.email}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.email}</div>
+      ),
     },
     {
       accessorKey: "approval_status",
@@ -53,7 +59,11 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <MinutesActions data={row.original} setIsMinute={setIsMinute} status="uploaded" />
+        <MinutesActions
+          data={row.original}
+          setIsMinute={setIsMinute}
+          status="uploaded"
+        />
       ),
     },
   ];
@@ -61,30 +71,42 @@ const Page = () => {
     {
       accessorKey: "name",
       header: "Applicant Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.name}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.name}</div>
+      ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.phone}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.phone}</div>
+      ),
     },
     {
       accessorKey: "email",
       header: "Applicant Email",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.email}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.email}</div>
+      ),
     },
     {
       accessorKey: "approval_status",
       header: "Minute Approval Status",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.approval_status?.toUpperCase()}</div>
+        <div className="w-full">
+          {row.original?.approval_status?.toUpperCase()}
+        </div>
       ),
     },
     {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <MinutesActions data={row.original} setIsMinute={setIsMinute} status="approved" />
+        <MinutesActions
+          data={row.original}
+          setIsMinute={setIsMinute}
+          status="approved"
+        />
       ),
     },
   ];
@@ -92,17 +114,23 @@ const Page = () => {
     {
       accessorKey: "name",
       header: "Applicant Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.name}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.name}</div>
+      ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.phone}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.phone}</div>
+      ),
     },
     {
       accessorKey: "email",
       header: "Applicant Email",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.email}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.email}</div>
+      ),
     },
     {
       accessorKey: "approval_status",
@@ -115,7 +143,11 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <MinutesActions data={row.original} setIsMinute={setIsMinute} status="rejected" />
+        <MinutesActions
+          data={row.original}
+          setIsMinute={setIsMinute}
+          status="rejected"
+        />
       ),
     },
   ];
@@ -124,17 +156,23 @@ const Page = () => {
     {
       accessorKey: "applicationNumber",
       header: "Application Number",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicationNumber}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicationNumber}</div>
+      ),
     },
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.name}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.name}</div>
+      ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
-      cell: ({ row }) => <div className="w-full">{row.original?.applicant?.phone}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.phone}</div>
+      ),
     },
     {
       accessorKey: "description",
@@ -151,12 +189,16 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <MinutesActions data={row.original} setIsMinute={setIsMinute} status="ready"/>
+        <MinutesActions
+          data={row.original}
+          setIsMinute={setIsMinute}
+          status="ready"
+        />
       ),
     },
   ];
 
-    const FilterDropDown = ({
+  const FilterDropDown = ({
     placeholderText,
     data,
   }: {
@@ -186,35 +228,37 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-           <div
-            // ref={filtersContainerRef}
-            className="flex items-center gap-3 overflow-x-hidden scrollbar-hide"
-            style={{ scrollBehavior: "smooth", maxWidth: "calc(4 * 11rem)" }}
-          >
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Call"
-                data={["Call Test"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Sector"
-                data={["ICT & Innovations"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By trade"
-                data={["Agriculture"]}
-              />
-            </div>
+        <div
+          // ref={filtersContainerRef}
+          className="flex items-center gap-3 overflow-x-hidden scrollbar-hide"
+          style={{ scrollBehavior: "smooth", maxWidth: "calc(4 * 11rem)" }}
+        >
+          <div className="w-44 flex-shrink-0">
+            <FilterDropDown
+              placeholderText="Filter By Call"
+              data={["Call Test"]}
+            />
           </div>
+          <div className="w-44 flex-shrink-0">
+            <FilterDropDown
+              placeholderText="Filter By Sector"
+              data={["ICT & Innovations"]}
+            />
+          </div>
+          <div className="w-44 flex-shrink-0">
+            <FilterDropDown
+              placeholderText="Filter By trade"
+              data={["Agriculture"]}
+            />
+          </div>
+        </div>
       </div>
 
-      <Tabs defaultValue="applications" >
+      <Tabs defaultValue="applications">
         <Tabs.List className="w-auto my-2 ml-5 float-end">
-          <Tabs.Tab value="applications">Ready for Minutes Negotiations</Tabs.Tab>
+          <Tabs.Tab value="applications">
+            Ready for Minutes Negotiations
+          </Tabs.Tab>
           <Tabs.Tab value="minutes">Meeting minutes Uploaded</Tabs.Tab>
           <Tabs.Tab value="approved">Approved meeting minutes</Tabs.Tab>
           <Tabs.Tab value="rejected">Rejected meeting minutes</Tabs.Tab>
@@ -231,16 +275,19 @@ const Page = () => {
         </Tabs.Panel>
 
         <Tabs.Panel value="applications">
-          <h1 className="text-xl p-4 font-bold"> Ready For Minutes Negotiations</h1>
-         <DataTable
-            columns={columns
-            }
+          <h1 className="text-xl p-4 font-bold">
+            {" "}
+            Ready For Minutes Negotiations
+          </h1>
+          <DataTable
+            columns={columns}
             data={applications.filter(
-              (app:any) => !minutes.find(
-                (min:any) =>
-                  min.application.uuid === app.uuid &&
-                  min.terms.toUpperCase() === "PENDING"
-              )
+              (app: any) =>
+                !minutes.find(
+                  (min: any) =>
+                    min.application.uuid === app.uuid &&
+                    min.terms.toUpperCase() === "PENDING",
+                ),
             )}
             loading={loading}
             noDataMessage="No Application ready for minute negotiation"
@@ -257,8 +304,8 @@ const Page = () => {
                 minutes.find(
                   (min: any) =>
                     min.application.uuid == app.uuid &&
-                    min.terms.toUpperCase() === "APPROVED"
-                ) === null
+                    min.terms.toUpperCase() === "APPROVED",
+                ) === null,
             )}
             noDataMessage="No Approved minute negotiation"
           />
@@ -266,21 +313,19 @@ const Page = () => {
 
         <Tabs.Panel value="rejected">
           <h1 className="text-xl p-4 font-bold">Rejected minute negotiation</h1>
-         <DataTable
-            columns={rejectedColumns
-            }
-            data={applications.filter(
-              (app:any) => minutes.find(
-                (min:any) =>
+          <DataTable
+            columns={rejectedColumns}
+            data={applications.filter((app: any) =>
+              minutes.find(
+                (min: any) =>
                   min.application.uuid === app.uuid &&
-                  min.terms.toUpperCase() === "REJECTED"
-              )
+                  min.terms.toUpperCase() === "REJECTED",
+              ),
             )}
             loading={loading}
             noDataMessage="No Rejected Minute Negotiations"
           />
         </Tabs.Panel>
-
       </Tabs>
 
       {/* AddMinute Modal */}
