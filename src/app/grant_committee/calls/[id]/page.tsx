@@ -117,7 +117,7 @@ const Page = () => {
             <span>
               <SolarDownloadMinimalisticBold />
             </span>
-            <p>View application instructions</p>
+            <p>Download application instructions</p>
           </div>
         </div>
       </div>
