@@ -511,12 +511,12 @@ export const handleSubmit = async (
   const error =
     type === "save"
       ? undefined
-      : validateQuestions(
+      : await validateQuestions(
           data,
           application.window.title.includes("3") && 3,
           application.subWindow.title.includes("2") && 2,
         );
-  if (error) {
+  if (error !== null && type === "submit") {
     notifications.show({
       message: error,
       color: "red",
@@ -617,14 +617,17 @@ export const handleSubmit = async (
   if (data.budgetSummaryAttachment)
     submitData.append("budgetSummaryAttachment", data.budgetSummaryAttachment);
 
-  console.log("final data -->", data);
+  console.log(application);
   try {
-    const res = await authorizedApi.post(
+    await authorizedApi.post(
       `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${application.uuid}`,
       submitData,
     );
     notifications.show({
-      message: "Application filled successfully!",
+      message:
+        type == "save"
+          ? "Application drafted successfully"
+          : "Application filled successfully!",
       color: "blue",
     });
     setLoading(false);

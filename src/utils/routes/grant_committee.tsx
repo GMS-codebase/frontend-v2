@@ -9,14 +9,14 @@ const grant_committeeRoutes: Route[] = [
     icon: <Icons.SolarPieChart2Bold />,
   },
   {
-    label: "Applicants",
-    path: "/grant_committee/applicants",
-    icon: <Icons.SolarUsersGroupTwoRoundedBold />,
-  },
-  {
     label: "Applications",
     path: "/grant_committee/applications",
     icon: <Icons.SolarFolderWithFilesBold />,
+  },
+  {
+    label: "Applicants",
+    path: "/grant_committee/applicants",
+    icon: <Icons.SolarUsersGroupTwoRoundedBold />,
   },
   {
     label: "Application Reports",

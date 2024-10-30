@@ -30,7 +30,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const trades: any = application?.trades.map((trade: any) => ({
+  const trades: any = application?.trades.map((trade: any, i: any) => ({
     label: trade.trade.title,
     value: trade.trade.title,
   }));
@@ -58,15 +58,14 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       }
       data={data}
       {...(setData && { setData: handleChange })}
-      trades={trades}
       commentsData={comments}
       setCommentsData={setComments}
+      application={application}
     />,
     <Page3
       key="equipments"
       data={data}
       {...(setData && { setData: handleChange })}
-      trades={trades}
       commentsData={comments}
       setCommentsData={setComments}
     />,
