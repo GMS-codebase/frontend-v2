@@ -16,60 +16,60 @@ const ContractsActions = ({
   isNew?: boolean;
 }) => {
   return (
-      <div className="">
-          <Menu shadow="lg" width={300}>
-              <Menu.Target>
-                  <button
-                      style={{
-                          background:
-                              "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-                      }}
-                      className="p-3 rounded-full border text-white hover:bg-red-100"
-                  >
-                      <HiDotsHorizontal size={25} color="white" />
-                  </button>
-              </Menu.Target>
-              <Menu.Dropdown>
-                  <Menu.Label>
-                      <h1 className="text-lg">Actions</h1>
-                  </Menu.Label>
-                  <Menu.Divider />
+    <div className="">
+      <Menu shadow="lg" width={300}>
+        <Menu.Target>
+          <button
+            style={{
+              background:
+                "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+            }}
+            className="p-3 rounded-full border text-white hover:bg-red-100"
+          >
+            <HiDotsHorizontal size={25} color="white" />
+          </button>
+        </Menu.Target>
+        <Menu.Dropdown>
+          <Menu.Label>
+            <h1 className="text-lg">Actions</h1>
+          </Menu.Label>
+          <Menu.Divider />
 
-                  {isNew && (
-                      <Menu.Item>
-                          <div
-                              onClick={() =>
-                                  setIsContract({
-                                      isOpen: true,
-                                      application: data,
-                                  })
-                              }
-                              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                          >
-                              <CiEdit size={21} color="#576074" />
-                              upload Contract
-                          </div>
-                      </Menu.Item>
-                  )}
-                  {isNew && (
-                      <Menu.Item>
-                          <div
-                              onClick={() =>
-                                  setIsContract({
-                                      isOpen: true,
-                                      application: data,
-                                  })
-                              }
-                              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                          >
-                              <CiEdit size={21} color="#576074" />
-                              View approved Signed Minutes Negotiation
-                          </div>
-                      </Menu.Item>
-                  )}
-              </Menu.Dropdown>
-          </Menu>
-      </div>
+          {isNew && (
+            <Menu.Item>
+              <div
+                onClick={() =>
+                  setIsContract({
+                    isOpen: true,
+                    application: data,
+                  })
+                }
+                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+              >
+                <CiEdit size={21} color="#576074" />
+                upload Contract
+              </div>
+            </Menu.Item>
+          )}
+          {isNew && (
+            <Menu.Item>
+              <div
+                onClick={() =>
+                  setIsContract({
+                    isOpen: true,
+                    application: data,
+                  })
+                }
+                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+              >
+                <CiEdit size={21} color="#576074" />
+                View approved Signed Minutes Negotiation
+              </div>
+            </Menu.Item>
+          )}
+        </Menu.Dropdown>
+      </Menu>
+    </div>
   );
 };
 
