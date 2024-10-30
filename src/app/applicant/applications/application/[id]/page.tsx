@@ -49,6 +49,7 @@ const Page = () => {
                 ? application?.projectFunding
                 : undefined
             }
+            showComments={false}
             goToBudget={() => setCurrentComponent("IndicativeBudget")}
           />
         );
@@ -58,6 +59,7 @@ const Page = () => {
             application={application as any}
             comments={application?.budget}
             data={application?.budget}
+            showComments={false}
           />
         );
       default:
