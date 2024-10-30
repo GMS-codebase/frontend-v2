@@ -179,6 +179,7 @@ const Page = () => {
         },
     ];
 
+
   function setIsContract(arg0: { isOpen: boolean; application: null; }): void {
     throw new Error("Function not implemented.");
   }
@@ -256,6 +257,69 @@ const Page = () => {
                     setIsContract({ isOpen: false, application: null })
                 }
             />
+  return (
+    <div className="w-full flex flex-col mb-20 pb-10">
+      <div className="w-full flex justify-between items-center p-4">
+        <div className="relative w-[20rem]">
+          <span className="absolute top-4 left-4">
+            <CiSearch size={25} />
+          </span>
+          <input
+            name="search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full p-3 py-4 pl-12 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
+            placeholder="Search"
+          />
+        </div>
+        <div className="flex items-center gap-3 right-2 ">
+          <FilterDropDown placeholderText="Filter By Call" data={["call 1"]} />
+          <FilterDropDown
+            placeholderText="Filter By Sector"
+            data={["ICT and innovations"]}
+          />
+          <FilterDropDown
+            placeholderText="Filter By Trade"
+            data={["Manufacturing"]}
+          />
+        </div>
+      </div>
+      <div className="flex mb-5 ">
+        <button
+          className={`w-full text-center py-3  ${activeTab === "applications" ? "bg-[#005DE90A] border-b-2 border-b-[#005DE9] text-[#005DE9]" : "bg-[#000F2303] text-black"}`}
+          onClick={() => setActiveTab("applications")}
+        >
+          Applications Ready For Contract Signing
+        </button>
+        <button
+          className={`w-full text-center py-3 ${activeTab === "contracts" ? "bg-[#005DE90A] border-b-2 border-b-[#005DE9] text-[#005DE9]" : "bg-[#000F2303] text-black"}`}
+          onClick={() => setActiveTab("contracts")}
+        >
+          Contracts Signed
+        </button>
+      </div>
+      {activeTab === "applications" ? (
+        <div className="bg-white rounded-2xl">
+          <h1 className="text-xl p-4 font-bold">
+            Applications Ready For Contract Signing
+          </h1>
+          <DataTable
+            columns={applicationColumns}
+            data={applications}
+            loading={loading}
+            noDataMessage="No Approved Applications"
+          />
+        </div>
+      ) : (
+        <div className="mb-10 bg-white rounded-2xl">
+          <h1 className="text-xl p-4 font-bold">Contracts Signed</h1>
+          <DataTable
+            columns={contractColumns}
+            data={contracts}
+            loading={loadingContracts}
+            noDataMessage="No Created Contracts"
+          />
+
         </div>
     );
 };

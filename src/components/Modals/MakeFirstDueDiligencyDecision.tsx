@@ -20,7 +20,7 @@ interface FormData {
   comment: string;
   decision: string;
   attachment: File | null;
-  trades: any;
+  traineeNumber: any;
 }
 
 const decisions = [
@@ -39,8 +39,6 @@ const MakeFirstDueDiligencyDecision = ({
   afterMakeDecision: () => void;
   application: any;
 }) => {
-  const [selectedTrade, setSelectedTrade] = useState<any>();
-  const [traineesNumber, setTraineesNumber] = useState(0);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     financeInfo: "",
@@ -50,7 +48,7 @@ const MakeFirstDueDiligencyDecision = ({
     comment: "",
     decision: "",
     attachment: null,
-    trades: [],
+    traineeNumber: "",
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -89,7 +87,7 @@ const MakeFirstDueDiligencyDecision = ({
       submitData.append("ohsinfo", formData.ohsInfo);
       submitData.append("equipmentinfo", formData.equipmentInfo);
       submitData.append("workPlaceInfo", formData.workPlaceInfo);
-      submitData.append("trades", formData.trades);
+      submitData.append("traineeNumber", formData.traineeNumber);
       submitData.append("comment", formData.comment);
       submitData.append("decision", formData.decision);
       if (formData.attachment) {
@@ -119,7 +117,7 @@ const MakeFirstDueDiligencyDecision = ({
         comment: "",
         decision: "",
         attachment: null,
-        trades: null,
+        traineeNumber: null,
       });
       afterMakeDecision();
       closeModal();
@@ -134,42 +132,6 @@ const MakeFirstDueDiligencyDecision = ({
     } finally {
       setLoading(false);
     }
-  };
-
-  const addTradeTrainee = () => {
-    console.log({ selectedTrade, traineesNumber });
-    console.log(formData);
-    setFormData((prev: any) => {
-      const existingTradeIndex = prev?.trades?.findIndex(
-        (trade: any) => trade.trade === selectedTrade,
-      );
-      if (existingTradeIndex !== -1) {
-        const updatedTrades = [...(prev.trades || [])];
-        updatedTrades[existingTradeIndex].trainees = traineesNumber;
-        return {
-          ...prev,
-          trades: updatedTrades,
-        };
-      } else {
-        return {
-          ...prev,
-          trades: [
-            ...(prev.trades || []),
-            { trade: selectedTrade, trainees: traineesNumber },
-          ],
-        };
-      }
-    });
-    setSelectedTrade(null);
-    setTraineesNumber(0);
-  };
-
-  const removeTradeTrainee = (uuid: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      trades:
-        prev.trades?.filter((entry: any) => entry.trade.uuid !== uuid) || [],
-    }));
   };
 
   return (
@@ -276,105 +238,20 @@ const MakeFirstDueDiligencyDecision = ({
                       htmlFor="trade"
                       className="block  font-bold text-gray-700 text-xs"
                     >
-                      Trade/Number of trainees
+                      Accepted Trainee Number
                     </label>
-                    <div className="w-full  flex items-center  bg-gray2  rounded-2xl">
-                      <div className="flex-grow  flex items-center gap-2 border-r border-r-gray h-full  p-2">
-                        <BsPerson className="w-5 h-5" />
-                        <div className="flex-grow">
-                          <Select
-                            name="trade"
-                            value={selectedTrade}
-                            onChange={(value) => setSelectedTrade(value)}
-                            data={application?.trades?.map((trade: any) => ({
-                              value: trade.trade.uuid,
-                              label: trade.trade.title,
-                            }))}
-                            placeholder="Select trade"
-                          />
-                        </div>
-                      </div>
-                      <div className="flex-grow flex items-center gap-2 p-2">
-                        <BsPerson className="w-5 h-5" />
-                        <input
-                          type="number"
-                          name="trainees"
-                          value={traineesNumber}
-                          placeholder="Number of trainees"
-                          className="outline-none flex-grow  bg-transparent"
-                          onChange={(e) =>
-                            setTraineesNumber(parseInt(e.target.value))
-                          }
-                        />
-                        <button
-                          type="button"
-                          className=" bg-blue-500 bg-opacity-15 py-1 rounded-2xl px-2  flex gap-1"
-                          // disabled={
-                          //   !selectedTrade ||
-                          //   traineesNumber === 0 ||
-                          //   traineesNumber == undefined
-                          // }
-                          onClick={addTradeTrainee}
-                        >
-                          <SolarAddSquareBold className="mt-[1px] w-5 h-5 text-blue-500" />
-                          <div className="text-blue-500">Add</div>
-                        </button>
-                      </div>
+                    <div className="flex-grow flex items-center gap-2 p-2 bg-gray2">
+                      <BsPerson className="w-5 h-5" />
+                      <input
+                        type="number"
+                        name="traineeNumber"
+                        value={formData.traineeNumber}
+                        placeholder="Number of trainees"
+                        className="outline-none flex-grow  bg-transparent"
+                        onChange={handleChange}
+                      />
                     </div>
                   </div>
-                  {formData.trades.length > 0 && (
-                    <table className="mt-3">
-                      <thead>
-                        <tr>
-                          <th className="px-4 py-2 text-sm font-medium text-gray-700">
-                            Trade
-                          </th>
-                          <th className="px-4 py-2 text-sm font-medium text-gray-700">
-                            Number of Trainees
-                          </th>
-                          <th className="px-4 py-2 text-sm font-medium text-gray-700">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {formData.trades?.map(
-                          (tradeTrainee: any, index: any) => (
-                            <tr key={index}>
-                              <td className="px-4 py-2 text-sm">
-                                {
-                                  application?.trades.find(
-                                    (trade: any) =>
-                                      trade.trade.uuid === tradeTrainee.trade,
-                                  ).trade.title
-                                }
-                              </td>
-                              <td className="px-4 py-2 text-sm">
-                                {tradeTrainee.trainees}
-                              </td>
-                              <td className="px-4 py-2 text-sm">
-                                <button
-                                  className="bg-primary px-2 text-sm py-1 text-white font-medium rounded-full"
-                                  onClick={() =>
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      trades: prev.trades.filter(
-                                        (trade: any) =>
-                                          trade.trade.uuid !==
-                                          tradeTrainee.trade.uuid,
-                                      ),
-                                    }))
-                                  }
-                                >
-                                  Remove
-                                </button>
-                              </td>
-                            </tr>
-                          ),
-                        )}
-                      </tbody>
-                    </table>
-                  )}
                 </div>
               </div>
             )}

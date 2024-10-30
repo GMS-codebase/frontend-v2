@@ -219,6 +219,48 @@ const CompleteProfile = ({
     }
   };
 
+  const handleProvinceChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      province: value,
+      district: "",
+      sector: "",
+      cell: "",
+      village: "",
+    }));
+  };
+
+  const handleDistrictChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      district: value,
+      sector: "",
+      cell: "",
+      village: "",
+    }));
+  };
+
+  const handleSectorChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      sector: value,
+      cell: "",
+      village: "",
+    }));
+  };
+
+  const handleCellChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      cell: value,
+      village: "",
+    }));
+  };
+
   return (
     <Modal
       size={"xl"}
@@ -414,7 +456,8 @@ const CompleteProfile = ({
                     htmlFor="fileUpload"
                     className="block text-xs font-bold text-gray-700"
                   >
-                    Attachment (Certificate)
+                    Attachment (Recognized Registration Certificate/
+                    Accreditation)
                   </label>
                   <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ">
                     <label
