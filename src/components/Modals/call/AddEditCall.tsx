@@ -27,7 +27,7 @@ const AddEditCall = ({
 }) => {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
-
+  const [errors, setErrors] = useState<any>();
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
@@ -46,21 +46,26 @@ const AddEditCall = ({
   const windows = useSelector((state: any) => state.windows);
   const { sectors } = useSelector((state: any) => state.sectors);
   let MultiWindowData =
-    windows?.windows?.map((window: any) => ({
-      value: window.uuid,
-      label: window.title,
-    })) ?? [];
+    windows?.windows
+      .filter((window: any) => window.subWindows.length !== 0)
+      ?.map((window: any) => ({
+        value: window.uuid,
+        label: window.title,
+      })) ?? [];
 
   const getSubWindowsData = () => {
     const subWindowData =
       windows?.windows
         ?.filter((window: any) => selectedWindows?.includes(window.uuid))
-        .flatMap((window: any) =>
-          window.subWindows?.map((subWindow: any) => ({
-            value: subWindow?.uuid,
-            label: subWindow?.title,
-          })),
-        ) || [];
+        .flatMap((window: any) => {
+          return (
+            window.subWindows?.map((subWindow: any) => ({
+              value: subWindow.uuid,
+              label: subWindow.title,
+            })) || []
+          );
+        }) || [];
+
     return subWindowData;
   };
 
@@ -264,6 +269,7 @@ const AddEditCall = ({
                         required
                       />
                     </div>
+                    {}
                   </div>
                 </div>
 
@@ -278,8 +284,7 @@ const AddEditCall = ({
                     <span className="absolute left-2 top-[10px]">
                       <Subtitles />
                     </span>
-                    <input
-                      type="text"
+                    <textarea
                       name="description"
                       value={formData.description}
                       placeholder="Add description"
