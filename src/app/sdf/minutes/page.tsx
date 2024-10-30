@@ -93,9 +93,7 @@ const Page = () => {
       accessorKey: "approval_status",
       header: "Minute Approval Status",
       cell: ({ row }) => (
-        <div className="w-full">
-          {row.original?.terms?.toUpperCase()}
-        </div>
+        <div className="w-full">{row.original?.terms?.toUpperCase()}</div>
       ),
     },
     {
@@ -318,8 +316,7 @@ const Page = () => {
             data={applications.filter((app: any) =>
               minutes.find(
                 (min: any) =>
-                  min.application.uuid === app.uuid &&
-                  min.terms === "REJECTED",
+                  min.application.uuid === app.uuid && min.terms === "REJECTED",
               ),
             )}
             loading={loading}
