@@ -15,6 +15,7 @@ interface FundingQuestionsProps {
   goToBudget?: () => void;
   showComments?: boolean;
   application?: any;
+  isApplicant?: boolean;
 }
 
 const FundingQuestions: React.FC<FundingQuestionsProps> = ({
@@ -24,7 +25,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   setComments,
   goToBudget,
   application,
-  showComments,
+  isApplicant,
 }) => {
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [currentStep, setCurrentStep] = useState(0);
@@ -83,6 +84,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       {...(setData && { setData: handleChange })}
       comments={comments}
       setComments={setComments}
+      isApplicant={true}
     />,
   ];
 
