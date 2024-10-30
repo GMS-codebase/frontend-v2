@@ -5,6 +5,8 @@ import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
 import { useParams } from "next/navigation";
 import { AiOutlineDelete } from "react-icons/ai";
+import DeleteConfirm from "./DeleteConfirm";
+import { useDisclosure } from "@mantine/hooks";
 
 interface MakeDecisionProps {
   isOpen: boolean;
@@ -39,11 +41,16 @@ const MakeDecision = ({
     traineeNumber: "",
   });
   const { id } = useParams<{ id: string }>();
+  const [tradeToDelete, setTradeToDelete] = useState<any | null>(null);
   const [errors, setErrors] = useState({
     decision: "",
     comment: "",
     traineeNumber: "",
   });
+  const [
+    isOpenDeleteModal,
+    { open: openDeleteModal, close: closeDeleteModal },
+  ] = useDisclosure(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -125,6 +132,40 @@ const MakeDecision = ({
       });
     }
     setLoading(false);
+  };
+
+  const addTradeTrainee = () => {
+    setFormData((prev: any) => {
+      const existingTradeIndex = prev.trades.findIndex(
+        (trade: any) => trade.trade === selectedTrade,
+      );
+      if (existingTradeIndex !== -1) {
+        const updatedTrades = [...prev.trades];
+        updatedTrades[existingTradeIndex].trainees = traineesNumber;
+        return {
+          ...prev,
+          trades: updatedTrades,
+        };
+      } else {
+        return {
+          ...prev,
+          trades: [
+            ...prev.trades,
+            { trade: selectedTrade, trainees: traineesNumber },
+          ],
+        };
+      }
+    });
+    setSelectedTrade(null);
+    setTraineesNumber(0);
+  };
+
+  const removeTradeTrainee = (uuid: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      trades: prev.trades.filter((entry) => entry.trade.uuid == uuid),
+    }));
+    closeDeleteModal();
   };
 
   return (
@@ -238,6 +279,13 @@ const MakeDecision = ({
           </form>
         </div>
       </div>
+      <DeleteConfirm
+        isOpen={isOpenDeleteModal}
+        onClose={closeDeleteModal}
+        onConfirm={() => {
+          removeTradeTrainee(tradeToDelete);
+        }}
+      />
     </Modal>
   );
 };
