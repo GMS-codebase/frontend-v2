@@ -11,11 +11,14 @@ export const Page2 = ({
   setCommentsData,
   type = "training",
   application,
+  isApplicant
+
 }: {
   data: any;
   setData?: any;
   commentsData?: Comments;
   setCommentsData?: any;
+  isApplicant?: boolean;
 
   type?: "training" | "assessment";
   application: any;
@@ -309,7 +312,7 @@ export const Page2 = ({
           )}
         </div>
       )}
-      {setCommentsData &&
+      {!isApplicant && setCommentsData &&
         renderCommentsSection(
           type === "assessment" ? "assessmentComment" : "trainingManualComment",
         )}

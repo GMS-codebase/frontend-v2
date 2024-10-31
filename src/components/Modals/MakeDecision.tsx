@@ -5,6 +5,7 @@ import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
 import { useParams } from "next/navigation";
 import { AiOutlineDelete } from "react-icons/ai";
+import { useSelector } from "react-redux";
 
 interface MakeDecisionProps {
   isOpen: boolean;
@@ -15,11 +16,11 @@ interface MakeDecisionProps {
     decision: string;
     comment: string;
     trades?: { trade: any; trainees: number }[];
-  };
+  } | any;
   firstEvaluationModal?: boolean;
   application?: any;
+  updated?: boolean;
 }
-
 const MakeDecision = ({
   isOpen,
   close,
@@ -28,27 +29,26 @@ const MakeDecision = ({
   defaultData,
   firstEvaluationModal,
   application,
+  updated
 }: MakeDecisionProps) => {
-  const [prompt, setPrompt] = useState({
-    opened: false,
-    trade: "",
-  });
   const [formData, setFormData] = useState({
     decision: "",
     comment: "",
     traineeNumber: "",
   });
-  const { id } = useParams<{ id: string }>();
   const [errors, setErrors] = useState({
     decision: "",
     comment: "",
     traineeNumber: "",
   });
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     if (defaultData) {
-      setFormData(defaultData as any);
+      setFormData({
+        decision: defaultData.decision,
+        comment: defaultData.comment,
+        traineeNumber: defaultData?.numberOfTrainees as any,
+      } as any);
     }
   }, [defaultData]);
 
@@ -100,14 +100,27 @@ const MakeDecision = ({
 
     setLoading(true);
     try {
-      const endpoint =
-        type === "Evaluation"
-          ? `/application/evaluation/make-decision/${id}`
-          : `/application/${id}/due-diligency-form/make-decision`;
+      const payload = {
+        decision: formData.decision,
+        comment: formData.comment,
+        ...(firstEvaluationModal && formData.decision === "APPROVED" && {
+          numberOfTrainees: parseInt(formData.traineeNumber)
+        })
+      };
+      if (defaultData) {
+        const endpoint = type === "Evaluation"
+          ? `/application/evaluation/update-decision/${application?.uuid}/${defaultData?.uuid}`
+          : `/application/${application?.uuid}/due-diligency-form/update-decision/${defaultData?.uuid}`;
 
-      const apiMethod =
-        type === "Evaluation" ? authorizedApi.patch : authorizedApi.post;
-      await apiMethod(endpoint, formData);
+        await authorizedApi.patch(endpoint, payload);
+      } else {
+        const endpoint = type === "Evaluation"
+          ? `/application/evaluation/make-decision/${application?.uuid}`
+          : `/application/${application?.uuid}/due-diligency-form/make-decision`;
+
+        const apiMethod = type === "Evaluation" ? authorizedApi.patch : authorizedApi.post;
+        await apiMethod(endpoint, payload);
+      }
 
       notifications.show({
         message: defaultData
@@ -115,7 +128,6 @@ const MakeDecision = ({
           : `${type} decision made successfully!`,
         color: "blue",
       });
-
       onMakeDecision();
       close();
     } catch (err: any) {

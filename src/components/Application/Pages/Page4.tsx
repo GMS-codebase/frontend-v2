@@ -8,12 +8,16 @@ export const Page4 = ({
   setData,
   comments,
   setComments,
+  isApplicant
+
 }: {
   data: any;
   files: any;
   setData?: any;
   comments?: any;
   setComments?: any;
+  isApplicant?: boolean;
+
 }) => {
   const [staffInputs, setStaffInputs] = useState({
     number: "",
@@ -222,7 +226,7 @@ export const Page4 = ({
           >
             {data?.staffAttachment ? "Download File" : "No Attachment Found!"}
           </button>
-          {comments && (
+          {!isApplicant && comments && (
             <div className="mt-2">
               <label htmlFor="" className="font-medium text-sm">
                 Comment
