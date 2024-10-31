@@ -12,11 +12,13 @@ interface MakeDecisionProps {
   close: () => void;
   onMakeDecision: () => void;
   type: "Evaluation" | "Due Diligence";
-  defaultData?: {
-    decision: string;
-    comment: string;
-    trades?: { trade: any; trainees: number }[];
-  } | any;
+  defaultData?:
+    | {
+        decision: string;
+        comment: string;
+        trades?: { trade: any; trainees: number }[];
+      }
+    | any;
   firstEvaluationModal?: boolean;
   application?: any;
   updated?: boolean;
@@ -29,7 +31,7 @@ const MakeDecision = ({
   defaultData,
   firstEvaluationModal,
   application,
-  updated
+  updated,
 }: MakeDecisionProps) => {
   const [formData, setFormData] = useState({
     decision: "",
@@ -103,22 +105,26 @@ const MakeDecision = ({
       const payload = {
         decision: formData.decision,
         comment: formData.comment,
-        ...(firstEvaluationModal && formData.decision === "APPROVED" && {
-          numberOfTrainees: parseInt(formData.traineeNumber)
-        })
+        ...(firstEvaluationModal &&
+          formData.decision === "APPROVED" && {
+            numberOfTrainees: parseInt(formData.traineeNumber),
+          }),
       };
       if (defaultData) {
-        const endpoint = type === "Evaluation"
-          ? `/application/evaluation/update-decision/${application?.uuid}/${defaultData?.uuid}`
-          : `/application/${application?.uuid}/due-diligency-form/update-decision/${defaultData?.uuid}`;
+        const endpoint =
+          type === "Evaluation"
+            ? `/application/evaluation/update-decision/${application?.uuid}/${defaultData?.uuid}`
+            : `/application/${application?.uuid}/due-diligency-form/update-decision/${defaultData?.uuid}`;
 
         await authorizedApi.patch(endpoint, payload);
       } else {
-        const endpoint = type === "Evaluation"
-          ? `/application/evaluation/make-decision/${application?.uuid}`
-          : `/application/${application?.uuid}/due-diligency-form/make-decision`;
+        const endpoint =
+          type === "Evaluation"
+            ? `/application/evaluation/make-decision/${application?.uuid}`
+            : `/application/${application?.uuid}/due-diligency-form/make-decision`;
 
-        const apiMethod = type === "Evaluation" ? authorizedApi.patch : authorizedApi.post;
+        const apiMethod =
+          type === "Evaluation" ? authorizedApi.patch : authorizedApi.post;
         await apiMethod(endpoint, payload);
       }
 

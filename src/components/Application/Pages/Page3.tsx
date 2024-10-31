@@ -9,7 +9,7 @@ export function Page3({
   commentsData,
   setCommentsData,
   type = "training", // Default to "training"
-  isApplicant
+  isApplicant,
 }: {
   data: any;
   setData?: any;
@@ -136,7 +136,7 @@ export function Page3({
           List down the equipment available to facilitate this {type}. [Name of
           equipment/Number/Related Trade]
         </p>
-        {setData && !commentsData  && renderTrainingEquipmentsInputs()}
+        {setData && !commentsData && renderTrainingEquipmentsInputs()}
         {(type !== "assessment"
           ? data?.trainingEquipment
           : data.assessmentEquipment
@@ -172,7 +172,7 @@ export function Page3({
           Please attach the proof of ownership (Notarized list of equipment,
           Original Invoices (EBM for locally purchased equipment).)
         </p>
-        {!isApplicant && commentsData || !setData ? (
+        {(!isApplicant && commentsData) || !setData ? (
           <>
             <button
               onClick={() =>
@@ -187,7 +187,8 @@ export function Page3({
                 ? "Download File"
                 : "No Attachment Found!"}
             </button>
-            {!isApplicant && commentsData &&
+            {!isApplicant &&
+              commentsData &&
               renderCommentsSection(
                 type === "assessment"
                   ? "assessmentEquipmentAttachmentComment"
@@ -245,21 +246,17 @@ export function Page3({
         )}
       </div>
       <div className="">
-        <h3 className="text-lg font-bold capitalize">
-          Premises Attachment
-        </h3>
+        <h3 className="text-lg font-bold capitalize">Premises Attachment</h3>
         <p className="text-sm text-gray-600">
           Please attach the proof of ownership (Notarized list of equipment,
-          Original Invoices (EBM for locally purchased equipment).) of the premises used in training
+          Original Invoices (EBM for locally purchased equipment).) of the
+          premises used in training
         </p>
-        {!isApplicant && commentsData || !setData ? (
+        {(!isApplicant && commentsData) || !setData ? (
           <>
             <button
               onClick={() =>
-                handleDownloadFile(
-                  data?.premisesAttachment,
-                  "applications",
-                )
+                handleDownloadFile(data?.premisesAttachment, "applications")
               }
               className={`w-full h-12 ${data?.premisesAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
             >
@@ -267,9 +264,9 @@ export function Page3({
                 ? "Download File"
                 : "No Attachment Found!"}
             </button>
-            {!isApplicant && commentsData &&
-              renderCommentsSection("premisesAttachmentComment",
-              )}
+            {!isApplicant &&
+              commentsData &&
+              renderCommentsSection("premisesAttachmentComment")}
           </>
         ) : (
           <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
@@ -280,13 +277,10 @@ export function Page3({
               <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl font-bold">+</span>
               </div>
-              {(data.premisesAttachment) ? (
+              {data.premisesAttachment ? (
                 <div className="text-center">
                   <p className="text-xl font-medium text-gray-700">
-                    {
-                      (data.premisesAttachment
-                      ).name
-                    }
+                    {data.premisesAttachment.name}
                   </p>
                   <p className="text-sm text-gray-500">File selected</p>
                 </div>
@@ -304,7 +298,8 @@ export function Page3({
               accept=".pdf"
               style={{ display: "none" }}
               onChange={(e) =>
-                setData("premisesAttachment",
+                setData(
+                  "premisesAttachment",
                   e.target.files ? e.target.files[0] : null,
                 )
               }

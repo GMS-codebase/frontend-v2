@@ -11,8 +11,7 @@ export const Page2 = ({
   setCommentsData,
   type = "training",
   application,
-  isApplicant
-
+  isApplicant,
 }: {
   data: any;
   setData?: any;
@@ -312,7 +311,8 @@ export const Page2 = ({
           )}
         </div>
       )}
-      {!isApplicant && setCommentsData &&
+      {!isApplicant &&
+        setCommentsData &&
         renderCommentsSection(
           type === "assessment" ? "assessmentComment" : "trainingManualComment",
         )}
