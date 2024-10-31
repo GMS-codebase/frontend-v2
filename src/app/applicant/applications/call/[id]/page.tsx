@@ -45,11 +45,7 @@ const Page = () => {
   const router = useRouter();
   const handleApply = () => {
     setApplyLoading(true);
-    if (existingApplication) {
-      router.push(
-        `/applicant/applications/application/${existingApplication.uuid}`,
-      );
-    } else if (
+    if (
       !profile.applicantProfile ||
       !profile.applicantProfile.business_name
     ) {
@@ -59,12 +55,8 @@ const Page = () => {
       (!contacts.myContacts || contacts.myContacts.length === 0)
     ) {
       openAddContact();
-    } else if (!existingApplication) {
+    } else{
       openCreateApplication();
-    } else {
-      router.push(
-        `/applicant/applications/call/${callId}/${existingApplication.uuid}/apply`,
-      );
     }
   };
   const [loading, setLoading] = useState(false);
@@ -213,7 +205,7 @@ const Page = () => {
               {applyLoading
                 ? "Loading...."
                 : existingApplication
-                  ? "Continue Application"
+                  ? "Create Another Application"
                   : "Apply"}
             </p>
           </button>
@@ -243,6 +235,7 @@ const Page = () => {
         isOpenCreatingApplication={isOpenCreateApplication}
         closeCreatingApplication={closeCreateApplication}
         call={call}
+        existingApplication={existingApplication}
       />
     </div>
   );

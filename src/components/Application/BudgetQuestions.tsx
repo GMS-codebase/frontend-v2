@@ -12,6 +12,7 @@ interface Props {
   comments?: Comments;
   setComments?: React.Dispatch<React.SetStateAction<Comments>>;
   application?: any;
+  isApplicant?: boolean;
 }
 
 const BudgetQuestions: React.FC<Props> = ({
@@ -20,6 +21,7 @@ const BudgetQuestions: React.FC<Props> = ({
   comments,
   setComments,
   application,
+  isApplicant
 }) => {
   const [budgetLineInputs, setBudgetLineInputs] = useState({
     amount: 0,
@@ -309,7 +311,7 @@ const BudgetQuestions: React.FC<Props> = ({
             )}
           </div>
         )}
-        {!setData && comments && (
+        {!isApplicant && !setData && comments && (
           <div className="mt-2">
             <p>Comment</p>
             <textarea
@@ -346,7 +348,7 @@ const BudgetQuestions: React.FC<Props> = ({
           disabled={!!comments || !setData}
           placeholder="Describe your contribution"
         />
-        {comments && (
+        {!isApplicant && comments && (
           <>
             <p className="text-sm text-gray-600">Comment</p>
             <textarea

@@ -9,12 +9,14 @@ export function Page3({
   commentsData,
   setCommentsData,
   type = "training", // Default to "training"
+  isApplicant
 }: {
   data: any;
   setData?: any;
   commentsData?: Comments;
   setCommentsData?: any;
   type?: "training" | "assessment"; // Type parameter
+  isApplicant?: boolean;
 }) {
   const [trainingEquipments, setTrainingEquipments] = useState({
     nameOfEquipment: "",
@@ -134,7 +136,7 @@ export function Page3({
           List down the equipment available to facilitate this {type}. [Name of
           equipment/Number/Related Trade]
         </p>
-        {setData && !commentsData && renderTrainingEquipmentsInputs()}
+        {setData && !commentsData  && renderTrainingEquipmentsInputs()}
         {(type !== "assessment"
           ? data?.trainingEquipment
           : data.assessmentEquipment
@@ -170,7 +172,7 @@ export function Page3({
           Please attach the proof of ownership (Notarized list of equipment,
           Original Invoices (EBM for locally purchased equipment).)
         </p>
-        {commentsData || !setData ? (
+        {!isApplicant && commentsData || !setData ? (
           <>
             <button
               onClick={() =>
@@ -185,7 +187,7 @@ export function Page3({
                 ? "Download File"
                 : "No Attachment Found!"}
             </button>
-            {commentsData &&
+            {!isApplicant && commentsData &&
               renderCommentsSection(
                 type === "assessment"
                   ? "assessmentEquipmentAttachmentComment"
@@ -235,6 +237,74 @@ export function Page3({
                   type !== "assessment"
                     ? "trainingEquipmentAttachment"
                     : "assessmentEquipmentAttachment",
+                  e.target.files ? e.target.files[0] : null,
+                )
+              }
+            />
+          </div>
+        )}
+      </div>
+      <div className="">
+        <h3 className="text-lg font-bold capitalize">
+          Premises Attachment
+        </h3>
+        <p className="text-sm text-gray-600">
+          Please attach the proof of ownership (Notarized list of equipment,
+          Original Invoices (EBM for locally purchased equipment).) of the premises used in training
+        </p>
+        {!isApplicant && commentsData || !setData ? (
+          <>
+            <button
+              onClick={() =>
+                handleDownloadFile(
+                  data?.premisesAttachment,
+                  "applications",
+                )
+              }
+              className={`w-full h-12 ${data?.premisesAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
+            >
+              {data?.premisesAttachment
+                ? "Download File"
+                : "No Attachment Found!"}
+            </button>
+            {!isApplicant && commentsData &&
+              renderCommentsSection("premisesAttachmentComment",
+              )}
+          </>
+        ) : (
+          <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
+            <label
+              htmlFor="file-upload-premisesAttachment"
+              className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+            >
+              <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+                <span className="text-2xl font-bold">+</span>
+              </div>
+              {(data.premisesAttachment) ? (
+                <div className="text-center">
+                  <p className="text-xl font-medium text-gray-700">
+                    {
+                      (data.premisesAttachment
+                      ).name
+                    }
+                  </p>
+                  <p className="text-sm text-gray-500">File selected</p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <p className="text-md text-gray-500">Upload file</p>
+                  <p className="text-md text-gray-400">or drag and drop</p>
+                </div>
+              )}
+            </label>
+            <input
+              id="file-upload-premisesAttachment"
+              name="premisesAttachment"
+              type="file"
+              accept=".pdf"
+              style={{ display: "none" }}
+              onChange={(e) =>
+                setData("premisesAttachment",
                   e.target.files ? e.target.files[0] : null,
                 )
               }

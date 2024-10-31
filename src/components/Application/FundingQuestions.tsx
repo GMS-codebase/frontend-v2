@@ -48,6 +48,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       {...(setData && { setData: handleChange })}
       comments={comments}
       setComments={setComments}
+      isApplicant={isApplicant}
     />,
     <Page2
       key="progress"
@@ -62,6 +63,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       commentsData={comments}
       setCommentsData={setComments}
       application={application}
+      isApplicant={isApplicant}
     />,
     <Page3
       key="equipments"
@@ -69,6 +71,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       {...(setData && { setData: handleChange })}
       commentsData={comments}
       setCommentsData={setComments}
+      isApplicant={isApplicant}
     />,
     <Page4
       key="staff"
@@ -77,6 +80,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       {...(setData && { setData: handleChange })}
       comments={comments}
       setComments={setComments}
+      isApplicant={isApplicant}
     />,
     <Page5
       key="last"
@@ -84,7 +88,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       {...(setData && { setData: handleChange })}
       comments={comments}
       setComments={setComments}
-      isApplicant={true}
+      isApplicant={isApplicant}
     />,
   ];
 
