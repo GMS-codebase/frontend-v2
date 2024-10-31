@@ -54,6 +54,7 @@ const Page = () => {
     contribution: "",
     roleAttachment: undefined,
     institutionAttachment: undefined,
+    premisesAttachment: undefined,
     trainingManualAttachment: undefined,
     trainingEquipmentAttachment: undefined,
     previousFinancialReportAttachment: undefined,
@@ -101,6 +102,9 @@ const Page = () => {
         trainingEquipment:
           application.projectFunding?.trainingEquipment ||
           prevData.trainingEquipment,
+        premisesAttachment:
+          application.projectFunding?.premisesAttachment ||
+          prevData.premisesAttachment,
         assessmentAndCertificationProcess:
           application.projectFunding?.assessmentAndCertificationProcess ||
           prevData.assessmentAndCertificationProcess,
@@ -141,6 +145,7 @@ const Page = () => {
       contribution: "",
       roleAttachment: undefined,
       institutionAttachment: undefined,
+      premisesAttachment: undefined,
       trainingManualAttachment: undefined,
       trainingEquipmentAttachment: undefined,
       previousFinancialReportAttachment: undefined,

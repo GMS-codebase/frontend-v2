@@ -90,6 +90,8 @@ const Page = () => {
       application?.projectFunding?.recruitmentTrainerComment || "",
     MOUsAttachmentComment:
       application?.projectFunding?.MOUsAttachmentComment || "",
+      premisesAttachmentComment:
+      application?.projectFunding?.premisesAttachmentComment || "",
     identificationMemberComment:
       application?.projectFunding?.identificationMemberComment || "",
     assessmentEquipmentComment:
@@ -179,8 +181,10 @@ const Page = () => {
         "Upload comments on the previous financial report.",
       contributionFromApplicantComment:
         "Specify comments regarding the applicant’s contribution.",
+      budgetAttachmentComment:
+        "Upload comments on the budget attachment.",
     };
-
+    
     if (!commentsData.titleComment) return commentMessages.titleComment;
     if (!commentsData.activitiesComment)
       return commentMessages.activitiesComment;
@@ -263,9 +267,6 @@ const Page = () => {
       </div>
     );
   }
-
-  console.log(application);
-
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -598,6 +599,7 @@ const Page = () => {
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
         evaluations={application?.evaluationDecisions || []}
+        application={application}
       />
     </div>
   );

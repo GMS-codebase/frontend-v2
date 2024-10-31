@@ -40,6 +40,7 @@ const Page = () => {
       case "Project":
         return (
           <FundingQuestions
+            isApplicant={true}
             application={application}
             data={application?.projectFunding}
             comments={
@@ -56,10 +57,10 @@ const Page = () => {
       case "IndicativeBudget":
         return (
           <BudgetQuestions
+            isApplicant={true}
             application={application as any}
             comments={application?.budget}
             data={application?.budget}
-            showComments={false}
           />
         );
       default:
@@ -287,6 +288,7 @@ const Page = () => {
         close={closeEvaluationDetails}
         evaluations={application?.evaluationDecisions || []}
         viewer="applicant"
+        application={application}
       />
       <DueDiligencyDetails
         application={application}
