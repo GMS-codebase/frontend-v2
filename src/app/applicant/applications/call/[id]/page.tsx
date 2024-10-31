@@ -45,17 +45,14 @@ const Page = () => {
   const router = useRouter();
   const handleApply = () => {
     setApplyLoading(true);
-    if (
-      !profile.applicantProfile ||
-      !profile.applicantProfile.business_name
-    ) {
+    if (!profile.applicantProfile || !profile.applicantProfile.business_name) {
       openAddProfile();
     } else if (
       !contacts.loading &&
       (!contacts.myContacts || contacts.myContacts.length === 0)
     ) {
       openAddContact();
-    } else{
+    } else {
       openCreateApplication();
     }
   };

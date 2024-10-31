@@ -8,8 +8,7 @@ export const Page4 = ({
   setData,
   comments,
   setComments,
-  isApplicant
-
+  isApplicant,
 }: {
   data: any;
   files: any;
@@ -17,7 +16,6 @@ export const Page4 = ({
   comments?: any;
   setComments?: any;
   isApplicant?: boolean;
-
 }) => {
   const [staffInputs, setStaffInputs] = useState({
     number: "",

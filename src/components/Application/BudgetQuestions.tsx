@@ -21,7 +21,7 @@ const BudgetQuestions: React.FC<Props> = ({
   comments,
   setComments,
   application,
-  isApplicant
+  isApplicant,
 }) => {
   const [budgetLineInputs, setBudgetLineInputs] = useState({
     amount: 0,

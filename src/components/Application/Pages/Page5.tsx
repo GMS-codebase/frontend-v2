@@ -7,7 +7,7 @@ export const Page5 = ({
   setData,
   comments,
   setComments,
-  isApplicant
+  isApplicant,
 }: {
   data: any;
   setData?: any;
