@@ -169,7 +169,14 @@ const CreateApplication = ({
         .filter((sector: any) => formData?.sectors?.includes(sector.uuid))
         .flatMap((sector: any) =>
           sector?.trades
-            .filter((trade: any) => trade.theWindow.uuid === formData.window && trade.uuid !== existingApplication?.trades.find((t: any) => t.uuid === trade.uuid)?.uuid)
+            .filter(
+              (trade: any) =>
+                trade.theWindow.uuid === formData.window &&
+                trade.uuid !==
+                  existingApplication?.trades.find(
+                    (t: any) => t.uuid === trade.uuid,
+                  )?.uuid,
+            )
             ?.map((trade: any) => ({
               label: trade.trade.title,
               value: trade.uuid,

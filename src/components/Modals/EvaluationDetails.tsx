@@ -15,7 +15,7 @@ const EvaluationDetails = ({
   isEditing,
   onSaveComment,
   viewer,
-  application
+  application,
 }: {
   evaluations: any;
   opened: boolean;
@@ -28,7 +28,7 @@ const EvaluationDetails = ({
   const [openEditDecision, setOpenEditDecision] = useState({
     open: false,
     decision: null,
-  })
+  });
   const [selectedDecision, setSelectedDecision] = useState<any>();
   const profile = useSelector((state: any) => state.auth);
   const [text, setText] = useState(
@@ -97,7 +97,12 @@ const EvaluationDetails = ({
                         profile?.userProfile?.data?.uuid && (
                         <button
                           className="bg-primary p-2 rounded-full text-white font-bold"
-                          onClick={() => setOpenEditDecision({open: true, decision: evaluation})}
+                          onClick={() =>
+                            setOpenEditDecision({
+                              open: true,
+                              decision: evaluation,
+                            })
+                          }
                         >
                           <CiEdit />
                         </button>
@@ -123,8 +128,10 @@ const EvaluationDetails = ({
         </div>
       </Modal>
       <MakeDecision
-        onMakeDecision={() => setOpenEditDecision({open: false, decision: null})}
-        close={()=> setOpenEditDecision({open: false, decision: null})}
+        onMakeDecision={() =>
+          setOpenEditDecision({ open: false, decision: null })
+        }
+        close={() => setOpenEditDecision({ open: false, decision: null })}
         isOpen={openEditDecision.open}
         type="Evaluation"
         defaultData={openEditDecision.decision}

@@ -90,7 +90,7 @@ const Page = () => {
       application?.projectFunding?.recruitmentTrainerComment || "",
     MOUsAttachmentComment:
       application?.projectFunding?.MOUsAttachmentComment || "",
-      premisesAttachmentComment:
+    premisesAttachmentComment:
       application?.projectFunding?.premisesAttachmentComment || "",
     identificationMemberComment:
       application?.projectFunding?.identificationMemberComment || "",
@@ -181,10 +181,9 @@ const Page = () => {
         "Upload comments on the previous financial report.",
       contributionFromApplicantComment:
         "Specify comments regarding the applicant’s contribution.",
-      budgetAttachmentComment:
-        "Upload comments on the budget attachment.",
+      budgetAttachmentComment: "Upload comments on the budget attachment.",
     };
-    
+
     if (!commentsData.titleComment) return commentMessages.titleComment;
     if (!commentsData.activitiesComment)
       return commentMessages.activitiesComment;
