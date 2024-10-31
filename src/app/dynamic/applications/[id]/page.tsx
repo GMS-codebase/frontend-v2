@@ -79,6 +79,8 @@ const Page = () => {
       application?.projectFunding.identificationMemberComment || "",
     assessmentEquipmentComment:
       application?.projectFunding.assessmentEquipmentComment || "",
+    premisesAttachmentComment:
+      application?.projectFunding?.premisesAttachmentComment || "",
     recruitmentCandidatesNumberComment:
       application?.projectFunding.recruitmentCandidatesNumberComment || "",
     assessorsAndFacilitatorsComment:
@@ -366,6 +368,7 @@ const Page = () => {
               )
             : []
         }
+        application={application}
       />
     </div>
   );
