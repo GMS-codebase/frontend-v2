@@ -100,6 +100,8 @@ const Page = () => {
       application?.projectFunding.recruitmentTrainerComment || "",
     MOUsAttachmentComment:
       application?.projectFunding.MOUsAttachmentComment || "",
+    premisesAttachmentComment:
+      application?.projectFunding?.premisesAttachmentComment || "",
     identificationMemberComment:
       application?.projectFunding.identificationMemberComment || "",
     assessmentEquipmentComment:
@@ -437,6 +439,7 @@ const Page = () => {
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
         evaluations={application?.evaluationDecisions}
+        application={application}
       />
       <NullifyModal
         closeModal={closeNullifyModal}
