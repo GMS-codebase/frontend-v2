@@ -26,7 +26,7 @@ const Page = () => {
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application?.uuid === id,
+    (application: any) => application?.uuid === id
   )[0];
   console.log("application --> ", application);
   const [decisionsLoading, setDecisionsLoading] = useState(false);
@@ -64,7 +64,7 @@ const Page = () => {
   const goToBudget = () => {
     setCurrentComponent("IndicativeBudget");
   };
-  const [commentsData, setCommentsData] = useState<Comments>({
+  const [commentsData, setCommentsData] = useState<any>({
     titleComment: application?.projectFunding?.titleComment || "",
     activitiesComment: application?.projectFunding?.activitiesComment || "",
     readinessExecuteComment:
@@ -103,13 +103,15 @@ const Page = () => {
     contributionComment: application?.budget?.contributionComment || "",
     assessmentComment: application?.projectFunding?.assessmentComment || "",
     budgetLinesComment: application?.budget?.budgetLinesComment || "",
+    premisesAttachmentComment:
+      application?.projectFunding?.premisesAttachmentComment || "",
   });
   console.log(application);
   useEffect(() => {
     if (application) {
       const hasComments = Object.entries(application.projectFunding || {}).some(
         ([key, value]) =>
-          key.includes("Comment") && value != null && value !== "",
+          key.includes("Comment") && value != null && value !== ""
       );
       setProperties({
         isDataEditable:
@@ -280,7 +282,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  },
+                  }
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -395,7 +397,7 @@ const Page = () => {
               onClick={() =>
                 handleDownloadFile(
                   application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates",
+                  "business_certificates"
                 )
               }
             >
@@ -491,7 +493,7 @@ const Page = () => {
                 !application?.evaluationDecisions.find(
                   (ev: any) =>
                     ev.employee.user_id.toString() ===
-                    profile?.userProfile?.data.uuid.toString(),
+                    profile?.userProfile?.data.uuid.toString()
                 ) && (
                   <>
                     <div
@@ -540,7 +542,7 @@ const Page = () => {
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>
                         dec?.employee?.user_id ===
-                        profile?.userProfile?.data.uuid,
+                        profile?.userProfile?.data.uuid
                     ) && (
                       <div
                         onClick={() => {
