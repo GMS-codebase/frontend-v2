@@ -15,6 +15,7 @@ import EmpStagesReducer from "./EmpStagesReducer";
 import MinutesReducer from "./MinutesReducer";
 import RolesReducer from "./RolesReducer";
 import DashboardReducer from "./DashboardReducer";
+import BudgetLinesReducer from "./BudgetLinesReducer";
 const rootReducer = combineReducers({
   contacts: ContactsReducer,
   auth: authReducer,
@@ -32,6 +33,7 @@ const rootReducer = combineReducers({
   empStages: EmpStagesReducer,
   roles: RolesReducer,
   dashboard: DashboardReducer,
+  budgetLines: BudgetLinesReducer,
 });
 
 export default rootReducer;
