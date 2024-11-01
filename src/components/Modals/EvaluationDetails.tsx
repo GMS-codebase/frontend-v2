@@ -81,7 +81,9 @@ const EvaluationDetails = ({
                 return (
                   <div key={i} className="w-full ">
                     <div className="flex gap-6 justify-start items-center">
-                      <p className="px-4 py-2 rounded-full bg-gray-100">{evaluation.employee.name}</p>
+                      <p className="px-4 py-2 rounded-full bg-gray-100">
+                        {evaluation.employee.name}
+                      </p>
                       {i === 0 && <p className="">Selected</p>}
                       <p
                         className={`px-4 py-2 rounded-full flex gap-2 justify-start items-start ${
@@ -137,7 +139,10 @@ const EvaluationDetails = ({
         type="Evaluation"
         defaultData={openEditDecision.decision}
         application={application}
-        firstEvaluationModal={application?.evaluationDecision?.reverse()[0].uid === openEditDecision.decision}
+        firstEvaluationModal={
+          application?.evaluationDecision?.reverse()[0].uid ===
+          openEditDecision.decision
+        }
       />
     </>
   );

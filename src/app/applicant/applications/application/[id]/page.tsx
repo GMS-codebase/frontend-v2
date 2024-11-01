@@ -75,7 +75,7 @@ const Page = () => {
     );
   }
 
-  console.log(application)
+  console.log(application);
   return (
     <div className="space-y-6 ">
       <div className="bg-white rounded-2xl p-10 flex flex-col gap-6  text-black">
