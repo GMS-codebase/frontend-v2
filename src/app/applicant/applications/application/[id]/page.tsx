@@ -74,6 +74,8 @@ const Page = () => {
       </div>
     );
   }
+
+  console.log(application)
   return (
     <div className="space-y-6 ">
       <div className="bg-white rounded-2xl p-10 flex flex-col gap-6  text-black">
@@ -257,7 +259,7 @@ const Page = () => {
                   className={`font-medium  ${
                     application?.stages.find(
                       (stage: any) => stage.stage === "DUE_DILIGENCY",
-                    ).status
+                    )?.status
                       ? "bg-[#4BC500] text-[#4BC500]"
                       : application?.status === "PENDING"
                         ? "bg-red-600 text-red-600"
@@ -267,7 +269,7 @@ const Page = () => {
                   {
                     application?.stages.find(
                       (stage: any) => stage.stage === "DUE_DILIGENCY",
-                    ).status
+                    )?.status
                   }
                 </div>
                 <div className="flex flex-col gap-2 mt-4">

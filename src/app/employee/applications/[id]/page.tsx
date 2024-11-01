@@ -26,7 +26,7 @@ const Page = () => {
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application?.uuid === id,
+    (application: any) => application?.uuid === id
   )[0];
   console.log("application --> ", application);
   const [decisionsLoading, setDecisionsLoading] = useState(false);
@@ -64,17 +64,23 @@ const Page = () => {
   const goToBudget = () => {
     setCurrentComponent("IndicativeBudget");
   };
-  const [commentsData, setCommentsData] = useState<Comments>({
+  const [commentsData, setCommentsData] = useState<any>({
     titleComment: application?.projectFunding?.titleComment || "",
     activitiesComment: application?.projectFunding?.activitiesComment || "",
     readinessExecuteComment:
       application?.projectFunding?.readinessExecuteComment || "",
     roleComment: application?.projectFunding?.roleComment || "",
     institutionComment: application?.projectFunding?.institutionComment || "",
+    trainingProcessComment:
+      application?.projectFunding?.trainingProcessComment || "",
+    assessmentProcessComment:
+      application?.projectFunding?.assessmentProcessComment || "",
     trainingManualComment:
       application?.projectFunding?.trainingManualComment || "",
     trainingEquipmentComment:
       application?.projectFunding?.trainingEquipmentComment || "",
+    trainingEquipmentAttachmentComment:
+      application?.projectFunding?.trainingEquipmentAttachmentComment || "",
     identificationEmployeeComment:
       application?.projectFunding?.identificationEmployeeComment || "",
     staffComment: application?.projectFunding?.staffComment || "",
@@ -96,6 +102,8 @@ const Page = () => {
       application?.projectFunding?.identificationMemberComment || "",
     assessmentEquipmentComment:
       application?.projectFunding?.assessmentEquipmentComment || "",
+    assessmentEquipmentAttachmentComment:
+      application?.projectFunding?.assessmentEquipmentAttachmentComment || "",
     recruitmentCandidatesNumberComment:
       application?.projectFunding?.recruitmentCandidatesNumberComment || "",
     assessorsAndFacilitatorsComment:
@@ -106,12 +114,11 @@ const Page = () => {
     assessmentComment: application?.projectFunding?.assessmentComment || "",
     budgetLinesComment: application?.budget?.budgetLinesComment || "",
   });
-  console.log(application);
   useEffect(() => {
     if (application) {
       const hasComments = Object.entries(application.projectFunding || {}).some(
         ([key, value]) =>
-          key.includes("Comment") && value != null && value !== "",
+          key.includes("Comment") && value != null && value !== ""
       );
       setProperties({
         isDataEditable:
@@ -258,7 +265,7 @@ const Page = () => {
   };
 
   const [downloading, setDownloading] = useState(false);
-
+  console.log(application);
   if (applications.loading) {
     return (
       <div className="h-full w-full flex items-center justify-center text-sm">
@@ -280,7 +287,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  },
+                  }
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -395,7 +402,7 @@ const Page = () => {
               onClick={() =>
                 handleDownloadFile(
                   application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates",
+                  "business_certificates"
                 )
               }
             >
@@ -487,11 +494,11 @@ const Page = () => {
                   ? "PENDING"
                   : "APPROVED"}
               </div>
-              {application?.evaluationDecisions.length < 3 &&
-                !application?.evaluationDecisions.find(
+              {application?.evaluationDecisions?.length < 3 &&
+                !application?.evaluationDecisions?.find(
                   (ev: any) =>
                     ev.employee.user_id.toString() ===
-                    profile?.userProfile?.data.uuid.toString(),
+                    profile?.userProfile?.data.uuid.toString()
                 ) && (
                   <>
                     <div
@@ -506,7 +513,7 @@ const Page = () => {
                   </>
                 )}
 
-              {application?.evaluationDecisions.length > 0 && (
+              {application?.evaluationDecisions?.length > 0 && (
                 <div className="flex flex-col gap-2 mt-4">
                   <button
                     onClick={openEvaluationDetails}
@@ -540,7 +547,7 @@ const Page = () => {
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>
                         dec?.employee?.user_id ===
-                        profile?.userProfile?.data.uuid,
+                        profile?.userProfile?.data.uuid
                     ) && (
                       <div
                         onClick={() => {
@@ -588,7 +595,7 @@ const Page = () => {
       />
       <MakeDecision
         type={selectedStage as any}
-        firstEvaluationModal={application?.evaluationDecisions.length === 0}
+        firstEvaluationModal={application?.evaluationDecisions?.length === 0}
         application={application}
         isOpen={isOpenMakeDecision}
         close={closeMakeDecision}

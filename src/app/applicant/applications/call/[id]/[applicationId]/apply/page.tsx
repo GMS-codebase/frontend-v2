@@ -32,7 +32,7 @@ const Page = () => {
     myApplications,
     loading: applicationsLoading,
   } = useSelector((state: any) => state.applications);
-  const application = applications.find((ap: any) => ap.uuid == applicationId);
+  const application = myApplications.find((ap: any) => ap.uuid == applicationId);
   const [data, setData] = useState<ApplicationQuestions>({
     title: "",
     activitiesAndOutcomes: "",

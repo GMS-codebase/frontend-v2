@@ -38,7 +38,7 @@ const BudgetQuestions: React.FC<Props> = ({
       setData((prev: any) => {
         const newData = [...(prev[inputName] || [])];
         const existingIndex = newData.findIndex(
-          (item: any) => item.budgetLine === value.budgetLine,
+          (item: any) => item.budgetLine === value.budgetLine
         );
         if (existingIndex !== -1) {
           newData[existingIndex].amount += value.amount;
@@ -87,7 +87,7 @@ const BudgetQuestions: React.FC<Props> = ({
       setData((prev: any) => ({
         ...prev,
         budgetLines: prev.budgetLines.filter(
-          (item: any, i: number) => i !== index,
+          (item: any, i: number) => i !== index
         ),
       }));
   };
@@ -99,7 +99,7 @@ const BudgetQuestions: React.FC<Props> = ({
       setData((prev: any) => ({
         ...prev,
         budgetLines: prev.budgetLines.map((item: any, index: number) =>
-          index === editingIndex ? budgetLineInputs : item,
+          index === editingIndex ? budgetLineInputs : item
         ),
       }));
 
@@ -195,7 +195,7 @@ const BudgetQuestions: React.FC<Props> = ({
               onClick={() =>
                 handleDownloadFile(
                   data?.budgetSummaryAttachment,
-                  "applications",
+                  "applications"
                 )
               }
               className={`w-full h-12 ${data?.budgetSummaryAttachment ? "bg-primary" : "bg-gray-600"} text-white rounded-full`}
@@ -242,6 +242,24 @@ const BudgetQuestions: React.FC<Props> = ({
                     : null,
                 }))
               }
+            />
+          </div>
+        )}
+        {!isApplicant && !setData && comments && (
+          <div className="mt-2">
+            <p>Comment</p>
+            <textarea
+              value={comments?.budgetSummaryAttachmentComment || ""}
+              disabled={!setComments}
+              onChange={(e) =>
+                setComments &&
+                setComments((prev: any) => ({
+                  ...prev,
+                  budgetSummaryAttachmentComment: e.target.value,
+                }))
+              }
+              className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
+              placeholder="Add your comment"
             />
           </div>
         )}
@@ -303,7 +321,7 @@ const BudgetQuestions: React.FC<Props> = ({
                     {data?.budgetLines?.reduce(
                       (acc: number, curr: any) =>
                         acc + Number.parseInt(curr.amount || "0", 10),
-                      0,
+                      0
                     ) || "N/A"}
                   </p>
                 </div>
@@ -315,13 +333,13 @@ const BudgetQuestions: React.FC<Props> = ({
           <div className="mt-2">
             <p>Comment</p>
             <textarea
-              value={comments?.budgetSummaryAttachmentComment || ""}
+              value={comments?.budgetLinesComment || ""}
               disabled={!setComments}
               onChange={(e) =>
                 setComments &&
                 setComments((prev: any) => ({
                   ...prev,
-                  budgetSummaryAttachmentComment: e.target.value,
+                  budgetLinesComment: e.target.value,
                 }))
               }
               className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"

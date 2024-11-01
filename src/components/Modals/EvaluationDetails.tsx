@@ -53,7 +53,7 @@ const EvaluationDetails = ({
           <div className="absolute right-3 m-4 text-center mt-0">
             <button
               onClick={close}
-              className="text-gray-500 hover:text-gray-700 focus:outline-none"
+              className="text-gray-500 hover:text-gray-700 focus:outline-none bg-gray-200 rounded-xl p-1"
             >
               <IoMdClose size={24} />
             </button>
@@ -80,8 +80,9 @@ const EvaluationDetails = ({
 
                 return (
                   <div key={i} className="w-full ">
-                    <div className="flex gap-6 justify-start items-start">
-                      {i === 0 && <p className="mt-2">Selected</p>}
+                    <div className="flex gap-6 justify-start items-center">
+                      <p className="px-4 py-2 rounded-full bg-gray-100">{evaluation.employee.name}</p>
+                      {i === 0 && <p className="">Selected</p>}
                       <p
                         className={`px-4 py-2 rounded-full flex gap-2 justify-start items-start ${
                           evaluation?.decision === "APPROVED"
@@ -136,6 +137,7 @@ const EvaluationDetails = ({
         type="Evaluation"
         defaultData={openEditDecision.decision}
         application={application}
+        firstEvaluationModal={application?.evaluationDecision?.reverse()[0].uid === openEditDecision.decision}
       />
     </>
   );

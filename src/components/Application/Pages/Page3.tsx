@@ -46,7 +46,7 @@ export function Page3({
           ? data.assessmentEquipment
           : data.trainingEquipment),
         trainingEquipments,
-      ],
+      ]
     );
 
     setTrainingEquipments({
@@ -163,6 +163,13 @@ export function Page3({
             </table>
           </div>
         )}
+        {!isApplicant &&
+          commentsData &&
+          renderCommentsSection(
+            type === "assessment"
+              ? "assessmentEquipmentsComment"
+              : "trainingEquipmentsComment"
+          )}
       </div>
       <div className="">
         <h3 className="text-lg font-bold capitalize">
@@ -178,7 +185,7 @@ export function Page3({
               onClick={() =>
                 handleDownloadFile(
                   data?.trainingEquipmentAttachment,
-                  "applications",
+                  "applications"
                 )
               }
               className={`w-full h-12 ${data?.trainingEquipmentAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
@@ -192,7 +199,7 @@ export function Page3({
               renderCommentsSection(
                 type === "assessment"
                   ? "assessmentEquipmentAttachmentComment"
-                  : "trainingEquipmentAttachmentComment",
+                  : "trainingEquipmentAttachmentComment"
               )}
           </>
         ) : (
@@ -238,7 +245,7 @@ export function Page3({
                   type !== "assessment"
                     ? "trainingEquipmentAttachment"
                     : "assessmentEquipmentAttachment",
-                  e.target.files ? e.target.files[0] : null,
+                  e.target.files ? e.target.files[0] : null
                 )
               }
             />
@@ -300,7 +307,7 @@ export function Page3({
               onChange={(e) =>
                 setData(
                   "premisesAttachment",
-                  e.target.files ? e.target.files[0] : null,
+                  e.target.files ? e.target.files[0] : null
                 )
               }
             />
