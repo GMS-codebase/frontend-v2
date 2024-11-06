@@ -40,9 +40,12 @@ const Page = () => {
   );
 
   const [loadingDownload, setLoadingDownload] = useState(false);
-  const [contractState, setContractState] = useState<{ isOpen: boolean; application: any | null }>({
+  const [contractState, setContractState] = useState<{
+    isOpen: boolean;
+    application: any | null;
+  }>({
     isOpen: false,
-    application: null
+    application: null,
   });
 
   const handleDownloadInstructions = async (file: any) => {

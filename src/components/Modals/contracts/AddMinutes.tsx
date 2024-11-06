@@ -1,5 +1,10 @@
 import { authorizedApi } from "@/utils/api";
-import { getApprovedMinutes, getMinutes, getRejectedMinutes, getUploadedMinutes } from "@/utils/funcs";
+import {
+  getApprovedMinutes,
+  getMinutes,
+  getRejectedMinutes,
+  getUploadedMinutes,
+} from "@/utils/funcs";
 import { Modal } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import React, { useState } from "react";
