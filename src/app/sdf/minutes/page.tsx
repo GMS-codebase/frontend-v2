@@ -17,14 +17,21 @@ const Page = () => {
     application: null,
   });
 
-  const { minutes, loading: loadingMinutes } = useSelector(
-    (state: any) => state.minutes,
-  );
+  const {
+    minutes,
+    uploadedMinutes,
+    approvedMinutes,
+    rejectedMinutes,
+    loading: loadingMinutes,
+    uploadedMinutesLoading,
+    approvedMinutesLoading,
+    rejectedMinutesLoading,
+    applicationsReadyForMinutesLoading,
+    applicationsReadyForMinutes,
+  } = useSelector((state: any) => state.minutes);
   const { applicationsForContractSigning: applications, loading } = useSelector(
     (state: any) => state.applications,
   );
-  console.log("applicatioons", applications);
-  console.log("minutes", minutes);
 
   const minuteColumns: ColumnDef<any>[] = [
     {
@@ -256,10 +263,10 @@ const Page = () => {
 
       <Tabs defaultValue="applications">
         <Tabs.List className="w-auto my-2 ml-5 float-end">
+          <Tabs.Tab value="minutes">Meeting minutes Uploaded</Tabs.Tab>
           <Tabs.Tab value="applications">
             Ready for Minutes Negotiations
           </Tabs.Tab>
-          <Tabs.Tab value="minutes">Meeting minutes Uploaded</Tabs.Tab>
           <Tabs.Tab value="approved">Approved meeting minutes</Tabs.Tab>
           <Tabs.Tab value="rejected">Rejected meeting minutes</Tabs.Tab>
         </Tabs.List>
@@ -268,8 +275,8 @@ const Page = () => {
           <h1 className="text-xl p-4 font-bold">Minutes Uploaded</h1>
           <DataTable
             columns={minuteColumns}
-            data={minutes}
-            loading={loadingMinutes}
+            data={uploadedMinutes}
+            loading={uploadedMinutesLoading}
             noDataMessage="No Created Minutes"
           />
         </Tabs.Panel>
@@ -281,15 +288,8 @@ const Page = () => {
           </h1>
           <DataTable
             columns={columns}
-            data={applications.filter(
-              (app: any) =>
-                !minutes.find(
-                  (min: any) =>
-                    min.application.uuid === app.uuid &&
-                    min.terms.toUpperCase() === "PENDING",
-                ),
-            )}
-            loading={loading}
+            data={applicationsReadyForMinutes}
+            loading={applicationsReadyForMinutesLoading}
             noDataMessage="No Application ready for minute negotiation"
           />
         </Tabs.Panel>
@@ -298,15 +298,8 @@ const Page = () => {
           <h1 className="text-xl p-4 font-bold">Approved minute negotiation</h1>
           <DataTable
             columns={approvedColumns}
-            loading={loading}
-            data={applications.filter(
-              (app: any) =>
-                minutes.find(
-                  (min: any) =>
-                    min.application.uuid == app.uuid &&
-                    min.terms.toUpperCase() === "APPROVED",
-                ) === null,
-            )}
+            loading={approvedMinutesLoading}
+            data={approvedMinutes}
             noDataMessage="No Approved minute negotiation"
           />
         </Tabs.Panel>
@@ -315,14 +308,8 @@ const Page = () => {
           <h1 className="text-xl p-4 font-bold">Rejected minute negotiation</h1>
           <DataTable
             columns={rejectedColumns}
-            data={applications.filter((app: any) =>
-              minutes.find(
-                (min: any) =>
-                  min.application.uuid === app.uuid &&
-                  min.terms.toUpperCase() === "REJECTED",
-              ),
-            )}
-            loading={loading}
+            data={rejectedMinutes}
+            loading={rejectedMinutesLoading}
             noDataMessage="No Rejected Minute Negotiations"
           />
         </Tabs.Panel>

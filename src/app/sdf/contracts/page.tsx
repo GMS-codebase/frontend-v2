@@ -40,6 +40,11 @@ const Page = () => {
   );
 
   const [loadingDownload, setLoadingDownload] = useState(false);
+  const [contractState, setContractState] = useState<{ isOpen: boolean; application: any | null }>({
+    isOpen: false,
+    application: null
+  });
+
   const handleDownloadInstructions = async (file: any) => {
     setLoadingDownload(true);
     try {
@@ -167,16 +172,12 @@ const Page = () => {
       cell: ({ row }) => (
         <ContractsActions
           data={row.original}
-          setIsContract={setIsContract}
+          setIsContract={setContractState}
           isNew={true}
         />
       ),
     },
   ];
-
-  function setIsContract(arg0: { isOpen: boolean; application: null }): void {
-    throw new Error("Function not implemented.");
-  }
 
   return (
     <div className="w-full flex flex-col mb-20 pb-10">
@@ -237,11 +238,11 @@ const Page = () => {
         </Tabs.Panel>
       </Tabs>
       <AddContract
-        data={contracts.application}
-        trades={contracts.application?.trades || []}
-        isOpenAddContract={contracts.isOpen}
+        data={contractState.application}
+        trades={contractState.application?.trades || []}
+        isOpenAddContract={contractState.isOpen}
         closeAddContract={() =>
-          setIsContract({ isOpen: false, application: null })
+          setContractState({ isOpen: false, application: null })
         }
       />
     </div>
