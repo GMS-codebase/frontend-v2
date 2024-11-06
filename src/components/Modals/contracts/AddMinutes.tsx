@@ -1,5 +1,5 @@
 import { authorizedApi } from "@/utils/api";
-import { getMinutes } from "@/utils/funcs";
+import { getApprovedMinutes, getMinutes, getRejectedMinutes, getUploadedMinutes } from "@/utils/funcs";
 import { Modal } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import React, { useState } from "react";
@@ -48,11 +48,11 @@ const AddMinute: React.FC<AddMinuteProps> = ({
     };
 
     const submitForm = new FormData();
-    submitForm.append("minutesNegotiation", newData.minute as Blob);
+    submitForm.append("attachment", newData.minute as Blob);
     submitForm.append("applicantId", newData.applicantId);
     submitForm.append("applicationId", newData.applicationId);
     authorizedApi
-      .post("/contracts/negotiate", submitForm, {
+      .post("/negotiation-contract/upload-negotiation", submitForm, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -68,6 +68,9 @@ const AddMinute: React.FC<AddMinuteProps> = ({
           amount: "",
         });
         getMinutes(dispatch);
+        getUploadedMinutes(dispatch);
+        getApprovedMinutes(dispatch);
+        getRejectedMinutes(dispatch);
         closeAddMinute();
       })
       .catch((err: any) => {
