@@ -310,7 +310,7 @@ export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
 export const getMinutes = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MINUTES_LOADING });
   authorizedApi
-    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint 
+    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint
     .then((res) => {
       dispatch({
         type: GET_MINUTES_SUCCESS,
@@ -340,7 +340,7 @@ export const getApplicationsForContracts = async (
 ) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
-    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint 
+    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint
     .then((res) => {
       dispatch({
         type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
@@ -413,10 +413,12 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
-export const getApplicationsReadyForMinutes = async (dispatch: Dispatch<UnknownAction>) => {
+export const getApplicationsReadyForMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+) => {
   dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
   authorizedApi
-    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint 
+    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint
     .then((res) => {
       console.log(" applications ready --> ", res.data.data?.data);
       dispatch({

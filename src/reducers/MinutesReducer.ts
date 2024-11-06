@@ -114,25 +114,25 @@ export default function MinutesReducer(state = initialState, action: Action) {
       return {
         ...state,
         uploadedMinutes: action.payload,
-        uploadedMinutesLoading: false
+        uploadedMinutesLoading: false,
       };
     case GET_APPROVED_MINUTES_SUCCESS:
       return {
         ...state,
         approvedMinutes: action.payload,
-        approvedMinutesLoading: false
+        approvedMinutesLoading: false,
       };
     case GET_REJECTED_MINUTES_SUCCESS:
       return {
         ...state,
         rejectedMinutes: action.payload,
-        rejectedMinutesLoading: false
+        rejectedMinutesLoading: false,
       };
     case GET_APPLICATIONS_READY_FOR_MINUTES_SUCCESS:
       return {
         ...state,
         applicationsReadyForMinutes: action.payload,
-        applicationsReadyForMinutesLoading: false
+        applicationsReadyForMinutesLoading: false,
       };
     default:
       return state;
