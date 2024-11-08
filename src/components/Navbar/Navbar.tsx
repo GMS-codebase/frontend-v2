@@ -27,6 +27,7 @@ import {
   getMinutes,
   getRoles,
   getSectorTrades,
+  getBudgetLines,
 } from "@/utils/funcs";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
@@ -79,6 +80,7 @@ const Navbar = () => {
       getApplicants(dispatch);
       getEmployees(dispatch);
       getRoles(dispatch);
+      getBudgetLines(dispatch);
     } else if (role === "SDF_SECRETARIATE") {
       getApplicants(dispatch);
       getContracts(dispatch);
@@ -88,6 +90,7 @@ const Navbar = () => {
       getMyContacts(dispatch);
       getMyApplicantProfile(dispatch);
       getMyApplications(dispatch);
+      getBudgetLines(dispatch);
     }
     getEmpStages(dispatch);
     getWindows(dispatch);
