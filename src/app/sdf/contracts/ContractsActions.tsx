@@ -34,11 +34,20 @@ const ContractsActions = ({
             <h1 className="text-lg">Actions</h1>
           </Menu.Label>
           <Menu.Divider />
-          {!isNew && (
-            <Menu.Item className="bg-[#F0F0F0]">
-              <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-                <FiEye size={21} color="#576074" />
-                Download Contract
+
+          {isNew && (
+            <Menu.Item>
+              <div
+                // onClick={() =>
+                //   setIsContract({
+                //     isOpen: true,
+                //     application: data,
+                //   })
+                // }
+                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+              >
+                <CiEdit size={21} color="#576074" />
+                upload Contract
               </div>
             </Menu.Item>
           )}
@@ -54,7 +63,7 @@ const ContractsActions = ({
                 className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
               >
                 <CiEdit size={21} color="#576074" />
-                Create Contract
+                View approved Signed Minutes Negotiation
               </div>
             </Menu.Item>
           )}

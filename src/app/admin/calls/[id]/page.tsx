@@ -24,14 +24,14 @@ import CloseStageModal from "@/components/Modals/call/CloseStage";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
-  const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
+  const call = calls?.calls?.filter((call: any) => call?.uuid === callId)[0];
   const [isEditCall, { open: openEditCall, close: closeEditCall }] =
     useDisclosure(false);
   const [isCloseCall, { open: openCloseCall, close: closeCloseCall }] =
     useDisclosure(false);
 
-  const startDate = call?.startDate ? new Date(call.startDate) : null;
-  const endDate = call?.endDate ? new Date(call.endDate) : null;
+  const startDate = call?.startDate ? new Date(call?.startDate) : null;
+  const endDate = call?.endDate ? new Date(call?.endDate) : null;
 
   let callcloseDays = 0;
   if (
@@ -64,6 +64,7 @@ const Page = () => {
         });
       });
   };
+  console.log(call);
   return (
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">
@@ -186,7 +187,7 @@ const Page = () => {
             <p>View call attachment</p>
           </div>
           <div>
-            <h1 className="mt-6 text-xl font-bold">Close Stage</h1>
+            <h1 className="mt-6 text-xl font-bold">Stages</h1>
             <div className="flex flex-col gap-2 mt-4">
               <div className="flex justify-between items-center bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 <h1>Evaluation Stage</h1>
@@ -195,33 +196,35 @@ const Page = () => {
                   onClick={() =>
                     SetCloseStage({ opened: true, stage: "EVALUATION" })
                   }
-                  className={`${call?.closedEvaluation ? "opacity-50 cursor-not-allowed" : ""} bg-danger text-white px-4 py-2 rounded-full`}
+                  className={`${call?.closedEvaluation ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full`}
                 >
-                  Close
+                  {call?.closedEvaluation ? "Open" : "Close"}
                 </button>
               </div>
               <div className="flex justify-between items-center bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 <h1>Due Diligency Stage</h1>
                 <button
-                  disabled={call?.closedDueDiligency}
+                  disabled={!call?.closedEvaluation}
                   onClick={() =>
                     SetCloseStage({ opened: true, stage: "DUE_DILIGENCY" })
                   }
-                  className={`${call?.closedDueDiligency ? "opacity-50 cursor-not-allowed" : ""} bg-danger text-white px-4 py-2 rounded-full`}
+                  className={`${call?.closedDueDiligency ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  Close
+                  {call?.closedDueDiligency ? "Open" : "Close"}
                 </button>
               </div>
               <div className="flex justify-between items-center bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 <h1>Grant Committee Stage</h1>
                 <button
-                  disabled={call?.closedGrantCommittee}
+                  disabled={
+                    !call?.closedDueDiligency || !call?.closedEvaluation
+                  }
                   onClick={() =>
                     SetCloseStage({ opened: true, stage: "GRANT_COMMITTEE" })
                   }
-                  className={`${call?.closedGrantCommittee ? "opacity-50 cursor-not-allowed" : ""} bg-danger text-white px-4 py-2 rounded-full`}
+                  className={`${call?.closedGrantCommittee ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  Close
+                  {call?.closedGrantCommittee ? "Open" : "Close"}
                 </button>
               </div>
             </div>

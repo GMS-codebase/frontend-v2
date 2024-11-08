@@ -100,6 +100,8 @@ const Page = () => {
       application?.projectFunding.recruitmentTrainerComment || "",
     MOUsAttachmentComment:
       application?.projectFunding.MOUsAttachmentComment || "",
+    premisesAttachmentComment:
+      application?.projectFunding?.premisesAttachmentComment || "",
     identificationMemberComment:
       application?.projectFunding.identificationMemberComment || "",
     assessmentEquipmentComment:
@@ -319,8 +321,8 @@ const Page = () => {
             <h3 className="font-semibold">Evaluation Stage</h3>
             <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
               {application?.currentStage === "EVALUATION"
-                ? "Pending"
-                : "Finished"}
+                ? "PENDING"
+                : "APPROVED"}
             </div>
             {application?.evaluationDecisions && (
               <div className="flex flex-col gap-2 mt-4">
@@ -437,6 +439,7 @@ const Page = () => {
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
         evaluations={application?.evaluationDecisions}
+        application={application}
       />
       <NullifyModal
         closeModal={closeNullifyModal}

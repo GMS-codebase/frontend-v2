@@ -123,6 +123,11 @@ const Page = () => {
       col1Data: sectorsData["Mining"]?.countApplicants,
       col2Data: sectorsData["Mining"]?.countApplicants,
     },
+    {
+      sector: "Total",
+      col1Data: sectorsData["Mining"]?.countApplicants,
+      col2Data: sectorsData["Mining"]?.countApplicants,
+    },
   ];
 
   return (

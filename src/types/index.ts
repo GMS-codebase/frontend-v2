@@ -76,6 +76,7 @@ export type Comments = {
   institutionComment: string;
   trainingManualComment: string;
   trainingEquipmentComment: string;
+  premisesAttachmentComment: string;
   identificationEmployeeComment: string;
   staffComment: string;
   sustainabilityComment: string;

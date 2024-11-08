@@ -15,18 +15,20 @@ const EvaluationDetails = ({
   isEditing,
   onSaveComment,
   viewer,
+  application,
 }: {
   evaluations: any;
   opened: boolean;
   close: () => void;
   isEditing?: boolean;
   viewer?: string;
+  application: any;
   onSaveComment?: (updatedText: string) => void;
 }) => {
-  const [
-    isOpenEditDecision,
-    { open: openEditDecision, close: closeEditDecision },
-  ] = useDisclosure(false);
+  const [openEditDecision, setOpenEditDecision] = useState({
+    open: false,
+    decision: null,
+  });
   const [selectedDecision, setSelectedDecision] = useState<any>();
   const profile = useSelector((state: any) => state.auth);
   const [text, setText] = useState(
@@ -60,21 +62,17 @@ const EvaluationDetails = ({
             <h1 className="text-xl font-bold">Evaluation decision details</h1>
           </div>
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
-            <h1 className="text-xl font-bold">
-              Approval personnel{" "}
-              <span className="text-sm font-light">
-                (people who made approval and confirmation)
-              </span>
-            </h1>
-            <div className="flex gap-6 justify-start items-center">
-              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-                Approved trainees
-              </p>
-              <p className="text-xl">
-                {evaluations?.length &&
-                  [...evaluations].reverse()[0]?.numberOfTrainees}
-              </p>
-            </div>
+            {viewer !== "applicant" && (
+              <div className="flex gap-6 justify-start items-center">
+                <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
+                  Approved trainees
+                </p>
+                <p className="text-xl">
+                  {evaluations?.length &&
+                    [...evaluations].reverse()[0]?.numberOfTrainees}
+                </p>
+              </div>
+            )}
             {evaluations &&
               [...evaluations].reverse().map((evaluation: any, i: number) => {
                 // Only show the first evaluation if the viewer is an applicant
@@ -83,9 +81,6 @@ const EvaluationDetails = ({
                 return (
                   <div key={i} className="w-full ">
                     <div className="flex gap-6 justify-start items-start">
-                      <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-                        {evaluation?.employee?.name}
-                      </p>
                       {i === 0 && <p className="mt-2">Selected</p>}
                       <p
                         className={`px-4 py-2 rounded-full flex gap-2 justify-start items-start ${
@@ -102,10 +97,12 @@ const EvaluationDetails = ({
                         profile?.userProfile?.data?.uuid && (
                         <button
                           className="bg-primary p-2 rounded-full text-white font-bold"
-                          onClick={() => {
-                            setSelectedDecision(evaluation);
-                            openEditDecision();
-                          }}
+                          onClick={() =>
+                            setOpenEditDecision({
+                              open: true,
+                              decision: evaluation,
+                            })
+                          }
                         >
                           <CiEdit />
                         </button>
@@ -131,11 +128,14 @@ const EvaluationDetails = ({
         </div>
       </Modal>
       <MakeDecision
-        onMakeDecision={() => closeEditDecision()}
-        close={closeEditDecision}
-        isOpen={isOpenEditDecision}
+        onMakeDecision={() =>
+          setOpenEditDecision({ open: false, decision: null })
+        }
+        close={() => setOpenEditDecision({ open: false, decision: null })}
+        isOpen={openEditDecision.open}
         type="Evaluation"
-        defaultData={selectedDecision?.evaluationDecision}
+        defaultData={openEditDecision.decision}
+        application={application}
       />
     </>
   );
