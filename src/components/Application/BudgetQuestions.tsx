@@ -3,7 +3,8 @@ import { ApplicationQuestions } from "@/types/application";
 import { handleDownloadFile } from "@/utils/funcs";
 import { Select } from "@mantine/core";
 import React, { useState, ChangeEvent } from "react";
-import { FaDownload } from "react-icons/fa6";
+import { FaDownload, FaTrash } from "react-icons/fa6";
+import { FaEdit } from "react-icons/fa";
 
 interface Props {
   data: any;
@@ -11,6 +12,7 @@ interface Props {
   comments?: Comments;
   setComments?: React.Dispatch<React.SetStateAction<Comments>>;
   application?: any;
+  isApplicant?: boolean;
 }
 
 const BudgetQuestions: React.FC<Props> = ({
@@ -19,6 +21,7 @@ const BudgetQuestions: React.FC<Props> = ({
   comments,
   setComments,
   application,
+  isApplicant,
 }) => {
   const [budgetLineInputs, setBudgetLineInputs] = useState({
     amount: 0,
@@ -28,6 +31,7 @@ const BudgetQuestions: React.FC<Props> = ({
     amount: "",
     budgetLine: "",
   });
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const handleArrayOfObjectsChange = (inputName: string, value: any) => {
     setData &&
@@ -69,6 +73,40 @@ const BudgetQuestions: React.FC<Props> = ({
     });
   };
 
+  const handleEdit = (index: number) => {
+    const budgetLine = data?.budgetLines[index];
+    setBudgetLineInputs({
+      amount: budgetLine.amount,
+      budgetLine: budgetLine.budgetLine,
+    });
+    setEditingIndex(index);
+  };
+
+  const handleDelete = (index: number) => {
+    setData &&
+      setData((prev: any) => ({
+        ...prev,
+        budgetLines: prev.budgetLines.filter(
+          (item: any, i: number) => i !== index,
+        ),
+      }));
+  };
+
+  const handleUpdate = () => {
+    if (!validateBudgetLineInputs() || editingIndex === null) return;
+
+    setData &&
+      setData((prev: any) => ({
+        ...prev,
+        budgetLines: prev.budgetLines.map((item: any, index: number) =>
+          index === editingIndex ? budgetLineInputs : item,
+        ),
+      }));
+
+    setBudgetLineInputs({ amount: 0, budgetLine: "" });
+    setEditingIndex(null);
+  };
+
   const renderBudgetLineInputs = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-5">
@@ -90,7 +128,6 @@ const BudgetQuestions: React.FC<Props> = ({
             }
             data={[
               "Occupation, safety, health and environmental at Workplace (OSHE)",
-              "Refreshment",
               "Consumables",
               "Trainees Facilitation Fees",
               "Trainers Allowances",
@@ -135,10 +172,10 @@ const BudgetQuestions: React.FC<Props> = ({
       </div>
       <div className="flex justify-end">
         <button
-          onClick={addBudgetLine}
+          onClick={editingIndex !== null ? handleUpdate : addBudgetLine}
           className="mt-2 p-2 bg-primary text-white px-20 rounded-2xl"
         >
-          Add
+          {editingIndex !== null ? "Update" : "Add"}
         </button>
       </div>
     </div>
@@ -213,7 +250,7 @@ const BudgetQuestions: React.FC<Props> = ({
         <div className="flex items-center justify-between py-2">
           <h3 className="text-lg font-bold">Budget Line</h3>
           <div className=" text-white bg-primary rounded-full px-10 flex items-center gap-2 py-2 cursor-pointer">
-            <FaDownload />
+            <FaEdit />
             <p>Download Template</p>
           </div>
         </div>
@@ -225,6 +262,9 @@ const BudgetQuestions: React.FC<Props> = ({
                 <tr className="bg-gray-100">
                   <th className="border p-2">Budget Line</th>
                   <th className="border p-2">Amount</th>
+                  {!comments && setData && (
+                    <th className="border p-2">Actions</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -232,6 +272,24 @@ const BudgetQuestions: React.FC<Props> = ({
                   <tr key={index}>
                     <td className="border p-2">{item.budgetLine || "N/A"}</td>
                     <td className="border p-2">{item.amount || "N/A"}</td>
+                    {!comments && setData && (
+                      <td className="border p-2">
+                        <div className="flex gap-2 justify-center">
+                          <button
+                            onClick={() => handleEdit(index)}
+                            className="text-blue-600 hover:text-blue-800"
+                          >
+                            <FaEdit />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(index)}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -253,7 +311,7 @@ const BudgetQuestions: React.FC<Props> = ({
             )}
           </div>
         )}
-        {!setData && comments && (
+        {!isApplicant && !setData && comments && (
           <div className="mt-2">
             <p>Comment</p>
             <textarea
@@ -290,7 +348,7 @@ const BudgetQuestions: React.FC<Props> = ({
           disabled={!!comments || !setData}
           placeholder="Describe your contribution"
         />
-        {comments && (
+        {!isApplicant && comments && (
           <>
             <p className="text-sm text-gray-600">Comment</p>
             <textarea

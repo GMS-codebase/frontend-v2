@@ -40,15 +40,26 @@ const Page = () => {
       case "Project":
         return (
           <FundingQuestions
+            isApplicant={true}
             application={application}
             data={application?.projectFunding}
+            comments={
+              application?.stages?.find(
+                (stage: any) => stage.stage === "EVALUATION",
+              )?.status
+                ? application?.projectFunding
+                : undefined
+            }
+            showComments={false}
             goToBudget={() => setCurrentComponent("IndicativeBudget")}
           />
         );
       case "IndicativeBudget":
         return (
           <BudgetQuestions
+            isApplicant={true}
             application={application as any}
+            comments={application?.budget}
             data={application?.budget}
           />
         );
@@ -209,39 +220,55 @@ const Page = () => {
         ) : (
           <div className="flex flex-col bg-white min-w-[30%] rounded-2xl p-5 gap-4">
             <h2 className="font-bold">Decision</h2>
-            <div className="flex flex-col gap-2">
-              <h3 className="font-semibold">Evaluation Stage</h3>
-              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                {application?.currentStage === "EVALUATION"
-                  ? "PENDING"
-                  : "APPROVED"}
-              </div>
-              <div className="flex flex-col gap-2 mt-4">
-                <button
-                  onClick={openEvaluationDetails}
-                  className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                >
-                  View details
-                </button>
-              </div>
-            </div>
-            {application?.currentStage !== "EVALUATION" && (
+            {application?.call.closedEvaluation && (
               <div className="flex flex-col gap-2">
-                <h3 className="font-bold">Due Diligence Stage</h3>
+                <h3 className="font-semibold">Evaluation Stage</h3>
                 <div
                   className={`font-medium  ${
-                    application?.status === "APPROVED" ||
-                    application?.currentStage !== "EVALUATION"
+                    application?.stages?.find(
+                      (stage: any) => stage.stage === "EVALUATION",
+                    )?.status === "APPROVED"
                       ? "bg-[#4BC500] text-[#4BC500]"
                       : application?.status === "PENDING"
                         ? "bg-red-600 text-red-600"
                         : ""
                   } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
                 >
-                  {application?.currentStage !== "EVALUATION" &&
-                  application?.currentStage !== "DUE_DILIGENCY"
-                    ? "APPROVED"
-                    : application?.status}
+                  {
+                    application?.stages?.find(
+                      (stage: any) => stage.stage === "EVALUATION",
+                    )?.status
+                  }
+                </div>
+                <div className="flex flex-col gap-2 mt-4">
+                  <button
+                    onClick={openEvaluationDetails}
+                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                  >
+                    View details
+                  </button>
+                </div>
+              </div>
+            )}
+            {application?.call.closedDueDiligency && (
+              <div className="flex flex-col gap-2">
+                <h3 className="font-bold">Due Diligence Stage</h3>
+                <div
+                  className={`font-medium  ${
+                    application?.stages.find(
+                      (stage: any) => stage.stage === "DUE_DILIGENCY",
+                    ).status
+                      ? "bg-[#4BC500] text-[#4BC500]"
+                      : application?.status === "PENDING"
+                        ? "bg-red-600 text-red-600"
+                        : ""
+                  } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+                >
+                  {
+                    application?.stages.find(
+                      (stage: any) => stage.stage === "DUE_DILIGENCY",
+                    ).status
+                  }
                 </div>
                 <div className="flex flex-col gap-2 mt-4">
                   <button
@@ -261,6 +288,7 @@ const Page = () => {
         close={closeEvaluationDetails}
         evaluations={application?.evaluationDecisions || []}
         viewer="applicant"
+        application={application}
       />
       <DueDiligencyDetails
         application={application}
