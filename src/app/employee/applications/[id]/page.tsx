@@ -90,6 +90,8 @@ const Page = () => {
       application?.projectFunding?.recruitmentTrainerComment || "",
     MOUsAttachmentComment:
       application?.projectFunding?.MOUsAttachmentComment || "",
+    premisesAttachmentComment:
+      application?.projectFunding?.premisesAttachmentComment || "",
     identificationMemberComment:
       application?.projectFunding?.identificationMemberComment || "",
     assessmentEquipmentComment:
@@ -181,6 +183,7 @@ const Page = () => {
         "Upload comments on the previous financial report.",
       contributionFromApplicantComment:
         "Specify comments regarding the applicant’s contribution.",
+      budgetAttachmentComment: "Upload comments on the budget attachment.",
     };
 
     if (!commentsData.titleComment) return commentMessages.titleComment;
@@ -265,9 +268,6 @@ const Page = () => {
       </div>
     );
   }
-
-  console.log(application);
-
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -331,43 +331,15 @@ const Page = () => {
             )}
           </div>
         </div>
-        <div className="flex justify-between items-center mt-5">
-          <div className="flex flex-col justify-start items-start gap-6 font-semibold">
+        <div className="flex justify-between items-start mt-5">
+          <div className="flex flex-col justify-start items-start gap-6 font-semibold w-1/2">
+            <h1 className="text-2xl font-bold">Application Information</h1>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
                 Application number
               </p>
               <p>{application?.applicationNumber}</p>
             </div>
-            <div className="flex gap-3 justify-start items-center font-semibold">
-              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-                Finished answering
-              </p>
-              <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
-            </div>
-            <div className="flex gap-3 justify-start items-center">
-              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-                Submitted
-              </p>
-              <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
-            </div>
-            <div className="flex gap-3 justify-start items-center">
-              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
-                Institution name
-              </p>
-              <p>
-                {application?.applicant?.businesses &&
-                  application?.applicant?.businesses[0]?.businessName}
-              </p>
-            </div>
-            <div className="flex gap-3 justify-start items-center">
-              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
-                Applicant&apos;s Phone Number
-              </p>
-              <p>{application?.applicant?.phone}</p>
-            </div>
-          </div>
-          <div className="flex flex-col justify-start items-start gap-6 font-semibold">
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Call
@@ -386,14 +358,52 @@ const Page = () => {
               </p>
               <p>{new Date(application?.doneAt)?.toLocaleDateString()}</p>
             </div>
+            <div className="flex gap-3 justify-start items-center font-semibold">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
+                Finished answering
+              </p>
+              <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
+                Submitted
+              </p>
+              <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
+            </div>
+            <div className="flex flex-col gap-4 font-semibold">
+              <h2 className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start w-fit">
+                Description
+              </h2>
+              <div>{application?.description}</div>
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-start items-start gap-6 font-semibold w-1/2 ml-7">
+            <h1 className="text-2xl font-bold">Applicant Information</h1>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
-                Application name
+                Applicant name
               </p>
               <p>{application?.applicant.name}</p>
             </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Applicant&apos;s Phone Number
+              </p>
+              <p>{application?.applicant?.phone}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Institution name
+              </p>
+              <p>
+                {application?.applicant?.businesses &&
+                  application?.applicant?.businesses[0]?.businessName}
+              </p>
+            </div>
+
             <div
-              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
+              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
               onClick={() =>
                 handleDownloadFile(
                   application?.applicant?.businesses[0]?.businessCertificate,
@@ -414,14 +424,15 @@ const Page = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-6 mt-6">
-          <div className="flex flex-col gap-4 font-semibold">
-            <h2 className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start w-fit">
-              Description
-            </h2>
-            <div>{application?.description}</div>
-          </div>
-        </div>
+
+        {/* <div className="flex flex-col gap-6 mt-6">
+                  <div className="flex px-4 py-2 gap-2 bg-[#005DE9] rounded-full text-white items-center justify-start w-fit">
+                      <span>
+                          <SolarFolder2Bold />
+                      </span>
+                      <div className="">Apply for Appeal</div>
+                  </div>
+              </div> */}
       </div>
       <div className="flex gap-6">
         <div
@@ -600,6 +611,7 @@ const Page = () => {
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
         evaluations={application?.evaluationDecisions || []}
+        application={application}
       />
     </div>
   );

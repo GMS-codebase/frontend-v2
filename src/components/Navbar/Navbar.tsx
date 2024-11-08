@@ -28,6 +28,10 @@ import {
   getRoles,
   getSectorTrades,
   getBudgetLines,
+  getApplicationsReadyForMinutes,
+  getRejectedMinutes,
+  getApprovedMinutes,
+  getUploadedMinutes,
 } from "@/utils/funcs";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
@@ -85,6 +89,10 @@ const Navbar = () => {
       getApplicants(dispatch);
       getContracts(dispatch);
       getMinutes(dispatch);
+      getApplicationsReadyForMinutes(dispatch);
+      getUploadedMinutes(dispatch);
+      getApprovedMinutes(dispatch);
+      getRejectedMinutes(dispatch);
       getApplicationsForContracts(dispatch);
     } else if (role === "APPLICANT") {
       getMyContacts(dispatch);

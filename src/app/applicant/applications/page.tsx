@@ -17,17 +17,24 @@ const Page = () => {
       application?.currentStage === "EVALUATION" &&
       !application?.call?.closedEvaluation
     ) {
-      return "PENDING";
+      return "EVALUATION IN PROGRESS";
     } else if (
       application?.currentStage === "DUE_DILIGENCY" &&
       !application?.call?.closedDueDiligency
     ) {
-      return "PENDING";
+      return "DUE DILIGENCY IN  PROGRESS";
     } else if (
       application?.currentStage === "GRANT_COMMITTEE" &&
       !application?.call?.closedGrantCommittee
     ) {
-      return "PENDING";
+      return "GRANT COMMITTEE IN PROGRESS";
+    } else if (
+      application?.currentStage === "CONTRACT_SIGNING" &&
+      (!application?.call?.closedGrantCommittee ||
+        !application?.call?.closedDueDiligency ||
+        !application?.call?.closedEvaluation)
+    ) {
+      return "CONTRACT SIGNING IN PROGRESS";
     } else {
       return application?.currentStage;
     }

@@ -5,21 +5,26 @@ import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
 import { useParams } from "next/navigation";
 import { AiOutlineDelete } from "react-icons/ai";
+import { useSelector } from "react-redux";
+import DeleteConfirm from "./DeleteConfirm";
+import { useDisclosure } from "@mantine/hooks";
 
 interface MakeDecisionProps {
   isOpen: boolean;
   close: () => void;
   onMakeDecision: () => void;
   type: "Evaluation" | "Due Diligence";
-  defaultData?: {
-    decision: string;
-    comment: string;
-    trades?: { trade: any; trainees: number }[];
-  };
+  defaultData?:
+    | {
+        decision: string;
+        comment: string;
+        trades?: { trade: any; trainees: number }[];
+      }
+    | any;
   firstEvaluationModal?: boolean;
   application?: any;
+  updated?: boolean;
 }
-
 const MakeDecision = ({
   isOpen,
   close,
@@ -28,27 +33,34 @@ const MakeDecision = ({
   defaultData,
   firstEvaluationModal,
   application,
+  updated,
 }: MakeDecisionProps) => {
-  const [prompt, setPrompt] = useState({
-    opened: false,
-    trade: "",
-  });
   const [formData, setFormData] = useState({
     decision: "",
     comment: "",
-    traineeNumber: "",
+    trades: [] as { trade: any; trainees: number }[],
   });
   const { id } = useParams<{ id: string }>();
+  const [tradeToDelete, setTradeToDelete] = useState<any | null>(null);
   const [errors, setErrors] = useState({
     decision: "",
     comment: "",
-    traineeNumber: "",
+    trades: "",
   });
+  const [
+    isOpenDeleteModal,
+    { open: openDeleteModal, close: closeDeleteModal },
+  ] = useDisclosure(false);
   const [loading, setLoading] = useState(false);
-
+  const [selectedTrade, setSelectedTrade] = useState<any>(null);
+  const [traineesNumber, setTraineesNumber] = useState<number | undefined>(0);
   useEffect(() => {
     if (defaultData) {
-      setFormData(defaultData as any);
+      setFormData({
+        decision: defaultData.decision,
+        comment: defaultData.comment,
+        traineeNumber: defaultData?.numberOfTrainees as any,
+      } as any);
     }
   }, [defaultData]);
 
@@ -68,7 +80,7 @@ const MakeDecision = ({
 
   const validate = () => {
     let valid = true;
-    const newErrors = { decision: "", comment: "", traineeNumber: "" };
+    const newErrors = { decision: "", comment: "", trades: "" };
 
     if (!formData.decision) {
       newErrors.decision = "Decision is required.";
@@ -80,13 +92,8 @@ const MakeDecision = ({
       valid = false;
     }
 
-    if (
-      firstEvaluationModal &&
-      !formData.traineeNumber &&
-      formData.decision === "APPROVED"
-    ) {
-      newErrors.traineeNumber =
-        "Please provide the number of accepted trainees.";
+    if (firstEvaluationModal && formData.trades.length === 0) {
+      newErrors.trades = "At least one trade/trainee entry is required.";
       valid = false;
     }
 
@@ -100,14 +107,31 @@ const MakeDecision = ({
 
     setLoading(true);
     try {
-      const endpoint =
-        type === "Evaluation"
-          ? `/application/evaluation/make-decision/${id}`
-          : `/application/${id}/due-diligency-form/make-decision`;
+      const payload = {
+        decision: formData.decision,
+        comment: formData.comment,
+        ...(firstEvaluationModal &&
+          formData.decision === "APPROVED" && {
+            numberOfTrainees: traineesNumber,
+          }),
+      };
+      if (defaultData) {
+        const endpoint =
+          type === "Evaluation"
+            ? `/application/evaluation/update-decision/${application?.uuid}/${defaultData?.uuid}`
+            : `/application/${application?.uuid}/due-diligency-form/update-decision/${defaultData?.uuid}`;
 
-      const apiMethod =
-        type === "Evaluation" ? authorizedApi.patch : authorizedApi.post;
-      await apiMethod(endpoint, formData);
+        await authorizedApi.patch(endpoint, payload);
+      } else {
+        const endpoint =
+          type === "Evaluation"
+            ? `/application/evaluation/make-decision/${application?.uuid}`
+            : `/application/${application?.uuid}/due-diligency-form/make-decision`;
+
+        const apiMethod =
+          type === "Evaluation" ? authorizedApi.patch : authorizedApi.post;
+        await apiMethod(endpoint, payload);
+      }
 
       notifications.show({
         message: defaultData
@@ -115,7 +139,6 @@ const MakeDecision = ({
           : `${type} decision made successfully!`,
         color: "blue",
       });
-
       onMakeDecision();
       close();
     } catch (err: any) {
@@ -125,6 +148,40 @@ const MakeDecision = ({
       });
     }
     setLoading(false);
+  };
+
+  const addTradeTrainee = () => {
+    setFormData((prev: any) => {
+      const existingTradeIndex = prev.trades.findIndex(
+        (trade: any) => trade.trade === selectedTrade,
+      );
+      if (existingTradeIndex !== -1) {
+        const updatedTrades = [...prev.trades];
+        updatedTrades[existingTradeIndex].trainees = traineesNumber;
+        return {
+          ...prev,
+          trades: updatedTrades,
+        };
+      } else {
+        return {
+          ...prev,
+          trades: [
+            ...prev.trades,
+            { trade: selectedTrade, trainees: traineesNumber },
+          ],
+        };
+      }
+    });
+    setSelectedTrade(null);
+    setTraineesNumber(0);
+  };
+
+  const removeTradeTrainee = (uuid: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      trades: prev.trades.filter((entry) => entry.trade.uuid == uuid),
+    }));
+    closeDeleteModal();
   };
 
   return (
@@ -198,19 +255,87 @@ const MakeDecision = ({
               <div className="space-y-3 mb-4 w-full">
                 <p className="block text-xs font-bold text-gray-700">
                   {" "}
-                  Accepted Trainee Number
+                  Trades and Trainees
                 </p>
-                <input
-                  type="number"
-                  value={formData.traineeNumber}
-                  onChange={handleChange}
-                  min={0}
-                  name="traineeNumber"
-                  placeholder="Number of trainees"
-                  className="outline-none flex-grow bg-gray-100 rounded-full px-3 py-3 w-full"
-                />
-                {errors.traineeNumber && (
-                  <p className="text-red-500 text-sm">{errors.traineeNumber}</p>
+                <div className="w-full flex gap-2">
+                  <Select
+                    value={selectedTrade}
+                    onChange={(value) => setSelectedTrade(value)}
+                    data={application?.trades.map((t: any) => ({
+                      value: t.trade.uuid,
+                      label: t.trade.title,
+                    }))}
+                    placeholder="Select trade"
+                    className="bg-gray-100 rounded-full py-0.5"
+                  />
+                  <input
+                    type="number"
+                    value={traineesNumber || ""}
+                    onChange={(e) =>
+                      setTraineesNumber(parseInt(e.target.value))
+                    }
+                    placeholder="Number of trainees"
+                    className="outline-none flex-grow bg-gray-100 rounded-full px-3"
+                  />
+                  <button
+                    type="button"
+                    onClick={addTradeTrainee}
+                    disabled={!selectedTrade || !traineesNumber}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-full"
+                  >
+                    Add
+                  </button>
+                </div>
+                {formData.trades.length > 0 && (
+                  <table className="w-full">
+                    <thead>
+                      <tr>
+                        <th>Trade</th>
+                        <th>Trainees</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData.trades.map((entry: any, index) => (
+                        <tr key={index}>
+                          <td>
+                            {" "}
+                            <div className="flex items-center justify-center">
+                              {
+                                application?.trades.find(
+                                  (t: any) => t.trade.uuid === entry.trade,
+                                )?.trade.title
+                              }
+                            </div>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <div className="flex items-center justify-center">
+                              {entry.trainees}
+                            </div>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <div className="flex items-center justify-center">
+                              {" "}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  removeTradeTrainee(entry.trade.uuid)
+                                }
+                                className="text-red-500"
+                              >
+                                <AiOutlineDelete />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+                {errors.trades && (
+                  <p className="text-red-500 text-sm">{errors.trades}</p>
                 )}
               </div>
             )}
@@ -238,6 +363,13 @@ const MakeDecision = ({
           </form>
         </div>
       </div>
+      <DeleteConfirm
+        isOpen={isOpenDeleteModal}
+        onClose={closeDeleteModal}
+        onConfirm={() => {
+          removeTradeTrainee(tradeToDelete);
+        }}
+      />
     </Modal>
   );
 };

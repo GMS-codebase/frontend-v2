@@ -7,11 +7,13 @@ export const Page5 = ({
   setData,
   comments,
   setComments,
+  isApplicant,
 }: {
   data: any;
   setData?: any;
   comments?: Comments;
   setComments?: any;
+  isApplicant?: boolean;
 }) => {
   return (
     <>
@@ -29,7 +31,7 @@ export const Page5 = ({
             disabled={!!comments || !setData}
           />
         }
-        {comments && (
+        {!isApplicant && comments && (
           <div className="mt-2">
             <h4 className="text-md font-semibold text-gray-700">Comment</h4>
             <textarea
@@ -67,7 +69,7 @@ export const Page5 = ({
                 ? "Download File"
                 : "No Report Found!"}
             </button>
-            {comments && (
+            {!isApplicant && comments && (
               <div className="mt-2">
                 <h4 className="text-md font-semibold text-gray-700">Comment</h4>
                 <textarea
@@ -137,7 +139,7 @@ export const Page5 = ({
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!comments || !setData}
         />
-        {comments && (
+        {!isApplicant && comments && (
           <div className="mt-2">
             <h4 className="text-md font-semibold text-gray-700">Comment</h4>
             <textarea
