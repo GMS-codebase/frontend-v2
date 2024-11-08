@@ -39,7 +39,7 @@ const routeMappings = {
   calls: "/call",
   contacts: "/contacts",
   employees: "/employees",
-  budgetLines: "/budgetLines",
+  budgetLines: "/budgetlines/delete",
 };
 const DeleteModal = ({
   isOpenModal,

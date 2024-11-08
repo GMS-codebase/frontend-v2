@@ -30,7 +30,9 @@ const Page = () => {
     budgetLines.budgetLines?.filter(
       (budgetLine: any) =>
         budgetLine?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        budgetLine?.shortname?.toLowerCase().includes(searchQuery.toLowerCase())
+        budgetLine?.shortname
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()),
     ) ?? [];
 
   const columns: ColumnDef<any>[] = [
