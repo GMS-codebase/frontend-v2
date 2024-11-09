@@ -15,16 +15,15 @@ const contracts: Contract[] = [
 ];
 
 const Contracts = ({
-  data = [],
-  loading = false,
+  data,
+  loading,
 }: {
   data?: any;
   loading?: boolean;
 }) => {
   const [hoveredContract, setHoveredContract] = useState<number | null>(null);
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Contracts</h2>
+    <div>
       <div className="flex flex-wrap gap-6">
         {loading ? (
           <div className="w-full h-full flex items-center justify-between">
@@ -32,7 +31,7 @@ const Contracts = ({
             <Skeleton width={330} height={200} />
             <Skeleton width={330} height={200} />
           </div>
-        ) : !!data ? (
+        ) : !data ? (
           <div className="w-full flex items-center mt-10">
             <h1 className="w-full text-center">No Contracts Signed!</h1>
           </div>

@@ -7,6 +7,7 @@ import AddContract from "@/components/Modals/AddContract"; // Import AddContract
 import AddMinute from "@/components/Modals/contracts/AddMinutes"; // Import AddMinute (for minutes)
 import { VscEye } from "react-icons/vsc";
 import { Upload } from "solar-icon-set";
+import { useState } from "react";
 
 const MinutesActions = ({
   setIsMinute,
@@ -21,7 +22,7 @@ const MinutesActions = ({
     useDisclosure(false);
   const [isOpenAddMinute, { open: openMinute, close: closeMinute }] =
     useDisclosure(false);
-
+  const [type, setType] = useState("");
   return (
     <div>
       <Menu shadow="lg" width={300}>
@@ -44,7 +45,10 @@ const MinutesActions = ({
 
           {status === "ready" && (
             <Menu.Item
-              onClick={openMinute}
+            onClick={()=> {
+              openMinute
+              setType("unsigned")
+            }}
               className="w-full py-1 text-[#576074]"
             >
               <div className="flex items-center gap-3 py-1">
@@ -100,7 +104,10 @@ const MinutesActions = ({
                 </div>
               </Menu.Item>
               <Menu.Item
-                onClick={openContract}
+                onClick={()=> {
+                  openMinute()
+                  setType("signed")
+                }}
                 className="w-full py-1 text-[#576074]"
               >
                 <div className="flex items-center gap-3 py-1">
@@ -124,18 +131,12 @@ const MinutesActions = ({
           )}
         </Menu.Dropdown>
       </Menu>
-
-      {/* Modals for actions */}
       <AddMinute
+        type=""
         data={data}
         isOpenAddMinute={isOpenAddMinute}
         closeAddMinute={closeMinute}
       />
-      {/* <AddContract
-        data={data}
-        isOpenAddContract={isOpenAddContract}
-        closeAddContract={closeContract}
-      /> */}
     </div>
   );
 };

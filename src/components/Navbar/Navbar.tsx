@@ -21,7 +21,7 @@ import {
   getSubWindows,
   getMyContracts,
   getContracts,
-  getApplicationsForContracts,
+  getApplicationsForContractSigning,
   getEmpStages,
   getMyApplications,
   getMinutes,
@@ -87,16 +87,19 @@ const Navbar = () => {
       getApplicants(dispatch);
       getContracts(dispatch);
       getMinutes(dispatch);
-      getApplicationsReadyForMinutes(dispatch);
-      getUploadedMinutes(dispatch);
-      getApprovedMinutes(dispatch);
-      getRejectedMinutes(dispatch);
-      getApplicationsForContracts(dispatch);
+      getApplicationsReadyForMinutes(dispatch, "sdf");
+      getUploadedMinutes(dispatch, "sdf");
+      getApprovedMinutes(dispatch, "sdf");
+      getRejectedMinutes(dispatch, "sdf");
     } else if (role === "APPLICANT") {
       getMyContacts(dispatch);
       getMyApplicantProfile(dispatch);
       getMyApplications(dispatch);
+      getUploadedMinutes(dispatch, "applicant");
+      getApprovedMinutes(dispatch, "applicant");
+      getRejectedMinutes(dispatch, "applicant");
     }
+    getApplicationsForContractSigning(dispatch);
     getEmpStages(dispatch);
     getWindows(dispatch);
     getSectors(dispatch);
