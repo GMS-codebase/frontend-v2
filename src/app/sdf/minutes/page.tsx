@@ -14,7 +14,7 @@ const Page = () => {
   const [isMinute, setIsMinute] = useState({
     isOpen: false,
     application: null,
-    type: ""
+    type: "",
   });
 
   const {
@@ -29,7 +29,7 @@ const Page = () => {
     applicationsReadyForMinutesLoading,
     applicationsReadyForMinutes,
   } = useSelector((state: any) => state.minutes);
-  
+
   const minuteColumns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -292,7 +292,9 @@ const Page = () => {
         </Tabs.Panel>
 
         <Tabs.Panel value="approved">
-          <h1 className="text-base p-4 font-bold">Approved minute negotiation</h1>
+          <h1 className="text-base p-4 font-bold">
+            Approved minute negotiation
+          </h1>
           <DataTable
             columns={approvedColumns}
             loading={approvedMinutesLoading}
@@ -302,7 +304,9 @@ const Page = () => {
         </Tabs.Panel>
 
         <Tabs.Panel value="rejected">
-          <h1 className="text-base p-4 font-bold">Rejected minute negotiation</h1>
+          <h1 className="text-base p-4 font-bold">
+            Rejected minute negotiation
+          </h1>
           <DataTable
             columns={rejectedColumns}
             data={rejectedMinutes}
@@ -314,10 +318,12 @@ const Page = () => {
 
       {/* AddMinute Modal */}
       <AddMinute
-        type= {isMinute.type}
+        type={isMinute.type}
         data={isMinute.application}
         isOpenAddMinute={isMinute.isOpen}
-        closeAddMinute={() => setIsMinute({ isOpen: false, application: null, type:"" })}
+        closeAddMinute={() =>
+          setIsMinute({ isOpen: false, application: null, type: "" })
+        }
       />
     </div>
   );

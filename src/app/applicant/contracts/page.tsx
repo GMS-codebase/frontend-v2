@@ -16,7 +16,9 @@ const Page = () => {
   const contracts = useSelector((state: any) => state.contract);
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const {uploadedMinutes, uploadedMinutesLoading} = useSelector((state: any) => state.minutes);
+  const { uploadedMinutes, uploadedMinutesLoading } = useSelector(
+    (state: any) => state.minutes,
+  );
 
   const columns: ColumnDef<any>[] = [
     {

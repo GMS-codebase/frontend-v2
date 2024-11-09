@@ -141,28 +141,36 @@ const Page = () => {
       accessorKey: "applicationNumber",
       header: "Application Number",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.application?.applicationNumber}</div>
+        <div className="w-full">
+          {row.original?.application?.applicationNumber}
+        </div>
       ),
     },
     {
       accessorKey: "applicationTitle",
       header: "Application Title",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.application?.projectFunding?.title}</div>
+        <div className="w-full">
+          {row.original?.application?.projectFunding?.title}
+        </div>
       ),
     },
     {
       accessorKey: "name",
       header: "Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.application?.applicant?.name}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.name}
+        </div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.application?.applicant?.phone}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.phone}
+        </div>
       ),
     },
     {
