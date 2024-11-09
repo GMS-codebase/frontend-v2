@@ -107,7 +107,7 @@ export const Page2 = ({
                 typeof application?.call?.endDate === "string"
                   ? new Date(application?.call?.endDate).getTime() +
                     24 * 60 * 60 * 1000
-                  : application?.call?.endDate.getTime() + 24 * 60 * 60 * 1000,
+                  : application?.call?.endDate.getTime() + 24 * 60 * 60 * 1000
               )
                 .toISOString()
                 .split("T")[0]
@@ -257,19 +257,35 @@ export const Page2 = ({
           </p>
           {commentsData || !setData ? (
             <>
-              <button
-                onClick={() =>
-                  handleDownloadFile(
-                    data?.trainingManualAttachment,
-                    "applications",
-                  )
-                }
-                className={`w-full h-12 ${data?.trainingManualAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
-              >
-                {data?.trainingManualAttachment
-                  ? "Download File"
-                  : "No Manual Found"}
-              </button>
+              {data?.trainingManualAttachment ? (
+                <div className="grid grid-cols-2 gap-2 my-2">
+                  <button
+                    onClick={() =>
+                      handleDownloadFile(
+                        data?.trainingManualAttachment,
+                        "applications"
+                      )
+                    }
+                    className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+                  >
+                    View File
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleDownloadFile(
+                        data?.trainingManualAttachment,
+                        "applications"
+                      )
+                    }
+                    className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+                  >
+                    <FaDownload />
+                    <p>Download File</p>
+                  </button>
+                </div>
+              ) : (
+                <p>No File found</p>
+              )}
             </>
           ) : (
             <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
@@ -303,7 +319,7 @@ export const Page2 = ({
                 onChange={(e) =>
                   setData(
                     "trainingManualAttachment",
-                    e.target.files ? e.target.files[0] : null,
+                    e.target.files ? e.target.files[0] : null
                   )
                 }
               />
@@ -314,7 +330,7 @@ export const Page2 = ({
       {!isApplicant &&
         setCommentsData &&
         renderCommentsSection(
-          type === "assessment" ? "assessmentComment" : "trainingManualComment",
+          type === "assessment" ? "assessmentComment" : "trainingManualComment"
         )}
     </>
   );

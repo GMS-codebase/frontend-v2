@@ -1,22 +1,53 @@
 "use client";
-import { BiSearch } from "react-icons/bi";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
+import { HiDotsHorizontal } from "react-icons/hi";
+import { CiSearch } from "react-icons/ci";
+import { Menu, Select } from "@mantine/core";
+import { useRef, useState, useMemo } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
-import { useDisclosure } from "@mantine/hooks";
-import { useState, useRef } from "react";
-import { Select } from "@mantine/core";
-import TableSkeleton from "@/components/core/data-table/TableSkeleton";
-import CallsActions from "./CallsAction";
-import AddEditCall from "@/components/Modals/call/AddEditCall";
+import Link from "next/link";
+import { VscEye } from "react-icons/vsc";
 
 const Page = () => {
-  const [isOpenCall, { open, close }] = useDisclosure(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const { applications, loading } = useSelector(
+    (state: any) => state.applications
+  );
   const filtersContainerRef = useRef<HTMLDivElement>(null);
 
-  const applications = useSelector((state: any) => state.applications);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedFilters, setSelectedFilters] = useState({
+    stage: "All",
+    window: "All",
+  });
+
+  const getUniqueValues = (key: string) => {
+    return [
+      "All",
+      ...new Set(
+        applications
+          .map((app: any) => {
+            return key
+              .split(".")
+              .reduce((obj, property) => obj?.[property], app);
+          })
+          .filter(Boolean)
+      ),
+    ];
+  };
+
+  const filterOptions = useMemo(
+    () => ({
+      stages: getUniqueValues("currentStage"),
+      windows: getUniqueValues("window.title"),
+    }),
+    [applications]
+  );
+
+  const formatStage = (stage: string) => {
+    return stage.replace(/_/g, " ").toUpperCase();
+  };
 
   const columns: ColumnDef<any>[] = [
     {
@@ -35,56 +66,75 @@ const Page = () => {
       cell: ({ row }) => <div>{row.original?.window?.title}</div>,
     },
     {
-      accessorKey: "sector",
-      header: "Sector",
-      cell: ({ row }) => <div>{row.original?.sectors[0]?.name}</div>,
-    },
-    {
-      accessorKey: "trade",
-      header: "Trade",
-      cell: ({ row }) => (
-        <div>
-          {row.original?.trades[0]
-            ? row.original?.trades[0]?.title
-            : "Not Assigned"}
-        </div>
-      ),
+      accessorKey: "call",
+      header: "Call",
+      cell: ({ row }) => <div>{row.original?.call?.title}</div>,
     },
     {
       accessorKey: "stage",
       header: "Stage",
-      cell: ({ row }) => <div>{row.original?.currentStage}</div>,
+      cell: ({ row }) => <div>{formatStage(row.original?.currentStage)}</div>,
     },
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions application={row.original} />,
+      cell: ({ row }) => (
+        <div>
+          <Menu shadow="lg" width={200}>
+            <Menu.Target>
+              <button
+                style={{
+                  background:
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+                }}
+                className="p-3 rounded-full border text-white hover:bg-red-100"
+              >
+                <HiDotsHorizontal size={25} color="white" />
+              </button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>
+                <h1 className="text-lg">Actions</h1>
+              </Menu.Label>
+              <Menu.Divider />
+              <Menu.Item className="bg-[#F0F0F0]">
+                <Link
+                  href={`/employee/applications/${row.original.uuid}`}
+                  className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <VscEye size={21} color="#576074" />
+                  View
+                </Link>
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </div>
+      ),
     },
   ];
 
   const FilterDropDown = ({
     placeholderText,
     data,
+    filterKey,
   }: {
     placeholderText: string;
     data: any[];
-  }) => (
-    <Select
-      data={data}
-      placeholder={placeholderText}
-      defaultValue={placeholderText}
-      className="w-full px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
-    />
-  );
+    filterKey: keyof typeof selectedFilters;
+  }) => {
+    return (
+      <Select
+        data={data.map((item) => ({ value: item, label: item }))}
+        placeholder={placeholderText}
+        value={selectedFilters[filterKey]}
+        onChange={(value) =>
+          setSelectedFilters((prev) => ({ ...prev, [filterKey]: value }))
+        }
+        className="w-full px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
+      />
+    );
+  };
 
-  const filteredApplications =
-    applications?.applications?.filter((application: any) =>
-      application?.applicant?.name
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase()),
-    ) ?? [];
-
-  console.log("filteredApplications", filteredApplications);
   const handleScroll = (direction: "left" | "right") => {
     if (filtersContainerRef.current) {
       const scrollAmount = 100;
@@ -96,22 +146,43 @@ const Page = () => {
     }
   };
 
+  const filteredApplications = useMemo(() => {
+    return (
+      applications
+        // .filter((app: any) => app.stages.length > 0)
+        .filter(
+          (app: any) =>
+            app.applicationNumber
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()) ||
+            app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .filter((app: any) => {
+          const { stage, window } = selectedFilters;
+          return (
+            (stage === "All" || formatStage(app.currentStage) === stage) &&
+            (window === "All" || app.window?.title === window)
+          );
+        })
+    );
+  }, [applications, searchTerm, selectedFilters]);
+
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
+      <div className="w-full flex justify-between items-center p-4 gap-5">
         <div className="relative w-[20rem]">
-          <span className="absolute top-4 left-2">
-            <BiSearch size={25} />
+          <span className="absolute top-4 left-4">
+            <CiSearch size={25} color="" />
           </span>
           <input
             name="search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
+            className="w-full p-3 py-4 pl-12 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
             placeholder="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center max-w-[70%]">
           <button
             onClick={() => handleScroll("left")}
             className="p-2 bg-white shadow-lg rounded-full mr-2"
@@ -121,52 +192,21 @@ const Page = () => {
 
           <div
             ref={filtersContainerRef}
-            className="flex items-center gap-3 overflow-x-hidden scrollbar-hide"
-            style={{ scrollBehavior: "smooth", maxWidth: "calc(4 * 11rem)" }}
+            className="flex items-center gap-3 overflow-x-hidden scrollbar-hide  flex-grow"
+            style={{ scrollBehavior: "smooth" }}
           >
             <div className="w-44 flex-shrink-0">
               <FilterDropDown
-                placeholderText="Filter By stage"
-                data={["Duediligence"]}
+                placeholderText="Filter By Stage"
+                data={filterOptions.stages}
+                filterKey="stage"
               />
             </div>
             <div className="w-44 flex-shrink-0">
               <FilterDropDown
                 placeholderText="Filter By Window"
-                data={["Window 1: Apprenticeship and Internships"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Subwindow"
-                data={["Rapid apprentices"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Sector"
-                data={["ICT & Innovations"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By trade"
-                data={["Agriculture"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By District"
-                data={[
-                  "Kicukiro",
-                  "Musanze",
-                  "Nyagatare",
-                  "Muhanga",
-                  "Nyarugenge",
-                  "Kamonyi",
-                  "Nyanza",
-                  "Gasabo",
-                ]}
+                data={filterOptions.windows}
+                filterKey="window"
               />
             </div>
           </div>
@@ -179,21 +219,19 @@ const Page = () => {
           </button>
         </div>
       </div>
-
-      <div className="w-full h-full">
-        {applications?.loading ? (
-          <TableSkeleton columns={columns} />
-        ) : filteredApplications.length === 0 ? (
-          <h1>No Applications Found!</h1>
-        ) : (
-          <DataTable
-            columns={columns}
-            data={filteredApplications}
-            tableWidth={1800}
-          />
-        )}
+      <div className="p-4">
+        <DataTable
+          columns={columns}
+          data={filteredApplications}
+          loading={loading}
+          noDataMessage={
+            applications?.length === 0
+              ? "No Applications So Far"
+              : filteredApplications.length === 0 &&
+                `No applications found matching your search term or filters.`
+          }
+        />
       </div>
-      <AddEditCall isOpenAddEditCall={isOpenCall} closeAddEditCall={close} />
     </div>
   );
 };

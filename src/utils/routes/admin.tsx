@@ -69,7 +69,7 @@ const adminRoutes: Route[] = [
     icon: <Icons.SolarFileBold />,
   },
   {
-    label: "roles",
+    label: "Roles",
     path: "/admin/roles",
     icon: <Icons.SolarUsersGroupTwoRoundedBold />,
   },

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Select } from "@mantine/core";
 import { Comments } from "@/types";
 import { handleDownloadFile } from "@/utils/funcs";
+import { FaDownload } from "react-icons/fa";
 
 export function Page3({
   data,
@@ -46,7 +47,7 @@ export function Page3({
           ? data.assessmentEquipment
           : data.trainingEquipment),
         trainingEquipments,
-      ],
+      ]
     );
 
     setTrainingEquipments({
@@ -174,11 +175,11 @@ export function Page3({
         </p>
         {(!isApplicant && commentsData) || !setData ? (
           <>
-            <button
+            {/* <button
               onClick={() =>
                 handleDownloadFile(
                   data?.trainingEquipmentAttachment,
-                  "applications",
+                  "applications"
                 )
               }
               className={`w-full h-12 ${data?.trainingEquipmentAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
@@ -186,13 +187,38 @@ export function Page3({
               {data?.trainingEquipmentAttachment
                 ? "Download File"
                 : "No Attachment Found!"}
-            </button>
+            </button> */}
+            <div className="grid grid-cols-2 gap-2 my-2">
+              <button
+                onClick={() =>
+                  handleDownloadFile(
+                    data?.trainingEquipmentAttachment,
+                    "applications"
+                  )
+                }
+                className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                View File
+              </button>
+              <button
+                onClick={() =>
+                  handleDownloadFile(
+                    data?.trainingEquipmentAttachment,
+                    "applications"
+                  )
+                }
+                className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                <FaDownload />
+                <p>Download File</p>
+              </button>
+            </div>
             {!isApplicant &&
               commentsData &&
               renderCommentsSection(
                 type === "assessment"
                   ? "assessmentEquipmentAttachmentComment"
-                  : "trainingEquipmentAttachmentComment",
+                  : "trainingEquipmentAttachmentComment"
               )}
           </>
         ) : (
@@ -238,7 +264,7 @@ export function Page3({
                   type !== "assessment"
                     ? "trainingEquipmentAttachment"
                     : "assessmentEquipmentAttachment",
-                  e.target.files ? e.target.files[0] : null,
+                  e.target.files ? e.target.files[0] : null
                 )
               }
             />
@@ -254,7 +280,7 @@ export function Page3({
         </p>
         {(!isApplicant && commentsData) || !setData ? (
           <>
-            <button
+            {/* <button
               onClick={() =>
                 handleDownloadFile(data?.premisesAttachment, "applications")
               }
@@ -263,7 +289,27 @@ export function Page3({
               {data?.premisesAttachment
                 ? "Download File"
                 : "No Attachment Found!"}
-            </button>
+            </button> */}
+            <div className="grid grid-cols-2 gap-2 my-2">
+              <button
+                onClick={() =>
+                  handleDownloadFile(data?.premisesAttachment, "applications")
+                }
+                className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                View File
+              </button>
+              <button
+                onClick={() =>
+                  handleDownloadFile(data?.premisesAttachment, "applications")
+                }
+                className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                <FaDownload />
+                <p>Download File</p>
+              </button>
+            </div>
+
             {!isApplicant &&
               commentsData &&
               renderCommentsSection("premisesAttachmentComment")}
@@ -300,7 +346,7 @@ export function Page3({
               onChange={(e) =>
                 setData(
                   "premisesAttachment",
-                  e.target.files ? e.target.files[0] : null,
+                  e.target.files ? e.target.files[0] : null
                 )
               }
             />
