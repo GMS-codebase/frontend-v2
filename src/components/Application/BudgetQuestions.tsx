@@ -1,6 +1,6 @@
 import { Comments } from "@/types";
 import { ApplicationQuestions } from "@/types/application";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
 import { Select } from "@mantine/core";
 import React, { useState, ChangeEvent } from "react";
 import { FaDownload, FaTrash } from "react-icons/fa6";
@@ -189,20 +189,26 @@ const BudgetQuestions: React.FC<Props> = ({
           Attach a file related to the budget summary
         </p>
         {comments || !setData ? (
-          <div className="mt-2">
+          <div className="grid grid-cols-2 gap-2 my-2">
             <button
-              disabled={data?.budgetSummaryAttachment === null}
+              onClick={() =>
+                handleViewFile(data?.budgetSummaryAttachment, "applications")
+              }
+              className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+            >
+              View File
+            </button>
+            <button
               onClick={() =>
                 handleDownloadFile(
                   data?.budgetSummaryAttachment,
                   "applications",
                 )
               }
-              className={`w-full h-12 ${data?.budgetSummaryAttachment ? "bg-primary" : "bg-gray-600"} text-white rounded-full`}
+              className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
             >
-              {data?.budgetSummaryAttachment
-                ? "Download Budget Summary"
-                : "No Budget Summary Attached"}
+              <FaDownload />
+              <p>Download File</p>
             </button>
           </div>
         ) : (

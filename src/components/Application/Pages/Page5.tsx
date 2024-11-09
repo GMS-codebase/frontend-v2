@@ -1,6 +1,7 @@
 import React from "react";
 import { Comments } from "@/types";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
+import { FaDownload } from "react-icons/fa";
 
 export const Page5 = ({
   data,
@@ -56,19 +57,31 @@ export const Page5 = ({
         </p>
         {comments || !setData ? (
           <>
-            <button
-              onClick={() =>
-                handleDownloadFile(
-                  data?.previousFinancialReportAttachment,
-                  "applications",
-                )
-              }
-              className="bg-primary rounded-2xl  my-2 text-white font-semibold w-full py-2"
-            >
-              {data?.previousFinancialReportAttachment
-                ? "Download File"
-                : "No Report Found!"}
-            </button>
+            <div className="grid grid-cols-2 gap-2 my-2">
+              <button
+                onClick={() =>
+                  handleViewFile(
+                    data?.previousFinancialReportAttachment,
+                    "applications",
+                  )
+                }
+                className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                View File
+              </button>
+              <button
+                onClick={() =>
+                  handleDownloadFile(
+                    data?.previousFinancialReportAttachment,
+                    "applications",
+                  )
+                }
+                className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                <FaDownload />
+                <p>Download File</p>
+              </button>
+            </div>
             {!isApplicant && comments && (
               <div className="mt-2">
                 <h4 className="text-md font-semibold text-gray-700">Comment</h4>

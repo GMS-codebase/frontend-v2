@@ -1,6 +1,7 @@
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
 import { Select } from "@mantine/core";
 import { useState } from "react";
+import { FaDownload } from "react-icons/fa";
 
 export const Page4 = ({
   data,
@@ -216,14 +217,25 @@ export const Page4 = ({
       </p>
       {comments ? (
         <>
-          <button
-            onClick={() =>
-              handleDownloadFile(data?.staffAttachment, "applications")
-            }
-            className={`w-full h-12 ${data?.staffAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
-          >
-            {data?.staffAttachment ? "Download File" : "No Attachment Found!"}
-          </button>
+          <div className="grid grid-cols-2 gap-2 my-2">
+            <button
+              onClick={() =>
+                handleViewFile(data?.staffAttachment, "applications")
+              }
+              className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+            >
+              View File
+            </button>
+            <button
+              onClick={() =>
+                handleDownloadFile(data?.staffAttachment, "applications")
+              }
+              className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+            >
+              <FaDownload />
+              <p>Download File</p>
+            </button>
+          </div>
           {!isApplicant && comments && (
             <div className="mt-2">
               <label htmlFor="" className="font-medium text-sm">

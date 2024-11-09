@@ -104,16 +104,19 @@ const CreateApplication = ({
         message: "Application created successfully!",
         color: "green",
       });
-      await getMyApplications(dispatch);
+      getMyApplications(dispatch);
       router.push(
         `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`,
       );
       closeCreatingApplication();
     } catch (error: any) {
+      console.log(error);
       notifications.show({
-        title: "Error",
-        message: error.message || "Something went wrong.",
-        color: "red",
+        title: error.response.data.message.includes("exists")
+          ? "Application already exists"
+          : "Error",
+        message: error.response.data.message || "Something went wrong.",
+        color: error.response.data.message.includes("exists") ? "gray" : "red",
       });
     }
     setLoading(false);
