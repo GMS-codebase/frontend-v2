@@ -107,7 +107,7 @@ export const Page2 = ({
                 typeof application?.call?.endDate === "string"
                   ? new Date(application?.call?.endDate).getTime() +
                     24 * 60 * 60 * 1000
-                  : application?.call?.endDate.getTime() + 24 * 60 * 60 * 1000
+                  : application?.call?.endDate.getTime() + 24 * 60 * 60 * 1000,
               )
                 .toISOString()
                 .split("T")[0]
@@ -263,7 +263,7 @@ export const Page2 = ({
                     onClick={() =>
                       handleDownloadFile(
                         data?.trainingManualAttachment,
-                        "applications"
+                        "applications",
                       )
                     }
                     className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
@@ -274,7 +274,7 @@ export const Page2 = ({
                     onClick={() =>
                       handleDownloadFile(
                         data?.trainingManualAttachment,
-                        "applications"
+                        "applications",
                       )
                     }
                     className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
@@ -319,7 +319,7 @@ export const Page2 = ({
                 onChange={(e) =>
                   setData(
                     "trainingManualAttachment",
-                    e.target.files ? e.target.files[0] : null
+                    e.target.files ? e.target.files[0] : null,
                   )
                 }
               />
@@ -330,7 +330,7 @@ export const Page2 = ({
       {!isApplicant &&
         setCommentsData &&
         renderCommentsSection(
-          type === "assessment" ? "assessmentComment" : "trainingManualComment"
+          type === "assessment" ? "assessmentComment" : "trainingManualComment",
         )}
     </>
   );
