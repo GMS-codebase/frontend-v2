@@ -16,12 +16,14 @@ interface AddMinuteProps {
   data: any; // Replace `any` with the actual type if available
   isOpenAddMinute: boolean;
   closeAddMinute: () => void;
+  type: string
 }
 
 const AddMinute: React.FC<AddMinuteProps> = ({
   data,
   isOpenAddMinute,
   closeAddMinute,
+  type
 }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<{
@@ -54,17 +56,18 @@ const AddMinute: React.FC<AddMinuteProps> = ({
 
     const submitForm = new FormData();
     submitForm.append("attachment", newData.minute as Blob);
-    submitForm.append("applicantId", newData.applicantId);
-    submitForm.append("applicationId", newData.applicationId);
+    submitForm.append("applicantID", newData.applicantId);
+    submitForm.append("applicationID", newData.applicationId);
+    type == "unsigned" ? 
     authorizedApi
-      .post("/negotiation-contract/upload-negotiation", submitForm, {
+      .post("/negotiation-contract/sdf/upload-negotiation", submitForm, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
       .then((res) => {
         notifications.show({
-          message: res?.data?.message,
+          message: res?.data?.data?.message,
           color: "blue",
         });
         setFormData({
@@ -73,9 +76,41 @@ const AddMinute: React.FC<AddMinuteProps> = ({
           amount: "",
         });
         getMinutes(dispatch);
-        getUploadedMinutes(dispatch);
-        getApprovedMinutes(dispatch);
-        getRejectedMinutes(dispatch);
+        getUploadedMinutes(dispatch, "sdf");
+        getApprovedMinutes(dispatch, "sdf");
+        getRejectedMinutes(dispatch, "sdf");
+        closeAddMinute();
+      })
+      .catch((err: any) => {
+        notifications.show({
+          message: err.response?.data?.message ?? "Failed to create Minute",
+          color: "red",
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      })
+      : 
+      authorizedApi
+      .patch("/negotiation-contract/sdf/signed-negotiation-attachment", submitForm, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        notifications.show({
+          message: res?.data?.data?.message,
+          color: "blue",
+        });
+        setFormData({
+          file: null,
+          name: "",
+          amount: "",
+        });
+        getMinutes(dispatch);
+        getUploadedMinutes(dispatch, "sdf");
+        getApprovedMinutes(dispatch, "sdf");
+        getRejectedMinutes(dispatch, "sdf");
         closeAddMinute();
       })
       .catch((err: any) => {

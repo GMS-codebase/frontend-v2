@@ -11,10 +11,10 @@ import AddMinute from "@/components/Modals/contracts/AddMinutes";
 import MinutesActions from "./MinutesActions";
 
 const Page = () => {
-  const [isOpenTrade, { open, close }] = useDisclosure(false);
   const [isMinute, setIsMinute] = useState({
     isOpen: false,
     application: null,
+    type: ""
   });
 
   const {
@@ -29,10 +29,7 @@ const Page = () => {
     applicationsReadyForMinutesLoading,
     applicationsReadyForMinutes,
   } = useSelector((state: any) => state.minutes);
-  const { applicationsForContractSigning: applications, loading } = useSelector(
-    (state: any) => state.applications,
-  );
-
+  
   const minuteColumns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -272,7 +269,7 @@ const Page = () => {
         </Tabs.List>
 
         <Tabs.Panel value="minutes">
-          <h1 className="text-xl p-4 font-bold">Minutes Uploaded</h1>
+          <h1 className="text-base p-4 font-bold">Minutes Uploaded</h1>
           <DataTable
             columns={minuteColumns}
             data={uploadedMinutes}
@@ -282,7 +279,7 @@ const Page = () => {
         </Tabs.Panel>
 
         <Tabs.Panel value="applications">
-          <h1 className="text-xl p-4 font-bold">
+          <h1 className="text-base p-4 font-bold">
             {" "}
             Ready For Minutes Negotiations
           </h1>
@@ -295,7 +292,7 @@ const Page = () => {
         </Tabs.Panel>
 
         <Tabs.Panel value="approved">
-          <h1 className="text-xl p-4 font-bold">Approved minute negotiation</h1>
+          <h1 className="text-base p-4 font-bold">Approved minute negotiation</h1>
           <DataTable
             columns={approvedColumns}
             loading={approvedMinutesLoading}
@@ -305,7 +302,7 @@ const Page = () => {
         </Tabs.Panel>
 
         <Tabs.Panel value="rejected">
-          <h1 className="text-xl p-4 font-bold">Rejected minute negotiation</h1>
+          <h1 className="text-base p-4 font-bold">Rejected minute negotiation</h1>
           <DataTable
             columns={rejectedColumns}
             data={rejectedMinutes}
@@ -317,9 +314,10 @@ const Page = () => {
 
       {/* AddMinute Modal */}
       <AddMinute
+        type= {isMinute.type}
         data={isMinute.application}
         isOpenAddMinute={isMinute.isOpen}
-        closeAddMinute={() => setIsMinute({ isOpen: false, application: null })}
+        closeAddMinute={() => setIsMinute({ isOpen: false, application: null, type:"" })}
       />
     </div>
   );

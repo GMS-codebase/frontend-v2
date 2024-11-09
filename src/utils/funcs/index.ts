@@ -335,12 +335,12 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_STAGES_ERROR, payload: err.response.data.error });
     });
 };
-export const getApplicationsForContracts = async (
+export const getApplicationsForContractSigning = async (
   dispatch: Dispatch<UnknownAction>,
 ) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
-    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint
+    .get("/negotiation-contract/applications/sdf/ready-contract-signing")
     .then((res) => {
       dispatch({
         type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
@@ -415,12 +415,12 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
 };
 export const getApplicationsReadyForMinutes = async (
   dispatch: Dispatch<UnknownAction>,
+  role: string
 ) => {
   dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
   authorizedApi
-    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint
+    .get(`/negotiation-contract/applications/${role}/ready-contract-signing`)
     .then((res) => {
-      console.log(" applications ready --> ", res.data.data?.data);
       dispatch({
         type: GET_APPLICATIONS_READY_FOR_MINUTES_SUCCESS,
         payload: res.data.data?.data,
@@ -433,12 +433,12 @@ export const getApplicationsReadyForMinutes = async (
       });
     });
 };
-export const getUploadedMinutes = async (dispatch: Dispatch<UnknownAction>) => {
+export const getUploadedMinutes = async (dispatch: Dispatch<UnknownAction>, role: string) => {
   dispatch({ type: GET_UPLOADED_MINUTES_LOADING });
   authorizedApi
-    .get("/negotiation-contract/applications/pending")
+    .get(`/negotiation-contract/applications/${role}/pending`)
     .then((res) => {
-      dispatch({ type: GET_UPLOADED_MINUTES_SUCCESS, payload: res.data.data });
+      dispatch({ type: GET_UPLOADED_MINUTES_SUCCESS, payload: res.data.data?.data });
     })
     .catch((err) => {
       dispatch({
@@ -447,12 +447,13 @@ export const getUploadedMinutes = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
-export const getApprovedMinutes = async (dispatch: Dispatch<UnknownAction>) => {
+export const getApprovedMinutes = async (dispatch: Dispatch<UnknownAction>, role: string) => {
   dispatch({ type: GET_APPROVED_MINUTES_LOADING });
   authorizedApi
-    .get("/negotiation-contract/applications/approved")
+    .get(`/negotiation-contract/applications/${role}/approved`)
     .then((res) => {
-      dispatch({ type: GET_APPROVED_MINUTES_SUCCESS, payload: res.data.data });
+      console.log("minutes --> ", res.data.data.data)
+      dispatch({ type: GET_APPROVED_MINUTES_SUCCESS, payload: res.data?.data?.data?.applications });
     })
     .catch((err) => {
       dispatch({
@@ -461,12 +462,12 @@ export const getApprovedMinutes = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
-export const getRejectedMinutes = async (dispatch: Dispatch<UnknownAction>) => {
+export const getRejectedMinutes = async (dispatch: Dispatch<UnknownAction>, role: string) => {
   dispatch({ type: GET_REJECTED_MINUTES_LOADING });
   authorizedApi
-    .get("/application/all-application")
+    .get("/negotiation-contract/applications/rejected")
     .then((res) => {
-      dispatch({ type: GET_REJECTED_MINUTES_SUCCESS, payload: res.data.data });
+      dispatch({ type: GET_REJECTED_MINUTES_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
       dispatch({
