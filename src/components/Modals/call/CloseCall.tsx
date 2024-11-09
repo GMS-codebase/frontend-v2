@@ -36,7 +36,7 @@ const CloseCallModal = ({
       closeModal();
     } catch (error: any) {
       setError(
-        error.response?.data?.message ?? "Error while nullifying decision"
+        error.response?.data?.message ?? "Error while nullifying decision",
       );
       notifications.show({ message: error.message, color: "red" });
     } finally {

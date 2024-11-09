@@ -1,7 +1,7 @@
 import { Modal } from "@mantine/core";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import { FiPower } from "react-icons/fi"; 
+import { FiPower } from "react-icons/fi";
 import SideVector1 from "@/assets/Vectors/sidevecto.svg";
 import SideVector2 from "@/assets/Vectors/sidevector2.svg";
 import { notifications } from "@mantine/notifications";
@@ -81,7 +81,7 @@ const ActivateDeactivateModal: React.FC<ActivateDeactivateModalProps> = ({
 
     try {
       await authorizedApi.put(
-        `${routeMappings[type]}/activate-deactivate/${id}`
+        `${routeMappings[type]}/activate-deactivate/${id}`,
       );
       notifications.show({
         message: `${capitalize(type.slice(0, -1))} has been ${action}d successfully`,

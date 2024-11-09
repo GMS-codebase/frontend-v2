@@ -16,14 +16,14 @@ Pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${Pdfjs.version}/b
 // Reusable download function based on your provided logic
 const handleDownloadFile = async (
   service: string,
-  filename: string
+  filename: string,
 ): Promise<Blob | null> => {
   try {
     const response = await unauthorizedApi.get(
       `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
         responseType: "blob",
-      }
+      },
     );
     return new Blob([response.data], {
       type: response.headers["content-type"],
@@ -62,7 +62,7 @@ const Page: React.FC = () => {
   const displayFile = async (
     service: string,
     file: string,
-    extension: string
+    extension: string,
   ) => {
     const blob = await handleDownloadFile(service, file);
     if (blob) {
@@ -81,7 +81,7 @@ const Page: React.FC = () => {
     setHtmlContent(value);
   };
 
-  console.log(fileBlobUrl)
+  console.log(fileBlobUrl);
 
   return (
     <div>

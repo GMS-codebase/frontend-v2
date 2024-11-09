@@ -51,7 +51,7 @@ const AddEditCall = ({
       .filter(
         (window: any) =>
           window.subWindows.length !== 0 &&
-          window.status === WINDOW_STATUS.ACTIVE
+          window.status === WINDOW_STATUS.ACTIVE,
       )
       ?.map((window: any) => ({
         value: window.uuid,
@@ -81,7 +81,7 @@ const AddEditCall = ({
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid)
+            selectedSubWindows.includes(subWindow.uuid),
           )
           .flatMap(
             (subWindow: any) =>
@@ -91,7 +91,7 @@ const AddEditCall = ({
                     (s: any) =>
                       s.uuid === sector.uuid &&
                       s.trades.length > 0 &&
-                      sector.status === TRADE_STATUS.ACTIVE
+                      sector.status === TRADE_STATUS.ACTIVE,
                   );
                   return matchingSector
                     ? {
@@ -100,8 +100,8 @@ const AddEditCall = ({
                       }
                     : null;
                 })
-                .filter(Boolean) || []
-          ) || []
+                .filter(Boolean) || [],
+          ) || [],
     );
     return sectorData;
   };
@@ -113,7 +113,7 @@ const AddEditCall = ({
       setFormData(defaultData);
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
       setSelectedSubWindows(
-        defaultData.subWindows.map((item: any) => item.uuid)
+        defaultData.subWindows.map((item: any) => item.uuid),
       );
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
     }

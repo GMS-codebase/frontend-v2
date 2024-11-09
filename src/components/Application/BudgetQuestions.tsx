@@ -192,10 +192,7 @@ const BudgetQuestions: React.FC<Props> = ({
           <div className="grid grid-cols-2 gap-2 my-2">
             <button
               onClick={() =>
-                handleViewFile(
-                  data?.budgetSummaryAttachment,
-                  "applications",
-                )
+                handleViewFile(data?.budgetSummaryAttachment, "applications")
               }
               className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
             >
