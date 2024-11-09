@@ -4,6 +4,12 @@ export type Route = {
   icon: any;
 };
 
+export type BudgetLine = {
+  uuid?: string;
+  name: string;
+  status?: any;
+};
+
 export type Window = {
   subWindows: any;
   title: string;

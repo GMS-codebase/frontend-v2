@@ -25,6 +25,7 @@ const EvaluationDetails = ({
   application: any;
   onSaveComment?: (updatedText: string) => void;
 }) => {
+  console.log(evaluations);
   const [openEditDecision, setOpenEditDecision] = useState({
     open: false,
     decision: null,
@@ -81,7 +82,10 @@ const EvaluationDetails = ({
                 return (
                   <div key={i} className="w-full ">
                     <div className="flex gap-6 justify-start items-start">
-                      {i === 0 && <p className="mt-2">Selected</p>}
+                      <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
+                        {evaluation.employee.name}
+                      </p>
+                      {/* {i === 0 && <p className="mt-2">Selected</p>} */}
                       <p
                         className={`px-4 py-2 rounded-full flex gap-2 justify-start items-start ${
                           evaluation?.decision === "APPROVED"

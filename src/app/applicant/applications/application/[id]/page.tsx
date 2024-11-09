@@ -74,6 +74,8 @@ const Page = () => {
       </div>
     );
   }
+
+  console.log(application);
   return (
     <div className="space-y-6 ">
       <div className="bg-white rounded-2xl p-10 flex flex-col gap-6  text-black">
@@ -241,45 +243,50 @@ const Page = () => {
                   }
                 </div>
                 <div className="flex flex-col gap-2 mt-4">
-                  <button
-                    onClick={openEvaluationDetails}
-                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                  >
-                    View details
-                  </button>
+                  {application.evaluationDecisions.length > 0 && (
+                    <button
+                      onClick={openEvaluationDetails}
+                      className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                    >
+                      View details
+                    </button>
+                  )}
                 </div>
               </div>
             )}
-            {application?.call.closedDueDiligency && (
-              <div className="flex flex-col gap-2">
-                <h3 className="font-bold">Due Diligence Stage</h3>
-                <div
-                  className={`font-medium  ${
-                    application?.stages.find(
-                      (stage: any) => stage.stage === "DUE_DILIGENCY",
-                    ).status
-                      ? "bg-[#4BC500] text-[#4BC500]"
-                      : application?.status === "PENDING"
-                        ? "bg-red-600 text-red-600"
-                        : ""
-                  } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-                >
-                  {
-                    application?.stages.find(
-                      (stage: any) => stage.stage === "DUE_DILIGENCY",
-                    ).status
-                  }
-                </div>
-                <div className="flex flex-col gap-2 mt-4">
-                  <button
-                    onClick={openDueDiligencyDetails}
-                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+            {application?.call.closedDueDiligency &&
+              application.stages.find(
+                (stage: any) => stage.stage === "DUE_DILIGENCY",
+              )?.status != null && (
+                <div className="flex flex-col gap-2">
+                  <h3 className="font-bold">Due Diligence Stage</h3>
+                  <div
+                    className={`font-medium  ${
+                      application?.stages.find(
+                        (stage: any) => stage.stage === "DUE_DILIGENCY",
+                      )?.status
+                        ? "bg-[#4BC500] text-[#4BC500]"
+                        : application?.status === "PENDING"
+                          ? "bg-red-600 text-red-600"
+                          : ""
+                    } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
                   >
-                    View details
-                  </button>
+                    {
+                      application?.stages.find(
+                        (stage: any) => stage.stage === "DUE_DILIGENCY",
+                      )?.status
+                    }
+                  </div>
+                  <div className="flex flex-col gap-2 mt-4">
+                    <button
+                      onClick={openDueDiligencyDetails}
+                      className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                    >
+                      View details
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
         )}
       </div>

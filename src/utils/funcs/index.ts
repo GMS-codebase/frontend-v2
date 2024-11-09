@@ -102,6 +102,11 @@ import {
 } from "@/actions/DashboardActions";
 import { prioritySectors } from "../constants";
 import { notifications } from "@mantine/notifications";
+import {
+  GET_BUDGET_LINES_ERROR,
+  GET_BUDGET_LINES_LOADING,
+  GET_BUDGET_LINES_SUCCESS,
+} from "@/actions/BudgetLinesActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -222,6 +227,20 @@ export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_TRADES_ERROR, payload: err.response.data.error });
     });
 };
+export const getBudgetLines = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_BUDGET_LINES_LOADING });
+  authorizedApi
+    .get("/budgetlines/all")
+    .then((res) => {
+      dispatch({ type: GET_BUDGET_LINES_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_BUDGET_LINES_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
 export const getCalls = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_CALLS_LOADING });
   authorizedApi
@@ -268,6 +287,16 @@ export const handleDownloadFile = async (file: any, service: string) => {
     document.body.removeChild(link);
   } catch (error) {
     console.error("Error downloading file:", error);
+  }
+};
+
+export const handleViewFile = (file: string, service: string): void => {
+  try {
+    const filename = encodeURIComponent(file.split("/").pop() || "");
+    const fileUrl = `/files/${service}/${filename}`;
+    window.open(fileUrl, "_blank");
+  } catch (error) {
+    console.error("Error opening file:", error);
   }
 };
 
@@ -373,6 +402,7 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/application/all-application")
     .then((res) => {
+      console.log(res.data);
       dispatch({
         type: GET_MY_APPLICATIONS_SUCCESS,
         payload: res.data.data.data,
