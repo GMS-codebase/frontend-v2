@@ -99,6 +99,18 @@ const Page = () => {
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <CiEdit size={21} color="#576074" />
+                  Activate
+                </div>
+              </Menu.Item>
+              <Menu.Item>
+                <div
+                  onClick={() => {
+                    setSelectedWindow(row.original);
+                    openCreateEditModal();
+                  }}
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <CiEdit size={21} color="#576074" />
                   Edit
                 </div>
               </Menu.Item>

@@ -38,7 +38,7 @@ const BudgetQuestions: React.FC<Props> = ({
       setData((prev: any) => {
         const newData = [...(prev[inputName] || [])];
         const existingIndex = newData.findIndex(
-          (item: any) => item.budgetLine === value.budgetLine,
+          (item: any) => item.budgetLine === value.budgetLine
         );
         if (existingIndex !== -1) {
           newData[existingIndex].amount += value.amount;
@@ -87,7 +87,7 @@ const BudgetQuestions: React.FC<Props> = ({
       setData((prev: any) => ({
         ...prev,
         budgetLines: prev.budgetLines.filter(
-          (item: any, i: number) => i !== index,
+          (item: any, i: number) => i !== index
         ),
       }));
   };
@@ -99,7 +99,7 @@ const BudgetQuestions: React.FC<Props> = ({
       setData((prev: any) => ({
         ...prev,
         budgetLines: prev.budgetLines.map((item: any, index: number) =>
-          index === editingIndex ? budgetLineInputs : item,
+          index === editingIndex ? budgetLineInputs : item
         ),
       }));
 
@@ -189,20 +189,45 @@ const BudgetQuestions: React.FC<Props> = ({
           Attach a file related to the budget summary
         </p>
         {comments || !setData ? (
-          <div className="mt-2">
+          // <div className="mt-2">
+          //   <button
+          //     disabled={data?.budgetSummaryAttachment === null}
+          //     onClick={() =>
+          //       handleDownloadFile(
+          //         data?.budgetSummaryAttachment,
+          //         "applications",
+          //       )
+          //     }
+          //     className={`w-full h-12 ${data?.budgetSummaryAttachment ? "bg-primary" : "bg-gray-600"} text-white rounded-full`}
+          //   >
+          //     {data?.budgetSummaryAttachment
+          //       ? "Download Budget Summary"
+          //       : "No Budget Summary Attached"}
+          //   </button>
+          // </div>
+          <div className="grid grid-cols-2 gap-2 my-2">
             <button
-              disabled={data?.budgetSummaryAttachment === null}
               onClick={() =>
                 handleDownloadFile(
                   data?.budgetSummaryAttachment,
-                  "applications",
+                  "applications"
                 )
               }
-              className={`w-full h-12 ${data?.budgetSummaryAttachment ? "bg-primary" : "bg-gray-600"} text-white rounded-full`}
+              className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
             >
-              {data?.budgetSummaryAttachment
-                ? "Download Budget Summary"
-                : "No Budget Summary Attached"}
+              View File
+            </button>
+            <button
+              onClick={() =>
+                handleDownloadFile(
+                  data?.budgetSummaryAttachment,
+                  "applications"
+                )
+              }
+              className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+            >
+              <FaDownload />
+              <p>Download File</p>
             </button>
           </div>
         ) : (
@@ -303,7 +328,7 @@ const BudgetQuestions: React.FC<Props> = ({
                     {data?.budgetLines?.reduce(
                       (acc: number, curr: any) =>
                         acc + Number.parseInt(curr.amount || "0", 10),
-                      0,
+                      0
                     ) || "N/A"}
                   </p>
                 </div>
