@@ -14,13 +14,7 @@ const contracts: Contract[] = [
   { id: 3, name: "Contract 3", fileUrl: "/path/to/contract3.pdf" },
 ];
 
-const Contracts = ({
-  data,
-  loading,
-}: {
-  data?: any;
-  loading?: boolean;
-}) => {
+const Contracts = ({ data, loading }: { data?: any; loading?: boolean }) => {
   const [hoveredContract, setHoveredContract] = useState<number | null>(null);
   return (
     <div>

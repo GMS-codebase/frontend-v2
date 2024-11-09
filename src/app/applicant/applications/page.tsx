@@ -39,7 +39,6 @@ export const getApplicationStatus = (application: any) => {
   }
 };
 const Page = () => {
-
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
