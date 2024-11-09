@@ -38,7 +38,7 @@ const BudgetQuestions: React.FC<Props> = ({
       setData((prev: any) => {
         const newData = [...(prev[inputName] || [])];
         const existingIndex = newData.findIndex(
-          (item: any) => item.budgetLine === value.budgetLine
+          (item: any) => item.budgetLine === value.budgetLine,
         );
         if (existingIndex !== -1) {
           newData[existingIndex].amount += value.amount;
@@ -87,7 +87,7 @@ const BudgetQuestions: React.FC<Props> = ({
       setData((prev: any) => ({
         ...prev,
         budgetLines: prev.budgetLines.filter(
-          (item: any, i: number) => i !== index
+          (item: any, i: number) => i !== index,
         ),
       }));
   };
@@ -99,7 +99,7 @@ const BudgetQuestions: React.FC<Props> = ({
       setData((prev: any) => ({
         ...prev,
         budgetLines: prev.budgetLines.map((item: any, index: number) =>
-          index === editingIndex ? budgetLineInputs : item
+          index === editingIndex ? budgetLineInputs : item,
         ),
       }));
 
@@ -210,7 +210,7 @@ const BudgetQuestions: React.FC<Props> = ({
               onClick={() =>
                 handleDownloadFile(
                   data?.budgetSummaryAttachment,
-                  "applications"
+                  "applications",
                 )
               }
               className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
@@ -221,7 +221,7 @@ const BudgetQuestions: React.FC<Props> = ({
               onClick={() =>
                 handleDownloadFile(
                   data?.budgetSummaryAttachment,
-                  "applications"
+                  "applications",
                 )
               }
               className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
@@ -328,7 +328,7 @@ const BudgetQuestions: React.FC<Props> = ({
                     {data?.budgetLines?.reduce(
                       (acc: number, curr: any) =>
                         acc + Number.parseInt(curr.amount || "0", 10),
-                      0
+                      0,
                     ) || "N/A"}
                   </p>
                 </div>
