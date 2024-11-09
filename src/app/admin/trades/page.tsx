@@ -30,7 +30,7 @@ const Page = () => {
     trades.trades?.filter(
       (trade: any) =>
         trade?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        trade?.shortname?.toLowerCase().includes(searchQuery.toLowerCase()),
+        trade?.shortname?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
 
   const columns: ColumnDef<any>[] = [
@@ -79,6 +79,18 @@ const Page = () => {
                 <h1 className="text-lg">Actions</h1>
               </Menu.Label>
               <Menu.Divider />
+              <Menu.Item>
+                <div
+                  onClick={() => {
+                    setSelectedTrade(row.original);
+                    openCreateEditModal();
+                  }}
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <CiEdit size={21} color="#576074" />
+                  Activate
+                </div>
+              </Menu.Item>
               <Menu.Item>
                 <div
                   onClick={() => {

@@ -49,7 +49,7 @@ const CreateApplication = ({
   }, [call]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -97,7 +97,7 @@ const CreateApplication = ({
           description: formData.description,
           sectors: [formData.sectors],
           trades: [formData.trades],
-        },
+        }
       );
       notifications.show({
         title: "Success",
@@ -106,14 +106,15 @@ const CreateApplication = ({
       });
       await getMyApplications(dispatch);
       router.push(
-        `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`,
+        `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`
       );
       closeCreatingApplication();
     } catch (error: any) {
+      console.log(error);
       notifications.show({
-        title: "Error",
-        message: error.message || "Something went wrong.",
-        color: "red",
+        title:error.response.data.message.includes("exists") ? "Application already exists" :"Error",
+        message: error.response.data.message || "Something went wrong.",
+        color: error.response.data.message.includes("exists") ? "gray": "red",
       });
     }
     setLoading(false);
@@ -132,7 +133,7 @@ const CreateApplication = ({
         .filter((subWindow: any) =>
           windows
             .find((win: any) => win.uuid === formData.window)
-            ?.subWindows.some((subWin: any) => subWin.uuid === subWindow.uuid),
+            ?.subWindows.some((subWin: any) => subWin.uuid === subWindow.uuid)
         )
         .map((subWindow: any) => ({
           label: subWindow.title,
@@ -143,16 +144,16 @@ const CreateApplication = ({
   const sectorOptions = formData.subwindow
     ? sectors
         .filter((sec: any) =>
-          call.sectors.some((sect: any) => sect.uuid === sec.uuid),
+          call.sectors.some((sect: any) => sect.uuid === sec.uuid)
         )
         .filter((sector: any) =>
           windows.map((window: any) =>
             window.subWindows
               .find((subWin: any) => subWin.uuid === formData.subwindow)
               ?.sectors.some(
-                (subWindowSector: any) => subWindowSector.uuid === sector.uuid,
-              ),
-          ),
+                (subWindowSector: any) => subWindowSector.uuid === sector.uuid
+              )
+          )
         )
         .map((sector: any) => ({
           label: sector.name,
@@ -164,7 +165,7 @@ const CreateApplication = ({
     ...new Map(
       sectors
         .filter((sec: any) =>
-          call?.sectors.some((sect: any) => sect.uuid === sec.uuid),
+          call?.sectors.some((sect: any) => sect.uuid === sec.uuid)
         )
         .filter((sector: any) => formData?.sectors?.includes(sector.uuid))
         .flatMap((sector: any) =>
@@ -174,15 +175,15 @@ const CreateApplication = ({
                 trade.theWindow.uuid === formData.window &&
                 trade.uuid !==
                   existingApplication?.trades.find(
-                    (t: any) => t.uuid === trade.uuid,
-                  )?.uuid,
+                    (t: any) => t.uuid === trade.uuid
+                  )?.uuid
             )
             ?.map((trade: any) => ({
               label: trade.trade.title,
               value: trade.uuid,
-            })),
+            }))
         )
-        .map((trade: any) => [trade.value, trade]),
+        .map((trade: any) => [trade.value, trade])
     ).values(),
   ];
 
@@ -225,7 +226,7 @@ const CreateApplication = ({
                         window: value,
                         subwindow: null,
                         sectors: [],
-                      }) as any,
+                      }) as any
                   )
                 }
                 data={windowOptions}
@@ -258,7 +259,7 @@ const CreateApplication = ({
                         ...prevData,
                         subwindow: value,
                         sectors: [],
-                      }) as any,
+                      }) as any
                   )
                 }
                 data={subwindowOptions}
@@ -290,7 +291,7 @@ const CreateApplication = ({
                       ({
                         ...prevData,
                         sectors: value,
-                      }) as any,
+                      }) as any
                   )
                 }
                 data={sectorOptions}
@@ -322,7 +323,7 @@ const CreateApplication = ({
                       ({
                         ...prevData,
                         trades: value,
-                      }) as any,
+                      }) as any
                   )
                 }
                 data={tradesOptions as any}

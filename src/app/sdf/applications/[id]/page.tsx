@@ -1,118 +1,146 @@
 "use client";
-import React, { useState } from "react";
-import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
+import React, { useEffect, useState } from "react";
 import {
   SolarFileBold,
   SolarFolder2Bold,
-  SolarEyeLinear,
   SolarPen2Bold,
 } from "@/components/core/icons";
 import { useParams } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Comments } from "@/types";
 import FundingQuestions from "@/components/Application/FundingQuestions";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import MakeEvaluationDecision from "@/components/Modals/MakeDecision";
+import MakeDecision from "@/components/Modals/MakeDecision";
 import EditEvalModal from "@/components/Modals/EditEvalModal";
 import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import { useDisclosure } from "@mantine/hooks";
 import BudgetQuestions from "@/components/Application/BudgetQuestions";
-import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
-import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
-import DueDiligenceModal from "@/components/Modals/DueDiigence";
-import { handleDownloadFile } from "@/utils/funcs";
-
+import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDiligencyDecision";
+import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
+import { getApplications, handleDownloadFile } from "@/utils/funcs";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
+  const { stages } = useSelector((state: any) => state.empStages);
+  const stagesArr = stages?.map((stage: any) => stage?.stage);
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id,
+    (application: any) => application?.uuid === id
   )[0];
-
+  console.log("application --> ", application);
+  const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isOpenAddDue, setIsOpenAddDue] = useState(false);
-  const openAddDue = () => setIsOpenAddDue(true);
-  const closeAddDue = () => setIsOpenAddDue(false);
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
   ] = useDisclosure(false);
   const [
-    isOpenGrantCommitteeDetails,
-    { open: openGrantCommitteeDetails, close: closeGrantCommitteeDetails },
+    isOpenDueDiligencyDetails,
+    { open: openDueDiligencyDetails, close: closeDueDiligencyDetails },
   ] = useDisclosure(false);
   const [
-    isOpenGrantCommitteeMakeDecision,
+    isOpenMakeDecision,
+    { open: openMakeDecision, close: closeMakeDecision },
+  ] = useDisclosure(false);
+  const [
+    isOpenMakeFirstDueDiligencyDecision,
     {
-      open: openGrantCommitteeMakeDecision,
-      close: closeGrantCommitteeMakeDecision,
+      open: openMakeFirstDueDiligencyDecision,
+      close: closeMakeFirstDueDiligencyDecision,
     },
   ] = useDisclosure(false);
-
+  const [selectedStage, setSelectedStage] = useState<
+    "Evaluation" | "Due Diligence"
+  >();
+  const dispatch = useDispatch();
   const [currentComponent, setCurrentComponent] = useState<
     "Project" | "IndicativeBudget"
   >("Project");
-  const [commentsData, setCommentsData] = useState<Comments>({
-    titleComment: application?.projectFunding.titleComment || "",
-    activitiesComment: application?.projectFunding.activitiesComment || "",
+  const [properties, setProperties] = useState({
+    isDataEditable: false,
+    isCommented: false,
+  });
+  const goToBudget = () => {
+    setCurrentComponent("IndicativeBudget");
+  };
+  const [commentsData, setCommentsData] = useState<any>({
+    titleComment: application?.projectFunding?.titleComment || "",
+    activitiesComment: application?.projectFunding?.activitiesComment || "",
     readinessExecuteComment:
-      application?.projectFunding.readinessExecuteComment || "",
-    roleComment: application?.projectFunding.roleComment || "",
-    institutionComment: application?.projectFunding.institutionComment || "",
+      application?.projectFunding?.readinessExecuteComment || "",
+    roleComment: application?.projectFunding?.roleComment || "",
+    institutionComment: application?.projectFunding?.institutionComment || "",
     trainingManualComment:
-      application?.projectFunding.trainingManualComment || "",
+      application?.projectFunding?.trainingManualComment || "",
     trainingEquipmentComment:
-      application?.projectFunding.trainingEquipmentComment || "",
+      application?.projectFunding?.trainingEquipmentComment || "",
     identificationEmployeeComment:
-      application?.projectFunding.identificationEmployeeComment || "",
-    staffComment: application?.projectFunding.staffComment || "",
+      application?.projectFunding?.identificationEmployeeComment || "",
+    staffComment: application?.projectFunding?.staffComment || "",
     sustainabilityComment:
-      application?.projectFunding.sustainabilityComment || "",
+      application?.projectFunding?.sustainabilityComment || "",
     previousFinancialReportComment:
-      application?.projectFunding.previousFinancialReportComment || "",
+      application?.projectFunding?.previousFinancialReportComment || "",
     trainingPremisesComment:
-      application?.projectFunding.trainingPremisesComment || "",
+      application?.projectFunding?.trainingPremisesComment || "",
     contributionFromApplicantComment:
-      application?.projectFunding.contributionFromApplicantComment || "",
+      application?.projectFunding?.contributionFromApplicantComment || "",
     recruitmentTrainerComment:
-      application?.projectFunding.recruitmentTrainerComment || "",
+      application?.projectFunding?.recruitmentTrainerComment || "",
     MOUsAttachmentComment:
-      application?.projectFunding.MOUsAttachmentComment || "",
+      application?.projectFunding?.MOUsAttachmentComment || "",
     premisesAttachmentComment:
       application?.projectFunding?.premisesAttachmentComment || "",
     identificationMemberComment:
-      application?.projectFunding.identificationMemberComment || "",
+      application?.projectFunding?.identificationMemberComment || "",
     assessmentEquipmentComment:
-      application?.projectFunding.assessmentEquipmentComment || "",
+      application?.projectFunding?.assessmentEquipmentComment || "",
     recruitmentCandidatesNumberComment:
-      application?.projectFunding.recruitmentCandidatesNumberComment || "",
+      application?.projectFunding?.recruitmentCandidatesNumberComment || "",
     assessorsAndFacilitatorsComment:
-      application?.projectFunding.assessorsAndFacilitatorsComment || "",
+      application?.projectFunding?.assessorsAndFacilitatorsComment || "",
     budgetSummaryAttachmentComment:
-      application?.projectFunding.budgetSummaryAttachmentComment || "",
-    contributionComment: application?.projectFunding.contributionComment || "",
+      application?.budget?.budgetSummaryAttachmentComment || "",
+    contributionComment: application?.budget?.contributionComment || "",
     assessmentComment: application?.projectFunding?.assessmentComment || "",
-    budgetLinesComment: application?.budget?.budgetLinesComment,
+    budgetLinesComment: application?.budget?.budgetLinesComment || "",
   });
+  console.log(application);
+  useEffect(() => {
+    if (application) {
+      const hasComments = Object.entries(application.projectFunding || {}).some(
+        ([key, value]) =>
+          key.includes("Comment") && value != null && value !== ""
+      );
+      setProperties({
+        isDataEditable:
+          application.isSubmitted || application.stages.length === 0,
+        isCommented: hasComments,
+      });
+    }
+  }, [application]);
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":
         return (
           <FundingQuestions
+            application={application}
+            // showComments={application?.currentStage !== "SUBMITTED"}
             data={application?.projectFunding}
-            setComments={setCommentsData}
+            setComments={!properties.isCommented ? setCommentsData : undefined}
             comments={commentsData}
+            goToBudget={goToBudget}
           />
         );
       case "IndicativeBudget":
         return (
           <BudgetQuestions
             application={application}
-            data={application?.projectFunding}
+            // showComments={application?.currentStage !== "SUBMITTED"}
+            data={application?.budget}
             comments={commentsData}
-            setComments={setCommentsData}
+            setComments={!properties.isCommented ? setCommentsData : undefined}
           />
         );
       default:
@@ -120,8 +148,124 @@ const Page = () => {
     }
   };
 
+  const validateComments = async (): Promise<string | null> => {
+    // Common validation messages for comments
+    const commentMessages = {
+      titleComment: "The title comment is required.",
+      activitiesComment:
+        "Please provide comments on the activities and expected outcomes.",
+      readinessExecuteComment:
+        "Comments indicating readiness for execution are required.",
+      roleComment: "Specify comments regarding the role in the project.",
+      identificationEmployeeComment:
+        "Comments on employee identification details are mandatory.",
+      trainingProcessComment:
+        "A description of the training process is required in comments.",
+      trainingManualAttachmentComment:
+        "Please upload comments on the training manual attachment.",
+      trainingEquipmentComment:
+        "Comments on training equipment details are required.",
+      trainingEquipmentAttachmentComment:
+        "Attach comments regarding the equipment documentation.",
+      assessmentProcessComment:
+        "A description of the assessment process is required in comments.",
+      assessmentEquipmentComment:
+        "Comments on assessment equipment details are required.",
+      assessmentEquipmentAttachmentComment:
+        "Attach comments regarding the equipment documentation.",
+      staffComment: "Comments regarding staff information are required.",
+      staffAttachmentComment:
+        "Upload comments on the staff-related attachment.",
+      sustainabilityComment: "Provide comments on the sustainability plan.",
+      previousFinancialReportComment:
+        "Upload comments on the previous financial report.",
+      contributionFromApplicantComment:
+        "Specify comments regarding the applicant’s contribution.",
+      budgetAttachmentComment: "Upload comments on the budget attachment.",
+    };
+
+    if (!commentsData.titleComment) return commentMessages.titleComment;
+    if (!commentsData.activitiesComment)
+      return commentMessages.activitiesComment;
+    if (!commentsData.readinessExecuteComment)
+      return commentMessages.readinessExecuteComment;
+    if (!commentsData.roleComment) return commentMessages.roleComment;
+    if (!commentsData.identificationEmployeeComment)
+      return commentMessages.identificationEmployeeComment;
+    if (!commentsData.sustainabilityComment)
+      return commentMessages.sustainabilityComment;
+    if (!commentsData.staffComment) return commentMessages.staffComment;
+    if (!commentsData.previousFinancialReportComment)
+      return commentMessages.previousFinancialReportComment;
+    if (!commentsData.contributionFromApplicantComment)
+      return commentMessages.contributionFromApplicantComment;
+
+    return null;
+  };
+
+  const handleAddComments = async () => {
+    const validationError = await validateComments();
+    if (validationError) {
+      notifications.show({
+        message: validationError,
+        color: "red",
+      });
+      return;
+    }
+    setLoading(true);
+    try {
+      if (
+        // !commentsData.previousFinancialReportComment ||
+        // !commentsData.activitiesComment ||
+        // !commentsData.assessmentEquipmentComment ||
+        // !commentsData.budgetSummaryAttachmentComment ||
+        // !commentsData.contributionComment ||
+        // !commentsData.contributionFromApplicantComment ||
+        // !commentsData.identificationEmployeeComment ||
+        // !commentsData.identificationMemberComment ||
+        !commentsData.titleComment
+        // !commentsData.identificationEmployeeComment ||
+        // !commentsData.institutionComment
+      ) {
+        notifications.show({
+          message: "Please fill all comments data!",
+          color: "red",
+          duration: 10000,
+        });
+        return setLoading(false);
+      }
+      await authorizedApi.patch(`/application/comment/${id}`, commentsData);
+      notifications.show({
+        message: "Comments Added Successfully!",
+        color: "blue",
+      });
+      refetch();
+    } catch (err: any) {
+      notifications.show({
+        message: err.response?.data?.message ?? "Failed to submit the form!",
+        color: "red",
+      });
+    }
+    setLoading(false);
+  };
+  const refetch = async () => {
+    setDecisionsLoading(true);
+    try {
+      await getApplications(dispatch);
+    } finally {
+      setDecisionsLoading(false);
+    }
+  };
+
   const [downloading, setDownloading] = useState(false);
 
+  if (applications.loading) {
+    return (
+      <div className="h-full w-full flex items-center justify-center text-sm">
+        Loading ...
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -133,10 +277,10 @@ const Page = () => {
               setDownloading(true);
               try {
                 const response = await authorizedApi.get(
-                  `/admin/applicant-details/${id}`,
+                  `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  },
+                  }
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -162,7 +306,6 @@ const Page = () => {
                   type: "success",
                 });
               } catch (error) {
-                console.error("Download error:", error);
                 notifications.show({
                   title: "Download Failed",
                   message:
@@ -186,7 +329,6 @@ const Page = () => {
             )}
           </div>
         </div>
-
         <div className="flex justify-between items-start mt-5">
           <div className="flex flex-col justify-start items-start gap-6 font-semibold w-1/2">
             <h1 className="text-2xl font-bold">Application Information</h1>
@@ -233,7 +375,8 @@ const Page = () => {
               <div>{application?.description}</div>
             </div>
           </div>
-          <div className="flex flex-col justify-start items-start gap-6 font-semibold w-1/2">
+
+          <div className="flex flex-col justify-start items-start gap-6 font-semibold w-1/2 ml-7">
             <h1 className="text-2xl font-bold">Applicant Information</h1>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
@@ -256,12 +399,13 @@ const Page = () => {
                   application?.applicant?.businesses[0]?.businessName}
               </p>
             </div>
+
             <div
               className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
               onClick={() =>
                 handleDownloadFile(
                   application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates",
+                  "business_certificates"
                 )
               }
             >
@@ -288,127 +432,183 @@ const Page = () => {
                   </div>
               </div> */}
       </div>
-      <div className="flex gap-2 p-5">
-        <div className="flex bg-white rounded-2xl w-[70%] gap-4 p-5">
+      <div className="flex gap-6">
+        <div
+          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 p-5`}
+        >
           <div className="flex flex-col gap-4 w-full">
             <div className="font-semibold text-2xl">Questions and answers</div>
             <div className="flex font-semibold">
               <div
                 onClick={() => setCurrentComponent("Project")}
-                className={`cursor-pointer w-1/2 ${
+                className={`cursor-pointer w-1/2 transition-all duration-200 ${
                   currentComponent === "Project"
-                    ? "bg-[#005DE9] bg-opacity-10"
+                    ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
                     : ""
-                } h-16 flex items-center justify-center`}
+                } py-2.5  flex items-center justify-center`}
               >
                 Project Funding Application
               </div>
               <div
                 onClick={() => setCurrentComponent("IndicativeBudget")}
-                className={`cursor-pointer w-1/2 ${
+                className={`cursor-pointer w-1/2 transition-all duration-200  ${
                   currentComponent === "IndicativeBudget"
-                    ? "bg-[#C50000] bg-opacity-10"
+                    ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
                     : ""
-                } h-16 flex items-center justify-center`}
+                } py-2.5  flex items-center justify-center`}
               >
                 Indicative Budget
               </div>
             </div>
             <div className="mt-4 w-full">{renderComponent()}</div>
+            {!properties.isCommented &&
+              application?.currentStage !== "SUBMITTED" && (
+                <div className="w-full flex justify-center mt-4 space-x-4">
+                  <button
+                    type="button"
+                    className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAddComments}
+                    disabled={loading}
+                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    {loading ? "Loading..." : "Save Comments"}
+                  </button>
+                </div>
+              )}
           </div>
         </div>
-        <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
-          <h2 className="font-bold">Decision</h2>
-          <div className="flex flex-col gap-2">
-            <h3 className="font-semibold">Evaluation Stage</h3>
-            <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-              {application?.currentStage === "EVALUATION"
-                ? "Pending"
-                : "APPROVED"}
-            </div>
-            {application?.evaluationDecisions && (
-              <div className="flex flex-col gap-2 mt-4">
-                <button
-                  onClick={openEvaluationDetails}
-                  className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                >
-                  View details
-                </button>
-              </div>
-            )}
+        {decisionsLoading ? (
+          <div className="flex  h-[500px] items-center justify-center bg-white w-[30%] rounded-2xl p-5 gap-4">
+            <p>Loading ....</p>
           </div>
-          <div className="flex flex-col gap-2">
-            <h3 className="font-bold">Due Diligence Stage</h3>
-            <div
-              className={`font-medium  ${
-                application?.status === "APPROVED" ||
-                application?.currentStage !== "EVALUATION"
-                  ? "bg-[#4BC500] text-[#4BC500]"
-                  : application?.status === "PENDING"
-                    ? "bg-red-600 text-red-600"
-                    : ""
-              } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-            >
-              {application?.currentStage !== "EVALUATION" &&
-              application?.currentStage !== "DUE_DILIGENCY"
-                ? "APPROVED"
-                : application?.status}
-            </div>
-            {application?.currentStage !== "DUE_DILIGENCY" && (
-              <div className="flex flex-col gap-2 mt-4">
-                <button
-                  onClick={openAddDue}
-                  className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                >
-                  View details
-                </button>
+        ) : application?.currentStage === "SUBMITTED" ? (
+          <div></div>
+        ) : (
+          <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
+            <h2 className="font-bold">Decision</h2>
+            <div className="flex flex-col gap-2">
+              <h3 className="font-semibold">Evaluation Stage</h3>
+              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
+                {application?.currentStage === "EVALUATION"
+                  ? "PENDING"
+                  : "APPROVED"}
               </div>
-            )}
-          </div>
-          <div className="flex flex-col gap-2">
-            <h3 className="font-semibold">Grant Committee</h3>
-            <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-              {!application?.grantCommitteeDecision ? "Pending" : "APPROVED"}
-            </div>
+              {application?.evaluationDecisions.length < 3 &&
+                !application?.evaluationDecisions.find(
+                  (ev: any) =>
+                    ev.employee.user_id.toString() ===
+                    profile?.userProfile?.data.uuid.toString()
+                ) && (
+                  <>
+                    <div
+                      onClick={() => {
+                        setSelectedStage("Evaluation");
+                        openMakeDecision();
+                      }}
+                      className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                    >
+                      <p>Make a decision</p>
+                    </div>
+                  </>
+                )}
 
-            {application?.grantCommitteeDecision && (
-              <div className="flex flex-col gap-2 mt-4">
-                <button
-                  onClick={openGrantCommitteeDetails}
-                  className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                >
-                  View details
-                </button>
-              </div>
-            )}
+              {application?.evaluationDecisions.length > 0 && (
+                <div className="flex flex-col gap-2 mt-4">
+                  <button
+                    onClick={openEvaluationDetails}
+                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                  >
+                    View details
+                  </button>
+                </div>
+              )}
+            </div>
+            {application?.currentStage !== "EVALUATION" &&
+              stagesArr?.includes("DUE_DILIGENCY") && (
+                <div className="flex flex-col gap-2">
+                  <h3 className="font-bold">Due Diligence Stage</h3>
+                  <div
+                    className={`font-medium  ${
+                      application?.status === "APPROVED" ||
+                      application?.currentStage !== "EVALUATION"
+                        ? "bg-[#4BC500] text-[#4BC500]"
+                        : application?.status === "PENDING"
+                          ? "bg-red-600 text-red-600"
+                          : ""
+                    } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+                  >
+                    {application?.currentStage !== "EVALUATION" &&
+                    application?.currentStage !== "DUE_DILIGENCY"
+                      ? "APPROVED"
+                      : application?.status}
+                  </div>
+                  {application?.duediligencyDecisions?.length < 4 &&
+                    !application?.duediligencyDecisions.find(
+                      (dec: any) =>
+                        dec?.employee?.user_id ===
+                        profile?.userProfile?.data.uuid
+                    ) && (
+                      <div
+                        onClick={() => {
+                          setSelectedStage("Due Diligence");
+                          if (
+                            !application?.duediligencyForm &&
+                            application?.duediligencyDecisions?.length < 2
+                          ) {
+                            openMakeFirstDueDiligencyDecision();
+                          } else {
+                            openMakeDecision();
+                          }
+                        }}
+                        className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                      >
+                        <p>Make a decision</p>
+                      </div>
+                    )}
+                  {application?.duediligencyForm && (
+                    <div className="flex flex-col gap-2 mt-4">
+                      <button
+                        onClick={openDueDiligencyDetails}
+                        className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                      >
+                        View details
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
           </div>
-        </div>
+        )}
       </div>
-      <DueDiligenceModal
+      <MakeFirstDueDiligencyDecision
         application={application}
-        opened={isOpenAddDue}
-        close={closeAddDue}
+        closeModal={closeMakeFirstDueDiligencyDecision}
+        afterMakeDecision={refetch}
+        isOpenModal={isOpenMakeFirstDueDiligencyDecision}
       />
-      <MakeGrantCommitteeDecision
+      <DueDiligencyDetails
         application={application}
-        closeModal={closeGrantCommitteeMakeDecision}
-        isOpen={isOpenGrantCommitteeMakeDecision}
-        onMakeDecision={() => {}}
+        opened={isOpenDueDiligencyDetails}
+        close={closeDueDiligencyDetails}
+        decisions={application?.duediligencyDecisions}
+      />
+      <MakeDecision
+        type={selectedStage as any}
+        firstEvaluationModal={application?.evaluationDecisions.length === 0}
+        application={application}
+        isOpen={isOpenMakeDecision}
+        close={closeMakeDecision}
+        onMakeDecision={() => refetch()}
       />
       <EvaluationDetails
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
-        evaluations={
-          application?.evaluationDecisions?.length &&
-          application?.evaluators?.length
-            ? application.evaluationDecisions.map(
-                (decision: any, index: any) => ({
-                  evaluator: application.evaluators[index],
-                  evaluationDecision: decision,
-                }),
-              )
-            : []
-        }
+        evaluations={application?.evaluationDecisions || []}
         application={application}
       />
     </div>

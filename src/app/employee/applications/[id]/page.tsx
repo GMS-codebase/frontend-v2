@@ -105,8 +105,6 @@ const Page = () => {
     contributionComment: application?.budget?.contributionComment || "",
     assessmentComment: application?.projectFunding?.assessmentComment || "",
     budgetLinesComment: application?.budget?.budgetLinesComment || "",
-    premisesAttachmentComment:
-      application?.projectFunding?.premisesAttachmentComment || "",
   });
   console.log(application);
   useEffect(() => {
