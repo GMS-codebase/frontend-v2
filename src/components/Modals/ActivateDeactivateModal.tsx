@@ -1,10 +1,9 @@
 import { Modal } from "@mantine/core";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import SideVector1 from "@/assets/Vectors/blueSideVector.svg";
-import SideVector2 from "@/assets/Vectors/blueSideVector2.svg";
-import activateSvg from "@/assets/Vectors/activate.svg";
+import { FiPower } from "react-icons/fi"; 
+import SideVector1 from "@/assets/Vectors/sidevecto.svg";
+import SideVector2 from "@/assets/Vectors/sidevector2.svg";
 import { notifications } from "@mantine/notifications";
 import { useDispatch } from "react-redux";
 import { authorizedApi } from "@/utils/api";
@@ -14,22 +13,21 @@ import {
 } from "@/actions/WindowsActions";
 import { UPDATE_SECTOR_SUCCESS } from "@/actions/SectorsActions";
 import { UPDATE_TRADE_SUCCESS } from "@/actions/TradesActions";
-import { UPDATE_CALL_SUCCESS } from "@/actions/CallsActions";
-import { UPDATE_CONTACT_SUCCESS } from "@/actions/ContactsActions";
-import { UPDATE_EMPLOYEE_SUCCESS } from "@/actions/EmployeesActions";
 import { UPDATE_BUDGET_LINE_SUCCESS } from "@/actions/BudgetLinesActions";
+import Image from "next/image";
+import {
+  BUDGET_LINE_STATUS,
+  SECTOR_STATUS,
+  SUBWINDOW_STATUS,
+  TRADE_STATUS,
+  WINDOW_STATUS,
+} from "@/utils/enums";
 
-// Importing UPDATE actions as constants
-
-// Type definitions for the action mappings and props
 type EntityType =
   | "windows"
   | "sectors"
   | "trades"
   | "subwindows"
-  | "calls"
-  | "contacts"
-  | "employees"
   | "budgetLines";
 
 interface ActivateDeactivateModalProps {
@@ -45,10 +43,15 @@ const actionMappings: Record<EntityType, string> = {
   sectors: UPDATE_SECTOR_SUCCESS,
   trades: UPDATE_TRADE_SUCCESS,
   subwindows: UPDATE_SUB_WINDOW_SUCCESS,
-  calls: UPDATE_CALL_SUCCESS,
-  contacts: UPDATE_CONTACT_SUCCESS,
-  employees: UPDATE_EMPLOYEE_SUCCESS,
   budgetLines: UPDATE_BUDGET_LINE_SUCCESS,
+};
+
+const enumMappings = {
+  windows: WINDOW_STATUS,
+  sectors: SECTOR_STATUS,
+  trades: TRADE_STATUS,
+  subwindows: SUBWINDOW_STATUS,
+  budgetLines: BUDGET_LINE_STATUS,
 };
 
 const routeMappings: Record<EntityType, string> = {
@@ -56,9 +59,6 @@ const routeMappings: Record<EntityType, string> = {
   sectors: "/sectors",
   trades: "/trade",
   subwindows: "/sub-window",
-  calls: "/call",
-  contacts: "/contacts",
-  employees: "/employees",
   budgetLines: "/budgetlines",
 };
 
@@ -80,14 +80,21 @@ const ActivateDeactivateModal: React.FC<ActivateDeactivateModalProps> = ({
     const action = isActive ? "deactivate" : "activate";
 
     try {
-      await authorizedApi.put(`${routeMappings[type]}/${id}/${action}`);
+      await authorizedApi.put(
+        `${routeMappings[type]}/activate-deactivate/${id}`
+      );
       notifications.show({
         message: `${capitalize(type.slice(0, -1))} has been ${action}d successfully`,
         color: "blue",
       });
       dispatch({
         type: actionMappings[type],
-        payload: { id, status: !isActive },
+        payload: {
+          uuid: id,
+          status: !isActive
+            ? enumMappings[type].ACTIVE
+            : enumMappings[type].INACTIVE,
+        },
       });
       closeModal();
     } catch (err: any) {
@@ -133,12 +140,8 @@ const ActivateDeactivateModal: React.FC<ActivateDeactivateModalProps> = ({
         />
         <div className="w-4/5 flex flex-col items-center mt-4 overflow-hidden">
           <div className="w-full flex flex-col items-center">
-            <Image
-              src={activateSvg}
-              alt="activate icon"
-              width={200}
-              height={50}
-            />
+            <FiPower size={100} color="#1E90FF" className="mb-4" />{" "}
+            {/* New Icon */}
             <h1 className="text-2xl font-extrabold text-center">
               Are you sure you want to {isActive ? "deactivate" : "activate"}{" "}
               this {capitalize(type.slice(0, -1))}?
@@ -160,7 +163,7 @@ const ActivateDeactivateModal: React.FC<ActivateDeactivateModalProps> = ({
               onClick={onToggleStatus}
               type="button"
               disabled={loading}
-              className="w-full px-4 py-3 bg-[#1E90FF] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 bg-primary text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading
                 ? "Processing..."

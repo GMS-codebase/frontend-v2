@@ -8,6 +8,7 @@ import { CiEdit } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
 import MakeDecision from "./MakeDecision";
 import { SolarFileBold } from "../core/icons";
+import { handleDownloadFile } from "@/utils/funcs";
 
 const DueDiligencyDetails = ({
   decisions,
@@ -33,12 +34,10 @@ const DueDiligencyDetails = ({
   const [selectedDecision, setSelectedDecision] = useState<any>();
   const profile = useSelector((state: any) => state.auth);
   const [text, setText] = useState(
-    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era.",
+    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era."
   );
 
-  const handleSave = () => {
-    onSaveComment && onSaveComment(text);
-  };
+
 
   return (
     <>
@@ -77,7 +76,15 @@ const DueDiligencyDetails = ({
             <label className="block text-sm text-gray-600" htmlFor="textarea">
               Attachment:
             </label>
-            <div className="flex mb-3 justify-center text-center items-center gap-2 px-4 py-2 bg-[#005DE9] rounded-full text-white">
+            <div
+              className="flex mb-3 justify-center text-center items-center gap-2 px-4 py-2 bg-[#005DE9] rounded-full text-white"
+              onClick={() =>
+                handleDownloadFile(
+                  application?.duediligencyForm?.trainingManualAttachment,
+                  "applications"
+                )
+              }
+            >
               <span>
                 <SolarFileBold />
               </span>

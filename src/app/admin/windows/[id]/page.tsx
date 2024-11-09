@@ -36,10 +36,10 @@ const Page = () => {
     useDisclosure(false);
   const windows = useSelector((state: any) => state.windows);
   const window = windows.windows?.filter(
-    (window: any) => window.uuid === windowId,
+    (window: any) => window.uuid === windowId
   )[0];
   const filteredSubWindows = window?.subWindows?.filter((subW: any) =>
-    subW.title.toLowerCase().includes(searchQuery.toLowerCase()),
+    subW.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const [selectedSubWindow, setSelectedSubWindow] = useState<any>();
   const columns: ColumnDef<any>[] = [
@@ -57,6 +57,13 @@ const Page = () => {
             ? row.original?.description?.slice(0, 50) + "..."
             : row.original?.description}
         </div>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.status || "-"}</div>
       ),
     },
     {
@@ -85,7 +92,7 @@ const Page = () => {
                 <div
                   onClick={() =>
                     navigate.push(
-                      `/admin/windows/${window?.uuid}/${row.original?.uuid}`,
+                      `/admin/windows/${window?.uuid}/${row.original?.uuid}`
                     )
                   }
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"

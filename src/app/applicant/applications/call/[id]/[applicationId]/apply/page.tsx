@@ -32,7 +32,10 @@ const Page = () => {
     myApplications,
     loading: applicationsLoading,
   } = useSelector((state: any) => state.applications);
-  const application = applications.find((ap: any) => ap.uuid == applicationId);
+  const [application, setApplication] = useState<any>();
+  useEffect(() => {
+    setApplication(applications.find((ap: any) => ap.uuid == applicationId));
+  }, [applications, applicationId]);
   const [data, setData] = useState<ApplicationQuestions>({
     title: "",
     activitiesAndOutcomes: "",
@@ -250,7 +253,7 @@ const Page = () => {
             type="button"
             onClick={() => {
               handleSubmit("submit", setLoading, data, application, () =>
-                router.push("/applicant/applications"),
+                router.push("/applicant/applications")
               );
             }}
             disabled={loading}

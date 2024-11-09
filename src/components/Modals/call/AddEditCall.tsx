@@ -15,6 +15,7 @@ import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
 import { getCalls } from "@/utils/funcs";
 import { ADD_CALL_SUCCESS, UPDATE_CALL_SUCCESS } from "@/actions/CallsActions";
+import { SUBWINDOW_STATUS, TRADE_STATUS, WINDOW_STATUS } from "@/utils/enums";
 
 const AddEditCall = ({
   isOpenAddEditCall,
@@ -47,7 +48,11 @@ const AddEditCall = ({
   const { sectors } = useSelector((state: any) => state.sectors);
   let MultiWindowData =
     windows?.windows
-      .filter((window: any) => window.subWindows.length !== 0)
+      .filter(
+        (window: any) =>
+          window.subWindows.length !== 0 &&
+          window.status === WINDOW_STATUS.ACTIVE
+      )
       ?.map((window: any) => ({
         value: window.uuid,
         label: window.title,
@@ -59,10 +64,12 @@ const AddEditCall = ({
         ?.filter((window: any) => selectedWindows?.includes(window.uuid))
         .flatMap((window: any) => {
           return (
-            window.subWindows?.map((subWindow: any) => ({
-              value: subWindow.uuid,
-              label: subWindow.title,
-            })) || []
+            window.subWindows
+              ?.filter((sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE)
+              .map((subWindow: any) => ({
+                value: subWindow.uuid,
+                label: subWindow.title,
+              })) || []
           );
         }) || [];
 
@@ -74,14 +81,17 @@ const AddEditCall = ({
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid),
+            selectedSubWindows.includes(subWindow.uuid)
           )
           .flatMap(
             (subWindow: any) =>
               subWindow.sectors
                 ?.map((sector: any) => {
                   const matchingSector = sectors.find(
-                    (s: any) => s.uuid === sector.uuid && s.trades.length > 0,
+                    (s: any) =>
+                      s.uuid === sector.uuid &&
+                      s.trades.length > 0 &&
+                      sector.status === TRADE_STATUS.ACTIVE
                   );
                   return matchingSector
                     ? {
@@ -90,8 +100,8 @@ const AddEditCall = ({
                       }
                     : null;
                 })
-                .filter(Boolean) || [],
-          ) || [],
+                .filter(Boolean) || []
+          ) || []
     );
     return sectorData;
   };
@@ -103,7 +113,7 @@ const AddEditCall = ({
       setFormData(defaultData);
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
       setSelectedSubWindows(
-        defaultData.subWindows.map((item: any) => item.uuid),
+        defaultData.subWindows.map((item: any) => item.uuid)
       );
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
     }

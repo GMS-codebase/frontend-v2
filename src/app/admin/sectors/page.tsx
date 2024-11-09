@@ -19,6 +19,7 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
+import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
 
 const Page = () => {
   const sectors = useSelector((state: any) => state.sectors);
@@ -28,6 +29,13 @@ const Page = () => {
     isOpenCreateEdit,
     { open: openCreateEditModal, close: closeCreateEditModal },
   ] = useDisclosure(false);
+  const [
+    isOpenActivateDeactivateSector,
+    {
+      open: openActivateDeactivateSectorModal,
+      close: closeActivateDeactivateSectorModal,
+    },
+  ] = useDisclosure(false);
   const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
   const [selectedSector, setSelectedSector] = useState<any>();
@@ -35,7 +43,7 @@ const Page = () => {
     sectors?.sectors?.filter(
       (sector: any) =>
         sector?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        sector?.shortname?.toLowerCase().includes(searchQuery.toLowerCase()),
+        sector?.shortname?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
   const columns: ColumnDef<any>[] = [
     {
@@ -59,6 +67,13 @@ const Page = () => {
             ? row.original?.description.slice(0, 50) + "..."
             : row.original.description}
         </div>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.status || "-"}</div>
       ),
     },
     {
@@ -96,12 +111,12 @@ const Page = () => {
                 <div
                   onClick={() => {
                     setSelectedSector(row.original);
-                    openCreateEditModal();
+                    openActivateDeactivateSectorModal();
                   }}
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <CiEdit size={21} color="#576074" />
-                  Activate
+                  {row.original.status === "ACTIVE" ? "Deactivate" : "Activate"}
                 </div>
               </Menu.Item>
               <Menu.Item>
@@ -189,6 +204,16 @@ const Page = () => {
         }}
         type="sectors"
         id={selectedSector?.uuid}
+      />
+      <ActivateDeactivateModal
+        type="sectors"
+        closeModal={() => {
+          closeActivateDeactivateSectorModal();
+          setSelectedSector(null);
+        }}
+        id={selectedSector?.uuid}
+        isActive={selectedSector?.status === "ACTIVE"}
+        isOpenModal={isOpenActivateDeactivateSector}
       />
     </div>
   );
