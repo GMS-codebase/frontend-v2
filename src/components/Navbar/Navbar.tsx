@@ -27,6 +27,7 @@ import {
   getMinutes,
   getRoles,
   getSectorTrades,
+  getBudgetLines,
   getApplicationsReadyForMinutes,
   getRejectedMinutes,
   getApprovedMinutes,
@@ -83,6 +84,7 @@ const Navbar = () => {
       getApplicants(dispatch);
       getEmployees(dispatch);
       getRoles(dispatch);
+      getBudgetLines(dispatch);
     } else if (role === "SDF_SECRETARIATE") {
       getApplicants(dispatch);
       getContracts(dispatch);
@@ -98,6 +100,7 @@ const Navbar = () => {
       getUploadedMinutes(dispatch, "applicant");
       getApprovedMinutes(dispatch, "applicant");
       getRejectedMinutes(dispatch, "applicant");
+      getBudgetLines(dispatch);
     }
     getApplicationsForContractSigning(dispatch);
     getEmpStages(dispatch);

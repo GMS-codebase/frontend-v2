@@ -14,7 +14,7 @@ import { notifications } from "@mantine/notifications";
 import { BsPerson } from "react-icons/bs";
 interface FormData {
   financeInfo: string;
-  ohsInfo: string;
+  ohs: string;
   equipmentInfo: string;
   workPlaceInfo: string;
   comment: string;
@@ -42,7 +42,7 @@ const MakeFirstDueDiligencyDecision = ({
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     financeInfo: "",
-    ohsInfo: "",
+    ohs: "",
     equipmentInfo: "",
     workPlaceInfo: "",
     comment: "",
@@ -84,7 +84,7 @@ const MakeFirstDueDiligencyDecision = ({
     try {
       const submitData = new FormData();
       submitData.append("financeInfo", formData.financeInfo);
-      submitData.append("ohsinfo", formData.ohsInfo);
+      submitData.append("ohsinfo", formData.ohs);
       submitData.append("equipmentinfo", formData.equipmentInfo);
       submitData.append("workPlaceInfo", formData.workPlaceInfo);
       submitData.append("traineeNumber", formData.traineeNumber);
@@ -111,7 +111,7 @@ const MakeFirstDueDiligencyDecision = ({
 
       setFormData({
         financeInfo: "",
-        ohsInfo: "",
+        ohs: "",
         equipmentInfo: "",
         workPlaceInfo: "",
         comment: "",
@@ -256,7 +256,7 @@ const MakeFirstDueDiligencyDecision = ({
               </div>
             )}
 
-            {["financeInfo", "ohsInfo", "equipmentInfo", "workPlaceInfo"].map(
+            {["financeInfo", "ohs", "equipmentInfo", "workPlaceInfo"].map(
               (field, idx) => (
                 <div key={idx} className="py-1 w-full">
                   <label

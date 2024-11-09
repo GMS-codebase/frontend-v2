@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Select } from "@mantine/core";
 import { Comments } from "@/types";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
+import { FaDownload } from "react-icons/fa";
 
 export function Page3({
   data,
@@ -174,19 +175,31 @@ export function Page3({
         </p>
         {(!isApplicant && commentsData) || !setData ? (
           <>
-            <button
-              onClick={() =>
-                handleDownloadFile(
-                  data?.trainingEquipmentAttachment,
-                  "applications",
-                )
-              }
-              className={`w-full h-12 ${data?.trainingEquipmentAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
-            >
-              {data?.trainingEquipmentAttachment
-                ? "Download File"
-                : "No Attachment Found!"}
-            </button>
+            <div className="grid grid-cols-2 gap-2 my-2">
+              <button
+                onClick={() =>
+                  handleViewFile(
+                    data?.trainingEquipmentAttachment,
+                    "applications",
+                  )
+                }
+                className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                View File
+              </button>
+              <button
+                onClick={() =>
+                  handleDownloadFile(
+                    data?.trainingEquipmentAttachment,
+                    "applications",
+                  )
+                }
+                className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                <FaDownload />
+                <p>Download File</p>
+              </button>
+            </div>
             {!isApplicant &&
               commentsData &&
               renderCommentsSection(
@@ -254,16 +267,26 @@ export function Page3({
         </p>
         {(!isApplicant && commentsData) || !setData ? (
           <>
-            <button
-              onClick={() =>
-                handleDownloadFile(data?.premisesAttachment, "applications")
-              }
-              className={`w-full h-12 ${data?.premisesAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
-            >
-              {data?.premisesAttachment
-                ? "Download File"
-                : "No Attachment Found!"}
-            </button>
+            <div className="grid grid-cols-2 gap-2 my-2">
+              <button
+                onClick={() =>
+                  handleViewFile(data?.premisesAttachment, "applications")
+                }
+                className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                View File
+              </button>
+              <button
+                onClick={() =>
+                  handleDownloadFile(data?.premisesAttachment, "applications")
+                }
+                className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                <FaDownload />
+                <p>Download File</p>
+              </button>
+            </div>
+
             {!isApplicant &&
               commentsData &&
               renderCommentsSection("premisesAttachmentComment")}

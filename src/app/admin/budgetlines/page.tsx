@@ -1,80 +1,45 @@
 "use client";
-import { SolarAddSquareBold } from "@/components/core/icons";
+import { useState } from "react";
+import { BiSearch } from "react-icons/bi";
+import { SolarAddFolderBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import { sectorsData as data, sectorsData } from "@/utils/constants/dummy";
-import SectorsActions from "../../../components/Actions/SectorsAction";
-import { CiEdit, CiSearch } from "react-icons/ci";
-import AddSector from "@/components/Modals/AddSector";
-import { useDisclosure } from "@mantine/hooks";
-import { useState } from "react";
-import UpdateSector from "@/components/Modals/UpdateSector";
-import { useSelector } from "react-redux";
-import { ClipLoader } from "react-spinners";
-import { BiSearch } from "react-icons/bi";
-import AddEditSector from "@/components/Modals/sectors/AddEditSector";
-import DeleteModal from "@/components/Modals/DeleteModal";
-import { Menu } from "@mantine/core";
 import { HiDotsHorizontal } from "react-icons/hi";
-import Link from "next/link";
+import { useDisclosure } from "@mantine/hooks";
+import AddBudgetLine from "@/components/Modals/budgetLines/AddEditBudgetLine";
+import { useSelector } from "react-redux";
+import { Menu, Button, Text, rem } from "@mantine/core";
 import { FiEye } from "react-icons/fi";
+import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
-import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
+import Link from "next/link";
+import DeleteModal from "@/components/Modals/DeleteModal";
 
 const Page = () => {
-  const sectors = useSelector((state: any) => state.sectors);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [
     isOpenCreateEdit,
     { open: openCreateEditModal, close: closeCreateEditModal },
   ] = useDisclosure(false);
-  const [
-    isOpenActivateDeactivateSector,
-    {
-      open: openActivateDeactivateSectorModal,
-      close: closeActivateDeactivateSectorModal,
-    },
-  ] = useDisclosure(false);
   const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
-  const [selectedSector, setSelectedSector] = useState<any>();
-  const filteredSectors =
-    sectors?.sectors?.filter(
-      (sector: any) =>
-        sector?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        sector?.shortname?.toLowerCase().includes(searchQuery.toLowerCase()),
+
+  const budgetLines = useSelector((state: any) => state.budgetLines);
+  const [selectedBudgetLine, setSelectedBudgetLine] = useState<any>("");
+  const filteredBudgetLines =
+    budgetLines.budgetLines?.filter(
+      (budgetLine: any) =>
+        budgetLine?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        budgetLine?.shortname
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()),
     ) ?? [];
+
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div>{row.original?.name}</div>,
-    },
-    {
-      accessorKey: "shortname",
-      header: "Short Name",
-      cell: ({ row }) => (
-        <div className="w-full">{row.original?.shortname}</div>
-      ),
-    },
-    {
-      accessorKey: "description",
-      header: "Description",
-      cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.description.length > 50
-            ? row.original?.description.slice(0, 50) + "..."
-            : row.original.description}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => (
-        <div className="truncate">{row.original?.status || "-"}</div>
-      ),
+      cell: ({ row }) => <div className="w-full">{row.original?.title}</div>,
     },
     {
       accessorKey: "actions",
@@ -98,31 +63,22 @@ const Page = () => {
                 <h1 className="text-lg">Actions</h1>
               </Menu.Label>
               <Menu.Divider />
-              <Menu.Item className="bg-[#F0F0F0]">
-                <Link
-                  href={`/admin/sectors/${row.original.uuid}`}
-                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                >
-                  <FiEye size={21} color="#576074" />
-                  View
-                </Link>
-              </Menu.Item>
               <Menu.Item>
                 <div
                   onClick={() => {
-                    setSelectedSector(row.original);
-                    openActivateDeactivateSectorModal();
+                    setSelectedBudgetLine(row.original);
+                    openCreateEditModal();
                   }}
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <CiEdit size={21} color="#576074" />
-                  {row.original.status === "ACTIVE" ? "Deactivate" : "Activate"}
+                  Activate
                 </div>
               </Menu.Item>
               <Menu.Item>
                 <div
                   onClick={() => {
-                    setSelectedSector(row.original);
+                    setSelectedBudgetLine(row.original);
                     openCreateEditModal();
                   }}
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
@@ -135,7 +91,7 @@ const Page = () => {
                 <div
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                   onClick={() => {
-                    setSelectedSector(row.original);
+                    setSelectedBudgetLine(row.original);
                     openDeleteModal();
                   }}
                 >
@@ -149,6 +105,7 @@ const Page = () => {
       ),
     },
   ];
+
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
@@ -167,55 +124,45 @@ const Page = () => {
 
         <button
           onClick={openCreateEditModal}
-          className="bg-[#005DE9] text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
         >
           <span className="text-2xl">
-            <SolarAddSquareBold />
+            <SolarAddFolderBold />
           </span>
-          <h1 className="text-base font-medium text-white">New Sector</h1>
+          <h1 className="text-base font-medium text-white">New BudgetLine</h1>
         </button>
       </div>
-
       <div className="w-full h-full">
         <DataTable
           columns={columns}
-          data={filteredSectors}
-          loading={sectors.loading}
+          data={filteredBudgetLines}
+          loading={budgetLines.loading}
           noDataMessage={
             searchQuery
-              ? `No trades matching ${searchQuery} found`
-              : "No Sectors Available"
+              ? `No BudgetLines found related to ${searchQuery}`
+              : "No BudgetLines Added So Far"
           }
         />
       </div>
-      <AddEditSector
-        isOpenAddEditSector={isOpenCreateEdit}
-        closeAddEditSector={() => {
-          setSelectedSector(null);
+      <AddBudgetLine
+        isOpenAddEditBudgetLine={isOpenCreateEdit}
+        closeAddEditBudgetLine={() => {
           closeCreateEditModal();
+          setSelectedBudgetLine(null);
         }}
-        defaultData={selectedSector}
+        defaultData={selectedBudgetLine}
       />
       <DeleteModal
         isOpenModal={isOpenDelete}
         closeModal={() => {
-          setSelectedSector(null);
           closeDeleteModal();
+          setSelectedBudgetLine(null);
         }}
-        type="sectors"
-        id={selectedSector?.uuid}
-      />
-      <ActivateDeactivateModal
-        type="sectors"
-        closeModal={() => {
-          closeActivateDeactivateSectorModal();
-          setSelectedSector(null);
-        }}
-        id={selectedSector?.uuid}
-        isActive={selectedSector?.status === "ACTIVE"}
-        isOpenModal={isOpenActivateDeactivateSector}
+        type="budgetLines"
+        id={selectedBudgetLine?.uuid}
       />
     </div>
   );
 };
+
 export default Page;

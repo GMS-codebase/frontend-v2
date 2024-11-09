@@ -64,7 +64,7 @@ const Page = () => {
   const goToBudget = () => {
     setCurrentComponent("IndicativeBudget");
   };
-  const [commentsData, setCommentsData] = useState<Comments>({
+  const [commentsData, setCommentsData] = useState<any>({
     titleComment: application?.projectFunding?.titleComment || "",
     activitiesComment: application?.projectFunding?.activitiesComment || "",
     readinessExecuteComment:

@@ -60,6 +60,13 @@ const Page = () => {
       ),
     },
     {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.status || "-"}</div>
+      ),
+    },
+    {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
