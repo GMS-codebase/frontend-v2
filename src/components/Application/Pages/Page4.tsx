@@ -218,24 +218,24 @@ export const Page4 = ({
       {comments ? (
         <>
           <div className="grid grid-cols-2 gap-2 my-2">
-              <button
-                onClick={() =>
-                  handleDownloadFile(data?.staffAttachment, "applications")
-                }
-                className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
-              >
-                View File
-              </button>
-              <button
-                onClick={() =>
-                  handleDownloadFile(data?.staffAttachment, "applications")
-                }
-                className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
-              >
-                <FaDownload />
-                <p>Download File</p>
-              </button>
-            </div>
+            <button
+              onClick={() =>
+                handleDownloadFile(data?.staffAttachment, "applications")
+              }
+              className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+            >
+              View File
+            </button>
+            <button
+              onClick={() =>
+                handleDownloadFile(data?.staffAttachment, "applications")
+              }
+              className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+            >
+              <FaDownload />
+              <p>Download File</p>
+            </button>
+          </div>
           {!isApplicant && comments && (
             <div className="mt-2">
               <label htmlFor="" className="font-medium text-sm">
