@@ -45,10 +45,10 @@ const MinutesActions = ({
 
           {status === "ready" && (
             <Menu.Item
-            onClick={()=> {
-              openMinute
-              setType("unsigned")
-            }}
+              onClick={() => {
+                openMinute;
+                setType("unsigned");
+              }}
               className="w-full py-1 text-[#576074]"
             >
               <div className="flex items-center gap-3 py-1">
@@ -104,9 +104,9 @@ const MinutesActions = ({
                 </div>
               </Menu.Item>
               <Menu.Item
-                onClick={()=> {
-                  openMinute()
-                  setType("signed")
+                onClick={() => {
+                  openMinute();
+                  setType("signed");
                 }}
                 className="w-full py-1 text-[#576074]"
               >

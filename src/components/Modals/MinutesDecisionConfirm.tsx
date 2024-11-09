@@ -15,41 +15,52 @@ interface DeleteConfirmProps {
   isOpen: boolean;
   onClose: () => void;
   minute: any;
-  decision: string
+  decision: string;
 }
 
-const MinutesDecisionConfirm = ({ isOpen, onClose, minute, decision }: DeleteConfirmProps) => {
+const MinutesDecisionConfirm = ({
+  isOpen,
+  onClose,
+  minute,
+  decision,
+}: DeleteConfirmProps) => {
   const dispatch = useDispatch();
-  console.log(minute)
+  console.log(minute);
   const [comment, setComment] = useState({
     value: "",
-    isError: ""
+    isError: "",
   });
   const [loading, setLoading] = useState(false);
-  const handleMakeMinuteDecision = ()=>{
-    if(!comment.value) {
-      return setComment({...comment, isError: "Please enter a comment!"})
+  const handleMakeMinuteDecision = () => {
+    if (!comment.value) {
+      return setComment({ ...comment, isError: "Please enter a comment!" });
     }
     setLoading(true);
-    authorizedApi.post(`/negotiation-contract/applicant/decision`, {
-      "applicationID": minute.application.uuid,
-      "applicantID": minute.application.applicant.user_id,
-      "decision": decision.toLowerCase() === "approve" ? "APPROVED" : decision.toLowerCase() === "reject" ? "REJECTED" : "NEGOTIATED",
-      "comment": comment
-    })
-     .then(() => {
-        notifications.show({
-          message: "Decision saved successfully!"
-        });
-        setComment({value: "", isError: ""})
-        onClose();
-        getUploadedMinutes(dispatch, "applicant")
+    authorizedApi
+      .post(`/negotiation-contract/applicant/decision`, {
+        applicationID: minute.application.uuid,
+        applicantID: minute.application.applicant.user_id,
+        decision:
+          decision.toLowerCase() === "approve"
+            ? "APPROVED"
+            : decision.toLowerCase() === "reject"
+              ? "REJECTED"
+              : "NEGOTIATED",
+        comment: comment,
       })
-     .catch((error) => {
+      .then(() => {
+        notifications.show({
+          message: "Decision saved successfully!",
+        });
+        setComment({ value: "", isError: "" });
+        onClose();
+        getUploadedMinutes(dispatch, "applicant");
+      })
+      .catch((error) => {
         console.error(error);
       })
-      .finally(()=> setLoading(false))
-  }
+      .finally(() => setLoading(false));
+  };
 
   return (
     <Modal
@@ -89,8 +100,16 @@ const MinutesDecisionConfirm = ({ isOpen, onClose, minute, decision }: DeleteCon
           </h2>
           <div className="mt-6 w-full">
             <h1 className="block text-xs font-bold text-gray-700">Comment</h1>
-            <textarea value={comment.value} onChange={(e: any)=> setComment({...comment, value: e.target.value})} className="mt-1 block w-full resize-none p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
-            {comment.isError && <p className="text-red-400 text-base mt-1">{comment.isError}</p>}
+            <textarea
+              value={comment.value}
+              onChange={(e: any) =>
+                setComment({ ...comment, value: e.target.value })
+              }
+              className="mt-1 block w-full resize-none p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+            {comment.isError && (
+              <p className="text-red-400 text-base mt-1">{comment.isError}</p>
+            )}
           </div>
           <div className="w-full flex justify-center mt-1 space-x-4 p-6">
             <button
@@ -106,7 +125,7 @@ const MinutesDecisionConfirm = ({ isOpen, onClose, minute, decision }: DeleteCon
               disabled={loading}
               className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2"
             >
-              {loading ? "Loading . . .": decision}
+              {loading ? "Loading . . ." : decision}
             </button>
           </div>
         </div>

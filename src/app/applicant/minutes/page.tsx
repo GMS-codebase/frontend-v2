@@ -21,14 +21,18 @@ const Page = () => {
       accessorKey: "number",
       header: "Application number",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.application.applicationNumber}</div>
+        <div className="truncate">
+          {row.original.application.applicationNumber}
+        </div>
       ),
     },
     {
       accessorKey: "title",
       header: "Application Title",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.application.projectFunding.title}</div>
+        <div className="truncate">
+          {row.original.application.projectFunding.title}
+        </div>
       ),
     },
     {
@@ -43,7 +47,7 @@ const Page = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({row}) => (
+      cell: ({ row }) => (
         <div>
           <Menu shadow="lg" width={300}>
             <Menu.Target>
@@ -63,22 +67,56 @@ const Page = () => {
               </Menu.Label>
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
-                <button onClick={()=> handleDownloadFile(row.original.minutes[0]?.minuteNegotiationAttachment, "minute-negotiation")}>
+                <button
+                  onClick={() =>
+                    handleDownloadFile(
+                      row.original.minutes[0]?.minuteNegotiationAttachment,
+                      "minute-negotiation",
+                    )
+                  }
+                >
                   Download
                 </button>
               </Menu.Item>
               <Menu.Item className="bg-[#F0F0F0]">
-                <button onClick={()=> setOpenedMinute({...openedMinute,open: true, minute: row.original, decision: "Approve"})}>
+                <button
+                  onClick={() =>
+                    setOpenedMinute({
+                      ...openedMinute,
+                      open: true,
+                      minute: row.original,
+                      decision: "Approve",
+                    })
+                  }
+                >
                   Approve
                 </button>
               </Menu.Item>
               <Menu.Item className="bg-[#F0F0F0]">
-                <button onClick={()=> setOpenedMinute({...openedMinute,open: true, minute: row.original, decision: "Reject"})}>
+                <button
+                  onClick={() =>
+                    setOpenedMinute({
+                      ...openedMinute,
+                      open: true,
+                      minute: row.original,
+                      decision: "Reject",
+                    })
+                  }
+                >
                   Reject
                 </button>
               </Menu.Item>
               <Menu.Item className="bg-[#F0F0F0]">
-                <button onClick={()=> setOpenedMinute({...openedMinute,open: true, minute: row.original, decision: "Negotiate"})}>
+                <button
+                  onClick={() =>
+                    setOpenedMinute({
+                      ...openedMinute,
+                      open: true,
+                      minute: row.original,
+                      decision: "Negotiate",
+                    })
+                  }
+                >
                   Negotiate
                 </button>
               </Menu.Item>
@@ -91,14 +129,16 @@ const Page = () => {
   const defaultOpenMinute = {
     open: false,
     minute: null,
-    decision: ""
-  }
+    decision: "",
+  };
   const [openedMinute, setOpenedMinute] = React.useState({
     open: false,
     minute: null,
-    decision: ""
+    decision: "",
   });
-  const {uploadedMinutes, uploadedMinutesLoading} = useSelector((state: any)=> state.minutes);
+  const { uploadedMinutes, uploadedMinutesLoading } = useSelector(
+    (state: any) => state.minutes,
+  );
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 p-4">
       <h2 className="text-2xl font-bold mb-4">Minutes</h2>
@@ -130,7 +170,12 @@ const Page = () => {
         />
       </div>
 
-      <MinutesDecisionConfirm decision={openedMinute.decision} minute={openedMinute.minute} isOpen={openedMinute.open} onClose={()=> setOpenedMinute(defaultOpenMinute)}/>
+      <MinutesDecisionConfirm
+        decision={openedMinute.decision}
+        minute={openedMinute.minute}
+        isOpen={openedMinute.open}
+        onClose={() => setOpenedMinute(defaultOpenMinute)}
+      />
     </div>
   );
 };
