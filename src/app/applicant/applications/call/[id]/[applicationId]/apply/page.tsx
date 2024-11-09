@@ -253,7 +253,7 @@ const Page = () => {
             type="button"
             onClick={() => {
               handleSubmit("submit", setLoading, data, application, () =>
-                router.push("/applicant/applications")
+                router.push("/applicant/applications"),
               );
             }}
             disabled={loading}
