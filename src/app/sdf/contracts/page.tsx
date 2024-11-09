@@ -141,32 +141,28 @@ const Page = () => {
       accessorKey: "applicationNumber",
       header: "Application Number",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicationNumber}</div>
+        <div className="w-full">{row.original?.application?.applicationNumber}</div>
+      ),
+    },
+    {
+      accessorKey: "applicationTitle",
+      header: "Application Title",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.application?.projectFunding?.title}</div>
       ),
     },
     {
       accessorKey: "name",
       header: "Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.name}</div>
+        <div className="w-full">{row.original?.application?.applicant?.name}</div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.phone}</div>
-      ),
-    },
-    {
-      accessorKey: "description",
-      header: "Description",
-      cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.description?.length > 50
-            ? row.original?.description.slice(0, 50) + "..."
-            : row.original?.description}
-        </div>
+        <div className="w-full">{row.original?.application?.applicant?.phone}</div>
       ),
     },
     {
@@ -181,7 +177,6 @@ const Page = () => {
       ),
     },
   ];
-
   return (
     <div className="w-full flex flex-col mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
@@ -231,7 +226,6 @@ const Page = () => {
         </Tabs.Panel>
         <Tabs.Panel value="contracts" className="bg-white rounded-2xl mt-4">
           <h1 className="text-xl font-bold  p-4">Contracts Signed</h1>
-
           <DataTable
             columns={contractColumns}
             data={contracts}
