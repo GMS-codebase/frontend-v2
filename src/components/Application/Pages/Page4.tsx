@@ -1,4 +1,4 @@
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
 import { Select } from "@mantine/core";
 import { useState } from "react";
 import { FaDownload } from "react-icons/fa";
@@ -220,7 +220,7 @@ export const Page4 = ({
           <div className="grid grid-cols-2 gap-2 my-2">
             <button
               onClick={() =>
-                handleDownloadFile(data?.staffAttachment, "applications")
+                handleViewFile(data?.staffAttachment, "applications")
               }
               className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
             >

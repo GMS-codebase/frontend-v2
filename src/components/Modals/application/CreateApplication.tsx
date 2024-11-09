@@ -104,7 +104,7 @@ const CreateApplication = ({
         message: "Application created successfully!",
         color: "green",
       });
-      await getMyApplications(dispatch);
+      getMyApplications(dispatch);
       router.push(
         `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`,
       );

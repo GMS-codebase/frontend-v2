@@ -21,6 +21,7 @@ import AddEditCall from "@/components/Modals/call/AddEditCall";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import CloseStageModal from "@/components/Modals/call/CloseStage";
+import { Center } from "@mantine/core";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
@@ -64,7 +65,13 @@ const Page = () => {
         });
       });
   };
-  console.log(call);
+  if (calls.loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p className="text-gray-600 text-sm">Loading....</p>
+      </div>
+    );
+  }
   return (
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">

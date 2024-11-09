@@ -1,5 +1,5 @@
 import { Comments } from "@/types";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
 import { Select } from "@mantine/core";
 import { useState } from "react";
 import { FaDownload } from "react-icons/fa";
@@ -261,7 +261,7 @@ export const Page2 = ({
                 <div className="grid grid-cols-2 gap-2 my-2">
                   <button
                     onClick={() =>
-                      handleDownloadFile(
+                      handleViewFile(
                         data?.trainingManualAttachment,
                         "applications",
                       )

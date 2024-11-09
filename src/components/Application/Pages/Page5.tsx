@@ -1,6 +1,6 @@
 import React from "react";
 import { Comments } from "@/types";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
 import { FaDownload } from "react-icons/fa";
 
 export const Page5 = ({
@@ -60,7 +60,7 @@ export const Page5 = ({
             <div className="grid grid-cols-2 gap-2 my-2">
               <button
                 onClick={() =>
-                  handleDownloadFile(
+                  handleViewFile(
                     data?.previousFinancialReportAttachment,
                     "applications",
                   )
