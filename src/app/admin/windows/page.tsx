@@ -14,6 +14,7 @@ import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 import Link from "next/link";
 import DeleteModal from "@/components/Modals/DeleteModal";
+import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
 
 const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,6 +24,13 @@ const Page = () => {
   ] = useDisclosure(false);
   const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
+  const [
+    isOpenActivateDeactivateWindow,
+    {
+      open: openActivateDeactivateWindowModal,
+      close: closeActivateDeactivateWindowModal,
+    },
+  ] = useDisclosure(false);
 
   const windows = useSelector((state: any) => state.windows);
   const [selectedWindow, setSelectedWindow] = useState<any>("");
@@ -60,6 +68,13 @@ const Page = () => {
       ),
     },
     {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.status || "-"}</div>
+      ),
+    },
+    {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
@@ -94,12 +109,12 @@ const Page = () => {
                 <div
                   onClick={() => {
                     setSelectedWindow(row.original);
-                    openCreateEditModal();
+                    openActivateDeactivateWindowModal();
                   }}
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <CiEdit size={21} color="#576074" />
-                  Activate
+                  {row.original.status === "ACTIVE" ? "Deactivate" : "Activate"}
                 </div>
               </Menu.Item>
               <Menu.Item>
@@ -187,6 +202,16 @@ const Page = () => {
         }}
         type="windows"
         id={selectedWindow?.uuid}
+      />
+      <ActivateDeactivateModal
+        type="windows"
+        closeModal={() => {
+          closeActivateDeactivateWindowModal();
+          setSelectedWindow(null);
+        }}
+        id={selectedWindow?.uuid}
+        isActive={selectedWindow?.status === "ACTIVE"}
+        isOpenModal={isOpenActivateDeactivateWindow}
       />
     </div>
   );
