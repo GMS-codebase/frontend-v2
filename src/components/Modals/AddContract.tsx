@@ -1,5 +1,5 @@
 import { authorizedApi } from "@/utils/api";
-import { Modal, Select } from "@mantine/core";
+import { Fieldset, Modal, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import React, { useState } from "react";
 import { BsPerson, BsFileEarmarkText } from "react-icons/bs";
@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { SolarAddSquareBold } from "../core/icons";
 import { CashOut, Upload } from "solar-icon-set";
 import { Trade } from "@/types";
+import { getApplicants, getContracts } from "@/utils/funcs";
 
 interface AddContractProps {
   data: any;
@@ -22,11 +23,13 @@ const AddContract: React.FC<AddContractProps> = ({
   closeAddContract,
   trades, // Added trades prop
 }) => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [installmentsInput, setInstallmentsInput] = useState(0);
-  const [selectedTrade, setSelectedTrade] = useState<any>();
   const [traineesNumber, setTraineesNumber] = useState(0);
   const [installmentsError, setInstallmentsError] = useState("");
+  const [comment, setComment] = useState("");
+  const [title, setTitle] = useState("");
   const [paymentType, setPaymentType] = useState<"instant" | "installments">(
     "instant",
   );
@@ -34,7 +37,7 @@ const AddContract: React.FC<AddContractProps> = ({
     name: string;
     file: File | null;
     paymentType: string;
-    installments?: number[];
+    installments?: { title: string; amount: number; condition: string, percentage: number }[];
     amount: number;
     tradeTrainees: { trade: Trade; trainees: number }[];
   }>({
@@ -47,7 +50,7 @@ const AddContract: React.FC<AddContractProps> = ({
 
   const validateAddingInstallment = () => {
     const currentTotal = formData.installments?.reduce(
-      (sum, value) => sum + value,
+      (sum, value) => sum + value.percentage,
       0,
     );
 
@@ -60,42 +63,89 @@ const AddContract: React.FC<AddContractProps> = ({
       return false;
     }
   };
+
+  // Add this validation function before handleSubmit
+const validateForm = () => {
+  if (!formData.file) {
+    notifications.show({
+      message: "Please upload a contract file",
+      color: "red",
+    });
+    return false;
+  }
+
+  if (formData.amount <= 0) {
+    notifications.show({
+      message: "Amount must be greater than 0",
+      color: "red",
+    });
+    return false;
+  }
+
+  if (traineesNumber <= 0) {
+    notifications.show({
+      message: "Number of trainees must be greater than 0",
+      color: "red",
+    });
+    return false;
+  }
+  if (paymentType === "installments") {
+    const totalPercentage = formData.installments?.reduce(
+      (sum, value) => sum + value.percentage,
+      0
+    ) || 0;
+    
+    if (totalPercentage !== 100) {
+      setInstallmentsError(
+        "Total installments percentage must equal 100%",
+      );
+      return false;
+    }
+  }
+
+  return true;
+};
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Add form validation
+    if (!validateForm()) {
+      return;
+    }
+  
     setLoading(true);
-
     const newData = {
       name: formData.name,
       contract: formData.file,
-      applicantId: data.applicant.uuid,
-      applicationId: data?.uuid,
+      applicantId: data?.application?.applicant?.uuid, // Add null check
+      applicationId: data?.application?.uuid,
       amount: formData.amount,
-      tradeTrainees: formData.tradeTrainees.map((trd) => ({
-        trade_id: trd.trade.uuid,
-        numberOfTrainees: trd.trainees,
-      })),
-      installments:
-        formData.paymentType === "instant" ? [100] : formData.installments,
+      installments: paymentType === "instant" 
+        ? [{ title: "Full Payment", percentage: 100, amount: formData.amount, condition: "Instant payment" }] 
+        : formData.installments,
     };
+    console.log("Data --> ", newData, data);  
+
     const submitForm = new FormData();
-    submitForm.append("name", newData.name);
-    submitForm.append("contract", newData.contract as Blob);
-    submitForm.append("applicantId", newData.applicantId);
-    submitForm.append("amount", newData.amount.toString());
-    submitForm.append("applicationId", newData.applicationId);
+    submitForm.append("attachment", newData.contract as Blob);
+    submitForm.append("applicantID", newData.applicantId);
+    submitForm.append("totalAmount", newData.amount.toString());
+    submitForm.append("numberOfTrainees", traineesNumber.toString());
+    submitForm.append("applicationID", newData.applicationId);
     newData.installments &&
       submitForm.append("installments", JSON.stringify(newData.installments));
-    submitForm.append("tradeNumbers", JSON.stringify(newData.tradeTrainees));
 
     try {
-      const res = await authorizedApi.post("/contracts", submitForm, {
+      const res = await authorizedApi.post("/negotiation-contract/sdf/upload-contract", submitForm, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       notifications.show({
         message: res?.data?.message,
         color: "blue",
       });
-      //   setFormData({ file: null, name: "", paymentType: "" });
+      getApplicants(dispatch);
+      getContracts(dispatch);
       closeAddContract();
     } catch (err: any) {
       notifications.show({
@@ -131,26 +181,6 @@ const AddContract: React.FC<AddContractProps> = ({
             onSubmit={handleSubmit}
             className="w-full  flex flex-col gap-2 px-2"
           >
-            <div className="w-full mb-4 ">
-              <label
-                htmlFor="name"
-                className="block text-md font-bold text-gray-700"
-              >
-                Name of the Contract
-              </label>
-              <div className="flex items-center w-full bg-gray2 p-2 px-3 rounded-2xl gap-2">
-                <CashOut />
-                <input
-                  type="text"
-                  placeholder="Name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, name: e.target.value }))
-                  }
-                  className="flex-grow outline-none bg-transparent py-1"
-                />
-              </div>
-            </div>
             <div className="w-full my-2">
               <label
                 htmlFor="fileUpload"
@@ -221,6 +251,27 @@ const AddContract: React.FC<AddContractProps> = ({
                 />
               </div>
             </div>
+            <div className="w-full mb-4 ">
+              <label
+                htmlFor="name"
+                className="block text-md font-bold text-gray-700"
+              >
+                Number of Trainees
+              </label>
+              <div className="flex items-center w-full bg-gray2 p-2 px-3 rounded-2xl gap-2">
+                <CashOut />
+                <input
+                  type="number"
+                  min={0}
+                  placeholder="Number of Trainees"
+                  value={traineesNumber}
+                  onChange={(e) =>
+                    setTraineesNumber(parseInt(e.target.value))
+                  }
+                  className="flex-grow outline-none bg-transparent py-1"
+                />
+              </div>
+            </div>
             <div className="w-full mb-4">
               <label
                 htmlFor="paymentType"
@@ -253,21 +304,39 @@ const AddContract: React.FC<AddContractProps> = ({
             <div className="mb-4">
               {paymentType === "installments" && (
                 <div>
+                  <Fieldset legend="Installment">
                   <div className="flex items-center gap-4">
                     <div className="w-full mb-4 ">
+                    <label
+                        htmlFor="paymentType"
+                        className="block text-md font-bold text-gray-700"
+                      >
+                        Title
+                      </label>
+                      <div className="flex items-center w-full bg-gray2 p-2 px-3 rounded-2xl gap-2">
+                        <CashOut />
+                        <input
+                          type="text"
+                          placeholder="Title"
+                          value={title}
+                          onChange={(e) => {
+                            setTitle(e.target.value);
+                          }}
+                          className="flex-grow outline-none bg-transparent py-1"
+                        />
+                      </div>
                       <label
                         htmlFor="paymentType"
                         className="block text-md font-bold text-gray-700"
                       >
-                        Installment
+                        Percentage
                       </label>
                       <div className="flex items-center w-full bg-gray2 p-2 px-3 rounded-2xl gap-2">
                         <CashOut />
                         <input
                           type="number"
-                          min={1}
-                          max={100}
-                          placeholder="Installment Percentage eg:10%"
+                          // min={1}
+                          placeholder="Installment Percentage eg. 20%"
                           value={installmentsInput}
                           onChange={(e) => {
                             setInstallmentsInput(parseInt(e.target.value));
@@ -275,150 +344,67 @@ const AddContract: React.FC<AddContractProps> = ({
                           }}
                           className="flex-grow outline-none bg-transparent py-1"
                         />
-                        <span
-                          className=" bg-blue-500 bg-opacity-15 py-1 rounded-2xl px-2  flex gap-1"
-                          onClick={() => {
-                            setInstallmentsError("");
-                            if (validateAddingInstallment()) return;
-                            setFormData((prev) => ({
-                              ...prev,
-                              installments: [
-                                ...(prev.installments || []),
-                                installmentsInput,
-                              ],
-                            }));
+                      </div>
+                      <div className="w-full mb-4 ">
+                        <label
+                          htmlFor="paymentType"
+                          className="block text-md font-bold text-gray-700"
+                        >
+                          Condition
+                        </label>
+                      <div className="flex items-center w-full bg-gray2 p-2 px-3 rounded-2xl gap-2">
+                        <CashOut />
+                        <input
+                          type="text"
+                          placeholder="Comment"
+                          value={comment}
+                          onChange={(e) => {
+                            setComment(e.target.value);
+                          }}
+                          className="flex-grow outline-none bg-transparent py-1"
+                        />
+                        </div>
+                      </div>
+                      <div
+                        className=" bg-blue-500 bg-opacity-15 py-1 rounded-2xl px-2 justify-self-end flex gap-1"
+                        onClick={() => {
+                          setInstallmentsError("");
+                          if (validateAddingInstallment()) return;
+                          setFormData((prev) => ({
+                            ...prev,
+                            installments: [
+                              ...(prev.installments || []),
+                              { title, percentage: installmentsInput, amount: installmentsInput * formData.amount / 100, condition: comment },
+                            ],
+                          }));
+                            setTitle("");
+                            setInstallmentsInput(0);
+                            setComment("");
                           }}
                         >
                           <SolarAddSquareBold className="mt-[1px] w-5 h-5 text-blue-500" />
                           <div className="text-blue-500">Add</div>
-                        </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-4 flex-wrap">
+                  </Fieldset>
+                  {installmentsError && (
+                    <p className="text-red-500 text-sm mt-3">{installmentsError}</p>
+                  )}
+                  <div className="flex items-center gap-4 flex-wrap mt-3">
                     {formData.installments?.map((installment, index) => (
                       <div
                         className="bg-primary text-white font-medium px-4 py-2 rounded-full"
                         key={index}
                       >
-                        {index + 1} th : {installment} %
+                        {index + 1} th : {installment.percentage} %
                       </div>
                     ))}
                   </div>
-                  {installmentsError && (
-                    <p className="text-red-500 text-sm">{installmentsError}</p>
-                  )}
                 </div>
               )}
             </div>
             <div className="space-y-3 mb-4">
-              <div>
-                <div className="w-full">
-                  <label
-                    htmlFor="trade"
-                    className="block  font-bold text-gray-700"
-                  >
-                    Trade/Number of trainees
-                  </label>
-                  <div className="w-full  flex items-center  bg-gray2  rounded-2xl">
-                    <div className="flex-grow  flex items-center gap-2 border-r border-r-gray h-full  p-2">
-                      <BsPerson className="w-5 h-5" />
-                      <div className="flex-grow">
-                        <Select
-                          name="trade"
-                          value={selectedTrade}
-                          onChange={(value) =>
-                            setSelectedTrade(
-                              trades.find((trade) => trade.uuid === value),
-                            )
-                          }
-                          data={trades.map((trade) => ({
-                            value: trade.uuid,
-                            label: trade.title,
-                          }))}
-                          placeholder="Select trade"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex-grow flex items-center gap-2 p-2">
-                      <BsPerson className="w-5 h-5" />
-                      <input
-                        type="number"
-                        name="trainees"
-                        value={traineesNumber}
-                        placeholder="Number of trainees"
-                        className="outline-none flex-grow  bg-transparent"
-                        onChange={(e) =>
-                          setTraineesNumber(parseInt(e.target.value))
-                        }
-                      />
-                      <span
-                        className=" bg-blue-500 bg-opacity-15 py-1 rounded-2xl px-2  flex gap-1"
-                        onClick={() =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            tradeTrainees: [
-                              ...prev.tradeTrainees,
-                              {
-                                trade: selectedTrade,
-                                trainees: traineesNumber,
-                              },
-                            ],
-                          }))
-                        }
-                      >
-                        <SolarAddSquareBold className="mt-[1px] w-5 h-5 text-blue-500" />
-                        <div className="text-blue-500">Add</div>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <table className="mt-3">
-                  <thead>
-                    <tr>
-                      <th className="px-4 py-2 text-sm font-medium text-gray-700">
-                        Trade
-                      </th>
-                      <th className="px-4 py-2 text-sm font-medium text-gray-700">
-                        Number of Trainees
-                      </th>
-                      <th className="px-4 py-2 text-sm font-medium text-gray-700">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {formData.tradeTrainees?.map((tradeTrainee, index) => (
-                      <tr key={index}>
-                        <td className="px-4 py-2 text-sm">
-                          {tradeTrainee.trade.title}
-                        </td>
-                        <td className="px-4 py-2 text-sm">
-                          {tradeTrainee.trainees}
-                        </td>
-                        <td className="px-4 py-2 text-sm">
-                          <button
-                            className="bg-primary px-2 text-sm py-1 text-white font-medium rounded-full"
-                            onClick={() =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                tradeTrainees: prev.tradeTrainees.filter(
-                                  (trade) =>
-                                    trade.trade.uuid !==
-                                    tradeTrainee.trade.uuid,
-                                ),
-                              }))
-                            }
-                          >
-                            Remove
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
               <div className="w-full flex justify-center mt-4 space-x-4">
                 <button
                   type="button"
