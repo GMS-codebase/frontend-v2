@@ -16,6 +16,7 @@ import { handleDownloadFile } from "@/utils/funcs";
 import MinutesDecisionConfirm from "@/components/Modals/MinutesDecisionConfirm";
 
 const Page = () => {
+  
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
