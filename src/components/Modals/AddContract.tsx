@@ -37,7 +37,12 @@ const AddContract: React.FC<AddContractProps> = ({
     name: string;
     file: File | null;
     paymentType: string;
-    installments?: { title: string; amount: number; condition: string, percentage: number }[];
+    installments?: {
+      title: string;
+      amount: number;
+      condition: string;
+      percentage: number;
+    }[];
     amount: number;
     tradeTrainees: { trade: Trade; trainees: number }[];
   }>({
@@ -65,55 +70,54 @@ const AddContract: React.FC<AddContractProps> = ({
   };
 
   // Add this validation function before handleSubmit
-const validateForm = () => {
-  if (!formData.file) {
-    notifications.show({
-      message: "Please upload a contract file",
-      color: "red",
-    });
-    return false;
-  }
-
-  if (formData.amount <= 0) {
-    notifications.show({
-      message: "Amount must be greater than 0",
-      color: "red",
-    });
-    return false;
-  }
-
-  if (traineesNumber <= 0) {
-    notifications.show({
-      message: "Number of trainees must be greater than 0",
-      color: "red",
-    });
-    return false;
-  }
-  if (paymentType === "installments") {
-    const totalPercentage = formData.installments?.reduce(
-      (sum, value) => sum + value.percentage,
-      0
-    ) || 0;
-    
-    if (totalPercentage !== 100) {
-      setInstallmentsError(
-        "Total installments percentage must equal 100%",
-      );
+  const validateForm = () => {
+    if (!formData.file) {
+      notifications.show({
+        message: "Please upload a contract file",
+        color: "red",
+      });
       return false;
     }
-  }
 
-  return true;
-};
+    if (formData.amount <= 0) {
+      notifications.show({
+        message: "Amount must be greater than 0",
+        color: "red",
+      });
+      return false;
+    }
+
+    if (traineesNumber <= 0) {
+      notifications.show({
+        message: "Number of trainees must be greater than 0",
+        color: "red",
+      });
+      return false;
+    }
+    if (paymentType === "installments") {
+      const totalPercentage =
+        formData.installments?.reduce(
+          (sum, value) => sum + value.percentage,
+          0,
+        ) || 0;
+
+      if (totalPercentage !== 100) {
+        setInstallmentsError("Total installments percentage must equal 100%");
+        return false;
+      }
+    }
+
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     // Add form validation
     if (!validateForm()) {
       return;
     }
-  
+
     setLoading(true);
     const newData = {
       name: formData.name,
@@ -121,11 +125,19 @@ const validateForm = () => {
       applicantId: data?.application?.applicant?.uuid, // Add null check
       applicationId: data?.application?.uuid,
       amount: formData.amount,
-      installments: paymentType === "instant" 
-        ? [{ title: "Full Payment", percentage: 100, amount: formData.amount, condition: "Instant payment" }] 
-        : formData.installments,
+      installments:
+        paymentType === "instant"
+          ? [
+              {
+                title: "Full Payment",
+                percentage: 100,
+                amount: formData.amount,
+                condition: "Instant payment",
+              },
+            ]
+          : formData.installments,
     };
-    console.log("Data --> ", newData, data);  
+    console.log("Data --> ", newData, data);
 
     const submitForm = new FormData();
     submitForm.append("attachment", newData.contract as Blob);
@@ -137,9 +149,13 @@ const validateForm = () => {
       submitForm.append("installments", JSON.stringify(newData.installments));
 
     try {
-      const res = await authorizedApi.post("/negotiation-contract/sdf/upload-contract", submitForm, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const res = await authorizedApi.post(
+        "/negotiation-contract/sdf/upload-contract",
+        submitForm,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
       notifications.show({
         message: res?.data?.message,
         color: "blue",
@@ -265,9 +281,7 @@ const validateForm = () => {
                   min={0}
                   placeholder="Number of Trainees"
                   value={traineesNumber}
-                  onChange={(e) =>
-                    setTraineesNumber(parseInt(e.target.value))
-                  }
+                  onChange={(e) => setTraineesNumber(parseInt(e.target.value))}
                   className="flex-grow outline-none bg-transparent py-1"
                 />
               </div>
@@ -305,78 +319,84 @@ const validateForm = () => {
               {paymentType === "installments" && (
                 <div>
                   <Fieldset legend="Installment">
-                  <div className="flex items-center gap-4">
-                    <div className="w-full mb-4 ">
-                    <label
-                        htmlFor="paymentType"
-                        className="block text-md font-bold text-gray-700"
-                      >
-                        Title
-                      </label>
-                      <div className="flex items-center w-full bg-gray2 p-2 px-3 rounded-2xl gap-2">
-                        <CashOut />
-                        <input
-                          type="text"
-                          placeholder="Title"
-                          value={title}
-                          onChange={(e) => {
-                            setTitle(e.target.value);
-                          }}
-                          className="flex-grow outline-none bg-transparent py-1"
-                        />
-                      </div>
-                      <label
-                        htmlFor="paymentType"
-                        className="block text-md font-bold text-gray-700"
-                      >
-                        Percentage
-                      </label>
-                      <div className="flex items-center w-full bg-gray2 p-2 px-3 rounded-2xl gap-2">
-                        <CashOut />
-                        <input
-                          type="number"
-                          // min={1}
-                          placeholder="Installment Percentage eg. 20%"
-                          value={installmentsInput}
-                          onChange={(e) => {
-                            setInstallmentsInput(parseInt(e.target.value));
-                            installmentsError && setInstallmentsError("");
-                          }}
-                          className="flex-grow outline-none bg-transparent py-1"
-                        />
-                      </div>
+                    <div className="flex items-center gap-4">
                       <div className="w-full mb-4 ">
                         <label
                           htmlFor="paymentType"
                           className="block text-md font-bold text-gray-700"
                         >
-                          Condition
+                          Title
                         </label>
-                      <div className="flex items-center w-full bg-gray2 p-2 px-3 rounded-2xl gap-2">
-                        <CashOut />
-                        <input
-                          type="text"
-                          placeholder="Comment"
-                          value={comment}
-                          onChange={(e) => {
-                            setComment(e.target.value);
-                          }}
-                          className="flex-grow outline-none bg-transparent py-1"
-                        />
+                        <div className="flex items-center w-full bg-gray2 p-2 px-3 rounded-2xl gap-2">
+                          <CashOut />
+                          <input
+                            type="text"
+                            placeholder="Title"
+                            value={title}
+                            onChange={(e) => {
+                              setTitle(e.target.value);
+                            }}
+                            className="flex-grow outline-none bg-transparent py-1"
+                          />
                         </div>
-                      </div>
-                      <div
-                        className=" bg-blue-500 bg-opacity-15 py-1 rounded-2xl px-2 justify-self-end flex gap-1"
-                        onClick={() => {
-                          setInstallmentsError("");
-                          if (validateAddingInstallment()) return;
-                          setFormData((prev) => ({
-                            ...prev,
-                            installments: [
-                              ...(prev.installments || []),
-                              { title, percentage: installmentsInput, amount: installmentsInput * formData.amount / 100, condition: comment },
-                            ],
-                          }));
+                        <label
+                          htmlFor="paymentType"
+                          className="block text-md font-bold text-gray-700"
+                        >
+                          Percentage
+                        </label>
+                        <div className="flex items-center w-full bg-gray2 p-2 px-3 rounded-2xl gap-2">
+                          <CashOut />
+                          <input
+                            type="number"
+                            // min={1}
+                            placeholder="Installment Percentage eg. 20%"
+                            value={installmentsInput}
+                            onChange={(e) => {
+                              setInstallmentsInput(parseInt(e.target.value));
+                              installmentsError && setInstallmentsError("");
+                            }}
+                            className="flex-grow outline-none bg-transparent py-1"
+                          />
+                        </div>
+                        <div className="w-full mb-4 ">
+                          <label
+                            htmlFor="paymentType"
+                            className="block text-md font-bold text-gray-700"
+                          >
+                            Condition
+                          </label>
+                          <div className="flex items-center w-full bg-gray2 p-2 px-3 rounded-2xl gap-2">
+                            <CashOut />
+                            <input
+                              type="text"
+                              placeholder="Comment"
+                              value={comment}
+                              onChange={(e) => {
+                                setComment(e.target.value);
+                              }}
+                              className="flex-grow outline-none bg-transparent py-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          className=" bg-blue-500 bg-opacity-15 py-1 rounded-2xl px-2 justify-self-end flex gap-1"
+                          onClick={() => {
+                            setInstallmentsError("");
+                            if (validateAddingInstallment()) return;
+                            setFormData((prev) => ({
+                              ...prev,
+                              installments: [
+                                ...(prev.installments || []),
+                                {
+                                  title,
+                                  percentage: installmentsInput,
+                                  amount:
+                                    (installmentsInput * formData.amount) / 100,
+                                  condition: comment,
+                                },
+                              ],
+                            }));
                             setTitle("");
                             setInstallmentsInput(0);
                             setComment("");
@@ -389,7 +409,9 @@ const validateForm = () => {
                     </div>
                   </Fieldset>
                   {installmentsError && (
-                    <p className="text-red-500 text-sm mt-3">{installmentsError}</p>
+                    <p className="text-red-500 text-sm mt-3">
+                      {installmentsError}
+                    </p>
                   )}
                   <div className="flex items-center gap-4 flex-wrap mt-3">
                     {formData.installments?.map((installment, index) => (
