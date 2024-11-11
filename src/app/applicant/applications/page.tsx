@@ -11,7 +11,7 @@ import { Menu } from "@mantine/core";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
-export const getApplicationStatus = (application: any) => {
+const getApplicationStatus = (application: any) => {
   if (
     application?.currentStage === "EVALUATION" &&
     !application?.call?.closedEvaluation

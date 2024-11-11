@@ -11,10 +11,35 @@ import { FiEye } from "react-icons/fi";
 import { BiSearch } from "react-icons/bi";
 import { SolarAddFolderBold } from "@/components/core/icons";
 import { DataTable } from "@/components/core/data-table";
-import { getApplicationStatus } from "../applications/page";
 import { handleDownloadFile } from "@/utils/funcs";
 import MinutesDecisionConfirm from "@/components/Modals/MinutesDecisionConfirm";
-
+const getApplicationStatus = (application: any) => {
+  if (
+    application?.currentStage === "EVALUATION" &&
+    !application?.call?.closedEvaluation
+  ) {
+    return "EVALUATION IN PROGRESS";
+  } else if (
+    application?.currentStage === "DUE_DILIGENCY" &&
+    !application?.call?.closedDueDiligency
+  ) {
+    return "DUE DILIGENCY IN  PROGRESS";
+  } else if (
+    application?.currentStage === "GRANT_COMMITTEE" &&
+    !application?.call?.closedGrantCommittee
+  ) {
+    return "GRANT COMMITTEE IN PROGRESS";
+  } else if (
+    application?.currentStage === "CONTRACT_SIGNING" &&
+    (!application?.call?.closedGrantCommittee ||
+      !application?.call?.closedDueDiligency ||
+      !application?.call?.closedEvaluation)
+  ) {
+    return "CONTRACT SIGNING IN PROGRESS";
+  } else {
+    return application?.currentStage;
+  }
+};
 const Page = () => {
   const columns: ColumnDef<any>[] = [
     {
