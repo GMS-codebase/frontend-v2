@@ -5,11 +5,13 @@ export const Page1 = ({
   setData,
   comments,
   setComments,
+  isApplicant,
 }: {
   data: any;
   setData?: any;
   comments?: Comments;
   setComments?: any;
+  isApplicant?: boolean;
 }) => {
   const handleCommentChange = (inputName: string, value: any) => {
     if (setComments) {
@@ -34,7 +36,7 @@ export const Page1 = ({
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!comments || !setData}
         />
-        {comments && (
+        {!isApplicant && comments && (
           <div className="mt-2 ">
             <label htmlFor="" className="font-medium text-sm">
               Comment
@@ -66,7 +68,7 @@ export const Page1 = ({
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!comments || !setData}
         />
-        {comments && (
+        {!isApplicant && comments && (
           <div className="mt-2">
             <label htmlFor="" className="font-medium text-sm">
               Comment
@@ -93,7 +95,7 @@ export const Page1 = ({
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!comments || !setData}
         />
-        {comments && (
+        {!isApplicant && comments && (
           <div className="mt-2">
             <label htmlFor="" className="font-medium text-sm">
               Comment
@@ -124,7 +126,7 @@ export const Page1 = ({
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!comments || !setData}
         />
-        {comments && (
+        {!isApplicant && comments && (
           <div className="mt-2">
             <label htmlFor="" className="font-medium text-sm">
               Comment
@@ -155,7 +157,7 @@ export const Page1 = ({
           className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
           disabled={!!comments || !setData}
         />
-        {comments && (
+        {!isApplicant && comments && (
           <div className="mt-2">
             <label htmlFor="" className="font-medium text-sm">
               Comment

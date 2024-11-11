@@ -64,7 +64,7 @@ const Page = () => {
   const goToBudget = () => {
     setCurrentComponent("IndicativeBudget");
   };
-  const [commentsData, setCommentsData] = useState<Comments>({
+  const [commentsData, setCommentsData] = useState<any>({
     titleComment: application?.projectFunding?.titleComment || "",
     activitiesComment: application?.projectFunding?.activitiesComment || "",
     readinessExecuteComment:
@@ -90,6 +90,8 @@ const Page = () => {
       application?.projectFunding?.recruitmentTrainerComment || "",
     MOUsAttachmentComment:
       application?.projectFunding?.MOUsAttachmentComment || "",
+    premisesAttachmentComment:
+      application?.projectFunding?.premisesAttachmentComment || "",
     identificationMemberComment:
       application?.projectFunding?.identificationMemberComment || "",
     assessmentEquipmentComment:
@@ -124,7 +126,7 @@ const Page = () => {
         return (
           <FundingQuestions
             application={application}
-            // showComments={application?.currentStage !== "SUBMISSION"}
+            // showComments={application?.currentStage !== "SUBMITTED"}
             data={application?.projectFunding}
             setComments={!properties.isCommented ? setCommentsData : undefined}
             comments={commentsData}
@@ -135,7 +137,7 @@ const Page = () => {
         return (
           <BudgetQuestions
             application={application}
-            // showComments={application?.currentStage !== "SUBMISSION"}
+            // showComments={application?.currentStage !== "SUBMITTED"}
             data={application?.budget}
             comments={commentsData}
             setComments={!properties.isCommented ? setCommentsData : undefined}
@@ -179,6 +181,7 @@ const Page = () => {
         "Upload comments on the previous financial report.",
       contributionFromApplicantComment:
         "Specify comments regarding the applicant’s contribution.",
+      budgetAttachmentComment: "Upload comments on the budget attachment.",
     };
 
     if (!commentsData.titleComment) return commentMessages.titleComment;
@@ -211,6 +214,26 @@ const Page = () => {
     }
     setLoading(true);
     try {
+      if (
+        // !commentsData.previousFinancialReportComment ||
+        // !commentsData.activitiesComment ||
+        // !commentsData.assessmentEquipmentComment ||
+        // !commentsData.budgetSummaryAttachmentComment ||
+        // !commentsData.contributionComment ||
+        // !commentsData.contributionFromApplicantComment ||
+        // !commentsData.identificationEmployeeComment ||
+        // !commentsData.identificationMemberComment ||
+        !commentsData.titleComment
+        // !commentsData.identificationEmployeeComment ||
+        // !commentsData.institutionComment
+      ) {
+        notifications.show({
+          message: "Please fill all comments data!",
+          color: "red",
+          duration: 10000,
+        });
+        return setLoading(false);
+      }
       await authorizedApi.patch(`/application/comment/${id}`, commentsData);
       notifications.show({
         message: "Comments Added Successfully!",
@@ -243,7 +266,6 @@ const Page = () => {
       </div>
     );
   }
-
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -412,7 +434,7 @@ const Page = () => {
       </div>
       <div className="flex gap-6">
         <div
-          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMISSION" ? "w-full" : "w-[70%]"} gap-4 p-5`}
+          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 p-5`}
         >
           <div className="flex flex-col gap-4 w-full">
             <div className="font-semibold text-2xl">Questions and answers</div>
@@ -440,7 +462,7 @@ const Page = () => {
             </div>
             <div className="mt-4 w-full">{renderComponent()}</div>
             {!properties.isCommented &&
-              application?.currentStage !== "SUBMISSION" && (
+              application?.currentStage !== "SUBMITTED" && (
                 <div className="w-full flex justify-center mt-4 space-x-4">
                   <button
                     type="button"
@@ -464,7 +486,7 @@ const Page = () => {
           <div className="flex  h-[500px] items-center justify-center bg-white w-[30%] rounded-2xl p-5 gap-4">
             <p>Loading ....</p>
           </div>
-        ) : application?.currentStage === "SUBMISSION" ? (
+        ) : application?.currentStage === "SUBMITTED" ? (
           <div></div>
         ) : (
           <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
@@ -587,6 +609,7 @@ const Page = () => {
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
         evaluations={application?.evaluationDecisions || []}
+        application={application}
       />
     </div>
   );

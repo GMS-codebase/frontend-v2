@@ -36,6 +36,7 @@ export interface ApplicationQuestions {
   roleAttachment?: File;
   institutionAttachment?: File;
   trainingManualAttachment?: File;
+  premisesAttachment?: File;
   trainingEquipmentAttachment?: File;
   previousFinancialReportAttachment?: File;
   MOUsAttachment?: File[];

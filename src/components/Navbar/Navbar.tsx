@@ -27,6 +27,11 @@ import {
   getMinutes,
   getRoles,
   getSectorTrades,
+  getBudgetLines,
+  getApplicationsReadyForMinutes,
+  getRejectedMinutes,
+  getApprovedMinutes,
+  getUploadedMinutes,
 } from "@/utils/funcs";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
@@ -79,15 +84,21 @@ const Navbar = () => {
       getApplicants(dispatch);
       getEmployees(dispatch);
       getRoles(dispatch);
+      getBudgetLines(dispatch);
     } else if (role === "SDF_SECRETARIATE") {
       getApplicants(dispatch);
       getContracts(dispatch);
       getMinutes(dispatch);
+      getApplicationsReadyForMinutes(dispatch);
+      getUploadedMinutes(dispatch);
+      getApprovedMinutes(dispatch);
+      getRejectedMinutes(dispatch);
       getApplicationsForContracts(dispatch);
     } else if (role === "APPLICANT") {
       getMyContacts(dispatch);
       getMyApplicantProfile(dispatch);
       getMyApplications(dispatch);
+      getBudgetLines(dispatch);
     }
     getEmpStages(dispatch);
     getWindows(dispatch);
