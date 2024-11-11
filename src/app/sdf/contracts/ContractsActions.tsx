@@ -38,12 +38,12 @@ const ContractsActions = ({
           {isNew && (
             <Menu.Item>
               <div
-                onClick={() =>
-                  setIsContract({
-                    isOpen: true,
-                    application: data,
-                  })
-                }
+                // onClick={() =>
+                //   setIsContract({
+                //     isOpen: true,
+                //     application: data,
+                //   })
+                // }
                 className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
               >
                 <CiEdit size={21} color="#576074" />

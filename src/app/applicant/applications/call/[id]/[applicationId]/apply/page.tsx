@@ -27,8 +27,15 @@ const Page = () => {
   const { id, applicationId } = useParams();
   const [loading, setLoading] = useState<any>();
   const [currentStep, setCurrentStep] = useState(0);
-  const { applications } = useSelector((state: any) => state.applications);
-  const application = applications.find((ap: any) => ap.uuid == applicationId);
+  const {
+    applications,
+    myApplications,
+    loading: applicationsLoading,
+  } = useSelector((state: any) => state.applications);
+  const [application, setApplication] = useState<any>();
+  useEffect(() => {
+    setApplication(applications.find((ap: any) => ap.uuid == applicationId));
+  }, [applications, applicationId]);
   const [data, setData] = useState<ApplicationQuestions>({
     title: "",
     activitiesAndOutcomes: "",
@@ -50,6 +57,7 @@ const Page = () => {
     contribution: "",
     roleAttachment: undefined,
     institutionAttachment: undefined,
+    premisesAttachment: undefined,
     trainingManualAttachment: undefined,
     trainingEquipmentAttachment: undefined,
     previousFinancialReportAttachment: undefined,
@@ -82,6 +90,9 @@ const Page = () => {
         identificationMember:
           application.projectFunding?.identificationMember ||
           prevData.identificationMember,
+        identificationEmployee:
+          application.projectFunding?.identificationEmployee ||
+          prevData.identificationEmployee,
         assessorsAndFacilitators:
           application.projectFunding?.assessorsAndFacilitators ||
           prevData.assessorsAndFacilitators,
@@ -94,6 +105,9 @@ const Page = () => {
         trainingEquipment:
           application.projectFunding?.trainingEquipment ||
           prevData.trainingEquipment,
+        premisesAttachment:
+          application.projectFunding?.premisesAttachment ||
+          prevData.premisesAttachment,
         assessmentAndCertificationProcess:
           application.projectFunding?.assessmentAndCertificationProcess ||
           prevData.assessmentAndCertificationProcess,
@@ -134,6 +148,7 @@ const Page = () => {
       contribution: "",
       roleAttachment: undefined,
       institutionAttachment: undefined,
+      premisesAttachment: undefined,
       trainingManualAttachment: undefined,
       trainingEquipmentAttachment: undefined,
       previousFinancialReportAttachment: undefined,
@@ -167,6 +182,19 @@ const Page = () => {
         return null;
     }
   };
+
+  if (applicationsLoading || !application) {
+    console.log(applications);
+    console.log(myApplications);
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  console.log(applications);
+  console.log(myApplications);
 
   return (
     <div>

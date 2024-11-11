@@ -23,6 +23,7 @@ import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
 import { getApplications } from "@/utils/funcs";
 import NullifyModal from "@/components/Modals/Nullify";
+import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,6 +32,10 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id,
   )[0];
+  const [
+    isOpenDueDiligencyDetails,
+    { open: openDueDiligencyDetails, close: closeDueDiligencyDetails },
+  ] = useDisclosure(false);
   const [nullifyLoading, setNullifyLoading] = useState<any>();
   const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [isOpenAddDue, setIsOpenAddDue] = useState(false);
@@ -95,6 +100,8 @@ const Page = () => {
       application?.projectFunding.recruitmentTrainerComment || "",
     MOUsAttachmentComment:
       application?.projectFunding.MOUsAttachmentComment || "",
+    premisesAttachmentComment:
+      application?.projectFunding?.premisesAttachmentComment || "",
     identificationMemberComment:
       application?.projectFunding.identificationMemberComment || "",
     assessmentEquipmentComment:
@@ -314,8 +321,8 @@ const Page = () => {
             <h3 className="font-semibold">Evaluation Stage</h3>
             <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
               {application?.currentStage === "EVALUATION"
-                ? "Pending"
-                : "Finished"}
+                ? "PENDING"
+                : "APPROVED"}
             </div>
             {application?.evaluationDecisions && (
               <div className="flex flex-col gap-2 mt-4">
@@ -363,7 +370,7 @@ const Page = () => {
             {application?.currentStage !== "DUE_DILIGENCY" && (
               <div className="flex flex-col gap-2 mt-4">
                 <button
-                  onClick={openAddDue}
+                  onClick={openDueDiligencyDetails}
                   className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
                 >
                   View details
@@ -416,10 +423,11 @@ const Page = () => {
           )}
         </div>
       </div>
-      <DueDiligenceModal
+      <DueDiligencyDetails
         application={application}
-        opened={isOpenAddDue}
-        close={closeAddDue}
+        opened={isOpenDueDiligencyDetails}
+        close={closeDueDiligencyDetails}
+        decisions={application?.duediligencyDecisions}
       />
       <MakeGrantCommitteeDecision
         application={application}
@@ -431,6 +439,7 @@ const Page = () => {
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
         evaluations={application?.evaluationDecisions}
+        application={application}
       />
       <NullifyModal
         closeModal={closeNullifyModal}

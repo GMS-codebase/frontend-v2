@@ -77,9 +77,17 @@ import {
   GET_STAGES_SUCCESS,
 } from "@/actions/EmpStagesActions";
 import {
+  GET_APPLICATIONS_READY_FOR_MINUTES_LOADING,
+  GET_APPLICATIONS_READY_FOR_MINUTES_SUCCESS,
+  GET_APPROVED_MINUTES_LOADING,
+  GET_APPROVED_MINUTES_SUCCESS,
   GET_MINUTES_ERROR,
   GET_MINUTES_LOADING,
   GET_MINUTES_SUCCESS,
+  GET_REJECTED_MINUTES_LOADING,
+  GET_REJECTED_MINUTES_SUCCESS,
+  GET_UPLOADED_MINUTES_LOADING,
+  GET_UPLOADED_MINUTES_SUCCESS,
 } from "@/actions/MinutesActions";
 import {
   GET_ROLES_LOADING,
@@ -94,6 +102,11 @@ import {
 } from "@/actions/DashboardActions";
 import { prioritySectors } from "../constants";
 import { notifications } from "@mantine/notifications";
+import {
+  GET_BUDGET_LINES_ERROR,
+  GET_BUDGET_LINES_LOADING,
+  GET_BUDGET_LINES_SUCCESS,
+} from "@/actions/BudgetLinesActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -214,6 +227,20 @@ export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_TRADES_ERROR, payload: err.response.data.error });
     });
 };
+export const getBudgetLines = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_BUDGET_LINES_LOADING });
+  authorizedApi
+    .get("/budgetlines/all")
+    .then((res) => {
+      dispatch({ type: GET_BUDGET_LINES_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_BUDGET_LINES_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
 export const getCalls = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_CALLS_LOADING });
   authorizedApi
@@ -263,6 +290,16 @@ export const handleDownloadFile = async (file: any, service: string) => {
   }
 };
 
+export const handleViewFile = (file: string, service: string): void => {
+  try {
+    const filename = encodeURIComponent(file.split("/").pop() || "");
+    const fileUrl = `/files/${service}/${filename}`;
+    window.open(fileUrl, "_blank");
+  } catch (error) {
+    console.error("Error opening file:", error);
+  }
+};
+
 export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_APPLICANTS_LOADING });
   authorizedApi
@@ -302,7 +339,7 @@ export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
 export const getMinutes = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MINUTES_LOADING });
   authorizedApi
-    .get("/contracts/negotiations/docs/all")
+    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint
     .then((res) => {
       dispatch({
         type: GET_MINUTES_SUCCESS,
@@ -332,7 +369,7 @@ export const getApplicationsForContracts = async (
 ) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
-    .get("/application/contract-signing/all")
+    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint
     .then((res) => {
       dispatch({
         type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
@@ -365,6 +402,7 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/application/all-application")
     .then((res) => {
+      console.log(res.data);
       dispatch({
         type: GET_MY_APPLICATIONS_SUCCESS,
         payload: res.data.data.data,
@@ -397,6 +435,68 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
     .get("/application/all-application")
     .then((res) => {
       dispatch({ type: GET_MY_CONTRACTS_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTRACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getApplicationsReadyForMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+) => {
+  dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
+  authorizedApi
+    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint
+    .then((res) => {
+      console.log(" applications ready --> ", res.data.data?.data);
+      dispatch({
+        type: GET_APPLICATIONS_READY_FOR_MINUTES_SUCCESS,
+        payload: res.data.data?.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MINUTES_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getUploadedMinutes = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_UPLOADED_MINUTES_LOADING });
+  authorizedApi
+    .get("/negotiation-contract/applications/pending")
+    .then((res) => {
+      dispatch({ type: GET_UPLOADED_MINUTES_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTRACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getApprovedMinutes = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_APPROVED_MINUTES_LOADING });
+  authorizedApi
+    .get("/negotiation-contract/applications/approved")
+    .then((res) => {
+      dispatch({ type: GET_APPROVED_MINUTES_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTRACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getRejectedMinutes = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_REJECTED_MINUTES_LOADING });
+  authorizedApi
+    .get("/application/all-application")
+    .then((res) => {
+      dispatch({ type: GET_REJECTED_MINUTES_SUCCESS, payload: res.data.data });
     })
     .catch((err) => {
       dispatch({
@@ -511,12 +611,12 @@ export const handleSubmit = async (
   const error =
     type === "save"
       ? undefined
-      : validateQuestions(
+      : await validateQuestions(
           data,
           application.window.title.includes("3") && 3,
           application.subWindow.title.includes("2") && 2,
         );
-  if (error) {
+  if (error !== null && type === "submit") {
     notifications.show({
       message: error,
       color: "red",
@@ -617,14 +717,17 @@ export const handleSubmit = async (
   if (data.budgetSummaryAttachment)
     submitData.append("budgetSummaryAttachment", data.budgetSummaryAttachment);
 
-  console.log("final data -->", data);
+  console.log(application);
   try {
-    const res = await authorizedApi.post(
+    await authorizedApi.post(
       `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${application.uuid}`,
       submitData,
     );
     notifications.show({
-      message: "Application filled successfully!",
+      message:
+        type == "save"
+          ? "Application drafted successfully"
+          : "Application filled successfully!",
       color: "blue",
     });
     setLoading(false);

@@ -1,9 +1,10 @@
 import { Comments } from "@/types";
 import { ApplicationQuestions } from "@/types/application";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
 import { Select } from "@mantine/core";
 import React, { useState, ChangeEvent } from "react";
-import { FaDownload } from "react-icons/fa6";
+import { FaDownload, FaTrash } from "react-icons/fa6";
+import { FaEdit } from "react-icons/fa";
 
 interface Props {
   data: any;
@@ -11,6 +12,7 @@ interface Props {
   comments?: Comments;
   setComments?: React.Dispatch<React.SetStateAction<Comments>>;
   application?: any;
+  isApplicant?: boolean;
 }
 
 const BudgetQuestions: React.FC<Props> = ({
@@ -19,39 +21,30 @@ const BudgetQuestions: React.FC<Props> = ({
   comments,
   setComments,
   application,
+  isApplicant,
 }) => {
-  const trades: any = application?.trades?.map((trade: any) => ({
-    label: trade.trade.title,
-    value: trade.trade.title,
-  }));
   const [budgetLineInputs, setBudgetLineInputs] = useState({
-    trade: "",
     amount: 0,
     budgetLine: "",
   });
   const [errors, setErrors] = useState({
-    trade: "",
     amount: "",
     budgetLine: "",
   });
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const handleArrayOfObjectsChange = (inputName: string, value: any) => {
     setData &&
       setData((prev: any) => {
         const newData = [...(prev[inputName] || [])];
         const existingIndex = newData.findIndex(
-          (item: any) =>
-            item.trade === value.trade && item.budgetLine === value.budgetLine,
+          (item: any) => item.budgetLine === value.budgetLine,
         );
-
         if (existingIndex !== -1) {
-          // Update the amount of the existing entry
           newData[existingIndex].amount += value.amount;
         } else {
-          // Add new entry
           newData.push(value);
         }
-
         return {
           ...prev,
           [inputName]: newData,
@@ -61,13 +54,12 @@ const BudgetQuestions: React.FC<Props> = ({
 
   const validateBudgetLineInputs = () => {
     const newErrors = {
-      trade: budgetLineInputs.trade ? "" : "Trade is required.",
       amount:
         budgetLineInputs.amount > 0 ? "" : "Amount must be greater than zero.",
       budgetLine: budgetLineInputs.budgetLine ? "" : "Budget line is required.",
     };
     setErrors(newErrors);
-    return !newErrors.trade && !newErrors.amount && !newErrors.budgetLine;
+    return !newErrors.amount && !newErrors.budgetLine;
   };
 
   const addBudgetLine = () => {
@@ -76,15 +68,48 @@ const BudgetQuestions: React.FC<Props> = ({
     }
     handleArrayOfObjectsChange("budgetLines", budgetLineInputs);
     setBudgetLineInputs({
-      trade: "",
       amount: 0,
       budgetLine: "",
     });
   };
 
+  const handleEdit = (index: number) => {
+    const budgetLine = data?.budgetLines[index];
+    setBudgetLineInputs({
+      amount: budgetLine.amount,
+      budgetLine: budgetLine.budgetLine,
+    });
+    setEditingIndex(index);
+  };
+
+  const handleDelete = (index: number) => {
+    setData &&
+      setData((prev: any) => ({
+        ...prev,
+        budgetLines: prev.budgetLines.filter(
+          (item: any, i: number) => i !== index,
+        ),
+      }));
+  };
+
+  const handleUpdate = () => {
+    if (!validateBudgetLineInputs() || editingIndex === null) return;
+
+    setData &&
+      setData((prev: any) => ({
+        ...prev,
+        budgetLines: prev.budgetLines.map((item: any, index: number) =>
+          index === editingIndex ? budgetLineInputs : item,
+        ),
+      }));
+
+    setBudgetLineInputs({ amount: 0, budgetLine: "" });
+    setEditingIndex(null);
+  };
+
   const renderBudgetLineInputs = () => (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-5">
         <div>
           <label
             htmlFor="budgetLine"
@@ -103,7 +128,6 @@ const BudgetQuestions: React.FC<Props> = ({
             }
             data={[
               "Occupation, safety, health and environmental at Workplace (OSHE)",
-              "Refreshment",
               "Consumables",
               "Trainees Facilitation Fees",
               "Trainers Allowances",
@@ -145,38 +169,13 @@ const BudgetQuestions: React.FC<Props> = ({
             <p className="text-red-600 text-sm">{errors.amount}</p>
           )}
         </div>
-        <div>
-          <label
-            htmlFor="trade"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Trade
-          </label>
-          <Select
-            id="trade"
-            name="trade"
-            value={budgetLineInputs.trade ?? ""}
-            onChange={(selectedOption: any) =>
-              setBudgetLineInputs((prev) => ({
-                ...prev,
-                trade: selectedOption || "",
-              }))
-            }
-            data={trades}
-            className="border pt-2 mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Select Trade"
-          />
-          {errors.trade && (
-            <p className="text-red-600 text-sm">{errors.trade}</p>
-          )}
-        </div>
       </div>
       <div className="flex justify-end">
         <button
-          onClick={addBudgetLine}
+          onClick={editingIndex !== null ? handleUpdate : addBudgetLine}
           className="mt-2 p-2 bg-primary text-white px-20 rounded-2xl"
         >
-          Add
+          {editingIndex !== null ? "Update" : "Add"}
         </button>
       </div>
     </div>
@@ -190,20 +189,26 @@ const BudgetQuestions: React.FC<Props> = ({
           Attach a file related to the budget summary
         </p>
         {comments || !setData ? (
-          <div className="mt-2">
+          <div className="grid grid-cols-2 gap-2 my-2">
             <button
-              disabled={data?.budgetSummaryAttachment === null}
+              onClick={() =>
+                handleViewFile(data?.budgetSummaryAttachment, "applications")
+              }
+              className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+            >
+              View File
+            </button>
+            <button
               onClick={() =>
                 handleDownloadFile(
                   data?.budgetSummaryAttachment,
                   "applications",
                 )
               }
-              className={`w-full h-12 ${data?.budgetSummaryAttachment ? "bg-primary" : "bg-gray-600"} text-white rounded-full`}
+              className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
             >
-              {data?.budgetSummaryAttachment
-                ? "Download Budget Summary"
-                : "No Budget Summary Attached"}
+              <FaDownload />
+              <p>Download File</p>
             </button>
           </div>
         ) : (
@@ -251,8 +256,8 @@ const BudgetQuestions: React.FC<Props> = ({
         <div className="flex items-center justify-between py-2">
           <h3 className="text-lg font-bold">Budget Line</h3>
           <div className=" text-white bg-primary rounded-full px-10 flex items-center gap-2 py-2 cursor-pointer">
-            <FaDownload />
-            <p>Template</p>
+            <FaEdit />
+            <p>Download Template</p>
           </div>
         </div>
         {!comments && setData && renderBudgetLineInputs()}
@@ -263,7 +268,9 @@ const BudgetQuestions: React.FC<Props> = ({
                 <tr className="bg-gray-100">
                   <th className="border p-2">Budget Line</th>
                   <th className="border p-2">Amount</th>
-                  <th className="border p-2">Trade</th>
+                  {!comments && setData && (
+                    <th className="border p-2">Actions</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -271,15 +278,24 @@ const BudgetQuestions: React.FC<Props> = ({
                   <tr key={index}>
                     <td className="border p-2">{item.budgetLine || "N/A"}</td>
                     <td className="border p-2">{item.amount || "N/A"}</td>
-                    <td className="border p-2">
-                      {item?.uuid
-                        ? trades.find(
-                            (trade: any) => trade.label === item?.trade?.title,
-                          )?.label
-                        : trades.find(
-                            (trade: any) => trade.value === item?.trade,
-                          )?.label}
-                    </td>
+                    {!comments && setData && (
+                      <td className="border p-2">
+                        <div className="flex gap-2 justify-center">
+                          <button
+                            onClick={() => handleEdit(index)}
+                            className="text-blue-600 hover:text-blue-800"
+                          >
+                            <FaEdit />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(index)}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -301,7 +317,7 @@ const BudgetQuestions: React.FC<Props> = ({
             )}
           </div>
         )}
-        {!setData && comments && (
+        {!isApplicant && !setData && comments && (
           <div className="mt-2">
             <p>Comment</p>
             <textarea
@@ -338,7 +354,7 @@ const BudgetQuestions: React.FC<Props> = ({
           disabled={!!comments || !setData}
           placeholder="Describe your contribution"
         />
-        {comments && (
+        {!isApplicant && comments && (
           <>
             <p className="text-sm text-gray-600">Comment</p>
             <textarea

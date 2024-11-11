@@ -15,6 +15,7 @@ import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
 import { getCalls } from "@/utils/funcs";
 import { ADD_CALL_SUCCESS, UPDATE_CALL_SUCCESS } from "@/actions/CallsActions";
+import { SUBWINDOW_STATUS, TRADE_STATUS, WINDOW_STATUS } from "@/utils/enums";
 
 const AddEditCall = ({
   isOpenAddEditCall,
@@ -27,7 +28,7 @@ const AddEditCall = ({
 }) => {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
-
+  const [errors, setErrors] = useState<any>();
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
@@ -46,21 +47,32 @@ const AddEditCall = ({
   const windows = useSelector((state: any) => state.windows);
   const { sectors } = useSelector((state: any) => state.sectors);
   let MultiWindowData =
-    windows?.windows?.map((window: any) => ({
-      value: window.uuid,
-      label: window.title,
-    })) ?? [];
+    windows?.windows
+      .filter(
+        (window: any) =>
+          window.subWindows.length !== 0 &&
+          window.status === WINDOW_STATUS.ACTIVE,
+      )
+      ?.map((window: any) => ({
+        value: window.uuid,
+        label: window.title,
+      })) ?? [];
 
   const getSubWindowsData = () => {
     const subWindowData =
       windows?.windows
         ?.filter((window: any) => selectedWindows?.includes(window.uuid))
-        .flatMap((window: any) =>
-          window.subWindows?.map((subWindow: any) => ({
-            value: subWindow?.uuid,
-            label: subWindow?.title,
-          })),
-        ) || [];
+        .flatMap((window: any) => {
+          return (
+            window.subWindows
+              ?.filter((sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE)
+              .map((subWindow: any) => ({
+                value: subWindow.uuid,
+                label: subWindow.title,
+              })) || []
+          );
+        }) || [];
+
     return subWindowData;
   };
 
@@ -76,7 +88,10 @@ const AddEditCall = ({
               subWindow.sectors
                 ?.map((sector: any) => {
                   const matchingSector = sectors.find(
-                    (s: any) => s.uuid === sector.uuid && s.trades.length > 0,
+                    (s: any) =>
+                      s.uuid === sector.uuid &&
+                      s.trades.length > 0 &&
+                      sector.status === TRADE_STATUS.ACTIVE,
                   );
                   return matchingSector
                     ? {
@@ -264,6 +279,7 @@ const AddEditCall = ({
                         required
                       />
                     </div>
+                    {}
                   </div>
                 </div>
 
@@ -278,8 +294,7 @@ const AddEditCall = ({
                     <span className="absolute left-2 top-[10px]">
                       <Subtitles />
                     </span>
-                    <input
-                      type="text"
+                    <textarea
                       name="description"
                       value={formData.description}
                       placeholder="Add description"

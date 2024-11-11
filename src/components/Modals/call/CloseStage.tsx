@@ -11,43 +11,49 @@ import { authorizedApi } from "@/utils/api";
 import { useParams } from "next/navigation";
 import { getCalls } from "@/utils/funcs";
 
-const CloseCallModal = ({
-  isOpenModal,
+const CloseStageModal = ({
   closeModal,
+  call,
+  data,
 }: {
-  isOpenModal: boolean;
   closeModal: () => void;
+  call: any;
+  data: {
+    opened: boolean;
+    stage: string;
+  };
 }) => {
   const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch();
-
-  const closeCall = async () => {
+  const handleCloseStage = async () => {
     setLoading(true);
-    setError(null);
-    try {
-      await authorizedApi.post(`/call/close-call-manually/${id}`);
-      notifications.show({
-        message: "Call closed successfully",
-        color: "blue",
+    authorizedApi
+      .post(`/call/close-stage`, { call: call?.title, stage: data?.stage })
+      .then((res) => {
+        notifications.show({
+          title: "Closed Stage Successfully!",
+          message: res.data.message,
+        });
+        getCalls(dispatch);
+        closeModal();
+      })
+      .catch((err) => {
+        notifications.show({
+          title: "Failed to close stage!",
+          message: err.response.data.message,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
       });
-      getCalls(dispatch);
-      closeModal();
-    } catch (error: any) {
-      setError(
-        error.response?.data?.message ?? "Error while nullifying decision",
-      );
-      notifications.show({ message: error.message, color: "red" });
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
     <Modal
       size=""
-      opened={isOpenModal}
+      opened={data.opened}
       onClose={closeModal}
       closeOnClickOutside={false}
       withCloseButton={false}
@@ -77,12 +83,8 @@ const CloseCallModal = ({
           <div className="w-full flex flex-col items-center">
             <Image src={deleteSvg} alt="vector" width={200} height={50} />
             <h1 className="text-2xl font-extrabold text-center">
-              Are you sure you want to close this call?
+              Are you sure you want to close this stage?
             </h1>
-            {/* <h2 className="text-[#000F2369] text-lg font-medium text-center">
-              This action may affect related records or data.
-            </h2> */}
-            {/* {error && <p className="text-red-500 text-center mt-2">{error}</p>} */}
           </div>
           <div className="w-full flex justify-center mt-4 space-x-4 p-6">
             <button
@@ -93,12 +95,12 @@ const CloseCallModal = ({
               Cancel
             </button>
             <button
-              onClick={closeCall}
+              onClick={handleCloseStage}
               type="button"
               disabled={loading}
               className="w-full px-4 py-3 bg-primary text-white rounded-full shadow-sm  2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Loading..." : "Close Call"}
+              {loading ? "Loading..." : "Close Stage"}
             </button>
           </div>
         </div>
@@ -107,4 +109,4 @@ const CloseCallModal = ({
   );
 };
 
-export default CloseCallModal;
+export default CloseStageModal;
