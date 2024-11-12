@@ -100,7 +100,7 @@ const GrantCommitteeDetails = ({
                     onClick={() =>
                       handleDownloadFile(
                         application?.grantCommitteeDecision?.attachment,
-                        "applications",
+                        "GrantCommitteeAttachments",
                       )
                     }
                   >

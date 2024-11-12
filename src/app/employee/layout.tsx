@@ -14,7 +14,7 @@ export default function AdminLayout({
   const [isCompressed, setIsCompressed] = useState(false);
   const [showAnnouncement, setShowAnnouncement] = useState(true);
   const { announcement, loading } = useSelector(
-    (state: any) => state.announcement,
+    (state: any) => state.announcement
   );
 
   return (
@@ -65,10 +65,10 @@ export default function AdminLayout({
         <div
           className={`${
             isCompressed ? "w-[93%]" : "w-[75%]"
-          } h-full bg-transparent side-section`}
+          } h-screen flex flex-col  bg-transparent side-section`}
         >
           <Navbar />
-          <div className="h-[95%] overflow-y-auto pt-8 pb-32 pages-parent">
+          <div className="flex-grow overflow-y-scroll pt-8 pb-32 pages-parent ">
             {children}
           </div>
         </div>
