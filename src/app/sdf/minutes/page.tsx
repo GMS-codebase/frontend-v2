@@ -307,23 +307,15 @@ const Page = () => {
 
       <Tabs defaultValue="applications">
         <Tabs.List className="w-auto my-2 ml-5 float-end">
-          <Tabs.Tab value="minutes">Meeting minutes Uploaded</Tabs.Tab>
           <Tabs.Tab value="applications">
             Ready for Minutes Negotiations
           </Tabs.Tab>
+          <Tabs.Tab value="minutes">Meeting minutes Uploaded</Tabs.Tab>
           <Tabs.Tab value="approved">Approved meeting minutes</Tabs.Tab>
           <Tabs.Tab value="rejected">Rejected meeting minutes</Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="minutes">
-          <h1 className="text-base p-4 font-bold">Minutes Uploaded</h1>
-          <DataTable
-            columns={minuteColumns}
-            data={uploadedMinutes}
-            loading={loadingMinutes}
-            noDataMessage="No Created Minutes"
-          />
-        </Tabs.Panel>
 
         <Tabs.Panel value="applications">
           <h1 className="text-base p-4 font-bold">
@@ -335,6 +327,14 @@ const Page = () => {
             data={readyForMinutesNegotiation}
             loading={loadingMinutes}
             noDataMessage="No Application ready for minute negotiation"
+          />
+        </Tabs.Panel>
+          <h1 className="text-base p-4 font-bold">Minutes Uploaded</h1>
+          <DataTable
+            columns={minuteColumns}
+            data={uploadedMinutes}
+            loading={loadingMinutes}
+            noDataMessage="No Created Minutes"
           />
         </Tabs.Panel>
 
