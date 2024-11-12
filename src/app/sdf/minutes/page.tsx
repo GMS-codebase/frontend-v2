@@ -5,34 +5,86 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { useDisclosure } from "@mantine/hooks";
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 import AddMinute from "@/components/Modals/contracts/AddMinutes";
 import MinutesActions from "./MinutesActions";
 
 const Page = () => {
-  const [isOpenTrade, { open, close }] = useDisclosure(false);
   const [isMinute, setIsMinute] = useState({
     isOpen: false,
     application: null,
+    type: "",
   });
 
   const {
     minutes,
-    uploadedMinutes,
-    approvedMinutes,
-    rejectedMinutes,
+    // uploadedMinutes,
+    // approvedMinutes,
+    // rejectedMinutes,
     loading: loadingMinutes,
-    uploadedMinutesLoading,
-    approvedMinutesLoading,
-    rejectedMinutesLoading,
-    applicationsReadyForMinutesLoading,
-    applicationsReadyForMinutes,
+    // uploadedMinutesLoading,
+    // approvedMinutesLoading,
+    // rejectedMinutesLoading,
+    // applicationsReadyForMinutesLoading,
+    // applicationsReadyForMinutes,
   } = useSelector((state: any) => state.minutes);
-  const { applicationsForContractSigning: applications, loading } = useSelector(
-    (state: any) => state.applications,
-  );
 
+  const [uploadedMinutes, setUploadedMinutes] = useState<any[]>([]);
+  const [readyForMinutesNegotiation, SetReadyForMinutesNegotiation] = useState<
+    any[]
+  >([]);
+  const [approvedMinutes, setApprovedMinutes] = useState<any[]>([]);
+  const [rejectedMinutes, setRejectedMinutes] = useState<any[]>([]);
+  const [negotiatedMinutes, setNegotiatedMinutes] = useState<any[]>([]);
+
+  console.log("minutes --> ", minutes);
+  useEffect(() => {
+    SetReadyForMinutesNegotiation(
+      minutes.filter(
+        (m: any) =>
+          !m?.uploadedMinutes &&
+          !m?.uploadedSignedMinutes &&
+          !m?.uploadedContract,
+      ),
+    );
+    setUploadedMinutes(
+      minutes.filter(
+        (m: any) =>
+          m?.uploadedMinutes &&
+          !m?.uploadedSignedMinutes &&
+          !m?.uploadedContract &&
+          m?.minuteStatus === "PENDING",
+      ),
+    );
+    setApprovedMinutes(
+      minutes.filter(
+        (m: any) =>
+          m?.uploadedMinutes &&
+          !m?.uploadedSignedMinutes &&
+          !m?.uploadedContract &&
+          m?.minuteStatus === "APPROVED",
+      ),
+    );
+    setRejectedMinutes(
+      minutes.filter(
+        (m: any) =>
+          m?.uploadedMinutes &&
+          !m?.uploadedSignedMinutes &&
+          !m?.uploadedContract &&
+          m?.minuteStatus === "REJECTED",
+      ),
+    );
+    setNegotiatedMinutes(
+      minutes.filter(
+        (m: any) =>
+          m?.uploadedMinutes &&
+          !m?.uploadedSignedMinutes &&
+          !m?.uploadedContract &&
+          m?.minuteStatus === "NEGOTIATED",
+      ),
+    );
+  }, [minutes]);
   const minuteColumns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -99,11 +151,7 @@ const Page = () => {
     {
       accessorKey: "approval_status",
       header: "Minute Approval Status",
-      cell: ({ row }) => (
-        <div className="w-full">
-          {row.original?.approval_status?.toUpperCase()}
-        </div>
-      ),
+      cell: ({ row }) => <div className="w-full">APPROVED</div>,
     },
     {
       accessorKey: "actions",
@@ -168,6 +216,13 @@ const Page = () => {
       ),
     },
     {
+      accessorKey: "call",
+      header: "Call",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.call?.title}</div>
+      ),
+    },
+    {
       accessorKey: "name",
       header: "Name",
       cell: ({ row }) => (
@@ -179,17 +234,6 @@ const Page = () => {
       header: "Applicant Phone",
       cell: ({ row }) => (
         <div className="w-full">{row.original?.applicant?.phone}</div>
-      ),
-    },
-    {
-      accessorKey: "description",
-      header: "Description",
-      cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.description?.length > 50
-            ? row.original?.description.slice(0, 50) + "..."
-            : row.original?.description}
-        </div>
       ),
     },
     {
@@ -272,44 +316,48 @@ const Page = () => {
         </Tabs.List>
 
         <Tabs.Panel value="minutes">
-          <h1 className="text-xl p-4 font-bold">Minutes Uploaded</h1>
+          <h1 className="text-base p-4 font-bold">Minutes Uploaded</h1>
           <DataTable
             columns={minuteColumns}
             data={uploadedMinutes}
-            loading={uploadedMinutesLoading}
+            loading={loadingMinutes}
             noDataMessage="No Created Minutes"
           />
         </Tabs.Panel>
 
         <Tabs.Panel value="applications">
-          <h1 className="text-xl p-4 font-bold">
+          <h1 className="text-base p-4 font-bold">
             {" "}
             Ready For Minutes Negotiations
           </h1>
           <DataTable
             columns={columns}
-            data={applicationsReadyForMinutes}
-            loading={applicationsReadyForMinutesLoading}
+            data={readyForMinutesNegotiation}
+            loading={loadingMinutes}
             noDataMessage="No Application ready for minute negotiation"
           />
         </Tabs.Panel>
 
         <Tabs.Panel value="approved">
-          <h1 className="text-xl p-4 font-bold">Approved minute negotiation</h1>
+          <h1 className="text-base p-4 font-bold">
+            Approved minute negotiation
+          </h1>
           <DataTable
             columns={approvedColumns}
-            loading={approvedMinutesLoading}
+            loading={loadingMinutes}
             data={approvedMinutes}
             noDataMessage="No Approved minute negotiation"
           />
         </Tabs.Panel>
 
         <Tabs.Panel value="rejected">
-          <h1 className="text-xl p-4 font-bold">Rejected minute negotiation</h1>
+          <h1 className="text-base p-4 font-bold">
+            Rejected minute negotiation
+          </h1>
           <DataTable
             columns={rejectedColumns}
             data={rejectedMinutes}
-            loading={rejectedMinutesLoading}
+            loading={loadingMinutes}
             noDataMessage="No Rejected Minute Negotiations"
           />
         </Tabs.Panel>
@@ -317,9 +365,12 @@ const Page = () => {
 
       {/* AddMinute Modal */}
       <AddMinute
+        type={isMinute.type}
         data={isMinute.application}
         isOpenAddMinute={isMinute.isOpen}
-        closeAddMinute={() => setIsMinute({ isOpen: false, application: null })}
+        closeAddMinute={() =>
+          setIsMinute({ isOpen: false, application: null, type: "" })
+        }
       />
     </div>
   );
