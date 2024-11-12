@@ -80,8 +80,7 @@ const MinutesActions = ({
                 </div>
               </Menu.Item>
               <Menu.Item
-                onClick={() => {
-                }}
+                onClick={() => {}}
                 className="w-full py-1 text-red-600"
               >
                 <div className="flex items-center gap-3 py-1">
