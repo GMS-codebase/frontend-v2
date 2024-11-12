@@ -81,7 +81,7 @@ const Page: React.FC = () => {
     setHtmlContent(value);
   };
 
-  console.log(fileBlobUrl);
+
 
   return (
     <div>
