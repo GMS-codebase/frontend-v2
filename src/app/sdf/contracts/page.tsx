@@ -12,11 +12,12 @@ import { unauthorizedApi } from "@/utils/api";
 import { Menu, Select, Tabs } from "@mantine/core";
 import { CiEdit, CiSearch } from "react-icons/ci";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
-
+  const navigate = useRouter();
   const { contracts, loading: loadingContracts } = useSelector(
     (state: any) => state.contracts,
   );
@@ -129,7 +130,7 @@ const Page = () => {
           {
             contracts.filter(
               (c: any) => c?.application_ID === row.original?.application?.uuid,
-            )?.contractNumber
+            )[0]?.contractNumber
           }
         </div>
       ),
@@ -156,7 +157,7 @@ const Page = () => {
             </Menu.Label>
             <Menu.Divider />
             <Menu.Item
-              onClick={() => handleDownloadInstructions(row.original.contract)}
+              onClick={() => navigate.push(`/sdf/contracts/${row?.original?.application?.uuid}`)}
             >
               <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
                 <CiEdit size={21} color="#576074" />
