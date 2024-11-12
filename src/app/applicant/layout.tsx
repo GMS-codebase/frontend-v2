@@ -13,7 +13,7 @@ export default function AdminLayout({
   const [isCompressed, setIsCompressed] = useState(false);
   const [showAnnouncement, setShowAnnouncement] = useState(true);
   const { announcement, loading } = useSelector(
-    (state: any) => state.announcement
+    (state: any) => state.announcement,
   );
 
   return (
