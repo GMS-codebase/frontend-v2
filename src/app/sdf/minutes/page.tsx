@@ -54,7 +54,7 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minuteStatus === "PENDING",
+          m?.minutesStatus === "PENDING",
       ),
     );
     setApprovedMinutes(
@@ -63,7 +63,7 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minuteStatus === "APPROVED",
+          m?.minutesStatus === "APPROVED",
       ),
     );
     setRejectedMinutes(
@@ -72,7 +72,7 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minuteStatus === "REJECTED",
+          m?.minutesStatus === "REJECTED",
       ),
     );
     setNegotiatedMinutes(
@@ -81,7 +81,7 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minuteStatus === "NEGOTIATED",
+          m?.minutesStatus === "NEGOTIATED",
       ),
     );
   }, [minutes]);
