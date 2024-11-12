@@ -14,6 +14,7 @@ import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 import Link from "next/link";
 import DeleteModal from "@/components/Modals/DeleteModal";
+import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
 
 const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,23 +24,33 @@ const Page = () => {
   ] = useDisclosure(false);
   const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
+  const [
+    isOpenActivateDeactivateBudgetLine,
+    {
+      open: openActivateDeactivateBudgetLineModal,
+      close: closeActivateDeactivateBudgetLineModal,
+    },
+  ] = useDisclosure(false);
 
   const budgetLines = useSelector((state: any) => state.budgetLines);
   const [selectedBudgetLine, setSelectedBudgetLine] = useState<any>("");
   const filteredBudgetLines =
-    budgetLines.budgetLines?.filter(
-      (budgetLine: any) =>
-        budgetLine?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        budgetLine?.shortname
-          ?.toLowerCase()
-          .includes(searchQuery.toLowerCase()),
+    budgetLines.budgetLines?.filter((budgetLine: any) =>
+      budgetLine?.budgetLine?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
 
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.title}</div>,
+      cell: ({ row }) => <div className="w-full">{row.original?.budgetLine}</div>,
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.status || "-"}</div>
+      ),
     },
     {
       accessorKey: "actions",
@@ -67,12 +78,12 @@ const Page = () => {
                 <div
                   onClick={() => {
                     setSelectedBudgetLine(row.original);
-                    openCreateEditModal();
+                    openActivateDeactivateBudgetLineModal();
                   }}
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <CiEdit size={21} color="#576074" />
-                  Activate
+                  {row.original.status === "ACTIVE" ? "Deactivate" : "Activate"}
                 </div>
               </Menu.Item>
               <Menu.Item>
@@ -139,8 +150,8 @@ const Page = () => {
           loading={budgetLines.loading}
           noDataMessage={
             searchQuery
-              ? `No BudgetLines found related to ${searchQuery}`
-              : "No BudgetLines Added So Far"
+              ? `No Budget Lines found related to ${searchQuery}`
+              : "No Budget Lines Added So Far"
           }
         />
       </div>
@@ -160,6 +171,16 @@ const Page = () => {
         }}
         type="budgetLines"
         id={selectedBudgetLine?.uuid}
+      />
+      <ActivateDeactivateModal
+        type="budgetLines"
+        closeModal={() => {
+          closeActivateDeactivateBudgetLineModal();
+          setSelectedBudgetLine(null);
+        }}
+        id={selectedBudgetLine?.uuid}
+        isActive={selectedBudgetLine?.status === "ACTIVE"}
+        isOpenModal={isOpenActivateDeactivateBudgetLine}
       />
     </div>
   );

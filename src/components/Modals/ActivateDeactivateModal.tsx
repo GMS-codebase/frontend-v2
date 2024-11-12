@@ -36,6 +36,7 @@ interface ActivateDeactivateModalProps {
   id: string;
   type: EntityType;
   isActive: boolean;
+  windowId?: string;
 }
 
 const actionMappings: Record<EntityType, string> = {
@@ -68,6 +69,7 @@ const ActivateDeactivateModal: React.FC<ActivateDeactivateModalProps> = ({
   id,
   type,
   isActive,
+  windowId,
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -81,20 +83,32 @@ const ActivateDeactivateModal: React.FC<ActivateDeactivateModalProps> = ({
 
     try {
       await authorizedApi.put(
-        `${routeMappings[type]}/activate-deactivate/${id}`,
+        `${routeMappings[type]}/activate-deactivate/${id}`
       );
       notifications.show({
         message: `${capitalize(type.slice(0, -1))} has been ${action}d successfully`,
         color: "blue",
       });
+      const payload =
+        type === "subwindows"
+          ? {
+              windowId: windowId,
+              data: {
+                uuid: id,
+                status: !isActive
+                  ? enumMappings[type].ACTIVE
+                  : enumMappings[type].INACTIVE,
+              },
+            }
+          : {
+              uuid: id,
+              status: !isActive
+                ? enumMappings[type].ACTIVE
+                : enumMappings[type].INACTIVE,
+            };
       dispatch({
         type: actionMappings[type],
-        payload: {
-          uuid: id,
-          status: !isActive
-            ? enumMappings[type].ACTIVE
-            : enumMappings[type].INACTIVE,
-        },
+        payload,
       });
       closeModal();
     } catch (err: any) {
@@ -151,7 +165,7 @@ const ActivateDeactivateModal: React.FC<ActivateDeactivateModalProps> = ({
               services related to this {capitalize(type.slice(0, -1))}
             </h2>
           </div>
-          <div className="w-full flex justify-center mt-4 space-x-4 p-6">
+          <div className="w-full flex justify-center mt-4 space-x-4 py-6">
             <button
               type="button"
               onClick={closeModal}
@@ -163,7 +177,7 @@ const ActivateDeactivateModal: React.FC<ActivateDeactivateModalProps> = ({
               onClick={onToggleStatus}
               type="button"
               disabled={loading}
-              className="w-full px-4 py-3 bg-primary text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 bg-primary text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed truncate"
             >
               {loading
                 ? "Processing..."

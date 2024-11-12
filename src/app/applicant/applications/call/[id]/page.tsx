@@ -20,16 +20,24 @@ import AddEditContact from "@/components/Modals/applicantContacts/AddEditContact
 import CreateApplication from "@/components/Modals/application/CreateApplication";
 import ProgressCircle from "@/components/CallsList/ProgressBar";
 import { unauthorizedApi } from "@/utils/api";
+import { HiDotsHorizontal } from "react-icons/hi";
+import { Menu } from "@mantine/core";
+import Link from "next/link";
+import { FiEye } from "react-icons/fi";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "@/components/core/data-table";
+import { getApplicationStatus } from "@/utils/funcs";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
   const profile = useSelector((state: any) => state.auth);
   const contacts = useSelector((state: any) => state.contacts);
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
-  const { myApplications } = useSelector((state: any) => state.applications);
-
+  const { myApplications, loading: myApplicationLoading } = useSelector(
+    (state: any) => state.applications
+  );
   const existingApplication = myApplications.find(
-    (app: any) => app?.call?.uuid === callId && app.stages.length === 0,
+    (app: any) => app?.call?.uuid === callId && app.stages.length === 0
   );
   const [
     isOpenCreateProfile,
@@ -66,7 +74,7 @@ const Page = () => {
         `/admin/download/calls/${filename}`,
         {
           responseType: "blob",
-        },
+        }
       );
       const blob = new Blob([response.data], {
         type: response.headers["content-type"],
@@ -85,6 +93,87 @@ const Page = () => {
       setLoading(false);
     }
   };
+
+
+  const columns: ColumnDef<any>[] = [
+    {
+      accessorKey: "number",
+      header: "Application number",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.applicationNumber}</div>
+      ),
+    },
+    {
+      accessorKey: "title",
+      header: "Call title",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.call.title}</div>
+      ),
+    },
+    {
+      accessorKey: "sector",
+      header: "Sector",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.sectors[0].name}</div>
+      ),
+    },
+    {
+      accessorKey: "trade",
+      header: "Trade",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.trades[0].trade.title}</div>
+      ),
+    },
+    {
+      accessorKey: "currentStage",
+      header: "Current Stage",
+      cell: ({ row }) => (
+        <div className="truncate">
+          {getApplicationStatus(row.original) || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <div>
+          <Menu shadow="lg" width={300}>
+            <Menu.Target>
+              <button
+                style={{
+                  background:
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+                }}
+                className="p-3 rounded-full border text-white hover:bg-red-100"
+              >
+                <HiDotsHorizontal size={25} color="white" />
+              </button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>
+                <h1 className="text-lg">Actions</h1>
+              </Menu.Label>
+              <Menu.Divider />
+              <Menu.Item className="bg-[#F0F0F0]">
+                <Link
+                  href={
+                    row.original.stages.length > 0
+                      ? `/applicant/applications/application/${row.original.uuid}`
+                      : `/applicant/applications/call/${row.original.call.uuid}/${row.original.uuid}/apply`
+                  }
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <FiEye size={21} color="#576074" />
+                  View
+                </Link>
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </div>
+      ),
+    },
+  ];
 
   if (calls.loading) {
     return (
@@ -207,6 +296,24 @@ const Page = () => {
             </p>
           </button>
         </div>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">
+              Other applications made on this call
+            </h2>
+            <div className="flex gap-2"></div>
+          </div>
+          <div className="w-full h-full">
+            <DataTable
+              columns={columns}
+              data={myApplications.filter(
+                (application: any) => application.call.uuid === callId
+              )}
+              loading={myApplicationLoading}
+              noDataMessage={"You haven't made any applications yet"}
+            />
+          </div>
+        </div>
       </div>
       <CompleteProfile
         closeCompleteProfile={closeAddProfile}
@@ -230,7 +337,11 @@ const Page = () => {
       />
       <CreateApplication
         isOpenCreatingApplication={isOpenCreateApplication}
-        closeCreatingApplication={closeCreateApplication}
+        closeCreatingApplication={(val) => {
+          closeCreateApplication();
+
+          val && setApplyLoading(false);
+        }}
         call={call}
         existingApplication={existingApplication}
       />

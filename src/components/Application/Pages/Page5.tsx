@@ -62,7 +62,7 @@ export const Page5 = ({
                 onClick={() =>
                   handleViewFile(
                     data?.previousFinancialReportAttachment,
-                    "applications",
+                    "applications"
                   )
                 }
                 className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
@@ -73,7 +73,7 @@ export const Page5 = ({
                 onClick={() =>
                   handleDownloadFile(
                     data?.previousFinancialReportAttachment,
-                    "applications",
+                    "applications"
                   )
                 }
                 className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
@@ -112,7 +112,9 @@ export const Page5 = ({
               {data.previousFinancialReportAttachment ? (
                 <div className="text-center">
                   <p className="text-xl font-medium text-gray-700">
-                    {data.previousFinancialReportAttachment.name}
+                    {typeof data?.previousFinancialReportAttachment === "string"
+                      ? data.previousFinancialReportAttachment.split("/").pop()
+                      : data?.previousFinancialReportAttachment?.name}
                   </p>
                   <p className="text-sm text-gray-500">File selected</p>
                 </div>
@@ -132,7 +134,7 @@ export const Page5 = ({
               onChange={(e) =>
                 setData(
                   "previousFinancialReportAttachment",
-                  e.target.files ? e.target.files[0] : null,
+                  e.target.files ? e.target.files[0] : null
                 )
               }
             />

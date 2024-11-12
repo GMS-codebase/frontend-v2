@@ -28,7 +28,7 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application?.uuid === id,
   )[0];
-  console.log("application --> ", application);
+
   const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [
@@ -106,7 +106,7 @@ const Page = () => {
     assessmentComment: application?.projectFunding?.assessmentComment || "",
     budgetLinesComment: application?.budget?.budgetLinesComment || "",
   });
-  console.log(application);
+
   useEffect(() => {
     if (application) {
       const hasComments = Object.entries(application.projectFunding || {}).some(
