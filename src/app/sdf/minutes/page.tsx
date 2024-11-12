@@ -316,19 +316,18 @@ const Page = () => {
         </Tabs.List>
 
         <Tabs.Panel value="minutes">
-
-        <Tabs.Panel value="applications">
-          <h1 className="text-base p-4 font-bold">
-            {" "}
-            Ready For Minutes Negotiations
-          </h1>
-          <DataTable
-            columns={columns}
-            data={readyForMinutesNegotiation}
-            loading={loadingMinutes}
-            noDataMessage="No Application ready for minute negotiation"
-          />
-        </Tabs.Panel>
+          <Tabs.Panel value="applications">
+            <h1 className="text-base p-4 font-bold">
+              {" "}
+              Ready For Minutes Negotiations
+            </h1>
+            <DataTable
+              columns={columns}
+              data={readyForMinutesNegotiation}
+              loading={loadingMinutes}
+              noDataMessage="No Application ready for minute negotiation"
+            />
+          </Tabs.Panel>
           <h1 className="text-base p-4 font-bold">Minutes Uploaded</h1>
           <DataTable
             columns={minuteColumns}
