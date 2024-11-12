@@ -179,7 +179,7 @@ const Page = () => {
     if (application) {
       const hasComments = Object.entries(application.projectFunding || {}).some(
         ([key, value]) =>
-          key.includes("Comment") && value != null && value !== ""
+          key.includes("Comment") && value != null && value !== "",
       );
       setProperties({
         isDataEditable:
@@ -348,7 +348,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -473,7 +473,7 @@ const Page = () => {
               onClick={() =>
                 handleDownloadFile(
                   application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates"
+                  "business_certificates",
                 )
               }
             >
@@ -564,7 +564,7 @@ const Page = () => {
               <div
                 className={`font-medium  ${
                   application?.stages?.find(
-                    (stage: any) => stage.stage === "EVALUATION"
+                    (stage: any) => stage.stage === "EVALUATION",
                   )?.status === "APPROVED"
                     ? "bg-[#4BC500] text-[#4BC500]"
                     : application?.status === "PENDING"
@@ -574,7 +574,7 @@ const Page = () => {
               >
                 {
                   application?.stages?.find(
-                    (stage: any) => stage.stage === "EVALUATION"
+                    (stage: any) => stage.stage === "EVALUATION",
                   )?.status
                 }
               </div>
@@ -582,7 +582,7 @@ const Page = () => {
                 !application?.evaluationDecisions.find(
                   (ev: any) =>
                     ev.employee.user_id.toString() ===
-                    profile?.userProfile?.data.uuid.toString()
+                    profile?.userProfile?.data.uuid.toString(),
                 ) && (
                   <>
                     <div
@@ -631,7 +631,7 @@ const Page = () => {
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>
                         dec?.employee?.user_id ===
-                        profile?.userProfile?.data.uuid
+                        profile?.userProfile?.data.uuid,
                     ) && (
                       <div
                         onClick={() => {
@@ -663,7 +663,7 @@ const Page = () => {
                 </div>
               )}
             {application?.stages?.find(
-              (stage: any) => stage?.stage === "GRANT_COMMITTEE"
+              (stage: any) => stage?.stage === "GRANT_COMMITTEE",
             ) && (
               <div className="flex flex-col gap-2">
                 <h3 className="font-semibold">Grant Committee</h3>

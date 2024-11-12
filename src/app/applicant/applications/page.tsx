@@ -13,7 +13,6 @@ import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
 import { getApplicationStatus } from "@/utils/funcs";
 const Page = () => {
-
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
@@ -95,7 +94,6 @@ const Page = () => {
   ];
   const myApplications = useSelector((state: any) => state.applications);
   const calls = useSelector((state: any) => state.calls);
-
 
   return (
     <div className="w-full  flex flex-col gap-4">

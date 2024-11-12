@@ -22,7 +22,7 @@ type Action = {
 
 export default function BudgetLinesReducer(
   state = initialState,
-  action: Action
+  action: Action,
 ) {
   switch (action.type) {
     case GET_BUDGET_LINES_LOADING:
@@ -59,7 +59,7 @@ export default function BudgetLinesReducer(
         budgetLines: state.budgetLines.map((trade: BudgetLine) =>
           trade.uuid == action.payload.uuid
             ? { ...trade, ...action.payload }
-            : trade
+            : trade,
         ),
         error: null,
         isError: false,
@@ -69,7 +69,7 @@ export default function BudgetLinesReducer(
       return {
         ...state,
         budgetLines: state.budgetLines.filter(
-          (trade: BudgetLine) => trade.uuid !== action.payload.id
+          (trade: BudgetLine) => trade.uuid !== action.payload.id,
         ),
         error: null,
         isError: false,

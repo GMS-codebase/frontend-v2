@@ -36,14 +36,16 @@ const Page = () => {
   const [selectedBudgetLine, setSelectedBudgetLine] = useState<any>("");
   const filteredBudgetLines =
     budgetLines.budgetLines?.filter((budgetLine: any) =>
-      budgetLine?.budgetLine?.toLowerCase().includes(searchQuery.toLowerCase())
+      budgetLine?.budgetLine?.toLowerCase().includes(searchQuery.toLowerCase()),
     ) ?? [];
 
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.budgetLine}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.budgetLine}</div>
+      ),
     },
     {
       accessorKey: "status",
