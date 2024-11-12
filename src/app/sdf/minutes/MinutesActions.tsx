@@ -23,6 +23,7 @@ const MinutesActions = ({
   const [isOpenAddMinute, { open: openMinute, close: closeMinute }] =
     useDisclosure(false);
   const [type, setType] = useState("");
+  console.log("data --> ", data);
   return (
     <div>
       <Menu shadow="lg" width={300}>
@@ -46,7 +47,7 @@ const MinutesActions = ({
           {status === "ready" && (
             <Menu.Item
               onClick={() => {
-                openMinute;
+                openMinute();
                 setType("unsigned");
               }}
               className="w-full py-1 text-[#576074]"
@@ -80,7 +81,6 @@ const MinutesActions = ({
               </Menu.Item>
               <Menu.Item
                 onClick={() => {
-                  /* Delete functionality */
                 }}
                 className="w-full py-1 text-red-600"
               >
@@ -132,7 +132,7 @@ const MinutesActions = ({
         </Menu.Dropdown>
       </Menu>
       <AddMinute
-        type=""
+        type={type}
         data={data}
         isOpenAddMinute={isOpenAddMinute}
         closeAddMinute={closeMinute}
