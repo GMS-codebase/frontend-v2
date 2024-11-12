@@ -11,7 +11,7 @@ import AddMinute from "@/components/Modals/contracts/AddMinutes";
 import MinutesActions from "./MinutesActions";
 
 const Page = () => {
-  const [isMinute, setIsMinute] = useState({
+  const [isMinute, setIsMinute] = useState<any>({
     isOpen: false,
     application: null,
     type: "",
@@ -19,15 +19,7 @@ const Page = () => {
 
   const {
     minutes,
-    // uploadedMinutes,
-    // approvedMinutes,
-    // rejectedMinutes,
     loading: loadingMinutes,
-    // uploadedMinutesLoading,
-    // approvedMinutesLoading,
-    // rejectedMinutesLoading,
-    // applicationsReadyForMinutesLoading,
-    // applicationsReadyForMinutes,
   } = useSelector((state: any) => state.minutes);
 
   const [uploadedMinutes, setUploadedMinutes] = useState<any[]>([]);
@@ -310,7 +302,7 @@ const Page = () => {
           <Tabs.Tab value="applications">
             Ready for Minutes Negotiations
           </Tabs.Tab>
-          <Tabs.Tab value="minutes">Meeting minutes Uploaded</Tabs.Tab>
+          <Tabs.Tab value="minutes">Contract Negotiation Uploaded</Tabs.Tab>
           <Tabs.Tab value="approved">Approved meeting minutes</Tabs.Tab>
           <Tabs.Tab value="rejected">Rejected meeting minutes</Tabs.Tab>
         </Tabs.List>
@@ -328,7 +320,7 @@ const Page = () => {
               noDataMessage="No Application ready for minute negotiation"
             />
           </Tabs.Panel>
-          <h1 className="text-base p-4 font-bold">Minutes Uploaded</h1>
+          <h1 className="text-base p-4 font-bold">Contract Negotiations Uploaded</h1>
           <DataTable
             columns={minuteColumns}
             data={uploadedMinutes}
@@ -361,16 +353,6 @@ const Page = () => {
           />
         </Tabs.Panel>
       </Tabs>
-
-      {/* AddMinute Modal */}
-      <AddMinute
-        type={isMinute.type}
-        data={isMinute.application}
-        isOpenAddMinute={isMinute.isOpen}
-        closeAddMinute={() =>
-          setIsMinute({ isOpen: false, application: null, type: "" })
-        }
-      />
     </div>
   );
 };
