@@ -3,7 +3,15 @@ import { Document, Page } from "react-pdf";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 
-const PDFViewerModal = ({ pdfPath, closeViewPDF, isOpenViewPDF }: { pdfPath: string; closeViewPDF: () => void; isOpenViewPDF: boolean }) => {
+const PDFViewerModal = ({
+  pdfPath,
+  closeViewPDF,
+  isOpenViewPDF,
+}: {
+  pdfPath: string;
+  closeViewPDF: () => void;
+  isOpenViewPDF: boolean;
+}) => {
   const [numPages, setNumPages] = useState<number | null>(null);
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {

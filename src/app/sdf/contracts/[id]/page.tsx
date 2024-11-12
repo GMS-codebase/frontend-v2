@@ -23,33 +23,45 @@ import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal
 import PDFViewerModal from "@/components/PDFViewer";
 
 const Page = () => {
-  const {id: applicationId} = useParams();
+  const { id: applicationId } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const {contracts, loading} = useSelector((state: any)=> state.contracts);
-  const {applications, loading: loadingApplications} = useSelector((state: any)=> state.applications);
-  const application = applications.find((a: any)=> a.uuid === applicationId)??[0];
+  const { contracts, loading } = useSelector((state: any) => state.contracts);
+  const { applications, loading: loadingApplications } = useSelector(
+    (state: any) => state.applications,
+  );
+  const application = applications.find(
+    (a: any) => a.uuid === applicationId,
+  ) ?? [0];
   console.log("contracts --> ", contracts);
-  const contract = contracts.find((c: any)=> c.application_ID === applicationId)??[0];
+  const contract = contracts.find(
+    (c: any) => c.application_ID === applicationId,
+  ) ?? [0];
   console.log("contract --> ", contract);
 
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "title",
       header: "Title",
-      cell: ({ row }) => <div className="w-full">{row.original?.title?.length > 30
-        ? row.original?.title?.slice(0, 30) + "..."
-        : row.original?.title}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">
+          {row.original?.title?.length > 30
+            ? row.original?.title?.slice(0, 30) + "..."
+            : row.original?.title}
+        </div>
+      ),
     },
     {
-        accessorKey: "amount",
-        header: "Amount",
-        cell: ({ row }) => <div className="w-full">{row.original?.amount}</div>,
-      },
-      {
-        accessorKey: "percentage",
-        header: "Percentage",
-        cell: ({ row }) => <div className="w-full">{row.original?.percentage} %</div>,
-      },
+      accessorKey: "amount",
+      header: "Amount",
+      cell: ({ row }) => <div className="w-full">{row.original?.amount}</div>,
+    },
+    {
+      accessorKey: "percentage",
+      header: "Percentage",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.percentage} %</div>
+      ),
+    },
     {
       accessorKey: "condition",
       header: "Condition",
@@ -91,9 +103,7 @@ const Page = () => {
               </Menu.Label>
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
-                <div
-                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                >
+                <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
                   <FiEye size={21} color="#576074" />
                   Mark as paid
                 </div>
@@ -105,7 +115,8 @@ const Page = () => {
     },
   ];
 
-  const [isOpenViewPDF, {open: openViewPDF,close: closeViewPDF}] = useDisclosure(false);
+  const [isOpenViewPDF, { open: openViewPDF, close: closeViewPDF }] =
+    useDisclosure(false);
   const pdfPath = contract?.contractAttachment;
   return contract?.uuid ? (
     <div className="bg-white rounded-2xl py-10">
@@ -132,7 +143,9 @@ const Page = () => {
                 <div>Contract Number</div>
               </div>
               <div className="flex flex-col gap-6 justify-start items-start ">
-                <h1 className="font-bold text-xl">{contract?.contractNumber}</h1>
+                <h1 className="font-bold text-xl">
+                  {contract?.contractNumber}
+                </h1>
               </div>
             </div>
             <div className="space-y-2 flex items-center gap-3">
@@ -154,7 +167,9 @@ const Page = () => {
                 <div>Remaining Amount</div>
               </div>
               <div className="flex flex-col gap-6 justify-start items-start ">
-                <h1 className="font-bold text-xl">{contract?.remainedAmount}</h1>
+                <h1 className="font-bold text-xl">
+                  {contract?.remainedAmount}
+                </h1>
               </div>
             </div>
             <div className="space-y-2 flex items-center gap-3">
@@ -165,7 +180,9 @@ const Page = () => {
                 <div>Number of trainees</div>
               </div>
               <div className="flex flex-col gap-6 justify-start items-start ">
-                <h1 className="font-bold text-xl">{contract?.numberOfTrainees}</h1>
+                <h1 className="font-bold text-xl">
+                  {contract?.numberOfTrainees}
+                </h1>
               </div>
             </div>
             <div className="space-y-2 flex items-center gap-3">
@@ -176,7 +193,9 @@ const Page = () => {
                 <div>Status</div>
               </div>
               <div className="flex flex-col gap-6 justify-start items-start ">
-                <h1 className="font-bold text-xl">{contract?.contractStatus}</h1>
+                <h1 className="font-bold text-xl">
+                  {contract?.contractStatus}
+                </h1>
               </div>
             </div>
           </div>
@@ -216,7 +235,11 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <PDFViewerModal isOpenViewPDF={isOpenViewPDF} closeViewPDF={closeViewPDF} pdfPath={pdfPath}/>
+      <PDFViewerModal
+        isOpenViewPDF={isOpenViewPDF}
+        closeViewPDF={closeViewPDF}
+        pdfPath={pdfPath}
+      />
     </div>
   ) : (
     <div className="flex items-center justify-center h-full">
