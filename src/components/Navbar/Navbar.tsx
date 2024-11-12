@@ -32,6 +32,7 @@ import {
   getRejectedMinutes,
   getApprovedMinutes,
   getUploadedMinutes,
+  getAnnouncement,
 } from "@/utils/funcs";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
@@ -102,6 +103,7 @@ const Navbar = () => {
       getRejectedMinutes(dispatch, "applicant");
       getBudgetLines(dispatch);
     }
+    getAnnouncement(dispatch);
     getApplicationsForContractSigning(dispatch);
     getEmpStages(dispatch);
     getWindows(dispatch);
