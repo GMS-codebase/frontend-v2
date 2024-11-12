@@ -50,7 +50,7 @@ const Page = () => {
             data={application?.projectFunding}
             comments={
               application?.stages?.find(
-                (stage: any) => stage.stage === "EVALUATION"
+                (stage: any) => stage.stage === "EVALUATION",
               )?.status
                 ? application?.projectFunding
                 : undefined
@@ -232,7 +232,7 @@ const Page = () => {
                 <div
                   className={`font-medium  ${
                     application?.stages?.find(
-                      (stage: any) => stage.stage === "EVALUATION"
+                      (stage: any) => stage.stage === "EVALUATION",
                     )?.status === "APPROVED"
                       ? "bg-[#4BC500] text-[#4BC500]"
                       : application?.status === "PENDING"
@@ -242,7 +242,7 @@ const Page = () => {
                 >
                   {
                     application?.stages?.find(
-                      (stage: any) => stage.stage === "EVALUATION"
+                      (stage: any) => stage.stage === "EVALUATION",
                     )?.status
                   }
                 </div>
@@ -260,14 +260,14 @@ const Page = () => {
             )}
             {application?.call.closedDueDiligency &&
               application.stages.find(
-                (stage: any) => stage.stage === "DUE_DILIGENCY"
+                (stage: any) => stage.stage === "DUE_DILIGENCY",
               )?.status != null && (
                 <div className="flex flex-col gap-2">
                   <h3 className="font-bold">Due Diligence Stage</h3>
                   <div
                     className={`font-medium  ${
                       application?.stages.find(
-                        (stage: any) => stage.stage === "DUE_DILIGENCY"
+                        (stage: any) => stage.stage === "DUE_DILIGENCY",
                       )?.status
                         ? "bg-[#4BC500] text-[#4BC500]"
                         : application?.status === "PENDING"
@@ -277,7 +277,7 @@ const Page = () => {
                   >
                     {
                       application?.stages.find(
-                        (stage: any) => stage.stage === "DUE_DILIGENCY"
+                        (stage: any) => stage.stage === "DUE_DILIGENCY",
                       )?.status
                     }
                   </div>
@@ -293,7 +293,7 @@ const Page = () => {
               )}
             {application?.call.closedGrantCommittee &&
               application?.stages?.find(
-                (stage: any) => stage?.stage === "GRANT_COMMITTEE"
+                (stage: any) => stage?.stage === "GRANT_COMMITTEE",
               )?.status != null && (
                 <div className="flex flex-col gap-2">
                   <h3 className="font-semibold">Grant Committee</h3>

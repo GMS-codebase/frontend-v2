@@ -143,7 +143,6 @@ const Page = () => {
         }
       })
       .catch((error) => {
-
         notifications.show({
           message: error.response.data.message,
           color: "red",

@@ -125,7 +125,6 @@ const MakeGrantCommitteeDecision = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-
     if (!validate()) return;
 
     setLoading(true);

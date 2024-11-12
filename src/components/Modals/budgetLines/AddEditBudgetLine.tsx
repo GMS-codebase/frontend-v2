@@ -86,7 +86,6 @@ const AddEditBudgetLine = ({
           color: "blue",
         });
 
-
         dispatch({
           type: defaultData
             ? UPDATE_BUDGET_LINE_SUCCESS

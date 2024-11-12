@@ -31,7 +31,9 @@ const Page = () => {
   const fetchApplication = async () => {
     setApplicationLoading(true);
     try {
-      const res = await authorizedApi.get(`/application/get-application/${applicationId}`);
+      const res = await authorizedApi.get(
+        `/application/get-application/${applicationId}`,
+      );
       setApplication(res.data.data.data);
       setApplicationLoading(false);
     } catch (error: any) {
@@ -260,7 +262,7 @@ const Page = () => {
             type="button"
             onClick={() => {
               handleSubmit("submit", setLoading, data, application, () =>
-                router.push("/applicant/applications")
+                router.push("/applicant/applications"),
               );
             }}
             disabled={loading}

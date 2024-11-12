@@ -97,7 +97,6 @@ const Page = () => {
   });
 
   const goToBudget = () => {
-
     setCurrentComponent("IndicativeBudget");
   };
 

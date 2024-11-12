@@ -27,8 +27,6 @@ const Page = () => {
     [rawApplications],
   );
 
-
-
   const filtersContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchTerm, setSearchTerm] = useState("");

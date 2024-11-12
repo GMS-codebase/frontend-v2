@@ -81,8 +81,6 @@ const Page: React.FC = () => {
     setHtmlContent(value);
   };
 
-
-
   return (
     <div>
       {fileType === "pdf" && fileBlobUrl && <Viewer fileUrl={fileBlobUrl} />}

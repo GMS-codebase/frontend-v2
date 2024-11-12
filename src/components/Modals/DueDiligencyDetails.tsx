@@ -34,7 +34,7 @@ const DueDiligencyDetails = ({
   const [selectedDecision, setSelectedDecision] = useState<any>();
   const profile = useSelector((state: any) => state.auth);
   const [text, setText] = useState(
-    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era."
+    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era.",
   );
 
   console.log(application);
@@ -87,7 +87,7 @@ const DueDiligencyDetails = ({
                     onClick={() =>
                       handleDownloadFile(
                         application?.duediligencyForm?.attachment,
-                        "applications"
+                        "applications",
                       )
                     }
                   >
