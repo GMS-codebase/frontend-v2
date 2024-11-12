@@ -107,6 +107,12 @@ import {
   GET_BUDGET_LINES_LOADING,
   GET_BUDGET_LINES_SUCCESS,
 } from "@/actions/BudgetLinesActions";
+
+import {
+  GET_ANNOUNCEMENT_LOADING,
+  GET_ANNOUNCEMENT_SUCCESS,
+  GET_ANNOUNCEMENT_ERROR,
+} from "@/actions/AnnouncementActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -324,11 +330,11 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
 export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_CONTRACTS_LOADING });
   authorizedApi
-    .get("/contracts")
+    .get("/negotiation-contract/contracts/sdf/all")
     .then((res) => {
       dispatch({
         type: GET_CONTRACTS_SUCCESS,
-        payload: res.data.data,
+        payload: res?.data?.data?.data,
       });
     })
     .catch((err) => {
@@ -364,12 +370,12 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_STAGES_ERROR, payload: err.response.data.error });
     });
 };
-export const getApplicationsForContracts = async (
+export const getApplicationsForContractSigning = async (
   dispatch: Dispatch<UnknownAction>,
 ) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
-    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint
+    .get("/negotiation-contract/applications/sdf/ready-contract-signing")
     .then((res) => {
       dispatch({
         type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
@@ -414,6 +420,26 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
+
+export const getAnnouncement = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_ANNOUNCEMENT_LOADING });
+  authorizedApi
+    .get("/announcements")
+    .then((res) => {
+      console.log(res.data.data.data);
+      dispatch({
+        type: GET_ANNOUNCEMENT_SUCCESS,
+        payload: res.data.data.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_ANNOUNCEMENT_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+
 export const getMyContacts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_CONTACTS_LOADING });
   authorizedApi
@@ -444,10 +470,11 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
 };
 export const getApplicationsReadyForMinutes = async (
   dispatch: Dispatch<UnknownAction>,
+  role: string,
 ) => {
   dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
   authorizedApi
-    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint
+    .get(`/application/contract-signing/all`)
     .then((res) => {
       dispatch({
         type: GET_APPLICATIONS_READY_FOR_MINUTES_SUCCESS,
@@ -461,12 +488,18 @@ export const getApplicationsReadyForMinutes = async (
       });
     });
 };
-export const getUploadedMinutes = async (dispatch: Dispatch<UnknownAction>) => {
+export const getUploadedMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+  role: string,
+) => {
   dispatch({ type: GET_UPLOADED_MINUTES_LOADING });
   authorizedApi
-    .get("/negotiation-contract/applications/pending")
+    .get(`/negotiation-contract/applications/${role}/pending`)
     .then((res) => {
-      dispatch({ type: GET_UPLOADED_MINUTES_SUCCESS, payload: res.data.data });
+      dispatch({
+        type: GET_UPLOADED_MINUTES_SUCCESS,
+        payload: res.data.data?.data,
+      });
     })
     .catch((err) => {
       dispatch({
@@ -475,12 +508,19 @@ export const getUploadedMinutes = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
-export const getApprovedMinutes = async (dispatch: Dispatch<UnknownAction>) => {
+export const getApprovedMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+  role: string,
+) => {
   dispatch({ type: GET_APPROVED_MINUTES_LOADING });
   authorizedApi
-    .get("/negotiation-contract/applications/approved")
+    .get(`/negotiation-contract/applications/${role}/approved`)
     .then((res) => {
-      dispatch({ type: GET_APPROVED_MINUTES_SUCCESS, payload: res.data.data });
+      console.log("minutes --> ", res.data.data.data);
+      dispatch({
+        type: GET_APPROVED_MINUTES_SUCCESS,
+        payload: res.data?.data?.data?.applications,
+      });
     })
     .catch((err) => {
       dispatch({
@@ -489,12 +529,18 @@ export const getApprovedMinutes = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
-export const getRejectedMinutes = async (dispatch: Dispatch<UnknownAction>) => {
+export const getRejectedMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+  role: string,
+) => {
   dispatch({ type: GET_REJECTED_MINUTES_LOADING });
   authorizedApi
-    .get("/application/all-application")
+    .get("/negotiation-contract/applications/rejected")
     .then((res) => {
-      dispatch({ type: GET_REJECTED_MINUTES_SUCCESS, payload: res.data.data });
+      dispatch({
+        type: GET_REJECTED_MINUTES_SUCCESS,
+        payload: res.data.data.data,
+      });
     })
     .catch((err) => {
       dispatch({
