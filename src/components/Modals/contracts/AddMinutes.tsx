@@ -1,6 +1,8 @@
 import { authorizedApi } from "@/utils/api";
 import {
+  getApplications,
   getApprovedMinutes,
+  getContracts,
   getMinutes,
   getRejectedMinutes,
   getUploadedMinutes,
@@ -13,7 +15,7 @@ import { useDispatch } from "react-redux";
 import { Folder2, Upload } from "solar-icon-set";
 
 interface AddMinuteProps {
-  data: any; // Replace `any` with the actual type if available
+  data: any;
   isOpenAddMinute: boolean;
   closeAddMinute: () => void;
   type: string;
@@ -37,6 +39,7 @@ const AddMinute: React.FC<AddMinuteProps> = ({
   });
   const dispatch = useDispatch();
 
+  console.log("data in add minutes --> ", data);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
     setFormData((prevData) => ({
@@ -47,84 +50,61 @@ const AddMinute: React.FC<AddMinuteProps> = ({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("Submitting form");
+  
+    if (!formData.file) {
+      notifications.show({
+        message: "Please upload a file",
+        color: "red",
+      });
+      return;
+    }
+  
     setLoading(true);
     const newData = {
       minute: formData.file,
-      applicantId: data.applicant.uuid,
+      applicantId: data?.applicant.uuid,
       applicationId: data?.uuid,
     };
-
     const submitForm = new FormData();
     submitForm.append("attachment", newData.minute as Blob);
     submitForm.append("applicantID", newData.applicantId);
     submitForm.append("applicationID", newData.applicationId);
-    type == "unsigned"
-      ? authorizedApi
-          .post("/negotiation-contract/sdf/upload-negotiation", submitForm, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          .then((res) => {
-            notifications.show({
-              message: res?.data?.data?.message,
-              color: "blue",
-            });
-            setFormData({
-              file: null,
-              name: "",
-              amount: "",
-            });
-            getMinutes(dispatch);
-            getUploadedMinutes(dispatch, "sdf");
-            getApprovedMinutes(dispatch, "sdf");
-            getRejectedMinutes(dispatch, "sdf");
-            closeAddMinute();
-          })
-          .catch((err: any) => {
-            notifications.show({
-              message: err.response?.data?.message ?? "Failed to create Minute",
-              color: "red",
-            });
-          })
-          .finally(() => {
-            setLoading(false);
-          })
-      : authorizedApi
-          .patch(
+  
+    try {
+      const response = type === "unsigned"
+        ? await authorizedApi.post(
+            "/negotiation-contract/sdf/upload-negotiation",
+            submitForm,
+            { headers: { "Content-Type": "multipart/form-data" } }
+          )
+        : await authorizedApi.patch(
             "/negotiation-contract/sdf/signed-negotiation-attachment",
             submitForm,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            },
-          )
-          .then((res) => {
-            notifications.show({
-              message: res?.data?.data?.message,
-              color: "blue",
-            });
-            setFormData({
-              file: null,
-              name: "",
-              amount: "",
-            });
-            getMinutes(dispatch);
-            getUploadedMinutes(dispatch, "sdf");
-            getApprovedMinutes(dispatch, "sdf");
-            getRejectedMinutes(dispatch, "sdf");
-            closeAddMinute();
-          })
-          .catch((err: any) => {
-            notifications.show({
-              message: err.response?.data?.message ?? "Failed to create Minute",
-              color: "red",
-            });
-          })
-          .finally(() => {
-            setLoading(false);
-          });
+            { headers: { "Content-Type": "multipart/form-data" } }
+          );
+  
+      notifications.show({
+        message: response?.data?.data?.message,
+        color: "blue",
+      });
+  
+      setFormData({ file: null, name: "", amount: "" });
+      getMinutes(dispatch);
+      getUploadedMinutes(dispatch, "sdf");
+      getApprovedMinutes(dispatch, "sdf");
+      getRejectedMinutes(dispatch, "sdf");
+      getContracts(dispatch);
+      getApplications(dispatch);
+      closeAddMinute();
+    } catch (err: any) {
+      notifications.show({
+        message: err.response?.data?.message ?? "Failed to create Minute",
+        color: "red",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

@@ -11,7 +11,7 @@ import ContractsActions from "./ContractsActions";
 import { unauthorizedApi } from "@/utils/api";
 import { Menu, Select, Tabs } from "@mantine/core";
 import { CiEdit, CiSearch } from "react-icons/ci";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
@@ -24,6 +24,15 @@ const Page = () => {
     (state: any) => state.applications,
   );
 
+  console.log("applications for contract signing", applications);
+
+  const [contractsSignedApplications, setContractsSignedApplications] = useState<any[]>([]);
+  const [applicationsForContractSigning, setApplicationsForContractSigning] = useState<any[]>([]);
+
+  useEffect(()=>{
+    setContractsSignedApplications(applications.filter((a: any)=> a?.application?.uploadedContract));
+    setApplicationsForContractSigning(applications.filter((a: any)=> !a?.application?.uploadedContract && a?.application?.uploadedSignedMinutes));
+  },[applications]);
   const FilterDropDown = ({
     placeholderText,
     data,
@@ -79,27 +88,27 @@ const Page = () => {
       accessorKey: "name",
       header: "Applicant Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.name}</div>
+        <div className="w-full">{row.original?.application?.applicant?.name}</div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.phone}</div>
+        <div className="w-full">{row.original?.application?.applicant?.phone}</div>
       ),
     },
     {
       accessorKey: "email",
       header: "Applicant Email",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.email}</div>
+        <div className="w-full">{row.original?.application?.applicant?.email}</div>
       ),
     },
     {
       accessorKey: "contractName",
-      header: "Contract Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
+      header: "Contract Number",
+      cell: ({ row }) => <div className="w-full">{contracts.filter((c: any)=> c?.application_ID === row.original?.application?.uuid)?.contractNumber}</div>,
     },
     {
       accessorKey: "actions",
@@ -227,7 +236,7 @@ const Page = () => {
           </h1>
           <DataTable
             columns={applicationColumns}
-            data={applications}
+            data={applicationsForContractSigning}
             loading={loading}
             noDataMessage="No Approved Applications"
           />
@@ -236,7 +245,7 @@ const Page = () => {
           <h1 className="text-xl font-bold  p-4">Contracts Signed</h1>
           <DataTable
             columns={contractColumns}
-            data={contracts}
+            data={contractsSignedApplications}
             loading={loadingContracts}
             noDataMessage="No Created Contracts"
           />

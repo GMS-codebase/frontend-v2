@@ -107,6 +107,12 @@ import {
   GET_BUDGET_LINES_LOADING,
   GET_BUDGET_LINES_SUCCESS,
 } from "@/actions/BudgetLinesActions";
+
+import {
+  GET_ANNOUNCEMENT_LOADING,
+  GET_ANNOUNCEMENT_SUCCESS,
+  GET_ANNOUNCEMENT_ERROR
+} from "@/actions/AnnouncementActions"
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -324,11 +330,11 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
 export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_CONTRACTS_LOADING });
   authorizedApi
-    .get("/contracts")
+    .get("/negotiation-contract/contracts/sdf/all")
     .then((res) => {
       dispatch({
         type: GET_CONTRACTS_SUCCESS,
-        payload: res.data.data,
+        payload: res?.data?.data?.data,
       });
     })
     .catch((err) => {
@@ -415,6 +421,26 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
+
+export const getAnnouncement = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_ANNOUNCEMENT_LOADING });
+  authorizedApi
+    .get("/announcements")
+    .then((res) => {
+      console.log(res.data.data.data);
+      dispatch({
+        type: GET_ANNOUNCEMENT_SUCCESS,
+        payload: res.data.data.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_ANNOUNCEMENT_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+
 export const getMyContacts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_CONTACTS_LOADING });
   authorizedApi
@@ -449,7 +475,7 @@ export const getApplicationsReadyForMinutes = async (
 ) => {
   dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
   authorizedApi
-    .get(`/negotiation-contract/applications/${role}/ready-contract-signing`)
+    .get(`/application/contract-signing/all`)
     .then((res) => {
       dispatch({
         type: GET_APPLICATIONS_READY_FOR_MINUTES_SUCCESS,
