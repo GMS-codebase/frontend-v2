@@ -22,7 +22,9 @@ const MinutesActions = ({
     useDisclosure(false);
   const [isOpenAddMinute, { open: openMinute, close: closeMinute }] =
     useDisclosure(false);
-  const [type, setType] = useState<"signed" | "unsigned" | "updated">("unsigned");
+  const [type, setType] = useState<"signed" | "unsigned" | "updated">(
+    "unsigned",
+  );
   console.log("data --> ", data);
   return (
     <div>
@@ -71,9 +73,8 @@ const MinutesActions = ({
                 </div>
               </Menu.Item>
               <Menu.Item
-                onClick={()=> {
-                  openMinute(),
-                  setType("updated")
+                onClick={() => {
+                  openMinute(), setType("updated");
                 }}
                 className="w-full py-1 text-[#576074]"
               >
