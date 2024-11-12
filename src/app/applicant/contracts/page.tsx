@@ -10,25 +10,15 @@ import Contracts from "@/components/contracts/contracts";
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Minutes from "@/components/minutes/minutes";
 
 const Page = () => {
   const contracts = useSelector((state: any) => state.contract);
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    // Simulating an API call
-    axios
-      .get("/api/contracts") // Replace with your actual API endpoint
-      .then((response) => {
-        setData(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching contracts:", error);
-        setLoading(false);
-      });
-  }, []);
+  const { uploadedMinutes, uploadedMinutesLoading } = useSelector(
+    (state: any) => state.minutes,
+  );
 
   const columns: ColumnDef<any>[] = [
     {
@@ -67,7 +57,8 @@ const Page = () => {
   ];
 
   return (
-    <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
+    <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 p-4">
+      <h2 className="text-2xl font-bold mb-4">Contracts</h2>
       <div className="w-full flex justify-between items-center p-4">
         <div className="relative w-[25rem]">
           <span className="absolute top-4 left-2">
