@@ -51,7 +51,7 @@ const AddMinute: React.FC<AddMinuteProps> = ({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Submitting form");
-  
+
     if (!formData.file) {
       notifications.show({
         message: "Please upload a file",
@@ -59,7 +59,7 @@ const AddMinute: React.FC<AddMinuteProps> = ({
       });
       return;
     }
-  
+
     setLoading(true);
     const newData = {
       minute: formData.file,
@@ -70,25 +70,26 @@ const AddMinute: React.FC<AddMinuteProps> = ({
     submitForm.append("attachment", newData.minute as Blob);
     submitForm.append("applicantID", newData.applicantId);
     submitForm.append("applicationID", newData.applicationId);
-  
+
     try {
-      const response = type === "unsigned"
-        ? await authorizedApi.post(
-            "/negotiation-contract/sdf/upload-negotiation",
-            submitForm,
-            { headers: { "Content-Type": "multipart/form-data" } }
-          )
-        : await authorizedApi.patch(
-            "/negotiation-contract/sdf/signed-negotiation-attachment",
-            submitForm,
-            { headers: { "Content-Type": "multipart/form-data" } }
-          );
-  
+      const response =
+        type === "unsigned"
+          ? await authorizedApi.post(
+              "/negotiation-contract/sdf/upload-negotiation",
+              submitForm,
+              { headers: { "Content-Type": "multipart/form-data" } },
+            )
+          : await authorizedApi.patch(
+              "/negotiation-contract/sdf/signed-negotiation-attachment",
+              submitForm,
+              { headers: { "Content-Type": "multipart/form-data" } },
+            );
+
       notifications.show({
         message: response?.data?.data?.message,
         color: "blue",
       });
-  
+
       setFormData({ file: null, name: "", amount: "" });
       getMinutes(dispatch);
       getUploadedMinutes(dispatch, "sdf");

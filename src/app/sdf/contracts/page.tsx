@@ -26,13 +26,23 @@ const Page = () => {
 
   console.log("applications for contract signing", applications);
 
-  const [contractsSignedApplications, setContractsSignedApplications] = useState<any[]>([]);
-  const [applicationsForContractSigning, setApplicationsForContractSigning] = useState<any[]>([]);
+  const [contractsSignedApplications, setContractsSignedApplications] =
+    useState<any[]>([]);
+  const [applicationsForContractSigning, setApplicationsForContractSigning] =
+    useState<any[]>([]);
 
-  useEffect(()=>{
-    setContractsSignedApplications(applications.filter((a: any)=> a?.application?.uploadedContract));
-    setApplicationsForContractSigning(applications.filter((a: any)=> !a?.application?.uploadedContract && a?.application?.uploadedSignedMinutes));
-  },[applications]);
+  useEffect(() => {
+    setContractsSignedApplications(
+      applications.filter((a: any) => a?.application?.uploadedContract),
+    );
+    setApplicationsForContractSigning(
+      applications.filter(
+        (a: any) =>
+          !a?.application?.uploadedContract &&
+          a?.application?.uploadedSignedMinutes,
+      ),
+    );
+  }, [applications]);
   const FilterDropDown = ({
     placeholderText,
     data,
@@ -88,27 +98,41 @@ const Page = () => {
       accessorKey: "name",
       header: "Applicant Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.application?.applicant?.name}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.name}
+        </div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.application?.applicant?.phone}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.phone}
+        </div>
       ),
     },
     {
       accessorKey: "email",
       header: "Applicant Email",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.application?.applicant?.email}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.email}
+        </div>
       ),
     },
     {
       accessorKey: "contractName",
       header: "Contract Number",
-      cell: ({ row }) => <div className="w-full">{contracts.filter((c: any)=> c?.application_ID === row.original?.application?.uuid)?.contractNumber}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">
+          {
+            contracts.filter(
+              (c: any) => c?.application_ID === row.original?.application?.uuid,
+            )?.contractNumber
+          }
+        </div>
+      ),
     },
     {
       accessorKey: "actions",

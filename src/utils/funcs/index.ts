@@ -111,8 +111,8 @@ import {
 import {
   GET_ANNOUNCEMENT_LOADING,
   GET_ANNOUNCEMENT_SUCCESS,
-  GET_ANNOUNCEMENT_ERROR
-} from "@/actions/AnnouncementActions"
+  GET_ANNOUNCEMENT_ERROR,
+} from "@/actions/AnnouncementActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
