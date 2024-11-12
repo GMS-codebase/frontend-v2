@@ -31,19 +31,60 @@ const Page = () => {
   } = useSelector((state: any) => state.minutes);
 
   const [uploadedMinutes, setUploadedMinutes] = useState<any[]>([]);
-  const [readyForMinutesNegotiation, SetReadyForMinutesNegotiation] = useState<any[]>([]);
+  const [readyForMinutesNegotiation, SetReadyForMinutesNegotiation] = useState<
+    any[]
+  >([]);
   const [approvedMinutes, setApprovedMinutes] = useState<any[]>([]);
   const [rejectedMinutes, setRejectedMinutes] = useState<any[]>([]);
   const [negotiatedMinutes, setNegotiatedMinutes] = useState<any[]>([]);
 
-  console.log("minutes --> ",minutes);
-  useEffect(()=>{
-    SetReadyForMinutesNegotiation(minutes.filter((m: any)=> !m?.uploadedMinutes && !m?.uploadedSignedMinutes && !m?.uploadedContract));
-    setUploadedMinutes(minutes.filter((m: any)=> m?.uploadedMinutes && !m?.uploadedSignedMinutes && !m?.uploadedContract  && m?.minuteStatus === "PENDING"));
-    setApprovedMinutes(minutes.filter((m: any)=> m?.uploadedMinutes && !m?.uploadedSignedMinutes && !m?.uploadedContract && m?.minuteStatus === "APPROVED"));
-    setRejectedMinutes(minutes.filter((m: any)=> m?.uploadedMinutes && !m?.uploadedSignedMinutes && !m?.uploadedContract  && m?.minuteStatus === "REJECTED"));
-    setNegotiatedMinutes(minutes.filter((m: any)=> m?.uploadedMinutes && !m?.uploadedSignedMinutes && !m?.uploadedContract  && m?.minuteStatus === "NEGOTIATED"));
-  },[minutes])
+  console.log("minutes --> ", minutes);
+  useEffect(() => {
+    SetReadyForMinutesNegotiation(
+      minutes.filter(
+        (m: any) =>
+          !m?.uploadedMinutes &&
+          !m?.uploadedSignedMinutes &&
+          !m?.uploadedContract,
+      ),
+    );
+    setUploadedMinutes(
+      minutes.filter(
+        (m: any) =>
+          m?.uploadedMinutes &&
+          !m?.uploadedSignedMinutes &&
+          !m?.uploadedContract &&
+          m?.minuteStatus === "PENDING",
+      ),
+    );
+    setApprovedMinutes(
+      minutes.filter(
+        (m: any) =>
+          m?.uploadedMinutes &&
+          !m?.uploadedSignedMinutes &&
+          !m?.uploadedContract &&
+          m?.minuteStatus === "APPROVED",
+      ),
+    );
+    setRejectedMinutes(
+      minutes.filter(
+        (m: any) =>
+          m?.uploadedMinutes &&
+          !m?.uploadedSignedMinutes &&
+          !m?.uploadedContract &&
+          m?.minuteStatus === "REJECTED",
+      ),
+    );
+    setNegotiatedMinutes(
+      minutes.filter(
+        (m: any) =>
+          m?.uploadedMinutes &&
+          !m?.uploadedSignedMinutes &&
+          !m?.uploadedContract &&
+          m?.minuteStatus === "NEGOTIATED",
+      ),
+    );
+  }, [minutes]);
   const minuteColumns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -110,11 +151,7 @@ const Page = () => {
     {
       accessorKey: "approval_status",
       header: "Minute Approval Status",
-      cell: ({ row }) => (
-        <div className="w-full">
-          APPROVED
-        </div>
-      ),
+      cell: ({ row }) => <div className="w-full">APPROVED</div>,
     },
     {
       accessorKey: "actions",
