@@ -17,10 +17,9 @@ const Page = () => {
     type: "",
   });
 
-  const {
-    minutes,
-    loading: loadingMinutes,
-  } = useSelector((state: any) => state.minutes);
+  const { minutes, loading: loadingMinutes } = useSelector(
+    (state: any) => state.minutes,
+  );
 
   const [uploadedMinutes, setUploadedMinutes] = useState<any[]>([]);
   const [readyForMinutesNegotiation, SetReadyForMinutesNegotiation] = useState<
@@ -320,7 +319,9 @@ const Page = () => {
               noDataMessage="No Application ready for minute negotiation"
             />
           </Tabs.Panel>
-          <h1 className="text-base p-4 font-bold">Contract Negotiations Uploaded</h1>
+          <h1 className="text-base p-4 font-bold">
+            Contract Negotiations Uploaded
+          </h1>
           <DataTable
             columns={minuteColumns}
             data={uploadedMinutes}

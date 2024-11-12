@@ -157,7 +157,11 @@ const Page = () => {
             </Menu.Label>
             <Menu.Divider />
             <Menu.Item
-              onClick={() => navigate.push(`/sdf/contracts/${row?.original?.application?.uuid}`)}
+              onClick={() =>
+                navigate.push(
+                  `/sdf/contracts/${row?.original?.application?.uuid}`,
+                )
+              }
             >
               <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
                 <CiEdit size={21} color="#576074" />
