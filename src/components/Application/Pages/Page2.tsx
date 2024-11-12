@@ -23,7 +23,7 @@ export const Page2 = ({
   type?: "training" | "assessment";
   application: any;
 }) => {
-  console.log(data.trainingManualAttachment)
+  console.log(data.trainingManualAttachment);
   const [trainingProcessInputs, setTrainingProcessInputs] = useState({
     moduleName: "",
     from: "",
@@ -66,7 +66,6 @@ export const Page2 = ({
       numberOfHours: "",
     });
     setAddTrainingError("");
-
   };
 
   const renderInputs = () => (
@@ -111,7 +110,7 @@ export const Page2 = ({
                     24 * 60 * 60 * 1000
                   : (application?.call?.endDate.getTime() ||
                       new Date().getTime()) +
-                    24 * 60 * 60 * 1000
+                    24 * 60 * 60 * 1000,
               )
                 .toISOString()
                 .split("T")[0]
@@ -203,8 +202,6 @@ export const Page2 = ({
     </div>
   );
 
-
-
   return (
     <>
       <div>
@@ -253,15 +250,13 @@ export const Page2 = ({
                             setData(
                               "trainingProcess",
                               data.trainingProcess.filter((process: any) => {
-
-
                                 return !(
                                   process.moduleName === item.moduleName &&
                                   process.from === item.from &&
                                   process.to === item.to &&
                                   process.numberOfHours === item.numberOfHours
                                 );
-                              })
+                              }),
                             );
                           }}
                         >
@@ -273,15 +268,13 @@ export const Page2 = ({
                             setData(
                               "trainingProcess",
                               data.trainingProcess.filter((process: any) => {
-
-
                                 return !(
                                   process.moduleName === item.moduleName &&
                                   process.from === item.from &&
                                   process.to === item.to &&
                                   process.numberOfHours === item.numberOfHours
                                 );
-                              })
+                              }),
                             );
                           }}
                         >
@@ -317,7 +310,7 @@ export const Page2 = ({
                     onClick={() =>
                       handleViewFile(
                         data?.trainingManualAttachment,
-                        "applications"
+                        "applications",
                       )
                     }
                     className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
@@ -328,7 +321,7 @@ export const Page2 = ({
                     onClick={() =>
                       handleDownloadFile(
                         data?.trainingManualAttachment,
-                        "applications"
+                        "applications",
                       )
                     }
                     className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
@@ -375,7 +368,7 @@ export const Page2 = ({
                 onChange={(e) =>
                   setData(
                     "trainingManualAttachment",
-                    e.target.files ? e.target.files[0] : null
+                    e.target.files ? e.target.files[0] : null,
                   )
                 }
               />
@@ -383,10 +376,10 @@ export const Page2 = ({
           )}
         </div>
       )}
-      {!isApplicant && commentsData &&
-        
+      {!isApplicant &&
+        commentsData &&
         renderCommentsSection(
-          type === "assessment" ? "assessmentComment" : "trainingManualComment"
+          type === "assessment" ? "assessmentComment" : "trainingManualComment",
         )}
     </>
   );

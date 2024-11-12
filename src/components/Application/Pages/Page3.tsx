@@ -48,7 +48,7 @@ export function Page3({
           ? data.assessmentEquipment
           : data.trainingEquipment),
         trainingEquipments,
-      ]
+      ],
     );
 
     setTrainingEquipments({
@@ -182,7 +182,7 @@ export function Page3({
                                   process.numberOfEquipment ===
                                     item.numberOfEquipment
                                 );
-                              })
+                              }),
                             );
                           }}
                         >
@@ -205,7 +205,7 @@ export function Page3({
                                   process.numberOfEquipment ===
                                     item.numberOfEquipment
                                 );
-                              })
+                              }),
                             );
                           }}
                         >
@@ -235,7 +235,7 @@ export function Page3({
                 onClick={() =>
                   handleViewFile(
                     data?.trainingEquipmentAttachment,
-                    "applications"
+                    "applications",
                   )
                 }
                 className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
@@ -246,7 +246,7 @@ export function Page3({
                 onClick={() =>
                   handleDownloadFile(
                     data?.trainingEquipmentAttachment,
-                    "applications"
+                    "applications",
                   )
                 }
                 className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
@@ -260,7 +260,7 @@ export function Page3({
               renderCommentsSection(
                 type === "assessment"
                   ? "assessmentEquipmentComment"
-                  : "trainingEquipmentComment"
+                  : "trainingEquipmentComment",
               )}
           </>
         ) : (
@@ -313,7 +313,7 @@ export function Page3({
                   type !== "assessment"
                     ? "trainingEquipmentAttachment"
                     : "assessmentEquipmentAttachment",
-                  e.target.files ? e.target.files[0] : null
+                  e.target.files ? e.target.files[0] : null,
                 )
               }
             />
@@ -387,7 +387,7 @@ export function Page3({
               onChange={(e) =>
                 setData(
                   "premisesAttachment",
-                  e.target.files ? e.target.files[0] : null
+                  e.target.files ? e.target.files[0] : null,
                 )
               }
             />

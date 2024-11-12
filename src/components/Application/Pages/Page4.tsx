@@ -225,7 +225,7 @@ export const Page4 = ({
                                 process.available.toUpperCase() ===
                                   item.available.toUpperCase()
                               );
-                            })
+                            }),
                           );
                         }}
                       >
@@ -244,7 +244,7 @@ export const Page4 = ({
                                 process.available.toUpperCase() ===
                                   item.available.toUpperCase()
                               );
-                            })
+                            }),
                           );
                         }}
                       >
@@ -334,7 +334,7 @@ export const Page4 = ({
             onChange={(e) =>
               setData(
                 "staffAttachment",
-                e.target.files && (e.target.files[0] as any)
+                e.target.files && (e.target.files[0] as any),
               )
             }
           />
