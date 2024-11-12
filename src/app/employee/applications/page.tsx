@@ -27,7 +27,7 @@ const Page = () => {
     [rawApplications],
   );
 
-  console.log(applications);
+
 
   const filtersContainerRef = useRef<HTMLDivElement>(null);
 

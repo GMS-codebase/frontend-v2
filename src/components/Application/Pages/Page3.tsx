@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Select } from "@mantine/core";
 import { Comments } from "@/types";
 import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
-import { FaDownload } from "react-icons/fa";
+import { FaDownload, FaRegEdit } from "react-icons/fa";
+import { MdDeleteOutline } from "react-icons/md";
 
 export function Page3({
   data,
@@ -39,7 +40,7 @@ export function Page3({
     if (!validateTrainingEquipments()) {
       return;
     }
-    console.log(data);
+
     setData(
       type === "assessment" ? "assessmentEquipment" : "trainingEquipment",
       [
@@ -47,7 +48,7 @@ export function Page3({
           ? data.assessmentEquipment
           : data.trainingEquipment),
         trainingEquipments,
-      ],
+      ]
     );
 
     setTrainingEquipments({
@@ -148,16 +149,70 @@ export function Page3({
                 <tr className="bg-gray-100">
                   <th className="border p-2">Name</th>
                   <th className="border p-2">Number of Equipment</th>
+                  {!commentsData && setData && (
+                    <th className="border p-2">Actions</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
                 {(type !== "assessment"
                   ? data?.trainingEquipment
-                  : data.assessmentEquipment
+                  : data?.assessmentEquipment
                 ).map((item: any, index: any) => (
                   <tr key={index}>
                     <td className="border p-2">{item.nameOfEquipment}</td>
                     <td className="border p-2">{item.numberOfEquipment}</td>
+                    {!commentsData && setData && (
+                      <td className="flex items-center justify-center gap-2 border p-3">
+                        <button
+                          className="text-primary"
+                          onClick={() => {
+                            setTrainingEquipments(item);
+                            setData(
+                              type !== "assessment"
+                                ? "trainingEquipment"
+                                : "assessmentEquipment",
+                              (type !== "assessment"
+                                ? data.trainingEquipment
+                                : data.assessmentEquipment
+                              ).filter((process: any) => {
+                                return !(
+                                  process.nameOfEquipment ===
+                                    item.nameOfEquipment &&
+                                  process.numberOfEquipment ===
+                                    item.numberOfEquipment
+                                );
+                              })
+                            );
+                          }}
+                        >
+                          <FaRegEdit className="w-5 h-5" />
+                        </button>
+                        <button
+                          className="text-danger"
+                          onClick={() => {
+                            setData(
+                              type !== "assessment"
+                                ? "trainingEquipment"
+                                : "assessmentEquipment",
+                              (type !== "assessment"
+                                ? data.trainingEquipment
+                                : data.assessmentEquipment
+                              ).filter((process: any) => {
+                                return !(
+                                  process.nameOfEquipment ===
+                                    item.nameOfEquipment &&
+                                  process.numberOfEquipment ===
+                                    item.numberOfEquipment
+                                );
+                              })
+                            );
+                          }}
+                        >
+                          <MdDeleteOutline className="w-5 h-5" />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -180,7 +235,7 @@ export function Page3({
                 onClick={() =>
                   handleViewFile(
                     data?.trainingEquipmentAttachment,
-                    "applications",
+                    "applications"
                   )
                 }
                 className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
@@ -191,7 +246,7 @@ export function Page3({
                 onClick={() =>
                   handleDownloadFile(
                     data?.trainingEquipmentAttachment,
-                    "applications",
+                    "applications"
                   )
                 }
                 className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
@@ -204,8 +259,8 @@ export function Page3({
               commentsData &&
               renderCommentsSection(
                 type === "assessment"
-                  ? "assessmentEquipmentAttachmentComment"
-                  : "trainingEquipmentAttachmentComment",
+                  ? "assessmentEquipmentComment"
+                  : "trainingEquipmentComment"
               )}
           </>
         ) : (
@@ -224,12 +279,19 @@ export function Page3({
               ) ? (
                 <div className="text-center">
                   <p className="text-xl font-medium text-gray-700">
-                    {
-                      (type === "assessment"
-                        ? data.assessmentEquipmentAttachment
-                        : data.trainingEquipmentAttachment
-                      ).name
-                    }
+                    {type}
+                    {typeof (type === "assessment"
+                      ? data?.assessmentEquipmentAttachment
+                      : data?.trainingEquipmentAttachment) === "string"
+                      ? (type === "assessment"
+                          ? data.assessmentEquipmentAttachment
+                          : data.trainingEquipmentAttachment
+                        )
+                          .split("/")
+                          .pop()
+                      : type === "assessment"
+                        ? data?.assessmentEquipmentAttachment?.name
+                        : data?.trainingEquipmentAttachment?.name}
                   </p>
                   <p className="text-sm text-gray-500">File selected</p>
                 </div>
@@ -251,7 +313,7 @@ export function Page3({
                   type !== "assessment"
                     ? "trainingEquipmentAttachment"
                     : "assessmentEquipmentAttachment",
-                  e.target.files ? e.target.files[0] : null,
+                  e.target.files ? e.target.files[0] : null
                 )
               }
             />
@@ -303,7 +365,9 @@ export function Page3({
               {data.premisesAttachment ? (
                 <div className="text-center">
                   <p className="text-xl font-medium text-gray-700">
-                    {data.premisesAttachment.name}
+                    {typeof data?.premisesAttachment === "string"
+                      ? data.premisesAttachment.split("/").pop()
+                      : data?.premisesAttachment?.name}
                   </p>
                   <p className="text-sm text-gray-500">File selected</p>
                 </div>
@@ -323,7 +387,7 @@ export function Page3({
               onChange={(e) =>
                 setData(
                   "premisesAttachment",
-                  e.target.files ? e.target.files[0] : null,
+                  e.target.files ? e.target.files[0] : null
                 )
               }
             />

@@ -143,7 +143,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -182,18 +182,18 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
 export const getDashboardData = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string,
+  stage: string
 ) => {
   try {
     dispatch({ type: GET_DASHBOARD_LOADING });
     const dashboardResponse = await authorizedApi.get(
-      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`,
+      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`
     );
     dispatch({ type: GET_DASHBOARD_SUCCESS, payload: dashboardResponse.data });
     for (const sector of prioritySectors) {
       try {
         const sectorResponse = await authorizedApi.get(
-          `/Sectors/${sector?.id}/count/applications/count/applicants`,
+          `/Sectors/${sector?.id}/count/applications/count/applicants`
         );
         dispatch({
           type: GET_PRIORITY_SECTORS_DATA,
@@ -232,7 +232,8 @@ export const getBudgetLines = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/budgetlines/all")
     .then((res) => {
-      dispatch({ type: GET_BUDGET_LINES_SUCCESS, payload: res.data.data });
+
+      dispatch({ type: GET_BUDGET_LINES_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
       dispatch({
@@ -272,7 +273,7 @@ export const handleDownloadFile = async (file: any, service: string) => {
       `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
         responseType: "blob",
-      },
+      }
     );
     const blob = new Blob([response.data], {
       type: response.headers["content-type"],
@@ -365,7 +366,7 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplicationsForContracts = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
@@ -402,7 +403,6 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/application/all-application")
     .then((res) => {
-      console.log(res.data);
       dispatch({
         type: GET_MY_APPLICATIONS_SUCCESS,
         payload: res.data.data.data,
@@ -444,13 +444,13 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplicationsReadyForMinutes = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
   authorizedApi
     .get("/application/contract-signing/all") //Todo: change this to the correct endpoint
     .then((res) => {
-      console.log(" applications ready --> ", res.data.data?.data);
+
       dispatch({
         type: GET_APPLICATIONS_READY_FOR_MINUTES_SUCCESS,
         payload: res.data.data?.data,
@@ -548,7 +548,7 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
 const validateQuestions = async (
   data: any,
   window?: number,
-  subwindow?: number,
+  subwindow?: number
 ): Promise<string | null> => {
   // Common validation messages
   const commonMessages = {
@@ -606,7 +606,7 @@ export const handleSubmit = async (
   setLoading: (type: any) => void,
   data: any,
   application: any,
-  callback?: () => void,
+  callback?: () => void
 ) => {
   const error =
     type === "save"
@@ -614,7 +614,7 @@ export const handleSubmit = async (
       : await validateQuestions(
           data,
           application.window.title.includes("3") && 3,
-          application.subWindow.title.includes("2") && 2,
+          application.subWindow.title.includes("2") && 2
         );
   if (error !== null && type === "submit") {
     notifications.show({
@@ -637,7 +637,7 @@ export const handleSubmit = async (
   if (data.trainingEquipment && data.trainingEquipment.length > 0)
     submitData.append(
       "trainingEquipment",
-      JSON.stringify(data.trainingEquipment),
+      JSON.stringify(data.trainingEquipment)
     );
   if (data.identificationEmployee)
     submitData.append("identificationEmployee", data.identificationEmployee);
@@ -648,12 +648,12 @@ export const handleSubmit = async (
   if (data.contributionFromApplicant)
     submitData.append(
       "contributionFromApplicant",
-      data.contributionFromApplicant,
+      data.contributionFromApplicant
     );
   if (data.recruitmentTrainerNumber)
     submitData.append(
       "recruitmentTrainerNumber",
-      data.recruitmentTrainerNumber,
+      data.recruitmentTrainerNumber
     );
   if (data.identificationMember)
     submitData.append("identificationMember", data.identificationMember);
@@ -663,22 +663,22 @@ export const handleSubmit = async (
   )
     submitData.append(
       "assessmentAndCertificationProcess",
-      JSON.stringify(data.assessmentAndCertificationProcess),
+      JSON.stringify(data.assessmentAndCertificationProcess)
     );
   if (data.assessmentEquipment && data.assessmentEquipment.length > 0)
     submitData.append(
       "assessmentEquipment",
-      JSON.stringify(data.assessmentEquipment),
+      JSON.stringify(data.assessmentEquipment)
     );
   if (data.recruitmentCandidatesNumber)
     submitData.append(
       "recruitmentCandidatesNumber",
-      data.recruitmentCandidatesNumber,
+      data.recruitmentCandidatesNumber
     );
   if (data.assessorsAndFacilitators)
     submitData.append(
       "assessorsAndFacilitators",
-      data.assessorsAndFacilitators,
+      data.assessorsAndFacilitators
     );
   if (data.contribution) submitData.append("contribution", data.contribution);
   if (data.roleAttachment)
@@ -688,7 +688,7 @@ export const handleSubmit = async (
   if (data.trainingManualAttachment)
     submitData.append(
       "trainingManualAttachment",
-      data.trainingManualAttachment,
+      data.trainingManualAttachment
     );
   if (data.staffAttachment)
     submitData.append("staffAttachment", data.staffAttachment);
@@ -697,12 +697,12 @@ export const handleSubmit = async (
   if (data.trainingEquipmentAttachment)
     submitData.append(
       "trainingEquipmentAttachment",
-      data.trainingEquipmentAttachment,
+      data.trainingEquipmentAttachment
     );
   if (data.previousFinancialReportAttachment)
     submitData.append(
       "previousFinancialReportAttachment",
-      data.previousFinancialReportAttachment,
+      data.previousFinancialReportAttachment
     );
   if (data.MOUsAttachment && data.MOUsAttachment.length > 0) {
     data.MOUsAttachment.forEach((file: any, index: any) => {
@@ -712,16 +712,16 @@ export const handleSubmit = async (
   if (data.assessmentEquipmentAttachment)
     submitData.append(
       "assessmentEquipmentAttachment",
-      data.assessmentEquipmentAttachment,
+      data.assessmentEquipmentAttachment
     );
   if (data.budgetSummaryAttachment)
     submitData.append("budgetSummaryAttachment", data.budgetSummaryAttachment);
 
-  console.log(application);
+
   try {
     await authorizedApi.post(
       `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${application.uuid}`,
-      submitData,
+      submitData
     );
     notifications.show({
       message:
@@ -733,12 +733,42 @@ export const handleSubmit = async (
     setLoading(false);
     callback && callback();
   } catch (err: any) {
-    console.log(err);
+
     notifications.show({
       message: err.response?.data?.message ?? "Failed to submit the form!",
       color: "red",
     });
   } finally {
     setLoading(null);
+  }
+};
+
+export const getApplicationStatus = (application: any) => {
+  if (!application.finishedAnswering) {
+    return "ANSWERING";
+  } else if (
+    application?.currentStage === "EVALUATION" &&
+    !application?.call?.closedEvaluation
+  ) {
+    return "EVALUATION IN PROGRESS";
+  } else if (
+    application?.currentStage === "DUE_DILIGENCY" &&
+    !application?.call?.closedDueDiligency
+  ) {
+    return "DUE DILIGENCY IN  PROGRESS";
+  } else if (
+    application?.currentStage === "GRANT_COMMITTEE" &&
+    !application?.call?.closedGrantCommittee
+  ) {
+    return "GRANT COMMITTEE IN PROGRESS";
+  } else if (
+    application?.currentStage === "CONTRACT_SIGNING" &&
+    (!application?.call?.closedGrantCommittee ||
+      !application?.call?.closedDueDiligency ||
+      !application?.call?.closedEvaluation)
+  ) {
+    return "CONTRACT SIGNING IN PROGRESS";
+  } else {
+    return application?.currentStage;
   }
 };

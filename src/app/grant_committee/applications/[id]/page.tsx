@@ -24,13 +24,14 @@ import DueDiligenceModal from "@/components/Modals/DueDiigence";
 import { getApplications } from "@/utils/funcs";
 import NullifyModal from "@/components/Modals/Nullify";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
+import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id,
+    (application: any) => application.uuid === id
   )[0];
   const [
     isOpenDueDiligencyDetails,
@@ -179,7 +180,7 @@ const Page = () => {
                   `/admin/applicant-details/${id}`,
                   {
                     responseType: "blob",
-                  },
+                  }
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -337,8 +338,8 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage?.stage === "EVALUATION",
-                        ),
+                          (stage: any) => stage?.stage === "EVALUATION"
+                        )
                       );
                       openNullifyModal();
                     }}
@@ -380,8 +381,8 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage?.stage === "DUE_DILIGENCY",
-                        ),
+                          (stage: any) => stage?.stage === "DUE_DILIGENCY"
+                        )
                       );
                       openNullifyModal();
                     }}
@@ -394,7 +395,7 @@ const Page = () => {
             )}
           </div>
           {application?.stages?.find(
-            (stage: any) => stage?.stage === "GRANT_COMMITTEE",
+            (stage: any) => stage?.stage === "GRANT_COMMITTEE"
           ) && (
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Grant Committee</h3>
@@ -434,6 +435,11 @@ const Page = () => {
         closeModal={closeGrantCommitteeMakeDecision}
         isOpen={isOpenGrantCommitteeMakeDecision}
         onMakeDecision={refetch}
+      />
+      <GrantCommitteeDetails
+        application={application}
+        close={closeGrantCommitteeDetails}
+        opened={isOpenGrantCommitteeDetails}
       />
       <EvaluationDetails
         opened={isOpenEvaluationDetails}

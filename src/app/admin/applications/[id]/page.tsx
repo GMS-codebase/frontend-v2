@@ -97,7 +97,7 @@ const Page = () => {
   });
 
   const goToBudget = () => {
-    console.log("Switching to Indicative Budget");
+
     setCurrentComponent("IndicativeBudget");
   };
 
