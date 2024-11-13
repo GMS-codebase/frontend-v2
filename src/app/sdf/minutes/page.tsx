@@ -18,7 +18,7 @@ const Page = () => {
   });
 
   const { minutes, loading: loadingMinutes } = useSelector(
-    (state: any) => state.minutes
+    (state: any) => state.minutes,
   );
 
   const [uploadedMinutes, setUploadedMinutes] = useState<any[]>([]);
@@ -36,8 +36,8 @@ const Page = () => {
         (m: any) =>
           !m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
-          !m?.uploadedContract
-      )
+          !m?.uploadedContract,
+      ),
     );
     setUploadedMinutes(
       minutes.filter(
@@ -45,8 +45,8 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minutesStatus === "PENDING"
-      )
+          m?.minutesStatus === "PENDING",
+      ),
     );
     setApprovedMinutes(
       minutes.filter(
@@ -54,8 +54,8 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minutesStatus === "APPROVED"
-      )
+          m?.minutesStatus === "APPROVED",
+      ),
     );
     setRejectedMinutes(
       minutes.filter(
@@ -63,8 +63,8 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minutesStatus === "REJECTED"
-      )
+          m?.minutesStatus === "REJECTED",
+      ),
     );
     setNegotiatedMinutes(
       minutes.filter(
@@ -72,8 +72,8 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minutesStatus === "NEGOTIATED"
-      )
+          m?.minutesStatus === "NEGOTIATED",
+      ),
     );
   }, [minutes]);
   const minuteColumns: ColumnDef<any>[] = [
