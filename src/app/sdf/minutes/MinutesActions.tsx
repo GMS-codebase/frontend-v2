@@ -56,7 +56,7 @@ const MinutesActions = ({
             >
               <div className="flex items-center gap-3 py-1">
                 <Upload size={21} />
-                <span>Upload Minute Negotiation</span>
+                <span>Upload contract negotiation</span>
               </div>
             </Menu.Item>
           )}
