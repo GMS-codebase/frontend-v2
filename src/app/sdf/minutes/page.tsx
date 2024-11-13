@@ -11,24 +11,15 @@ import AddMinute from "@/components/Modals/contracts/AddMinutes";
 import MinutesActions from "./MinutesActions";
 
 const Page = () => {
-  const [isMinute, setIsMinute] = useState({
+  const [isMinute, setIsMinute] = useState<any>({
     isOpen: false,
     application: null,
     type: "",
   });
 
-  const {
-    minutes,
-    // uploadedMinutes,
-    // approvedMinutes,
-    // rejectedMinutes,
-    loading: loadingMinutes,
-    // uploadedMinutesLoading,
-    // approvedMinutesLoading,
-    // rejectedMinutesLoading,
-    // applicationsReadyForMinutesLoading,
-    // applicationsReadyForMinutes,
-  } = useSelector((state: any) => state.minutes);
+  const { minutes, loading: loadingMinutes } = useSelector(
+    (state: any) => state.minutes,
+  );
 
   const [uploadedMinutes, setUploadedMinutes] = useState<any[]>([]);
   const [readyForMinutesNegotiation, SetReadyForMinutesNegotiation] = useState<
@@ -54,7 +45,7 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minuteStatus === "PENDING",
+          m?.minutesStatus === "PENDING",
       ),
     );
     setApprovedMinutes(
@@ -63,7 +54,7 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minuteStatus === "APPROVED",
+          m?.minutesStatus === "APPROVED",
       ),
     );
     setRejectedMinutes(
@@ -72,7 +63,7 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minuteStatus === "REJECTED",
+          m?.minutesStatus === "REJECTED",
       ),
     );
     setNegotiatedMinutes(
@@ -81,7 +72,7 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minuteStatus === "NEGOTIATED",
+          m?.minutesStatus === "NEGOTIATED",
       ),
     );
   }, [minutes]);
@@ -307,34 +298,35 @@ const Page = () => {
 
       <Tabs defaultValue="applications">
         <Tabs.List className="w-auto my-2 ml-5 float-end">
-          <Tabs.Tab value="minutes">Meeting minutes Uploaded</Tabs.Tab>
           <Tabs.Tab value="applications">
             Ready for Minutes Negotiations
           </Tabs.Tab>
+          <Tabs.Tab value="minutes">Contract Negotiation Uploaded</Tabs.Tab>
           <Tabs.Tab value="approved">Approved meeting minutes</Tabs.Tab>
           <Tabs.Tab value="rejected">Rejected meeting minutes</Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="minutes">
-          <h1 className="text-base p-4 font-bold">Minutes Uploaded</h1>
+          <Tabs.Panel value="applications">
+            <h1 className="text-base p-4 font-bold">
+              {" "}
+              Ready For Minutes Negotiations
+            </h1>
+            <DataTable
+              columns={columns}
+              data={readyForMinutesNegotiation}
+              loading={loadingMinutes}
+              noDataMessage="No Application ready for minute negotiation"
+            />
+          </Tabs.Panel>
+          <h1 className="text-base p-4 font-bold">
+            Contract Negotiations Uploaded
+          </h1>
           <DataTable
             columns={minuteColumns}
             data={uploadedMinutes}
             loading={loadingMinutes}
             noDataMessage="No Created Minutes"
-          />
-        </Tabs.Panel>
-
-        <Tabs.Panel value="applications">
-          <h1 className="text-base p-4 font-bold">
-            {" "}
-            Ready For Minutes Negotiations
-          </h1>
-          <DataTable
-            columns={columns}
-            data={readyForMinutesNegotiation}
-            loading={loadingMinutes}
-            noDataMessage="No Application ready for minute negotiation"
           />
         </Tabs.Panel>
 
@@ -362,16 +354,6 @@ const Page = () => {
           />
         </Tabs.Panel>
       </Tabs>
-
-      {/* AddMinute Modal */}
-      <AddMinute
-        type={isMinute.type}
-        data={isMinute.application}
-        isOpenAddMinute={isMinute.isOpen}
-        closeAddMinute={() =>
-          setIsMinute({ isOpen: false, application: null, type: "" })
-        }
-      />
     </div>
   );
 };
