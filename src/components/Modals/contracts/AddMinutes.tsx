@@ -143,8 +143,8 @@ const AddMinute: React.FC<AddMinuteProps> = ({
                 className="block text-md font-bold text-gray-700"
               >
                 {type == "unsigned"
-                  ? "Minutes Negotiation"
-                  : "Signed Minutes Negotiation"}
+                  ? "Contract negotiation"
+                  : "Signed Contract negotiation"}
               </label>
               <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <label
