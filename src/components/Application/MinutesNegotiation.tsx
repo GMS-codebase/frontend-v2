@@ -45,7 +45,9 @@ const MinutesNegotiation = () => {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Contracts Contract negotiation</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        Contracts Contract negotiation
+      </h1>
       <div className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full mx-auto w-fit font-bold cursor-pointer items-center justify-center">
         <span>
           <SolarDownloadMinimalisticBold />
