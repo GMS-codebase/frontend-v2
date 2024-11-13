@@ -45,8 +45,8 @@ const Page = () => {
         (m: any) =>
           !m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
-          !m?.uploadedContract
-      )
+          !m?.uploadedContract,
+      ),
     );
     setUploadedMinutes(
       minutes.filter(
@@ -54,8 +54,8 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minuteStatus === "PENDING"
-      )
+          m?.minuteStatus === "PENDING",
+      ),
     );
     setApprovedMinutes(
       minutes.filter(
@@ -63,8 +63,8 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minuteStatus === "APPROVED"
-      )
+          m?.minuteStatus === "APPROVED",
+      ),
     );
     setRejectedMinutes(
       minutes.filter(
@@ -72,8 +72,8 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minuteStatus === "REJECTED"
-      )
+          m?.minuteStatus === "REJECTED",
+      ),
     );
     setNegotiatedMinutes(
       minutes.filter(
@@ -81,8 +81,8 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minuteStatus === "NEGOTIATED"
-      )
+          m?.minuteStatus === "NEGOTIATED",
+      ),
     );
   }, [minutes]);
   const minuteColumns: ColumnDef<any>[] = [
