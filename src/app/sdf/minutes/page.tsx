@@ -11,15 +11,24 @@ import AddMinute from "@/components/Modals/contracts/AddMinutes";
 import MinutesActions from "./MinutesActions";
 
 const Page = () => {
-  const [isMinute, setIsMinute] = useState<any>({
+  const [isMinute, setIsMinute] = useState({
     isOpen: false,
     application: null,
     type: "",
   });
 
-  const { minutes, loading: loadingMinutes } = useSelector(
-    (state: any) => state.minutes,
-  );
+  const {
+    minutes,
+    // uploadedMinutes,
+    // approvedMinutes,
+    // rejectedMinutes,
+    loading: loadingMinutes,
+    // uploadedMinutesLoading,
+    // approvedMinutesLoading,
+    // rejectedMinutesLoading,
+    // applicationsReadyForMinutesLoading,
+    // applicationsReadyForMinutes,
+  } = useSelector((state: any) => state.minutes);
 
   const [uploadedMinutes, setUploadedMinutes] = useState<any[]>([]);
   const [readyForMinutesNegotiation, SetReadyForMinutesNegotiation] = useState<
@@ -36,8 +45,8 @@ const Page = () => {
         (m: any) =>
           !m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
-          !m?.uploadedContract,
-      ),
+          !m?.uploadedContract
+      )
     );
     setUploadedMinutes(
       minutes.filter(
@@ -45,8 +54,8 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minutesStatus === "PENDING",
-      ),
+          m?.minuteStatus === "PENDING"
+      )
     );
     setApprovedMinutes(
       minutes.filter(
@@ -54,8 +63,8 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minutesStatus === "APPROVED",
-      ),
+          m?.minuteStatus === "APPROVED"
+      )
     );
     setRejectedMinutes(
       minutes.filter(
@@ -63,8 +72,8 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minutesStatus === "REJECTED",
-      ),
+          m?.minuteStatus === "REJECTED"
+      )
     );
     setNegotiatedMinutes(
       minutes.filter(
@@ -72,8 +81,8 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minutesStatus === "NEGOTIATED",
-      ),
+          m?.minuteStatus === "NEGOTIATED"
+      )
     );
   }, [minutes]);
   const minuteColumns: ColumnDef<any>[] = [
@@ -298,35 +307,34 @@ const Page = () => {
 
       <Tabs defaultValue="applications">
         <Tabs.List className="w-auto my-2 ml-5 float-end">
+          <Tabs.Tab value="minutes">Meeting minutes Uploaded</Tabs.Tab>
           <Tabs.Tab value="applications">
             Ready for Minutes Negotiations
           </Tabs.Tab>
-          <Tabs.Tab value="minutes">Contract Negotiation Uploaded</Tabs.Tab>
           <Tabs.Tab value="approved">Approved meeting minutes</Tabs.Tab>
           <Tabs.Tab value="rejected">Rejected meeting minutes</Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="minutes">
-          <Tabs.Panel value="applications">
-            <h1 className="text-base p-4 font-bold">
-              {" "}
-              Ready For Minutes Negotiations
-            </h1>
-            <DataTable
-              columns={columns}
-              data={readyForMinutesNegotiation}
-              loading={loadingMinutes}
-              noDataMessage="No Application ready for minute negotiation"
-            />
-          </Tabs.Panel>
-          <h1 className="text-base p-4 font-bold">
-            Contract Negotiations Uploaded
-          </h1>
+          <h1 className="text-base p-4 font-bold">Minutes Uploaded</h1>
           <DataTable
             columns={minuteColumns}
             data={uploadedMinutes}
             loading={loadingMinutes}
             noDataMessage="No Created Minutes"
+          />
+        </Tabs.Panel>
+
+        <Tabs.Panel value="applications">
+          <h1 className="text-base p-4 font-bold">
+            {" "}
+            Ready For Minutes Negotiations
+          </h1>
+          <DataTable
+            columns={columns}
+            data={readyForMinutesNegotiation}
+            loading={loadingMinutes}
+            noDataMessage="No Application ready for minute negotiation"
           />
         </Tabs.Panel>
 
@@ -354,6 +362,16 @@ const Page = () => {
           />
         </Tabs.Panel>
       </Tabs>
+
+      {/* AddMinute Modal */}
+      <AddMinute
+        type={isMinute.type as any}
+        data={isMinute.application}
+        isOpenAddMinute={isMinute.isOpen}
+        closeAddMinute={() =>
+          setIsMinute({ isOpen: false, application: null, type: "" })
+        }
+      />
     </div>
   );
 };
