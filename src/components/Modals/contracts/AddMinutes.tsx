@@ -18,7 +18,7 @@ interface AddMinuteProps {
   data: any;
   isOpenAddMinute: boolean;
   closeAddMinute: () => void;
-  type: string;
+  type: "signed" | "unsigned" | "updated";
 }
 
 const AddMinute: React.FC<AddMinuteProps> = ({
@@ -125,7 +125,9 @@ const AddMinute: React.FC<AddMinuteProps> = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="w-full flex flex-col items-center">
-          <h1 className="text-2xl font-extrabold">Create New Minute</h1>
+          <h1 className="text-2xl font-extrabold">
+            {type == "unsigned" ? "Create New Minute" : "Upload Signed Minutes"}
+          </h1>
           <h2 className="text-[#000F2369] text-lg font-medium">
             Provide your Minute details to create a new Minute.
           </h2>
@@ -140,7 +142,9 @@ const AddMinute: React.FC<AddMinuteProps> = ({
                 htmlFor="fileUpload"
                 className="block text-md font-bold text-gray-700"
               >
-                Minutes Negotiation
+                {type == "unsigned"
+                  ? "Minutes Negotiation"
+                  : "Signed Minutes Negotiation"}
               </label>
               <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <label
