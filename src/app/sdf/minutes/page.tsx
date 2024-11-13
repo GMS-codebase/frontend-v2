@@ -49,7 +49,7 @@ const Page = () => {
       ),
     );
     setUploadedMinutes(
-      minutes.filter( 
+      minutes.filter(
         (m: any) =>
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
