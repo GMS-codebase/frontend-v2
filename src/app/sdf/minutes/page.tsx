@@ -198,6 +198,47 @@ const Page = () => {
     },
   ];
 
+  const negotiatedColumns: ColumnDef<any>[] = [
+    {
+      accessorKey: "name",
+      header: "Applicant Name",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.name}</div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: "Applicant Phone",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.phone}</div>
+      ),
+    },
+    {
+      accessorKey: "email",
+      header: "Applicant Email",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.email}</div>
+      ),
+    },
+    {
+      accessorKey: "approval_status",
+      header: "Minute Approval Status",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.terms?.toUpperCase()}</div>
+      ),
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <MinutesActions
+          data={row.original}
+          setIsMinute={setIsMinute}
+          status="rejected"
+        />
+      ),
+    },
+  ];
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "applicationNumber",
@@ -297,19 +338,20 @@ const Page = () => {
       </div>
 
       <Tabs defaultValue="applications">
-        <Tabs.List className="w-auto my-2 ml-5 float-end">
+        <Tabs.List className="w-auto my-2 float-end">
           <Tabs.Tab value="applications">
             Ready for Contract negotiations
           </Tabs.Tab>
           <Tabs.Tab value="minutes">Contract Negotiation Uploaded</Tabs.Tab>
-          <Tabs.Tab value="approved">Approved meeting minutes</Tabs.Tab>
-          <Tabs.Tab value="rejected">Rejected meeting minutes</Tabs.Tab>
+          <Tabs.Tab value="approved">Approved contract negotiations</Tabs.Tab>
+          <Tabs.Tab value="rejected">Rejected contract negotiations</Tabs.Tab>
+          {/* <Tabs.Tab value="rejected">Negotiated contract negotiations</Tabs.Tab> */}
         </Tabs.List>
 
         <Tabs.Panel value="applications">
           <h1 className="text-base p-4 font-bold">
             {" "}
-            Ready For Contract negotiations
+            Ready For Contract negotiation
           </h1>
           <DataTable
             columns={columns}
@@ -332,7 +374,7 @@ const Page = () => {
 
         <Tabs.Panel value="approved">
           <h1 className="text-base p-4 font-bold">
-            Approved contract negotiation
+            Approved contract negotiations
           </h1>
           <DataTable
             columns={approvedColumns}
@@ -344,13 +386,24 @@ const Page = () => {
 
         <Tabs.Panel value="rejected">
           <h1 className="text-base p-4 font-bold">
-            Rejected contract negotiation
+            Rejected contract negotiations
           </h1>
           <DataTable
             columns={rejectedColumns}
             data={rejectedMinutes}
             loading={loadingMinutes}
             noDataMessage="No Rejected contract negotiations"
+          />
+        </Tabs.Panel>
+        <Tabs.Panel value="negotiated">
+          <h1 className="text-base p-4 font-bold">
+            Negotiated contract negotiations
+          </h1>
+          <DataTable
+            columns={negotiatedColumns}
+            data={negotiatedMinutes}
+            loading={loadingMinutes}
+            noDataMessage="No Negotiated contract negotiations"
           />
         </Tabs.Panel>
       </Tabs>
