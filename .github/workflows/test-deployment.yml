@@ -49,9 +49,7 @@ jobs:
         run: |
           cd ~/apps/staging/frontend-v2-staging
           git fetch origin
-          git reset --hard origin/staging
-          npm install --force
-          npm run build
+          git reset --hard origin/staging  # Ensure the latest code is fetched and checked out
           pm2 restart gms-staging
           pm2 save
 
