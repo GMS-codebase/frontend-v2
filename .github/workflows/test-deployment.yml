@@ -34,11 +34,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
-      - name: Install pm2 globally
-        run: npm install -g pm2
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --force
         working-directory: ~/apps/staging/frontend-v2-staging
 
       - name: Create environment variables
@@ -61,11 +59,3 @@ jobs:
 
       - name: Check if pm2 is running
         run: pm2 list
-
-      - name: Notify failure on Slack
-        if: failure()
-        uses: 8398a7/action-slack@v3
-        with:
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          status: failure
-          message: 'Deployment to staging failed!'
