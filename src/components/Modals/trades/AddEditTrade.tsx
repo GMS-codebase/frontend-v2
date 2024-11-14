@@ -103,7 +103,7 @@ const AddEditTrade = ({
             : "Trade is created successfully",
           color: "blue",
         });
-        console.log(res.data.data);
+
         dispatch({
           type: defaultData ? UPDATE_TRADE_SUCCESS : ADD_TRADE_SUCCESS,
           payload: res.data?.data,
@@ -150,7 +150,7 @@ const AddEditTrade = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[45vw] max-h-[90vh] overflow-y-auto  relative bg-white rounded-3xl p-16 flex flex-col items-center modal">
+      <div className="w-[45vw] max-h-[90vh] overflow-y-auto  relative bg-white rounded-3xl p-10 flex flex-col items-center modal">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeAddEditTrade}

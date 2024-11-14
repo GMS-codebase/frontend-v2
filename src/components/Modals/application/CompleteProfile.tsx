@@ -1,3 +1,4 @@
+"use client";
 import { authorizedApi } from "@/utils/api";
 import { Checkbox, Modal, Select, Stepper } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
@@ -6,6 +7,8 @@ import { IoMdClose } from "react-icons/io";
 import { User } from "solar-icon-set";
 import { Upload } from "solar-icon-set";
 import { CalendarMinimalistic, Folder2, ShieldWarning } from "solar-icon-set";
+// @typescript-eslint/no-var-requires
+const { Provinces, Districts, Sectors, Cells, Villages } = require("rwanda");
 
 type FormData = {
   tin: string;
@@ -103,6 +106,25 @@ const CompleteProfile = ({
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  const ProvincesOptions = Provinces();
+  const DistrictOptions = formData.province ? Districts(formData.province) : [];
+  const SectorOptions =
+    formData.district && formData.province
+      ? Sectors(formData.province, formData.district)
+      : [];
+  const CellOptions =
+    formData.sector && formData.district && formData.province
+      ? Cells(formData.province, formData.district, formData.sector)
+      : [];
+  const VillageOptions =
+    formData.cell && formData.sector && formData.district && formData.province
+      ? Villages(
+          formData.province,
+          formData.district,
+          formData.sector,
+          formData.cell,
+        )
+      : [];
 
   const handleNext = () => {
     if (validate()) {
@@ -120,6 +142,15 @@ const CompleteProfile = ({
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+      ...(name === "province" && {
+        district: "",
+        sector: "",
+        cell: "",
+        village: "",
+      }),
+      ...(name === "district" && { sector: "", cell: "", village: "" }),
+      ...(name === "sector" && { cell: "", village: "" }),
+      ...(name === "cell" && { village: "" }),
     }));
 
     if (errors[name]) {
@@ -188,6 +219,48 @@ const CompleteProfile = ({
     }
   };
 
+  const handleProvinceChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      province: value,
+      district: "",
+      sector: "",
+      cell: "",
+      village: "",
+    }));
+  };
+
+  const handleDistrictChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      district: value,
+      sector: "",
+      cell: "",
+      village: "",
+    }));
+  };
+
+  const handleSectorChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      sector: value,
+      cell: "",
+      village: "",
+    }));
+  };
+
+  const handleCellChange = (e: any) => {
+    const value = e.target.value;
+    setFormData((prevState) => ({
+      ...prevState,
+      cell: value,
+      village: "",
+    }));
+  };
+
   return (
     <Modal
       size={"xl"}
@@ -203,64 +276,12 @@ const CompleteProfile = ({
         >
           <IoMdClose size={25} color={"#000"} />
         </button>
-        <div className="w-11/12 flex justify-between items-start mt-4">
-          <div className="w-[43%] flex flex-col items-start">
-            <h1 className="text-2xl font-extrabold">Complete your profile</h1>
-            <h2 className="text-[#000F2369] text-lg font-medium w-4/5">
-              Provide the below details to complete. Provide the below details
-              to complete.
-            </h2>
-          </div>
-          <div className="w-[55%] flex items-center">
-            <div
-              onClick={() => setActiveTab(1)}
-              className={`w-1/3 flex justify-end ${
-                activeTab === 1 ? "bg-[#005DE90A]" : ""
-              }`}
-            >
-              <button
-                className={`py-2 transition-all duration-300 text-xs w-full font-medium ${
-                  activeTab === 1
-                    ? "border-b-2 border-[#005DE9] text-[#005DE9]"
-                    : ""
-                }`}
-              >
-                Call Details
-              </button>
-            </div>
-            <div
-              onClick={() => setActiveTab(2)}
-              className={`w-1/3 flex justify-end ${
-                activeTab === 2 ? "bg-[#005DE90A]" : ""
-              }`}
-            >
-              <button
-                className={`py-2 transition-all duration-200 text-xs w-full font-medium ${
-                  activeTab === 2
-                    ? "border-b-2 border-[#005DE9] text-[#005DE9]"
-                    : ""
-                }`}
-              >
-                Timeline Details
-              </button>
-            </div>
-            <div
-              onClick={() => setActiveTab(3)}
-              className={`w-1/3 flex justify-start ${
-                activeTab === 3 ? "bg-[#005DE90A]" : ""
-              }`}
-            >
-              <button
-                className={`py-2 transition-all duration-300 text-xs w-full  font-medium ${
-                  activeTab === 3
-                    ? "border-b-2 border-[#005DE9] text-[#005DE9]"
-                    : ""
-                }`}
-              >
-                Category Details
-              </button>
-            </div>
-          </div>
+        <div className="  my-4 text-center w-full">
+          <h1 className="text-2xl font-extrabold">Complete your profile</h1>
+          <h2 className="text-[#000F2369] text-lg font-medium 5">
+            Provide the below details to complete. Provide the below details to
+            complete.
+          </h2>
         </div>
 
         <div className="w-11/12 flex flex-col items-center mt-4 overflow-hidden">
@@ -282,9 +303,9 @@ const CompleteProfile = ({
                       type="text"
                       name="tin"
                       value={formData.tin}
-                      placeholder="Call title"
+                      placeholder="TIN"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2.5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -309,7 +330,7 @@ const CompleteProfile = ({
                       value={formData.reg_no_or_school_code}
                       placeholder="Registration number"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -333,6 +354,8 @@ const CompleteProfile = ({
                       <Folder2 />
                     </span>
                     <Select
+                      defaultValue={null}
+                      clearable={true}
                       name="business_type"
                       value={formData.business_type}
                       onChange={(value: any) => {
@@ -359,7 +382,7 @@ const CompleteProfile = ({
                           value: "training center",
                         },
                       ]}
-                      className="mt-1 block w-full  pl-5  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full  pl-5  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       placeholder="Select Business Type"
                     />
                   </div>
@@ -386,7 +409,8 @@ const CompleteProfile = ({
                       value={formData.reg_date}
                       placeholder="Registration Date"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      max={new Date().toISOString().split("T")[0]}
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -402,7 +426,7 @@ const CompleteProfile = ({
                       htmlFor="is_private"
                       className="block text-xs font-bold text-gray-700"
                     >
-                      Is Internal
+                      Is Private
                     </label>
                     <div className="mt-1 pl-1 flex flex-col gap-2">
                       <Checkbox
@@ -432,9 +456,10 @@ const CompleteProfile = ({
                     htmlFor="fileUpload"
                     className="block text-xs font-bold text-gray-700"
                   >
-                    Attachment (Certificate)
+                    Attachment (Recognized Registration Certificate/
+                    Accreditation)
                   </label>
-                  <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                  <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ">
                     <label
                       htmlFor="file-upload"
                       className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
@@ -521,7 +546,7 @@ const CompleteProfile = ({
                       value={formData.employee_number}
                       placeholder="Employee Number"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -548,7 +573,7 @@ const CompleteProfile = ({
                       value={formData.bank_name}
                       placeholder="Bank Name"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -575,7 +600,7 @@ const CompleteProfile = ({
                       value={formData.year_of_placement}
                       placeholder="year of establishment"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -602,7 +627,7 @@ const CompleteProfile = ({
                       value={formData.bank_account}
                       placeholder="Bank Account"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -631,7 +656,7 @@ const CompleteProfile = ({
                       value={formData.email}
                       placeholder="Type the email"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -656,7 +681,7 @@ const CompleteProfile = ({
                       value={formData.business_phone}
                       placeholder="Phone number"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -685,7 +710,7 @@ const CompleteProfile = ({
                       value={formData.business_address}
                       placeholder="Address"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -712,7 +737,7 @@ const CompleteProfile = ({
                       value={formData.po_box}
                       placeholder="PO box"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -750,24 +775,24 @@ const CompleteProfile = ({
                   >
                     Province
                   </label>
-                  <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <Folder2 />
-                    </span>
-                    <input
-                      type="text"
-                      name="province"
-                      value={formData.province}
-                      placeholder="Province"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
-                    />
-                  </div>
+                  <select
+                    name="province"
+                    value={formData.province}
+                    onChange={handleChange}
+                    className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                  >
+                    <option value="">Select Province</option>
+                    {ProvincesOptions.map((option: string, index: number) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                   {errors.province && (
                     <p className="text-red-500 text-sm">{errors.province}</p>
                   )}
                 </div>
+
                 <div className="w-full">
                   <label
                     htmlFor="district"
@@ -775,25 +800,25 @@ const CompleteProfile = ({
                   >
                     District
                   </label>
-                  <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <User />
-                    </span>
-                    <input
-                      type="text"
-                      name="district"
-                      value={formData.district}
-                      placeholder="District"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
-                    />
-                  </div>
+                  <select
+                    name="district"
+                    value={formData.district}
+                    onChange={handleChange}
+                    className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                  >
+                    <option value="">Select District</option>
+                    {DistrictOptions.map((option: string, index: number) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                   {errors.district && (
                     <p className="text-red-500 text-sm">{errors.district}</p>
                   )}
                 </div>
               </div>
+
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
                   <label
@@ -802,24 +827,24 @@ const CompleteProfile = ({
                   >
                     Sector
                   </label>
-                  <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <Folder2 />
-                    </span>
-                    <input
-                      type="text"
-                      name="sector"
-                      value={formData.sector}
-                      placeholder="sector"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
-                    />
-                  </div>
+                  <select
+                    name="sector"
+                    value={formData.sector}
+                    onChange={handleChange}
+                    className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                  >
+                    <option value="">Select Sector</option>
+                    {SectorOptions.map((option: string, index: number) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                   {errors.sector && (
                     <p className="text-red-500 text-sm">{errors.sector}</p>
                   )}
                 </div>
+
                 <div className="w-full">
                   <label
                     htmlFor="cell"
@@ -827,20 +852,19 @@ const CompleteProfile = ({
                   >
                     Cell
                   </label>
-                  <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <Folder2 />
-                    </span>
-                    <input
-                      type="text"
-                      name="cell"
-                      value={formData.cell}
-                      placeholder="Cell"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
-                    />
-                  </div>
+                  <select
+                    name="cell"
+                    value={formData.cell}
+                    onChange={handleChange}
+                    className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                  >
+                    <option value="">Select Cell</option>
+                    {CellOptions.map((option: string, index: number) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                   {errors.cell && (
                     <p className="text-red-500 text-sm">{errors.cell}</p>
                   )}
@@ -849,25 +873,24 @@ const CompleteProfile = ({
 
               <div className="w-full">
                 <label
-                  htmlFor="address"
+                  htmlFor="village"
                   className="block text-xs font-bold text-gray-700"
                 >
                   Village
                 </label>
-                <div className="w-full relative">
-                  <span className="absolute left-2 top-[10px]">
-                    <Folder2 />
-                  </span>
-                  <input
-                    type="village"
-                    name="village"
-                    value={formData.village}
-                    placeholder="Village"
-                    onChange={handleChange}
-                    className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    required
-                  />
-                </div>
+                <select
+                  name="village"
+                  value={formData.village}
+                  onChange={handleChange}
+                  className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                >
+                  <option value="">Select Village</option>
+                  {VillageOptions.map((option: string, index: number) => (
+                    <option key={index} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
                 {errors.village && (
                   <p className="text-red-500 text-sm">{errors.village}</p>
                 )}

@@ -1,17 +1,11 @@
 import { ApplicationQuestions } from "@/types/application";
-import { Select } from "@mantine/core";
 import React, { useState, useEffect, ChangeEvent } from "react";
-import { useSelector } from "react-redux";
-import {
-  TrainingProgress,
-  TrainingEquipments,
-  Staff,
-  LastPageQuestions,
-  FirstPageQuestions,
-} from "./FundingPages";
-import { useParams } from "next/navigation";
-import { authorizedApi } from "@/utils/api";
 import { Comments } from "@/types";
+import { Page1 } from "./Pages/Page1";
+import { Page2 } from "./Pages/Page2";
+import { Page3 } from "./Pages/Page3";
+import { Page4 } from "./Pages/Page4";
+import { Page5 } from "./Pages/Page5";
 
 interface FundingQuestionsProps {
   data: ApplicationQuestions;
@@ -20,6 +14,8 @@ interface FundingQuestionsProps {
   setComments?: React.Dispatch<React.SetStateAction<Comments>>;
   goToBudget?: () => void;
   showComments?: boolean;
+  application?: any;
+  isApplicant?: boolean;
 }
 
 const FundingQuestions: React.FC<FundingQuestionsProps> = ({
@@ -28,115 +24,67 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   comments,
   setComments,
   goToBudget,
-  showComments,
+  application,
+  isApplicant,
 }) => {
-  const { applicationId } = useParams();
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
-  const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
-  useEffect(() => {
-    const fetchApplicationData = async () => {
-      try {
-        const response = await authorizedApi.get(
-          `/application/get-application/${applicationId}`,
-        );
-        const applicationData = response.data.data.data;
-        console.log("appplication data -- ", applicationData);
-        const trades: any = applicationData.trades.map((trade: any) => ({
-          label: trade.title,
-          value: trade.uuid,
-        }));
-        setApplicationTrades(trades);
-      } catch (error) {
-        console.error("Error fetching application data:", error);
-      }
-    };
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  console.log(data);
 
-    fetchApplicationData();
-  }, [applicationId]);
-
-  const handleInputChange = (inputName: string, value: any) => {
-    setData &&
-      setData((prev: any) => ({
-        ...prev,
-        [inputName]: value,
-      }));
-  };
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
-    const file = e.target.files?.[0];
-    if (file && setData) {
-      setFiles((prev) => ({ ...prev, [key]: file }));
-      setData((prev: any) => ({ ...prev, [key]: file }));
-    }
-  };
-
-  const handleArrayOfObjectsChange = (
-    inputName: string,
-    value: any,
-    index: number,
-  ) => {
-    setData &&
-      setData((prev: any) => {
-        const newData = [...(prev[inputName] || [])];
-        newData[index] = value;
-        return {
-          ...prev,
-          [inputName]: newData,
-        };
-      });
+  const handleChange = (input: string, value: any) => {
+    errors[input] && setErrors((prev: any) => ({ ...prev, [input]: null }));
+    setData && setData((prev: any) => ({ ...prev, [input]: value }));
   };
 
   const steps = [
-    <FirstPageQuestions
+    <Page1
       key="first"
       data={data}
-      handleInputChange={handleInputChange}
-      commentData={comments}
-      setCommentData={setComments}
-      showComments={showComments}
+      {...(setData && { setData: handleChange })}
+      comments={comments}
+      setComments={setComments}
+      isApplicant={isApplicant}
     />,
-    <TrainingProgress
+    <Page2
       key="progress"
+      type={
+        application?.window?.title?.includes("3") &&
+        application?.subWindow?.title?.includes("2")
+          ? "assessment"
+          : "training"
+      }
       data={data}
-      files={files}
-      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
-      handleFileChange={handleFileChange}
-      trades={applicationTrades}
+      {...(setData && { setData: handleChange })}
       commentsData={comments}
       setCommentsData={setComments}
-      showComments={showComments}
+      application={application}
+      isApplicant={isApplicant}
     />,
-    <TrainingEquipments
+    <Page3
       key="equipments"
       data={data}
-      files={files}
-      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
-      handleFileChange={handleFileChange}
-      trades={applicationTrades}
+      {...(setData && { setData: handleChange })}
       commentsData={comments}
       setCommentsData={setComments}
-      showComments={showComments}
+      isApplicant={isApplicant}
     />,
-    <Staff
+    <Page4
       key="staff"
       data={data}
       files={files}
-      handleFileChange={handleFileChange}
-      handleArrayOfObjectsChange={handleArrayOfObjectsChange}
-      commentData={comments}
-      setCommentData={setComments}
-      showComments={showComments}
+      {...(setData && { setData: handleChange })}
+      comments={comments}
+      setComments={setComments}
+      isApplicant={isApplicant}
     />,
-    <LastPageQuestions
+    <Page5
       key="last"
       data={data}
-      handleInputChange={handleInputChange}
-      files={files}
-      handleFileChange={handleFileChange}
-      commentData={comments}
-      setCommentData={setComments}
-      showComments={showComments}
+      {...(setData && { setData: handleChange })}
+      comments={comments}
+      setComments={setComments}
+      isApplicant={isApplicant}
     />,
   ];
 
@@ -146,7 +94,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else if (currentStep === steps.length - 1 && goToBudget) {
@@ -170,7 +118,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
           Prev
         </button>
         <button
-          onClick={handleNext}
+          onClick={currentStep === steps.length - 1 ? goToBudget : handleNext}
           className={`px-10 py-2 rounded-full text-white ${
             currentStep === steps.length - 1
               ? "bg-primary hover:bg-blue-600"

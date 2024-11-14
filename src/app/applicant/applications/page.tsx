@@ -2,21 +2,17 @@
 
 import React from "react";
 import CallsList from "../../../components/CallsList/page";
-import { SolarFileBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import { callData as data } from "@/utils/constants/dummy";
-import { CiSearch } from "react-icons/ci";
 import { useSelector } from "react-redux";
-import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 import { Menu } from "@mantine/core";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
+import { getApplicationStatus } from "@/utils/funcs";
 const Page = () => {
-  const navigate = useRouter;
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
@@ -26,24 +22,33 @@ const Page = () => {
       ),
     },
     {
-      accessorKey: "call",
-      header: "Call Title",
+      accessorKey: "title",
+      header: "Call title",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.call?.title}</div>
+        <div className="truncate">{row.original.call.title}</div>
       ),
     },
     {
-      accessorKey: "window",
-      header: "Window",
+      accessorKey: "sector",
+      header: "Sector",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.window.title}</div>
+        <div className="truncate">{row.original.sectors[0].name}</div>
+      ),
+    },
+    {
+      accessorKey: "trade",
+      header: "Trade",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.trades[0].trade.title}</div>
       ),
     },
     {
       accessorKey: "currentStage",
       header: "Current Stage",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.currentStage}</div>
+        <div className="truncate">
+          {getApplicationStatus(row.original) || "-"}
+        </div>
       ),
     },
     {
@@ -70,7 +75,11 @@ const Page = () => {
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
                 <Link
-                  href={`/applicant/applications/application/${row.original.uuid}`}
+                  href={
+                    row.original.stages.length > 0
+                      ? `/applicant/applications/application/${row.original.uuid}`
+                      : `/applicant/applications/call/${row.original.call.uuid}/${row.original.uuid}/apply`
+                  }
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <FiEye size={21} color="#576074" />
@@ -101,22 +110,6 @@ const Page = () => {
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">Latest applications</h2>
           <div className="flex gap-2"></div>
-          <div className="relative w-[25rem]">
-            <span className="absolute top-4 left-2">
-              <CiSearch size={25} />
-            </span>
-            <input
-              name="search"
-              className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
-              placeholder="Search"
-            />
-          </div>
-          <div className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center">
-            <span>
-              <SolarFileBold />
-            </span>
-            <div>Export as PDF</div>
-          </div>
         </div>
         <div className="w-full h-full">
           <DataTable

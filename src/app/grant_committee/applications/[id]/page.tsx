@@ -22,6 +22,9 @@ import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDe
 import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
 import { getApplications } from "@/utils/funcs";
+import NullifyModal from "@/components/Modals/Nullify";
+import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
+import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,14 +33,23 @@ const Page = () => {
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id,
   )[0];
+  const [
+    isOpenDueDiligencyDetails,
+    { open: openDueDiligencyDetails, close: closeDueDiligencyDetails },
+  ] = useDisclosure(false);
   const [nullifyLoading, setNullifyLoading] = useState<any>();
   const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [isOpenAddDue, setIsOpenAddDue] = useState(false);
+  const [selectedStage, setSelectedStage] = useState<any>();
   const openAddDue = () => setIsOpenAddDue(true);
   const closeAddDue = () => setIsOpenAddDue(false);
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
+  ] = useDisclosure(false);
+  const [
+    isOpenNullifyModal,
+    { open: openNullifyModal, close: closeNullifyModal },
   ] = useDisclosure(false);
   const [
     isOpenGrantCommitteeDetails,
@@ -89,6 +101,8 @@ const Page = () => {
       application?.projectFunding.recruitmentTrainerComment || "",
     MOUsAttachmentComment:
       application?.projectFunding.MOUsAttachmentComment || "",
+    premisesAttachmentComment:
+      application?.projectFunding?.premisesAttachmentComment || "",
     identificationMemberComment:
       application?.projectFunding.identificationMemberComment || "",
     assessmentEquipmentComment:
@@ -100,23 +114,28 @@ const Page = () => {
     budgetSummaryAttachmentComment:
       application?.projectFunding.budgetSummaryAttachmentComment || "",
     contributionComment: application?.projectFunding.contributionComment || "",
+    assessmentComment: application?.projectFunding?.assessmentComment || "",
+    budgetLinesComment: application?.budget?.budgetLinesComment,
   });
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":
         return (
           <FundingQuestions
+            application={application}
             data={application?.projectFunding}
-            setComments={setCommentsData}
             comments={commentsData}
+            // showComments={true}
+            goToBudget={() => setCurrentComponent("IndicativeBudget")}
           />
         );
       case "IndicativeBudget":
         return (
           <BudgetQuestions
-            data={application?.projectFunding}
-            commentData={commentsData}
-            setCommentData={setCommentsData}
+            application={application}
+            data={application?.budget}
+            comments={commentsData}
+            // showComments={true}
           />
         );
       default:
@@ -131,7 +150,6 @@ const Page = () => {
       await authorizedApi.patch(`/application/nullify/${id}/${stageId}`);
       refetch();
     } catch (error) {
-      console.log(error);
       notifications.show({
         message: "Error while nullifying the decisions",
         color: "red",
@@ -248,9 +266,15 @@ const Page = () => {
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
-                Application submission deadline
+                Application submission date
               </p>
-              <p>2022/02.18 02:00:00</p>
+              <p>{new Date(application?.doneAt)?.toLocaleDateString()}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Applicant&apos;s Phone Number
+              </p>
+              <p>{application?.applicant?.phone}</p>
             </div>
           </div>
         </div>
@@ -298,8 +322,8 @@ const Page = () => {
             <h3 className="font-semibold">Evaluation Stage</h3>
             <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
               {application?.currentStage === "EVALUATION"
-                ? "Pending"
-                : "Finished"}
+                ? "PENDING"
+                : "APPROVED"}
             </div>
             {application?.evaluationDecisions && (
               <div className="flex flex-col gap-2 mt-4">
@@ -312,19 +336,16 @@ const Page = () => {
                 {!application?.grantCommitteeDecision && (
                   <button
                     onClick={() => {
-                      nullifyDecision(
+                      setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage.stage === "EVALUATION",
-                        ).uuid,
-                        "EVALUATION",
+                          (stage: any) => stage?.stage === "EVALUATION",
+                        ),
                       );
+                      openNullifyModal();
                     }}
-                    disabled={nullifyLoading === "EVALUATION"}
                     className="font-medium bg-red-100 text-red-500 w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
                   >
-                    {nullifyLoading === "EVALUATION"
-                      ? "Loading..."
-                      : "Nullify Decision"}
+                    Nullify Decision
                   </button>
                 )}
               </div>
@@ -350,7 +371,7 @@ const Page = () => {
             {application?.currentStage !== "DUE_DILIGENCY" && (
               <div className="flex flex-col gap-2 mt-4">
                 <button
-                  onClick={openAddDue}
+                  onClick={openDueDiligencyDetails}
                   className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
                 >
                   View details
@@ -358,31 +379,28 @@ const Page = () => {
                 {!application?.grantCommitteeDecision && (
                   <button
                     onClick={() => {
-                      nullifyDecision(
+                      setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage.stage === "DUE_DILIGENCY",
-                        ).uuid,
-                        "DUE_DILIGENCY",
+                          (stage: any) => stage?.stage === "DUE_DILIGENCY",
+                        ),
                       );
+                      openNullifyModal();
                     }}
-                    disabled={nullifyLoading === "DUE_DILIGENCY"}
                     className="font-medium bg-red-100 text-red-500 w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
                   >
-                    {nullifyLoading === "DUE_DILIGENCY"
-                      ? "Loading..."
-                      : "Nullify Decision"}
+                    Nullify Decision
                   </button>
                 )}
               </div>
             )}
           </div>
           {application?.stages?.find(
-            (stage: any) => stage.stage === "GRANT_COMMITTEE",
+            (stage: any) => stage?.stage === "GRANT_COMMITTEE",
           ) && (
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Grant Committee</h3>
               <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                {!application?.grantCommitteeDecision ? "Pending" : "Finished"}
+                {!application?.grantCommitteeDecision ? "Pending" : "APPROVED"}
               </div>
 
               {application?.grantCommitteeDecision ? (
@@ -406,22 +424,34 @@ const Page = () => {
           )}
         </div>
       </div>
-      <DueDiligenceModal
+      <DueDiligencyDetails
         application={application}
-        opened={isOpenAddDue}
-        close={closeAddDue}
+        opened={isOpenDueDiligencyDetails}
+        close={closeDueDiligencyDetails}
+        decisions={application?.duediligencyDecisions}
       />
       <MakeGrantCommitteeDecision
-        applicationId={id}
+        application={application}
         closeModal={closeGrantCommitteeMakeDecision}
         isOpen={isOpenGrantCommitteeMakeDecision}
         onMakeDecision={refetch}
-        trades={application?.trades}
+      />
+      <GrantCommitteeDetails
+        application={application}
+        close={closeGrantCommitteeDetails}
+        opened={isOpenGrantCommitteeDetails}
       />
       <EvaluationDetails
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
         evaluations={application?.evaluationDecisions}
+        application={application}
+      />
+      <NullifyModal
+        closeModal={closeNullifyModal}
+        isOpenModal={isOpenNullifyModal}
+        onAfterNullify={() => refetch()}
+        stage={selectedStage}
       />
     </div>
   );

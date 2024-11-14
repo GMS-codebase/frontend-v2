@@ -1,50 +1,60 @@
 import { Modal, Select } from "@mantine/core";
 import { IoMdClose } from "react-icons/io";
-import { SolarDocumentBold } from "@/components/core/icons";
 import { useState, useEffect } from "react";
 import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
 import { useParams } from "next/navigation";
+import { AiOutlineDelete } from "react-icons/ai";
+import { useSelector } from "react-redux";
 
 interface MakeDecisionProps {
   isOpen: boolean;
   close: () => void;
   onMakeDecision: () => void;
   type: "Evaluation" | "Due Diligence";
-  defaultData?: {
-    decision: string;
-    comment: string;
-  };
+  defaultData?:
+    | {
+        decision: string;
+        comment: string;
+        numberOfTrainees: string;
+      }
+    | any;
+  firstEvaluationModal?: boolean;
+  application?: any;
+  updated?: boolean;
 }
-
 const MakeDecision = ({
   isOpen,
   close,
   onMakeDecision,
   type,
   defaultData,
+  firstEvaluationModal,
+  application,
+  updated,
 }: MakeDecisionProps) => {
   const [formData, setFormData] = useState({
     decision: "",
     comment: "",
+    traineeNumber: "",
   });
-  const { id } = useParams<{ id: string }>();
-
   const [errors, setErrors] = useState({
     decision: "",
     comment: "",
+    traineeNumber: "",
   });
-
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     if (defaultData) {
-      console.log(defaultData);
-      setFormData(defaultData);
+      setFormData({
+        decision: defaultData.decision,
+        comment: defaultData.comment,
+        traineeNumber: defaultData?.numberOfTrainees as any,
+      } as any);
     }
   }, [defaultData]);
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
+  const handleChange = (e: { target: { name: string; value: any } }) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -60,7 +70,7 @@ const MakeDecision = ({
 
   const validate = () => {
     let valid = true;
-    const newErrors = { decision: "", comment: "" };
+    const newErrors = { decision: "", comment: "", traineeNumber: "" };
 
     if (!formData.decision) {
       newErrors.decision = "Decision is required.";
@@ -72,25 +82,51 @@ const MakeDecision = ({
       valid = false;
     }
 
+    if (
+      firstEvaluationModal &&
+      !formData.traineeNumber &&
+      formData.decision === "APPROVED"
+    ) {
+      newErrors.traineeNumber =
+        "Please provide the number of accepted trainees.";
+      valid = false;
+    }
+
     setErrors(newErrors);
     return valid;
   };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-
     if (!validate()) return;
 
     setLoading(true);
     try {
-      const endpoint =
-        type === "Evaluation"
-          ? `/application/evaluation/make-decision/${id}`
-          : `/application/${id}/due-diligency-form/make-decision`;
+      const payload = {
+        decision: formData.decision,
+        comment: formData.comment,
+        ...(firstEvaluationModal &&
+          formData.decision === "APPROVED" && {
+            numberOfTrainees: parseInt(formData.traineeNumber),
+          }),
+      };
+      if (defaultData) {
+        const endpoint =
+          type === "Evaluation"
+            ? `/application/evaluation/update-decision/${application?.uuid}/${defaultData?.uuid}`
+            : `/application/${application?.uuid}/due-diligency-form/update-decision/${defaultData?.uuid}`;
 
-      type === "Evaluation"
-        ? await authorizedApi.patch(endpoint, formData)
-        : await authorizedApi.post(endpoint, formData);
+        await authorizedApi.patch(endpoint, payload);
+      } else {
+        const endpoint =
+          type === "Evaluation"
+            ? `/application/evaluation/make-decision/${application?.uuid}`
+            : `/application/${application?.uuid}/due-diligency-form/make-decision`;
+
+        const apiMethod =
+          type === "Evaluation" ? authorizedApi.patch : authorizedApi.post;
+        await apiMethod(endpoint, payload);
+      }
 
       notifications.show({
         message: defaultData
@@ -98,7 +134,6 @@ const MakeDecision = ({
           : `${type} decision made successfully!`,
         color: "blue",
       });
-
       onMakeDecision();
       close();
     } catch (err: any) {
@@ -133,46 +168,29 @@ const MakeDecision = ({
             onSubmit={handleSubmit}
             className="w-full overflow-y-auto flex flex-col gap-4 px-2"
           >
-            <div className="w-full flex justify-between gap-3">
-              <div className="w-full">
-                <label
-                  htmlFor="decision"
-                  className="block text-xs font-bold text-gray-700"
-                >
-                  Decision
-                </label>
-                <div className="w-full relative">
-                  <span className="absolute left-2 top-[10px]">
-                    <SolarDocumentBold />
-                  </span>
-                  <Select
-                    name="decision"
-                    value={formData.decision}
-                    onChange={(value: any) => {
-                      setFormData((prevData) => ({
-                        ...prevData,
-                        decision: value,
-                      }));
-                      if (errors.decision) {
-                        setErrors((prevData) => ({
-                          ...prevData,
-                          decision: "",
-                        }));
-                      }
-                    }}
-                    data={[
-                      { label: "Approve", value: "APPROVED" },
-                      { label: "Reject", value: "REJECTED" },
-                    ]}
-                    className="mt-1 block w-full pl-6 text-gray-400 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Select your decision"
-                    required
-                  />
-                </div>
-                {errors.decision && (
-                  <p className="text-red-500 text-sm">{errors.decision}</p>
-                )}
-              </div>
+            <div className="w-full">
+              <label
+                htmlFor="decision"
+                className="block text-xs font-bold text-gray-700"
+              >
+                Decision
+              </label>
+              <Select
+                name="decision"
+                value={formData.decision}
+                onChange={(value: any) =>
+                  setFormData((prev) => ({ ...prev, decision: value }))
+                }
+                data={[
+                  { label: "Approve", value: "APPROVED" },
+                  { label: "Reject", value: "REJECTED" },
+                ]}
+                placeholder="Select your decision"
+                className="bg-gray-100 rounded-full py-0.5"
+              />
+              {errors.decision && (
+                <p className="text-red-500 text-sm">{errors.decision}</p>
+              )}
             </div>
 
             <div className="w-full">
@@ -182,32 +200,51 @@ const MakeDecision = ({
               >
                 Comment
               </label>
-              <div className="w-full relative">
-                <textarea
-                  name="comment"
-                  value={formData.comment}
-                  placeholder="Provide a comment"
-                  onChange={handleChange}
-                  className="mt-1 block w-full pb-28 pt-2 pl-8 px-6 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
-                />
-              </div>
+              <textarea
+                name="comment"
+                value={formData.comment}
+                onChange={handleChange}
+                placeholder="Provide a comment"
+                className="mt-1 block w-full pb-28 pt-2 px-3  bg-[#000F230A] rounded-2xl outline-none"
+              />
               {errors.comment && (
                 <p className="text-red-500 text-sm">{errors.comment}</p>
               )}
             </div>
 
-            <div className="w-full flex justify-center mt-4 space-x-4">
+            {firstEvaluationModal && formData.decision === "APPROVED" && (
+              <div className="space-y-3 mb-4 w-full">
+                <p className="block text-xs font-bold text-gray-700">
+                  {" "}
+                  Accepted Trainee Number
+                </p>
+                <input
+                  type="number"
+                  value={formData.traineeNumber}
+                  onChange={handleChange}
+                  min={0}
+                  name="traineeNumber"
+                  placeholder="Number of trainees"
+                  className="outline-none flex-grow bg-gray-100 rounded-full px-3 py-3 w-full"
+                />
+                {errors.traineeNumber && (
+                  <p className="text-red-500 text-sm">{errors.traineeNumber}</p>
+                )}
+              </div>
+            )}
+
+            <div className="grid grid-cols-2  mt-4 gap-4">
               <button
                 type="button"
                 onClick={close}
-                className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="px-4 py-3 bg-black text-white rounded-full"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="px-4 py-3 bg-blue-500 text-white rounded-full"
               >
                 {loading
                   ? "Loading.."

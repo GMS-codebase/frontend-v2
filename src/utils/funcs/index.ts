@@ -77,9 +77,17 @@ import {
   GET_STAGES_SUCCESS,
 } from "@/actions/EmpStagesActions";
 import {
+  GET_APPLICATIONS_READY_FOR_MINUTES_LOADING,
+  GET_APPLICATIONS_READY_FOR_MINUTES_SUCCESS,
+  GET_APPROVED_MINUTES_LOADING,
+  GET_APPROVED_MINUTES_SUCCESS,
   GET_MINUTES_ERROR,
   GET_MINUTES_LOADING,
   GET_MINUTES_SUCCESS,
+  GET_REJECTED_MINUTES_LOADING,
+  GET_REJECTED_MINUTES_SUCCESS,
+  GET_UPLOADED_MINUTES_LOADING,
+  GET_UPLOADED_MINUTES_SUCCESS,
 } from "@/actions/MinutesActions";
 import {
   GET_ROLES_LOADING,
@@ -93,6 +101,18 @@ import {
   GET_PRIORITY_SECTORS_DATA,
 } from "@/actions/DashboardActions";
 import { prioritySectors } from "../constants";
+import { notifications } from "@mantine/notifications";
+import {
+  GET_BUDGET_LINES_ERROR,
+  GET_BUDGET_LINES_LOADING,
+  GET_BUDGET_LINES_SUCCESS,
+} from "@/actions/BudgetLinesActions";
+
+import {
+  GET_ANNOUNCEMENT_LOADING,
+  GET_ANNOUNCEMENT_SUCCESS,
+  GET_ANNOUNCEMENT_ERROR,
+} from "@/actions/AnnouncementActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -145,7 +165,6 @@ export const getSectorTrades = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/Sectors/sector/trades")
     .then((res) => {
-      console.log(res.data.data.data);
       dispatch({
         type: GET_SECTOR_TRADES_SUCCESS,
         payload: res.data.data.data,
@@ -160,7 +179,6 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/Sectors")
     .then((res) => {
-      console.log(res.data.data.data);
       dispatch({ type: GET_SECTORS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
@@ -215,6 +233,20 @@ export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_TRADES_ERROR, payload: err.response.data.error });
     });
 };
+export const getBudgetLines = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_BUDGET_LINES_LOADING });
+  authorizedApi
+    .get("/budgetlines/all")
+    .then((res) => {
+      dispatch({ type: GET_BUDGET_LINES_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_BUDGET_LINES_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
 export const getCalls = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_CALLS_LOADING });
   authorizedApi
@@ -240,11 +272,10 @@ export const getRoles = async (dispatch: Dispatch<UnknownAction>) => {
 
 export const handleDownloadFile = async (file: any, service: string) => {
   try {
-    console.log("attachment --> ", file);
     const filename = file.split("/").pop();
-    console.log(filename);
+
     const response = await unauthorizedApi.get(
-      `/admin/download/${service}/${filename}`,
+      `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
         responseType: "blob",
       },
@@ -262,6 +293,16 @@ export const handleDownloadFile = async (file: any, service: string) => {
     document.body.removeChild(link);
   } catch (error) {
     console.error("Error downloading file:", error);
+  }
+};
+
+export const handleViewFile = (file: string, service: string): void => {
+  try {
+    const filename = encodeURIComponent(file.split("/").pop() || "");
+    const fileUrl = `/files/${service}/${filename}`;
+    window.open(fileUrl, "_blank");
+  } catch (error) {
+    console.error("Error opening file:", error);
   }
 };
 
@@ -289,11 +330,11 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
 export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_CONTRACTS_LOADING });
   authorizedApi
-    .get("/contracts")
+    .get("/negotiation-contract/contracts/sdf/all")
     .then((res) => {
       dispatch({
         type: GET_CONTRACTS_SUCCESS,
-        payload: res.data.data,
+        payload: res?.data?.data?.data,
       });
     })
     .catch((err) => {
@@ -304,7 +345,7 @@ export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
 export const getMinutes = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MINUTES_LOADING });
   authorizedApi
-    .get("/contracts/negotiations/docs/all")
+    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint
     .then((res) => {
       dispatch({
         type: GET_MINUTES_SUCCESS,
@@ -329,12 +370,12 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_STAGES_ERROR, payload: err.response.data.error });
     });
 };
-export const getApplicationsForContracts = async (
+export const getApplicationsForContractSigning = async (
   dispatch: Dispatch<UnknownAction>,
 ) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
-    .get("/application/contract-signing/all")
+    .get("/negotiation-contract/applications/sdf/ready-contract-signing")
     .then((res) => {
       dispatch({
         type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
@@ -367,20 +408,38 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/application/all-application")
     .then((res) => {
-      console.log(res.data.data);
       dispatch({
         type: GET_MY_APPLICATIONS_SUCCESS,
         payload: res.data.data.data,
       });
     })
     .catch((err) => {
-      console.log(err);
       dispatch({
         type: GET_MY_APPLICATIONS_ERROR,
         payload: err.response.data.error,
       });
     });
 };
+
+export const getAnnouncement = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_ANNOUNCEMENT_LOADING });
+  authorizedApi
+    .get("/announcements")
+    .then((res) => {
+      console.log(res.data.data.data);
+      dispatch({
+        type: GET_ANNOUNCEMENT_SUCCESS,
+        payload: res.data.data.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_ANNOUNCEMENT_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+
 export const getMyContacts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_CONTACTS_LOADING });
   authorizedApi
@@ -401,6 +460,87 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
     .get("/application/all-application")
     .then((res) => {
       dispatch({ type: GET_MY_CONTRACTS_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTRACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getApplicationsReadyForMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+  role: string,
+) => {
+  dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
+  authorizedApi
+    .get(`/application/contract-signing/all`)
+    .then((res) => {
+      dispatch({
+        type: GET_APPLICATIONS_READY_FOR_MINUTES_SUCCESS,
+        payload: res.data.data?.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MINUTES_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getUploadedMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+  role: string,
+) => {
+  dispatch({ type: GET_UPLOADED_MINUTES_LOADING });
+  authorizedApi
+    .get(`/negotiation-contract/applications/${role}/pending`)
+    .then((res) => {
+      dispatch({
+        type: GET_UPLOADED_MINUTES_SUCCESS,
+        payload: res.data.data?.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTRACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getApprovedMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+  role: string,
+) => {
+  dispatch({ type: GET_APPROVED_MINUTES_LOADING });
+  authorizedApi
+    .get(`/negotiation-contract/applications/${role}/approved`)
+    .then((res) => {
+      console.log("minutes --> ", res.data.data.data);
+      dispatch({
+        type: GET_APPROVED_MINUTES_SUCCESS,
+        payload: res.data?.data?.data?.applications,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTRACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getRejectedMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+  role: string,
+) => {
+  dispatch({ type: GET_REJECTED_MINUTES_LOADING });
+  authorizedApi
+    .get("/negotiation-contract/applications/rejected")
+    .then((res) => {
+      dispatch({
+        type: GET_REJECTED_MINUTES_SUCCESS,
+        payload: res.data.data.data,
+      });
     })
     .catch((err) => {
       dispatch({
@@ -447,4 +587,230 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
         payload: err.response.data.error ?? "Network Error",
       });
     });
+};
+
+const validateQuestions = async (
+  data: any,
+  window?: number,
+  subwindow?: number,
+): Promise<string | null> => {
+  // Common validation messages
+  const commonMessages = {
+    title: "The title is required.",
+    activitiesAndOutcomes:
+      "Please provide the activities and expected outcomes.",
+    readinessExecute: "Indicate the readiness for execution.",
+    role: "Specify the role in the project.",
+    identificationEmployee: "Employee identification details are mandatory.",
+    trainingProcess: "A description of the training process is required.",
+    trainingManualAttachment: "Please upload the training manual attachment.",
+    trainingEquipment: "Training equipment details are required.",
+    trainingEquipmentAttachment: "Attach the equipment documentation.",
+    assessmentProcess: "A description of the assessment process is required.",
+    assessmentEquipment: "Assessment equipment details are required.",
+    assessmentEquipmentAttachment: "Attach the equipment documentation.",
+    staffs: "Staff information is required.",
+    staffAttachment: "Upload the staff-related attachment.",
+    sustainability: "Provide the sustainability plan.",
+    previousFinancialReportAttachment: "Upload the previous financial report.",
+    contributionFromApplicant: "Specify the applicant’s contribution.",
+  };
+  const isAssessmentWindow = window === 3 && subwindow === 2;
+  if (!data.title) return commonMessages.title;
+  if (!data.activitiesAndOutcomes) return commonMessages.activitiesAndOutcomes;
+  if (!data.readinessExecute) return commonMessages.readinessExecute;
+  if (!data.role) return commonMessages.role;
+  if (!data.identificationEmployee)
+    return commonMessages.identificationEmployee;
+  if (!data.sustainability) return commonMessages.sustainability;
+  if (isAssessmentWindow) {
+    if (!data.assessmentProcess) return commonMessages.assessmentProcess;
+    if (!data.assessmentEquipment) return commonMessages.assessmentEquipment;
+    if (!data.assessmentEquipmentAttachment)
+      return commonMessages.assessmentEquipmentAttachment;
+  } else {
+    if (!data.trainingProcess) return commonMessages.trainingProcess;
+    if (!data.trainingManualAttachment)
+      return commonMessages.trainingManualAttachment;
+    if (!data.trainingEquipment) return commonMessages.trainingEquipment;
+    if (!data.trainingEquipmentAttachment)
+      return commonMessages.trainingEquipmentAttachment;
+  }
+  if (!data.staffs) return commonMessages.staffs;
+  if (!data.staffAttachment) return commonMessages.staffAttachment;
+  if (!data.previousFinancialReportAttachment)
+    return commonMessages.previousFinancialReportAttachment;
+  if (!data.contributionFromApplicant)
+    return commonMessages.contributionFromApplicant;
+  return null;
+};
+
+export const handleSubmit = async (
+  type: "submit" | "save",
+  setLoading: (type: any) => void,
+  data: any,
+  application: any,
+  callback?: () => void,
+) => {
+  const error =
+    type === "save"
+      ? undefined
+      : await validateQuestions(
+          data,
+          application.window.title.includes("3") && 3,
+          application.subWindow.title.includes("2") && 2,
+        );
+  if (error !== null && type === "submit") {
+    notifications.show({
+      message: error,
+      color: "red",
+    });
+    return;
+  }
+  setLoading(type);
+  const submitData = new FormData();
+  if (data.title) submitData.append("title", data.title);
+  if (data.activitiesAndOutcomes)
+    submitData.append("activitiesAndOutcomes", data.activitiesAndOutcomes);
+  if (data.readinessExecute)
+    submitData.append("readinessExecute", data.readinessExecute);
+  if (data.role) submitData.append("role", data.role);
+  if (data.institution) submitData.append("institution", data.institution);
+  if (data.trainingProcess && data.trainingProcess.length > 0)
+    submitData.append("trainingProcess", JSON.stringify(data.trainingProcess));
+  if (data.trainingEquipment && data.trainingEquipment.length > 0)
+    submitData.append(
+      "trainingEquipment",
+      JSON.stringify(data.trainingEquipment),
+    );
+  if (data.identificationEmployee)
+    submitData.append("identificationEmployee", data.identificationEmployee);
+  if (data.staffs && data.staffs.length > 0)
+    submitData.append("staffs", JSON.stringify(data.staffs));
+  if (data.sustainability)
+    submitData.append("sustainability", data.sustainability);
+  if (data.contributionFromApplicant)
+    submitData.append(
+      "contributionFromApplicant",
+      data.contributionFromApplicant,
+    );
+  if (data.recruitmentTrainerNumber)
+    submitData.append(
+      "recruitmentTrainerNumber",
+      data.recruitmentTrainerNumber,
+    );
+  if (data.identificationMember)
+    submitData.append("identificationMember", data.identificationMember);
+  if (
+    data.assessmentAndCertificationProcess &&
+    data.assessmentAndCertificationProcess.length > 0
+  )
+    submitData.append(
+      "assessmentAndCertificationProcess",
+      JSON.stringify(data.assessmentAndCertificationProcess),
+    );
+  if (data.assessmentEquipment && data.assessmentEquipment.length > 0)
+    submitData.append(
+      "assessmentEquipment",
+      JSON.stringify(data.assessmentEquipment),
+    );
+  if (data.recruitmentCandidatesNumber)
+    submitData.append(
+      "recruitmentCandidatesNumber",
+      data.recruitmentCandidatesNumber,
+    );
+  if (data.assessorsAndFacilitators)
+    submitData.append(
+      "assessorsAndFacilitators",
+      data.assessorsAndFacilitators,
+    );
+  if (data.contribution) submitData.append("contribution", data.contribution);
+  if (data.roleAttachment)
+    submitData.append("roleAttachment", data.roleAttachment);
+  if (data.institutionAttachment)
+    submitData.append("institutionAttachment", data.institutionAttachment);
+  if (data.trainingManualAttachment)
+    submitData.append(
+      "trainingManualAttachment",
+      data.trainingManualAttachment,
+    );
+  if (data.staffAttachment)
+    submitData.append("staffAttachment", data.staffAttachment);
+  if (data.budgetLines)
+    submitData.append("budgetLines", JSON.stringify(data.budgetLines));
+  if (data.trainingEquipmentAttachment)
+    submitData.append(
+      "trainingEquipmentAttachment",
+      data.trainingEquipmentAttachment,
+    );
+  if (data.previousFinancialReportAttachment)
+    submitData.append(
+      "previousFinancialReportAttachment",
+      data.previousFinancialReportAttachment,
+    );
+  if (data.MOUsAttachment && data.MOUsAttachment.length > 0) {
+    data.MOUsAttachment.forEach((file: any, index: any) => {
+      submitData.append(`MOUsAttachment[${index}]`, file);
+    });
+  }
+  if (data.assessmentEquipmentAttachment)
+    submitData.append(
+      "assessmentEquipmentAttachment",
+      data.assessmentEquipmentAttachment,
+    );
+  if (data.budgetSummaryAttachment)
+    submitData.append("budgetSummaryAttachment", data.budgetSummaryAttachment);
+
+  try {
+    await authorizedApi.post(
+      `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${application.uuid}`,
+      submitData,
+    );
+    notifications.show({
+      message:
+        type == "save"
+          ? "Application drafted successfully"
+          : "Application filled successfully!",
+      color: "blue",
+    });
+    setLoading(false);
+    callback && callback();
+  } catch (err: any) {
+    notifications.show({
+      message: err.response?.data?.message ?? "Failed to submit the form!",
+      color: "red",
+    });
+  } finally {
+    setLoading(null);
+  }
+};
+
+export const getApplicationStatus = (application: any) => {
+  if (!application.finishedAnswering) {
+    return "ANSWERING";
+  } else if (
+    application?.currentStage === "EVALUATION" &&
+    !application?.call?.closedEvaluation
+  ) {
+    return "EVALUATION IN PROGRESS";
+  } else if (
+    application?.currentStage === "DUE_DILIGENCY" &&
+    !application?.call?.closedDueDiligency
+  ) {
+    return "DUE DILIGENCY IN  PROGRESS";
+  } else if (
+    application?.currentStage === "GRANT_COMMITTEE" &&
+    !application?.call?.closedGrantCommittee
+  ) {
+    return "GRANT COMMITTEE IN PROGRESS";
+  } else if (
+    application?.currentStage === "CONTRACT_SIGNING" &&
+    (!application?.call?.closedGrantCommittee ||
+      !application?.call?.closedDueDiligency ||
+      !application?.call?.closedEvaluation)
+  ) {
+    return "CONTRACT SIGNING IN PROGRESS";
+  } else {
+    return application?.currentStage;
+  }
 };
