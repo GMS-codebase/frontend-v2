@@ -14,17 +14,21 @@ const EvaluationDetails = ({
   close,
   isEditing,
   onSaveComment,
+  viewer,
+  application,
 }: {
   evaluations: any;
   opened: boolean;
   close: () => void;
   isEditing?: boolean;
+  viewer?: string;
+  application: any;
   onSaveComment?: (updatedText: string) => void;
 }) => {
-  const [
-    isOpenEditDecision,
-    { open: openEditDecision, close: closeEditDecision },
-  ] = useDisclosure(false);
+  const [openEditDecision, setOpenEditDecision] = useState({
+    open: false,
+    decision: null,
+  });
   const [selectedDecision, setSelectedDecision] = useState<any>();
   const profile = useSelector((state: any) => state.auth);
   const [text, setText] = useState(
@@ -34,6 +38,7 @@ const EvaluationDetails = ({
   const handleSave = () => {
     onSaveComment && onSaveComment(text);
   };
+
   return (
     <>
       <Modal
@@ -44,7 +49,7 @@ const EvaluationDetails = ({
         centered
         className="flex flex-col gap-4 rounded-full"
       >
-        <div className="flex max-h-[90vh] overflow-y-auto flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative">
+        <div className="flex w-[45vw] max-h-[90vh] overflow-y-auto flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative">
           <div className="absolute right-3 m-4 text-center mt-0">
             <button
               onClick={close}
@@ -57,67 +62,88 @@ const EvaluationDetails = ({
             <h1 className="text-xl font-bold">Evaluation decision details</h1>
           </div>
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
-            <h1 className="text-xl font-bold">
-              Approval personnel{" "}
-              <span className="text-sm font-light">
-                (people who made approval and confirmation)
-              </span>
-            </h1>
+            {viewer !== "applicant" && (
+              <div className="flex gap-6 justify-start items-center">
+                <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
+                  Approved trainees
+                </p>
+                <p className="text-xl">
+                  {evaluations?.length &&
+                    [...evaluations].reverse()[0]?.numberOfTrainees}
+                </p>
+              </div>
+            )}
             {evaluations &&
-              [...evaluations].reverse().map((evaluation: any, i: any) => (
-                <div key={i} className="w-full ">
-                  <div className="flex gap-6 justify-start items-start">
-                    <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-                      {evaluation?.employee?.name}
-                    </p>
-                    {i === 0 && <p className="mt-2">Selected</p>}
-                    <p
-                      className={` px-4 py-2 rounded-full flex gap-2 justify-start items-start ${
-                        evaluation?.decision === "APPROVED"
-                          ? "bg-lime-500  bg-opacity-10 text-green-500"
-                          : evaluation?.decision === "REJECTED" &&
-                            "bg-red-500 bg-opacity-10 text-danger"
-                      }`}
-                    >
-                      {evaluation?.decision}
-                    </p>
-                    {evaluation?.employee?.user_id ==
-                      profile?.userProfile?.data?.uuid && (
-                      <button
-                        className="bg-primary p-2 rounded-full text-white font-bold"
-                        onClick={() => {
-                          setSelectedDecision(evaluation);
-                          openEditDecision();
-                        }}
+              [...evaluations].reverse().map((evaluation: any, i: number) => {
+                // Only show the first evaluation if the viewer is an applicant
+                if (viewer === "applicant" && i > 0) return null;
+
+                return (
+                  <div key={i} className="w-full ">
+                    <div className="flex gap-6 justify-start items-start">
+                      {viewer !== "applicant" && (
+                        <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
+                          {evaluation.employee.name}
+                        </p>
+                      )}
+                      {/* {i === 0 && <p className="mt-2">Selected</p>} */}
+                      <p
+                        className={`px-4 py-2 rounded-full flex gap-2 justify-start items-start ${
+                          evaluation?.decision === "APPROVED"
+                            ? "bg-lime-500 bg-opacity-10 text-green-500"
+                            : evaluation?.decision === "REJECTED"
+                              ? "bg-red-500 bg-opacity-10 text-danger"
+                              : ""
+                        }`}
                       >
-                        <CiEdit />
-                      </button>
-                    )}
+                        {evaluation?.decision}
+                      </p>
+                      {evaluation?.employee?.user_id ===
+                        profile?.userProfile?.data?.uuid && (
+                        <button
+                          className="bg-primary p-2 rounded-full text-white font-bold"
+                          onClick={() =>
+                            setOpenEditDecision({
+                              open: true,
+                              decision: evaluation,
+                            })
+                          }
+                        >
+                          <CiEdit />
+                        </button>
+                      )}
+                    </div>
+                    <div className="p-2 mt-2 w-full">
+                      <label className="block text-sm text-gray-600">
+                        Comment:
+                      </label>
+                      <textarea
+                        value={evaluation?.comment}
+                        disabled
+                        rows={2}
+                        className={`mt-2 p-2 w-full border border-gray-500 rounded-xl shadow-sm ${
+                          isEditing ? "bg-white" : "bg-gray-100"
+                        }`}
+                      />
+                    </div>
                   </div>
-                  <div className="p-2 mt-2 w-full">
-                    <label className="block text-sm text-gray-600">
-                      Comment:
-                    </label>
-                    <textarea
-                      value={evaluation?.comment}
-                      disabled
-                      rows={2}
-                      className={`mt-2 p-2 w-full border border-gray-500  rounded-xl shadow-sm  ${
-                        isEditing ? "bg-white" : "bg-gray-100"
-                      }`}
-                    />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
           </div>
         </div>
       </Modal>
       <MakeDecision
-        onMakeDecision={() => closeEditDecision()}
-        close={closeEditDecision}
-        isOpen={isOpenEditDecision}
+        onMakeDecision={() =>
+          setOpenEditDecision({ open: false, decision: null })
+        }
+        close={() => {
+          setOpenEditDecision({ open: false, decision: null });
+          close();
+        }}
+        isOpen={openEditDecision.open}
         type="Evaluation"
-        defaultData={selectedDecision?.evaluationDecision}
+        defaultData={openEditDecision.decision}
+        application={application}
       />
     </>
   );

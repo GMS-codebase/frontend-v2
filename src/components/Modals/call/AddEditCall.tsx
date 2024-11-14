@@ -15,6 +15,13 @@ import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
 import { getCalls } from "@/utils/funcs";
 import { ADD_CALL_SUCCESS, UPDATE_CALL_SUCCESS } from "@/actions/CallsActions";
+import {
+  SECTOR_STATUS,
+  SUBWINDOW_STATUS,
+  TRADE_STATUS,
+  WINDOW_STATUS,
+} from "@/utils/enums";
+import { tradesData } from "@/utils/constants/dummy";
 
 const AddEditCall = ({
   isOpenAddEditCall,
@@ -27,7 +34,7 @@ const AddEditCall = ({
 }) => {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
-  const windows = useSelector((state: any) => state.windows);
+  const [errors, setErrors] = useState<any>();
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
@@ -43,23 +50,42 @@ const AddEditCall = ({
     sectors: [],
     attachment: null,
   });
-
+  const windows = useSelector((state: any) => state.windows);
+  const { sectors } = useSelector((state: any) => state.sectors);
   let MultiWindowData =
-    windows?.windows?.map((window: any) => ({
-      value: window.uuid,
-      label: window.title,
-    })) ?? [];
+    windows?.windows
+      .filter(
+        (window: any) =>
+          window.subWindows.filter(
+            (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE,
+          ).length !== 0 && window.status === WINDOW_STATUS.ACTIVE,
+      )
+      ?.map((window: any) => ({
+        value: window.uuid,
+        label: window.title,
+      })) ?? [];
 
   const getSubWindowsData = () => {
     const subWindowData =
       windows?.windows
         ?.filter((window: any) => selectedWindows?.includes(window.uuid))
-        .flatMap((window: any) =>
-          window.subWindows?.map((subWindow: any) => ({
-            value: subWindow?.uuid,
-            label: subWindow?.title,
-          })),
-        ) || [];
+        .flatMap((window: any) => {
+          return (
+            window.subWindows
+              ?.filter(
+                (sub: any) =>
+                  sub.status === SUBWINDOW_STATUS.ACTIVE &&
+                  sub.sectors.filter(
+                    (sec: any) => sec.status === SECTOR_STATUS.ACTIVE,
+                  ),
+              )
+              .map((subWindow: any) => ({
+                value: subWindow.uuid,
+                label: subWindow.title,
+              })) || []
+          );
+        }) || [];
+
     return subWindowData;
   };
 
@@ -70,11 +96,27 @@ const AddEditCall = ({
           ?.filter((subWindow: any) =>
             selectedSubWindows.includes(subWindow.uuid),
           )
-          .flatMap((subWindow: any) =>
-            subWindow.sectors?.map((sector: any) => ({
-              value: sector?.uuid,
-              label: sector?.name,
-            })),
+          .flatMap(
+            (subWindow: any) =>
+              subWindow.sectors
+                ?.map((sector: any) => {
+                  const matchingSector = sectors.find(
+                    (s: any) =>
+                      s.uuid === sector.uuid &&
+                      s.trades.filter(
+                        (trad: any) =>
+                          trad.trade.status === TRADE_STATUS.ACTIVE,
+                      ).length > 0 &&
+                      sector.status === SECTOR_STATUS.ACTIVE,
+                  );
+                  return matchingSector
+                    ? {
+                        value: matchingSector.uuid,
+                        label: matchingSector.name,
+                      }
+                    : null;
+                })
+                .filter(Boolean) || [],
           ) || [],
     );
     return sectorData;
@@ -84,7 +126,6 @@ const AddEditCall = ({
   const MultiSectorData = getSectorData();
   useEffect(() => {
     if (defaultData) {
-      console.log(defaultData);
       setFormData(defaultData);
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
       setSelectedSubWindows(
@@ -146,7 +187,7 @@ const AddEditCall = ({
               message: "Call updated successfully!",
               color: "blue",
             });
-            console.log(res.data);
+
             setFormData({
               title: "",
               description: "",
@@ -254,6 +295,7 @@ const AddEditCall = ({
                         required
                       />
                     </div>
+                    {}
                   </div>
                 </div>
 
@@ -268,8 +310,7 @@ const AddEditCall = ({
                     <span className="absolute left-2 top-[10px]">
                       <Subtitles />
                     </span>
-                    <input
-                      type="text"
+                    <textarea
                       name="description"
                       value={formData.description}
                       placeholder="Add description"

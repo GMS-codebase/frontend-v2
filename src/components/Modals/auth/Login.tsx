@@ -44,7 +44,7 @@ const LoginModal = ({
             navigate.push("/employee");
             break;
           case "applicant":
-            navigate.push("/applicant/contacts");
+            navigate.push("/applicant/applications");
             break;
           case "grant_committee":
             navigate.push("/grant_committee");

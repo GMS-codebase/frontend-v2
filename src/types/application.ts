@@ -11,7 +11,7 @@ export interface ApplicationQuestions {
   trainingEquipment?: TrainingEquipment[];
   identificationEmployee?: string;
   staffs?: Staff[];
-  staffAttachments: string;
+  staffAttachment: string;
   sustainability?: string;
   contributionFromApplicant?: string;
 
@@ -36,6 +36,7 @@ export interface ApplicationQuestions {
   roleAttachment?: File;
   institutionAttachment?: File;
   trainingManualAttachment?: File;
+  premisesAttachment?: File;
   trainingEquipmentAttachment?: File;
   previousFinancialReportAttachment?: File;
   MOUsAttachment?: File[];
@@ -82,5 +83,5 @@ export interface AssessmentEquipment {
 // Enum for Staff availability
 export enum AvailableOrHired {
   AVAILABLE = "AVAILABLE",
-  HIRED = "HIRED",
+  HIRED = "To be hired",
 }

@@ -1,24 +1,31 @@
 import { useDisclosure } from "@mantine/hooks";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Menu } from "@mantine/core";
+import { RiDeleteBinLine } from "react-icons/ri";
 import { CiEdit } from "react-icons/ci";
 import AddContract from "@/components/Modals/AddContract"; // Import AddContract
 import AddMinute from "@/components/Modals/contracts/AddMinutes"; // Import AddMinute (for minutes)
+import { VscEye } from "react-icons/vsc";
+import { Upload } from "solar-icon-set";
+import { useState } from "react";
 
 const MinutesActions = ({
   setIsMinute,
   data,
-  isNew,
+  status,
 }: {
   setIsMinute: (employee: any) => void;
   data: any;
-  isNew?: boolean;
+  status: string;
 }) => {
   const [isOpenAddContract, { open: openContract, close: closeContract }] =
     useDisclosure(false);
   const [isOpenAddMinute, { open: openMinute, close: closeMinute }] =
-    useDisclosure(false); // Control AddMinute modal
-
+    useDisclosure(false);
+  const [type, setType] = useState<"signed" | "unsigned" | "updated">(
+    "unsigned",
+  );
+  console.log("data --> ", data);
   return (
     <div>
       <Menu shadow="lg" width={300}>
@@ -38,26 +45,100 @@ const MinutesActions = ({
             <h1 className="text-lg">Actions</h1>
           </Menu.Label>
           <Menu.Divider />
-          {isNew && (
-            <Menu.Item>
-              <div
-                onClick={openMinute} // Open AddMinute modal when clicked
-                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-              >
-                <CiEdit size={21} color="#576074" />
-                Upload Minute Negotiation
+
+          {status === "ready" && (
+            <Menu.Item
+              onClick={() => {
+                openMinute();
+                setType("unsigned");
+              }}
+              className="w-full py-1 text-[#576074]"
+            >
+              <div className="flex items-center gap-3 py-1">
+                <Upload size={21} />
+                <span>Upload contract negotiation</span>
               </div>
             </Menu.Item>
           )}
-          {isNew && <p>No Actions</p>}
+
+          {status === "uploaded" && (
+            <>
+              <Menu.Item
+                onClick={() => setIsMinute(data)}
+                className="w-full py-1 text-[#576074]"
+              >
+                <div className="flex items-center gap-3 py-1">
+                  <VscEye size={21} />
+                  <span>View</span>
+                </div>
+              </Menu.Item>
+              <Menu.Item
+                onClick={() => {
+                  openMinute(), setType("updated");
+                }}
+                className="w-full py-1 text-[#576074]"
+              >
+                <div className="flex items-center gap-3 py-1">
+                  <CiEdit size={21} />
+                  <span>Update</span>
+                </div>
+              </Menu.Item>
+              <Menu.Item
+                onClick={() => {}}
+                className="w-full py-1 text-red-600"
+              >
+                <div className="flex items-center gap-3 py-1">
+                  <RiDeleteBinLine size={21} />
+                  <span>Delete</span>
+                </div>
+              </Menu.Item>
+            </>
+          )}
+
+          {status === "approved" && (
+            <>
+              <Menu.Item
+                onClick={() => setIsMinute(data)}
+                className="w-full py-1 text-[#576074]"
+              >
+                <div className="flex items-center gap-3 py-1">
+                  <VscEye size={21} />
+                  <span>View</span>
+                </div>
+              </Menu.Item>
+              <Menu.Item
+                onClick={() => {
+                  openMinute();
+                  setType("signed");
+                }}
+                className="w-full py-1 text-[#576074]"
+              >
+                <div className="flex items-center gap-3 py-1">
+                  <Upload size={21} />
+                  <span>Upload Signed Meeting Minutes</span>
+                </div>
+              </Menu.Item>
+            </>
+          )}
+
+          {status === "rejected" && (
+            <Menu.Item
+              onClick={() => setIsMinute(data)}
+              className="w-full py-1 text-[#576074]"
+            >
+              <div className="flex items-center gap-3 py-1">
+                <VscEye size={21} />
+                <span>View meeting minutes</span>
+              </div>
+            </Menu.Item>
+          )}
         </Menu.Dropdown>
       </Menu>
-
-      {/* AddMinute modal for uploading the minute negotiation */}
       <AddMinute
+        type={type}
         data={data}
-        isOpenAddMinute={isOpenAddMinute} // Pass modal open state
-        closeAddMinute={closeMinute} // Pass the function to close modal
+        isOpenAddMinute={isOpenAddMinute}
+        closeAddMinute={closeMinute}
       />
     </div>
   );

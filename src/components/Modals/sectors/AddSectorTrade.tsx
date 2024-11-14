@@ -39,11 +39,16 @@ const AddSectorTrade = ({
   }));
 
   const windowOptions = windows.windows
-    .filter((window: any) =>
-      window.subWindows.filter((subWindow: any) =>
-        subWindow.sectors.filter((sec: any) => sec.uuid === id),
-      ),
-    )
+    .filter((window: any) => {
+      const hasSubWindow = window?.subWindows?.some((subWindow: any) => {
+        const hasSector = subWindow.sectors.some((sec: any) => {
+          sec.uuid === id && console.log("    Found match :", window);
+          return sec.uuid === id;
+        });
+        return hasSector;
+      });
+      return hasSubWindow;
+    })
     .map((window: any) => ({
       value: window.title,
       label: window.title,
@@ -90,9 +95,12 @@ const AddSectorTrade = ({
           "Trade assigned to sector for all selected windows successfully!",
         color: "blue",
       });
+      setFormData({
+        trade: "",
+        windows: [],
+      });
       closeAddSectorTrade();
     } catch (error: any) {
-      console.log(error);
       notifications.show({
         message: error.response?.data?.message ?? "Failed to assign trade!",
         color: "red",

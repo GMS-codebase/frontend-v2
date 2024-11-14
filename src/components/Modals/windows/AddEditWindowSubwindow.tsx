@@ -45,7 +45,6 @@ const AddEditWindowSubwindow = ({
 
   useEffect(() => {
     if (defaultData) {
-      console.log(defaultData);
       setFormData({
         title: defaultData.title,
         description: defaultData.description,
@@ -109,7 +108,7 @@ const AddEditWindowSubwindow = ({
             : "Sub window created successfully",
           color: "blue",
         });
-        console.log(response.data.data);
+
         dispatch({
           type: defaultData
             ? UPDATE_SUB_WINDOW_SUCCESS

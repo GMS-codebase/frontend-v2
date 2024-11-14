@@ -20,7 +20,8 @@
 .DS_Store
 *.pem
 
-env
+.env*
+*env*
 
 # debug
 npm-debug.log*
@@ -36,3 +37,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 todo.*
+todo.*
+.env
+.env

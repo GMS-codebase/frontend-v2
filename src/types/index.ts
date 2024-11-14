@@ -4,6 +4,12 @@ export type Route = {
   icon: any;
 };
 
+export type BudgetLine = {
+  uuid?: string;
+  name: string;
+  status?: any;
+};
+
 export type Window = {
   subWindows: any;
   title: string;
@@ -70,11 +76,13 @@ export type Comments = {
   institutionComment: string;
   trainingManualComment: string;
   trainingEquipmentComment: string;
+  premisesAttachmentComment: string;
   identificationEmployeeComment: string;
   staffComment: string;
   sustainabilityComment: string;
   previousFinancialReportComment: string;
   trainingPremisesComment: string;
+  assessmentComment: string;
   contributionFromApplicantComment: string;
   recruitmentTrainerComment: string;
   MOUsAttachmentComment: string;
@@ -83,7 +91,8 @@ export type Comments = {
   recruitmentCandidatesNumberComment: string;
   assessorsAndFacilitatorsComment: string;
   budgetSummaryAttachmentComment: string;
-  contributionComment: string;
+  contributionComment?: string;
+  budgetLinesComment?: string;
 };
 
 export type Call = {

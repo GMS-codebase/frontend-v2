@@ -38,7 +38,7 @@ const EditRoleModal: React.FC<AddRoleModalProps> = ({
       setFormData({ title: initialData?.title, tabs: tabs, emails: emails });
     }
   }, [initialData]);
-  console.log("initial data", initialData);
+
   const dispatch = useDispatch();
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,7 +77,7 @@ const EditRoleModal: React.FC<AddRoleModalProps> = ({
       .patch(`/roles/update-role/${initialData.uuid}`, formData)
       .then((res) => {
         getRoles(dispatch);
-        console.log(res.data);
+
         notifications.show({
           message: "Role updated successfully",
           color: "blue",
@@ -85,7 +85,6 @@ const EditRoleModal: React.FC<AddRoleModalProps> = ({
         closeAddEditRole();
       })
       .catch((err) => {
-        console.log(err.response);
         notifications.show({
           title: "Failed to update role",
           message: err.response.data.message ?? "",

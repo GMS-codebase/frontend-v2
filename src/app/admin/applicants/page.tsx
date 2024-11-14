@@ -1,22 +1,15 @@
 "use client";
-import { useState, useRef } from "react";
-import { BiSearch } from "react-icons/bi";
+import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { applicantsData as data } from "@/utils/constants/dummy";
-import { useDisclosure } from "@mantine/hooks";
 import { useSelector } from "react-redux";
-import TableSkeleton from "@/components/core/data-table/TableSkeleton";
-import { RiDeleteBinLine } from "react-icons/ri";
-import { Menu, Select } from "@mantine/core";
+import { Menu } from "@mantine/core";
 import Link from "next/link";
-import { FiChevronLeft, FiChevronRight, FiEye } from "react-icons/fi";
 import { CiSearch } from "react-icons/ci";
+import { FiEye } from "react-icons/fi";
 const Page = () => {
-  const [isOpenCall, { open, close }] = useDisclosure(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const filtersContainerRef = useRef<HTMLDivElement>(null);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -80,10 +73,12 @@ const Page = () => {
     },
   ];
   const applicants = useSelector((state: any) => state.applicants);
+
   const ApplicantsWithProfile = applicants?.applicants?.filter(
-    (applicant: any) => applicant.has_completed_profile,
+    (applicant: any) =>
+      applicant.has_completed_profile || applicant.applications.length > 0,
   );
-  console.log("applicants with profile", applicants);
+
   const filteredApplicants = ApplicantsWithProfile?.filter(
     (applicant: any) =>
       applicant.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -93,32 +88,6 @@ const Page = () => {
         ?.toLowerCase()
         .includes(searchTerm.toLowerCase()),
   );
-  const FilterDropDown = ({
-    placeholderText,
-    data,
-  }: {
-    placeholderText: string;
-    data: any[];
-  }) => {
-    return (
-      <Select
-        data={data}
-        placeholder={placeholderText}
-        defaultValue={placeholderText}
-        className="w-full px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
-      />
-    );
-  };
-  const handleScroll = (direction: "left" | "right") => {
-    if (filtersContainerRef.current) {
-      const scrollAmount = 100;
-      if (direction === "left") {
-        filtersContainerRef.current.scrollLeft -= scrollAmount;
-      } else {
-        filtersContainerRef.current.scrollLeft += scrollAmount;
-      }
-    }
-  };
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
@@ -134,80 +103,18 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-        <div className="flex items-center">
-          <button
-            onClick={() => handleScroll("left")}
-            className="p-2 bg-white shadow-lg rounded-full mr-2"
-          >
-            <FiChevronLeft size={25} />
-          </button>
-          <div
-            ref={filtersContainerRef}
-            className="flex items-center gap-3 overflow-x-hidden scrollbar-hide"
-            style={{ scrollBehavior: "smooth", maxWidth: "calc(4 * 11rem)" }}
-          >
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By stage"
-                data={["Duediligence"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Window"
-                data={["Window 1: Apprenticeship and Internships"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Subwindow"
-                data={["Rapid apprentices"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Sector"
-                data={["ICT & Innovations"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By trade"
-                data={["Agriculture"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By District"
-                data={[
-                  "Kicukiro",
-                  "Musanze",
-                  "Nyagatare",
-                  "Muhanga",
-                  "Nyarugenge",
-                  "Kamonyi",
-                  "Nyanza",
-                  "Gasabo",
-                ]}
-              />
-            </div>
-          </div>
-          <button
-            onClick={() => handleScroll("right")}
-            className="p-2 bg-white shadow-lg rounded-full ml-2"
-          >
-            <FiChevronRight size={25} />
-          </button>
-        </div>
       </div>
       <div className="w-full h-full">
-        {applicants?.loading ? (
-          <TableSkeleton columns={columns} />
-        ) : filteredApplicants?.length === 0 ? (
-          <h1>No Applicants Found!</h1>
-        ) : (
-          <DataTable columns={columns} data={filteredApplicants ?? []} />
-        )}
+        <DataTable
+          columns={columns}
+          data={filteredApplicants ?? []}
+          loading={applicants?.loading}
+          noDataMessage={
+            searchTerm
+              ? `No applicants matching ${searchTerm} found`
+              : "No applicants yet"
+          }
+        />
       </div>
     </div>
   );

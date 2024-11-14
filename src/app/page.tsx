@@ -27,7 +27,10 @@ function Page() {
   );
   const sortedCalls = calls
     ? [...calls]
-        .filter((call: any) => new Date(call.endDate) > new Date())
+        .filter(
+          (call: any) =>
+            new Date(call.endDate) > new Date() && call.status === "OPEN",
+        )
         .sort(
           (a: any, b: any) =>
             new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
@@ -106,7 +109,7 @@ function Page() {
           style={{ scrollbarWidth: "none" }}
         >
           <div className="flex space-x-4">
-            {sortedCalls &&
+            {sortedCalls.length ? (
               sortedCalls.map((call: any) => (
                 <div
                   key={call.id}
@@ -130,7 +133,12 @@ function Page() {
                     View details
                   </button>
                 </div>
-              ))}
+              ))
+            ) : (
+              <h2 className="text-black w-full text-base text-center md:text-xl mt-4 font-normal">
+                Unfortunately there is no open call.
+              </h2>
+            )}
           </div>
         </div>
       </div>

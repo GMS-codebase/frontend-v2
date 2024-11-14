@@ -15,7 +15,6 @@ const ContractsActions = ({
   data: any;
   isNew?: boolean;
 }) => {
-  console.log(data);
   return (
     <div className="">
       <Menu shadow="lg" width={300}>
@@ -35,27 +34,17 @@ const ContractsActions = ({
             <h1 className="text-lg">Actions</h1>
           </Menu.Label>
           <Menu.Divider />
-          {!isNew && (
-            <Menu.Item className="bg-[#F0F0F0]">
-              <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-                <FiEye size={21} color="#576074" />
-                Download Contract
-              </div>
-            </Menu.Item>
-          )}
+
           {isNew && (
             <Menu.Item>
               <div
                 onClick={() =>
-                  setIsContract({
-                    isOpen: true,
-                    application: data,
-                  })
+                  setIsContract({ isOpen: true, application: data })
                 }
                 className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
               >
                 <CiEdit size={21} color="#576074" />
-                Create Contract
+                Upload Contract
               </div>
             </Menu.Item>
           )}

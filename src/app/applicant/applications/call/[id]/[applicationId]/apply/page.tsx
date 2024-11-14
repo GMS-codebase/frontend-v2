@@ -16,6 +16,7 @@ import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { IoIosSave } from "react-icons/io";
 import { useRouter } from "next/navigation";
+import { handleSubmit } from "@/utils/funcs";
 
 const Page = () => {
   const router = useRouter();
@@ -24,28 +25,25 @@ const Page = () => {
   >("Project");
 
   const { id, applicationId } = useParams();
-  const [loading, setLoading] = useState(false);
-  const [applicationTrades, setApplicationTrades] = useState<any[]>([]);
-  const [currentStep, setCurrentStep] = useState(0);
-  useEffect(() => {
-    const fetchApplicationData = async () => {
-      try {
-        const response = await authorizedApi.get(
-          `/application/get-application/${applicationId}`,
-        );
-        const applicationData = response.data.data.data;
-        console.log("appplication data -- ", applicationData);
-        const trades: any = applicationData.trades.map((trade: any) => ({
-          label: trade.title,
-          value: trade.title,
-        }));
-        setApplicationTrades(trades);
-      } catch (error) {
-        console.error("Error fetching application data:", error);
+  const [loading, setLoading] = useState<any>();
+  const [applicationLoading, setApplicationLoading] = useState(true);
+  const [application, setApplication] = useState<any>();
+  const fetchApplication = async () => {
+    setApplicationLoading(true);
+    try {
+      const res = await authorizedApi.get(
+        `/application/get-application/${applicationId}`,
+      );
+      setApplication(res.data.data.data);
+      setApplicationLoading(false);
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        window.history.back();
       }
-    };
-
-    fetchApplicationData();
+    }
+  };
+  useEffect(() => {
+    fetchApplication();
   }, [applicationId]);
   const [data, setData] = useState<ApplicationQuestions>({
     title: "",
@@ -68,136 +66,79 @@ const Page = () => {
     contribution: "",
     roleAttachment: undefined,
     institutionAttachment: undefined,
+    premisesAttachment: undefined,
     trainingManualAttachment: undefined,
     trainingEquipmentAttachment: undefined,
     previousFinancialReportAttachment: undefined,
     MOUsAttachment: [],
     assessmentEquipmentAttachment: undefined,
     budgetSummaryAttachment: undefined,
-    staffAttachments: "",
+    budgetLines: [],
+    staffAttachment: "",
   });
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    const submitData = new FormData();
-
-    if (data.title) submitData.append("title", data.title);
-    if (data.activitiesAndOutcomes)
-      submitData.append("activitiesAndOutcomes", data.activitiesAndOutcomes);
-    if (data.readinessExecute)
-      submitData.append("readinessExecute", data.readinessExecute);
-    if (data.role) submitData.append("role", data.role);
-    if (data.institution) submitData.append("institution", data.institution);
-    if (data.trainingProcess && data.trainingProcess.length > 0)
-      submitData.append(
-        "trainingProcess",
-        JSON.stringify(data.trainingProcess),
-      );
-    if (data.trainingEquipment && data.trainingEquipment.length > 0)
-      submitData.append(
-        "trainingEquipment",
-        JSON.stringify(data.trainingEquipment),
-      );
-    if (data.identificationEmployee)
-      submitData.append("identificationEmployee", data.identificationEmployee);
-    if (data.staffs && data.staffs.length > 0)
-      submitData.append("staffs", JSON.stringify(data.staffs));
-    if (data.sustainability)
-      submitData.append("sustainability", data.sustainability);
-    if (data.contributionFromApplicant)
-      submitData.append(
-        "contributionFromApplicant",
-        data.contributionFromApplicant,
-      );
-    if (data.recruitmentTrainerNumber)
-      submitData.append(
-        "recruitmentTrainerNumber",
-        data.recruitmentTrainerNumber,
-      );
-    if (data.identificationMember)
-      submitData.append("identificationMember", data.identificationMember);
-    if (
-      data.assessmentAndCertificationProcess &&
-      data.assessmentAndCertificationProcess.length > 0
-    )
-      submitData.append(
-        "assessmentAndCertificationProcess",
-        JSON.stringify(data.assessmentAndCertificationProcess),
-      );
-    if (data.assessmentEquipment && data.assessmentEquipment.length > 0)
-      submitData.append(
-        "assessmentEquipment",
-        JSON.stringify(data.assessmentEquipment),
-      );
-    if (data.recruitmentCandidatesNumber)
-      submitData.append(
-        "recruitmentCandidatesNumber",
-        data.recruitmentCandidatesNumber,
-      );
-    if (data.assessorsAndFacilitators)
-      submitData.append(
-        "assessorsAndFacilitators",
-        data.assessorsAndFacilitators,
-      );
-    if (data.contribution) submitData.append("contribution", data.contribution);
-    if (data.roleAttachment)
-      submitData.append("roleAttachment", data.roleAttachment);
-    if (data.institutionAttachment)
-      submitData.append("institutionAttachment", data.institutionAttachment);
-    if (data.trainingManualAttachment)
-      submitData.append(
-        "trainingManualAttachment",
-        data.trainingManualAttachment,
-      );
-    if (data.staffAttachments)
-      submitData.append("staffAttachments", String([data.staffAttachments]));
-    if (data.budgetLines)
-      submitData.append("budgetLines", JSON.stringify(data.budgetLines));
-    if (data.trainingEquipmentAttachment)
-      submitData.append(
-        "trainingEquipmentAttachment",
-        data.trainingEquipmentAttachment,
-      );
-    if (data.previousFinancialReportAttachment)
-      submitData.append(
-        "previousFinancialReportAttachment",
-        data.previousFinancialReportAttachment,
-      );
-    if (data.MOUsAttachment && data.MOUsAttachment.length > 0) {
-      data.MOUsAttachment.forEach((file, index) => {
-        submitData.append(`MOUsAttachment[${index}]`, file);
-      });
+  useEffect(() => {
+    if (application) {
+      setData((prevData) => ({
+        ...prevData,
+        title: application.projectFunding?.title || prevData.title,
+        activitiesAndOutcomes:
+          application.projectFunding?.activitiesAndOutcomes ||
+          prevData.activitiesAndOutcomes,
+        readinessExecute:
+          application.projectFunding?.readinessExecute ||
+          prevData.readinessExecute,
+        role: application.projectFunding?.role || prevData.role,
+        institution:
+          application.projectFunding?.institution || prevData.institution,
+        sustainability:
+          application.projectFunding?.sustainability || prevData.sustainability,
+        recruitmentTrainerNumber:
+          application.projectFunding?.recruitmentTrainerNumber ||
+          prevData.recruitmentTrainerNumber,
+        identificationMember:
+          application.projectFunding?.identificationMember ||
+          prevData.identificationMember,
+        identificationEmployee:
+          application.projectFunding?.identificationEmployee ||
+          prevData.identificationEmployee,
+        assessorsAndFacilitators:
+          application.projectFunding?.assessorsAndFacilitators ||
+          prevData.assessorsAndFacilitators,
+        staffAttachment:
+          application.projectFunding?.staffAttachment ||
+          prevData.staffAttachment,
+        trainingManualAttachment:
+          application.projectFunding?.trainingManualAttachment ||
+          prevData.trainingManualAttachment,
+        trainingProcess:
+          application.projectFunding?.trainingProcess ||
+          prevData.trainingProcess,
+        trainingEquipment:
+          application.projectFunding?.trainingEquipment ||
+          prevData.trainingEquipment,
+        trainingEquipmentAttachment:
+          application.projectFunding?.trainingEquipmentAttachment ||
+          prevData.trainingEquipmentAttachment,
+        premisesAttachment:
+          application.projectFunding?.premisesAttachment ||
+          prevData.premisesAttachment,
+        assessmentAndCertificationProcess:
+          application.projectFunding?.assessmentAndCertificationProcess ||
+          prevData.assessmentAndCertificationProcess,
+        assessmentEquipment:
+          application.projectFunding?.assessmentEquipment ||
+          prevData.assessmentEquipment,
+        budgetSummaryAttachment:
+          application.budget?.budgetSummaryAttachment ||
+          prevData.budgetSummaryAttachment,
+        contributionFromApplicant:
+          application.budget?.contributionFromApplicant ||
+          prevData.contributionFromApplicant,
+        budgetLines: application.budget?.budgetLines || prevData.budgetLines,
+      }));
     }
-    if (data.assessmentEquipmentAttachment)
-      submitData.append(
-        "assessmentEquipmentAttachment",
-        data.assessmentEquipmentAttachment,
-      );
-    if (data.budgetSummaryAttachment)
-      submitData.append(
-        "budgetSummaryAttachment",
-        data.budgetSummaryAttachment,
-      );
-
-    console.log("final data -->", data);
-    try {
-      const res = await authorizedApi.post(
-        `/application/fillApplication/${applicationId}`,
-        submitData,
-      );
-      notifications.show({
-        message: "Application filled successfully!",
-        color: "blue",
-      });
-      router.push("/applicant/applications");
-    } catch (err: any) {
-      notifications.show({
-        message: err.response?.data?.message ?? "Failed to submit the form!",
-        color: "red",
-      });
-    }
-    setLoading(false);
-  };
+  }, [application]);
 
   const handleReset = () => {
     setData({
@@ -216,12 +157,13 @@ const Page = () => {
       identificationMember: "",
       assessmentAndCertificationProcess: [],
       assessmentEquipment: [],
-      staffAttachments: "",
+      staffAttachment: "",
       recruitmentCandidatesNumber: "",
       assessorsAndFacilitators: "",
       contribution: "",
       roleAttachment: undefined,
       institutionAttachment: undefined,
+      premisesAttachment: undefined,
       trainingManualAttachment: undefined,
       trainingEquipmentAttachment: undefined,
       previousFinancialReportAttachment: undefined,
@@ -231,12 +173,12 @@ const Page = () => {
     });
   };
 
-  const calls = useSelector((state: any) => state.calls);
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":
         return (
           <FundingQuestions
+            application={application}
             data={data}
             setData={setData}
             goToBudget={() => setCurrentComponent("IndicativeBudget")}
@@ -245,7 +187,7 @@ const Page = () => {
       case "IndicativeBudget":
         return (
           <BudgetQuestions
-            trades={applicationTrades}
+            application={application}
             data={data}
             setData={setData}
           />
@@ -255,22 +197,34 @@ const Page = () => {
     }
   };
 
-  const allFieldsFilled = Object.values(data).every((value) => {
-    if (Array.isArray(value)) return value.length > 0;
-    return value !== "" && value !== undefined;
-  });
+  if (applicationLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div>
       <div className="flex flex-col gap-4 w-full bg-white p-4 rounded-2xl ">
-        <div className="font-semibold text-2xl flex justify-between items-center">
-          <p>Questions and answers</p>
+        <div className=" flex justify-between items-center">
+          <p className="font-semibold text-2xl">Questions and answers</p>
           <button
-            className="bg-primary text-white p-3 rounded-full"
-            onClick={handleSubmit}
-            disabled={!allFieldsFilled || loading}
+            className="bg-primary text-white py-3 px-10 flex items-center gap-2 rounded-full "
+            onClick={() => {
+              handleSubmit("save", setLoading, data, application);
+            }}
+            disabled={loading === "save"}
           >
-            <IoIosSave />
+            {loading === "save" ? (
+              <p>Loading...</p>
+            ) : (
+              <>
+                <IoIosSave />
+                <p className="">Save Draft</p>
+              </>
+            )}
           </button>
         </div>
         <div className="flex font-semibold">
@@ -306,7 +260,11 @@ const Page = () => {
           </button>
           <button
             type="button"
-            onClick={handleSubmit}
+            onClick={() => {
+              handleSubmit("submit", setLoading, data, application, () =>
+                router.push("/applicant/applications"),
+              );
+            }}
             disabled={loading}
             className={`w-full px-4 py-2 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 bg-primary text-white
               `}
