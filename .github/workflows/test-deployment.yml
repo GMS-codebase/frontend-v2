@@ -3,11 +3,11 @@ name: Deploy To Testing Server
 on:
   push:
     branches:
-      - staging   # Change to trigger on staging branch
+      - staging   
 
 jobs:
   deploy:
-    runs-on: self-hosted   # Use your self-hosted runner instead of ubuntu-latest
+    runs-on: self-hosted   
 
     steps:
       - name: Checkout code
@@ -32,12 +32,12 @@ jobs:
           username: gmsuser
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/apps/frontend-v2
+            cd ~/apps/frontend-v2/staging/frontend-v2-staging
             git stash
-            git pull origin staging   # Pull from staging branch instead of main
+            git pull origin staging  
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
             npm install --force
             npm run build
-            pm2 restart frontend-v2
+            pm2 restart gms-staging
             pm2 save
