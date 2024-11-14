@@ -3,41 +3,25 @@ name: Deploy To Testing Server
 on:
   push:
     branches:
-      - staging
+      - staging   # Change to trigger on staging branch
+
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: self-hosted   # Use your self-hosted runner instead of ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Ensure Node.js v20 is installed
-        run: |
-          node_version=$(node -v)
-          echo "Current Node.js version: $node_version"
-
-          if [[ "$node_version" != "v20"* ]]; then
-            echo "Installing Node.js v20..."
-            # Install Node.js v20 using n
-            curl -L https://git.io/n-install | bash
-            export N_PREFIX=$HOME/n
-            export PATH=$N_PREFIX/bin:$PATH
-            n 20
-          fi
-
-      - name: Cache node modules
-        uses: actions/cache@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
-
-
+          node-version: "20"
+          check-latest: true
+          cache: "npm"
+      
       - name: Install dependencies
         run: npm install --force
-        working-directory: ~/apps/staging/frontend-v2-staging
 
       - name: Create environment variables
         run: |
@@ -46,16 +30,21 @@ jobs:
 
       - name: Build Next.js app
         run: npm run build
-        working-directory: ~/apps/staging/frontend-v2-staging
 
-      - name: Deploy Application
-        if: success()
-        run: |
-          cd ~/apps/staging/frontend-v2-staging
-          git fetch origin
-          git reset --hard origin/staging  # Ensure the latest code is fetched and checked out
-          pm2 restart gms-staging
-          pm2 save
-
-      - name: Check if pm2 is running
-        run: pm2 list
+      - name: Deploy to SSH server
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: 197.243.23.139
+          port: 22
+          username: gmsuser
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/apps/frontend-v2
+            git stash
+            git pull origin staging   # Pull from staging branch instead of main
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            npm install --force
+            npm run build
+            pm2 restart frontend-v2
+            pm2 save
