@@ -259,7 +259,6 @@ const Page = () => {
         "Specify comments regarding the applicant’s contribution.",
       budgetAttachmentComment: "Upload comments on the budget attachment.",
     };
-
     if (!commentsData?.titleComment) return commentMessages?.titleComment;
     if (!commentsData.activitiesComment)
       return commentMessages.activitiesComment;
