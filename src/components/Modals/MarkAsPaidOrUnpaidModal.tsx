@@ -17,7 +17,7 @@ interface MarkAsPaidOrUnpaidModalProps {
   closeModal: () => void;
   id: string;
   type: EntityType;
-  contractId: string
+  contractId: string;
 }
 const MarkAsPaidOrUnpaidModal: React.FC<MarkAsPaidOrUnpaidModalProps> = ({
   isOpenModal,
@@ -33,15 +33,15 @@ const MarkAsPaidOrUnpaidModal: React.FC<MarkAsPaidOrUnpaidModalProps> = ({
     setLoading(true);
     try {
       await authorizedApi.get(
-        `/negotiation-contract/contracts/sdf/${type === "paid" ? "pay": "unpay"}/${contractId}/${id}`,
+        `/negotiation-contract/contracts/sdf/${type === "paid" ? "pay" : "unpay"}/${contractId}/${id}`,
       );
       notifications.show({
         message: `Installment marked as ${type} successfully`,
         color: "green",
       });
       closeModal();
-      getApplications(dispatch)
-      getContracts(dispatch)
+      getApplications(dispatch);
+      getContracts(dispatch);
     } catch (err: any) {
       notifications.show({
         message:
@@ -108,9 +108,7 @@ const MarkAsPaidOrUnpaidModal: React.FC<MarkAsPaidOrUnpaidModalProps> = ({
               disabled={loading}
               className="w-full px-4 py-3 bg-primary text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed truncate"
             >
-              {loading
-                ? "Processing..."
-                : `Mark as ${type}`}
+              {loading ? "Processing..." : `Mark as ${type}`}
             </button>
           </div>
         </div>
