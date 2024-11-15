@@ -139,7 +139,7 @@ const Page = () => {
               data={
                 calls
                   ? calls?.map((call: any) => {
-                      return { value: call.uuid, label: call.title };
+                      return { value: call.uuid, label: call?.title };
                     })
                   : []
               }
