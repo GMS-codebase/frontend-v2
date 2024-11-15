@@ -85,10 +85,7 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <InstallmentsActions
-          data={row.original}
-          contractId={contract?.uuid}
-        />
+        <InstallmentsActions data={row.original} contractId={contract?.uuid} />
       ),
     },
   ];
@@ -102,15 +99,20 @@ const Page = () => {
         <div className="flex flex-col gap-6  text-black">
           <div className="flex justify-between px-10">
             <div className="text-xl font-bold">Contract Details</div>
+            <div className="flex gap-2">
             <button
               onClick={openViewPDF}
               className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
             >
-              <span>
-                <SolarPen2Bold />
-              </span>
-              <div>View Contract Attachment</div>
-            </button>
+                <div>View Contract Attachment</div>
+              </button>
+              <button
+              onClick={openViewPDF}
+              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
+            >
+                <div>View Minutes Attachment</div>
+              </button>
+            </div>
           </div>
           <div className=" px-10 space-y-5">
             <div className="space-y-2 flex items-center gap-3">
@@ -134,7 +136,9 @@ const Page = () => {
                 <div>Contract Amount</div>
               </div>
               <div className="flex flex-col gap-6 justify-start items-start ">
-                <h1 className="font-bold text-xl">{parseInt(contract?.totalAmount)}</h1>
+                <h1 className="font-bold text-xl">
+                  {parseInt(contract?.totalAmount)}
+                </h1>
               </div>
             </div>
             <div className="space-y-2 flex items-center gap-3">
@@ -146,7 +150,8 @@ const Page = () => {
               </div>
               <div className="flex flex-col gap-6 justify-start items-start ">
                 <h1 className="font-bold text-xl">
-                  {parseInt(contract?.totalAmount) - parseInt(contract?.remainedAmount)}
+                  {parseInt(contract?.totalAmount) -
+                    parseInt(contract?.remainedAmount)}
                 </h1>
               </div>
             </div>
