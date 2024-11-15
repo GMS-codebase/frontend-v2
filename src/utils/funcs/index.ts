@@ -617,7 +617,8 @@ const validateQuestions = async (
   };
   const isAssessmentWindow = window === 3 && subwindow === 2;
   if (!data?.title) return commonMessages?.title;
-  if (!data?.activitiesAndOutcomes) return commonMessages?.activitiesAndOutcomes;
+  if (!data?.activitiesAndOutcomes)
+    return commonMessages?.activitiesAndOutcomes;
   if (!data?.readinessExecute) return commonMessages?.readinessExecute;
   if (!data?.role) return commonMessages?.role;
   if (!data?.identificationEmployee)
