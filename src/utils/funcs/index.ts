@@ -616,20 +616,20 @@ const validateQuestions = async (
     contributionFromApplicant: "Specify the applicant’s contribution.",
   };
   const isAssessmentWindow = window === 3 && subwindow === 2;
-  if (!data.title) return commonMessages.title;
-  if (!data.activitiesAndOutcomes) return commonMessages.activitiesAndOutcomes;
-  if (!data.readinessExecute) return commonMessages.readinessExecute;
-  if (!data.role) return commonMessages.role;
-  if (!data.identificationEmployee)
-    return commonMessages.identificationEmployee;
-  if (!data.sustainability) return commonMessages.sustainability;
+  if (!data?.title) return commonMessages?.title;
+  if (!data?.activitiesAndOutcomes) return commonMessages?.activitiesAndOutcomes;
+  if (!data?.readinessExecute) return commonMessages?.readinessExecute;
+  if (!data?.role) return commonMessages?.role;
+  if (!data?.identificationEmployee)
+    return commonMessages?.identificationEmployee;
+  if (!data?.sustainability) return commonMessages?.sustainability;
   if (isAssessmentWindow) {
-    if (!data.assessmentProcess) return commonMessages.assessmentProcess;
+    if (!data?.assessmentProcess) return commonMessages?.assessmentProcess;
     if (!data.assessmentEquipment) return commonMessages.assessmentEquipment;
-    if (!data.assessmentEquipmentAttachment)
-      return commonMessages.assessmentEquipmentAttachment;
+    if (!data?.assessmentEquipmentAttachment)
+      return commonMessages?.assessmentEquipmentAttachment;
   } else {
-    if (!data.trainingProcess) return commonMessages.trainingProcess;
+    if (!data?.trainingProcess) return commonMessages?.trainingProcess;
     if (!data.trainingManualAttachment)
       return commonMessages.trainingManualAttachment;
     if (!data.trainingEquipment) return commonMessages.trainingEquipment;
@@ -657,8 +657,8 @@ export const handleSubmit = async (
       ? undefined
       : await validateQuestions(
           data,
-          application.window.title.includes("3") && 3,
-          application.subWindow.title.includes("2") && 2,
+          application.window?.title.includes("3") && 3,
+          application.subWindow?.title.includes("2") && 2,
         );
   if (error !== null && type === "submit") {
     notifications.show({
@@ -669,7 +669,7 @@ export const handleSubmit = async (
   }
   setLoading(type);
   const submitData = new FormData();
-  if (data.title) submitData.append("title", data.title);
+  if (data?.title) submitData.append("title", data?.title);
   if (data.activitiesAndOutcomes)
     submitData.append("activitiesAndOutcomes", data.activitiesAndOutcomes);
   if (data.readinessExecute)

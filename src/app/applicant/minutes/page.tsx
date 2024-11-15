@@ -56,7 +56,7 @@ const Page = () => {
       header: "Application Title",
       cell: ({ row }) => (
         <div className="truncate">
-          {row.original.application.projectFunding.title}
+          {row.original.application.projectFunding?.title}
         </div>
       ),
     },
