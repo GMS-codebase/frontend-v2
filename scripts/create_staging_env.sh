@@ -3,7 +3,7 @@
 
 
 # Specify the content to be written to the .env.local file
-ENV_CONTENT="# TEST\nBACKEND_BASEURL = http://10.10.77.42:8082\nBACKEND_URL = http://10.10.77.42:8082/api/v2\nNEXT_PUBLIC_BACKEND_API = http://10.10.77.42:8082/api/v2"
+ENV_CONTENT="# TEST\nBACKEND_BASEURL = http://197.243.20.222:8082\nBACKEND_URL = http://197.243.20.222:8082/api/v2\nNEXT_PUBLIC_BACKEND_API = http://197.243.20.222:8082/api/v2"
 
 # Check if .env.local file exists
 if [ -f .env.local ]; then
