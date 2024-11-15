@@ -239,6 +239,7 @@ const Page = () => {
       ),
     },
   ];
+
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "applicationNumber",
@@ -338,7 +339,7 @@ const Page = () => {
       </div>
 
       <Tabs defaultValue="applications">
-        <Tabs.List className="w-auto my-2 float-end">
+        <Tabs.List className="w-auto my-2 ml-5 float-end">
           <Tabs.Tab value="applications">
             Ready for Contract negotiations
           </Tabs.Tab>
@@ -393,17 +394,6 @@ const Page = () => {
             data={rejectedMinutes}
             loading={loadingMinutes}
             noDataMessage="No Rejected contract negotiations"
-          />
-        </Tabs.Panel>
-        <Tabs.Panel value="negotiated">
-          <h1 className="text-base p-4 font-bold">
-            Negotiated contract negotiations
-          </h1>
-          <DataTable
-            columns={negotiatedColumns}
-            data={negotiatedMinutes}
-            loading={loadingMinutes}
-            noDataMessage="No Negotiated contract negotiations"
           />
         </Tabs.Panel>
       </Tabs>
