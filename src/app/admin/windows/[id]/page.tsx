@@ -47,7 +47,7 @@ const Page = () => {
     },
   ] = useDisclosure(false);
   const filteredSubWindows = window?.subWindows?.filter((subW: any) =>
-    subW.title.toLowerCase().includes(searchQuery.toLowerCase()),
+    subW?.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
   const [selectedSubWindow, setSelectedSubWindow] = useState<any>();
   const columns: ColumnDef<any>[] = [

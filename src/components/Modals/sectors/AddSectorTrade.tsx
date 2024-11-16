@@ -42,7 +42,6 @@ const AddSectorTrade = ({
     .filter((window: any) => {
       const hasSubWindow = window?.subWindows?.some((subWindow: any) => {
         const hasSector = subWindow.sectors.some((sec: any) => {
-          sec.uuid === id && console.log("    Found match :", window);
           return sec.uuid === id;
         });
         return hasSector;

@@ -134,7 +134,7 @@ const Page = () => {
   const filteredCalls = calls?.calls?.filter((call: Call) => {
     const query = searchQuery.toLowerCase();
     return (
-      call.title.toLowerCase().includes(query) ||
+      call?.title.toLowerCase().includes(query) ||
       format(new Date(call.startDate), "dd MMMM yyyy")
         .toLowerCase()
         .includes(query) ||
