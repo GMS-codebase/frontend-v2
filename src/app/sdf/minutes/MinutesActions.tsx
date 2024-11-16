@@ -29,7 +29,6 @@ const MinutesActions = ({
   );
   const [isOpenRejectionReason, { open: openRejectionReason, close: closeRejectionReason }] =
     useDisclosure(false);
-  console.log("data --> ", data, "minute --> ", minute);
   return (
     <div>
       <Menu shadow="lg" width={300}>

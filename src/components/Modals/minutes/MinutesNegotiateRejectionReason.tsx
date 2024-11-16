@@ -24,7 +24,6 @@ const MinutesRejectionReason = ({
   type,
 }: DeleteConfirmProps) => {
   const dispatch = useDispatch();
-  console.log(minute);
   const [loading, setLoading] = useState(false);
   const action = type === "rejected" ? "revert" : "reject";
   const handleMinutesRevert = () => {

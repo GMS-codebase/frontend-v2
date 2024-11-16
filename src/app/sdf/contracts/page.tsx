@@ -25,8 +25,6 @@ const Page = () => {
     (state: any) => state.applications,
   );
 
-  console.log("applications for contract signing", applications);
-
   const [contractsSignedApplications, setContractsSignedApplications] =
     useState<any[]>([]);
   const [applicationsForContractSigning, setApplicationsForContractSigning] =
@@ -165,7 +163,7 @@ const Page = () => {
             >
               <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
                 <CiEdit size={21} color="#576074" />
-                View Contract
+                View Contract Info
               </div>
             </Menu.Item>
           </Menu.Dropdown>

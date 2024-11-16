@@ -25,7 +25,6 @@ const MinutesDecisionConfirm = ({
   decision,
 }: DeleteConfirmProps) => {
   const dispatch = useDispatch();
-  console.log(minute);
   const [comment, setComment] = useState({
     value: "",
     isError: "",

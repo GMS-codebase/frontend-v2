@@ -33,7 +33,6 @@ const Page = () => {
   const [rejectedMinutes, setRejectedMinutes] = useState<any[]>([]);
   const [negotiatedMinutes, setNegotiatedMinutes] = useState<any[]>([]);
 
-  console.log("minutes --> ", minutes, "applicationsForContractSigning --> ", applicationsForContractSigning);
   useEffect(() => {
     SetReadyForMinutesNegotiation(
       minutes.filter(
