@@ -71,7 +71,6 @@ jobs:
         run: |
           pm2 stop $JOB_NAME || true  # Stop any running instance (if exists)
           echo "$SCRIPT_NAME"
-          echo $SCRIPT_NAME
-          echo $JOB_NAME
-          pm2 start npm --name $JOB_NAME -- run $SCRIPT_NAME
+          echo "$JOB_NAME"
+          pm2 start npm --name "$JOB_NAME" -- run "$SCRIPT_NAME"
           pm2 save
