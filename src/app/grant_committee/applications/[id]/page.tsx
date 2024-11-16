@@ -24,6 +24,7 @@ import DueDiligenceModal from "@/components/Modals/DueDiigence";
 import { getApplications } from "@/utils/funcs";
 import NullifyModal from "@/components/Modals/Nullify";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
+import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
@@ -434,6 +435,11 @@ const Page = () => {
         closeModal={closeGrantCommitteeMakeDecision}
         isOpen={isOpenGrantCommitteeMakeDecision}
         onMakeDecision={refetch}
+      />
+      <GrantCommitteeDetails
+        application={application}
+        close={closeGrantCommitteeDetails}
+        opened={isOpenGrantCommitteeDetails}
       />
       <EvaluationDetails
         opened={isOpenEvaluationDetails}

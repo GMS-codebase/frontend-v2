@@ -7,10 +7,12 @@
     "firstname",
     "lastname",
     "mantine",
+    "NEGOCIATION",
     "notavailable",
     "phonenumber",
     "SECRETARIATE",
-    "sidevector",
+    "sidevecto",
+    "mantine",
     "Subwindow",
     "subwindows",
     "tabler"

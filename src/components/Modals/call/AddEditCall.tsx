@@ -15,7 +15,13 @@ import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
 import { getCalls } from "@/utils/funcs";
 import { ADD_CALL_SUCCESS, UPDATE_CALL_SUCCESS } from "@/actions/CallsActions";
-import { SUBWINDOW_STATUS, TRADE_STATUS, WINDOW_STATUS } from "@/utils/enums";
+import {
+  SECTOR_STATUS,
+  SUBWINDOW_STATUS,
+  TRADE_STATUS,
+  WINDOW_STATUS,
+} from "@/utils/enums";
+import { tradesData } from "@/utils/constants/dummy";
 
 const AddEditCall = ({
   isOpenAddEditCall,
@@ -50,8 +56,9 @@ const AddEditCall = ({
     windows?.windows
       .filter(
         (window: any) =>
-          window.subWindows.length !== 0 &&
-          window.status === WINDOW_STATUS.ACTIVE,
+          window.subWindows.filter(
+            (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE,
+          ).length !== 0 && window.status === WINDOW_STATUS.ACTIVE,
       )
       ?.map((window: any) => ({
         value: window.uuid,
@@ -65,7 +72,13 @@ const AddEditCall = ({
         .flatMap((window: any) => {
           return (
             window.subWindows
-              ?.filter((sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE)
+              ?.filter(
+                (sub: any) =>
+                  sub.status === SUBWINDOW_STATUS.ACTIVE &&
+                  sub.sectors.filter(
+                    (sec: any) => sec.status === SECTOR_STATUS.ACTIVE,
+                  ),
+              )
               .map((subWindow: any) => ({
                 value: subWindow.uuid,
                 label: subWindow.title,
@@ -90,8 +103,11 @@ const AddEditCall = ({
                   const matchingSector = sectors.find(
                     (s: any) =>
                       s.uuid === sector.uuid &&
-                      s.trades.length > 0 &&
-                      sector.status === TRADE_STATUS.ACTIVE,
+                      s.trades.filter(
+                        (trad: any) =>
+                          trad.trade.status === TRADE_STATUS.ACTIVE,
+                      ).length > 0 &&
+                      sector.status === SECTOR_STATUS.ACTIVE,
                   );
                   return matchingSector
                     ? {
@@ -171,7 +187,7 @@ const AddEditCall = ({
               message: "Call updated successfully!",
               color: "blue",
             });
-            console.log(res.data);
+
             setFormData({
               title: "",
               description: "",

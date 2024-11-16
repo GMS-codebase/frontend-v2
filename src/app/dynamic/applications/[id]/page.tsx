@@ -51,7 +51,7 @@ const Page = () => {
     "Project" | "IndicativeBudget"
   >("Project");
   const [commentsData, setCommentsData] = useState<Comments>({
-    titleComment: application?.projectFunding.titleComment || "",
+    titleComment: application?.projectFunding?.titleComment || "",
     activitiesComment: application?.projectFunding.activitiesComment || "",
     readinessExecuteComment:
       application?.projectFunding.readinessExecuteComment || "",
@@ -196,13 +196,13 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Call
               </p>
-              <p>{application?.call.title}</p>
+              <p>{application?.call?.title}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Window
               </p>
-              <p>{application?.window.title}</p>
+              <p>{application?.window?.title}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">

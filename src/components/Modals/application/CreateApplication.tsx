@@ -16,7 +16,7 @@ const CreateApplication = ({
   existingApplication,
 }: {
   isOpenCreatingApplication: boolean;
-  closeCreatingApplication: () => void;
+  closeCreatingApplication: (val: boolean) => void;
   call: any;
   existingApplication: any;
 }) => {
@@ -108,9 +108,8 @@ const CreateApplication = ({
       router.push(
         `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`,
       );
-      closeCreatingApplication();
+      closeCreatingApplication(false);
     } catch (error: any) {
-      console.log(error);
       notifications.show({
         title: error.response.data.message.includes("exists")
           ? "Application already exists"
@@ -193,14 +192,18 @@ const CreateApplication = ({
     <Modal
       size=""
       opened={isOpenCreatingApplication}
-      onClose={closeCreatingApplication}
+      onClose={() => {
+        closeCreatingApplication(true);
+      }}
       closeOnClickOutside={false}
       withCloseButton={false}
     >
       <div className="max-w-[50vw] w-[50vw] max-h-[90vh] relative bg-white rounded-3xl p-4 pt-10 pb-10 flex flex-col items-center overflow-y-auto">
         <button
           className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
-          onClick={closeCreatingApplication}
+          onClick={() => {
+            closeCreatingApplication(true);
+          }}
         >
           <IoMdClose size={25} color="#000" />
         </button>
@@ -363,7 +366,7 @@ const CreateApplication = ({
           <div className="w-full flex justify-center mt-4 space-x-4">
             <button
               type="button"
-              onClick={closeCreatingApplication}
+              onClick={() => closeCreatingApplication(true)}
               className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Cancel

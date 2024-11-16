@@ -117,14 +117,13 @@ const MakeGrantCommitteeDecision = ({
       newErrors.description = "Description is required.";
       isValid = false;
     }
-    console.log(newErrors);
+
     setErrors(newErrors);
     return isValid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitting");
 
     if (!validate()) return;
 

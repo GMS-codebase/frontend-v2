@@ -18,6 +18,7 @@ import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import { useDisclosure } from "@mantine/hooks";
+import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
@@ -30,6 +31,10 @@ const Page = () => {
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
+  ] = useDisclosure(false);
+  const [
+    isOpenGrantCommitteeDetails,
+    { open: openGrantCommitteeDetails, close: closeGrantCommitteeDetails },
   ] = useDisclosure(false);
   const [
     isOpenDueDiligencyDetails,
@@ -75,7 +80,6 @@ const Page = () => {
     );
   }
 
-  console.log(application);
   return (
     <div className="space-y-6 ">
       <div className="bg-white rounded-2xl p-10 flex flex-col gap-6  text-black">
@@ -287,6 +291,30 @@ const Page = () => {
                   </div>
                 </div>
               )}
+            {application?.call.closedGrantCommittee &&
+              application?.stages?.find(
+                (stage: any) => stage?.stage === "GRANT_COMMITTEE",
+              )?.status != null && (
+                <div className="flex flex-col gap-2">
+                  <h3 className="font-semibold">Grant Committee</h3>
+                  <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
+                    {!application?.grantCommitteeDecision
+                      ? "Pending"
+                      : "APPROVED"}
+                  </div>
+
+                  {application?.grantCommitteeDecision && (
+                    <div className="flex flex-col gap-2 mt-4">
+                      <button
+                        onClick={openGrantCommitteeDetails}
+                        className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                      >
+                        View details
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
           </div>
         )}
       </div>
@@ -303,6 +331,12 @@ const Page = () => {
         close={closeDueDiligencyDetails}
         viewer="applicant"
         decisions={application?.duediligencyDecisions}
+      />
+      <GrantCommitteeDetails
+        application={application}
+        close={closeGrantCommitteeDetails}
+        opened={isOpenGrantCommitteeDetails}
+        viewer="applicant"
       />
     </div>
   );
