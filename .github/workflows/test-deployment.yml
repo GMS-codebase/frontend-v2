@@ -43,13 +43,11 @@ jobs:
       # Verify Git Status
       - name: Verify Git Status
         run: |
-          cd ~/apps/$FRONTEND_DIR
           git status
 
       # Install dependencies and build the application
       - name: Install dependencies and build the application
         run: |
-          cd ~/apps/$FRONTEND_DIR
           git pull origin $GITHUB_REF
           npm install --force
           npm run build
@@ -57,7 +55,6 @@ jobs:
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-          cd ~/apps/$FRONTEND_DIR
           pm2 stop $FRONTEND_DIR || true  # Stop any running instance (if exists)
           pm2 start npm --name $FRONTEND_DIR -- run start -- --port $PORT
           pm2 save
