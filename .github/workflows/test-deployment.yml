@@ -28,17 +28,21 @@ jobs:
             export FRONTEND_DIR=frontend-v2-staging
             export PORT=5800
           fi
+          BRANCH_NAME=$(echo $GITHUB_REF | sed 's/refs\/heads\///')
+          echo "Branch name: $BRANCH_NAME"
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
       # Install dependencies and build the application
       - name: Install dependencies and build the application
         run: |
           cd ~/apps/$FRONTEND_DIR
-          git stash
-          git pull origin $GITHUB_REF
+          ls -la  # Check if it's a git repository
+          git status
+          git pull origin $BRANCH_NAME
           npm install --force
           npm run build
 
-      # Start the application with pm2 using the appropriate PORT
+      # Start the application using pm2
       - name: Start the application using pm2
         run: |
           cd ~/apps/$FRONTEND_DIR
