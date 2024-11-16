@@ -426,7 +426,6 @@ export const getAnnouncement = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/announcements")
     .then((res) => {
-      console.log(res.data.data.data);
       dispatch({
         type: GET_ANNOUNCEMENT_SUCCESS,
         payload: res.data.data.data,
@@ -516,7 +515,6 @@ export const getApprovedMinutes = async (
   authorizedApi
     .get(`/negotiation-contract/applications/${role}/approved`)
     .then((res) => {
-      console.log("minutes --> ", res.data.data.data);
       dispatch({
         type: GET_APPROVED_MINUTES_SUCCESS,
         payload: res.data?.data?.data?.applications,

@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { SolarAddSquareBold } from "../core/icons";
 import { CashOut, Upload } from "solar-icon-set";
 import { Trade } from "@/types";
-import { getApplicants, getContracts } from "@/utils/funcs";
+import { getApplicants, getApplications, getContracts } from "@/utils/funcs";
 
 interface AddContractProps {
   data: any;
@@ -137,7 +137,6 @@ const AddContract: React.FC<AddContractProps> = ({
             ]
           : formData.installments,
     };
-    console.log("Data --> ", newData, data);
 
     const submitForm = new FormData();
     submitForm.append("attachment", newData.contract as Blob);
@@ -162,6 +161,7 @@ const AddContract: React.FC<AddContractProps> = ({
       });
       getApplicants(dispatch);
       getContracts(dispatch);
+      getApplications(dispatch);
       closeAddContract();
     } catch (err: any) {
       notifications.show({

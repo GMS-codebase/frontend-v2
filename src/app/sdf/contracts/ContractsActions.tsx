@@ -44,7 +44,7 @@ const ContractsActions = ({
                 className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
               >
                 <CiEdit size={21} color="#576074" />
-                Upload Contract Info
+                Upload Contract
               </div>
             </Menu.Item>
           )}

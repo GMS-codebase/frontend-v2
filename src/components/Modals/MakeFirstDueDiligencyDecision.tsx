@@ -83,7 +83,6 @@ const MakeFirstDueDiligencyDecision = ({
 
     try {
       const submitData = new FormData();
-      console.log(formData);
       submitData.append("financeInfo", formData.financeinfo);
       submitData.append("ohsinfo", formData.ohs);
       submitData.append("equipmentinfo", formData.equipmentinfo);

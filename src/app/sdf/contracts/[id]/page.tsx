@@ -33,12 +33,9 @@ const Page = () => {
   const application = applications.find(
     (a: any) => a.uuid === applicationId,
   ) ?? [0];
-  console.log("contracts --> ", contracts);
   const contract = contracts.find(
     (c: any) => c.application_ID === applicationId,
   ) ?? [0];
-  console.log("contract --> ", contract);
-
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "title",

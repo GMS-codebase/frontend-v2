@@ -39,7 +39,6 @@ const AddMinute: React.FC<AddMinuteProps> = ({
   });
   const dispatch = useDispatch();
 
-  console.log("data in add minutes --> ", data);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
     setFormData((prevData) => ({
@@ -50,8 +49,6 @@ const AddMinute: React.FC<AddMinuteProps> = ({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Submitting form");
-
     if (!formData.file) {
       notifications.show({
         message: "Please upload a file",
