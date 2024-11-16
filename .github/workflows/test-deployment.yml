@@ -3,26 +3,45 @@ name: Deploy To Testing Server
 on:
   push:
     branches:
+      - main
       - staging
 
 jobs:
   deploy:
     runs-on: self-hosted
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Create environment variables
         run: |
-          chmod +x scripts/create_staging_env.sh
-          ./scripts/create_staging_env.sh
+          if [[ $GITHUB_REF == "refs/heads/main" ]]; then
+            chmod +x scripts/create_main_env.sh
+            ./scripts/create_main_env.sh
+          elif [[ $GITHUB_REF == "refs/heads/staging" ]]; then
+            chmod +x scripts/create_staging_env.sh
+            ./scripts/create_staging_env.sh
+          fi
 
       - name: Deploy Application
         run: |
-          cd ~/apps/staging/frontend-v2-staging
-          git stash
-          git pull origin staging 
-          npm install --force
-          npm run build
-          pm2 restart gms-staging
-          pm2 save
+          if [[ $GITHUB_REF == "refs/heads/main" ]]; then
+            echo "Deploying to main branch"
+            cd ~/apps/main/frontend-v2-main
+            git stash
+            git pull origin main
+            npm install --force
+            npm run build
+            pm2 restart gms-main --update-env --port 5600
+            pm2 save
+          elif [[ $GITHUB_REF == "refs/heads/staging" ]]; then
+            echo "Deploying to staging branch"
+            cd ~/apps/staging/frontend-v2-staging
+            git stash
+            git pull origin staging
+            npm install --force
+            npm run build
+            pm2 restart gms-staging --update-env --port 5800
+            pm2 save
+          fi
