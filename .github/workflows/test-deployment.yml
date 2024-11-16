@@ -49,7 +49,7 @@ jobs:
       - name: Install dependencies and build the application
         run: |
           git pull origin $GITHUB_REF
-          # npm install --force
+          npm install --force
           npm run build
 
       - name: Create the jobs names
