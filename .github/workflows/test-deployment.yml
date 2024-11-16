@@ -19,12 +19,12 @@ jobs:
         run: |
           if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
             echo "Main branch detected"
-            cp ./envs/.env.main ./.env # For main branch
+            cp ./.env.main ./.env # For main branch
             export FRONTEND_DIR=frontend-v2
             export PORT=5600
           elif [[ "$GITHUB_REF" == "refs/heads/staging" ]]; then
             echo "Staging branch detected"
-            cp ./envs/.env.staging ./.env # For staging branch
+            cp ./.env.staging ./.env # For staging branch
             export FRONTEND_DIR=frontend-v2-staging
             export PORT=5800
           fi
