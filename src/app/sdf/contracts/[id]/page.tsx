@@ -21,6 +21,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
 import PDFViewerModal from "@/components/PDFViewer";
+import InstallmentsActions from "./InstallmentsActions";
 
 const Page = () => {
   const { id: applicationId } = useParams();
@@ -32,12 +33,9 @@ const Page = () => {
   const application = applications.find(
     (a: any) => a.uuid === applicationId,
   ) ?? [0];
-  console.log("contracts --> ", contracts);
   const contract = contracts.find(
     (c: any) => c.application_ID === applicationId,
   ) ?? [0];
-  console.log("contract --> ", contract);
-
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "title",
@@ -84,33 +82,7 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <div className="">
-          <Menu shadow="lg" width={300}>
-            <Menu.Target>
-              <button
-                style={{
-                  background:
-                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-                }}
-                className="p-3 rounded-full border text-white hover:bg-red-100"
-              >
-                <HiDotsHorizontal size={25} color="white" />
-              </button>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Label>
-                <h1 className="text-lg">Actions</h1>
-              </Menu.Label>
-              <Menu.Divider />
-              <Menu.Item className="bg-[#F0F0F0]">
-                <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
-                  <FiEye size={21} color="#576074" />
-                  Mark as paid
-                </div>
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </div>
+        <InstallmentsActions data={row.original} contractId={contract?.uuid} />
       ),
     },
   ];
@@ -124,15 +96,20 @@ const Page = () => {
         <div className="flex flex-col gap-6  text-black">
           <div className="flex justify-between px-10">
             <div className="text-xl font-bold">Contract Details</div>
+            <div className="flex gap-2">
             <button
               onClick={openViewPDF}
               className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
             >
-              <span>
-                <SolarPen2Bold />
-              </span>
-              <div>View Contract Attachment</div>
-            </button>
+                <div>View Contract Attachment</div>
+              </button>
+              <button
+              onClick={openViewPDF}
+              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
+            >
+                <div>View Minutes Attachment</div>
+              </button>
+            </div>
           </div>
           <div className=" px-10 space-y-5">
             <div className="space-y-2 flex items-center gap-3">
@@ -156,7 +133,23 @@ const Page = () => {
                 <div>Contract Amount</div>
               </div>
               <div className="flex flex-col gap-6 justify-start items-start ">
-                <h1 className="font-bold text-xl">{contract?.totalAmount}</h1>
+                <h1 className="font-bold text-xl">
+                  {parseInt(contract?.totalAmount)}
+                </h1>
+              </div>
+            </div>
+            <div className="space-y-2 flex items-center gap-3">
+              <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center w-fit">
+                <span className="">
+                  <SolarAddFolderBold />
+                </span>
+                <div>Paid Amount</div>
+              </div>
+              <div className="flex flex-col gap-6 justify-start items-start ">
+                <h1 className="font-bold text-xl">
+                  {parseInt(contract?.totalAmount) -
+                    parseInt(contract?.remainedAmount)}
+                </h1>
               </div>
             </div>
             <div className="space-y-2 flex items-center gap-3">
@@ -168,7 +161,7 @@ const Page = () => {
               </div>
               <div className="flex flex-col gap-6 justify-start items-start ">
                 <h1 className="font-bold text-xl">
-                  {contract?.remainedAmount}
+                  {parseInt(contract?.remainedAmount)}
                 </h1>
               </div>
             </div>

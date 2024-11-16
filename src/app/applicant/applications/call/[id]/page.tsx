@@ -106,7 +106,7 @@ const Page = () => {
       accessorKey: "title",
       header: "Call title",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.call.title}</div>
+        <div className="truncate">{row.original.call?.title}</div>
       ),
     },
     {
@@ -120,7 +120,7 @@ const Page = () => {
       accessorKey: "trade",
       header: "Trade",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.trades[0].trade.title}</div>
+        <div className="truncate">{row.original.trades[0].trade?.title}</div>
       ),
     },
     {
