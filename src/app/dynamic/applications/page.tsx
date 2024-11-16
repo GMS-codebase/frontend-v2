@@ -27,8 +27,6 @@ const Page = () => {
     [rawApplications],
   );
 
-  console.log(applications);
-
   const filtersContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -225,7 +223,7 @@ const Page = () => {
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&
           (sector === "All" || app.sector?.name === sector) &&
-          (trade === "All" || app.trade?.trade.title === trade)
+          (trade === "All" || app.trade?.trade?.title === trade)
         );
       });
   }, [applications, searchTerm, selectedFilters]);

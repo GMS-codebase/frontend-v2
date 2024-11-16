@@ -75,14 +75,14 @@ const AddEditBudgetLine = ({
 
     const request = defaultData
       ? authorizedApi.put(`/budgetlines/update/${defaultData.uuid}`, formData)
-      : authorizedApi.post("/budgetlines/close-stage", formData);
+      : authorizedApi.post("/budgetlines/", formData);
 
     request
       .then((res) => {
         notifications.show({
           message: defaultData
-            ? "BudgetLine is updated successfully"
-            : "BudgetLine is created successfully",
+            ? "Budget Line is updated successfully"
+            : "Budget Line is created successfully",
           color: "blue",
         });
 
@@ -90,7 +90,7 @@ const AddEditBudgetLine = ({
           type: defaultData
             ? UPDATE_BUDGET_LINE_SUCCESS
             : ADD_BUDGET_LINE_SUCCESS,
-          payload: res.data?.data,
+          payload: res.data?.data.data,
         });
         setFormData({
           title: "",
@@ -104,7 +104,7 @@ const AddEditBudgetLine = ({
             notifications.show({
               message: `Failed to ${
                 defaultData ? "update" : "create"
-              } trade. It seems a trade with similar details already exists.`,
+              } budget line. It seems a budget line with similar details already exists.`,
               color: "red",
             });
           } else {
@@ -113,7 +113,7 @@ const AddEditBudgetLine = ({
                 errorMessage ??
                 `Failed to ${
                   defaultData.title ? "update" : "create"
-                } trade! Please try again.`,
+                } budget line! Please try again.`,
               color: "red",
             });
           }
@@ -141,12 +141,12 @@ const AddEditBudgetLine = ({
         </button>
         <div className="w-full flex flex-col items-center">
           <h1 className="text-2xl font-extrabold">
-            {defaultData ? "Update BudgetLine" : "Create New BudgetLine"}
+            {defaultData ? "Update Budget Line" : "Create New Budget Line"}
           </h1>
           <h2 className="text-[#000F2369] text-lg font-medium">
             {defaultData
-              ? "Update your BudgetLine details."
-              : "Provide your BudgetLine details to create a new BudgetLine."}
+              ? "Update your Budget Line details."
+              : "Provide your Budget Line details to create a new BudgetLine."}
           </h2>
         </div>
         <div className="w-full flex flex-col items-center mt-10 ">
@@ -170,7 +170,7 @@ const AddEditBudgetLine = ({
                     type="text"
                     name="title"
                     value={formData.title}
-                    placeholder="BudgetLine title"
+                    placeholder="Budget Line title"
                     onChange={handleChange}
                     className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"
                   />

@@ -21,7 +21,7 @@ import {
   getSubWindows,
   getMyContracts,
   getContracts,
-  getApplicationsForContracts,
+  getApplicationsForContractSigning,
   getEmpStages,
   getMyApplications,
   getMinutes,
@@ -32,6 +32,7 @@ import {
   getRejectedMinutes,
   getApprovedMinutes,
   getUploadedMinutes,
+  getAnnouncement,
 } from "@/utils/funcs";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
@@ -89,17 +90,21 @@ const Navbar = () => {
       getApplicants(dispatch);
       getContracts(dispatch);
       getMinutes(dispatch);
-      getApplicationsReadyForMinutes(dispatch);
-      getUploadedMinutes(dispatch);
-      getApprovedMinutes(dispatch);
-      getRejectedMinutes(dispatch);
-      getApplicationsForContracts(dispatch);
+      getApplicationsReadyForMinutes(dispatch, "sdf");
+      getUploadedMinutes(dispatch, "sdf");
+      getApprovedMinutes(dispatch, "sdf");
+      getRejectedMinutes(dispatch, "sdf");
     } else if (role === "APPLICANT") {
       getMyContacts(dispatch);
       getMyApplicantProfile(dispatch);
       getMyApplications(dispatch);
+      getUploadedMinutes(dispatch, "applicant");
+      getApprovedMinutes(dispatch, "applicant");
+      getRejectedMinutes(dispatch, "applicant");
       getBudgetLines(dispatch);
     }
+    getAnnouncement(dispatch);
+    getApplicationsForContractSigning(dispatch);
     getEmpStages(dispatch);
     getWindows(dispatch);
     getSectors(dispatch);
