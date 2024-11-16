@@ -18,7 +18,7 @@ interface AddMinuteProps {
   data: any;
   isOpenAddMinute: boolean;
   closeAddMinute: () => void;
-  type: "signed" | "unsigned" | "updated";
+  type: "signed" | "unsigned" | "updated" | "negotiated";
 }
 
 const AddMinute: React.FC<AddMinuteProps> = ({
@@ -79,11 +79,23 @@ const AddMinute: React.FC<AddMinuteProps> = ({
               submitForm,
               { headers: { "Content-Type": "multipart/form-data" } },
             )
-          : await authorizedApi.patch(
-              "/negotiation-contract/sdf/signed-negotiation-attachment",
-              submitForm,
-              { headers: { "Content-Type": "multipart/form-data" } },
-            );
+          : type == "signed"
+            ? await authorizedApi.patch(
+                "/negotiation-contract/sdf/signed-negotiation-attachment",
+                submitForm,
+                { headers: { "Content-Type": "multipart/form-data" } },
+              )
+            : type == "updated"
+              ? await authorizedApi.patch(
+                  "/negotiation-contract/sdf/update-negotiation-attachment",
+                  submitForm,
+                  { headers: { "Content-Type": "multipart/form-data" } },
+                )
+              : await authorizedApi.patch(
+                  "/negotiation-contract/sdf/update-negotiation-attachment/negotiate",
+                  submitForm,
+                  { headers: { "Content-Type": "multipart/form-data" } },
+                );
 
       notifications.show({
         message: response?.data?.data?.message,
@@ -108,6 +120,11 @@ const AddMinute: React.FC<AddMinuteProps> = ({
     }
   };
 
+  const title = type == "unsigned"
+    ? "Create New Contract Negotiation"
+    : type == "signed"
+      ? "Upload Signed Contract Negotiation"
+      : "Update Contract Negotiation";
   return (
     <Modal
       opened={isOpenAddMinute}
@@ -126,10 +143,10 @@ const AddMinute: React.FC<AddMinuteProps> = ({
         </button>
         <div className="w-full flex flex-col items-center">
           <h1 className="text-2xl font-extrabold">
-            {type == "unsigned" ? "Create New Minute" : "Upload Signed Minutes"}
+            {title}
           </h1>
           <h2 className="text-[#000F2369] text-lg font-medium">
-            Provide your Minute details to create a new Minute.
+            Provide your Minute details to {title}.
           </h2>
         </div>
         <div className="w-4/5 flex flex-col items-center mt-10 overflow-hidden">
@@ -144,7 +161,9 @@ const AddMinute: React.FC<AddMinuteProps> = ({
               >
                 {type == "unsigned"
                   ? "Contract negotiation"
-                  : "Signed Contract negotiation"}
+                  : type == "signed"
+                    ? "Signed Contract negotiation"
+                    : "Updated Contract negotiation"}
               </label>
               <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <label

@@ -12,7 +12,7 @@ import { BiSearch } from "react-icons/bi";
 import { SolarAddFolderBold } from "@/components/core/icons";
 import { DataTable } from "@/components/core/data-table";
 import { handleDownloadFile } from "@/utils/funcs";
-import MinutesDecisionConfirm from "@/components/Modals/MinutesDecisionConfirm";
+import MinutesDecisionConfirm from "@/components/Modals/minutes/MinutesDecisionConfirm";
 const getApplicationStatus = (application: any) => {
   if (
     application?.currentStage === "EVALUATION" &&

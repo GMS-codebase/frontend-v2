@@ -8,24 +8,28 @@ import AddMinute from "@/components/Modals/contracts/AddMinutes"; // Import AddM
 import { VscEye } from "react-icons/vsc";
 import { Upload } from "solar-icon-set";
 import { useState } from "react";
+import { handleDownloadFile } from "@/utils/funcs";
+import MinutesNegotiateRejectionReason from "@/components/Modals/minutes/MinutesNegotiateRejectionReason";
 
 const MinutesActions = ({
   setIsMinute,
   data,
   status,
+  minute
 }: {
   setIsMinute: (employee: any) => void;
   data: any;
   status: string;
+  minute: any;
 }) => {
-  const [isOpenAddContract, { open: openContract, close: closeContract }] =
-    useDisclosure(false);
   const [isOpenAddMinute, { open: openMinute, close: closeMinute }] =
     useDisclosure(false);
-  const [type, setType] = useState<"signed" | "unsigned" | "updated">(
+  const [type, setType] = useState<"signed" | "unsigned" | "updated" | "negotiated">(
     "unsigned",
   );
-  console.log("data --> ", data);
+  const [isOpenRejectionReason, { open: openRejectionReason, close: closeRejectionReason }] =
+    useDisclosure(false);
+  console.log("data --> ", data, "minute --> ", minute);
   return (
     <div>
       <Menu shadow="lg" width={300}>
@@ -83,15 +87,6 @@ const MinutesActions = ({
                   <span>Update</span>
                 </div>
               </Menu.Item>
-              <Menu.Item
-                onClick={() => {}}
-                className="w-full py-1 text-red-600"
-              >
-                <div className="flex items-center gap-3 py-1">
-                  <RiDeleteBinLine size={21} />
-                  <span>Delete</span>
-                </div>
-              </Menu.Item>
             </>
           )}
 
@@ -101,7 +96,15 @@ const MinutesActions = ({
                 onClick={() => setIsMinute(data)}
                 className="w-full py-1 text-[#576074]"
               >
-                <div className="flex items-center gap-3 py-1">
+                <div
+                  onClick={() =>
+                    handleDownloadFile(
+                      data?.attachment,
+                      "negotiations-contract",
+                    )
+                  }
+                  className="flex items-center gap-3 py-1"
+                >
                   <VscEye size={21} />
                   <span>View</span>
                 </div>
@@ -123,14 +126,47 @@ const MinutesActions = ({
 
           {status === "rejected" && (
             <Menu.Item
-              onClick={() => setIsMinute(data)}
+              onClick={() => {
+                openRejectionReason();
+                setIsMinute(data);
+              }}  
               className="w-full py-1 text-[#576074]"
             >
               <div className="flex items-center gap-3 py-1">
                 <VscEye size={21} />
-                <span>View meeting minutes</span>
+                <span>View reason and respond</span>
               </div>
             </Menu.Item>
+          )}
+
+          {status === "negotiated" && (
+            <>
+            <Menu.Item
+              onClick={() => {
+                openRejectionReason();
+                setIsMinute(data);
+              }}  
+              className="w-full py-1 text-[#576074]"
+            >
+              <div className="flex items-center gap-3 py-1">
+                <VscEye size={21} />
+                <span>View reason and respond</span>
+              </div>
+            </Menu.Item>
+            <Menu.Item
+                onClick={() => {
+                  openMinute();
+                  setType("negotiated");
+                }}  
+              className="w-full py-1 text-[#576074]"
+            >
+              <div className="flex items-center gap-3 py-1">
+                <VscEye size={21} />
+                <span>Upload another contract negotiation</span>
+              </div>
+            </Menu.Item>
+            </>
+            
           )}
         </Menu.Dropdown>
       </Menu>
@@ -140,6 +176,12 @@ const MinutesActions = ({
         isOpenAddMinute={isOpenAddMinute}
         closeAddMinute={closeMinute}
       />
+      <MinutesNegotiateRejectionReason
+        isOpen={isOpenRejectionReason}
+        onClose={closeRejectionReason}
+        minute={data}
+        type={status}
+      />  
     </div>
   );
 };

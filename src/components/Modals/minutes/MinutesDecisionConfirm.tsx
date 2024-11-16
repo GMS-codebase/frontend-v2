@@ -45,7 +45,7 @@ const MinutesDecisionConfirm = ({
             ? "APPROVED"
             : decision.toLowerCase() === "reject"
               ? "REJECTED"
-              : "NEGOTIATED",
+              : "NEGOTIATE",
         comment: comment,
       })
       .then(() => {
@@ -78,14 +78,14 @@ const MinutesDecisionConfirm = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <Image
-          src={decision.toLowerCase() === "approve" ? SideVector1 : RedVector1}
+          src={decision.toLowerCase() !== "reject" ? SideVector1 : RedVector1}
           alt="vector"
           className="absolute bottom-[3rem] right-[-2rem] h-32"
           width={100}
           height={50}
         />
         <Image
-          src={decision.toLowerCase() === "approve" ? SideVector2 : RedVector2}
+          src={decision.toLowerCase() !== "reject" ? SideVector2 : RedVector2}
           alt="vector"
           className="absolute top-[3rem] left-[-2rem] h-32"
           width={100}
