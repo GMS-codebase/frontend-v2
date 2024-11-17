@@ -69,6 +69,17 @@ jobs:
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
+          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+            echo "Main branch detected"
+            export JOB_NAME="gms-dev"
+            export SCRIPT_NAME="development"
+          elif [[ "$GITHUB_REF" == "refs/heads/staging" ]]; then
+            echo "Staging branch detected"
+            export JOB_NAME="gms-staging"
+            export SCRIPT_NAME="staging"
+          fi
+          echo "JOB_NAME=$JOB_NAME"
+          echo "SCRIPT_NAME=$SCRIPT_NAME"
           pm2 restart $JOB_NAME
           pm2 save
 
