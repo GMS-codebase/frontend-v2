@@ -69,7 +69,6 @@ jobs:
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-          pm2 stop $JOB_NAME --no-daemon || true # Stop any running instance (if exists)
-          pm2 start "npm run $SCRIPT_NAME" --name "$JOB_NAME" --no-daemon
+          pm2 restart "$JOB_NAME"
           pm2 save
 
