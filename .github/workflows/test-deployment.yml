@@ -69,6 +69,6 @@ jobs:
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-          pm2 restart "$JOB_NAME"
+          pm2 restart $JOB_NAME
           pm2 save
 
