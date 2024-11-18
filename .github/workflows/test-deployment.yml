@@ -19,12 +19,14 @@ jobs:
         run: |
           if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
             echo "Main branch detected"
-            chmod +x ./scripts/create_staging_env.sh
+            chmod +x ./scripts/create_dev_env.sh
+            bash ./scripts/create_dev_env.sh
             export FRONTEND_DIR=frontend-v2
             export PORT=5600
           elif [[ "$GITHUB_REF" == "refs/heads/staging" ]]; then
             echo "Staging branch detected"
             chmod +x ./scripts/create_staging_env.sh
+            bash ./scripts/create_staging_env.sh
             export FRONTEND_DIR=frontend-v2-staging
             export PORT=5800
           fi
