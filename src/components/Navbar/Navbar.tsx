@@ -33,6 +33,7 @@ import {
   getApprovedMinutes,
   getUploadedMinutes,
   getAnnouncement,
+  getForms,
 } from "@/utils/funcs";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
@@ -116,6 +117,7 @@ const Navbar = () => {
     getMEReports(dispatch);
     getProfile(dispatch);
     getSectorTrades(dispatch);
+    getForms(dispatch);
   }, []);
 
   const { profile } = useSelector((state: any) => state.profile);
