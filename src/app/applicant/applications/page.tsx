@@ -12,6 +12,7 @@ import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
 import { getApplicationStatus } from "@/utils/funcs";
+import { CALL_STATUS } from "@/utils/enums";
 const Page = () => {
   const columns: ColumnDef<any>[] = [
     {
@@ -76,7 +77,8 @@ const Page = () => {
               <Menu.Item className="bg-[#F0F0F0]">
                 <Link
                   href={
-                    row.original.stages.length > 0
+                    row.original.stages.length > 0 ||
+                    row.original.call.status === CALL_STATUS.OPEN
                       ? `/applicant/applications/application/${row.original.uuid}`
                       : `/applicant/applications/call/${row.original.call.uuid}/${row.original.uuid}/apply`
                   }

@@ -17,18 +17,21 @@ import { UPDATE_BUDGET_LINE_SUCCESS } from "@/actions/BudgetLinesActions";
 import Image from "next/image";
 import {
   BUDGET_LINE_STATUS,
+  FORM_STATUS,
   SECTOR_STATUS,
   SUBWINDOW_STATUS,
   TRADE_STATUS,
   WINDOW_STATUS,
 } from "@/utils/enums";
+import { UPDATE_FORM_SUCCESS } from "@/actions/FormsActions";
 
 type EntityType =
   | "windows"
   | "sectors"
   | "trades"
   | "subwindows"
-  | "budgetLines";
+  | "budgetLines"
+  | "forms";
 
 interface ActivateDeactivateModalProps {
   isOpenModal: boolean;
@@ -45,6 +48,7 @@ const actionMappings: Record<EntityType, string> = {
   trades: UPDATE_TRADE_SUCCESS,
   subwindows: UPDATE_SUB_WINDOW_SUCCESS,
   budgetLines: UPDATE_BUDGET_LINE_SUCCESS,
+  forms: UPDATE_FORM_SUCCESS,
 };
 
 const enumMappings = {
@@ -53,6 +57,7 @@ const enumMappings = {
   trades: TRADE_STATUS,
   subwindows: SUBWINDOW_STATUS,
   budgetLines: BUDGET_LINE_STATUS,
+  forms: FORM_STATUS,
 };
 
 const routeMappings: Record<EntityType, string> = {
@@ -61,6 +66,7 @@ const routeMappings: Record<EntityType, string> = {
   trades: "/trade",
   subwindows: "/sub-window",
   budgetLines: "/budgetlines",
+  forms: "/forms",
 };
 
 const ActivateDeactivateModal: React.FC<ActivateDeactivateModalProps> = ({
@@ -83,7 +89,7 @@ const ActivateDeactivateModal: React.FC<ActivateDeactivateModalProps> = ({
 
     try {
       await authorizedApi.put(
-        `${routeMappings[type]}/activate-deactivate/${id}`,
+        `${routeMappings[type]}/activate-deactivate/${id}`
       );
       notifications.show({
         message: `${capitalize(type.slice(0, -1))} has been ${action}d successfully`,

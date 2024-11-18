@@ -10,6 +10,12 @@ export type BudgetLine = {
   status?: any;
 };
 
+export type Form = {
+  uuid?: string;
+  name: string;
+  dto: string;
+};
+
 export type Window = {
   subWindows: any;
   title: string;
