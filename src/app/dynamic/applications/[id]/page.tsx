@@ -51,7 +51,7 @@ const Page = () => {
     "Project" | "IndicativeBudget"
   >("Project");
   const [commentsData, setCommentsData] = useState<Comments>({
-    titleComment: application?.projectFunding.titleComment || "",
+    titleComment: application?.projectFunding?.titleComment || "",
     activitiesComment: application?.projectFunding.activitiesComment || "",
     readinessExecuteComment:
       application?.projectFunding.readinessExecuteComment || "",
@@ -80,6 +80,8 @@ const Page = () => {
       application?.projectFunding.identificationMemberComment || "",
     assessmentEquipmentComment:
       application?.projectFunding.assessmentEquipmentComment || "",
+    premisesAttachmentComment:
+      application?.projectFunding?.premisesAttachmentComment || "",
     recruitmentCandidatesNumberComment:
       application?.projectFunding.recruitmentCandidatesNumberComment || "",
     assessorsAndFacilitatorsComment:
@@ -194,13 +196,13 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Call
               </p>
-              <p>{application?.call.title}</p>
+              <p>{application?.call?.title}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Window
               </p>
-              <p>{application?.window.title}</p>
+              <p>{application?.window?.title}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
@@ -319,8 +321,8 @@ const Page = () => {
             <h3 className="font-semibold">Evaluation Stage</h3>
             <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
               {application?.currentStage === "EVALUATION"
-                ? "Pending"
-                : "Finished"}
+                ? "PENDING"
+                : "APPROVED"}
             </div>
             {application?.evaluationDecisions && (
               <div className="flex flex-col gap-2 mt-4">
@@ -364,7 +366,7 @@ const Page = () => {
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold">Grant Committee</h3>
             <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-              {!application?.grantCommitteeDecision ? "Pending" : "Finished"}
+              {!application?.grantCommitteeDecision ? "PENDING" : "APPROVED"}
             </div>
 
             {application?.grantCommitteeDecision && (
@@ -405,6 +407,7 @@ const Page = () => {
               )
             : []
         }
+        application={application}
       />
     </div>
   );

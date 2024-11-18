@@ -17,6 +17,8 @@ import { DELETE_TRADE_SUCCESS } from "@/actions/TradesActions";
 import { DELETE_CALL_SUCCESS } from "@/actions/CallsActions";
 import { DELETE_CONTACT_SUCCESS } from "@/actions/ContactsActions";
 import { DELETE_EMPLOYEE_SUCCESS } from "@/actions/EmployeesActions";
+import { DELETE_BUDGET_LINE_SUCCESS } from "@/actions/BudgetLinesActions";
+import { DELETE_FORM_SUCCESS } from "@/actions/FormsActions";
 
 // Redux action mappings
 const actionMappings = {
@@ -27,6 +29,8 @@ const actionMappings = {
   calls: DELETE_CALL_SUCCESS,
   contacts: DELETE_CONTACT_SUCCESS,
   employees: DELETE_EMPLOYEE_SUCCESS,
+  budgetLines: DELETE_BUDGET_LINE_SUCCESS,
+  forms: DELETE_FORM_SUCCESS,
 };
 
 const routeMappings = {
@@ -37,6 +41,8 @@ const routeMappings = {
   calls: "/call",
   contacts: "/contacts",
   employees: "/employees",
+  budgetLines: "/budgetlines/delete",
+  forms: "/forms",
 };
 const DeleteModal = ({
   isOpenModal,
@@ -56,7 +62,9 @@ const DeleteModal = ({
     | "subwindows"
     | "calls"
     | "contacts"
-    | "employees";
+    | "employees"
+    | "budgetLines"
+    | "forms";
 }) => {
   const dispatch = useDispatch();
   const [deleteId, setDeleteId] = useState(id);
@@ -106,7 +114,7 @@ const DeleteModal = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[550px] h-[400px] relative bg-white rounded-3xl p-4 pt-10 pb-4 flex flex-col items-center">
+      <div className="w-[40vw] max-h-[90vh] overflow-y-auto overflow-x-hidden relative bg-white rounded-3xl p-10 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeModal}

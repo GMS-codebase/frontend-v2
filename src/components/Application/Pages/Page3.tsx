@@ -1,33 +1,34 @@
 import React, { useState } from "react";
 import { Select } from "@mantine/core";
 import { Comments } from "@/types";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
+import { FaDownload, FaRegEdit } from "react-icons/fa";
+import { MdDeleteOutline } from "react-icons/md";
 
 export function Page3({
   data,
   setData,
-  trades,
   commentsData,
   setCommentsData,
   type = "training", // Default to "training"
+  isApplicant,
 }: {
   data: any;
   setData?: any;
-  trades: any;
   commentsData?: Comments;
   setCommentsData?: any;
   type?: "training" | "assessment"; // Type parameter
+  isApplicant?: boolean;
 }) {
   const [trainingEquipments, setTrainingEquipments] = useState({
-    trade: "",
     nameOfEquipment: "",
     numberOfEquipment: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
 
   const validateTrainingEquipments = () => {
-    const { trade, nameOfEquipment, numberOfEquipment } = trainingEquipments;
-    if (!trade || !nameOfEquipment || !numberOfEquipment) {
+    const { nameOfEquipment, numberOfEquipment } = trainingEquipments;
+    if (!nameOfEquipment || !numberOfEquipment) {
       setErrorMessage("Please fill in all fields before adding.");
       return false;
     }
@@ -39,7 +40,7 @@ export function Page3({
     if (!validateTrainingEquipments()) {
       return;
     }
-    console.log(data);
+
     setData(
       type === "assessment" ? "assessmentEquipment" : "trainingEquipment",
       [
@@ -51,7 +52,6 @@ export function Page3({
     );
 
     setTrainingEquipments({
-      trade: "",
       nameOfEquipment: "",
       numberOfEquipment: "",
     });
@@ -59,7 +59,7 @@ export function Page3({
 
   const renderTrainingEquipmentsInputs = () => (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-5">
         <div>
           <label
             htmlFor="nameOfEquipment"
@@ -100,28 +100,6 @@ export function Page3({
               }))
             }
             className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="trade"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Trade
-          </label>
-          <Select
-            id="trade"
-            name="trade"
-            value={trainingEquipments.trade}
-            onChange={(selectedOption) =>
-              setTrainingEquipments((prev) => ({
-                ...prev,
-                trade: selectedOption || "",
-              }))
-            }
-            data={trades}
-            className="border pt-2 mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Select Trade"
           />
         </div>
       </div>
@@ -171,26 +149,70 @@ export function Page3({
                 <tr className="bg-gray-100">
                   <th className="border p-2">Name</th>
                   <th className="border p-2">Number of Equipment</th>
-                  <th className="border p-2">Selected Trade</th>
+                  {!commentsData && setData && (
+                    <th className="border p-2">Actions</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
                 {(type !== "assessment"
                   ? data?.trainingEquipment
-                  : data.assessmentEquipment
+                  : data?.assessmentEquipment
                 ).map((item: any, index: any) => (
                   <tr key={index}>
                     <td className="border p-2">{item.nameOfEquipment}</td>
                     <td className="border p-2">{item.numberOfEquipment}</td>
-                    <td className="border p-2">
-                      {item?.uuid
-                        ? trades.find(
-                            (trade: any) => trade.value === item?.trade?.title,
-                          )?.value
-                        : trades.find(
-                            (trade: any) => trade.value === item?.trade,
-                          )?.label}
-                    </td>
+                    {!commentsData && setData && (
+                      <td className="flex items-center justify-center gap-2 border p-3">
+                        <button
+                          className="text-primary"
+                          onClick={() => {
+                            setTrainingEquipments(item);
+                            setData(
+                              type !== "assessment"
+                                ? "trainingEquipment"
+                                : "assessmentEquipment",
+                              (type !== "assessment"
+                                ? data.trainingEquipment
+                                : data.assessmentEquipment
+                              ).filter((process: any) => {
+                                return !(
+                                  process.nameOfEquipment ===
+                                    item.nameOfEquipment &&
+                                  process.numberOfEquipment ===
+                                    item.numberOfEquipment
+                                );
+                              }),
+                            );
+                          }}
+                        >
+                          <FaRegEdit className="w-5 h-5" />
+                        </button>
+                        <button
+                          className="text-danger"
+                          onClick={() => {
+                            setData(
+                              type !== "assessment"
+                                ? "trainingEquipment"
+                                : "assessmentEquipment",
+                              (type !== "assessment"
+                                ? data.trainingEquipment
+                                : data.assessmentEquipment
+                              ).filter((process: any) => {
+                                return !(
+                                  process.nameOfEquipment ===
+                                    item.nameOfEquipment &&
+                                  process.numberOfEquipment ===
+                                    item.numberOfEquipment
+                                );
+                              }),
+                            );
+                          }}
+                        >
+                          <MdDeleteOutline className="w-5 h-5" />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -206,26 +228,39 @@ export function Page3({
           Please attach the proof of ownership (Notarized list of equipment,
           Original Invoices (EBM for locally purchased equipment).)
         </p>
-        {commentsData || !setData ? (
+        {(!isApplicant && commentsData) || !setData ? (
           <>
-            <button
-              onClick={() =>
-                handleDownloadFile(
-                  data?.trainingEquipmentAttachment,
-                  "applications",
-                )
-              }
-              className={`w-full h-12 ${data?.trainingEquipmentAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
-            >
-              {data?.trainingEquipmentAttachment
-                ? "Download File"
-                : "No Attachment Found!"}
-            </button>
-            {commentsData &&
+            <div className="grid grid-cols-2 gap-2 my-2">
+              <button
+                onClick={() =>
+                  handleViewFile(
+                    data?.trainingEquipmentAttachment,
+                    "applications",
+                  )
+                }
+                className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                View File
+              </button>
+              <button
+                onClick={() =>
+                  handleDownloadFile(
+                    data?.trainingEquipmentAttachment,
+                    "applications",
+                  )
+                }
+                className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                <FaDownload />
+                <p>Download File</p>
+              </button>
+            </div>
+            {!isApplicant &&
+              commentsData &&
               renderCommentsSection(
                 type === "assessment"
-                  ? "assessmentEquipmentAttachmentComment"
-                  : "trainingEquipmentAttachmentComment",
+                  ? "assessmentEquipmentComment"
+                  : "trainingEquipmentComment",
               )}
           </>
         ) : (
@@ -244,12 +279,19 @@ export function Page3({
               ) ? (
                 <div className="text-center">
                   <p className="text-xl font-medium text-gray-700">
-                    {
-                      (type === "assessment"
-                        ? data.assessmentEquipmentAttachment
-                        : data.trainingEquipmentAttachment
-                      ).name
-                    }
+                    {type}
+                    {typeof (type === "assessment"
+                      ? data?.assessmentEquipmentAttachment
+                      : data?.trainingEquipmentAttachment) === "string"
+                      ? (type === "assessment"
+                          ? data.assessmentEquipmentAttachment
+                          : data.trainingEquipmentAttachment
+                        )
+                          .split("/")
+                          .pop()
+                      : type === "assessment"
+                        ? data?.assessmentEquipmentAttachment?.name
+                        : data?.trainingEquipmentAttachment?.name}
                   </p>
                   <p className="text-sm text-gray-500">File selected</p>
                 </div>
@@ -271,6 +313,80 @@ export function Page3({
                   type !== "assessment"
                     ? "trainingEquipmentAttachment"
                     : "assessmentEquipmentAttachment",
+                  e.target.files ? e.target.files[0] : null,
+                )
+              }
+            />
+          </div>
+        )}
+      </div>
+      <div className="">
+        <h3 className="text-lg font-bold capitalize">Premises Attachment</h3>
+        <p className="text-sm text-gray-600">
+          Please attach the proof of ownership (Notarized list of equipment,
+          Original Invoices (EBM for locally purchased equipment).) of the
+          premises used in training
+        </p>
+        {(!isApplicant && commentsData) || !setData ? (
+          <>
+            <div className="grid grid-cols-2 gap-2 my-2">
+              <button
+                onClick={() =>
+                  handleViewFile(data?.premisesAttachment, "applications")
+                }
+                className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                View File
+              </button>
+              <button
+                onClick={() =>
+                  handleDownloadFile(data?.premisesAttachment, "applications")
+                }
+                className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+              >
+                <FaDownload />
+                <p>Download File</p>
+              </button>
+            </div>
+
+            {!isApplicant &&
+              commentsData &&
+              renderCommentsSection("premisesAttachmentComment")}
+          </>
+        ) : (
+          <div className="flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl -sm">
+            <label
+              htmlFor="file-upload-premisesAttachment"
+              className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
+            >
+              <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+                <span className="text-2xl font-bold">+</span>
+              </div>
+              {data.premisesAttachment ? (
+                <div className="text-center">
+                  <p className="text-xl font-medium text-gray-700">
+                    {typeof data?.premisesAttachment === "string"
+                      ? data.premisesAttachment.split("/").pop()
+                      : data?.premisesAttachment?.name}
+                  </p>
+                  <p className="text-sm text-gray-500">File selected</p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <p className="text-md text-gray-500">Upload file</p>
+                  <p className="text-md text-gray-400">or drag and drop</p>
+                </div>
+              )}
+            </label>
+            <input
+              id="file-upload-premisesAttachment"
+              name="premisesAttachment"
+              type="file"
+              accept=".pdf"
+              style={{ display: "none" }}
+              onChange={(e) =>
+                setData(
+                  "premisesAttachment",
                   e.target.files ? e.target.files[0] : null,
                 )
               }

@@ -4,6 +4,18 @@ export type Route = {
   icon: any;
 };
 
+export type BudgetLine = {
+  uuid?: string;
+  name: string;
+  status?: any;
+};
+
+export type Form = {
+  uuid?: string;
+  name: string;
+  dto: string;
+};
+
 export type Window = {
   subWindows: any;
   title: string;
@@ -70,6 +82,7 @@ export type Comments = {
   institutionComment: string;
   trainingManualComment: string;
   trainingEquipmentComment: string;
+  premisesAttachmentComment: string;
   identificationEmployeeComment: string;
   staffComment: string;
   sustainabilityComment: string;

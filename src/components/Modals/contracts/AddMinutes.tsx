@@ -1,5 +1,12 @@
 import { authorizedApi } from "@/utils/api";
-import { getMinutes } from "@/utils/funcs";
+import {
+  getApplications,
+  getApprovedMinutes,
+  getContracts,
+  getMinutes,
+  getRejectedMinutes,
+  getUploadedMinutes,
+} from "@/utils/funcs";
 import { Modal } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import React, { useState } from "react";
@@ -8,15 +15,17 @@ import { useDispatch } from "react-redux";
 import { Folder2, Upload } from "solar-icon-set";
 
 interface AddMinuteProps {
-  data: any; // Replace `any` with the actual type if available
+  data: any;
   isOpenAddMinute: boolean;
   closeAddMinute: () => void;
+  type: "signed" | "unsigned" | "updated" | "negotiated";
 }
 
 const AddMinute: React.FC<AddMinuteProps> = ({
   data,
   isOpenAddMinute,
   closeAddMinute,
+  type,
 }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<{
@@ -40,47 +49,79 @@ const AddMinute: React.FC<AddMinuteProps> = ({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!formData.file) {
+      notifications.show({
+        message: "Please upload a file",
+        color: "red",
+      });
+      return;
+    }
+
     setLoading(true);
     const newData = {
       minute: formData.file,
-      applicantId: data.applicant.uuid,
+      applicantId: data?.applicant.uuid,
       applicationId: data?.uuid,
     };
-
     const submitForm = new FormData();
-    submitForm.append("minutesNegotiation", newData.minute as Blob);
-    submitForm.append("applicantId", newData.applicantId);
-    submitForm.append("applicationId", newData.applicationId);
-    authorizedApi
-      .post("/contracts/negotiate", submitForm, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        notifications.show({
-          message: res?.data?.message,
-          color: "blue",
-        });
-        setFormData({
-          file: null,
-          name: "",
-          amount: "",
-        });
-        getMinutes(dispatch);
-        closeAddMinute();
-      })
-      .catch((err: any) => {
-        notifications.show({
-          message: err.response?.data?.message ?? "Failed to create Minute",
-          color: "red",
-        });
-      })
-      .finally(() => {
-        setLoading(false);
+    submitForm.append("attachment", newData.minute as Blob);
+    submitForm.append("applicantID", newData.applicantId);
+    submitForm.append("applicationID", newData.applicationId);
+
+    try {
+      const response =
+        type === "unsigned"
+          ? await authorizedApi.post(
+              "/negotiation-contract/sdf/upload-negotiation",
+              submitForm,
+              { headers: { "Content-Type": "multipart/form-data" } },
+            )
+          : type == "signed"
+            ? await authorizedApi.patch(
+                "/negotiation-contract/sdf/signed-negotiation-attachment",
+                submitForm,
+                { headers: { "Content-Type": "multipart/form-data" } },
+              )
+            : type == "updated"
+              ? await authorizedApi.patch(
+                  "/negotiation-contract/sdf/update-negotiation-attachment",
+                  submitForm,
+                  { headers: { "Content-Type": "multipart/form-data" } },
+                )
+              : await authorizedApi.patch(
+                  "/negotiation-contract/sdf/update-negotiation-attachment/negotiate",
+                  submitForm,
+                  { headers: { "Content-Type": "multipart/form-data" } },
+                );
+
+      notifications.show({
+        message: response?.data?.data?.message,
+        color: "blue",
       });
+
+      setFormData({ file: null, name: "", amount: "" });
+      getMinutes(dispatch);
+      getUploadedMinutes(dispatch, "sdf");
+      getApprovedMinutes(dispatch, "sdf");
+      getRejectedMinutes(dispatch, "sdf");
+      getContracts(dispatch);
+      getApplications(dispatch);
+      closeAddMinute();
+    } catch (err: any) {
+      notifications.show({
+        message: err.response?.data?.message ?? "Failed to create Minute",
+        color: "red",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const title = type == "unsigned"
+    ? "Create New Contract Negotiation"
+    : type == "signed"
+      ? "Upload Signed Contract Negotiation"
+      : "Update Contract Negotiation";
   return (
     <Modal
       opened={isOpenAddMinute}
@@ -98,9 +139,11 @@ const AddMinute: React.FC<AddMinuteProps> = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="w-full flex flex-col items-center">
-          <h1 className="text-2xl font-extrabold">Create New Minute</h1>
+          <h1 className="text-2xl font-extrabold">
+            {title}
+          </h1>
           <h2 className="text-[#000F2369] text-lg font-medium">
-            Provide your Minute details to create a new Minute.
+            Provide your Minute details to {title}.
           </h2>
         </div>
         <div className="w-4/5 flex flex-col items-center mt-10 overflow-hidden">
@@ -113,7 +156,11 @@ const AddMinute: React.FC<AddMinuteProps> = ({
                 htmlFor="fileUpload"
                 className="block text-md font-bold text-gray-700"
               >
-                Minutes Negotiation
+                {type == "unsigned"
+                  ? "Contract negotiation"
+                  : type == "signed"
+                    ? "Signed Contract negotiation"
+                    : "Updated Contract negotiation"}
               </label>
               <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <label

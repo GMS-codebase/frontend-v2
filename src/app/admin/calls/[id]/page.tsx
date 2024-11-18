@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import DonutChart from "../../../../components/chart/DonutChart";
 import {
   SolarPen2Bold,
@@ -18,17 +18,21 @@ import ProgressCircle from "@/components/CallsList/ProgressBar";
 import { useDisclosure } from "@mantine/hooks";
 import CloseCallModal from "@/components/Modals/call/CloseCall";
 import AddEditCall from "@/components/Modals/call/AddEditCall";
+import { authorizedApi } from "@/utils/api";
+import { notifications } from "@mantine/notifications";
+import CloseStageModal from "@/components/Modals/call/CloseStage";
+import { Center } from "@mantine/core";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
-  const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
+  const call = calls?.calls?.filter((call: any) => call?.uuid === callId)[0];
   const [isEditCall, { open: openEditCall, close: closeEditCall }] =
     useDisclosure(false);
   const [isCloseCall, { open: openCloseCall, close: closeCloseCall }] =
     useDisclosure(false);
 
-  const startDate = call?.startDate ? new Date(call.startDate) : null;
-  const endDate = call?.endDate ? new Date(call.endDate) : null;
+  const startDate = call?.startDate ? new Date(call?.startDate) : null;
+  const endDate = call?.endDate ? new Date(call?.endDate) : null;
 
   let callcloseDays = 0;
   if (
@@ -39,6 +43,34 @@ const Page = () => {
   ) {
     const timeDifference = endDate.getTime() - startDate.getTime();
     callcloseDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+  }
+  const [closeStage, SetCloseStage] = useState({
+    opened: false,
+    stage: "",
+  });
+
+  const handleCloseStage = async (stage: string) => {
+    authorizedApi
+      .post(`/calls/close-stage`, { callId, stage })
+      .then((res) => {
+        notifications.show({
+          title: "Closed Stage Successfully!",
+          message: res.data.message,
+        });
+      })
+      .catch((err) => {
+        notifications.show({
+          title: "Failed to close stage!",
+          message: err.response.data.message,
+        });
+      });
+  };
+  if (calls.loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p className="text-gray-600 text-sm">Loading....</p>
+      </div>
+    );
   }
   return (
     <div className="bg-white rounded-2xl p-10 ">
@@ -56,12 +88,14 @@ const Page = () => {
                 </span>
                 <div>Edit Call</div>
               </div>
-              <div
-                className="flex gap-2 p-2 bg-danger rounded-full text-white px-4  py-2 items-center justify-center"
-                onClick={openCloseCall}
-              >
-                <div>Close Call</div>
-              </div>
+              {call?.status !== "CLOSED" && (
+                <div
+                  className="flex gap-2 p-2 bg-danger rounded-full text-white px-4  py-2 items-center justify-center"
+                  onClick={openCloseCall}
+                >
+                  <div>Close Call</div>
+                </div>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2">
@@ -159,9 +193,58 @@ const Page = () => {
             </span>
             <p>View call attachment</p>
           </div>
+          <div>
+            <h1 className="mt-6 text-xl font-bold">Stages</h1>
+            <div className="flex flex-col gap-2 mt-4">
+              <div className="flex justify-between items-center bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                <h1>Evaluation Stage</h1>
+                <button
+                  disabled={call?.closedEvaluation}
+                  onClick={() =>
+                    SetCloseStage({ opened: true, stage: "EVALUATION" })
+                  }
+                  className={`${call?.closedEvaluation ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full`}
+                >
+                  {call?.closedEvaluation ? "Open" : "Close"}
+                </button>
+              </div>
+              <div className="flex justify-between items-center bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                <h1>Due Diligency Stage</h1>
+                <button
+                  disabled={!call?.closedEvaluation}
+                  onClick={() =>
+                    SetCloseStage({ opened: true, stage: "DUE_DILIGENCY" })
+                  }
+                  className={`${call?.closedDueDiligency ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  {call?.closedDueDiligency ? "Open" : "Close"}
+                </button>
+              </div>
+              <div className="flex justify-between items-center bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                <h1>Grant Committee Stage</h1>
+                <button
+                  disabled={
+                    !call?.closedDueDiligency || !call?.closedEvaluation
+                  }
+                  onClick={() =>
+                    SetCloseStage({ opened: true, stage: "GRANT_COMMITTEE" })
+                  }
+                  className={`${call?.closedGrantCommittee ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  {call?.closedGrantCommittee ? "Open" : "Close"}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <CloseCallModal closeModal={closeCloseCall} isOpenModal={isCloseCall} />
+      <CloseStageModal
+        call={call}
+        closeModal={() => SetCloseStage({ opened: false, stage: "" })}
+        // isOpenModal={closeStage.status}
+        data={closeStage}
+      />
       <AddEditCall
         closeAddEditCall={closeEditCall}
         isOpenAddEditCall={isEditCall}
