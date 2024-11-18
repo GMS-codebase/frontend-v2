@@ -36,6 +36,7 @@ const AddEditCall = ({
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<any>();
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
+  const [selectedForm, setSelectedForm] = useState<any>("");
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
   const dispatch = useDispatch();
@@ -51,20 +52,25 @@ const AddEditCall = ({
     attachment: null,
   });
   const windows = useSelector((state: any) => state.windows);
+  const forms = useSelector((state: any) => state.forms);
   const { sectors } = useSelector((state: any) => state.sectors);
   let MultiWindowData =
     windows?.windows
       .filter(
         (window: any) =>
           window.subWindows.filter(
-            (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE,
-          ).length !== 0 && window.status === WINDOW_STATUS.ACTIVE,
+            (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE
+          ).length !== 0 && window.status === WINDOW_STATUS.ACTIVE
       )
       ?.map((window: any) => ({
         value: window.uuid,
         label: window.title,
       })) ?? [];
 
+  const FormsData = forms.forms.map((form: any) => ({
+    label: form.name,
+    value: form.uuid,
+  }));
   const getSubWindowsData = () => {
     const subWindowData =
       windows?.windows
@@ -76,8 +82,8 @@ const AddEditCall = ({
                 (sub: any) =>
                   sub.status === SUBWINDOW_STATUS.ACTIVE &&
                   sub.sectors.filter(
-                    (sec: any) => sec.status === SECTOR_STATUS.ACTIVE,
-                  ),
+                    (sec: any) => sec.status === SECTOR_STATUS.ACTIVE
+                  )
               )
               .map((subWindow: any) => ({
                 value: subWindow.uuid,
@@ -94,7 +100,7 @@ const AddEditCall = ({
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid),
+            selectedSubWindows.includes(subWindow.uuid)
           )
           .flatMap(
             (subWindow: any) =>
@@ -104,10 +110,9 @@ const AddEditCall = ({
                     (s: any) =>
                       s.uuid === sector.uuid &&
                       s.trades.filter(
-                        (trad: any) =>
-                          trad.trade.status === TRADE_STATUS.ACTIVE,
+                        (trad: any) => trad.trade.status === TRADE_STATUS.ACTIVE
                       ).length > 0 &&
-                      sector.status === SECTOR_STATUS.ACTIVE,
+                      sector.status === SECTOR_STATUS.ACTIVE
                   );
                   return matchingSector
                     ? {
@@ -116,8 +121,8 @@ const AddEditCall = ({
                       }
                     : null;
                 })
-                .filter(Boolean) || [],
-          ) || [],
+                .filter(Boolean) || []
+          ) || []
     );
     return sectorData;
   };
@@ -129,8 +134,9 @@ const AddEditCall = ({
       setFormData(defaultData);
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
       setSelectedSubWindows(
-        defaultData.subWindows.map((item: any) => item.uuid),
+        defaultData.subWindows.map((item: any) => item.uuid)
       );
+      setSelectedForm(defaultData.form as any);
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
     }
   }, [defaultData]);
@@ -161,6 +167,7 @@ const AddEditCall = ({
     submitData.append("applicationStartDate", formData?.startDate as any);
     submitData.append("applicationEndDate", formData?.endDate as any);
     submitData.append("window", JSON.stringify(selectedWindows));
+    submitData.append("form", selectedForm);
     submitData.append("sector", JSON.stringify(selectedSectors));
     submitData.append("subWindows", JSON.stringify(selectedSubWindows));
     if (formData?.attachment) {
@@ -574,6 +581,29 @@ const AddEditCall = ({
                       data={MultiSectorData || []}
                       value={selectedSectors}
                       placeholder="Select or type in a sector"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="">
+                  <label
+                    htmlFor="windows"
+                    className="block text-xs font-bold text-gray-700"
+                  >
+                    Select Questions
+                  </label>
+                  <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <span className="absolute left-2 top-3 text-black text-lg">
+                      <SolarSuitcaseLinear />
+                    </span>
+                    <Select
+                      name="questions"
+                      onChange={(value) => {
+                        setSelectedForm(value);
+                      }}
+                      data={FormsData || []}
+                      value={selectedForm}
+                      placeholder="Select or type in a given form of questions"
                       required
                     />
                   </div>

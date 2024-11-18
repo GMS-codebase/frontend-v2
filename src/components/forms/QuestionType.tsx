@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import QuestionsPage from "./QuestionsPage"; // Import the QuestionsPage component
 import { QuestionForm } from "@/types/questions-form";
 
@@ -14,6 +14,10 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
   onChange,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [questionType]);
 
   const pages = formData[questionType].pages;
 
@@ -53,7 +57,7 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
       <QuestionsPage
         pageIndex={currentPage}
         questionType={questionType}
-        pageQuestions={pages[currentPage].questions}
+        pageQuestions={pages[currentPage]?.questions}
         onChange={(updatedQuestions) => {
           const updatedPages = [...pages];
           updatedPages[currentPage].questions = updatedQuestions;
