@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import QuestionsPage from "./QuestionsPage"; // Import the QuestionsPage component
 import { QuestionForm } from "@/types/questions-form";
 
-
 interface QuestionTypeProps {
   questionType: string;
   formData: QuestionForm;

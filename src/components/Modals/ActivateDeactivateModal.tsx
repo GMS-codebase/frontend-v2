@@ -89,7 +89,7 @@ const ActivateDeactivateModal: React.FC<ActivateDeactivateModalProps> = ({
 
     try {
       await authorizedApi.put(
-        `${routeMappings[type]}/activate-deactivate/${id}`
+        `${routeMappings[type]}/activate-deactivate/${id}`,
       );
       notifications.show({
         message: `${capitalize(type.slice(0, -1))} has been ${action}d successfully`,

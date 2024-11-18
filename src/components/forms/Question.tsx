@@ -72,7 +72,7 @@ const CreateQuestion: React.FC<CreateQuestionProps> = ({
   const [editingQuestion, setEditingQuestion] = useState(question);
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    key: keyof Question
+    key: keyof Question,
   ) => {
     const updatedQuestion = { ...editingQuestion, [key]: e.target.value };
     setEditingQuestion(updatedQuestion);

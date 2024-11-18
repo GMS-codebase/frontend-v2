@@ -56,7 +56,7 @@ export default function FormsReducer(state = initialState, action: Action) {
         forms: state.forms.map((trade: Form) =>
           trade.uuid == action.payload.uuid
             ? { ...trade, ...action.payload }
-            : trade
+            : trade,
         ),
         error: null,
         isError: false,
@@ -66,7 +66,7 @@ export default function FormsReducer(state = initialState, action: Action) {
       return {
         ...state,
         forms: state.forms.filter(
-          (trade: Form) => trade.uuid !== action.payload.id
+          (trade: Form) => trade.uuid !== action.payload.id,
         ),
         error: null,
         isError: false,
