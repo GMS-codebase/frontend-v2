@@ -3,12 +3,21 @@ import React, { useState, useEffect } from "react";
 import AddQuestionType from "./AddQuestionsType";
 import QuestionType from "./QuestionType"; // Import the new component
 import { QuestionForm } from "@/types/questions-form";
+import { useDispatch } from "react-redux";
+import { useParams, useRouter } from "next/navigation";
+import { notifications } from "@mantine/notifications";
+import { authorizedApi } from "@/utils/api";
+import { ADD_FORM_SUCCESS, UPDATE_FORM_SUCCESS } from "@/actions/FormsActions";
 
 const CreateForm: React.FC = () => {
   const [isAddTypeModalOpen, setIsAddTypeModalOpen] = useState(false);
-  const [formTitle, setFormTitle] = useState(""); // State for form title
-  const [activeType, setActiveType] = useState<string>("text"); // Default active type set to 'text'
+  const [formTitle, setFormTitle] = useState("");
+  const [activeType, setActiveType] = useState<string>("text");
   const [formData, setFormData] = useState<QuestionForm>();
+  const dispatch = useDispatch();
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const addQuestionType = (newType: { name: string; description: string }) => {
     setFormData((prevFormData) => ({
@@ -22,8 +31,55 @@ const CreateForm: React.FC = () => {
   };
 
   const handleSaveForm = () => {
-    // Handle form save logic here
-    console.log("Form saved with title:", formTitle, formData);
+    setLoading(true);
+    const request = id
+      ? authorizedApi.put(`/forms/${id}`, {
+          name: formTitle,
+          dto: JSON.stringify(formData),
+        })
+      : authorizedApi.post("/forms", {
+          name: formTitle,
+          dto: JSON.stringify(formData),
+        });
+
+    request
+      .then((res) => {
+        notifications.show({
+          message: id
+            ? "Question Form  is updated successfully"
+            : "Question Form  is created successfully",
+          color: "blue",
+        });
+
+        dispatch({
+          type: id ? UPDATE_FORM_SUCCESS : ADD_FORM_SUCCESS,
+          payload: res.data?.data,
+        });
+        router.back();
+      })
+      .catch((err) => {
+        if (err.response) {
+          const errorMessage = err.response.data.message;
+          if (errorMessage && errorMessage.includes("duplicate key")) {
+            notifications.show({
+              message: `Failed to ${
+                id ? "update" : "create"
+              } form. It seems a form with similar details already exists.`,
+              color: "red",
+            });
+          } else {
+            notifications.show({
+              message:
+                errorMessage ??
+                `Failed to ${id ? "update" : "create"} form! Please try again.`,
+              color: "red",
+            });
+          }
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -38,9 +94,10 @@ const CreateForm: React.FC = () => {
         />
         <button
           onClick={handleSaveForm}
+          disabled={loading}
           className="px-4 py-2 bg-primary text-white rounded-full hover:bg-primary/80"
         >
-          Save
+          {loading ? "Loading.." : "Save"}
         </button>
       </div>
 

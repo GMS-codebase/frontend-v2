@@ -113,6 +113,11 @@ import {
   GET_ANNOUNCEMENT_SUCCESS,
   GET_ANNOUNCEMENT_ERROR,
 } from "@/actions/AnnouncementActions";
+import {
+  GET_FORMS_ERROR,
+  GET_FORMS_LOADING,
+  GET_FORMS_SUCCESS,
+} from "@/actions/FormsActions";
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -149,7 +154,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -188,18 +193,18 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
 export const getDashboardData = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string,
+  stage: string
 ) => {
   try {
     dispatch({ type: GET_DASHBOARD_LOADING });
     const dashboardResponse = await authorizedApi.get(
-      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`,
+      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`
     );
     dispatch({ type: GET_DASHBOARD_SUCCESS, payload: dashboardResponse.data });
     for (const sector of prioritySectors) {
       try {
         const sectorResponse = await authorizedApi.get(
-          `/Sectors/${sector?.id}/count/applications/count/applicants`,
+          `/Sectors/${sector?.id}/count/applications/count/applicants`
         );
         dispatch({
           type: GET_PRIORITY_SECTORS_DATA,
@@ -231,6 +236,17 @@ export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
     })
     .catch((err) => {
       dispatch({ type: GET_TRADES_ERROR, payload: err.response.data.error });
+    });
+};
+export const getForms = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_FORMS_LOADING });
+  authorizedApi
+    .get("/forms/all")
+    .then((res) => {
+      dispatch({ type: GET_FORMS_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_FORMS_ERROR, payload: err.response.data.error });
     });
 };
 export const getBudgetLines = async (dispatch: Dispatch<UnknownAction>) => {
@@ -278,7 +294,7 @@ export const handleDownloadFile = async (file: any, service: string) => {
       `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
         responseType: "blob",
-      },
+      }
     );
     const blob = new Blob([response.data], {
       type: response.headers["content-type"],
@@ -371,7 +387,7 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplicationsForContractSigning = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
@@ -469,7 +485,7 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
 };
 export const getApplicationsReadyForMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string,
+  role: string
 ) => {
   dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
   authorizedApi
@@ -489,7 +505,7 @@ export const getApplicationsReadyForMinutes = async (
 };
 export const getUploadedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string,
+  role: string
 ) => {
   dispatch({ type: GET_UPLOADED_MINUTES_LOADING });
   authorizedApi
@@ -509,7 +525,7 @@ export const getUploadedMinutes = async (
 };
 export const getApprovedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string,
+  role: string
 ) => {
   dispatch({ type: GET_APPROVED_MINUTES_LOADING });
   authorizedApi
@@ -529,7 +545,7 @@ export const getApprovedMinutes = async (
 };
 export const getRejectedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string,
+  role: string
 ) => {
   dispatch({ type: GET_REJECTED_MINUTES_LOADING });
   authorizedApi
@@ -590,7 +606,7 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
 const validateQuestions = async (
   data: any,
   window?: number,
-  subwindow?: number,
+  subwindow?: number
 ): Promise<string | null> => {
   // Common validation messages
   const commonMessages = {
@@ -649,7 +665,7 @@ export const handleSubmit = async (
   setLoading: (type: any) => void,
   data: any,
   application: any,
-  callback?: () => void,
+  callback?: () => void
 ) => {
   const error =
     type === "save"
@@ -657,7 +673,7 @@ export const handleSubmit = async (
       : await validateQuestions(
           data,
           application.window?.title.includes("3") && 3,
-          application.subWindow?.title.includes("2") && 2,
+          application.subWindow?.title.includes("2") && 2
         );
   if (error !== null && type === "submit") {
     notifications.show({
@@ -680,7 +696,7 @@ export const handleSubmit = async (
   if (data.trainingEquipment && data.trainingEquipment.length > 0)
     submitData.append(
       "trainingEquipment",
-      JSON.stringify(data.trainingEquipment),
+      JSON.stringify(data.trainingEquipment)
     );
   if (data.identificationEmployee)
     submitData.append("identificationEmployee", data.identificationEmployee);
@@ -691,12 +707,12 @@ export const handleSubmit = async (
   if (data.contributionFromApplicant)
     submitData.append(
       "contributionFromApplicant",
-      data.contributionFromApplicant,
+      data.contributionFromApplicant
     );
   if (data.recruitmentTrainerNumber)
     submitData.append(
       "recruitmentTrainerNumber",
-      data.recruitmentTrainerNumber,
+      data.recruitmentTrainerNumber
     );
   if (data.identificationMember)
     submitData.append("identificationMember", data.identificationMember);
@@ -706,22 +722,22 @@ export const handleSubmit = async (
   )
     submitData.append(
       "assessmentAndCertificationProcess",
-      JSON.stringify(data.assessmentAndCertificationProcess),
+      JSON.stringify(data.assessmentAndCertificationProcess)
     );
   if (data.assessmentEquipment && data.assessmentEquipment.length > 0)
     submitData.append(
       "assessmentEquipment",
-      JSON.stringify(data.assessmentEquipment),
+      JSON.stringify(data.assessmentEquipment)
     );
   if (data.recruitmentCandidatesNumber)
     submitData.append(
       "recruitmentCandidatesNumber",
-      data.recruitmentCandidatesNumber,
+      data.recruitmentCandidatesNumber
     );
   if (data.assessorsAndFacilitators)
     submitData.append(
       "assessorsAndFacilitators",
-      data.assessorsAndFacilitators,
+      data.assessorsAndFacilitators
     );
   if (data.contribution) submitData.append("contribution", data.contribution);
   if (data.roleAttachment)
@@ -731,7 +747,7 @@ export const handleSubmit = async (
   if (data.trainingManualAttachment)
     submitData.append(
       "trainingManualAttachment",
-      data.trainingManualAttachment,
+      data.trainingManualAttachment
     );
   if (data.staffAttachment)
     submitData.append("staffAttachment", data.staffAttachment);
@@ -740,12 +756,12 @@ export const handleSubmit = async (
   if (data.trainingEquipmentAttachment)
     submitData.append(
       "trainingEquipmentAttachment",
-      data.trainingEquipmentAttachment,
+      data.trainingEquipmentAttachment
     );
   if (data.previousFinancialReportAttachment)
     submitData.append(
       "previousFinancialReportAttachment",
-      data.previousFinancialReportAttachment,
+      data.previousFinancialReportAttachment
     );
   if (data.MOUsAttachment && data.MOUsAttachment.length > 0) {
     data.MOUsAttachment.forEach((file: any, index: any) => {
@@ -755,7 +771,7 @@ export const handleSubmit = async (
   if (data.assessmentEquipmentAttachment)
     submitData.append(
       "assessmentEquipmentAttachment",
-      data.assessmentEquipmentAttachment,
+      data.assessmentEquipmentAttachment
     );
   if (data.budgetSummaryAttachment)
     submitData.append("budgetSummaryAttachment", data.budgetSummaryAttachment);
@@ -763,7 +779,7 @@ export const handleSubmit = async (
   try {
     await authorizedApi.post(
       `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${application.uuid}`,
-      submitData,
+      submitData
     );
     notifications.show({
       message:

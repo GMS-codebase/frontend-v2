@@ -31,13 +31,13 @@ const Page = () => {
   const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
 
-  const trades = useSelector((state: any) => state.trades);
+  const forms = useSelector((state: any) => state.forms);
   const [selectedForm, setSelectedForm] = useState<any>("");
   const filteredForms =
-    trades.trades?.filter(
+    forms.forms?.filter(
       (trade: any) =>
         trade?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        trade?.shortname?.toLowerCase().includes(searchQuery.toLowerCase()),
+        trade?.shortname?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
 
   const columns: ColumnDef<any>[] = [
@@ -148,7 +148,7 @@ const Page = () => {
         <DataTable
           columns={columns}
           data={filteredForms}
-          loading={trades.loading}
+          loading={forms.loading}
           noDataMessage={
             searchQuery
               ? `No Forms found related to ${searchQuery}`
