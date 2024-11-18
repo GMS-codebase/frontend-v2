@@ -81,7 +81,7 @@ const Page = () => {
     if (application) {
       setData((prevData) => ({
         ...prevData,
-        title: application.projectFunding?.title || prevData.title,
+        title: application.projectFunding?.title || prevData?.title,
         activitiesAndOutcomes:
           application.projectFunding?.activitiesAndOutcomes ||
           prevData.activitiesAndOutcomes,
