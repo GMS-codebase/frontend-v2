@@ -50,7 +50,6 @@ const Page = () => {
     authorizedApi
       .post("/announcements", updatedAnnouncement)
       .then((response) => {
-        console.log(response);
         setRoles([]);
         setBody("");
         notifications.show({

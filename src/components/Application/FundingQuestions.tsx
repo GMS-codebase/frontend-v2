@@ -30,7 +30,6 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [currentStep, setCurrentStep] = useState(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  console.log(data);
 
   const handleChange = (input: string, value: any) => {
     errors[input] && setErrors((prev: any) => ({ ...prev, [input]: null }));

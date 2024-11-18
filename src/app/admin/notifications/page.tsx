@@ -184,15 +184,15 @@ const Page = () => {
               onChange={(value: string) =>
                 setFormData({
                   ...formData,
-                  filters: { ...formData.filters, call: value },
+                  filters: { ...formData?.filters, call: value },
                 })
               }
               placeholderText="Filter By Call"
               data={
                 calls
                   ? calls.map((call: any) => ({
-                      value: call.uuid,
-                      label: call.title,
+                      value: call?.uuid,
+                      label: call?.title,
                     }))
                   : []
               }

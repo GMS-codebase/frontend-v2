@@ -23,7 +23,6 @@ const Page = () => {
     (state: any) => state.applications,
   );
 
-  console.log("applications for contract signing", applications);
 
   const [contractsSignedApplications, setContractsSignedApplications] =
     useState<any[]>([]);

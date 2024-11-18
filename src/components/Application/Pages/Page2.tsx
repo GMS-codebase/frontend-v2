@@ -23,7 +23,6 @@ export const Page2 = ({
   type?: "training" | "assessment";
   application: any;
 }) => {
-  console.log(data.trainingManualAttachment);
   const [trainingProcessInputs, setTrainingProcessInputs] = useState({
     moduleName: "",
     from: "",

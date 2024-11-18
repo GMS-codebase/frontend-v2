@@ -259,8 +259,7 @@ const Page = () => {
         "Specify comments regarding the applicant’s contribution.",
       budgetAttachmentComment: "Upload comments on the budget attachment.",
     };
-
-    if (!commentsData.titleComment) return commentMessages.titleComment;
+    if (!commentsData?.titleComment) return commentMessages?.titleComment;
     if (!commentsData.activitiesComment)
       return commentMessages.activitiesComment;
     if (!commentsData.readinessExecuteComment)
@@ -299,7 +298,7 @@ const Page = () => {
         // !commentsData.contributionFromApplicantComment ||
         // !commentsData.identificationEmployeeComment ||
         // !commentsData.identificationMemberComment ||
-        !commentsData.titleComment
+        !commentsData?.titleComment
         // !commentsData.identificationEmployeeComment ||
         // !commentsData.institutionComment
       ) {
@@ -410,13 +409,13 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Call
               </p>
-              <p>{application?.call.title}</p>
+              <p>{application?.call?.title}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Window
               </p>
-              <p>{application?.window.title}</p>
+              <p>{application?.window?.title}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">

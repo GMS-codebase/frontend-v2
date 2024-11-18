@@ -21,6 +21,10 @@ const Page = () => {
     (state: any) => state.minutes,
   );
 
+  const { applicationsForContractSigning, loading: loadingApplications } = useSelector(
+    (state: any) => state.applications,
+  );
+
   const [uploadedMinutes, setUploadedMinutes] = useState<any[]>([]);
   const [readyForMinutesNegotiation, SetReadyForMinutesNegotiation] = useState<
     any[]
@@ -29,7 +33,6 @@ const Page = () => {
   const [rejectedMinutes, setRejectedMinutes] = useState<any[]>([]);
   const [negotiatedMinutes, setNegotiatedMinutes] = useState<any[]>([]);
 
-  console.log("minutes --> ", minutes);
   useEffect(() => {
     SetReadyForMinutesNegotiation(
       minutes.filter(
@@ -72,7 +75,7 @@ const Page = () => {
           m?.uploadedMinutes &&
           !m?.uploadedSignedMinutes &&
           !m?.uploadedContract &&
-          m?.minutesStatus === "NEGOTIATED",
+          m?.minutesStatus === "NEGOTIATE",
       ),
     );
   }, [minutes]);
@@ -102,7 +105,7 @@ const Page = () => {
       accessorKey: "approval_status",
       header: "Minute Approval Status",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.terms?.toUpperCase()}</div>
+        <div className="w-full">{row.original?.minutesStatus?.toUpperCase()}</div>
       ),
     },
     {
@@ -113,6 +116,7 @@ const Page = () => {
           data={row.original}
           setIsMinute={setIsMinute}
           status="uploaded"
+          minute={applicationsForContractSigning.find((app: any) => app?.application?.uuid === row.original?.uuid)}
         />
       ),
     },
@@ -142,7 +146,7 @@ const Page = () => {
     {
       accessorKey: "approval_status",
       header: "Minute Approval Status",
-      cell: ({ row }) => <div className="w-full">APPROVED</div>,
+      cell: ({ row }) => <div className="w-full">{row.original?.minutesStatus?.toUpperCase()}</div>,
     },
     {
       accessorKey: "actions",
@@ -152,6 +156,7 @@ const Page = () => {
           data={row.original}
           setIsMinute={setIsMinute}
           status="approved"
+          minute={applicationsForContractSigning.find((app: any) => app?.application?.uuid === row.original?.uuid)}
         />
       ),
     },
@@ -182,7 +187,7 @@ const Page = () => {
       accessorKey: "approval_status",
       header: "Minute Approval Status",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.terms?.toUpperCase()}</div>
+        <div className="w-full">{row.original?.minutesStatus?.toUpperCase()}</div>
       ),
     },
     {
@@ -193,6 +198,8 @@ const Page = () => {
           data={row.original}
           setIsMinute={setIsMinute}
           status="rejected"
+          minute={applicationsForContractSigning.find((app: any) => app?.application?.uuid === row.original?.uuid)}
+
         />
       ),
     },
@@ -224,7 +231,7 @@ const Page = () => {
       accessorKey: "approval_status",
       header: "Minute Approval Status",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.terms?.toUpperCase()}</div>
+        <div className="w-full">{row.original?.minutesStatus?.toUpperCase()}</div>
       ),
     },
     {
@@ -234,11 +241,13 @@ const Page = () => {
         <MinutesActions
           data={row.original}
           setIsMinute={setIsMinute}
-          status="rejected"
+          status="negotiated"
+          minute={applicationsForContractSigning.find((app: any) => app?.application?.uuid === row.original?.uuid)}
         />
       ),
     },
   ];
+
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "applicationNumber",
@@ -276,6 +285,8 @@ const Page = () => {
           data={row.original}
           setIsMinute={setIsMinute}
           status="ready"
+          minute={applicationsForContractSigning.find((app: any) => app?.application?.uuid === row.original?.uuid)}
+
         />
       ),
     },
@@ -338,14 +349,16 @@ const Page = () => {
       </div>
 
       <Tabs defaultValue="applications">
-        <Tabs.List className="w-auto my-2 float-end">
+        <Tabs.List className="w-auto my-2 ml-5 float-end">
           <Tabs.Tab value="applications">
-            Ready for Contract negotiations
+            Ready
           </Tabs.Tab>
-          <Tabs.Tab value="minutes">Contract Negotiation Uploaded</Tabs.Tab>
-          <Tabs.Tab value="approved">Approved contract negotiations</Tabs.Tab>
-          <Tabs.Tab value="rejected">Rejected contract negotiations</Tabs.Tab>
-          {/* <Tabs.Tab value="rejected">Negotiated contract negotiations</Tabs.Tab> */}
+          <Tabs.Tab value="minutes">Uploaded</Tabs.Tab>
+          <Tabs.Tab value="approved">Approved</Tabs.Tab>
+          <Tabs.Tab value="rejected">Rejected</Tabs.Tab>
+          <Tabs.Tab value="negotiated">
+            Negotiated
+          </Tabs.Tab> 
         </Tabs.List>
 
         <Tabs.Panel value="applications">
