@@ -1,47 +1,85 @@
-name: Deploy To Testing Server
+name: Deploy Application
 
 on:
   push:
     branches:
       - main
+      - staging
+
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-          check-latest: true
-          cache: "npm"
-      - name: Install dependencies
-        run: npm install --force
 
-      - name: Create environment variables
+      # Set environment variables based on the branch (Main or Staging)
+      - name: Set Environment Variables 
         run: |
-          chmod +x scripts/create_staging_env.sh
-          ./scripts/create_staging_env.sh
+          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+            echo "Main branch detected"
+            cp ./.env.main ./.env # For main branch
+            export FRONTEND_DIR=frontend-v2
+            export PORT=5600
+          elif [[ "$GITHUB_REF" == "refs/heads/staging" ]]; then
+            echo "Staging branch detected"
+            cp ./.env.staging ./.env # For staging branch
+            export FRONTEND_DIR=frontend-v2-staging
+            export PORT=5800
+          fi
+          echo "FRONTEND_DIR=$FRONTEND_DIR"
+          echo "PORT=$PORT"
 
-      - name: Build Next.js app
-        run: npm run build
+      # Verify Current Directory
+      - name: Verify Current Directory
+        run: |
+          echo "Current Directory: $(pwd)"
+          ls -la
+          if [ ! -d ".git" ]; then
+            echo "No .git directory found. This is unexpected."
+          fi
 
-      - name: Deploy to SSH server
-        uses: appleboy/ssh-action@v0.1.5
-        with:
-          host: 197.243.23.139
-          port: 22
-          username: gmsuser
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd ~/apps/frontend-v2
-            git stash
-            git pull origin main
-            export NVM_DIR=~/.nvm
-            source ~/.nvm/nvm.sh
-            npm  install --force
-            npm  run build
-            pm2 restart frontend-v2
-            pm2 save
+      # Verify Git Status
+      - name: Verify Git Status
+        run: |
+          git status
+
+      # Install dependencies and build the application
+      - name: Install dependencies and build the application
+        run: |
+          git pull origin $GITHUB_REF
+          npm install --force
+          npm run build
+
+      - name: Create the jobs names
+        run: |
+          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+            echo "Main branch detected"
+            export JOB_NAME="gms-dev"
+            export SCRIPT_NAME="development"
+          elif [[ "$GITHUB_REF" == "refs/heads/staging" ]]; then
+            echo "Staging branch detected"
+            export JOB_NAME="gms-staging"
+            export SCRIPT_NAME="staging"
+          fi
+          echo "JOB_NAME=$JOB_NAME"
+          echo "SCRIPT_NAME=$SCRIPT_NAME"
+
+      # Start the application using pm2
+      - name: Start the application using pm2
+        run: |
+          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+            echo "Main branch detected"
+            export JOB_NAME="gms-dev"
+            export SCRIPT_NAME="development"
+          elif [[ "$GITHUB_REF" == "refs/heads/staging" ]]; then
+            echo "Staging branch detected"
+            export JOB_NAME="gms-staging"
+            export SCRIPT_NAME="staging"
+          fi
+          echo "JOB_NAME=$JOB_NAME"
+          echo "SCRIPT_NAME=$SCRIPT_NAME"
+          pm2 restart $JOB_NAME
+          pm2 save
+

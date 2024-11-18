@@ -15,6 +15,7 @@ interface FundingQuestionsProps {
   goToBudget?: () => void;
   showComments?: boolean;
   application?: any;
+  isApplicant?: boolean;
 }
 
 const FundingQuestions: React.FC<FundingQuestionsProps> = ({
@@ -24,16 +25,11 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   setComments,
   goToBudget,
   application,
-  showComments,
+  isApplicant,
 }) => {
   const [files, setFiles] = useState<{ [key: string]: File | undefined }>({});
   const [currentStep, setCurrentStep] = useState(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-  const trades: any = application?.trades.map((trade: any) => ({
-    label: trade.trade.title,
-    value: trade.trade.title,
-  }));
 
   const handleChange = (input: string, value: any) => {
     errors[input] && setErrors((prev: any) => ({ ...prev, [input]: null }));
@@ -47,6 +43,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       {...(setData && { setData: handleChange })}
       comments={comments}
       setComments={setComments}
+      isApplicant={isApplicant}
     />,
     <Page2
       key="progress"
@@ -58,17 +55,18 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       }
       data={data}
       {...(setData && { setData: handleChange })}
-      trades={trades}
       commentsData={comments}
       setCommentsData={setComments}
+      application={application}
+      isApplicant={isApplicant}
     />,
     <Page3
       key="equipments"
       data={data}
       {...(setData && { setData: handleChange })}
-      trades={trades}
       commentsData={comments}
       setCommentsData={setComments}
+      isApplicant={isApplicant}
     />,
     <Page4
       key="staff"
@@ -77,6 +75,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       {...(setData && { setData: handleChange })}
       comments={comments}
       setComments={setComments}
+      isApplicant={isApplicant}
     />,
     <Page5
       key="last"
@@ -84,6 +83,7 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
       {...(setData && { setData: handleChange })}
       comments={comments}
       setComments={setComments}
+      isApplicant={isApplicant}
     />,
   ];
 

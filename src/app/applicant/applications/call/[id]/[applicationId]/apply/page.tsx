@@ -26,9 +26,25 @@ const Page = () => {
 
   const { id, applicationId } = useParams();
   const [loading, setLoading] = useState<any>();
-  const [currentStep, setCurrentStep] = useState(0);
-  const { applications } = useSelector((state: any) => state.applications);
-  const application = applications.find((ap: any) => ap.uuid == applicationId);
+  const [applicationLoading, setApplicationLoading] = useState(true);
+  const [application, setApplication] = useState<any>();
+  const fetchApplication = async () => {
+    setApplicationLoading(true);
+    try {
+      const res = await authorizedApi.get(
+        `/application/get-application/${applicationId}`,
+      );
+      setApplication(res.data.data.data);
+      setApplicationLoading(false);
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        window.history.back();
+      }
+    }
+  };
+  useEffect(() => {
+    fetchApplication();
+  }, [applicationId]);
   const [data, setData] = useState<ApplicationQuestions>({
     title: "",
     activitiesAndOutcomes: "",
@@ -50,6 +66,7 @@ const Page = () => {
     contribution: "",
     roleAttachment: undefined,
     institutionAttachment: undefined,
+    premisesAttachment: undefined,
     trainingManualAttachment: undefined,
     trainingEquipmentAttachment: undefined,
     previousFinancialReportAttachment: undefined,
@@ -64,7 +81,7 @@ const Page = () => {
     if (application) {
       setData((prevData) => ({
         ...prevData,
-        title: application.projectFunding?.title || prevData.title,
+        title: application.projectFunding?.title || prevData?.title,
         activitiesAndOutcomes:
           application.projectFunding?.activitiesAndOutcomes ||
           prevData.activitiesAndOutcomes,
@@ -82,18 +99,30 @@ const Page = () => {
         identificationMember:
           application.projectFunding?.identificationMember ||
           prevData.identificationMember,
+        identificationEmployee:
+          application.projectFunding?.identificationEmployee ||
+          prevData.identificationEmployee,
         assessorsAndFacilitators:
           application.projectFunding?.assessorsAndFacilitators ||
           prevData.assessorsAndFacilitators,
         staffAttachment:
           application.projectFunding?.staffAttachment ||
           prevData.staffAttachment,
+        trainingManualAttachment:
+          application.projectFunding?.trainingManualAttachment ||
+          prevData.trainingManualAttachment,
         trainingProcess:
           application.projectFunding?.trainingProcess ||
           prevData.trainingProcess,
         trainingEquipment:
           application.projectFunding?.trainingEquipment ||
           prevData.trainingEquipment,
+        trainingEquipmentAttachment:
+          application.projectFunding?.trainingEquipmentAttachment ||
+          prevData.trainingEquipmentAttachment,
+        premisesAttachment:
+          application.projectFunding?.premisesAttachment ||
+          prevData.premisesAttachment,
         assessmentAndCertificationProcess:
           application.projectFunding?.assessmentAndCertificationProcess ||
           prevData.assessmentAndCertificationProcess,
@@ -134,6 +163,7 @@ const Page = () => {
       contribution: "",
       roleAttachment: undefined,
       institutionAttachment: undefined,
+      premisesAttachment: undefined,
       trainingManualAttachment: undefined,
       trainingEquipmentAttachment: undefined,
       previousFinancialReportAttachment: undefined,
@@ -143,7 +173,6 @@ const Page = () => {
     });
   };
 
-  const calls = useSelector((state: any) => state.calls);
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":
@@ -167,6 +196,14 @@ const Page = () => {
         return null;
     }
   };
+
+  if (applicationLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div>

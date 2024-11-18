@@ -79,6 +79,8 @@ const Page = () => {
       application?.projectFunding?.recruitmentTrainerComment || "",
     MOUsAttachmentComment:
       application?.projectFunding?.MOUsAttachmentComment || "",
+    premisesAttachmentComment:
+      application?.projectFunding?.premisesAttachmentComment || "",
     identificationMemberComment:
       application?.projectFunding?.identificationMemberComment || "",
     assessmentEquipmentComment:
@@ -95,7 +97,6 @@ const Page = () => {
   });
 
   const goToBudget = () => {
-    console.log("Switching to Indicative Budget");
     setCurrentComponent("IndicativeBudget");
   };
 
@@ -108,7 +109,7 @@ const Page = () => {
             setComments={setCommentsData}
             comments={commentsData}
             goToBudget={goToBudget}
-            // showComments={application?.currentStage !== "SUBMISSION"}
+            // showComments={application?.currentStage !== "SUBMITTED"}
           />
         );
       case "IndicativeBudget":
@@ -118,7 +119,7 @@ const Page = () => {
             data={application?.budget}
             comments={commentsData}
             setComments={setCommentsData}
-            // showComments={application?.currentStage !== "SUBMISSION"}
+            // showComments={application?.currentStage !== "SUBMITTED"}
           />
         );
       default:
@@ -206,13 +207,13 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Call
               </p>
-              <p>{application?.call.title}</p>
+              <p>{application?.call?.title}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Window
               </p>
-              <p>{application?.window.title}</p>
+              <p>{application?.window?.title}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
@@ -245,7 +246,7 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Applicant name
               </p>
-              <p>{application?.applicant.name}</p>
+              <p>{application?.applicant?.name}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
@@ -296,7 +297,7 @@ const Page = () => {
       </div>
       <div className="flex gap-2 p-5">
         <div
-          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMISSION" ? "w-full" : "w-[70%]"}  gap-4 p-5`}
+          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"}  gap-4 p-5`}
         >
           <div className="flex flex-col gap-4 w-full">
             <div className="font-semibold text-2xl">Questions and answers</div>
@@ -326,7 +327,7 @@ const Page = () => {
           </div>
         </div>
 
-        {application?.currentStage === "SUBMISSION" ? (
+        {application?.currentStage === "SUBMITTED" ? (
           <div></div>
         ) : (
           <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
@@ -422,6 +423,7 @@ const Page = () => {
               )
             : []
         }
+        application={application}
       />
     </div>
   );

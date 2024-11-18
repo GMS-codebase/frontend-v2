@@ -72,7 +72,7 @@ const Page = () => {
   const filteredTrades = useMemo(() => {
     return trades?.filter(
       (tradeSector) =>
-        tradeSector.trade.title
+        tradeSector.trade?.title
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
         tradeSector.trade.shortname
@@ -87,7 +87,7 @@ const Page = () => {
         accessorKey: "name",
         header: "Name",
         cell: ({ row }) => (
-          <div className="w-full">{row.original.trade.title}</div>
+          <div className="w-full">{row.original.trade?.title}</div>
         ),
       },
       {
@@ -111,7 +111,7 @@ const Page = () => {
       {
         accessorKey: "window",
         header: "Window",
-        cell: ({ row }) => <div>{row.original.theWindow.title}</div>,
+        cell: ({ row }) => <div>{row.original.theWindow?.title}</div>,
       },
       {
         accessorKey: "actions",

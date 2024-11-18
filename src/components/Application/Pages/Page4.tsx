@@ -1,6 +1,8 @@
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
 import { Select } from "@mantine/core";
 import { useState } from "react";
+import { FaDownload, FaRegEdit } from "react-icons/fa";
+import { MdDeleteOutline } from "react-icons/md";
 
 export const Page4 = ({
   data,
@@ -8,12 +10,14 @@ export const Page4 = ({
   setData,
   comments,
   setComments,
+  isApplicant,
 }: {
   data: any;
   files: any;
   setData?: any;
   comments?: any;
   setComments?: any;
+  isApplicant?: boolean;
 }) => {
   const [staffInputs, setStaffInputs] = useState({
     number: "",
@@ -150,22 +154,23 @@ export const Page4 = ({
               <label className="block text-sm font-medium text-gray-700">
                 Availability
               </label>
-              <Select
+              <select
                 name="available"
                 value={staffInputs.available}
-                onChange={(value: string | null) =>
+                onChange={(e) =>
                   setStaffInputs((prev) => ({
                     ...prev,
-                    available: value ?? "",
+                    available: e.target.value,
                   }))
                 }
-                data={[
-                  { value: "available", label: "Available" },
-                  { value: "to be hired", label: "To Be Hired" },
-                ]}
-                className="border pt-2 mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Select Availability"
-              />
+                className="border py-2.5 px-3  outline-none mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm  sm:text-sm"
+              >
+                <option value="" disabled>
+                  Select Availability
+                </option>
+                <option value="available">Available</option>
+                <option value="to be hired">To Be Hired</option>
+              </select>
               {errors.available && (
                 <p className="text-red-500 text-sm mt-1">{errors.available}</p>
               )}
@@ -190,17 +195,63 @@ export const Page4 = ({
                 <th className="border p-2">Number of Staff</th>
                 <th className="border p-2">Qualification</th>
                 <th className="border p-2">Status</th>
+                {!comments && setData && (
+                  <th className="border p-2">Actions</th>
+                )}
               </tr>
             </thead>
             <tbody>
               {data?.staffs.map((item: any, index: any) => (
-                <tr key={index}>
+                <tr key={index} className="border">
                   <td className="border p-2">{item.position}</td>
                   <td className="border p-2">{item.number}</td>
                   <td className="border p-2">{item.qualification}</td>
                   <td className="border p-2">
                     {item.available?.toUpperCase()}
                   </td>
+                  {!comments && setData && (
+                    <td className="flex items-center justify-center gap-2  p-3 ">
+                      <button
+                        className="text-primary"
+                        onClick={() => {
+                          setStaffInputs(item);
+                          setData(
+                            "staffs",
+                            data.staffs.filter((process: any) => {
+                              return !(
+                                process.position === item.position &&
+                                process.number === item.number &&
+                                process.qualification === item.qualification &&
+                                process.available.toUpperCase() ===
+                                  item.available.toUpperCase()
+                              );
+                            }),
+                          );
+                        }}
+                      >
+                        <FaRegEdit className="w-5 h-5" />
+                      </button>
+                      <button
+                        className="text-danger"
+                        onClick={() => {
+                          setData(
+                            "staffs",
+                            data.staffs.filter((process: any) => {
+                              return !(
+                                process.position === item.position &&
+                                process.number === item.number &&
+                                process.qualification === item.qualification &&
+                                process.available.toUpperCase() ===
+                                  item.available.toUpperCase()
+                              );
+                            }),
+                          );
+                        }}
+                      >
+                        <MdDeleteOutline className="w-5 h-5" />
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -212,17 +263,28 @@ export const Page4 = ({
       <p className="text-sm text-gray-600">
         Please attach the document containing the cvs of the staffs
       </p>
-      {comments ? (
+      {comments || !setData ? (
         <>
-          <button
-            onClick={() =>
-              handleDownloadFile(data?.staffAttachment, "applications")
-            }
-            className={`w-full h-12 ${data?.staffAttachment ? "bg-primary" : "bg-gray-600"} my-2 text-white font-semibold rounded-full w-full py-2`}
-          >
-            {data?.staffAttachment ? "Download File" : "No Attachment Found!"}
-          </button>
-          {comments && (
+          <div className="grid grid-cols-2 gap-2 my-2">
+            <button
+              onClick={() =>
+                handleViewFile(data?.staffAttachment, "applications")
+              }
+              className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+            >
+              View File
+            </button>
+            <button
+              onClick={() =>
+                handleDownloadFile(data?.staffAttachment, "applications")
+              }
+              className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+            >
+              <FaDownload />
+              <p>Download File</p>
+            </button>
+          </div>
+          {!isApplicant && comments && (
             <div className="mt-2">
               <label htmlFor="" className="font-medium text-sm">
                 Comment
@@ -250,7 +312,9 @@ export const Page4 = ({
             {data.staffAttachment ? (
               <div className="text-center">
                 <p className="text-xl font-medium text-gray-700">
-                  {data.staffAttachment.name}
+                  {typeof data?.staffAttachment === "string"
+                    ? data.staffAttachment.split("/").pop()
+                    : data?.staffAttachment?.name}
                 </p>
                 <p className="text-sm text-gray-500">File selected</p>
               </div>

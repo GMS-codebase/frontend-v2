@@ -9,6 +9,7 @@ import { notifications } from "@mantine/notifications";
 import { useDispatch } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { useParams } from "next/navigation";
+import { getCalls } from "@/utils/funcs";
 
 const CloseCallModal = ({
   isOpenModal,
@@ -20,6 +21,7 @@ const CloseCallModal = ({
   const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const dispatch = useDispatch();
 
   const closeCall = async () => {
     setLoading(true);
@@ -30,6 +32,7 @@ const CloseCallModal = ({
         message: "Call closed successfully",
         color: "blue",
       });
+      getCalls(dispatch);
       closeModal();
     } catch (error: any) {
       setError(

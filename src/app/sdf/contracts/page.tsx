@@ -11,12 +11,13 @@ import ContractsActions from "./ContractsActions";
 import { unauthorizedApi } from "@/utils/api";
 import { Menu, Select, Tabs } from "@mantine/core";
 import { CiEdit, CiSearch } from "react-icons/ci";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
-
+  const navigate = useRouter();
   const { contracts, loading: loadingContracts } = useSelector(
     (state: any) => state.contracts,
   );
@@ -24,6 +25,23 @@ const Page = () => {
     (state: any) => state.applications,
   );
 
+  const [contractsSignedApplications, setContractsSignedApplications] =
+    useState<any[]>([]);
+  const [applicationsForContractSigning, setApplicationsForContractSigning] =
+    useState<any[]>([]);
+
+  useEffect(() => {
+    setContractsSignedApplications(
+      applications.filter((a: any) => a?.application?.uploadedContract),
+    );
+    setApplicationsForContractSigning(
+      applications.filter(
+        (a: any) =>
+          !a?.application?.uploadedContract &&
+          a?.application?.uploadedSignedMinutes,
+      ),
+    );
+  }, [applications]);
   const FilterDropDown = ({
     placeholderText,
     data,
@@ -40,6 +58,14 @@ const Page = () => {
   );
 
   const [loadingDownload, setLoadingDownload] = useState(false);
+  const [contractState, setContractState] = useState<{
+    isOpen: boolean;
+    application: any | null;
+  }>({
+    isOpen: false,
+    application: null,
+  });
+
   const handleDownloadInstructions = async (file: any) => {
     setLoadingDownload(true);
     try {
@@ -71,27 +97,41 @@ const Page = () => {
       accessorKey: "name",
       header: "Applicant Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.name}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.name}
+        </div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.phone}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.phone}
+        </div>
       ),
     },
     {
       accessorKey: "email",
       header: "Applicant Email",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.email}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.email}
+        </div>
       ),
     },
     {
       accessorKey: "contractName",
-      header: "Contract Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
+      header: "Contract Number",
+      cell: ({ row }) => (
+        <div className="w-full">
+          {
+            contracts.filter(
+              (c: any) => c?.application_ID === row.original?.application?.uuid,
+            )[0]?.contractNumber
+          }
+        </div>
+      ),
     },
     {
       accessorKey: "actions",
@@ -115,11 +155,15 @@ const Page = () => {
             </Menu.Label>
             <Menu.Divider />
             <Menu.Item
-              onClick={() => handleDownloadInstructions(row.original.contract)}
+              onClick={() =>
+                navigate.push(
+                  `/sdf/contracts/${row?.original?.application?.uuid}`,
+                )
+              }
             >
               <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
                 <CiEdit size={21} color="#576074" />
-                View Contract
+                View Contract Info
               </div>
             </Menu.Item>
           </Menu.Dropdown>
@@ -133,31 +177,35 @@ const Page = () => {
       accessorKey: "applicationNumber",
       header: "Application Number",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicationNumber}</div>
+        <div className="w-full">
+          {row.original?.application?.applicationNumber}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "applicationTitle",
+      header: "Application Title",
+      cell: ({ row }) => (
+        <div className="w-full">
+          {row.original?.application?.projectFunding?.title}
+        </div>
       ),
     },
     {
       accessorKey: "name",
       header: "Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.name}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.name}
+        </div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.phone}</div>
-      ),
-    },
-    {
-      accessorKey: "description",
-      header: "Description",
-      cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.description?.length > 50
-            ? row.original?.description.slice(0, 50) + "..."
-            : row.original?.description}
+        <div className="w-full">
+          {row.original?.application?.applicant?.phone}
         </div>
       ),
     },
@@ -167,17 +215,12 @@ const Page = () => {
       cell: ({ row }) => (
         <ContractsActions
           data={row.original}
-          setIsContract={setIsContract}
+          setIsContract={setContractState}
           isNew={true}
         />
       ),
     },
   ];
-
-  function setIsContract(arg0: { isOpen: boolean; application: null }): void {
-    throw new Error("Function not implemented.");
-  }
-
   return (
     <div className="w-full flex flex-col mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
@@ -220,28 +263,27 @@ const Page = () => {
           </h1>
           <DataTable
             columns={applicationColumns}
-            data={applications}
+            data={applicationsForContractSigning}
             loading={loading}
             noDataMessage="No Approved Applications"
           />
         </Tabs.Panel>
         <Tabs.Panel value="contracts" className="bg-white rounded-2xl mt-4">
           <h1 className="text-xl font-bold  p-4">Contracts Signed</h1>
-
           <DataTable
             columns={contractColumns}
-            data={contracts}
+            data={contractsSignedApplications}
             loading={loadingContracts}
             noDataMessage="No Created Contracts"
           />
         </Tabs.Panel>
       </Tabs>
       <AddContract
-        data={contracts.application}
-        trades={contracts.application?.trades || []}
-        isOpenAddContract={contracts.isOpen}
+        data={contractState.application}
+        trades={contractState.application?.trades || []}
+        isOpenAddContract={contractState.isOpen}
         closeAddContract={() =>
-          setIsContract({ isOpen: false, application: null })
+          setContractState({ isOpen: false, application: null })
         }
       />
     </div>
