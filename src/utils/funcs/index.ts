@@ -243,7 +243,7 @@ export const getForms = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/forms/all")
     .then((res) => {
-      dispatch({ type: GET_FORMS_SUCCESS, payload: res.data.data });
+      dispatch({ type: GET_FORMS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
       dispatch({ type: GET_FORMS_ERROR, payload: err.response.data.error });

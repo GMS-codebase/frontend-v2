@@ -34,17 +34,15 @@ const Page = () => {
   const forms = useSelector((state: any) => state.forms);
   const [selectedForm, setSelectedForm] = useState<any>("");
   const filteredForms =
-    forms.forms?.filter(
-      (trade: any) =>
-        trade?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        trade?.shortname?.toLowerCase().includes(searchQuery.toLowerCase())
+    forms.forms?.filter((form: any) =>
+      form?.name?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
 
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.title}</div>,
+      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
     },
     {
       accessorKey: "status",
@@ -88,16 +86,13 @@ const Page = () => {
                 </div>
               </Menu.Item>
               <Menu.Item>
-                <div
-                  onClick={() => {
-                    setSelectedForm(row.original);
-                    openCreateEditModal();
-                  }}
+                <Link
+                  href={`/admin/forms/create-edit/${row.original.uuid}`}
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <CiEdit size={21} color="#576074" />
                   Edit
-                </div>
+                </Link>
               </Menu.Item>
               <Menu.Item>
                 <div
@@ -135,7 +130,7 @@ const Page = () => {
         </div>
 
         <Link
-          href={"/admin/forms/create"}
+          href={"/admin/forms/create-edit/create"}
           className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
         >
           <span className="text-2xl">

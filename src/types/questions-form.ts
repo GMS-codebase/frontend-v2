@@ -8,6 +8,11 @@ export interface QuestionForm {
   };
 }
 
+export interface Form {
+  name: string;
+  qns: string;
+}
+
 export interface Question {
   id: string;
   title: string;
