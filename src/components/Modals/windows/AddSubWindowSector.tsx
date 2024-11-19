@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "next/navigation";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
+import { getWindows } from "@/utils/funcs";
 import {
   ADD_TRADE_SECTOR_SUCCESS,
   UPDATE_SECTOR_SUCCESS,
@@ -21,43 +22,23 @@ const AddSubWindowSector = ({
   const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    trade: "",
-    windows: [] as string[],
+    sector: [] as string[],
   });
   const [errors, setErrors] = useState({
-    trade: "",
-    windows: "",
+    sector: "",
   });
 
-  const windows = useSelector((state: any) => state.windows);
-  const trades = useSelector((state: any) => state.trades);
+  const sectors = useSelector((state: any) => state.sectors);
   const dispatch = useDispatch();
 
-  const tradeOptions = trades.trades.map((trade: any) => ({
-    value: trade.uuid,
-    label: trade.title,
+  const sectorOptions = sectors.sectors.map((sector: any) => ({
+    value: sector.uuid,
+    label: sector.name,
   }));
-
-  const windowOptions = windows.windows
-    .filter((window: any) => {
-      const hasSubWindow = window?.subWindows?.some((subWindow: any) => {
-        const hasSector = subWindow.sectors.some((sec: any) => {
-          return sec.uuid === id;
-        });
-        return hasSector;
-      });
-      return hasSubWindow;
-    })
-    .map((window: any) => ({
-      value: window.title,
-      label: window.title,
-    }));
 
   const validateForm = () => {
     const newErrors: any = {};
-    if (!formData.trade) newErrors.trade = "Trade is required";
-    if (!formData.windows.length)
-      newErrors.windows = "At least one window is required"; // Validate for at least one window
+    if (!formData.sector) newErrors.sector = "Sector is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -78,30 +59,29 @@ const AddSubWindowSector = ({
     if (!validateForm()) return;
     setLoading(true);
     try {
-      await authorizedApi.put(`/Sectors/${id}/assign-trade`, {
-        tradeId: formData.trade,
-        windows: formData.windows,
+      await authorizedApi.put(`/subwindow/${id}/assign-sector`, {
+        sectorId: formData.sector,
       });
       // dispatch({
       //   type: ADD_TRADE_SECTOR_SUCCESS,
       //   payload: {
       //     sectorId: id,
-      //     trade: trades.trades.find((tr: any) => tr.uuid === tradeId),
+      //     sector: sectors.sectors.find((tr: any) => tr.uuid === sectorId),
       //   },
       // });
       notifications.show({
         message:
-          "Trade assigned to sector for all selected windows successfully!",
+          "Sector assigned to sector for all selected windows successfully!",
         color: "blue",
       });
       setFormData({
-        trade: "",
-        windows: [],
+        sector: [],
       });
+      getWindows(dispatch)
       closeAddSubWindowSector();
     } catch (error: any) {
       notifications.show({
-        message: error.response?.data?.message ?? "Failed to assign trade!",
+        message: error.response?.data?.message ?? "Failed to assign sector!",
         color: "red",
       });
     } finally {
@@ -125,9 +105,9 @@ const AddSubWindowSector = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="w-full flex flex-col items-center">
-          <h1 className="text-2xl font-extrabold">Add Trade To Sector</h1>
+          <h1 className="text-2xl font-extrabold">Add Sector To Sub Window</h1>
           <h2 className="text-[#000F2369] text-lg font-medium">
-            Provide the sector and window details to add a new trade.
+            Attach a sector to subwindow
           </h2>
         </div>
         <div className="w-full flex flex-col items-center mt-10 overflow-hidden">
@@ -137,53 +117,26 @@ const AddSubWindowSector = ({
           >
             <div className="w-full">
               <label
-                htmlFor="trade"
+                htmlFor="sector"
                 className="block text-base font-medium text-black"
               >
-                Select Trade
+                Select Sector
               </label>
               <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <span className="absolute left-2 top-3 text-black text-lg">
                   <SolarSuitcaseLinear />
                 </span>
-                <Select
-                  name="trade"
-                  value={formData.trade}
-                  onChange={(value: any) => handleChange("trade", value)}
-                  data={tradeOptions}
-                  placeholder="Type in or select trade"
-                  required
-                />
-              </div>
-              {errors.trade && (
-                <div className="text-red-600 text-sm mt-1">{errors.trade}</div>
-              )}
-            </div>
-
-            <div className="w-full">
-              <label
-                htmlFor="windows"
-                className="block text-base font-medium text-black"
-              >
-                Select Windows
-              </label>
-              <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                <span className="absolute left-2 top-3 text-black text-lg">
-                  <SolarWindowFrameLinear />
-                </span>
                 <MultiSelect
-                  name="windows"
-                  value={formData.windows}
-                  onChange={(value: string[]) => handleChange("windows", value)}
-                  data={windowOptions}
-                  placeholder="Type in or select windows"
+                  name="sector"
+                  value={formData.sector}
+                  onChange={(value: any) => handleChange("sector", value)}
+                  data={sectorOptions}
+                  placeholder="Type in or select sector"
                   required
                 />
               </div>
-              {errors.windows && (
-                <div className="text-red-600 text-sm mt-1">
-                  {errors.windows}
-                </div>
+              {errors.sector && (
+                <div className="text-red-600 text-sm mt-1">{errors.sector}</div>
               )}
             </div>
 
