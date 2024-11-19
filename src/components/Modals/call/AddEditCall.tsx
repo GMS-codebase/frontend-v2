@@ -59,8 +59,8 @@ const AddEditCall = ({
       .filter(
         (window: any) =>
           window.subWindows.filter(
-            (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE
-          ).length !== 0 && window.status === WINDOW_STATUS.ACTIVE
+            (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE,
+          ).length !== 0 && window.status === WINDOW_STATUS.ACTIVE,
       )
       ?.map((window: any) => ({
         value: window.uuid,
@@ -82,8 +82,8 @@ const AddEditCall = ({
                 (sub: any) =>
                   sub.status === SUBWINDOW_STATUS.ACTIVE &&
                   sub.sectors.filter(
-                    (sec: any) => sec.status === SECTOR_STATUS.ACTIVE
-                  )
+                    (sec: any) => sec.status === SECTOR_STATUS.ACTIVE,
+                  ),
               )
               .map((subWindow: any) => ({
                 value: subWindow.uuid,
@@ -100,7 +100,7 @@ const AddEditCall = ({
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid)
+            selectedSubWindows.includes(subWindow.uuid),
           )
           .flatMap(
             (subWindow: any) =>
@@ -110,9 +110,10 @@ const AddEditCall = ({
                     (s: any) =>
                       s.uuid === sector.uuid &&
                       s.trades.filter(
-                        (trad: any) => trad.trade.status === TRADE_STATUS.ACTIVE
+                        (trad: any) =>
+                          trad.trade.status === TRADE_STATUS.ACTIVE,
                       ).length > 0 &&
-                      sector.status === SECTOR_STATUS.ACTIVE
+                      sector.status === SECTOR_STATUS.ACTIVE,
                   );
                   return matchingSector
                     ? {
@@ -121,8 +122,8 @@ const AddEditCall = ({
                       }
                     : null;
                 })
-                .filter(Boolean) || []
-          ) || []
+                .filter(Boolean) || [],
+          ) || [],
     );
     return sectorData;
   };
@@ -134,7 +135,7 @@ const AddEditCall = ({
       setFormData(defaultData);
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
       setSelectedSubWindows(
-        defaultData.subWindows.map((item: any) => item.uuid)
+        defaultData.subWindows.map((item: any) => item.uuid),
       );
       setSelectedForm(defaultData.form as any);
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));

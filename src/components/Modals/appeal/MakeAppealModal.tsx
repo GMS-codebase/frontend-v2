@@ -1,57 +1,49 @@
 import { Modal } from "@mantine/core";
-import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
-import SideVector1 from "@/assets/Vectors/sidevecto.svg";
-import SideVector2 from "@/assets/Vectors/sidevector2.svg";
-import RedVector1 from "@/assets/Vectors/redSideVector.svg";
-import RedVector2 from "@/assets/Vectors/redSideVector2.svg";
+import { FaGavel } from "react-icons/fa";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
-import {
-  getContracts,
-  getRejectedMinutes,
-  getUploadedMinutes,
-  getMinutes,
-} from "@/utils/funcs";
 import { useDispatch } from "react-redux";
-interface DeleteConfirmProps {
+
+interface AppealModalProps {
   isOpen: boolean;
   onClose: () => void;
-  minute: any;
-  type: string;
+  application: any;
+  stage: "EVALUATION" | "DUE_DILIGENCY";
 }
 
-const MinutesRejectionReason = ({
-  isOpen,
-  onClose,
-  minute,
-  type,
-}: DeleteConfirmProps) => {
+const MakeAppealModal = ({ isOpen, onClose, application, stage }: AppealModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const action = type === "rejected" ? "revert" : "reject";
-  const handleMinutesRevert = () => {
+  const [appealReason, setAppealReason] = useState("");
+
+  const handleAppealSubmit = () => {
+    if (!appealReason.trim()) {
+      notifications.show({
+        message: "Please provide a reason for your appeal",
+        color: "red",
+      });
+      return;
+    }
+
     setLoading(true);
     authorizedApi
-      .patch(
-        `/negotiation-contract/applications/sdf/${type === "rejected" ? "revert" : "reject"}/${minute?.uuid}`,
-      )
+      .post(`/appeals/${application?.uuid}/create`, {
+        appeal: appealReason,
+        stageId: stage
+      })
       .then(() => {
         notifications.show({
-          message: `Application ${action}ed successfully!`,
+          message: "Appeal submitted successfully!",
           color: "green",
         });
         onClose();
-        getUploadedMinutes(dispatch, "applicant");
-        getRejectedMinutes(dispatch, "applicant");
-        getContracts(dispatch);
-        getMinutes(dispatch);
       })
       .catch((error) => {
-        console.error(error);
         notifications.show({
-          message: `Failed to ${action} the application!`,
+          title: "Failed to submit appeal!",
+          message: error.response.data.message,
           color: "red",
         });
       })
@@ -74,14 +66,24 @@ const MinutesRejectionReason = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="w-4/5 flex flex-col items-center mt-4 overflow-hidden pb-8">
+          <FaGavel size={40} className="text-blue-500 mb-4" />
           <h1 className="text-2xl font-extrabold text-center">
-            {type === "rejected" ? "Rejected Minutes" : "Negotiated Minutes"}
+            Submit an Appeal
           </h1>
+          <p className="text-gray-600 text-center mt-2">
+            Please provide detailed reasons for your appeal. This will help us better understand your case.
+          </p>
           <div className="mt-6 w-full">
             <h1 className="block text-xs font-bold text-gray-700">
-              Reason For {type === "rejected" ? "Rejection" : "Negotiation"}
+              Appeal Reason
             </h1>
-            <textarea className="mt-1 block w-full resize-none p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+            <textarea
+              value={appealReason}
+              onChange={(e) => setAppealReason(e.target.value)}
+              placeholder="Explain why you would like to appeal this decision..."
+              rows={5}
+              className="mt-1 block w-full resize-none p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
           </div>
           <div className="w-full flex justify-center mt-1 space-x-4 p-6">
             <button
@@ -92,12 +94,12 @@ const MinutesRejectionReason = ({
               Cancel
             </button>
             <button
-              onClick={handleMinutesRevert}
+              onClick={handleAppealSubmit}
               type="button"
               disabled={loading}
               className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2"
             >
-              {loading ? "Loading . . ." : action}
+              {loading ? "Submitting..." : "Submit Appeal"}
             </button>
           </div>
         </div>
@@ -106,4 +108,4 @@ const MinutesRejectionReason = ({
   );
 };
 
-export default MinutesRejectionReason;
+export default MakeAppealModal;
