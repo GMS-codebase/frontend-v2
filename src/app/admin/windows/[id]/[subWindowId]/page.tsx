@@ -164,7 +164,7 @@ const Page = () => {
                   />
                 </div>
 
-                {/* <button
+                <button
                   onClick={openAddEditSubWindow}
                   className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
                 >
@@ -172,9 +172,9 @@ const Page = () => {
                     <SolarAddFolderBold />
                   </span>
                   <h1 className="text-base font-medium text-white">
-                    New Sub-Window
+                    Assign Trade To SubWindow
                   </h1>
-                </button> */}
+                </button>
               </div>
             </div>
 
