@@ -71,9 +71,6 @@ const AddEditWindowSubwindow = ({
       if (!formData.title) tempErrors.title = "Title is required";
       if (!formData.description)
         tempErrors.description = "Description is required";
-    } else if (active === 1) {
-      if (!formData.sectors.length)
-        tempErrors.sectors = "At least one sector must be selected";
     }
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -95,11 +92,11 @@ const AddEditWindowSubwindow = ({
         const response = defaultData
           ? await authorizedApi.patch(
               `/sub-window/${defaultData.uuid}`,
-              formData,
+              formData
             )
           : await authorizedApi.post(
               `/sub-window/create/${windowId}`,
-              formData,
+              formData
             );
 
         notifications.show({
@@ -240,92 +237,28 @@ const AddEditWindowSubwindow = ({
                   </div>
                 </div>
 
-                <div className="w-full flex justify-center mt-4 space-x-4">
+                <div className="w-full flex justify-between gap-3">
                   <button
                     type="button"
-                    onClick={handleCancel}
+                    onClick={prevStep}
                     className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                    Cancel
+                    Back
                   </button>
                   <button
                     type="button"
-                    onClick={nextStep}
+                    onClick={handleSubmit}
                     className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    disabled={isSubmitting}
                   >
-                    Next
+                    {isSubmitting
+                      ? defaultData
+                        ? "Updating..."
+                        : "Creating..."
+                      : defaultData
+                        ? "Update"
+                        : "Create"}
                   </button>
-                </div>
-              </div>
-            </Stepper.Step>
-
-            <Stepper.Step
-              label="Related sectors"
-              description=""
-              className="text-xs"
-            >
-              <div className="w-full flex flex-col gap-2 px-2">
-                <div className="">
-                  <label
-                    htmlFor="sectors"
-                    className="block text-base font-medium text-black"
-                  >
-                    Sectors
-                  </label>
-                  <div className="w-full">
-                    <MultiSelect
-                      value={formData.sectors}
-                      onChange={(value) =>
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          sectors: value,
-                        }))
-                      }
-                      data={MultiSelectData}
-                      placeholder="Select sectors"
-                      searchable
-                      clearable
-                      rightSection={<SolarSuitcaseLinear />}
-                      className="bg-[#000F230A] rounded-2xl"
-                    />
-                    {errors.sectors && (
-                      <p className="text-red-600 text-sm mt-1">
-                        {errors.sectors}
-                      </p>
-                    )}
-                  </div>
-                  <div className="w-full flex justify-end my-5 space-x-4">
-                    <button
-                      type="button"
-                      onClick={openAddSector}
-                      className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    >
-                      Add New Sector
-                    </button>
-                  </div>
-                  <div className="w-full flex justify-between gap-3">
-                    <button
-                      type="button"
-                      onClick={prevStep}
-                      className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    >
-                      Back
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleSubmit}
-                      className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting
-                        ? defaultData
-                          ? "Updating..."
-                          : "Creating..."
-                        : defaultData
-                          ? "Update"
-                          : "Create"}
-                    </button>
-                  </div>
                 </div>
               </div>
             </Stepper.Step>
