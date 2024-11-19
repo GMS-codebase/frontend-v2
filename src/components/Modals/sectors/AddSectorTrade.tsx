@@ -34,8 +34,6 @@ const AddSectorTrade = ({
     label: trade.title,
   }));
 
-
-
   const validateForm = () => {
     const newErrors: any = {};
     if (!formData.trade) newErrors.trade = "Trade is required";

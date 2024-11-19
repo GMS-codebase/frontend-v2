@@ -117,11 +117,12 @@ const AddMinute: React.FC<AddMinuteProps> = ({
     }
   };
 
-  const title = type == "unsigned"
-    ? "Create New Contract Negotiation"
-    : type == "signed"
-      ? "Upload Signed Contract Negotiation"
-      : "Update Contract Negotiation";
+  const title =
+    type == "unsigned"
+      ? "Create New Contract Negotiation"
+      : type == "signed"
+        ? "Upload Signed Contract Negotiation"
+        : "Update Contract Negotiation";
   return (
     <Modal
       opened={isOpenAddMinute}
@@ -139,9 +140,7 @@ const AddMinute: React.FC<AddMinuteProps> = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="w-full flex flex-col items-center">
-          <h1 className="text-2xl font-extrabold">
-            {title}
-          </h1>
+          <h1 className="text-2xl font-extrabold">{title}</h1>
           <h2 className="text-[#000F2369] text-lg font-medium">
             Provide your Minute details to {title}.
           </h2>

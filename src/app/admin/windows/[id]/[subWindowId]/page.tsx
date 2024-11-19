@@ -11,7 +11,7 @@ import { DataTable } from "@/components/core/data-table";
 import { CiEdit, CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
 import AddEditWindowSubwindow from "@/components/Modals/windows/AddEditWindowSubwindow";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "next/navigation";
 import AddEditWindow from "@/components/Modals/windows/AddEditWindow";
 import DeleteModal from "@/components/Modals/DeleteModal";
@@ -31,7 +31,7 @@ const Page = () => {
     isDeleteSubWindow,
     { open: openDeleteSubWindow, close: closeDeleteSubWindow },
   ] = useDisclosure(false);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
   const { id: windowId } = useParams();
   const { subWindowId: subWindowId } = useParams();
@@ -39,13 +39,13 @@ const Page = () => {
     useDisclosure(false);
   const windows = useSelector((state: any) => state.windows);
   const window = windows.windows?.filter(
-    (window: any) => window.uuid === windowId
+    (window: any) => window.uuid === windowId,
   )[0];
   const subWindow = window?.subWindows?.filter(
-    (sbWindow: any, index: any) => sbWindow?.uuid === subWindowId
+    (sbWindow: any, index: any) => sbWindow?.uuid === subWindowId,
   )[0];
   const filteredSectors = subWindow?.sectors.filter((sector: any) =>
-    sector?.name.toLowerCase().includes(searchQuery.toLowerCase())
+    sector?.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const [selectedSubWindow, setSelectedSubWindow] = useState<any>();
