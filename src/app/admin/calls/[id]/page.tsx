@@ -249,7 +249,6 @@ const Page = () => {
               <div className="flex justify-between items-center bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 <h1>Evaluation Stage</h1>
                 <button
-                  disabled={call?.evaluationAppealOpened}
                   onClick={() =>
                     setOpenCloseAppeal({
                       opened: true,
@@ -267,7 +266,6 @@ const Page = () => {
               <div className="flex justify-between items-center bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 <h1>Due Diligency Stage</h1>
                 <button
-                  disabled={!call?.evaluationAppealOpened}
                   onClick={() =>
                     setOpenCloseAppeal({
                       opened: true,
