@@ -13,7 +13,12 @@ interface AppealModalProps {
   stage: "EVALUATION" | "DUE_DILIGENCY";
 }
 
-const MakeAppealModal = ({ isOpen, onClose, application, stage }: AppealModalProps) => {
+const MakeAppealModal = ({
+  isOpen,
+  onClose,
+  application,
+  stage,
+}: AppealModalProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [appealReason, setAppealReason] = useState("");
@@ -31,7 +36,7 @@ const MakeAppealModal = ({ isOpen, onClose, application, stage }: AppealModalPro
     authorizedApi
       .post(`/appeals/${application?.uuid}/create`, {
         appeal: appealReason,
-        stageId: stage
+        stageId: stage,
       })
       .then(() => {
         notifications.show({
@@ -71,7 +76,8 @@ const MakeAppealModal = ({ isOpen, onClose, application, stage }: AppealModalPro
             Submit an Appeal
           </h1>
           <p className="text-gray-600 text-center mt-2">
-            Please provide detailed reasons for your appeal. This will help us better understand your case.
+            Please provide detailed reasons for your appeal. This will help us
+            better understand your case.
           </p>
           <div className="mt-6 w-full">
             <h1 className="block text-xs font-bold text-gray-700">

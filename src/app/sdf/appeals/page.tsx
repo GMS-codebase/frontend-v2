@@ -18,7 +18,6 @@ import DeleteModal from "@/components/Modals/DeleteModal";
 import ViewAppealModal from "@/components/Modals/appeal/ViewAppeal";
 
 const Page = () => {
-
   const { appeals, loading } = useSelector((state: any) => state.appeals);
   const [viewAppeal, setViewAppeal] = useState<any>({
     open: false,
@@ -57,9 +56,9 @@ const Page = () => {
       header: "Appeal Status",
       cell: ({ row }) => (
         <div
-          className={`${row.original?.desicion === "PENDING" ? "bg-lime-100 text-lime-900" : "bg-red-50 text-red-500"} text-center px-2 rounded-full py-1`}
+          className={`${row.original?.status === "PENDING" ? "bg-lime-100 text-lime-900" : row.original?.status === "APPROVED" ? "bg-green-300 text-lime-900" : "bg-red-50 text-red-500"} text-center px-2 rounded-full py-1`}
         >
-          {row.original?.desicion}
+          {row.original?.status}
         </div>
       ),
     },
