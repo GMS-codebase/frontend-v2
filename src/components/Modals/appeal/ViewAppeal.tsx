@@ -3,7 +3,7 @@ import { IoMdClose } from "react-icons/io";
 import { FaGavel } from "react-icons/fa";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getAppeals } from "@/utils/funcs";
 import { useDispatch } from "react-redux";
 
@@ -14,12 +14,19 @@ interface ViewAppealModalProps {
 }
 
 const ViewAppealModal = ({ isOpen, onClose, appeal }: ViewAppealModalProps) => {
+  console.log("appeal ", appeal);
   const [loading, setLoading] = useState(false);
-  const [decisionComment, setDecisionComment] = useState(
-    appeal?.appeal_answer ?? "",
-  );
+  const [decisionComment, setDecisionComment] = useState("");
+  useEffect(()=>{
+    setDecisionComment(appeal?.appeal_answer ?? "");
+  },[appeal])
+  const [required, setRequired] = useState(false);
   const dispatch = useDispatch();
   const handleAppealDecision = (isApproved: boolean) => {
+    if (decisionComment?.length === 0) {
+      setRequired(true);
+      return;
+    }
     setLoading(true);
     authorizedApi
       .put(`/appeals/${appeal.uuid}/${isApproved ? "approve" : "reject"}`, {
@@ -70,36 +77,40 @@ const ViewAppealModal = ({ isOpen, onClose, appeal }: ViewAppealModalProps) => {
               Appeal Reason
             </h1>
             <textarea
+              value={appeal?.appeal_comment}
+              readOnly
               disabled
               className="mt-1 block w-full text-sm p-3 bg-[#000F230A] rounded-2xl min-h-[80px] resize-none"
-            >
-              {appeal?.appeal_comment}
-            </textarea>
+            />
           </div>
           <h1 className="w-full mt-3 text-start block text-xs font-bold text-gray-700">
             Your Decision Comment
           </h1>
+          {required && (
+            <p className="text-xs text-red-500">This field is required</p>
+          )}
           <textarea
             placeholder="Enter your decision comment here..."
             className="mt-1 block w-full text-sm p-3 bg-[#000F230A] rounded-2xl min-h-[60px] resize-none"
             value={decisionComment}
             onChange={(e) => setDecisionComment(e.target.value)}
-          ></textarea>
+            required
+          />
         </div>
         <div className="w-full flex justify-center mt-1 space-x-4 p-6">
           <button
             type="button"
             onClick={() => handleAppealDecision(false)}
-            disabled={loading}
-            className="w-full px-4 py-3 bg-red-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            disabled={loading || appeal?.status === "REJECTED"}
+            className={`w-full px-4 py-3 ${appeal?.status === "REJECTED" ? "bg-red-400 cursor-not-allowed":"bg-red-500"} text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2`}
           >
             {loading ? "Processing..." : "Reject Appeal"}
           </button>
           <button
             onClick={() => handleAppealDecision(true)}
             type="button"
-            disabled={loading}
-            className="w-full px-4 py-3 bg-green-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            disabled={loading || appeal?.status === "APPROVED"}
+            className={`w-full px-4 py-3 ${appeal?.status === "APPROVED" ? "bg-green-400 cursor-not-allowed":"bg-green-500"} text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2`}
           >
             {loading ? "Processing..." : "Accept Appeal"}
           </button>
