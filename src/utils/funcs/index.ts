@@ -124,10 +124,14 @@ import {
   GET_APPEALS_LOADING,
   GET_APPEALS_SUCCESS,
 } from "@/actions/AppealsActions";
-export const getAppeals = async (dispatch: Dispatch<UnknownAction>) => {
+export const getAppeals = async (dispatch: Dispatch<UnknownAction>, user: string) => {
   dispatch({ type: GET_APPEALS_LOADING });
+  const api =
+    user === "applicant"
+      ? "/appeals/all-appeals/mine/all"
+      : "/appeals/all";
   authorizedApi
-    .get("/appeals/all")
+    .get(api)
     .then((res) => {
       dispatch({ type: GET_APPEALS_SUCCESS, payload: res.data.data.data });
     })

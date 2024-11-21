@@ -16,7 +16,7 @@ const OpenCloseAppealModal = ({
   stage,
   callId,
   type,
-  opened
+  opened,
 }: {
   closeModal: () => void;
   stage: "EVALUATION" | "DUE_DILIGENCY";
@@ -30,10 +30,10 @@ const OpenCloseAppealModal = ({
   const handleAppealStatusChange = async () => {
     setLoading(true);
     authorizedApi
-      .put(`/appeals/${callId}/stage/${stage}/${isClosing ? 'close' : 'open'}`)
+      .put(`/appeals/${callId}/stage/${stage}/${isClosing ? "close" : "open"}`)
       .then((res) => {
         notifications.show({
-          title: `Appeal ${isClosing ? 'Closed' : 'Opened'} Successfully!`,
+          title: `Appeal ${isClosing ? "Closed" : "Opened"} Successfully!`,
           message: res.data.message,
           color: "blue",
         });
@@ -44,7 +44,7 @@ const OpenCloseAppealModal = ({
       })
       .catch((err) => {
         notifications.show({
-          title: `Failed to ${isClosing ? 'close' : 'open'} appeal!`,
+          title: `Failed to ${isClosing ? "close" : "open"} appeal!`,
           message: err.response.data.message,
           color: "red",
         });
@@ -87,7 +87,8 @@ const OpenCloseAppealModal = ({
           <div className="w-full flex flex-col items-center">
             <Image src={deleteSvg} alt="vector" width={200} height={50} />
             <h1 className="text-2xl font-extrabold text-center">
-              Are you sure you want to {isClosing ? 'close' : 'open'} appeal on this stage?
+              Are you sure you want to {isClosing ? "close" : "open"} appeal on
+              this stage?
             </h1>
           </div>
           <div className="w-full flex justify-center mt-4 space-x-4 p-6">
@@ -104,7 +105,11 @@ const OpenCloseAppealModal = ({
               disabled={loading}
               className="w-full px-4 py-3 bg-primary text-white rounded-full shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Loading..." : isClosing ? "Close Appeal" : "Open Appeal"}
+              {loading
+                ? "Loading..."
+                : isClosing
+                  ? "Close Appeal"
+                  : "Open Appeal"}
             </button>
           </div>
         </div>
