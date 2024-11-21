@@ -15,7 +15,6 @@ const ViewAppealResultsModal = ({
   application,
 }: ViewAppealResultsProps) => {
   const { appeals } = useSelector((state: any) => state?.appeals);
-  console.log(appeals, application);
   const appeal = appeals.find(
     (appeal: any) => appeal.application_number === application?.applicationNumber,
   );
@@ -52,12 +51,12 @@ const ViewAppealResultsModal = ({
                 Status
               </h2>
               <div className={`mt-1 inline-block px-3 py-1 rounded-full text-sm ${
-                appeal?.decision === 'APPROVE' ? 'bg-green-100 text-green-800' :
-                appeal?.decision === 'REJECT' ? 'bg-red-100 text-red-800' :
+                appeal?.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
+                appeal?.status === 'REJECTED' ? 'bg-red-100 text-red-800' :
                 'bg-yellow-100 text-yellow-800'
                 }`}
               >
-                {appeal?.decision || "PENDING"}
+                {appeal?.status || "PENDING"}
               </div>
             </div>
 
@@ -70,27 +69,17 @@ const ViewAppealResultsModal = ({
               </div>
             </div>
 
-            {appeal?.decision && (
+            {appeal?.appeal_answer && (
               <div>
                 <h2 className="text-start block text-xs font-bold text-gray-700">
-                  Response
+                  Response Comment
                 </h2>
                 <div className="mt-1 block w-full text-sm p-3 bg-[#000F230A] rounded-2xl min-h-[60px]">
-                  {appeal?.decision_comment || 'No response provided.'}
+                  {appeal?.appeal_answer || 'No response provided.'}
                 </div>
               </div>
             )}
           </div>
-        </div>
-        
-        <div className="w-full flex justify-center mt-1 p-6">
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-1/2 px-4 py-3 bg-gray-100 text-gray-800 rounded-full shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-          >
-            Close
-          </button>
         </div>
       </div>
     </Modal>

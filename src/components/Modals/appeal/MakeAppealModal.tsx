@@ -3,8 +3,9 @@ import { IoMdClose } from "react-icons/io";
 import { FaGavel } from "react-icons/fa";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { getAppeals, getApplicants, getApplications } from "@/utils/funcs";
 
 interface AppealModalProps {
   isOpen: boolean;
@@ -22,7 +23,6 @@ const MakeAppealModal = ({
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [appealReason, setAppealReason] = useState("");
-
   const handleAppealSubmit = () => {
     if (!appealReason.trim()) {
       notifications.show({
@@ -43,7 +43,10 @@ const MakeAppealModal = ({
           message: "Appeal submitted successfully!",
           color: "green",
         });
+        setAppealReason("");
         onClose();
+        getAppeals(dispatch, "applicant");
+        getApplications(dispatch);
       })
       .catch((error) => {
         notifications.show({
