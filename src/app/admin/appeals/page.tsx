@@ -39,8 +39,8 @@ const Page = () => {
     },
     {
       accessorKey: "legal_status",
-      header: "Legal Status",
-      cell: ({ row }) => <div>{row.original.legal_status}</div>,
+      header: "Call Title",
+      cell: ({ row }) => <div>{row.original?.call?.title ?? "-"}</div>,
     },
     {
       accessorKey: "appeal_comment",

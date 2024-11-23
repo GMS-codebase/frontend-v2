@@ -38,6 +38,7 @@ const Page = () => {
     "Project" | "IndicativeBudget"
   >("Project");
   const application = myApplications.find((app: any) => app?.uuid === callId);
+  console.log(application);
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
@@ -243,7 +244,7 @@ const Page = () => {
                   className={`font-medium  ${
                     application?.stages?.find(
                       (stage: any) => stage.stage === "EVALUATION",
-                    )?.status === "APPROVED"
+                    )?.status || application?.evaluationDecisions[0]?.decision === "APPROVED"
                       ? "bg-[#4BC500] text-[#4BC500]"
                       : application?.status === "PENDING"
                         ? "bg-red-600 text-red-600"
@@ -253,7 +254,7 @@ const Page = () => {
                   {
                     application?.stages?.find(
                       (stage: any) => stage.stage === "EVALUATION",
-                    )?.status
+                    )?.status ?? application?.evaluationDecisions[0]?.decision
                   }
                 </div>
                 <div className="flex flex-col gap-2 mt-4">
@@ -268,6 +269,7 @@ const Page = () => {
                   {application?.stages.find(
                     (stage: any) => stage.stage === "EVALUATION",
                   )?.status === "REJECTED" &&
+                    application?.call?.evaluationAppealOpened &&
                     !application.hasAppealedEvaluation && (
                       <button
                         onClick={() =>
@@ -318,7 +320,7 @@ const Page = () => {
                     {
                       application?.stages.find(
                         (stage: any) => stage.stage === "DUE_DILIGENCY",
-                      )?.status
+                      )?.status ?? application?.evaluationDecisions[0]?.decision
                     }
                   </div>
                   <div className="flex flex-col gap-2 mt-4">
@@ -332,6 +334,7 @@ const Page = () => {
                   {application?.stages.find(
                     (stage: any) => stage.stage === "DUE_DILIGENCY",
                   )?.status === "REJECTED" &&
+                  application?.call?.dueAppealOpened &&
                     !application.hasAppealedDue && (
                       <button
                         onClick={() =>
