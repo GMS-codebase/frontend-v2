@@ -1,0 +1,49 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set environment variables based on the branch (Main or Staging)
+      - name: Set Environment Variables
+        run: |
+            echo "Staging branch detected"
+            chmod +x ./scripts/create_staging_env.sh
+            bash ./scripts/create_staging_env.sh
+            export FRONTEND_DIR=frontend-v2-staging
+
+      # Verify Current Directory
+      - name: Verify Current Directory
+        run: |
+          echo "Current Directory: $(pwd)"
+          ls -la
+          if [ ! -d ".git" ]; then
+            echo "No .git directory found. This is unexpected."
+          fi
+
+      # Verify Git Status
+      - name: Verify Git Status
+        run: |
+          git status
+
+      # Install dependencies and build the application
+      - name: Install dependencies and build the application
+        run: |
+          git pull origin staging
+          npm install --force
+          npm run build
+
+      # Start the application using pm2
+      - name: Start the application using pm2
+        run: |
+            pm2 restart gms-staging
+            pm2 save
