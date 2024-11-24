@@ -43,7 +43,7 @@ jobs:
       # Install dependencies and build the application
       - name: Install dependencies and build the application
         run: |
-          npm ci
+          npm ci --force
           npm run build
 
       # Create job-related environment variables
