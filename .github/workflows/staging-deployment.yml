@@ -10,25 +10,26 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      # Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set environment variables based on the branch (Main or Staging)
+      # Set Environment Variables
       - name: Set Environment Variables
         run: |
-            echo "Staging branch detected"
-            chmod +x ./scripts/create_staging_env.sh
-            bash ./scripts/create_staging_env.sh
-            export FRONTEND_DIR=frontend-v2-staging
+          echo "Staging branch detected"
+          chmod +x ./scripts/create_staging_env.sh
+          if [ ! -f ./scripts/create_staging_env.sh ]; then
+            echo "Script not found!"; exit 1;
+          fi
+          bash ./scripts/create_staging_env.sh
+          echo "FRONTEND_DIR=frontend-v2-staging" >> $GITHUB_ENV
 
       # Verify Current Directory
       - name: Verify Current Directory
         run: |
           echo "Current Directory: $(pwd)"
           ls -la
-          if [ ! -d ".git" ]; then
-            echo "No .git directory found. This is unexpected."
-          fi
 
       # Verify Git Status
       - name: Verify Git Status
@@ -38,12 +39,16 @@ jobs:
       # Install dependencies and build the application
       - name: Install dependencies and build the application
         run: |
-          git pull origin staging
-          npm install --force
+          npm ci
           npm run build
+
+      # Install pm2 globally
+      - name: Install pm2 globally
+        run: |
+          npm install -g pm2
 
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-            pm2 restart gms-testing
-            pm2 save
+          pm2 restart gms-frontend
+          pm2 save
