@@ -1,9 +1,9 @@
-name: Deploy Staging
+name: Deploy Testing
 
 on:
   push:
     branches:
-      - staging
+      - test
 
 jobs:
   deploy:
@@ -17,13 +17,13 @@ jobs:
       # Set Environment Variables
       - name: Set Environment Variables
         run: |
-          echo "Staging branch detected"
-          chmod +x ./scripts/create_staging_env.sh
-          if [ ! -f ./scripts/create_staging_env.sh ]; then
+          echo "Test branch detected"
+          chmod +x ./scripts/create_test_env.sh
+          if [ ! -f ./scripts/create_test_env.sh ]; then
             echo "Script not found!"; exit 1;
           fi
-          bash ./scripts/create_staging_env.sh
-          echo "FRONTEND_DIR=frontend-v2-staging" >> $GITHUB_ENV
+          bash ./scripts/create_test_env.sh
+          echo "FRONTEND_DIR=frontend-v2-testing" >> $GITHUB_ENV
 
       # Verify Current Directory
       - name: Verify Current Directory
@@ -39,7 +39,7 @@ jobs:
       # Install dependencies and build the application
       - name: Install dependencies and build the application
         run: |
-          npm ci
+          npm install --force
           npm run build
 
       # Install pm2 globally
@@ -50,5 +50,5 @@ jobs:
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-          pm2 restart gms-frontend
+          pm2 restart gms-testing || pm2 start npm --name "gms-testing" -- start
           pm2 save
