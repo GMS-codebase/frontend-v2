@@ -1,0 +1,54 @@
+name: Deploy Staging
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set Environment Variables
+      - name: Set Environment Variables
+        run: |
+          echo "Staging branch detected"
+          chmod +x ./scripts/create_staging_env.sh
+          if [ ! -f ./scripts/create_staging_env.sh ]; then
+            echo "Script not found!"; exit 1;
+          fi
+          bash ./scripts/create_staging_env.sh
+          echo "FRONTEND_DIR=frontend-v2-staging" >> $GITHUB_ENV
+
+      # Verify Current Directory
+      - name: Verify Current Directory
+        run: |
+          echo "Current Directory: $(pwd)"
+          ls -la
+
+      # Verify Git Status
+      - name: Verify Git Status
+        run: |
+          git status
+
+      # Install dependencies and build the application
+      - name: Install dependencies and build the application
+        run: |
+          npm ci --force
+          npm run build
+
+      # Install pm2 globally
+      - name: Install pm2 globally
+        run: |
+          npm install -g pm2
+
+      # Start the application using pm2
+      - name: Start the application using pm2
+        run: |
+          pm2 restart gms-frontend
+          pm2 save
