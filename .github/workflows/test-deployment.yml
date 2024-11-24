@@ -1,10 +1,9 @@
-name: Deploy Application
+name: Deploy Dev
 
 on:
   push:
     branches:
       - main
-      - staging
 
 jobs:
   deploy:
@@ -17,21 +16,11 @@ jobs:
       # Set environment variables based on the branch (Main or Staging)
       - name: Set Environment Variables
         run: |
-          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
             echo "Main branch detected"
             chmod +x ./scripts/create_dev_env.sh
             bash ./scripts/create_dev_env.sh
             export FRONTEND_DIR=frontend-v2
             export PORT=5600
-          elif [[ "$GITHUB_REF" == "refs/heads/staging" ]]; then
-            echo "Staging branch detected"
-            chmod +x ./scripts/create_staging_env.sh
-            bash ./scripts/create_staging_env.sh
-            export FRONTEND_DIR=frontend-v2-staging
-            export PORT=5800
-          fi
-          echo "FRONTEND_DIR=$FRONTEND_DIR"
-          echo "PORT=$PORT"
 
       # Verify Current Directory
       - name: Verify Current Directory
@@ -50,37 +39,21 @@ jobs:
       # Install dependencies and build the application
       - name: Install dependencies and build the application
         run: |
-          git pull origin $GITHUB_REF
+          git pull origin main
           npm install --force
           npm run build
 
       - name: Create the jobs names
         run: |
-          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
             echo "Main branch detected"
-            export JOB_NAME="gms-dev"
+            export JOB_NAME="gms-frontend"
             export SCRIPT_NAME="development"
-          elif [[ "$GITHUB_REF" == "refs/heads/staging" ]]; then
-            echo "Staging branch detected"
-            export JOB_NAME="gms-staging"
-            export SCRIPT_NAME="staging"
-          fi
           echo "JOB_NAME=$JOB_NAME"
           echo "SCRIPT_NAME=$SCRIPT_NAME"
 
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
             echo "Main branch detected"
-            export JOB_NAME="gms-dev"
-            export SCRIPT_NAME="development"
-          elif [[ "$GITHUB_REF" == "refs/heads/staging" ]]; then
-            echo "Staging branch detected"
-            export JOB_NAME="gms-staging"
-            export SCRIPT_NAME="staging"
-          fi
-          echo "JOB_NAME=$JOB_NAME"
-          echo "SCRIPT_NAME=$SCRIPT_NAME"
-          pm2 restart $JOB_NAME
+          pm2 restart gms-frontend
           pm2 save
