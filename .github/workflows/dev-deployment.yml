@@ -16,6 +16,18 @@ jobs:
         with: 
           path: ./dev
 
+      # Set environment variables
+      - name: Set Environment Variables
+        run: |
+          echo "Main branch detected"
+          chmod +x ./dev/scripts/create_dev_env.sh
+          if [ ! -f ./dev/scripts/create_dev_env.sh ]; then
+            echo "create_dev_env.sh script not found! Exiting."; exit 1;
+          fi
+          bash ./dev/scripts/create_dev_env.sh
+          echo "FRONTEND_DIR=frontend-v2/dev" >> $GITHUB_ENV
+          echo "PORT=5600" >> $GITHUB_ENV
+
       # Verify the current directory
       - name: Verify Current Directory
         run: |
@@ -24,18 +36,6 @@ jobs:
           if [ ! -d ".git" ]; then
             echo "No .git directory found. This is unexpected. Exiting."; exit 1;
           fi
-
-      # Set environment variables
-      - name: Set Environment Variables
-        run: |
-          echo "Main branch detected"
-          chmod +x ./dev/scripts/create_dev_env.sh
-          if [ ! -f ./scripts/create_dev_env.sh ]; then
-            echo "create_dev_env.sh script not found! Exiting."; exit 1;
-          fi
-          bash ./dev/scripts/create_dev_env.sh
-          echo "FRONTEND_DIR=frontend-v2" >> $GITHUB_ENV
-          echo "PORT=5600" >> $GITHUB_ENV
 
       # Verify Git status
       - name: Verify Git Status
