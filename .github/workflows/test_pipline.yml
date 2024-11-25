@@ -16,22 +16,22 @@ jobs:
         with: 
           path: ./test
 
-      # Set Environment Variables
-      - name: Set Environment Variables
-        run: |
-          echo "Test branch detected"
-          chmod +x ./scripts/create_test_env.sh
-          if [ ! -f ./scripts/create_test_env.sh ]; then
-            echo "Script not found!"; exit 1;
-          fi
-          bash ./scripts/create_test_env.sh
-          echo "FRONTEND_DIR=frontend-v2-testing" >> $GITHUB_ENV
-
       # Verify Current Directory
       - name: Verify Current Directory
         run: |
           echo "Current Directory: $(pwd)"
           ls -la
+
+      # Set Environment Variables
+      - name: Set Environment Variables
+        run: |
+          echo "Test branch detected"
+          chmod +x ./test/scripts/create_test_env.sh
+          if [ ! -f ./test/scripts/create_test_env.sh ]; then
+            echo "Script not found!"; exit 1;
+          fi
+          bash ./test/scripts/create_test_env.sh
+          echo "FRONTEND_DIR=frontend-v2-testing" >> $GITHUB_ENV
 
       # Verify Git Status
       - name: Verify Git Status
