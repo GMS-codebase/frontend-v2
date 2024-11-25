@@ -118,6 +118,29 @@ import {
   GET_FORMS_LOADING,
   GET_FORMS_SUCCESS,
 } from "@/actions/FormsActions";
+import { Form } from "@/types";
+
+import {
+  GET_APPEALS_ERROR,
+  GET_APPEALS_LOADING,
+  GET_APPEALS_SUCCESS,
+} from "@/actions/AppealsActions";
+export const getAppeals = async (dispatch: Dispatch<UnknownAction>, user: string) => {
+  dispatch({ type: GET_APPEALS_LOADING });
+  const api =
+    user === "applicant"
+      ? "/appeals/all-appeals/mine/all"
+      : "/appeals/all";
+  authorizedApi
+    .get(api)
+    .then((res) => {
+      dispatch({ type: GET_APPEALS_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_APPEALS_ERROR, payload: err.response.data.error });
+    });
+};
+
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -154,7 +177,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -193,18 +216,18 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
 export const getDashboardData = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string
+  stage: string,
 ) => {
   try {
     dispatch({ type: GET_DASHBOARD_LOADING });
     const dashboardResponse = await authorizedApi.get(
-      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`
+      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`,
     );
     dispatch({ type: GET_DASHBOARD_SUCCESS, payload: dashboardResponse.data });
     for (const sector of prioritySectors) {
       try {
         const sectorResponse = await authorizedApi.get(
-          `/Sectors/${sector?.id}/count/applications/count/applicants`
+          `/Sectors/${sector?.id}/count/applications/count/applicants`,
         );
         dispatch({
           type: GET_PRIORITY_SECTORS_DATA,
@@ -294,7 +317,7 @@ export const handleDownloadFile = async (file: any, service: string) => {
       `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
         responseType: "blob",
-      }
+      },
     );
     const blob = new Blob([response.data], {
       type: response.headers["content-type"],
@@ -387,7 +410,7 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplicationsForContractSigning = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
@@ -485,7 +508,7 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
 };
 export const getApplicationsReadyForMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
   authorizedApi
@@ -505,7 +528,7 @@ export const getApplicationsReadyForMinutes = async (
 };
 export const getUploadedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_UPLOADED_MINUTES_LOADING });
   authorizedApi
@@ -525,7 +548,7 @@ export const getUploadedMinutes = async (
 };
 export const getApprovedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_APPROVED_MINUTES_LOADING });
   authorizedApi
@@ -545,7 +568,7 @@ export const getApprovedMinutes = async (
 };
 export const getRejectedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_REJECTED_MINUTES_LOADING });
   authorizedApi
@@ -604,182 +627,36 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
 };
 
 const validateQuestions = async (
-  data: any,
-  window?: number,
-  subwindow?: number
+  answers: any,
+  form: Form
 ): Promise<string | null> => {
-  // Common validation messages
-  const commonMessages = {
-    title: "The title is required.",
-    activitiesAndOutcomes:
-      "Please provide the activities and expected outcomes.",
-    readinessExecute: "Indicate the readiness for execution.",
-    role: "Specify the role in the project.",
-    identificationEmployee: "Employee identification details are mandatory.",
-    trainingProcess: "A description of the training process is required.",
-    trainingManualAttachment: "Please upload the training manual attachment.",
-    trainingEquipment: "Training equipment details are required.",
-    trainingEquipmentAttachment: "Attach the equipment documentation.",
-    assessmentProcess: "A description of the assessment process is required.",
-    assessmentEquipment: "Assessment equipment details are required.",
-    assessmentEquipmentAttachment: "Attach the equipment documentation.",
-    staffs: "Staff information is required.",
-    staffAttachment: "Upload the staff-related attachment.",
-    sustainability: "Provide the sustainability plan.",
-    previousFinancialReportAttachment: "Upload the previous financial report.",
-    contributionFromApplicant: "Specify the applicant’s contribution.",
-  };
-  const isAssessmentWindow = window === 3 && subwindow === 2;
-  if (!data?.title) return commonMessages?.title;
-  if (!data?.activitiesAndOutcomes)
-    return commonMessages?.activitiesAndOutcomes;
-  if (!data?.readinessExecute) return commonMessages?.readinessExecute;
-  if (!data?.role) return commonMessages?.role;
-  if (!data?.identificationEmployee)
-    return commonMessages?.identificationEmployee;
-  if (!data?.sustainability) return commonMessages?.sustainability;
-  if (isAssessmentWindow) {
-    if (!data?.assessmentProcess) return commonMessages?.assessmentProcess;
-    if (!data.assessmentEquipment) return commonMessages.assessmentEquipment;
-    if (!data?.assessmentEquipmentAttachment)
-      return commonMessages?.assessmentEquipmentAttachment;
-  } else {
-    if (!data?.trainingProcess) return commonMessages?.trainingProcess;
-    if (!data.trainingManualAttachment)
-      return commonMessages.trainingManualAttachment;
-    if (!data.trainingEquipment) return commonMessages.trainingEquipment;
-    if (!data.trainingEquipmentAttachment)
-      return commonMessages.trainingEquipmentAttachment;
-  }
-  if (!data.staffs) return commonMessages.staffs;
-  if (!data.staffAttachment) return commonMessages.staffAttachment;
-  if (!data.previousFinancialReportAttachment)
-    return commonMessages.previousFinancialReportAttachment;
-  if (!data.contributionFromApplicant)
-    return commonMessages.contributionFromApplicant;
   return null;
 };
 
 export const handleSubmit = async (
   type: "submit" | "save",
   setLoading: (type: any) => void,
-  data: any,
+  answers: any,
   application: any,
+  form: any,
   callback?: () => void
 ) => {
   const error =
-    type === "save"
-      ? undefined
-      : await validateQuestions(
-          data,
-          application.window?.title.includes("3") && 3,
-          application.subWindow?.title.includes("2") && 2
-        );
+    type === "save" ? undefined : await validateQuestions(answers, form);
   if (error !== null && type === "submit") {
     notifications.show({
       message: error,
-      color: "red",
+      color: "red", 
     });
     return;
   }
   setLoading(type);
-  const submitData = new FormData();
-  if (data?.title) submitData.append("title", data?.title);
-  if (data.activitiesAndOutcomes)
-    submitData.append("activitiesAndOutcomes", data.activitiesAndOutcomes);
-  if (data.readinessExecute)
-    submitData.append("readinessExecute", data.readinessExecute);
-  if (data.role) submitData.append("role", data.role);
-  if (data.institution) submitData.append("institution", data.institution);
-  if (data.trainingProcess && data.trainingProcess.length > 0)
-    submitData.append("trainingProcess", JSON.stringify(data.trainingProcess));
-  if (data.trainingEquipment && data.trainingEquipment.length > 0)
-    submitData.append(
-      "trainingEquipment",
-      JSON.stringify(data.trainingEquipment)
-    );
-  if (data.identificationEmployee)
-    submitData.append("identificationEmployee", data.identificationEmployee);
-  if (data.staffs && data.staffs.length > 0)
-    submitData.append("staffs", JSON.stringify(data.staffs));
-  if (data.sustainability)
-    submitData.append("sustainability", data.sustainability);
-  if (data.contributionFromApplicant)
-    submitData.append(
-      "contributionFromApplicant",
-      data.contributionFromApplicant
-    );
-  if (data.recruitmentTrainerNumber)
-    submitData.append(
-      "recruitmentTrainerNumber",
-      data.recruitmentTrainerNumber
-    );
-  if (data.identificationMember)
-    submitData.append("identificationMember", data.identificationMember);
-  if (
-    data.assessmentAndCertificationProcess &&
-    data.assessmentAndCertificationProcess.length > 0
-  )
-    submitData.append(
-      "assessmentAndCertificationProcess",
-      JSON.stringify(data.assessmentAndCertificationProcess)
-    );
-  if (data.assessmentEquipment && data.assessmentEquipment.length > 0)
-    submitData.append(
-      "assessmentEquipment",
-      JSON.stringify(data.assessmentEquipment)
-    );
-  if (data.recruitmentCandidatesNumber)
-    submitData.append(
-      "recruitmentCandidatesNumber",
-      data.recruitmentCandidatesNumber
-    );
-  if (data.assessorsAndFacilitators)
-    submitData.append(
-      "assessorsAndFacilitators",
-      data.assessorsAndFacilitators
-    );
-  if (data.contribution) submitData.append("contribution", data.contribution);
-  if (data.roleAttachment)
-    submitData.append("roleAttachment", data.roleAttachment);
-  if (data.institutionAttachment)
-    submitData.append("institutionAttachment", data.institutionAttachment);
-  if (data.trainingManualAttachment)
-    submitData.append(
-      "trainingManualAttachment",
-      data.trainingManualAttachment
-    );
-  if (data.staffAttachment)
-    submitData.append("staffAttachment", data.staffAttachment);
-  if (data.budgetLines)
-    submitData.append("budgetLines", JSON.stringify(data.budgetLines));
-  if (data.trainingEquipmentAttachment)
-    submitData.append(
-      "trainingEquipmentAttachment",
-      data.trainingEquipmentAttachment
-    );
-  if (data.previousFinancialReportAttachment)
-    submitData.append(
-      "previousFinancialReportAttachment",
-      data.previousFinancialReportAttachment
-    );
-  if (data.MOUsAttachment && data.MOUsAttachment.length > 0) {
-    data.MOUsAttachment.forEach((file: any, index: any) => {
-      submitData.append(`MOUsAttachment[${index}]`, file);
-    });
-  }
-  if (data.assessmentEquipmentAttachment)
-    submitData.append(
-      "assessmentEquipmentAttachment",
-      data.assessmentEquipmentAttachment
-    );
-  if (data.budgetSummaryAttachment)
-    submitData.append("budgetSummaryAttachment", data.budgetSummaryAttachment);
-
   try {
     await authorizedApi.post(
       `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${application.uuid}`,
-      submitData
+      {
+        answers: JSON.stringify(answers),
+      }
     );
     notifications.show({
       message:
@@ -789,7 +666,7 @@ export const handleSubmit = async (
       color: "blue",
     });
     setLoading(false);
-    callback && callback();
+    // callback && callback();
   } catch (err: any) {
     notifications.show({
       message: err.response?.data?.message ?? "Failed to submit the form!",
@@ -797,6 +674,44 @@ export const handleSubmit = async (
     });
   } finally {
     setLoading(null);
+  }
+};
+
+const validateComments = async (
+  comments: any,
+  form: any
+): Promise<string | null> => {
+  return null;
+};
+
+export const handleAddComments = async (
+  comments: any,
+  form: any,
+  application: any,
+  callback?: () => void
+) => {
+  const validationError = await validateComments(comments, form);
+  if (validationError) {
+    notifications.show({
+      message: validationError,
+      color: "red",
+    });
+    return;
+  }
+  try {
+    await authorizedApi.patch(`/application/comment/${application.uuid}`, {
+      comments: JSON.stringify(comments),
+    });
+    notifications.show({
+      message: "Comments Added Successfully!",
+      color: "blue",
+    });
+    callback && callback();
+  } catch (err: any) {
+    notifications.show({
+      message: err.response?.data?.message ?? "Failed to submit the form!",
+      color: "red",
+    });
   }
 };
 

@@ -1,0 +1,62 @@
+name: Deploy Dev
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      # Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set environment variables
+      - name: Set Environment Variables
+        run: |
+          echo "Main branch detected"
+          chmod +x ./scripts/create_dev_env.sh
+          if [ ! -f ./scripts/create_dev_env.sh ]; then
+            echo "create_dev_env.sh script not found! Exiting."; exit 1;
+          fi
+          bash ./scripts/create_dev_env.sh
+          echo "FRONTEND_DIR=frontend-v2" >> $GITHUB_ENV
+          echo "PORT=5600" >> $GITHUB_ENV
+
+      # Verify the current directory
+      - name: Verify Current Directory
+        run: |
+          echo "Current Directory: $(pwd)"
+          ls -la
+          if [ ! -d ".git" ]; then
+            echo "No .git directory found. This is unexpected. Exiting."; exit 1;
+          fi
+
+      # Verify Git status
+      - name: Verify Git Status
+        run: |
+          git status
+
+      # Install dependencies and build the application
+      - name: Install dependencies and build the application
+        run: |
+          npm install --force
+          npm run build
+
+      # Create job-related environment variables
+      - name: Create the job names
+        run: |
+          echo "Main branch detected"
+          echo "JOB_NAME=gms-dev" >> $GITHUB_ENV
+          echo "SCRIPT_NAME=development" >> $GITHUB_ENV
+          echo "JOB_NAME=$JOB_NAME"
+          echo "SCRIPT_NAME=$SCRIPT_NAME"
+
+      # Start the application using pm2
+      - name: Start the application using pm2
+        run: |
+          pm2 restart gms-dev || pm2 start npm --name "gms-dev" -- start
+          pm2 save

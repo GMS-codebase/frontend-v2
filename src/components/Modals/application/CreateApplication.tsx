@@ -89,11 +89,12 @@ const CreateApplication = ({
     }
     try {
       setLoading(true);
+      console.log(formData);
       const res = await authorizedApi.post(
         `/application/create-application/${call.uuid}`,
         {
           window: formData.window,
-          subwindow: formData.subwindow,
+          subWindow: formData.subwindow,
           description: formData.description,
           sectors: [formData.sectors],
           trades: [formData.trades],
@@ -120,7 +121,7 @@ const CreateApplication = ({
     }
     setLoading(false);
   };
-  const windows = useSelector((state: any) => state.windows.windows);
+  const { windows, subWindows } = useSelector((state: any) => state.windows);
   const sectors = useSelector((state: any) => state.sectors.sectors);
 
   const windowOptions =
@@ -130,11 +131,17 @@ const CreateApplication = ({
     })) || [];
 
   const subwindowOptions = formData.window
-    ? call.subWindows
+    ? subWindows
         .filter((subWindow: any) =>
           windows
             .find((win: any) => win.uuid === formData.window)
-            ?.subWindows.some((subWin: any) => subWin.uuid === subWindow.uuid)
+            ?.subWindows.some(
+              (subWin: any) =>
+                subWin.uuid === subWindow.uuid &&
+                Object.keys(JSON.parse(call.subwindowForms) || "{}").some(
+                  (key: string) => key == subWindow.uuid
+                )
+            )
         )
         .map((subWindow: any) => ({
           label: subWindow.title,
