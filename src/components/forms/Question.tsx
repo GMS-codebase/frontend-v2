@@ -216,16 +216,16 @@ const renderQuestionType = (
       <CheckboxInput
         question={question}
         mode={mode}
-        value={options?.answers?.[question.id]}
+        value={options?.answers?.[question.id] || []}
         onChange={(data) => options?.setAnswers?.(question.id, data)}
         onQuestionChange={options?.onQuestionChange as any}
       />
     )}
     {question.type === "file" && (
       <FileInput
+        question={question}
         onChange={(answer) => options?.setAnswers?.(question.id, answer)}
         value={options?.answers?.[question.id]}
-        multi={true}
         accept=".pdf"
         disabled={!options?.setAnswers}
       />

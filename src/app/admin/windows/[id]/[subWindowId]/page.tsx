@@ -42,16 +42,7 @@ const Page = () => {
   const { subWindowId: subWindowId } = useParams();
   const [isUpdateWindow, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
-  const windows = useSelector((state: any) => state.windows);
-  const forms = useSelector((state: any) => state.forms);
-  const activeForm = forms.forms.find((form: any) => {
-    const hasSubWindow = form?.subWindows?.some((subW: any) => {
-      console.log("Checking subWindow:", subW.uuid, "against", subWindowId);
-      return subW.uuid === subWindowId;
-    });
-    return hasSubWindow;
-  });
-
+  const windows = useSelector((state: any) => state.windows); 
   const window = windows.windows?.filter(
     (window: any) => window.uuid === windowId,
   )[0];
@@ -164,29 +155,6 @@ const Page = () => {
               <div className="flex flex-col gap-6 justify-start items-start ">
                 <h1 className="font-medium text-base text-gray-500">
                   {subWindow?.description}
-                </h1>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <div className="flex gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center  w-fit">
-                  <span className="">
-                    <SolarClockSquareBold />
-                  </span>
-                  <div>Question Form Assigned To Sub Window</div>
-                </div>
-                <button
-                  onClick={openAssignFormSubWindow}
-                  className="bg-primary text-white p-2 rounded-full flex flex-row items-center gap-3"
-                >
-                  <h1 className="text-base font-medium text-white">
-                    Change Form
-                  </h1>
-                </button>
-              </div>
-              <div className="flex flex-col gap-6 justify-start items-start ">
-                <h1 className="font-medium text-base text-gray-500">
-                  {activeForm?.name || "-"}
                 </h1>
               </div>
             </div>

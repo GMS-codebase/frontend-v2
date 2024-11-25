@@ -1,11 +1,12 @@
+import { Question } from "@/types/questions-form";
 import { authorizedApi } from "@/utils/api";
 import React, { useState } from "react";
 import { FaDownload } from "react-icons/fa";
 
 type FileInputProps = {
-  value?: string | string[];
-  onChange: (url: string | string[]) => void;
-  multi?: boolean;
+  question: Question;
+  value?: string;
+  onChange: (url: string) => void;
   accept?: string;
   disabled?: boolean;
   mode?: "creating" | "viewing" | "answering" | "commenting";
@@ -15,9 +16,9 @@ type FileInputProps = {
 };
 
 const FileInput: React.FC<FileInputProps> = ({
+  question,
   value,
   onChange,
-  multi = false,
   accept = ".pdf",
   disabled = false,
   mode = "creating",
@@ -25,30 +26,27 @@ const FileInput: React.FC<FileInputProps> = ({
   handleViewFile,
   handleDownloadFile,
 }) => {
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  console.log(value);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = async (files: FileList | null) => {
     if (!files || disabled) return;
 
-    const filesArray = Array.from(files);
-    setSelectedFiles(filesArray);
+    const file = files[0];
+    setSelectedFile(file);
 
     setIsUploading(true);
     try {
-      const uploadedUrls = await Promise.all(
-        filesArray.map(async (file) => {
-          const formData = new FormData();
-          formData.append("file", file);
-          const response = await authorizedApi.post("/files/upload", formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          });
-          return response.data.url;
-        })
-      );
-      onChange(multi ? uploadedUrls : uploadedUrls[0]);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", question.id);
+      const response = await authorizedApi.post("/files/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      onChange(response.data.data.data);
     } catch (error) {
       console.error("File upload failed", error);
     } finally {
@@ -60,13 +58,17 @@ const FileInput: React.FC<FileInputProps> = ({
     return (
       <div className="grid grid-cols-2 gap-2 my-2">
         <button
-          onClick={() => handleViewFile && handleViewFile(answers, "applications")}
+          onClick={() =>
+            handleViewFile && handleViewFile(answers, "applications")
+          }
           className={`bg-gray-200 text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
         >
           View File
         </button>
         <button
-          onClick={() => handleDownloadFile && handleDownloadFile(answers, "applications")}
+          onClick={() =>
+            handleDownloadFile && handleDownloadFile(answers, "applications")
+          }
           className={`bg-primary text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
         >
           <FaDownload />
@@ -87,14 +89,14 @@ const FileInput: React.FC<FileInputProps> = ({
         <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
           <span className="text-2xl font-bold">+</span>
         </div>
-        {selectedFiles.length > 0 || value ? (
+        {selectedFile || value ? (
           <div className="text-center">
-            {(multi ? selectedFiles : selectedFiles.slice(0, 1)).map((file, index) => (
-              <p key={index} className="text-xl font-medium text-gray-700">
-                {file.name}
-              </p>
-            ))}
-            <p className="text-sm text-gray-500">{isUploading ? "Uploading..." : "File selected"}</p>
+            <p className="text-xl font-medium text-gray-700">
+              {value ? value : selectedFile?.name}
+            </p>
+            <p className="text-sm text-gray-500">
+              {isUploading ? "Uploading..." : "File selected"}
+            </p>
           </div>
         ) : (
           <div className="text-center">
@@ -107,14 +109,13 @@ const FileInput: React.FC<FileInputProps> = ({
         id="file-upload"
         type="file"
         accept={accept}
-        multiple={multi}
         disabled={disabled}
         style={{ display: "none" }}
         onChange={(e) => handleFileChange(e.target.files)}
       />
-      {(selectedFiles.length > 0 || value) && (
+      {(selectedFile || value) && (
         <button
-          onClick={() => setSelectedFiles([])}
+          onClick={() => setSelectedFile(null)}
           className="mt-4 bg-gray-200 text-black font-semibold rounded-full px-4 py-2"
         >
           Select Another File

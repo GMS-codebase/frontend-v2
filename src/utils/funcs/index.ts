@@ -650,33 +650,31 @@ export const handleSubmit = async (
     });
     return;
   }
-  console.log(answers)
-  // setLoading(type);
-  // try {
-  //   await authorizedApi.post(
-  //     `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${application.uuid}`,
-  //     {
-  //       answers: JSON.stringify(answers),
-  //     }
-  //   );
-  //   console.log(answers);
-  //   notifications.show({
-  //     message:
-  //       type == "save"
-  //         ? "Application drafted successfully"
-  //         : "Application filled successfully!",
-  //     color: "blue",
-  //   });
-  //   setLoading(false);
-  //   // callback && callback();
-  // } catch (err: any) {
-  //   notifications.show({
-  //     message: err.response?.data?.message ?? "Failed to submit the form!",
-  //     color: "red",
-  //   });
-  // } finally {
-  //   setLoading(null);
-  // }
+  setLoading(type);
+  try {
+    await authorizedApi.post(
+      `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${application.uuid}`,
+      {
+        answers: JSON.stringify(answers),
+      }
+    );
+    notifications.show({
+      message:
+        type == "save"
+          ? "Application drafted successfully"
+          : "Application filled successfully!",
+      color: "blue",
+    });
+    setLoading(false);
+    // callback && callback();
+  } catch (err: any) {
+    notifications.show({
+      message: err.response?.data?.message ?? "Failed to submit the form!",
+      color: "red",
+    });
+  } finally {
+    setLoading(null);
+  }
 };
 
 const validateComments = async (
