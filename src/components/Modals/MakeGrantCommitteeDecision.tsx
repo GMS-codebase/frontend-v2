@@ -284,7 +284,6 @@ const MakeGrantCommitteeDecision = ({
                     accept=".pdf"
                     onChange={handleFileChange}
                     className="mt-1 hidden w-full text-gray-400 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    required
                   />
                 </div>
                 {errors.attachment && (

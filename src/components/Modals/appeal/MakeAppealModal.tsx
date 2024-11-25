@@ -5,7 +5,7 @@ import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { getAppeals, getApplicants, getApplications } from "@/utils/funcs";
+import { getAppeals, getApplicants, getApplications, getMyApplications } from "@/utils/funcs";
 
 interface AppealModalProps {
   isOpen: boolean;
@@ -47,6 +47,7 @@ const MakeAppealModal = ({
         onClose();
         getAppeals(dispatch, "applicant");
         getApplications(dispatch);
+        getMyApplications(dispatch);
       })
       .catch((error) => {
         notifications.show({

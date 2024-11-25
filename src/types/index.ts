@@ -113,7 +113,7 @@ export type Call = {
   appealDays: string;
   windows: Window[] | string[];
   form: Form | string;
-  subWindows: SubWindow[] | string[];
+  subwindowForms: string;
   sectors: Sector[] | string[];
   attachment: File | string | null;
 };

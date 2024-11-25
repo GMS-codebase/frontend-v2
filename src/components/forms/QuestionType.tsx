@@ -3,15 +3,25 @@ import QuestionsPage from "./QuestionsPage"; // Import the QuestionsPage compone
 import { QuestionForm } from "@/types/questions-form";
 
 interface QuestionTypeProps {
+  mode: "creating" | "viewing" | "answering" | "commenting";
   questionType: string;
   formData: QuestionForm;
   onChange: (updatedFormData: any) => void;
+  answers?: { [key: string]: any };
+  setAnswers?: (key: string, value: any) => void;
+  comments?: { [key: string]: any };
+  setComments?: (key: string, value: any) => void;
 }
 
 const QuestionType: React.FC<QuestionTypeProps> = ({
+  mode,
   questionType,
   formData,
   onChange,
+  answers,
+  setAnswers,
+  comments,
+  setComments,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -20,6 +30,8 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
   }, [questionType]);
 
   const pages = formData[questionType].pages;
+  console.log(formData);
+  console.log(answers)
 
   const handleNextPage = () => {
     if (currentPage < pages.length - 1) {
@@ -39,39 +51,40 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
     };
 
     const updatedFormData = {
-      ...formData,
-      [questionType]: {
-        ...formData[questionType],
-        pages: [...pages, newPage],
-      },
+      ...formData[questionType],
+      pages: [...pages, newPage],
     };
 
     onChange(updatedFormData);
+    setCurrentPage(formData[questionType].pages.length - 1);
   };
 
+  console.log(pages);
+
   return (
-    <div className="p-4 border rounded-lg bg-gray-100 mb-4">
-      <h3 className="text-lg font-semibold mb-2">
-        Question Type: {questionType}
-      </h3>
+    <div>
       <QuestionsPage
+        onAddPage={handleAddPage}
+        answers={answers}
+        setAnswers={setAnswers}
+        comments={comments}
+        setComments={setComments}
+        mode={mode}
         pageIndex={currentPage}
         questionType={questionType}
         pageQuestions={pages[currentPage]?.questions}
         onChange={(updatedQuestions) => {
           const updatedPages = [...pages];
           updatedPages[currentPage].questions = updatedQuestions;
-          const updatedFormData = {
-            ...formData,
-            [questionType]: {
-              ...formData[questionType],
-              pages: updatedPages,
-            },
-          };
-          onChange(updatedFormData); // Update the form data from CreateForm
+          console.log("Pages updated")
+          console.log(updatedPages);
+          onChange({
+            ...formData[questionType],
+            pages: updatedPages,
+          });
         }}
       />{" "}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center gap-2 justify-end mb-4">
         <button
           onClick={handlePrevPage}
           disabled={currentPage === 0}
@@ -89,12 +102,16 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
         </span>
 
         {currentPage === pages.length - 1 ? (
-          <button
-            onClick={handleAddPage}
-            className="px-4 py-2 bg-primary text-white rounded-full"
-          >
-            Add Page
-          </button>
+          <>
+            {mode === "creating" && (
+              <button
+                onClick={handleAddPage}
+                className="px-4 py-2 bg-primary text-white rounded-full"
+              >
+                Add Page
+              </button>
+            )}
+          </>
         ) : (
           <button
             onClick={handleNextPage}
