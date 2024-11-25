@@ -89,11 +89,12 @@ const CreateApplication = ({
     }
     try {
       setLoading(true);
+      console.log(formData)
       const res = await authorizedApi.post(
         `/application/create-application/${call.uuid}`,
         {
           window: formData.window,
-          subwindow: formData.subwindow,
+          subWindow: formData.subwindow,
           description: formData.description,
           sectors: [formData.sectors],
           trades: [formData.trades],

@@ -94,6 +94,8 @@ const Page = () => {
     }
   };
 
+  console.log(call)
+
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
