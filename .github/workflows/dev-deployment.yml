@@ -33,9 +33,6 @@ jobs:
         run: |
           echo "Current Directory: $(pwd)"
           ls -la
-          if [ ! -d ".git" ]; then
-            echo "No .git directory found. This is unexpected. Exiting."; exit 1;
-          fi
 
       # Verify Git status
       - name: Verify Git Status
