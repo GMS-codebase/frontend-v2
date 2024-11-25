@@ -31,6 +31,7 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
 
   const pages = formData[questionType].pages;
   console.log(formData);
+  console.log(answers)
 
   const handleNextPage = () => {
     if (currentPage < pages.length - 1) {
@@ -75,6 +76,7 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
         onChange={(updatedQuestions) => {
           const updatedPages = [...pages];
           updatedPages[currentPage].questions = updatedQuestions;
+          console.log("Pages updated")
           console.log(updatedPages);
           onChange({
             ...formData[questionType],

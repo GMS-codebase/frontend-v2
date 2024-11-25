@@ -52,7 +52,7 @@ const RadioInput: React.FC<RadioInputProps> = ({
                 value={choice}
                 checked={value === choice}
                 onChange={() => handleSelectionChange(choice)}
-                disabled={mode === "viewing" || disabled}
+                // disabled={mode !== "answering"}
                 className="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
               />
               <input

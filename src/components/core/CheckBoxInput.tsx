@@ -35,9 +35,11 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
   };
 
   const handleCheckboxToggle = (toggledValue: string) => {
-    const updatedValue = value.includes(toggledValue)
+    console.log(value)
+    const updatedValue = value?.includes(toggledValue)
       ? value.filter((val) => val !== toggledValue) 
       : [...value, toggledValue];
+    console.log(updatedValue);
     onChange(updatedValue);
   };
 
@@ -55,7 +57,7 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
                 value={choice}
                 checked={value?.includes(choice)}
                 onChange={() => handleCheckboxToggle(choice)}
-                disabled={mode === "viewing" || disabled}
+                // disabled={mode !== "answering"}
                 className="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
               />
               <input
@@ -79,13 +81,6 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
           )}
         </div>
       </div>
-
-      {/* Display selected values when in answering mode */}
-      {mode === "answering" && !disabled && value.length > 0 && (
-        <div className="mt-4 text-sm text-gray-700">
-          <strong>Your answers:</strong> {value.join(", ")}
-        </div>
-      )}
     </div>
   );
 };

@@ -53,7 +53,6 @@ const AddEditCall = ({
     endDate: "",
     appealDays: "",
     windows: [],
-    subWindows: [],
     sectors: [],
     attachment: null,
   });
@@ -140,8 +139,8 @@ const AddEditCall = ({
     if (defaultData) {
       setFormData(defaultData);
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
-      setSelectedSubWindows(
-        defaultData.subWindows.map((item: any) => item.uuid)
+      setSelectedSubWindowsForms(
+        JSON.parse(defaultData.subwindowForms || "{}")
       );
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
     }
@@ -161,11 +160,6 @@ const AddEditCall = ({
 
   const handleSubmit = () => {
     setLoading(true);
-    setFormData({
-      ...formData,
-      sectors: selectedSectors,
-      windows: selectedWindows,
-    });
     const submitData = new FormData();
     submitData.append("title", formData?.title as any);
     submitData.append("description", formData?.description as any);
@@ -174,7 +168,10 @@ const AddEditCall = ({
     submitData.append("applicationEndDate", formData?.endDate as any);
     submitData.append("window", JSON.stringify(selectedWindows));
     submitData.append("sector", JSON.stringify(selectedSectors));
-    submitData.append("subWindows", JSON.stringify(selectedSubWindows));
+    submitData.append(
+      "subWindowForms",
+      JSON.stringify(selectedSubWindowsForms)
+    );
     if (formData?.attachment) {
       submitData?.append("attachment", formData?.attachment);
     }
@@ -207,7 +204,6 @@ const AddEditCall = ({
               endDate: "",
               appealDays: "",
               windows: [],
-              subWindows: [],
               sectors: [],
               attachment: null,
             });
@@ -243,7 +239,6 @@ const AddEditCall = ({
               endDate: "",
               appealDays: "",
               windows: [],
-              subWindows: [],
               sectors: [],
               attachment: null,
             });
@@ -618,37 +613,39 @@ const AddEditCall = ({
                   </button>
                 </div>
 
-                <div className="my-2">
-                  <table className="min-w-full table-auto border-collapse border border-gray-300">
-                    <thead>
-                      <tr className="bg-gray-100">
-                        <th className="px-4 py-2 text-left">Sub-Window</th>
-                        <th className="px-4 py-2 text-left">Form</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(selectedSubWindowsForms).map(
-                        ([subWindow, form]) => (
-                          <tr key={subWindow} className="border-b">
-                            <td className="px-4 py-2">
-                              {
-                                MultiSubWindowData.find(
-                                  (sub: any) => sub.value == subWindow
-                                )?.label
-                              }
-                            </td>
-                            <td className="px-4 py-2">
-                              {
-                                FormsData.find((fm: any) => fm.value == form)
-                                  ?.label
-                              }
-                            </td>
-                          </tr>
-                        )
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                {Object.keys(selectedSubWindowsForms).length > 0 && (
+                  <div className="my-2">
+                    <table className="min-w-full table-auto border-collapse border border-gray-300">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="px-4 py-2 text-left">Sub-Window</th>
+                          <th className="px-4 py-2 text-left">Form</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.entries(selectedSubWindowsForms).map(
+                          ([subWindow, form]) => (
+                            <tr key={subWindow} className="border-b">
+                              <td className="px-4 py-2">
+                                {
+                                  MultiSubWindowData.find(
+                                    (sub: any) => sub.value == subWindow
+                                  )?.label
+                                }
+                              </td>
+                              <td className="px-4 py-2">
+                                {
+                                  FormsData.find((fm: any) => fm.value == form)
+                                    ?.label
+                                }
+                              </td>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
 
                 <div className="">
                   <label

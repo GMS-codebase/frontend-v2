@@ -38,11 +38,14 @@ const Page = () => {
   const forms = useSelector((state: any) => state.forms);
   const application = myApplications.find((app: any) => app?.uuid === callId);
   const form = forms.forms.find((form: any) => {
-    const foundSubWindow = form?.subWindows?.find((subW: any) => {
-      const isMatch = subW?.uuid === application?.subWindow?.uuid;
-      return isMatch;
-    });
-    return foundSubWindow != null;
+    const foundSubWindow = Object.keys(
+      JSON.parse(application?.call.subwindowForms || "{}")
+    ).find((key: string) => key === application?.subWindow.uuid);
+
+    return (
+      form.uuid ===
+      JSON.parse(application?.call.subwindowForms || "{}")[foundSubWindow as any]
+    );
   });
 
   console.log(application);
