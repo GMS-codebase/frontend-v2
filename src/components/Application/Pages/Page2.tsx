@@ -2,7 +2,8 @@ import { Comments } from "@/types";
 import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
 import { Select } from "@mantine/core";
 import { useState } from "react";
-import { FaDownload } from "react-icons/fa";
+import { FaDownload, FaRegEdit } from "react-icons/fa";
+import { MdDeleteOutline } from "react-icons/md";
 
 export const Page2 = ({
   data,
@@ -64,7 +65,6 @@ export const Page2 = ({
       numberOfHours: "",
     });
     setAddTrainingError("");
-    console.log(data.trainingProcess);
   };
 
   const renderInputs = () => (
@@ -107,7 +107,9 @@ export const Page2 = ({
                 typeof application?.call?.endDate === "string"
                   ? new Date(application?.call?.endDate).getTime() +
                     24 * 60 * 60 * 1000
-                  : application?.call?.endDate.getTime() + 24 * 60 * 60 * 1000,
+                  : (application?.call?.endDate.getTime() ||
+                      new Date().getTime()) +
+                    24 * 60 * 60 * 1000,
               )
                 .toISOString()
                 .split("T")[0]
@@ -222,6 +224,9 @@ export const Page2 = ({
                   <th className="border p-2">From Date</th>
                   <th className="border p-2">To Date</th>
                   <th className="border p-2">Number of Hours</th>
+                  {!commentsData && setData && (
+                    <th className="border p-2">Actions</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -235,6 +240,47 @@ export const Page2 = ({
                       {new Date(item.to).toLocaleDateString()}
                     </td>
                     <td className="border p-2">{item.numberOfHours}</td>
+                    {!commentsData && setData && (
+                      <td className="flex items-center justify-center gap-2 border p-3 ">
+                        <button
+                          className="text-primary"
+                          onClick={() => {
+                            setTrainingProcessInputs(item);
+                            setData(
+                              "trainingProcess",
+                              data.trainingProcess.filter((process: any) => {
+                                return !(
+                                  process.moduleName === item.moduleName &&
+                                  process.from === item.from &&
+                                  process.to === item.to &&
+                                  process.numberOfHours === item.numberOfHours
+                                );
+                              }),
+                            );
+                          }}
+                        >
+                          <FaRegEdit className="w-5 h-5" />
+                        </button>
+                        <button
+                          className="text-danger"
+                          onClick={() => {
+                            setData(
+                              "trainingProcess",
+                              data.trainingProcess.filter((process: any) => {
+                                return !(
+                                  process.moduleName === item.moduleName &&
+                                  process.from === item.from &&
+                                  process.to === item.to &&
+                                  process.numberOfHours === item.numberOfHours
+                                );
+                              }),
+                            );
+                          }}
+                        >
+                          <MdDeleteOutline className="w-5 h-5" />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -299,7 +345,9 @@ export const Page2 = ({
                 {data.trainingManualAttachment ? (
                   <div className="text-center">
                     <p className="text-xl font-medium text-gray-700">
-                      {data?.trainingManualAttachment?.name}
+                      {typeof data?.trainingManualAttachment === "string"
+                        ? data.trainingManualAttachment.split("/").pop()
+                        : data?.trainingManualAttachment?.name}
                     </p>
                     <p className="text-sm text-gray-500">{"File selected"}</p>
                   </div>
@@ -328,7 +376,7 @@ export const Page2 = ({
         </div>
       )}
       {!isApplicant &&
-        setCommentsData &&
+        commentsData &&
         renderCommentsSection(
           type === "assessment" ? "assessmentComment" : "trainingManualComment",
         )}

@@ -3,6 +3,7 @@ import {
   DELETE_BUDGET_LINE_SUCCESS,
   GET_BUDGET_LINES_ERROR,
   GET_BUDGET_LINES_LOADING,
+  GET_BUDGET_LINES_SUCCESS,
   UPDATE_BUDGET_LINE_SUCCESS,
 } from "@/actions/BudgetLinesActions";
 import { BudgetLine } from "@/types";
@@ -32,15 +33,17 @@ export default function BudgetLinesReducer(
     case GET_BUDGET_LINES_ERROR:
       return {
         ...state,
-        loading: false,
-        budgetLines: action.payload,
-      };
-    case GET_BUDGET_LINES_ERROR:
-      return {
-        ...state,
         isError: true,
         loading: false,
         error: action.payload,
+      };
+    case GET_BUDGET_LINES_SUCCESS:
+      return {
+        ...state,
+        budgetLines: action.payload,
+        error: null,
+        isError: false,
+        loading: false,
       };
     case ADD_BUDGET_LINE_SUCCESS:
       return {

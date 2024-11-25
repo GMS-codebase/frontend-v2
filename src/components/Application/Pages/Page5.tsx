@@ -112,7 +112,9 @@ export const Page5 = ({
               {data.previousFinancialReportAttachment ? (
                 <div className="text-center">
                   <p className="text-xl font-medium text-gray-700">
-                    {data.previousFinancialReportAttachment.name}
+                    {typeof data?.previousFinancialReportAttachment === "string"
+                      ? data.previousFinancialReportAttachment.split("/").pop()
+                      : data?.previousFinancialReportAttachment?.name}
                   </p>
                   <p className="text-sm text-gray-500">File selected</p>
                 </div>
