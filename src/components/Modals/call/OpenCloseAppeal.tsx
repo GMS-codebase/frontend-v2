@@ -1,4 +1,4 @@
-import { Checkbox, Modal, Select, Stepper } from "@mantine/core";
+import { Modal } from "@mantine/core";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
@@ -6,49 +6,68 @@ import SideVector1 from "@/assets/Vectors/redSideVector.svg";
 import SideVector2 from "@/assets/Vectors/redSideVector2.svg";
 import deleteSvg from "@/assets/Vectors/delete.svg";
 import { notifications } from "@mantine/notifications";
+import { useDispatch } from "react-redux";
 import { authorizedApi } from "@/utils/api";
-const DeleteMinutesModal = ({
-  isOpenDeleteWindow,
-  closeDeleteWindow,
-  id,
+import { useParams } from "next/navigation";
+import { getCalls } from "@/utils/funcs";
+
+const OpenCloseAppealModal = ({
+  closeModal,
+  stage,
+  callId,
+  type,
+  opened,
 }: {
-  isOpenDeleteWindow: boolean;
-  closeDeleteWindow: () => void;
-  id: string;
+  closeModal: () => void;
+  stage: "EVALUATION" | "DUE_DILIGENCY";
+  callId: any;
+  type: "OPEN" | "CLOSE";
+  opened: boolean;
 }) => {
-  const onDelete = () => {
+  const [loading, setLoading] = useState(false);
+  const isClosing = type === "CLOSE";
+  const dispatch = useDispatch();
+  const handleAppealStatusChange = async () => {
+    setLoading(true);
     authorizedApi
-      .delete(`/meeting-minutes`)
-      .then(() => {
+      .put(`/appeals/${callId}/stage/${stage}/${isClosing ? "close" : "open"}`)
+      .then((res) => {
         notifications.show({
-          message: "Contract Negotiation is deleted successfully",
+          title: `Appeal ${isClosing ? "Closed" : "Opened"} Successfully!`,
+          message: res.data.message,
           color: "blue",
         });
-        closeDeleteWindow();
+        getCalls(dispatch);
+        // Add your appeals fetch function here
+        // getAppeals(dispatch);
+        closeModal();
       })
       .catch((err) => {
         notifications.show({
-          message:
-            err.response?.data?.message ??
-            "Failed to deleted contract negotiation!",
+          title: `Failed to ${isClosing ? "close" : "open"} appeal!`,
+          message: err.response.data.message,
           color: "red",
         });
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
+
   return (
     <Modal
-      size={""}
-      opened={isOpenDeleteWindow}
-      onClose={closeDeleteWindow}
+      size=""
+      opened={opened}
+      onClose={closeModal}
       closeOnClickOutside={false}
       withCloseButton={false}
     >
       <div className="w-[550px] h-[400px] relative bg-white rounded-3xl p-4 pt-10 pb-4 flex flex-col items-center">
         <button
-          className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
-          onClick={closeDeleteWindow}
+          className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
+          onClick={closeModal}
         >
-          <IoMdClose size={25} color={"#000"} />
+          <IoMdClose size={25} color="#000" />
         </button>
         <Image
           src={SideVector1}
@@ -68,23 +87,29 @@ const DeleteMinutesModal = ({
           <div className="w-full flex flex-col items-center">
             <Image src={deleteSvg} alt="vector" width={200} height={50} />
             <h1 className="text-2xl font-extrabold text-center">
-              Are you sure you want to delete this Contract Negotiation?
+              Are you sure you want to {isClosing ? "close" : "open"} appeal on
+              this stage?
             </h1>
           </div>
           <div className="w-full flex justify-center mt-4 space-x-4 p-6">
             <button
               type="button"
-              onClick={closeDeleteWindow}
+              onClick={closeModal}
               className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2"
             >
               Cancel
             </button>
             <button
-              onClick={onDelete}
+              onClick={handleAppealStatusChange}
               type="button"
-              className="w-full px-4 py-3 bg-[#C50D0DF2] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              disabled={loading}
+              className="w-full px-4 py-3 bg-primary text-white rounded-full shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Delete Contract Negotiation
+              {loading
+                ? "Loading..."
+                : isClosing
+                  ? "Close Appeal"
+                  : "Open Appeal"}
             </button>
           </div>
         </div>
@@ -93,4 +118,4 @@ const DeleteMinutesModal = ({
   );
 };
 
-export default DeleteMinutesModal;
+export default OpenCloseAppealModal;

@@ -20,11 +20,21 @@ import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import { useDisclosure } from "@mantine/hooks";
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 import Form from "@/components/forms/Form";
+import MakeAppealModal from "@/components/Modals/appeal/MakeAppealModal";
+import ViewAppealResultsModal from "@/components/Modals/appeal/ViewAppealResults";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
   const { myApplications } = useSelector((state: any) => state.applications);
+  const [viewAppealResults, setViewAppealResults] = useState({
+    opened: false,
+    application: null,
+  });
+  const [openMakeAppeal, setOpenMakeAppeal] = useState({
+    opened: false,
+    stage: "EVALUATION",
+  });
   const forms = useSelector((state: any) => state.forms);
   const application = myApplications.find((app: any) => app?.uuid === callId);
   const form = forms.forms.find((form: any) => {
@@ -35,6 +45,7 @@ const Page = () => {
     return foundSubWindow != null;
   });
 
+  console.log(application);
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
@@ -187,8 +198,8 @@ const Page = () => {
                 <div
                   className={`font-medium  ${
                     application?.stages?.find(
-                      (stage: any) => stage.stage === "EVALUATION"
-                    )?.status === "APPROVED"
+                      (stage: any) => stage.stage === "EVALUATION",
+                    )?.status || application?.evaluationDecisions[0]?.decision === "APPROVED"
                       ? "bg-[#4BC500] text-[#4BC500]"
                       : application?.status === "PENDING"
                         ? "bg-red-600 text-red-600"
@@ -197,8 +208,8 @@ const Page = () => {
                 >
                   {
                     application?.stages?.find(
-                      (stage: any) => stage.stage === "EVALUATION"
-                    )?.status
+                      (stage: any) => stage.stage === "EVALUATION",
+                    )?.status ?? application?.evaluationDecisions[0]?.decision
                   }
                 </div>
                 <div className="flex flex-col gap-2 mt-4">
@@ -208,6 +219,37 @@ const Page = () => {
                       className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
                     >
                       View details
+                    </button>
+                  )}
+                  {application?.stages.find(
+                    (stage: any) => stage.stage === "EVALUATION",
+                  )?.status === "REJECTED" &&
+                    application?.call?.evaluationAppealOpened &&
+                    !application.hasAppealedEvaluation && (
+                      <button
+                        onClick={() =>
+                        setOpenMakeAppeal({ opened: true, stage: "EVALUATION" })
+                      }
+                      className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                    >
+                      Appeal
+                    </button>
+                  )}
+
+                  {application?.stages.find(
+                    (stage: any) => stage.stage === "EVALUATION",
+                  )?.status === "REJECTED" &&
+                    application.hasAppealedEvaluation && (
+                    <button
+                      onClick={() =>
+                        setViewAppealResults({
+                          opened: true,
+                          application,
+                        })
+                      }
+                      className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                    >
+                      View Appeal
                     </button>
                   )}
                 </div>
@@ -232,8 +274,8 @@ const Page = () => {
                   >
                     {
                       application?.stages.find(
-                        (stage: any) => stage.stage === "DUE_DILIGENCY"
-                      )?.status
+                        (stage: any) => stage.stage === "DUE_DILIGENCY",
+                      )?.status ?? application?.evaluationDecisions[0]?.decision
                     }
                   </div>
                   <div className="flex flex-col gap-2 mt-4">
@@ -244,6 +286,39 @@ const Page = () => {
                       View details
                     </button>
                   </div>
+                  {application?.stages.find(
+                    (stage: any) => stage.stage === "DUE_DILIGENCY",
+                  )?.status === "REJECTED" &&
+                  application?.call?.dueAppealOpened &&
+                    !application.hasAppealedDue && (
+                      <button
+                        onClick={() =>
+                        setOpenMakeAppeal({
+                          opened: true,
+                          stage: "DUE_DILIGENCY",
+                        })
+                      }
+                      className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                    >
+                      Appeal
+                    </button>
+                  )}
+                  {application?.stages.find(
+                    (stage: any) => stage.stage === "DUE_DILIGENCY",
+                  )?.status === "REJECTED" &&
+                    application.hasAppealedDue && (
+                      <button
+                        onClick={() =>
+                        setViewAppealResults({
+                          opened: true,
+                          application,
+                        })
+                      }
+                      className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                    >
+                      View Appeal
+                    </button>
+                  )}
                 </div>
               )}
             {application?.call.closedGrantCommittee &&
@@ -292,6 +367,21 @@ const Page = () => {
         close={closeGrantCommitteeDetails}
         opened={isOpenGrantCommitteeDetails}
         viewer="applicant"
+      />
+      <MakeAppealModal
+        isOpen={openMakeAppeal.opened}
+        onClose={() =>
+          setOpenMakeAppeal({ opened: false, stage: "EVALUATION" })
+        }
+        application={application}
+        stage={openMakeAppeal.stage as "EVALUATION" | "DUE_DILIGENCY"}
+      />
+      <ViewAppealResultsModal
+        isOpen={viewAppealResults.opened}
+        onClose={() =>
+          setViewAppealResults({ opened: false, application: null })
+        }
+        application={application}
       />
     </div>
   );

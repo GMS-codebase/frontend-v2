@@ -119,6 +119,28 @@ import {
   GET_FORMS_SUCCESS,
 } from "@/actions/FormsActions";
 import { Form } from "@/types";
+
+import {
+  GET_APPEALS_ERROR,
+  GET_APPEALS_LOADING,
+  GET_APPEALS_SUCCESS,
+} from "@/actions/AppealsActions";
+export const getAppeals = async (dispatch: Dispatch<UnknownAction>, user: string) => {
+  dispatch({ type: GET_APPEALS_LOADING });
+  const api =
+    user === "applicant"
+      ? "/appeals/all-appeals/mine/all"
+      : "/appeals/all";
+  authorizedApi
+    .get(api)
+    .then((res) => {
+      dispatch({ type: GET_APPEALS_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_APPEALS_ERROR, payload: err.response.data.error });
+    });
+};
+
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -155,7 +177,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -194,18 +216,18 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
 export const getDashboardData = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string
+  stage: string,
 ) => {
   try {
     dispatch({ type: GET_DASHBOARD_LOADING });
     const dashboardResponse = await authorizedApi.get(
-      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`
+      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`,
     );
     dispatch({ type: GET_DASHBOARD_SUCCESS, payload: dashboardResponse.data });
     for (const sector of prioritySectors) {
       try {
         const sectorResponse = await authorizedApi.get(
-          `/Sectors/${sector?.id}/count/applications/count/applicants`
+          `/Sectors/${sector?.id}/count/applications/count/applicants`,
         );
         dispatch({
           type: GET_PRIORITY_SECTORS_DATA,
@@ -295,7 +317,7 @@ export const handleDownloadFile = async (file: any, service: string) => {
       `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
         responseType: "blob",
-      }
+      },
     );
     const blob = new Blob([response.data], {
       type: response.headers["content-type"],
@@ -388,7 +410,7 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplicationsForContractSigning = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
@@ -486,7 +508,7 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
 };
 export const getApplicationsReadyForMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
   authorizedApi
@@ -506,7 +528,7 @@ export const getApplicationsReadyForMinutes = async (
 };
 export const getUploadedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_UPLOADED_MINUTES_LOADING });
   authorizedApi
@@ -526,7 +548,7 @@ export const getUploadedMinutes = async (
 };
 export const getApprovedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_APPROVED_MINUTES_LOADING });
   authorizedApi
@@ -546,7 +568,7 @@ export const getApprovedMinutes = async (
 };
 export const getRejectedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_REJECTED_MINUTES_LOADING });
   authorizedApi

@@ -34,6 +34,7 @@ import {
   getUploadedMinutes,
   getAnnouncement,
   getForms,
+  getAppeals,
 } from "@/utils/funcs";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
@@ -87,6 +88,7 @@ const Navbar = () => {
       getEmployees(dispatch);
       getRoles(dispatch);
       getBudgetLines(dispatch);
+      getAppeals(dispatch, "admin");
     } else if (role === "SDF_SECRETARIATE") {
       getApplicants(dispatch);
       getContracts(dispatch);
@@ -95,6 +97,7 @@ const Navbar = () => {
       getUploadedMinutes(dispatch, "sdf");
       getApprovedMinutes(dispatch, "sdf");
       getRejectedMinutes(dispatch, "sdf");
+      getAppeals(dispatch, "sdf");
     } else if (role === "APPLICANT") {
       getMyContacts(dispatch);
       getMyApplicantProfile(dispatch);
@@ -103,6 +106,7 @@ const Navbar = () => {
       getApprovedMinutes(dispatch, "applicant");
       getRejectedMinutes(dispatch, "applicant");
       getBudgetLines(dispatch);
+      getAppeals(dispatch, "applicant");
     }
     getAnnouncement(dispatch);
     getApplicationsForContractSigning(dispatch);
