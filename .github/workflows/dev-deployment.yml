@@ -60,5 +60,5 @@ jobs:
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-          pm2 restart gms-dev || pm2 start npm --name "gms-dev" -- start
+          pm2 restart gms-dev || pm2 start npm --name "gms-dev" -- start --env .env.local
           pm2 save

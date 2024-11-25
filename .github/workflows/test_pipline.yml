@@ -47,5 +47,5 @@ jobs:
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-          pm2 restart gms-testing || pm2 start npm --name "gms-testing" -- start
+          pm2 restart gms-testing || pm2 start npm --name "gms-testing" -- start --env .env.local
           pm2 save
