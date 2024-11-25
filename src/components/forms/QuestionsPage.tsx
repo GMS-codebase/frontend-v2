@@ -58,6 +58,11 @@ const QuestionsPage: React.FC<QuestionsPageProps> = ({
     onChange(updatedQuestions);
   };
 
+  const deleteQuestion = (questionId: string) => {
+    const updatedQuestions = pageQuestions?.filter((q) => q.id !== questionId);
+    onChange(updatedQuestions);
+  };
+
   const handleDragEnd = (result: any) => {
     if (!result.destination || mode !== "creating") return;
 
@@ -81,7 +86,7 @@ const QuestionsPage: React.FC<QuestionsPageProps> = ({
         </div>
       )}
       <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="questions-list">
+        <Droppable droppableId="questions-list" type="group">
           {(provided: any) => (
             <div
               {...provided.droppableProps}
@@ -107,6 +112,7 @@ const QuestionsPage: React.FC<QuestionsPageProps> = ({
                         question={question}
                         editable={mode === "creating"}
                         onChange={handleQuestionChange}
+                        deleteQuestion={deleteQuestion}
                         answers={answers}
                         setAnswers={setAnswers}
                         comments={comments}

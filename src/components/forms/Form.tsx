@@ -24,7 +24,7 @@ const Form: React.FC<Props> = ({
   setComments,
 }) => {
   const [isAddTypeModalOpen, setIsAddTypeModalOpen] = useState(false);
-  const [activeType, setActiveType] = useState<string>("text");
+  const [activeType, setActiveType] = useState<string | null>();
 
   const addQuestionType = (newType: { name: string; description: string }) => {
     setFormData &&
@@ -46,8 +46,10 @@ const Form: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    const questions = Object.values(formData?.qns ?? {}) as any[];
-    setActiveType(questions[0]?.name);
+    if (!activeType) {
+      const questions = Object.values(formData?.qns ?? {}) as any[];
+      setActiveType(questions[0]?.name);
+    }
   }, [formData]);
 
   return (
@@ -81,29 +83,31 @@ const Form: React.FC<Props> = ({
           >
             <div className="flex items-center gap-2">
               <p>{type.name}</p>
-              {mode === "creating" && <button
-                className="text-danger bg-white rounded-full"
-                onClick={() => {
-                  setFormData &&
-                    setFormData((prevFormData: any) => {
-                      if (!prevFormData) return null;
-                      const updatedFormData = {
-                        ...prevFormData,
-                        qns: {
-                          ...(typeof prevFormData.qns === "object"
-                            ? prevFormData.qns
-                            : {}),
-                        },
-                      };
-                      if (typeof updatedFormData.qns === "object") {
-                        delete updatedFormData.qns[type.name as any];
-                      }
-                      return updatedFormData;
-                    });
-                }}
-              >
-                <IoIosCloseCircle className="w-6 h-6" />
-              </button>}
+              {mode === "creating" && (
+                <button
+                  className="text-danger bg-white rounded-full"
+                  onClick={() => {
+                    setFormData &&
+                      setFormData((prevFormData: any) => {
+                        if (!prevFormData) return null;
+                        const updatedFormData = {
+                          ...prevFormData,
+                          qns: {
+                            ...(typeof prevFormData.qns === "object"
+                              ? prevFormData.qns
+                              : {}),
+                          },
+                        };
+                        if (typeof updatedFormData.qns === "object") {
+                          delete updatedFormData.qns[type.name as any];
+                        }
+                        return updatedFormData;
+                      });
+                  }}
+                >
+                  <IoIosCloseCircle className="w-6 h-6" />
+                </button>
+              )}
             </div>
           </div>
         ))}

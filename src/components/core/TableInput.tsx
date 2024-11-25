@@ -8,7 +8,7 @@ interface TableInputProps {
   value: any;
   onChange: (data: Record<string, any>[]) => void;
   question: Question;
-  onChangeQuestion: (question: Question) => void;
+  onQuestionChange: (question: Question) => void;
   disabled?: boolean;
   isEditing?: boolean;
   mode: "creating" | "viewing" | "answering" | "commenting";
@@ -18,7 +18,7 @@ const TableInput: React.FC<TableInputProps> = ({
   value,
   onChange,
   question,
-  onChangeQuestion,
+  onQuestionChange,
   disabled = false,
   mode = "creating",
   isEditing = false,
@@ -49,21 +49,21 @@ const TableInput: React.FC<TableInputProps> = ({
     const newColumn: TableColumn = { title: "New Column", type: "text" };
     const updatedColumns = [...columns, newColumn];
     setColumns(updatedColumns);
-    onChangeQuestion({ ...question, columns: updatedColumns });
+    onQuestionChange({ ...question, columns: updatedColumns });
   };
 
   const handleRemoveColumn = (index: number) => {
     const updatedColumns = [...columns];
     updatedColumns.splice(index, 1);
     setColumns(updatedColumns);
-    onChangeQuestion({ ...question, columns: updatedColumns });
+    onQuestionChange({ ...question, columns: updatedColumns });
   };
 
   const handleColumnChange = (index: number, key: keyof TableColumn, value: any) => {
     const updatedColumns = [...columns];
     updatedColumns[index][key] = value;
     setColumns(updatedColumns);
-    onChangeQuestion({ ...question, columns: updatedColumns });
+    onQuestionChange({ ...question, columns: updatedColumns });
   };
 
   if (mode === "viewing" || mode === "commenting") {
