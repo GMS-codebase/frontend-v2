@@ -331,8 +331,6 @@ const Page = () => {
                   application?.stages?.find(
                     (stage: any) => stage.stage === "EVALUATION",
                   )?.status ?? application?.evaluationDecisions[0]?.decision ?? "PENDING"
-                    (stage: any) => stage.stage === "EVALUATION"
-                  )?.status
                 }
               </div>
               {application?.evaluationDecisions.length < 3 &&
