@@ -19,22 +19,20 @@ import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import { getApplications, handleDownloadFile } from "@/utils/funcs";
+import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
   const stagesArr = stages?.map((stage: any) => stage?.stage);
-  const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
-  const application = applications?.applications?.filter(
-    (application: any) => application?.uuid === id,
-  )[0];
-  console.log("application --> ", application);
   const [decisionsLoading, setDecisionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [applicationLoading, setApplicationLoading] = useState(true);
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
   ] = useDisclosure(false);
+  const [application, setApplication] = useState<any>();
   const [
     isOpenDueDiligencyDetails,
     { open: openDueDiligencyDetails, close: closeDueDiligencyDetails },
@@ -42,6 +40,10 @@ const Page = () => {
   const [
     isOpenMakeDecision,
     { open: openMakeDecision, close: closeMakeDecision },
+  ] = useDisclosure(false);
+  const [
+    isOpenGrantCommitteeDetails,
+    { open: openGrantCommitteeDetails, close: closeGrantCommitteeDetails },
   ] = useDisclosure(false);
   const [
     isOpenMakeFirstDueDiligencyDecision,
@@ -64,6 +66,72 @@ const Page = () => {
   const goToBudget = () => {
     setCurrentComponent("IndicativeBudget");
   };
+  const fetchApplication = async () => {
+    setApplicationLoading(true);
+    try {
+      const res = await authorizedApi.get(`/application/get-application/${id}`);
+      setApplication(res.data.data.data);
+      setCommentsData({
+        titleComment: res.data.data.data.projectFunding?.titleComment || "",
+        activitiesComment:
+          res.data.data.data.projectFunding?.activitiesComment || "",
+        readinessExecuteComment:
+          res.data.data.data.projectFunding?.readinessExecuteComment || "",
+        roleComment: res.data.data.data.projectFunding?.roleComment || "",
+        institutionComment:
+          res.data.data.data.projectFunding?.institutionComment || "",
+        trainingManualComment:
+          res.data.data.data.projectFunding?.trainingManualComment || "",
+        trainingEquipmentComment:
+          res.data.data.data.projectFunding?.trainingEquipmentComment || "",
+        identificationEmployeeComment:
+          res.data.data.data.projectFunding?.identificationEmployeeComment ||
+          "",
+        staffComment: res.data.data.data.projectFunding?.staffComment || "",
+        sustainabilityComment:
+          res.data.data.data.projectFunding?.sustainabilityComment || "",
+        previousFinancialReportComment:
+          res.data.data.data.projectFunding?.previousFinancialReportComment ||
+          "",
+        trainingPremisesComment:
+          res.data.data.data.projectFunding?.trainingPremisesComment || "",
+        contributionFromApplicantComment:
+          res.data.data.data.projectFunding?.contributionFromApplicantComment ||
+          "",
+        recruitmentTrainerComment:
+          res.data.data.data.projectFunding?.recruitmentTrainerComment || "",
+        MOUsAttachmentComment:
+          res.data.data.data.projectFunding?.MOUsAttachmentComment || "",
+        premisesAttachmentComment:
+          res.data.data.data.projectFunding?.premisesAttachmentComment || "",
+        identificationMemberComment:
+          res.data.data.data.projectFunding?.identificationMemberComment || "",
+        assessmentEquipmentComment:
+          res.data.data.data.projectFunding?.assessmentEquipmentComment || "",
+        recruitmentCandidatesNumberComment:
+          res.data.data.data.projectFunding
+            ?.recruitmentCandidatesNumberComment || "",
+        assessorsAndFacilitatorsComment:
+          res.data.data.data.projectFunding?.assessorsAndFacilitatorsComment ||
+          "",
+        budgetSummaryAttachmentComment:
+          res.data.data.data.budget?.budgetSummaryAttachmentComment || "",
+        contributionComment:
+          res.data.data.data.budget?.contributionComment || "",
+        assessmentComment:
+          res.data.data.data.projectFunding?.assessmentComment || "",
+        budgetLinesComment: res.data.data.data.budget?.budgetLinesComment || "",
+      });
+      setApplicationLoading(false);
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        window.history.back();
+      }
+    }
+  };
+  useEffect(() => {
+    fetchApplication();
+  }, [id]);
   const [commentsData, setCommentsData] = useState<any>({
     titleComment: application?.projectFunding?.titleComment || "",
     activitiesComment: application?.projectFunding?.activitiesComment || "",
@@ -106,7 +174,7 @@ const Page = () => {
     assessmentComment: application?.projectFunding?.assessmentComment || "",
     budgetLinesComment: application?.budget?.budgetLinesComment || "",
   });
-  console.log(application);
+
   useEffect(() => {
     if (application) {
       const hasComments = Object.entries(application.projectFunding || {}).some(
@@ -129,7 +197,11 @@ const Page = () => {
             // showComments={application?.currentStage !== "SUBMITTED"}
             data={application?.projectFunding}
             setComments={!properties.isCommented ? setCommentsData : undefined}
-            comments={commentsData}
+            comments={
+              application?.currentStage === "SUBMITTED"
+                ? undefined
+                : commentsData
+            }
             goToBudget={goToBudget}
           />
         );
@@ -137,9 +209,13 @@ const Page = () => {
         return (
           <BudgetQuestions
             application={application}
-            // showComments={application?.currentStage !== "SUBMITTED"}
+            // showComments={}
             data={application?.budget}
-            comments={commentsData}
+            comments={
+              application?.currentStage === "SUBMITTED"
+                ? undefined
+                : commentsData
+            }
             setComments={!properties.isCommented ? setCommentsData : undefined}
           />
         );
@@ -183,8 +259,7 @@ const Page = () => {
         "Specify comments regarding the applicant’s contribution.",
       budgetAttachmentComment: "Upload comments on the budget attachment.",
     };
-
-    if (!commentsData.titleComment) return commentMessages.titleComment;
+    if (!commentsData?.titleComment) return commentMessages?.titleComment;
     if (!commentsData.activitiesComment)
       return commentMessages.activitiesComment;
     if (!commentsData.readinessExecuteComment)
@@ -223,7 +298,7 @@ const Page = () => {
         // !commentsData.contributionFromApplicantComment ||
         // !commentsData.identificationEmployeeComment ||
         // !commentsData.identificationMemberComment ||
-        !commentsData.titleComment
+        !commentsData?.titleComment
         // !commentsData.identificationEmployeeComment ||
         // !commentsData.institutionComment
       ) {
@@ -239,7 +314,7 @@ const Page = () => {
         message: "Comments Added Successfully!",
         color: "blue",
       });
-      refetch();
+      fetchApplication();
     } catch (err: any) {
       notifications.show({
         message: err.response?.data?.message ?? "Failed to submit the form!",
@@ -248,18 +323,10 @@ const Page = () => {
     }
     setLoading(false);
   };
-  const refetch = async () => {
-    setDecisionsLoading(true);
-    try {
-      await getApplications(dispatch);
-    } finally {
-      setDecisionsLoading(false);
-    }
-  };
 
   const [downloading, setDownloading] = useState(false);
 
-  if (applications.loading) {
+  if (applicationLoading) {
     return (
       <div className="h-full w-full flex items-center justify-center text-sm">
         Loading ...
@@ -342,13 +409,13 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Call
               </p>
-              <p>{application?.call.title}</p>
+              <p>{application?.call?.title}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Window
               </p>
-              <p>{application?.window.title}</p>
+              <p>{application?.window?.title}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
@@ -493,10 +560,22 @@ const Page = () => {
             <h2 className="font-bold">Decision</h2>
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Evaluation Stage</h3>
-              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                {application?.currentStage === "EVALUATION"
-                  ? "PENDING"
-                  : "APPROVED"}
+              <div
+                className={`font-medium  ${
+                  application?.stages?.find(
+                    (stage: any) => stage.stage === "EVALUATION",
+                  )?.status === "APPROVED"
+                    ? "bg-[#4BC500] text-[#4BC500]"
+                    : application?.status === "PENDING"
+                      ? "bg-red-600 text-red-600"
+                      : ""
+                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+              >
+                {
+                  application?.stages?.find(
+                    (stage: any) => stage.stage === "EVALUATION",
+                  )?.status
+                }
               </div>
               {application?.evaluationDecisions.length < 3 &&
                 !application?.evaluationDecisions.find(
@@ -582,13 +661,36 @@ const Page = () => {
                   )}
                 </div>
               )}
+            {application?.stages?.find(
+              (stage: any) => stage?.stage === "GRANT_COMMITTEE",
+            ) && (
+              <div className="flex flex-col gap-2">
+                <h3 className="font-semibold">Grant Committee</h3>
+                <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
+                  {!application?.grantCommitteeDecision
+                    ? "Pending"
+                    : "APPROVED"}
+                </div>
+
+                {application?.grantCommitteeDecision && (
+                  <div className="flex flex-col gap-2 mt-4">
+                    <button
+                      onClick={openGrantCommitteeDetails}
+                      className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                    >
+                      View details
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
       <MakeFirstDueDiligencyDecision
         application={application}
         closeModal={closeMakeFirstDueDiligencyDecision}
-        afterMakeDecision={refetch}
+        afterMakeDecision={fetchApplication}
         isOpenModal={isOpenMakeFirstDueDiligencyDecision}
       />
       <DueDiligencyDetails
@@ -603,7 +705,12 @@ const Page = () => {
         application={application}
         isOpen={isOpenMakeDecision}
         close={closeMakeDecision}
-        onMakeDecision={() => refetch()}
+        onMakeDecision={() => fetchApplication()}
+      />
+      <GrantCommitteeDetails
+        application={application}
+        close={closeGrantCommitteeDetails}
+        opened={isOpenGrantCommitteeDetails}
       />
       <EvaluationDetails
         opened={isOpenEvaluationDetails}

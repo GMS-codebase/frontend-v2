@@ -10,8 +10,13 @@ const applicantRoutes: Route[] = [
     icon: <Icons.SolarFolderWithFilesBold />,
   },
   {
-    label: "Applicant Contracts",
+    label: "Contracts",
     path: "/applicant/contracts",
+    icon: <Icons.SolarDocumentBold />,
+  },
+  {
+    label: "Minutes",
+    path: "/applicant/minutes",
     icon: <Icons.SolarDocumentBold />,
   },
   {

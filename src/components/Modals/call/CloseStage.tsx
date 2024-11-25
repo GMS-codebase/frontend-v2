@@ -35,6 +35,7 @@ const CloseStageModal = ({
         notifications.show({
           title: "Closed Stage Successfully!",
           message: res.data.message,
+          color: "blue",
         });
         getCalls(dispatch);
         closeModal();
@@ -43,6 +44,7 @@ const CloseStageModal = ({
         notifications.show({
           title: "Failed to close stage!",
           message: err.response.data.message,
+          color: "red",
         });
       })
       .finally(() => {

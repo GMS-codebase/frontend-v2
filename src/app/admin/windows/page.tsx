@@ -52,7 +52,7 @@ const Page = () => {
         <div className="w-full">
           {row.original?.title.length > 25
             ? row.original?.title.slice(0, 25) + "..."
-            : row.original.title}
+            : row.original?.title}
         </div>
       ),
     },

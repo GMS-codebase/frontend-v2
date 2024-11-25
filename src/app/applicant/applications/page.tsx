@@ -11,34 +11,8 @@ import { Menu } from "@mantine/core";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
+import { getApplicationStatus } from "@/utils/funcs";
 const Page = () => {
-  const getApplicationStatus = (application: any) => {
-    if (
-      application?.currentStage === "EVALUATION" &&
-      !application?.call?.closedEvaluation
-    ) {
-      return "EVALUATION IN PROGRESS";
-    } else if (
-      application?.currentStage === "DUE_DILIGENCY" &&
-      !application?.call?.closedDueDiligency
-    ) {
-      return "DUE DILIGENCY IN  PROGRESS";
-    } else if (
-      application?.currentStage === "GRANT_COMMITTEE" &&
-      !application?.call?.closedGrantCommittee
-    ) {
-      return "GRANT COMMITTEE IN PROGRESS";
-    } else if (
-      application?.currentStage === "CONTRACT_SIGNING" &&
-      (!application?.call?.closedGrantCommittee ||
-        !application?.call?.closedDueDiligency ||
-        !application?.call?.closedEvaluation)
-    ) {
-      return "CONTRACT SIGNING IN PROGRESS";
-    } else {
-      return application?.currentStage;
-    }
-  };
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
@@ -51,7 +25,7 @@ const Page = () => {
       accessorKey: "title",
       header: "Call title",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.call.title}</div>
+        <div className="truncate">{row.original.call?.title}</div>
       ),
     },
     {
@@ -65,7 +39,7 @@ const Page = () => {
       accessorKey: "trade",
       header: "Trade",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.trades[0].trade.title}</div>
+        <div className="truncate">{row.original?.trades[0]?.trade?.title}</div>
       ),
     },
     {
@@ -120,7 +94,6 @@ const Page = () => {
   ];
   const myApplications = useSelector((state: any) => state.applications);
   const calls = useSelector((state: any) => state.calls);
-  console.log(myApplications);
 
   return (
     <div className="w-full  flex flex-col gap-4">
@@ -137,16 +110,6 @@ const Page = () => {
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">Latest applications</h2>
           <div className="flex gap-2"></div>
-          {/* <div className="relative w-[25rem]">
-            <span className="absolute top-4 left-2">
-              <CiSearch size={25} />
-            </span>
-            <input
-              name="search"
-              className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
-              placeholder="Search"
-            />
-          </div> */}
         </div>
         <div className="w-full h-full">
           <DataTable

@@ -26,16 +26,25 @@ const Page = () => {
 
   const { id, applicationId } = useParams();
   const [loading, setLoading] = useState<any>();
-  const [currentStep, setCurrentStep] = useState(0);
-  const {
-    applications,
-    myApplications,
-    loading: applicationsLoading,
-  } = useSelector((state: any) => state.applications);
+  const [applicationLoading, setApplicationLoading] = useState(true);
   const [application, setApplication] = useState<any>();
+  const fetchApplication = async () => {
+    setApplicationLoading(true);
+    try {
+      const res = await authorizedApi.get(
+        `/application/get-application/${applicationId}`,
+      );
+      setApplication(res.data.data.data);
+      setApplicationLoading(false);
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        window.history.back();
+      }
+    }
+  };
   useEffect(() => {
-    setApplication(applications.find((ap: any) => ap.uuid == applicationId));
-  }, [applications, applicationId]);
+    fetchApplication();
+  }, [applicationId]);
   const [data, setData] = useState<ApplicationQuestions>({
     title: "",
     activitiesAndOutcomes: "",
@@ -72,7 +81,7 @@ const Page = () => {
     if (application) {
       setData((prevData) => ({
         ...prevData,
-        title: application.projectFunding?.title || prevData.title,
+        title: application.projectFunding?.title || prevData?.title,
         activitiesAndOutcomes:
           application.projectFunding?.activitiesAndOutcomes ||
           prevData.activitiesAndOutcomes,
@@ -99,12 +108,18 @@ const Page = () => {
         staffAttachment:
           application.projectFunding?.staffAttachment ||
           prevData.staffAttachment,
+        trainingManualAttachment:
+          application.projectFunding?.trainingManualAttachment ||
+          prevData.trainingManualAttachment,
         trainingProcess:
           application.projectFunding?.trainingProcess ||
           prevData.trainingProcess,
         trainingEquipment:
           application.projectFunding?.trainingEquipment ||
           prevData.trainingEquipment,
+        trainingEquipmentAttachment:
+          application.projectFunding?.trainingEquipmentAttachment ||
+          prevData.trainingEquipmentAttachment,
         premisesAttachment:
           application.projectFunding?.premisesAttachment ||
           prevData.premisesAttachment,
@@ -158,7 +173,6 @@ const Page = () => {
     });
   };
 
-  const calls = useSelector((state: any) => state.calls);
   const renderComponent = () => {
     switch (currentComponent) {
       case "Project":
@@ -183,18 +197,13 @@ const Page = () => {
     }
   };
 
-  if (applicationsLoading || !application) {
-    console.log(applications);
-    console.log(myApplications);
+  if (applicationLoading) {
     return (
       <div className="w-full h-full flex items-center justify-center">
         <p>Loading...</p>
       </div>
     );
   }
-
-  console.log(applications);
-  console.log(myApplications);
 
   return (
     <div>

@@ -13,10 +13,10 @@ import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { BsPerson } from "react-icons/bs";
 interface FormData {
-  financeInfo: string;
+  financeinfo: string;
   ohs: string;
-  equipmentInfo: string;
-  workPlaceInfo: string;
+  equipmentinfo: string;
+  workplaceinfo: string;
   comment: string;
   decision: string;
   attachment: File | null;
@@ -41,10 +41,10 @@ const MakeFirstDueDiligencyDecision = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    financeInfo: "",
+    financeinfo: "",
     ohs: "",
-    equipmentInfo: "",
-    workPlaceInfo: "",
+    equipmentinfo: "",
+    workplaceinfo: "",
     comment: "",
     decision: "",
     attachment: null,
@@ -83,10 +83,10 @@ const MakeFirstDueDiligencyDecision = ({
 
     try {
       const submitData = new FormData();
-      submitData.append("financeInfo", formData.financeInfo);
+      submitData.append("financeInfo", formData.financeinfo);
       submitData.append("ohsinfo", formData.ohs);
-      submitData.append("equipmentinfo", formData.equipmentInfo);
-      submitData.append("workPlaceInfo", formData.workPlaceInfo);
+      submitData.append("equipmentinfo", formData.equipmentinfo);
+      submitData.append("workPlaceInfo", formData.workplaceinfo);
       submitData.append("traineeNumber", formData.traineeNumber);
       submitData.append("comment", formData.comment);
       submitData.append("decision", formData.decision);
@@ -110,10 +110,10 @@ const MakeFirstDueDiligencyDecision = ({
       });
 
       setFormData({
-        financeInfo: "",
+        financeinfo: "",
         ohs: "",
-        equipmentInfo: "",
-        workPlaceInfo: "",
+        equipmentinfo: "",
+        workplaceinfo: "",
         comment: "",
         decision: "",
         attachment: null,
@@ -240,7 +240,7 @@ const MakeFirstDueDiligencyDecision = ({
                     >
                       Accepted Trainee Number
                     </label>
-                    <div className="flex-grow flex items-center gap-2 p-2 bg-gray2">
+                    <div className="flex-grow flex items-center gap-2 p-2 bg-gray2 rounded-2xl">
                       <BsPerson className="w-5 h-5" />
                       <input
                         type="number"
@@ -256,19 +256,25 @@ const MakeFirstDueDiligencyDecision = ({
               </div>
             )}
 
-            {["financeInfo", "ohs", "equipmentInfo", "workPlaceInfo"].map(
+            {["Finance Info", "OHS", "Equipment Info", "Work Place Info"].map(
               (field, idx) => (
                 <div key={idx} className="py-1 w-full">
                   <label
                     className="block text-sm text-gray-600 capitalize"
                     htmlFor={field}
                   >
-                    {field.replace(/([A-Z])/g, " $1")}:
+                    {field}:
                   </label>
                   <textarea
-                    id={field}
-                    name={field}
-                    value={formData[field as keyof FormData] as string}
+                    id={field.toLowerCase().replace(/\s+/g, "")}
+                    name={field.toLowerCase().replace(/\s+/g, "")}
+                    value={
+                      formData[
+                        field
+                          .toLowerCase()
+                          .replace(/\s+/g, "") as keyof FormData
+                      ] as string
+                    }
                     onChange={handleChange}
                     rows={4}
                     className="mt-1 block w-full p-6 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base"

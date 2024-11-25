@@ -97,7 +97,6 @@ const Page = () => {
   });
 
   const goToBudget = () => {
-    console.log("Switching to Indicative Budget");
     setCurrentComponent("IndicativeBudget");
   };
 
@@ -208,13 +207,13 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Call
               </p>
-              <p>{application?.call.title}</p>
+              <p>{application?.call?.title}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Window
               </p>
-              <p>{application?.window.title}</p>
+              <p>{application?.window?.title}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
@@ -247,7 +246,7 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Applicant name
               </p>
-              <p>{application?.applicant.name}</p>
+              <p>{application?.applicant?.name}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
