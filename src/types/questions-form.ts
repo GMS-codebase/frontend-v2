@@ -18,12 +18,20 @@ export interface Question {
   id: string;
   title: string;
   description: string;
-  type: "text" | "paragraph" | "file" | "table";
+  type:
+    | "text"
+    | "paragraph"
+    | "file"
+    | "table"
+    | "radio"
+    | "checkbox"
+    | "select"
+    | "multiselect";
   required: boolean;
   commentable: boolean;
-  columns?:TableColumn[]
+  columns?: TableColumn[];
+  choices?: string[];
 }
-
 
 export interface TableColumn {
   title: string;

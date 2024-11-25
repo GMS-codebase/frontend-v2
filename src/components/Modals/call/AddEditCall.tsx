@@ -23,6 +23,7 @@ import {
 } from "@/utils/enums";
 import { tradesData } from "@/utils/constants/dummy";
 import { MdPlusOne } from "react-icons/md";
+import { FaPlus } from "react-icons/fa";
 
 const AddEditCall = ({
   isOpenAddEditCall,
@@ -106,7 +107,7 @@ const AddEditCall = ({
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid)
+            Object.keys(selectedSubWindowsForms).includes(subWindow.uuid)
           )
           .flatMap(
             (subWindow: any) =>
@@ -543,8 +544,8 @@ const AddEditCall = ({
                   </div>
                 </div>
 
-                <div className="flex flex-row gap-4 my-2">
-                  <div className="">
+                <div className="flex flex-row gap-4 my-2 items-end">
+                  <div className="flex-grow">
                     <label
                       htmlFor="subWindow"
                       className="block text-xs font-bold text-gray-700"
@@ -560,7 +561,14 @@ const AddEditCall = ({
                         onChange={(value) => {
                           setSelectedSub(value);
                         }}
-                        data={MultiSubWindowData || []}
+                        data={
+                          MultiSubWindowData.filter(
+                            (sub: any) =>
+                              Object.keys(selectedSubWindowsForms).find(
+                                (k) => k == sub.value
+                              ) == null
+                          ) || []
+                        }
                         value={selectedSub}
                         placeholder="Select or type in a sub-window"
                         required
@@ -568,7 +576,7 @@ const AddEditCall = ({
                     </div>
                   </div>
 
-                  <div className="">
+                  <div className="flex-grow">
                     <label
                       htmlFor="form"
                       className="block text-xs font-bold text-gray-700"
@@ -593,7 +601,7 @@ const AddEditCall = ({
                   </div>
 
                   <button
-                    className="bg-primary p-2 rounded-full"
+                    className="bg-primary py-2 px-5  rounded-2xl h-fit text-white"
                     onClick={() => {
                       if (selectedSub && selectedForm) {
                         setSelectedSubWindowsForms((prev: any) => ({
@@ -606,11 +614,11 @@ const AddEditCall = ({
                       }
                     }}
                   >
-                    <MdPlusOne className="w-5 h-5" />
+                    Add
                   </button>
                 </div>
 
-                <div className="mt-4">
+                <div className="my-2">
                   <table className="min-w-full table-auto border-collapse border border-gray-300">
                     <thead>
                       <tr className="bg-gray-100">
@@ -622,8 +630,19 @@ const AddEditCall = ({
                       {Object.entries(selectedSubWindowsForms).map(
                         ([subWindow, form]) => (
                           <tr key={subWindow} className="border-b">
-                            <td className="px-4 py-2">{subWindow}</td>
-                            <td className="px-4 py-2">{form as any}</td>
+                            <td className="px-4 py-2">
+                              {
+                                MultiSubWindowData.find(
+                                  (sub: any) => sub.value == subWindow
+                                )?.label
+                              }
+                            </td>
+                            <td className="px-4 py-2">
+                              {
+                                FormsData.find((fm: any) => fm.value == form)
+                                  ?.label
+                              }
+                            </td>
                           </tr>
                         )
                       )}

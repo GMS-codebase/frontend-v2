@@ -6,7 +6,8 @@ import { FiEdit3 } from "react-icons/fi";
 import FileInput from "../core/FileInput";
 import TableInput from "../core/TableInput";
 import { Question } from "@/types/questions-form";
-
+import RadioInput from "../core/RadioInput";
+import CheckboxInput from "../core/CheckBoxInput";
 
 interface CreateQuestionProps {
   question: Question;
@@ -24,12 +25,14 @@ interface QuestionProps {
   comments?: { [key: string]: any };
   setComments?: (key: string, value: any) => void;
   onChange: (updatedQuestion: Question) => void;
+  deleteQuestion: (questionId: string) => void;
 }
 
 const QuestionComponent: React.FC<QuestionProps> = ({
   mode,
   question,
   editable,
+  deleteQuestion,
   onChange,
   answers,
   setAnswers,
@@ -39,12 +42,12 @@ const QuestionComponent: React.FC<QuestionProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-
   return (
     <div
       ref={containerRef}
-      className={` flex-grow w-full overflow-hidden p-4 bg-white border rounded-lg mb-6 ${isEditing ? "border-l-4 border-l-primary" : ""
-        }`}
+      className={` flex-grow w-full overflow-hidden p-4 bg-white border rounded-lg mb-6 ${
+        isEditing ? "border-l-4 border-l-primary" : ""
+      }`}
     >
       {isEditing ? (
         <CreateQuestion
@@ -62,6 +65,7 @@ const QuestionComponent: React.FC<QuestionProps> = ({
           answers={answers}
           setAnswers={setAnswers}
           comments={comments}
+          deleteQuestion={deleteQuestion}
           setComments={setComments}
         />
       )}
@@ -79,9 +83,9 @@ const CreateQuestion: React.FC<CreateQuestionProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     key: keyof Question
   ) => {
-
     const updatedQuestion = { ...editingQuestion, [key]: e.target.value };
-    if(key === "type" && e.target.value === "table") updatedQuestion.columns = [] 
+    if (key === "type" && e.target.value === "table")
+      updatedQuestion.columns = [];
     setEditingQuestion(updatedQuestion);
   };
   return (
@@ -104,6 +108,8 @@ const CreateQuestion: React.FC<CreateQuestionProps> = ({
           </option>
           <option value="text">Text</option>
           <option value="paragraph">Paragraph</option>
+          <option value="radio">Radio Choices</option>
+          <option value="checkbox">Checkbox Choices</option>
           <option value="file">File</option>
           <option value="table">Table</option>
         </select>
@@ -118,7 +124,10 @@ const CreateQuestion: React.FC<CreateQuestionProps> = ({
         />
       </div>
       <div className="border-t-2 py-3 w-full overflow-x-auto">
-        {renderQuestionType("creating", editingQuestion,{onQuestionChange:(question)=>setEditingQuestion(question),isEditing:true})}
+        {renderQuestionType("creating", editingQuestion, {
+          onQuestionChange: (question) => setEditingQuestion(question),
+          isEditing: true,
+        })}
       </div>
 
       <div className="border-t-2 pt-3 flex justify-end gap-3">
@@ -167,14 +176,14 @@ const CreateQuestion: React.FC<CreateQuestionProps> = ({
 const renderQuestionType = (
   mode: "creating" | "viewing" | "answering" | "commenting",
   question: Question,
-options?:{
-  answers?: { [key: string]: any },
-  setAnswers?: (key: string, value: any) => void,
-  comments?: { [key: string]: any },
-  setComments?: (key: string, value: any) => void,
-  onQuestionChange? : (question:Question)=>void
-  isEditing?:boolean
-}
+  options?: {
+    answers?: { [key: string]: any };
+    setAnswers?: (key: string, value: any) => void;
+    comments?: { [key: string]: any };
+    setComments?: (key: string, value: any) => void;
+    onQuestionChange?: (question: Question) => void;
+    isEditing?: boolean;
+  }
 ) => (
   <>
     {question.type === "text" && (
@@ -194,27 +203,58 @@ options?:{
         disabled={!options?.setAnswers}
       />
     )}
+    {question.type === "radio" && (
+      <RadioInput
+        question={question}
+        mode={mode}
+        value={options?.answers?.[question.id]}
+        onChange={(data) => options?.setAnswers?.(question.id, data)}
+        onQuestionChange={options?.onQuestionChange as any}
+      />
+    )}
+    {question.type === "checkbox" && (
+      <CheckboxInput
+        question={question}
+        mode={mode}
+        value={options?.answers?.[question.id]}
+        onChange={(data) => options?.setAnswers?.(question.id, data)}
+        onQuestionChange={options?.onQuestionChange as any}
+      />
+    )}
     {question.type === "file" && (
-      <FileInput onChange={(answer) => options?.setAnswers?.(question.id, answer)} value={options?.answers?.[question.id]}
+      <FileInput
+        onChange={(answer) => options?.setAnswers?.(question.id, answer)}
+        value={options?.answers?.[question.id]}
         multi={true}
         accept=".pdf"
         disabled={!options?.setAnswers}
       />
     )}
     {question.type === "table" && (
-      <TableInput question={question} mode={mode} value={options?.answers?.[question.id]} onChange={(data)=>options?.setAnswers?.(question.id, data)}  onChangeQuestion={options?.onQuestionChange as any} isEditing={options?.isEditing}/>
+      <TableInput
+        question={question}
+        mode={mode}
+        value={options?.answers?.[question.id]}
+        onChange={(data) => options?.setAnswers?.(question.id, data)}
+        onQuestionChange={options?.onQuestionChange as any}
+        isEditing={options?.isEditing}
+      />
     )}
-    {question.commentable && ( options?.comments || options?.setComments) && (mode === "commenting" || "viewing") && (
-      <div className="my-2">
-        <p>Comment</p>
-        <textarea
-          className="w-full p-3 border rounded-2xl outline-none"
-          value={options?.comments?.[question.id] || ""}
-          onChange={(e) => options?.setComments?.(question.id, e.target.value)}
-          disabled={!options?.setComments}
-        />
-      </div>
-    )}
+    {question.commentable &&
+      (options?.comments || options?.setComments) &&
+      (mode === "commenting" || "viewing") && (
+        <div className="my-2">
+          <p>Comment</p>
+          <textarea
+            className="w-full p-3 border rounded-2xl outline-none"
+            value={options?.comments?.[question.id] || ""}
+            onChange={(e) =>
+              options?.setComments?.(question.id, e.target.value)
+            }
+            disabled={!options?.setComments}
+          />
+        </div>
+      )}
   </>
 );
 
@@ -226,6 +266,7 @@ interface ViewQuestionProps {
   setAnswers?: (key: string, value: any) => void;
   comments?: { [key: string]: any };
   setComments?: (key: string, value: any) => void;
+  deleteQuestion: (questionId: string) => void;
 }
 
 const ViewQuestion: React.FC<ViewQuestionProps> = ({
@@ -236,30 +277,27 @@ const ViewQuestion: React.FC<ViewQuestionProps> = ({
   comments,
   setAnswers,
   setComments,
+  deleteQuestion,
 }) => {
   return (
     <div className="space-y-2">
       <p className="text-gray-900 text-2xl ">{question.title}</p>
       <p className="text-gray-600">{question.description}</p>
       <div className="w-full overflow-x-auto">
-      {renderQuestionType(
-        mode,
-        question,
-{
-  answers,
-  setAnswers,
-  comments,
-  setComments,
-  isEditing:false
-}
-      )}
+        {renderQuestionType(mode === "creating" ? "viewing" : mode, question, {
+          answers,
+          setAnswers,
+          comments,
+          setComments,
+          isEditing: false,
+        })}
       </div>
       {mode === "creating" && (
         <div className="border-t-2 pt-3 flex justify-end gap-3">
           <button onClick={edit} className="">
             <FiEdit3 className="w-6 h-6 font-bold text-xl" />
           </button>
-          <button>
+          <button onClick={() => deleteQuestion(question.id)}>
             <MdOutlineDelete className="w-6 h-6 font-bold text-xl" />
           </button>
         </div>
