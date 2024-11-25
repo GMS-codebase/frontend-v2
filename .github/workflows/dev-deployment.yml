@@ -13,6 +13,8 @@ jobs:
       # Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
+        with: 
+          path: ./dev
 
       # Set environment variables
       - name: Set Environment Variables
