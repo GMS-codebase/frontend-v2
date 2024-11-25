@@ -17,6 +17,7 @@ import AddEditWindow from "@/components/Modals/windows/AddEditWindow";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import AddSubWindowSector from "@/components/Modals/windows/AddSubWindowSector";
 import { getWindows } from "@/utils/funcs";
+import AddSubWindowForm from "@/components/Modals/windows/AddSubWindowForm";
 
 const Page = () => {
   const [
@@ -28,6 +29,10 @@ const Page = () => {
     { open: openAssignSectorSubWindow, close: closeAssignSectorSubWindow },
   ] = useDisclosure(false);
   const [
+    isAssignFormSubWindow,
+    { open: openAssignFormSubWindow, close: closeAssignFormSubWindow },
+  ] = useDisclosure(false);
+  const [
     isDeleteSubWindow,
     { open: openDeleteSubWindow, close: closeDeleteSubWindow },
   ] = useDisclosure(false);
@@ -37,7 +42,7 @@ const Page = () => {
   const { subWindowId: subWindowId } = useParams();
   const [isUpdateWindow, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
-  const windows = useSelector((state: any) => state.windows);
+  const windows = useSelector((state: any) => state.windows); 
   const window = windows.windows?.filter(
     (window: any) => window.uuid === windowId,
   )[0];
@@ -106,6 +111,8 @@ const Page = () => {
     //   ),
     // },
   ];
+
+  console.log(subWindow);
 
   if (windows.loading) {
     return <div className="flex items-center justify-center ">Loading</div>;
@@ -229,6 +236,12 @@ const Page = () => {
           isOpenAddSubWindowSector={isAssignSectorSubWindow}
           closeAddSubWindowSector={() => {
             closeAssignSectorSubWindow();
+          }}
+        />
+        <AddSubWindowForm
+          isOpenAddSubWindowForm={isAssignFormSubWindow}
+          closeAddSubWindowForm={() => {
+            closeAssignFormSubWindow();
           }}
         />
       </div>

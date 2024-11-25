@@ -19,6 +19,7 @@ import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import { useDisclosure } from "@mantine/hooks";
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
+import Form from "@/components/forms/Form";
 import MakeAppealModal from "@/components/Modals/appeal/MakeAppealModal";
 import ViewAppealResultsModal from "@/components/Modals/appeal/ViewAppealResults";
 const Page = () => {
@@ -34,10 +35,19 @@ const Page = () => {
     opened: false,
     stage: "EVALUATION",
   });
-  const [currentComponent, setCurrentComponent] = useState<
-    "Project" | "IndicativeBudget"
-  >("Project");
+  const forms = useSelector((state: any) => state.forms);
   const application = myApplications.find((app: any) => app?.uuid === callId);
+  const form = forms.forms.find((form: any) => {
+    const foundSubWindow = Object.keys(
+      JSON.parse(application?.call.subwindowForms || "{}")
+    ).find((key: string) => key === application?.subWindow.uuid);
+
+    return (
+      form.uuid ===
+      JSON.parse(application?.call.subwindowForms || "{}")[foundSubWindow as any]
+    );
+  });
+
   console.log(application);
   const [
     isOpenEvaluationDetails,
@@ -51,38 +61,7 @@ const Page = () => {
     isOpenDueDiligencyDetails,
     { open: openDueDiligencyDetails, close: closeDueDiligencyDetails },
   ] = useDisclosure(false);
-  const renderComponent = () => {
-    switch (currentComponent) {
-      case "Project":
-        return (
-          <FundingQuestions
-            isApplicant={true}
-            application={application}
-            data={application?.projectFunding}
-            comments={
-              application?.stages?.find(
-                (stage: any) => stage.stage === "EVALUATION",
-              )?.status
-                ? application?.projectFunding
-                : undefined
-            }
-            showComments={false}
-            goToBudget={() => setCurrentComponent("IndicativeBudget")}
-          />
-        );
-      case "IndicativeBudget":
-        return (
-          <BudgetQuestions
-            isApplicant={true}
-            application={application as any}
-            comments={application?.budget}
-            data={application?.budget}
-          />
-        );
-      default:
-        return null;
-    }
-  };
+
   if (calls?.loading && !call) {
     return (
       <div className="w-full h-full flex items-center justify-center text-black">
@@ -120,17 +99,6 @@ const Page = () => {
                 <div>Title</div>
               </div>
               <p className="text-xl font-bold">{application?.call?.title}</p>
-            </div>
-            <div className="flex gap-4 items-center ">
-              <div className="flex gap-2  bg-gray-400 bg-opacity-10 rounded-full px-4  py-2 items-center justify-center font-semibold">
-                <span>
-                  <SolarShieldWarningBold />
-                </span>
-                <div>Appeal Days</div>
-              </div>
-              <div className="text-xl font-bold">
-                {application?.call?.appealDays} Days
-              </div>
             </div>
             <div className="flex gap-4 items-center  ">
               <div className="flex  gap-2  bg-gray-400 rounded-full bg-opacity-10 px-4  py-2 font-semibold items-center justify-center">
@@ -206,32 +174,11 @@ const Page = () => {
           <MinutesNegotiation />
         ))}
       <div className={` w-full  flex gap-6`}>
-        <div className="flex flex-col gap-4 w-full bg-white p-5 rounded-2xl">
-          <div className="font-semibold text-2xl">Questions and answers</div>
-          <div className="flex font-semibold">
-            <div
-              onClick={() => setCurrentComponent("Project")}
-              className={`cursor-pointer w-1/2 transition-all duration-200 ${
-                currentComponent === "Project"
-                  ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
-                  : ""
-              } py-2.5  flex items-center justify-center`}
-            >
-              Project Funding Application
-            </div>
-            <div
-              onClick={() => setCurrentComponent("IndicativeBudget")}
-              className={`cursor-pointer w-1/2 transition-all duration-200  ${
-                currentComponent === "IndicativeBudget"
-                  ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
-                  : ""
-              } py-2.5  flex items-center justify-center`}
-            >
-              Indicative Budget
-            </div>
-          </div>
-          <div className="mt-4 w-full">{renderComponent()}</div>
-        </div>
+        {form && <Form
+          formData={{name:form?.name,qns:JSON.parse(form?.qns || "{}")}}
+          answers={JSON.parse(application.answers)}
+          mode="viewing"
+        />}
         {application?.currentStage === "SUBMITTED" ? (
           <div></div>
         ) : (
@@ -302,14 +249,14 @@ const Page = () => {
             )}
             {application?.call.closedDueDiligency &&
               application.stages.find(
-                (stage: any) => stage.stage === "DUE_DILIGENCY",
+                (stage: any) => stage.stage === "DUE_DILIGENCY"
               )?.status != null && (
                 <div className="flex flex-col gap-2">
                   <h3 className="font-bold">Due Diligence Stage</h3>
                   <div
                     className={`font-medium  ${
                       application?.stages.find(
-                        (stage: any) => stage.stage === "DUE_DILIGENCY",
+                        (stage: any) => stage.stage === "DUE_DILIGENCY"
                       )?.status
                         ? "bg-[#4BC500] text-[#4BC500]"
                         : application?.status === "PENDING"
@@ -368,7 +315,7 @@ const Page = () => {
               )}
             {application?.call.closedGrantCommittee &&
               application?.stages?.find(
-                (stage: any) => stage?.stage === "GRANT_COMMITTEE",
+                (stage: any) => stage?.stage === "GRANT_COMMITTEE"
               )?.status != null && (
                 <div className="flex flex-col gap-2">
                   <h3 className="font-semibold">Grant Committee</h3>
