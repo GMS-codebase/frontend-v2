@@ -192,7 +192,7 @@ const Page = () => {
           />
         </div>
       </div>
-      <Tabs defaultValue="applications">
+      <Tabs defaultValue="contracts">
         <Tabs.List className="w-auto float-end my-6 mr-5">
           <Tabs.Tab value="contracts" className="px-4">
             Contracts Signed
