@@ -22,6 +22,7 @@ import {
   WINDOW_STATUS,
 } from "@/utils/enums";
 import { tradesData } from "@/utils/constants/dummy";
+import { MdPlusOne } from "react-icons/md";
 
 const AddEditCall = ({
   isOpenAddEditCall,
@@ -37,7 +38,10 @@ const AddEditCall = ({
   const [errors, setErrors] = useState<any>();
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
   const [selectedSub, setSelectedSub] = useState<any>();
-  const [selectedFor, setSelectedFor] = useState<any>();
+  const [selectedForm, setSelectedForm] = useState<any>();
+  const [selectedSubWindowsForms, setSelectedSubWindowsForms] = useState<any>(
+    {}
+  );
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
   const dispatch = useDispatch();
@@ -60,8 +64,8 @@ const AddEditCall = ({
       .filter(
         (window: any) =>
           window.subWindows.filter(
-            (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE,
-          ).length !== 0 && window.status === WINDOW_STATUS.ACTIVE,
+            (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE
+          ).length !== 0 && window.status === WINDOW_STATUS.ACTIVE
       )
       ?.map((window: any) => ({
         value: window.uuid,
@@ -79,8 +83,8 @@ const AddEditCall = ({
                 (sub: any) =>
                   sub.status === SUBWINDOW_STATUS.ACTIVE &&
                   sub.sectors.filter(
-                    (sec: any) => sec.status === SECTOR_STATUS.ACTIVE,
-                  ),
+                    (sec: any) => sec.status === SECTOR_STATUS.ACTIVE
+                  )
               )
               .map((subWindow: any) => ({
                 value: subWindow.uuid,
@@ -92,12 +96,17 @@ const AddEditCall = ({
     return subWindowData;
   };
 
+  const FormsData = forms.forms.map((form: any) => ({
+    value: form.uuid,
+    label: form.name,
+  }));
+
   const getSectorData = () => {
     const sectorData = windows?.windows?.flatMap(
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid),
+            selectedSubWindows.includes(subWindow.uuid)
           )
           .flatMap(
             (subWindow: any) =>
@@ -107,10 +116,9 @@ const AddEditCall = ({
                     (s: any) =>
                       s.uuid === sector.uuid &&
                       s.trades.filter(
-                        (trad: any) =>
-                          trad.trade.status === TRADE_STATUS.ACTIVE,
+                        (trad: any) => trad.trade.status === TRADE_STATUS.ACTIVE
                       ).length > 0 &&
-                      sector.status === SECTOR_STATUS.ACTIVE,
+                      sector.status === SECTOR_STATUS.ACTIVE
                   );
                   return matchingSector
                     ? {
@@ -119,8 +127,8 @@ const AddEditCall = ({
                       }
                     : null;
                 })
-                .filter(Boolean) || [],
-          ) || [],
+                .filter(Boolean) || []
+          ) || []
     );
     return sectorData;
   };
@@ -132,7 +140,7 @@ const AddEditCall = ({
       setFormData(defaultData);
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
       setSelectedSubWindows(
-        defaultData.subWindows.map((item: any) => item.uuid),
+        defaultData.subWindows.map((item: any) => item.uuid)
       );
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
     }
@@ -535,29 +543,92 @@ const AddEditCall = ({
                   </div>
                 </div>
 
-                <div className="">
-                  <label
-                    htmlFor="subWindows"
-                    className="block text-xs font-bold text-gray-700"
-                  >
-                    Select sub-windows
-                  </label>
-                  <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                    <span className="absolute left-2 top-3 text-black text-lg">
-                      <SolarSuitcaseLinear />
-                    </span>
-                    <MultiSelect
-                      name="subWindows"
-                      onChange={(value) => {
-                        setSelectedSubWindows(value);
-                        setSelectedSectors([]);
-                      }}
-                      data={MultiSubWindowData || []}
-                      value={selectedSubWindows}
-                      placeholder="Select or type in a sub-window"
-                      required
-                    />
+                <div className="flex flex-row gap-4 my-2">
+                  <div className="">
+                    <label
+                      htmlFor="subWindow"
+                      className="block text-xs font-bold text-gray-700"
+                    >
+                      Select sub-windows
+                    </label>
+                    <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                      <span className="absolute left-2 top-3 text-black text-lg">
+                        <SolarSuitcaseLinear />
+                      </span>
+                      <Select
+                        name="subWindow"
+                        onChange={(value) => {
+                          setSelectedSub(value);
+                        }}
+                        data={MultiSubWindowData || []}
+                        value={selectedSub}
+                        placeholder="Select or type in a sub-window"
+                        required
+                      />
+                    </div>
                   </div>
+
+                  <div className="">
+                    <label
+                      htmlFor="form"
+                      className="block text-xs font-bold text-gray-700"
+                    >
+                      Select form for the sub window
+                    </label>
+                    <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                      <span className="absolute left-2 top-3 text-black text-lg">
+                        <SolarSuitcaseLinear />
+                      </span>
+                      <Select
+                        name="form"
+                        onChange={(value) => {
+                          setSelectedForm(value);
+                        }}
+                        data={FormsData || []}
+                        value={selectedForm}
+                        placeholder="Select or type in a sub-window"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    className="bg-primary p-2 rounded-full"
+                    onClick={() => {
+                      if (selectedSub && selectedForm) {
+                        setSelectedSubWindowsForms((prev: any) => ({
+                          ...prev,
+                          [selectedSub]: selectedForm,
+                        }));
+                        setSelectedForm(null);
+                        setSelectedSub(null);
+                        setSelectedSectors([]);
+                      }
+                    }}
+                  >
+                    <MdPlusOne className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="mt-4">
+                  <table className="min-w-full table-auto border-collapse border border-gray-300">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="px-4 py-2 text-left">Sub-Window</th>
+                        <th className="px-4 py-2 text-left">Form</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(selectedSubWindowsForms).map(
+                        ([subWindow, form]) => (
+                          <tr key={subWindow} className="border-b">
+                            <td className="px-4 py-2">{subWindow}</td>
+                            <td className="px-4 py-2">{form as any}</td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </table>
                 </div>
 
                 <div className="">
