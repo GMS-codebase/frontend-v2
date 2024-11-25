@@ -1,0 +1,49 @@
+name: Deploy Testing
+
+on:
+  push:
+    branches:
+      - test
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set Environment Variables
+      - name: Set Environment Variables
+        run: |
+          echo "Test branch detected"
+          chmod +x ./scripts/create_test_env.sh
+          if [ ! -f ./scripts/create_test_env.sh ]; then
+            echo "Script not found!"; exit 1;
+          fi
+          bash ./scripts/create_test_env.sh
+          echo "FRONTEND_DIR=frontend-v2-testing" >> $GITHUB_ENV
+
+      # Verify Current Directory
+      - name: Verify Current Directory
+        run: |
+          echo "Current Directory: $(pwd)"
+          ls -la
+
+      # Verify Git Status
+      - name: Verify Git Status
+        run: |
+          git status
+
+      # Install dependencies and build the application
+      - name: Install dependencies and build the application
+        run: |
+          npm install --force
+          npm run build
+          
+      # Start the application using pm2
+      - name: Start the application using pm2
+        run: |
+          pm2 restart gms-testing || pm2 start npm --name "gms-testing" -- start
+          pm2 save

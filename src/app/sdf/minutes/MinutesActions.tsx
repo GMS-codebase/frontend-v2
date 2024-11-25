@@ -15,7 +15,7 @@ const MinutesActions = ({
   setIsMinute,
   data,
   status,
-  minute
+  minute,
 }: {
   setIsMinute: (employee: any) => void;
   data: any;
@@ -24,11 +24,13 @@ const MinutesActions = ({
 }) => {
   const [isOpenAddMinute, { open: openMinute, close: closeMinute }] =
     useDisclosure(false);
-  const [type, setType] = useState<"signed" | "unsigned" | "updated" | "negotiated">(
-    "unsigned",
-  );
-  const [isOpenRejectionReason, { open: openRejectionReason, close: closeRejectionReason }] =
-    useDisclosure(false);
+  const [type, setType] = useState<
+    "signed" | "unsigned" | "updated" | "negotiated"
+  >("unsigned");
+  const [
+    isOpenRejectionReason,
+    { open: openRejectionReason, close: closeRejectionReason },
+  ] = useDisclosure(false);
   return (
     <div>
       <Menu shadow="lg" width={300}>
@@ -128,7 +130,7 @@ const MinutesActions = ({
               onClick={() => {
                 openRejectionReason();
                 setIsMinute(data);
-              }}  
+              }}
               className="w-full py-1 text-[#576074]"
             >
               <div className="flex items-center gap-3 py-1">
@@ -140,32 +142,31 @@ const MinutesActions = ({
 
           {status === "negotiated" && (
             <>
-            <Menu.Item
-              onClick={() => {
-                openRejectionReason();
-                setIsMinute(data);
-              }}  
-              className="w-full py-1 text-[#576074]"
-            >
-              <div className="flex items-center gap-3 py-1">
-                <VscEye size={21} />
-                <span>View reason and respond</span>
-              </div>
-            </Menu.Item>
-            <Menu.Item
+              <Menu.Item
+                onClick={() => {
+                  openRejectionReason();
+                  setIsMinute(data);
+                }}
+                className="w-full py-1 text-[#576074]"
+              >
+                <div className="flex items-center gap-3 py-1">
+                  <VscEye size={21} />
+                  <span>View reason and respond</span>
+                </div>
+              </Menu.Item>
+              <Menu.Item
                 onClick={() => {
                   openMinute();
                   setType("negotiated");
-                }}  
-              className="w-full py-1 text-[#576074]"
-            >
-              <div className="flex items-center gap-3 py-1">
-                <VscEye size={21} />
-                <span>Upload another contract negotiation</span>
-              </div>
-            </Menu.Item>
+                }}
+                className="w-full py-1 text-[#576074]"
+              >
+                <div className="flex items-center gap-3 py-1">
+                  <VscEye size={21} />
+                  <span>Upload another contract negotiation</span>
+                </div>
+              </Menu.Item>
             </>
-            
           )}
         </Menu.Dropdown>
       </Menu>
@@ -180,7 +181,7 @@ const MinutesActions = ({
         onClose={closeRejectionReason}
         minute={data}
         type={status}
-      />  
+      />
     </div>
   );
 };

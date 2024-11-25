@@ -21,9 +21,8 @@ const Page = () => {
     (state: any) => state.minutes,
   );
 
-  const { applicationsForContractSigning, loading: loadingApplications } = useSelector(
-    (state: any) => state.applications,
-  );
+  const { applicationsForContractSigning, loading: loadingApplications } =
+    useSelector((state: any) => state.applications);
 
   const [uploadedMinutes, setUploadedMinutes] = useState<any[]>([]);
   const [readyForMinutesNegotiation, SetReadyForMinutesNegotiation] = useState<
@@ -105,7 +104,9 @@ const Page = () => {
       accessorKey: "approval_status",
       header: "Minute Approval Status",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.minutesStatus?.toUpperCase()}</div>
+        <div className="w-full">
+          {row.original?.minutesStatus?.toUpperCase()}
+        </div>
       ),
     },
     {
@@ -116,7 +117,9 @@ const Page = () => {
           data={row.original}
           setIsMinute={setIsMinute}
           status="uploaded"
-          minute={applicationsForContractSigning.find((app: any) => app?.application?.uuid === row.original?.uuid)}
+          minute={applicationsForContractSigning.find(
+            (app: any) => app?.application?.uuid === row.original?.uuid,
+          )}
         />
       ),
     },
@@ -146,7 +149,11 @@ const Page = () => {
     {
       accessorKey: "approval_status",
       header: "Minute Approval Status",
-      cell: ({ row }) => <div className="w-full">{row.original?.minutesStatus?.toUpperCase()}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">
+          {row.original?.minutesStatus?.toUpperCase()}
+        </div>
+      ),
     },
     {
       accessorKey: "actions",
@@ -156,7 +163,9 @@ const Page = () => {
           data={row.original}
           setIsMinute={setIsMinute}
           status="approved"
-          minute={applicationsForContractSigning.find((app: any) => app?.application?.uuid === row.original?.uuid)}
+          minute={applicationsForContractSigning.find(
+            (app: any) => app?.application?.uuid === row.original?.uuid,
+          )}
         />
       ),
     },
@@ -187,7 +196,9 @@ const Page = () => {
       accessorKey: "approval_status",
       header: "Minute Approval Status",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.minutesStatus?.toUpperCase()}</div>
+        <div className="w-full">
+          {row.original?.minutesStatus?.toUpperCase()}
+        </div>
       ),
     },
     {
@@ -198,8 +209,9 @@ const Page = () => {
           data={row.original}
           setIsMinute={setIsMinute}
           status="rejected"
-          minute={applicationsForContractSigning.find((app: any) => app?.application?.uuid === row.original?.uuid)}
-
+          minute={applicationsForContractSigning.find(
+            (app: any) => app?.application?.uuid === row.original?.uuid,
+          )}
         />
       ),
     },
@@ -231,7 +243,9 @@ const Page = () => {
       accessorKey: "approval_status",
       header: "Minute Approval Status",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.minutesStatus?.toUpperCase()}</div>
+        <div className="w-full">
+          {row.original?.minutesStatus?.toUpperCase()}
+        </div>
       ),
     },
     {
@@ -242,7 +256,9 @@ const Page = () => {
           data={row.original}
           setIsMinute={setIsMinute}
           status="negotiated"
-          minute={applicationsForContractSigning.find((app: any) => app?.application?.uuid === row.original?.uuid)}
+          minute={applicationsForContractSigning.find(
+            (app: any) => app?.application?.uuid === row.original?.uuid,
+          )}
         />
       ),
     },
@@ -285,8 +301,9 @@ const Page = () => {
           data={row.original}
           setIsMinute={setIsMinute}
           status="ready"
-          minute={applicationsForContractSigning.find((app: any) => app?.application?.uuid === row.original?.uuid)}
-
+          minute={applicationsForContractSigning.find(
+            (app: any) => app?.application?.uuid === row.original?.uuid,
+          )}
         />
       ),
     },
@@ -350,15 +367,11 @@ const Page = () => {
 
       <Tabs defaultValue="applications">
         <Tabs.List className="w-auto my-2 ml-5 float-end">
-          <Tabs.Tab value="applications">
-            Ready
-          </Tabs.Tab>
+          <Tabs.Tab value="applications">Ready</Tabs.Tab>
           <Tabs.Tab value="minutes">Uploaded</Tabs.Tab>
           <Tabs.Tab value="approved">Approved</Tabs.Tab>
           <Tabs.Tab value="rejected">Rejected</Tabs.Tab>
-          <Tabs.Tab value="negotiated">
-            Negotiated
-          </Tabs.Tab> 
+          <Tabs.Tab value="negotiated">Negotiated</Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="applications">
