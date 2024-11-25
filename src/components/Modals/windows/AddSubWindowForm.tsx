@@ -1,4 +1,4 @@
-import { Modal, Select, MultiSelect } from "@mantine/core";
+import { Modal, Select } from "@mantine/core";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { SolarSuitcaseLinear, SolarWindowFrameLinear } from "../../core/icons";
@@ -6,37 +6,39 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "next/navigation";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
+import { getForms, getWindows } from "@/utils/funcs";
 import {
   ADD_TRADE_SECTOR_SUCCESS,
   UPDATE_SECTOR_SUCCESS,
 } from "@/actions/SectorsActions";
 
-const AddSectorTrade = ({
-  isOpenAddSectorTrade,
-  closeAddSectorTrade,
+const AddSubWindowForm = ({
+  isOpenAddSubWindowForm,
+  closeAddSubWindowForm,
 }: {
-  isOpenAddSectorTrade: boolean;
-  closeAddSectorTrade: () => void;
+  isOpenAddSubWindowForm: boolean;
+  closeAddSubWindowForm: () => void;
 }) => {
-  const { id } = useParams<{ id: string }>();
+  const { subWindowId } = useParams<{ subWindowId: string }>();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    trade: "",
+    form: "",
   });
   const [errors, setErrors] = useState({
-    trade: "",
+    form: "",
   });
-  const trades = useSelector((state: any) => state.trades);
+
+  const forms = useSelector((state: any) => state.forms);
   const dispatch = useDispatch();
 
-  const tradeOptions = trades.trades.map((trade: any) => ({
-    value: trade.uuid,
-    label: trade.title,
+  const formOptions = forms.forms.map((form: any) => ({
+    value: form.uuid,
+    label: form?.name,
   }));
 
   const validateForm = () => {
     const newErrors: any = {};
-    if (!formData.trade) newErrors.trade = "Trade is required";
+    if (!formData.form) newErrors.form = "Form is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -57,28 +59,24 @@ const AddSectorTrade = ({
     if (!validateForm()) return;
     setLoading(true);
     try {
-      await authorizedApi.put(`/Sectors/${id}/assign-trade`, {
-        tradeId: formData.trade,
-      });
-      // dispatch({
-      //   type: ADD_TRADE_SECTOR_SUCCESS,
-      //   payload: {
-      //     sectorId: id,
-      //     trade: trades.trades.find((tr: any) => tr.uuid === tradeId),
-      //   },
-      // });
+      await authorizedApi.patch(
+        `/forms/link-with-subWindow/${formData.form}/${subWindowId}`,
+        {
+          formId: formData.form,
+        }
+      );
       notifications.show({
-        message:
-          "Trade assigned to sector for all selected windows successfully!",
+        message: "Form assigned to subwindow successfully!",
         color: "blue",
       });
       setFormData({
-        trade: "",
+        form: "",
       });
-      closeAddSectorTrade();
+      getForms(dispatch);
+      closeAddSubWindowForm();
     } catch (error: any) {
       notifications.show({
-        message: error.response?.data?.message ?? "Failed to assign trade!",
+        message: error.response?.data?.message ?? "Failed to assign form!",
         color: "red",
       });
     } finally {
@@ -89,22 +87,22 @@ const AddSectorTrade = ({
   return (
     <Modal
       size={""}
-      opened={isOpenAddSectorTrade}
-      onClose={closeAddSectorTrade}
+      opened={isOpenAddSubWindowForm}
+      onClose={closeAddSubWindowForm}
       closeOnClickOutside={false}
       withCloseButton={false}
     >
       <div className="w-[45vw] max-h-[90vh] overflow-y-auto relative bg-white rounded-3xl flex flex-col items-center p-16">
         <button
           className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
-          onClick={closeAddSectorTrade}
+          onClick={closeAddSubWindowForm}
         >
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="w-full flex flex-col items-center">
-          <h1 className="text-2xl font-extrabold">Add Trade To Sector</h1>
+          <h1 className="text-2xl font-extrabold">Add Form To Sub Window</h1>
           <h2 className="text-[#000F2369] text-lg font-medium">
-            Provide the sector and window details to add a new trade.
+            Attach a form to subwindow
           </h2>
         </div>
         <div className="w-full flex flex-col items-center mt-10 overflow-hidden">
@@ -114,33 +112,33 @@ const AddSectorTrade = ({
           >
             <div className="w-full">
               <label
-                htmlFor="trade"
+                htmlFor="form"
                 className="block text-base font-medium text-black"
               >
-                Select Trade
+                Select Form
               </label>
               <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <span className="absolute left-2 top-3 text-black text-lg">
                   <SolarSuitcaseLinear />
                 </span>
                 <Select
-                  name="trade"
-                  value={formData.trade}
-                  onChange={(value: any) => handleChange("trade", value)}
-                  data={tradeOptions}
-                  placeholder="Type in or select trade"
+                  name="form"
+                  value={formData.form}
+                  onChange={(value: any) => handleChange("form", value)}
+                  data={formOptions}
+                  placeholder="Type in or select form"
                   required
                 />
               </div>
-              {errors.trade && (
-                <div className="text-red-600 text-sm mt-1">{errors.trade}</div>
+              {errors.form && (
+                <div className="text-red-600 text-sm mt-1">{errors.form}</div>
               )}
             </div>
 
             <div className="w-full flex justify-center mt-4 space-x-4">
               <button
                 type="button"
-                onClick={closeAddSectorTrade}
+                onClick={closeAddSubWindowForm}
                 className="w-full px-4 py-3 bg-black text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 Cancel
@@ -162,4 +160,4 @@ const AddSectorTrade = ({
   );
 };
 
-export default AddSectorTrade;
+export default AddSubWindowForm;

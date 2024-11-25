@@ -94,6 +94,7 @@ const Page = () => {
     }
   };
 
+
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
@@ -211,15 +212,6 @@ const Page = () => {
                   <div>Title</div>
                 </div>
                 <p className="text-xl font-bold">{call?.title}</p>
-              </div>
-              <div className="flex gap-4 items-center ">
-                <div className="flex gap-2  bg-gray-400 bg-opacity-10 rounded-full px-4  py-2 items-center justify-center font-semibold">
-                  <span>
-                    <SolarShieldWarningBold />
-                  </span>
-                  <div>Appeal Days</div>
-                </div>
-                <div className="text-xl font-bold">{call?.appealDays} Days</div>
               </div>
               <div className="flex gap-4 items-center  ">
                 <div className="flex  gap-2  bg-gray-400 rounded-full bg-opacity-10 px-4  py-2 font-semibold items-center justify-center">

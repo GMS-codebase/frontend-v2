@@ -14,6 +14,11 @@ const sdfRoutes: Route[] = [
     icon: <Icons.SolarFolderWithFilesBold />,
   },
   {
+    label: "Appeals",
+    path: "/sdf/appeals",
+    icon: <Icons.SolarDocumentTextBroken />,
+  },
+  {
     label: "Applicants",
     path: "/sdf/applicants",
     icon: <Icons.SolarFileBold />,
