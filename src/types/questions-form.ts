@@ -9,15 +9,24 @@ export interface QuestionForm {
 }
 
 export interface Form {
+  uuid?: string;
   name: string;
-  qns: string;
+  qns: any;
 }
 
 export interface Question {
   id: string;
   title: string;
-  subtitle: string;
+  description: string;
   type: "text" | "paragraph" | "file" | "table";
   required: boolean;
   commentable: boolean;
+  columns?:TableColumn[]
+}
+
+
+export interface TableColumn {
+  title: string;
+  type: "text" | "number" | "select";
+  options?: string[];
 }

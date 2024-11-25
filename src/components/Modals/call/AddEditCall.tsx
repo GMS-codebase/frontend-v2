@@ -36,7 +36,8 @@ const AddEditCall = ({
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<any>();
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
-  const [selectedForm, setSelectedForm] = useState<any>("");
+  const [selectedSub, setSelectedSub] = useState<any>();
+  const [selectedFor, setSelectedFor] = useState<any>();
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
   const dispatch = useDispatch();
@@ -67,10 +68,6 @@ const AddEditCall = ({
         label: window.title,
       })) ?? [];
 
-  const FormsData = forms.forms.map((form: any) => ({
-    label: form.name,
-    value: form.uuid,
-  }));
   const getSubWindowsData = () => {
     const subWindowData =
       windows?.windows
@@ -136,7 +133,6 @@ const AddEditCall = ({
       setSelectedSubWindows(
         defaultData.subWindows.map((item: any) => item.uuid)
       );
-      setSelectedForm(defaultData.form as any);
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
     }
   }, [defaultData]);
@@ -167,7 +163,6 @@ const AddEditCall = ({
     submitData.append("applicationStartDate", formData?.startDate as any);
     submitData.append("applicationEndDate", formData?.endDate as any);
     submitData.append("window", JSON.stringify(selectedWindows));
-    submitData.append("form", selectedForm);
     submitData.append("sector", JSON.stringify(selectedSectors));
     submitData.append("subWindows", JSON.stringify(selectedSubWindows));
     if (formData?.attachment) {
@@ -581,29 +576,6 @@ const AddEditCall = ({
                       data={MultiSectorData || []}
                       value={selectedSectors}
                       placeholder="Select or type in a sector"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="">
-                  <label
-                    htmlFor="windows"
-                    className="block text-xs font-bold text-gray-700"
-                  >
-                    Select Questions
-                  </label>
-                  <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                    <span className="absolute left-2 top-3 text-black text-lg">
-                      <SolarSuitcaseLinear />
-                    </span>
-                    <Select
-                      name="questions"
-                      onChange={(value) => {
-                        setSelectedForm(value);
-                      }}
-                      data={FormsData || []}
-                      value={selectedForm}
-                      placeholder="Select or type in a given form of questions"
                       required
                     />
                   </div>

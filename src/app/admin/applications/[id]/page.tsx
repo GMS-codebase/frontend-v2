@@ -1,35 +1,22 @@
 "use client";
-import React, { useState } from "react";
-import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
+import React, { useEffect, useState } from "react";
 import {
-  SolarFileBold,
-  SolarFolder2Bold,
-  SolarEyeLinear,
   SolarPen2Bold,
 } from "@/components/core/icons";
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
-import { Comments } from "@/types";
-import FundingQuestions from "@/components/Application/FundingQuestions";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import MakeEvaluationDecision from "@/components/Modals/MakeDecision";
-import EditEvalModal from "@/components/Modals/EditEvalModal";
 import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import { useDisclosure } from "@mantine/hooks";
-import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
-import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
 import { handleDownloadFile } from "@/utils/funcs";
+import Form from "@/components/forms/Form";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
-  const applications = useSelector((state: any) => state.applications);
-  const profile = useSelector((state: any) => state.auth);
-  const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id,
-  )[0];
+  const forms = useSelector((state: any) => state.forms);
 
   const [isOpenAddDue, setIsOpenAddDue] = useState(false);
   const openAddDue = () => setIsOpenAddDue(true);
@@ -50,84 +37,41 @@ const Page = () => {
     },
   ] = useDisclosure(false);
 
-  const [currentComponent, setCurrentComponent] = useState<
-    "Project" | "IndicativeBudget"
-  >("Project");
-  const [commentsData, setCommentsData] = useState<Comments>({
-    titleComment: application?.projectFunding?.titleComment || "",
-    activitiesComment: application?.projectFunding?.activitiesComment || "",
-    readinessExecuteComment:
-      application?.projectFunding?.readinessExecuteComment || "",
-    roleComment: application?.projectFunding?.roleComment || "",
-    institutionComment: application?.projectFunding?.institutionComment || "",
-    trainingManualComment:
-      application?.projectFunding?.trainingManualComment || "",
-    trainingEquipmentComment:
-      application?.projectFunding?.trainingEquipmentComment || "",
-    identificationEmployeeComment:
-      application?.projectFunding?.identificationEmployeeComment || "",
-    staffComment: application?.projectFunding?.staffComment || "",
-    sustainabilityComment:
-      application?.projectFunding?.sustainabilityComment || "",
-    previousFinancialReportComment:
-      application?.projectFunding?.previousFinancialReportComment || "",
-    trainingPremisesComment:
-      application?.projectFunding?.trainingPremisesComment || "",
-    contributionFromApplicantComment:
-      application?.projectFunding?.contributionFromApplicantComment || "",
-    recruitmentTrainerComment:
-      application?.projectFunding?.recruitmentTrainerComment || "",
-    MOUsAttachmentComment:
-      application?.projectFunding?.MOUsAttachmentComment || "",
-    premisesAttachmentComment:
-      application?.projectFunding?.premisesAttachmentComment || "",
-    identificationMemberComment:
-      application?.projectFunding?.identificationMemberComment || "",
-    assessmentEquipmentComment:
-      application?.projectFunding?.assessmentEquipmentComment || "",
-    recruitmentCandidatesNumberComment:
-      application?.projectFunding?.recruitmentCandidatesNumberComment || "",
-    assessorsAndFacilitatorsComment:
-      application?.projectFunding?.assessorsAndFacilitatorsComment || "",
-    budgetSummaryAttachmentComment:
-      application?.projectFunding?.budgetSummaryAttachmentComment || "",
-    contributionComment: application?.projectFunding?.contributionComment || "",
-    assessmentComment: application?.projectFunding?.assessmentComment || "",
-    budgetLinesComment: application?.budget?.budgetLinesComment,
+  const [downloading, setDownloading] = useState(false);
+  const [applicationLoading, setApplicationLoading] = useState(true);
+  const [application, setApplication] = useState<any>();
+  const form = forms.forms.find((form: any) => {
+    const foundSubWindow = form?.subWindows?.find((subW: any) => {
+      const isMatch = subW?.uuid === application?.subWindow?.uuid;
+      return isMatch;
+    });
+    return foundSubWindow != null;
   });
 
-  const goToBudget = () => {
-    setCurrentComponent("IndicativeBudget");
-  };
 
-  const renderComponent = () => {
-    switch (currentComponent) {
-      case "Project":
-        return (
-          <FundingQuestions
-            data={application?.projectFunding}
-            setComments={setCommentsData}
-            comments={commentsData}
-            goToBudget={goToBudget}
-            // showComments={application?.currentStage !== "SUBMITTED"}
-          />
-        );
-      case "IndicativeBudget":
-        return (
-          <BudgetQuestions
-            application={application}
-            data={application?.budget}
-            comments={commentsData}
-            setComments={setCommentsData}
-            // showComments={application?.currentStage !== "SUBMITTED"}
-          />
-        );
-      default:
-        return null;
+  const fetchApplication = async () => {
+    setApplicationLoading(true);
+    try {
+      const res = await authorizedApi.get(`/application/get-application/${id}`);
+      setApplication(res.data.data.data);
+      setApplicationLoading(false);
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        window.history.back();
+      }
     }
   };
+  useEffect(() => {
+    fetchApplication();
+  }, [id]);
 
-  const [downloading, setDownloading] = useState(false);
+  if (applicationLoading) {
+    return (
+      <div className="h-full w-full flex items-center justify-center text-sm">
+        Loading ...
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
@@ -143,7 +87,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid}`,
                   {
                     responseType: "blob",
-                  },
+                  }
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -268,7 +212,7 @@ const Page = () => {
               onClick={() =>
                 handleDownloadFile(
                   application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates",
+                  "business_certificates"
                 )
               }
             >
@@ -299,32 +243,12 @@ const Page = () => {
         <div
           className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"}  gap-4 p-5`}
         >
-          <div className="flex flex-col gap-4 w-full">
-            <div className="font-semibold text-2xl">Questions and answers</div>
-            <div className="flex font-semibold">
-              <div
-                onClick={() => setCurrentComponent("Project")}
-                className={`cursor-pointer w-1/2 ${
-                  currentComponent === "Project"
-                    ? "bg-[#005DE9] bg-opacity-10"
-                    : ""
-                } h-16 flex items-center justify-center`}
-              >
-                Project Funding Application
-              </div>
-              <div
-                onClick={() => setCurrentComponent("IndicativeBudget")}
-                className={`cursor-pointer w-1/2 ${
-                  currentComponent === "IndicativeBudget"
-                    ? "bg-[#C50000] bg-opacity-10"
-                    : ""
-                } h-16 flex items-center justify-center`}
-              >
-                Indicative Budget
-              </div>
-            </div>
-            <div className="mt-4 w-full">{renderComponent()}</div>
-          </div>
+          {form && <Form
+            mode={"viewing"}
+            answers={JSON.parse(application.answers)}
+            comments={JSON.parse(application.comments)}
+            formData={{name:form?.name,qns:JSON.parse(form?.qns || "{}")}}
+          />}
         </div>
 
         {application?.currentStage === "SUBMITTED" ? (
@@ -419,7 +343,7 @@ const Page = () => {
                 (decision: any, index: any) => ({
                   evaluator: application.evaluators[index],
                   evaluationDecision: decision,
-                }),
+                })
               )
             : []
         }
