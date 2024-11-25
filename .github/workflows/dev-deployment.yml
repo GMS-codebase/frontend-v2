@@ -25,6 +25,7 @@ jobs:
             echo "create_dev_env.sh script not found! Exiting."; exit 1;
           fi
           bash ./dev/scripts/create_dev_env.sh
+          cd dev
           echo "FRONTEND_DIR=frontend-v2/dev" >> $GITHUB_ENV
           echo "PORT=5600" >> $GITHUB_ENV
 
