@@ -31,7 +31,7 @@ jobs:
             echo "Script not found! Exiting."; exit 1;
           fi
           bash ./staging/scripts/create_staging_env.sh
-          echo "FRONTEND_DIR=frontend-v2-staging" >> $GITHUB_ENV
+          echo "FRONTEND_DIR=frontend-v2/staging" >> $GITHUB_ENV
           echo "PORT=5800" >> $GITHUB_ENV
 
       # Verify Git Status
