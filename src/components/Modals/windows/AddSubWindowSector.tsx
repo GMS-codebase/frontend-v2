@@ -7,7 +7,6 @@ import { useParams } from "next/navigation";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { getWindows } from "@/utils/funcs";
-import { getWindows } from "@/utils/funcs";
 import {
   ADD_TRADE_SECTOR_SUCCESS,
   UPDATE_SECTOR_SUCCESS,
@@ -20,7 +19,7 @@ const AddSubWindowSector = ({
   isOpenAddSubWindowSector: boolean;
   closeAddSubWindowSector: () => void;
 }) => {
-  const { id } = useParams<{ id: string }>();
+  const { subWindowId } = useParams<{ subWindowId: string }>();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     sector: [] as string[],
@@ -32,10 +31,6 @@ const AddSubWindowSector = ({
   const sectors = useSelector((state: any) => state.sectors);
   const dispatch = useDispatch();
 
-  const sectorOptions = sectors.sectors.map((sector: any) => ({
-    value: sector.uuid,
-    label: sector.name,
-  }));
   const sectorOptions = sectors.sectors.map((sector: any) => ({
     value: sector.uuid,
     label: sector.name,
@@ -65,13 +60,13 @@ const AddSubWindowSector = ({
     if (!validateForm()) return;
     setLoading(true);
     try {
-      await authorizedApi.put(`/subwindow/${id}/assign-sector`, {
+      await authorizedApi.put(`/subwindow/${subWindowId}/assign-sector`, {
         sectorId: formData.sector,
       });
       // dispatch({
       //   type: ADD_TRADE_SECTOR_SUCCESS,
       //   payload: {
-      //     sectorId: id,
+      //     sectorId: subWindowId,
       //     sector: sectors.sectors.find((tr: any) => tr.uuid === sectorId),
       //   },
       // });
