@@ -20,11 +20,12 @@ jobs:
       - name: Set Environment Variables
         run: |
           echo "Main branch detected"
-          chmod +x ./dev/scripts/create_dev_env.sh
-          if [ ! -f ./dev/scripts/create_dev_env.sh ]; then
+          cd dev
+          chmod +x ./scripts/create_dev_env.sh
+          if [ ! -f ./scripts/create_dev_env.sh ]; then
             echo "create_dev_env.sh script not found! Exiting."; exit 1;
           fi
-          bash ./dev/scripts/create_dev_env.sh
+          bash ./scripts/create_dev_env.sh
           echo "FRONTEND_DIR=frontend-v2/dev" >> $GITHUB_ENV
           echo "PORT=5600" >> $GITHUB_ENV
 
