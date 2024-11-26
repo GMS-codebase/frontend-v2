@@ -97,16 +97,16 @@ const Page = () => {
           <div className="flex justify-between px-10">
             <div className="text-xl font-bold">Contract Details</div>
             <div className="flex gap-2">
-            <button
-              onClick={openViewPDF}
-              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
-            >
+              <button
+                onClick={openViewPDF}
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
+              >
                 <div>View Contract Attachment</div>
               </button>
               <button
-              onClick={openViewPDF}
-              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
-            >
+                onClick={openViewPDF}
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
+              >
                 <div>View Minutes Attachment</div>
               </button>
             </div>

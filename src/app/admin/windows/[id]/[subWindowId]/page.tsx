@@ -37,7 +37,7 @@ const Page = () => {
   const { subWindowId: subWindowId } = useParams();
   const [isUpdateWindow, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
-  const windows = useSelector((state: any) => state.windows);
+  const windows = useSelector((state: any) => state.windows); 
   const window = windows.windows?.filter(
     (window: any) => window.uuid === windowId
   )[0];
@@ -177,12 +177,14 @@ const Page = () => {
 
                 <button
                   onClick={openAssignSectorSubWindow}
+                  onClick={openAssignSectorSubWindow}
                   className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
                 >
                   <span className="text-2xl">
                     <SolarAddFolderBold />
                   </span>
                   <h1 className="text-base font-medium text-white">
+                    Assign Sector To SubWindow
                     Assign Sector To SubWindow
                   </h1>
                 </button>
