@@ -27,8 +27,8 @@ jobs:
         run: |
           cd test
           echo "Test branch detected"
-          chmod +x ./scripts/create_test_env.sh
-          if [ ! -f ./scripts/create_test_env.sh ]; then
+          chmod +x ./test/scripts/create_test_env.sh
+          if [ ! -f ./test/scripts/create_test_env.sh ]; then
             echo "Script not found! Exiting."; exit 1;
           fi
           bash ./test/scripts/create_test_env.sh
