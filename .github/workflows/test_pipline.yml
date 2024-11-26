@@ -16,12 +16,6 @@ jobs:
         with:
           path: test
 
-      # Verify Current Directory
-      - name: Verify Current Directory
-        run: |
-          echo "Current Directory: $(pwd)"
-          ls -la ./test
-
       # Set Environment Variables
       - name: Set Environment Variables
         run: |
@@ -34,6 +28,12 @@ jobs:
           bash ./test/scripts/create_test_env.sh
           echo "FRONTEND_DIR=frontend-v2/testing" >> $GITHUB_ENV
           echo "PORT=5700" >> $GITHUB_ENV
+          
+      # Verify Current Directory
+      - name: Verify Current Directory
+        run: |
+          echo "Current Directory: $(pwd)"
+          ls -la ./test
 
       # Verify Git Status
       - name: Verify Git Status
