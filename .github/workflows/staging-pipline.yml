@@ -14,24 +14,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with: 
-          path: ./staging
+          path: /staging
+
+      # Set Environment Variables
+      - name: Set Environment Variables
+        run: |
+          echo "Staging branch detected"
+          chmod +x ./scripts/create_staging_env.sh
+          if [ ! -f ./scripts/create_staging_env.sh ]; then
+            echo "Script not found!"; exit 1;
+          fi
+          bash ./scripts/create_staging_env.sh
+          echo "FRONTEND_DIR=frontend-v2-staging" >> $GITHUB_ENV
 
       # Verify Current Directory
       - name: Verify Current Directory
         run: |
           echo "Current Directory: $(pwd)"
           ls -la
-      
-      # Set Environment Variables
-      - name: Set Environment Variables
-        run: |
-          echo "Staging branch detected"
-          chmod +x ./staging/scripts/create_staging_env.sh
-          if [ ! -f ./staging/scripts/create_staging_env.sh ]; then
-            echo "Script not found!"; exit 1;
-          fi
-          bash ./staging/scripts/create_staging_env.sh
-          echo "FRONTEND_DIR=frontend-v2-staging" >> $GITHUB_ENV
 
       # Verify Git Status
       - name: Verify Git Status
@@ -47,5 +47,5 @@ jobs:
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-          pm2 restart gms-frontend || pm2 start npm --name "gms-frontend" -- start --env .env.local
+          pm2 restart gms-frontend
           pm2 save
