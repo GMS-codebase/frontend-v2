@@ -1,5 +1,6 @@
 import { Question } from "@/types/questions-form";
 import { authorizedApi } from "@/utils/api";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
 import React, { useState } from "react";
 import { FaDownload } from "react-icons/fa";
 
@@ -11,8 +12,6 @@ type FileInputProps = {
   disabled?: boolean;
   mode?: "creating" | "viewing" | "answering" | "commenting";
   answers?: string;
-  handleViewFile?: (url: string, type: string) => void;
-  handleDownloadFile?: (url: string, type: string) => void;
 };
 
 const FileInput: React.FC<FileInputProps> = ({
@@ -23,10 +22,7 @@ const FileInput: React.FC<FileInputProps> = ({
   disabled = false,
   mode = "creating",
   answers,
-  handleViewFile,
-  handleDownloadFile,
 }) => {
-  console.log(value);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -38,6 +34,13 @@ const FileInput: React.FC<FileInputProps> = ({
 
     setIsUploading(true);
     try {
+      if (value) {
+        await authorizedApi.post("/api/v2/files/delete", {
+          folder: question.id,
+          filename: value,
+        });
+      }
+
       const formData = new FormData();
       formData.append("file", file);
       formData.append("folder", question.id);
@@ -58,18 +61,14 @@ const FileInput: React.FC<FileInputProps> = ({
     return (
       <div className="grid grid-cols-2 gap-2 my-2">
         <button
-          onClick={() =>
-            handleViewFile && handleViewFile(answers, "applications")
-          }
-          className={`bg-gray-200 text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+          onClick={() => handleViewFile(value as any, question.id)}
+          className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
         >
           View File
         </button>
         <button
-          onClick={() =>
-            handleDownloadFile && handleDownloadFile(answers, "applications")
-          }
-          className={`bg-primary text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+          onClick={() => handleDownloadFile(value, question.id)}
+          className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
         >
           <FaDownload />
           <p>Download File</p>

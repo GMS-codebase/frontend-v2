@@ -14,43 +14,43 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          path: staging
+          path: dev
 
-      # Verify Current Directory
+      # Set environment variables
+      - name: Set Environment Variables
+        run: |
+          echo "Main branch detected"
+          cd dev
+          chmod +x ./scripts/create_dev_env.sh
+          if [ ! -f ./scripts/create_dev_env.sh ]; then
+            echo "create_dev_env.sh script not found! Exiting."; exit 1;
+          fi
+          bash ./scripts/create_dev_env.sh
+          echo "FRONTEND_DIR=frontend-v2/dev" >> $GITHUB_ENV
+          echo "PORT=5600" >> $GITHUB_ENV
+
+      # Verify the current directory
       - name: Verify Current Directory
         run: |
           echo "Current Directory: $(pwd)"
-          ls -la ./staging
-
-      # Set Environment Variables
-      - name: Set Environment Variables
-        run: |
-          echo "Staging branch detected"
-          cd staging
-          chmod +x ./scripts/create_staging_env.sh
-          if [ ! -f ./scripts/create_staging_env.sh ]; then
-            echo "Script not found! Exiting."; exit 1;
-          fi
-          bash ./scripts/create_staging_env.sh
-          echo "FRONTEND_DIR=frontend-v2/staging" >> $GITHUB_ENV
-          echo "PORT=5800" >> $GITHUB_ENV
+          ls -la ./dev
 
       # Verify Git Status
       - name: Verify Git Status
         run: |
-          cd staging
+          cd dev
           git status
 
       # Install dependencies and build the application
       - name: Install dependencies and build the application
         run: |
-          cd staging
+          cd dev
           npm install --force
           npm run build
           
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-          cd staging
-          pm2 restart gms-frontend || pm2 start ecosystem.config.js --env .env.local
+          cd dev
+          pm2 restart gms-dev || pm2 start ecosystem.config.js
           pm2 save
