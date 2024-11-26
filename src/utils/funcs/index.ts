@@ -118,19 +118,21 @@ import {
   GET_FORMS_LOADING,
   GET_FORMS_SUCCESS,
 } from "@/actions/FormsActions";
-import { Form } from "@/types";
+import { Form } from "@/types/questions-form";
 
 import {
   GET_APPEALS_ERROR,
   GET_APPEALS_LOADING,
   GET_APPEALS_SUCCESS,
 } from "@/actions/AppealsActions";
-export const getAppeals = async (dispatch: Dispatch<UnknownAction>, user: string) => {
+import { QuestionForm } from "@/types/questions-form";
+export const getAppeals = async (
+  dispatch: Dispatch<UnknownAction>,
+  user: string
+) => {
   dispatch({ type: GET_APPEALS_LOADING });
   const api =
-    user === "applicant"
-      ? "/appeals/all-appeals/mine/all"
-      : "/appeals/all";
+    user === "applicant" ? "/appeals/all-appeals/mine/all" : "/appeals/all";
   authorizedApi
     .get(api)
     .then((res) => {
@@ -177,7 +179,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -216,18 +218,18 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
 export const getDashboardData = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string,
+  stage: string
 ) => {
   try {
     dispatch({ type: GET_DASHBOARD_LOADING });
     const dashboardResponse = await authorizedApi.get(
-      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`,
+      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`
     );
     dispatch({ type: GET_DASHBOARD_SUCCESS, payload: dashboardResponse.data });
     for (const sector of prioritySectors) {
       try {
         const sectorResponse = await authorizedApi.get(
-          `/Sectors/${sector?.id}/count/applications/count/applicants`,
+          `/Sectors/${sector?.id}/count/applications/count/applicants`
         );
         dispatch({
           type: GET_PRIORITY_SECTORS_DATA,
@@ -317,7 +319,7 @@ export const handleDownloadFile = async (file: any, service: string) => {
       `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
         responseType: "blob",
-      },
+      }
     );
     const blob = new Blob([response.data], {
       type: response.headers["content-type"],
@@ -410,7 +412,7 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplicationsForContractSigning = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
@@ -508,7 +510,7 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
 };
 export const getApplicationsReadyForMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string,
+  role: string
 ) => {
   dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
   authorizedApi
@@ -528,7 +530,7 @@ export const getApplicationsReadyForMinutes = async (
 };
 export const getUploadedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string,
+  role: string
 ) => {
   dispatch({ type: GET_UPLOADED_MINUTES_LOADING });
   authorizedApi
@@ -548,7 +550,7 @@ export const getUploadedMinutes = async (
 };
 export const getApprovedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string,
+  role: string
 ) => {
   dispatch({ type: GET_APPROVED_MINUTES_LOADING });
   authorizedApi
@@ -568,7 +570,7 @@ export const getApprovedMinutes = async (
 };
 export const getRejectedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string,
+  role: string
 ) => {
   dispatch({ type: GET_REJECTED_MINUTES_LOADING });
   authorizedApi
@@ -627,10 +629,66 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
 };
 
 const validateQuestions = async (
-  answers: any,
+  answers: { [key: string]: any },
   form: Form
 ): Promise<string | null> => {
-  return null;
+  try {
+    if (!form.qns) {
+      return "The form structure is invalid or missing questions.";
+    }
+    const questionForm: QuestionForm = JSON.parse(form.qns);
+    for (const [sectionKey, section] of Object.entries(questionForm)) {
+      for (const page of section.pages) {
+        for (const question of page.questions) {
+          if (question.required) {
+            const answer = answers[question.id];
+            if (
+              answer === undefined ||
+              answer === null ||
+              (typeof answer === "string" && answer.trim() === "") ||
+              (Array.isArray(answer) && answer.length === 0) ||
+              (question.type === "file" && typeof answer !== "string")
+            ) {
+              return `The question "${question.title}" is required but was not answered.`;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  } catch (error: any) {
+    return `An error occurred during validation: ${error.message}`;
+  }
+};
+
+const validateComments = async (
+  comments: { [key: string]: any },
+  form: Form
+): Promise<string | null> => {
+  try {
+    if (!form.qns) {
+      return "The form structure is invalid or missing questions.";
+    }
+    const questionForm: QuestionForm = JSON.parse(form.qns);
+    for (const [sectionKey, section] of Object.entries(questionForm)) {
+      for (const page of section.pages) {
+        for (const question of page.questions) {
+          if (question.commentable) {
+            const comment = comments[question.id];
+            if (
+              comment !== undefined &&
+              (typeof comment !== "string" || comment.trim() === "")
+            ) {
+              return `The comment for question "${question.title}" is invalid. Comments should be non-empty strings.`;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  } catch (error: any) {
+    return `An error occurred during comment validation: ${error.message}`;
+  }
 };
 
 export const handleSubmit = async (
@@ -646,7 +704,7 @@ export const handleSubmit = async (
   if (error !== null && type === "submit") {
     notifications.show({
       message: error,
-      color: "red", 
+      color: "red",
     });
     return;
   }
@@ -675,13 +733,6 @@ export const handleSubmit = async (
   } finally {
     setLoading(null);
   }
-};
-
-const validateComments = async (
-  comments: any,
-  form: any
-): Promise<string | null> => {
-  return null;
 };
 
 export const handleAddComments = async (

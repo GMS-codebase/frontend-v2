@@ -54,21 +54,24 @@ const Form: React.FC<Props> = ({
 
   return (
     <div className="p-4">
-      <div className="rounded-xl bg-white ">
-        <div className="h-4 bg-primary rounded-t-xl" />
-        <div className="p-6">
-          <input
-            type="text"
-            placeholder="Enter form title"
-            value={formData?.name}
-            disabled={mode !== "creating"}
-            onChange={(e) =>
-              setFormData && setFormData({ ...formData, name: e.target.value })
-            }
-            className="flex-grow p-2 text-2xl  focus:outline-none w-full border-b"
-          />
+      {mode === "creating" && (
+        <div className="rounded-xl bg-white ">
+          <div className="h-4 bg-primary rounded-t-xl" />
+          <div className="p-6">
+            <input
+              type="text"
+              placeholder="Enter form title"
+              value={formData?.name}
+              disabled={mode !== "creating"}
+              onChange={(e) =>
+                setFormData &&
+                setFormData({ ...formData, name: e.target.value })
+              }
+              className="flex-grow p-2 text-2xl  focus:outline-none w-full border-b"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="flex overflow-x-auto py-4 space-x-4 mb-4">
         {Object.values(formData?.qns ?? {}).map((type: any) => (
