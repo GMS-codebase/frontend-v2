@@ -130,14 +130,14 @@ const Page = () => {
                 notifications.show({
                   title: "Download Successful",
                   message: "The file has been downloaded successfully.",
-                  type: "success",
+                  color: "green",
                 });
               } catch (error) {
                 notifications.show({
                   title: "Download Failed",
                   message:
                     "There was an issue downloading the file. Please try again.",
-                  type: "error",
+                  color: "red",
                 });
               } finally {
                 setDownloading(false);
