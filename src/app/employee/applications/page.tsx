@@ -13,18 +13,27 @@ import { VscEye } from "react-icons/vsc";
 const Page = () => {
   // Select applications from Redux store
   const { applications: rawApplications, loading } = useSelector(
-    (state: any) => state.applications,
+    (state: any) => state.applications
   );
+  const { stages } = useSelector((state: any) => state.empStages);
+  console.log(stages);
 
-  // Format applications to flatten nested arrays
   const applications = useMemo(
     () =>
-      rawApplications.map((app: any) => ({
-        ...app,
-        sector: app.sectors[0] || null,
-        trade: app.trades[0] || null,
-      })),
-    [rawApplications],
+      rawApplications
+        .map((app: any) => ({
+          ...app,
+          sector: app.sectors[0] || null,
+          trade: app.trades[0] || null,
+        }))
+        .filter((app: any) => {
+          const matchingStage = stages.find(
+            (stage: any) => stage.sector == app.sector.name
+          );
+          console.log("Filtering app:", app, "Matching stage:", matchingStage);
+          return matchingStage;
+        }),
+    [rawApplications, stages]
   );
 
   const filtersContainerRef = useRef<HTMLDivElement>(null);
@@ -46,9 +55,9 @@ const Page = () => {
       ...new Set(
         applications
           .map((app: any) =>
-            key.split(".").reduce((obj, property) => obj?.[property], app),
+            key.split(".").reduce((obj, property) => obj?.[property], app)
           )
-          .filter(Boolean),
+          .filter(Boolean)
       ),
     ];
   };
@@ -62,7 +71,7 @@ const Page = () => {
       trades: getUniqueValues("trade.trade.title"),
       call: getUniqueValues("call.title"),
     }),
-    [applications],
+    [applications]
   );
 
   // Format stage string
@@ -212,7 +221,7 @@ const Page = () => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade } =
