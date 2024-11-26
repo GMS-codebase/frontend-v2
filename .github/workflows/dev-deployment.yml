@@ -1,62 +1,55 @@
-name: Deploy Dev
+name: Deploy Staging
 
 on:
   push:
     branches:
-      - main
+      - staging
 
 jobs:
   deploy:
     runs-on: self-hosted
 
     steps:
-      # Checkout the code from the repository
+      # Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          path: staging
 
-      # Set environment variables
-      - name: Set Environment Variables
-        run: |
-          echo "Main branch detected"
-          chmod +x ./scripts/create_dev_env.sh
-          if [ ! -f ./scripts/create_dev_env.sh ]; then
-            echo "create_dev_env.sh script not found! Exiting."; exit 1;
-          fi
-          bash ./scripts/create_dev_env.sh
-          echo "FRONTEND_DIR=frontend-v2" >> $GITHUB_ENV
-          echo "PORT=5600" >> $GITHUB_ENV
-
-      # Verify the current directory
+      # Verify Current Directory
       - name: Verify Current Directory
         run: |
           echo "Current Directory: $(pwd)"
-          ls -la
-          if [ ! -d ".git" ]; then
-            echo "No .git directory found. This is unexpected. Exiting."; exit 1;
-          fi
+          ls -la ./staging
 
-      # Verify Git status
+      # Set Environment Variables
+      - name: Set Environment Variables
+        run: |
+          echo "Staging branch detected"
+          chmod +x ./staging/scripts/create_staging_env.sh
+          if [ ! -f ./staging/scripts/create_staging_env.sh ]; then
+            echo "Script not found! Exiting."; exit 1;
+          fi
+          bash ./staging/scripts/create_staging_env.sh
+          echo "FRONTEND_DIR=frontend-v2-staging" >> $GITHUB_ENV
+          echo "PORT=5800" >> $GITHUB_ENV
+
+      # Verify Git Status
       - name: Verify Git Status
         run: |
+          cd staging
           git status
 
       # Install dependencies and build the application
       - name: Install dependencies and build the application
         run: |
+          cd staging
           npm install --force
           npm run build
-
-      # Create job-related environment variables
-      - name: Create the job names
-        run: |
-          echo "Main branch detected"
-          echo "JOB_NAME=gms-dev" >> $GITHUB_ENV
-          echo "SCRIPT_NAME=development" >> $GITHUB_ENV
-          echo "JOB_NAME=$JOB_NAME"
-          echo "SCRIPT_NAME=$SCRIPT_NAME"
-
+          
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-          pm2 restart gms-dev || pm2 start npm --name "gms-dev" -- start
+          cd staging
+          pm2 restart gms-frontend || pm2 start ecosystem.config.js --env .env.local
           pm2 save
