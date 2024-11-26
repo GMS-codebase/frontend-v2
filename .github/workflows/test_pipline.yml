@@ -25,8 +25,8 @@ jobs:
           if [ ! -f ./scripts/create_test_env.sh ]; then
             echo "Script not found! Exiting."; exit 1;
           fi
-          bash ./test/scripts/create_test_env.sh
-          echo "FRONTEND_DIR=frontend-v2/testing" >> $GITHUB_ENV
+          bash ./scripts/create_test_env.sh
+          echo "FRONTEND_DIR=frontend-v2/test" >> $GITHUB_ENV
           echo "PORT=5700" >> $GITHUB_ENV
           
       # Verify Current Directory
