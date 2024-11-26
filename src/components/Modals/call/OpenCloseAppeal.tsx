@@ -33,10 +33,10 @@ const OpenCloseAppealModal = ({
   const handleAppealStatusChange = async () => {
     setLoading(true);
     authorizedApi
-      .put(`/appeals/${callId}/stage/${stage}/${isClosing ? "close" : "open"}`, !isClosing && {
+      .put(`/appeals/${callId}/stage/${stage}/${isClosing ? "close" : "open"}`, !isClosing ? {
         "from": fromDate,
         "to": toDate
-      })
+      }: {})
       .then((res) => {
         notifications.show({
           title: `Appeal ${isClosing ? "Closed" : "Opened"} Successfully!`,
