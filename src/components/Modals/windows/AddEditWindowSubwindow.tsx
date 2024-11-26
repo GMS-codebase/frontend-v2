@@ -95,11 +95,11 @@ const AddEditWindowSubwindow = ({
         const response = defaultData
           ? await authorizedApi.patch(
               `/sub-window/${defaultData.uuid}`,
-              formData
+              formData,
             )
           : await authorizedApi.post(
               `/sub-window/create/${windowId}`,
-              formData
+              formData,
             );
 
         notifications.show({
