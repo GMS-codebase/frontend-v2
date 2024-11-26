@@ -769,6 +769,8 @@ export const handleAddComments = async (
 export const getApplicationStatus = (application: any) => {
   if (!application.finishedAnswering) {
     return "ANSWERING";
+  } else if (application.call.closed) {
+    return "SUBMITTED";
   } else if (
     application?.currentStage === "EVALUATION" &&
     !application?.call?.closedEvaluation

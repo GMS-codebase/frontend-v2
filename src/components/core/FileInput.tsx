@@ -11,7 +11,6 @@ type FileInputProps = {
   accept?: string;
   disabled?: boolean;
   mode?: "creating" | "viewing" | "answering" | "commenting";
-  answers?: string;
 };
 
 const FileInput: React.FC<FileInputProps> = ({
@@ -21,7 +20,6 @@ const FileInput: React.FC<FileInputProps> = ({
   accept = ".pdf",
   disabled = false,
   mode = "creating",
-  answers,
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -57,7 +55,7 @@ const FileInput: React.FC<FileInputProps> = ({
     }
   };
 
-  if ((mode === "commenting" || mode === "viewing") && answers) {
+  if ((mode === "commenting" || mode === "viewing") && value) {
     return (
       <div className="grid grid-cols-2 gap-2 my-2">
         <button
