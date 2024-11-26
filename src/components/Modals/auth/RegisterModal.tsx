@@ -180,10 +180,7 @@ const RegisterModal = ({
               description=""
               className="text-xs"
             >
-              <form
-                onSubmit={handleSubmit}
-                className="mt-4 w-full h-[70%] overflow-y-auto flex flex-col gap-2 px-2"
-              >
+              <div className="mt-4 w-full h-[70%] overflow-y-auto flex flex-col gap-2 px-2">
                 <div className="w-full">
                   <label
                     htmlFor="institution"
@@ -240,25 +237,18 @@ const RegisterModal = ({
                 </div>
                 <div className="w-full flex justify-center mt-4">
                   <button
-                    type="submit"
+                    type="button"
+                    onClick={() => {
+                      if (validateStep2()) {
+                        setActive(1);
+                      }
+                    }}
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
                     Next
                   </button>
                 </div>
-                <h1 className="w-full text-center text-[#000F2369] text-base font-medium mt-4">
-                  Already have an account?{" "}
-                  <span
-                    className="text-base font-medium cursor-pointer text-primary"
-                    onClick={() => {
-                      closeRegister();
-                      openLogin();
-                    }}
-                  >
-                    Login
-                  </span>
-                </h1>
-              </form>
+              </div>
             </Stepper.Step>
             <Stepper.Step
               label="Contact Person"
@@ -436,10 +426,10 @@ const RegisterModal = ({
                     Go Back
                   </button>
                 </div>
-                <h1 className="text-[#000F2369] text-base font-medium mt-4">
+                <h1 className="w-full text-center text-[#000F2369] text-base font-medium mt-4">
                   Already have an account?{" "}
                   <span
-                    className="text-base font-medium text-primary cursor-pointer"
+                    className="text-base font-medium cursor-pointer text-primary"
                     onClick={() => {
                       closeRegister();
                       openLogin();
