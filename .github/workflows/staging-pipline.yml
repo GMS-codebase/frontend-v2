@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with: 
-          path: /staging
+          path: staging
 
       # Set Environment Variables
       - name: Set Environment Variables
