@@ -12,7 +12,7 @@ const roles = [
   "GRANT_COMMITTEE",
   "DYNAMIC",
 ];
-const whitelist = ["/", "/redirect", "/public"];
+const whitelist = ["/redirect", "/public"];
 function getRolePath(role: Role): string {
   switch (role.toLowerCase()) {
     case "dynamic":
@@ -66,7 +66,7 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     }
     if (request.nextUrl.pathname === "/") {
-      return NextResponse.next();
+      return NextResponse.redirect(new URL(nextUrl, request.url));
     }
     const roleInRoute = request.nextUrl.pathname.split("/")[1].toUpperCase();
     if (
