@@ -177,7 +177,6 @@ const Page = () => {
 
                 <button
                   onClick={openAssignSectorSubWindow}
-                  onClick={openAssignSectorSubWindow}
                   className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
                 >
                   <span className="text-2xl">

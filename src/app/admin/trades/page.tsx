@@ -177,10 +177,7 @@ const Page = () => {
       </div>
       <AddTrade
         isOpenAddEditTrade={isOpenCreateEdit}
-        closeAddEditTrade={() => {
-          closeCreateEditModal();
-          setSelectedTrade(null);
-        }}
+        closeAddEditTrade={closeCreateEditModal}
         defaultData={selectedTrade}
       />
       <DeleteModal
