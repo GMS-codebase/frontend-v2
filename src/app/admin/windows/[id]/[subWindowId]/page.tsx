@@ -17,7 +17,6 @@ import AddEditWindow from "@/components/Modals/windows/AddEditWindow";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import AddSubWindowSector from "@/components/Modals/windows/AddSubWindowSector";
 
-
 const Page = () => {
   const [
     isAddEditSubWindow,
@@ -183,7 +182,6 @@ const Page = () => {
                     <SolarAddFolderBold />
                   </span>
                   <h1 className="text-base font-medium text-white">
-                    Assign Sector To SubWindow
                     Assign Sector To SubWindow
                   </h1>
                 </button>
