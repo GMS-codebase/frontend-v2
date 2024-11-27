@@ -167,8 +167,8 @@ const RegisterModal = ({
           height={50}
         />
         <div className="w-full flex flex-col items-center">
-          <h1 className="text-2xl font-extrabold">Register</h1>
-          <h2 className="text-[#000F2369] text-lg font-medium">
+          <h1 className="text-3xl font-extrabold text-primaryText">Register</h1>
+          <h2 className="text-primaryText opacity-40 font-medium text-xl">
             Provide your details to register your account.
           </h2>
         </div>
@@ -189,8 +189,8 @@ const RegisterModal = ({
                     Institution Name
                   </label>
                   <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <HiOutlineMail />
+                    <span className="absolute top-1/2  -translate-y-1/2  left-3">
+                      <HiOutlineMail className="w-5 h-5" />
                     </span>
                     <input
                       type="text"
@@ -198,16 +198,14 @@ const RegisterModal = ({
                       value={formData.institution}
                       placeholder="Type in institution name"
                       onChange={handleChange}
-                      className={`mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
+                      className={`w-full bg-gray-100 p-3 rounded-3xl pl-10 outline-primary transition-all duration-150 ${
                         errors.institution ? "border-red-500" : ""
                       }`}
                     />
-                    {errors.institution && (
-                      <p className="text-red-500 text-xs">
-                        {errors.institution}
-                      </p>
-                    )}
                   </div>
+                  {errors.institution && (
+                    <p className="text-red-500 text-xs">{errors.institution}</p>
+                  )}
                 </div>
                 <div className="w-full">
                   <label
@@ -217,8 +215,8 @@ const RegisterModal = ({
                     Position
                   </label>
                   <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <HiOutlineMail />
+                    <span className="absolute top-1/2  -translate-y-1/2  left-3">
+                      <HiOutlineMail className="w-5 h-5" />
                     </span>
                     <input
                       type="text"
@@ -226,14 +224,14 @@ const RegisterModal = ({
                       value={formData.position}
                       placeholder="Type in position name"
                       onChange={handleChange}
-                      className={`mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
+                      className={`w-full bg-gray-100 p-3 rounded-3xl pl-10 outline-primary transition-all duration-150 ${
                         errors.position ? "border-red-500" : ""
                       }`}
                     />
-                    {errors.position && (
-                      <p className="text-red-500 text-xs">{errors.position}</p>
-                    )}
                   </div>
+                  {errors.position && (
+                    <p className="text-red-500 text-xs">{errors.position}</p>
+                  )}
                 </div>
                 <div className="w-full flex justify-center mt-4">
                   <button
