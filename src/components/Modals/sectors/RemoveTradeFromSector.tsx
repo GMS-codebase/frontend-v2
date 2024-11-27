@@ -15,12 +15,10 @@ const RemoveTradeFromSectorModal = ({
   isOpenModal,
   closeModal,
   tradeId,
-  windowId,
 }: {
   isOpenModal: boolean;
   closeModal: () => void;
   tradeId: string;
-  windowId?: string;
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -31,7 +29,6 @@ const RemoveTradeFromSectorModal = ({
     authorizedApi
       .put(`/Sectors/${id}/remove-trade`, {
         tradeId,
-        windowId,
       })
       .then(() => {
         notifications.show({
