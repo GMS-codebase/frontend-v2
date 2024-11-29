@@ -11,13 +11,11 @@ import { DataTable } from "@/components/core/data-table";
 import { CiEdit, CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
 import AddEditWindowSubwindow from "@/components/Modals/windows/AddEditWindowSubwindow";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { useParams } from "next/navigation";
 import AddEditWindow from "@/components/Modals/windows/AddEditWindow";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import AddSubWindowSector from "@/components/Modals/windows/AddSubWindowSector";
-import { getWindows } from "@/utils/funcs";
-import AddSubWindowForm from "@/components/Modals/windows/AddSubWindowForm";
 
 const Page = () => {
   const [
@@ -29,14 +27,10 @@ const Page = () => {
     { open: openAssignSectorSubWindow, close: closeAssignSectorSubWindow },
   ] = useDisclosure(false);
   const [
-    isAssignFormSubWindow,
-    { open: openAssignFormSubWindow, close: closeAssignFormSubWindow },
-  ] = useDisclosure(false);
-  const [
     isDeleteSubWindow,
     { open: openDeleteSubWindow, close: closeDeleteSubWindow },
   ] = useDisclosure(false);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
   const [searchQuery, setSearchQuery] = useState("");
   const { id: windowId } = useParams();
   const { subWindowId: subWindowId } = useParams();
@@ -44,13 +38,13 @@ const Page = () => {
     useDisclosure(false);
   const windows = useSelector((state: any) => state.windows); 
   const window = windows.windows?.filter(
-    (window: any) => window.uuid === windowId,
+    (window: any) => window.uuid === windowId
   )[0];
   const subWindow = window?.subWindows?.filter(
-    (sbWindow: any, index: any) => sbWindow?.uuid === subWindowId,
+    (sbWindow: any, index: any) => sbWindow?.uuid === subWindowId
   )[0];
   const filteredSectors = subWindow?.sectors.filter((sector: any) =>
-    sector?.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    sector?.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const [selectedSubWindow, setSelectedSubWindow] = useState<any>();
@@ -111,8 +105,6 @@ const Page = () => {
     //   ),
     // },
   ];
-
-  console.log(subWindow);
 
   if (windows.loading) {
     return <div className="flex items-center justify-center ">Loading</div>;
@@ -236,12 +228,6 @@ const Page = () => {
           isOpenAddSubWindowSector={isAssignSectorSubWindow}
           closeAddSubWindowSector={() => {
             closeAssignSectorSubWindow();
-          }}
-        />
-        <AddSubWindowForm
-          isOpenAddSubWindowForm={isAssignFormSubWindow}
-          closeAddSubWindowForm={() => {
-            closeAssignFormSubWindow();
           }}
         />
       </div>

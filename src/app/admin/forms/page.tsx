@@ -45,13 +45,6 @@ const Page = () => {
       cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
     },
     {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => (
-        <div className="truncate">{row.original?.status || "-"}</div>
-      ),
-    },
-    {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
@@ -73,18 +66,6 @@ const Page = () => {
                 <h1 className="text-lg">Actions</h1>
               </Menu.Label>
               <Menu.Divider />
-              <Menu.Item>
-                <div
-                  onClick={() => {
-                    setSelectedForm(row.original);
-                    openActivateDeactivateFormModal();
-                  }}
-                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                >
-                  <CiEdit size={21} color="#576074" />
-                  {row.original.status === "ACTIVE" ? "Deactivate" : "Activate"}
-                </div>
-              </Menu.Item>
               <Menu.Item>
                 <Link
                   href={`/admin/forms/create-edit/${row.original.uuid}`}
@@ -159,16 +140,6 @@ const Page = () => {
         }}
         type="forms"
         id={selectedForm?.uuid}
-      />
-      <ActivateDeactivateModal
-        type="forms"
-        closeModal={() => {
-          closeActivateDeactivateFormModal();
-          setSelectedForm(null);
-        }}
-        id={selectedForm?.uuid}
-        isActive={selectedForm?.status === "ACTIVE"}
-        isOpenModal={isOpenActivateDeactivateForm}
       />
     </div>
   );
