@@ -8,6 +8,8 @@ import TableInput from "../core/TableInput";
 import { Question } from "@/types/questions-form";
 import RadioInput from "../core/RadioInput";
 import CheckboxInput from "../core/CheckBoxInput";
+import DeleteQuestion from "./RemoveQuestion";
+import { useDisclosure } from "@mantine/hooks";
 
 interface CreateQuestionProps {
   question: Question;
@@ -279,6 +281,10 @@ const ViewQuestion: React.FC<ViewQuestionProps> = ({
   setComments,
   deleteQuestion,
 }) => {
+  const [
+    isOpenDeleteQuestion,
+    { open: openDeleteQuestion, close: closeDeleteQuestion },
+  ] = useDisclosure(false);
   return (
     <div className="space-y-2">
       <p className="text-gray-900 text-2xl ">{question.title}</p>
@@ -297,11 +303,17 @@ const ViewQuestion: React.FC<ViewQuestionProps> = ({
           <button onClick={edit} className="">
             <FiEdit3 className="w-6 h-6 font-bold text-xl" />
           </button>
-          <button onClick={() => deleteQuestion(question.id)}>
+          <button onClick={openDeleteQuestion}>
             <MdOutlineDelete className="w-6 h-6 font-bold text-xl" />
           </button>
         </div>
       )}
+      <DeleteQuestion
+        closeModal={closeDeleteQuestion}
+        isOpenModal={isOpenDeleteQuestion}
+        question={question}
+        removeQuestion={() => deleteQuestion(question.id)}
+      />
     </div>
   );
 };
