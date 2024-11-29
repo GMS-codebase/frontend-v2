@@ -35,7 +35,7 @@ const Page = () => {
   const [selectedForm, setSelectedForm] = useState<any>("");
   const filteredForms =
     forms.forms?.filter((form: any) =>
-      form?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+      form?.name?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
 
   const columns: ColumnDef<any>[] = [
@@ -66,6 +66,15 @@ const Page = () => {
                 <h1 className="text-lg">Actions</h1>
               </Menu.Label>
               <Menu.Divider />
+              <Menu.Item>
+                <Link
+                  href={`/admin/forms/view/${row.original.uuid}`}
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <FiEye size={21} color="#576074" />
+                  View
+                </Link>
+              </Menu.Item>
               <Menu.Item>
                 <Link
                   href={`/admin/forms/create-edit/${row.original.uuid}`}

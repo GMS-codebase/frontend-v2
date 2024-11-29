@@ -59,11 +59,12 @@ export function middleware(request: NextRequest) {
     }
     const role = decoded?.role;
     const nextUrl = getRolePath(role ?? "");
-    if (whitelist.includes(request.nextUrl.pathname)) {
+    if (whitelist.includes(request.nextUrl.pathname) && request.nextUrl.pathname !== "/") {
       return NextResponse.next();
     }
+
     if (request.nextUrl.pathname === "/") {
-      return NextResponse.next();
+      return NextResponse.redirect(new URL(nextUrl, request.url));
     }
     const roleInRoute = request.nextUrl.pathname.split("/")[1].toUpperCase();
     if (
