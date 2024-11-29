@@ -86,7 +86,7 @@ const LoginModal = ({
       withCloseButton={false}
       centered
     >
-      <div className="w-[40vw] max-h-[90vh] py-10  flex flex-col gap-2 align-middle rounded-3xl bg-white p-10 relative">
+      <div className="lg:w-[40vw] max-h-[90vh] py-10  flex flex-col gap-2 align-middle rounded-3xl bg-white p-10 relative">
         <Image
           src={require("@/assets/Vectors/sidevecto.svg")}
           alt=""
