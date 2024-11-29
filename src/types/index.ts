@@ -1,3 +1,5 @@
+import { QuestionForm } from "./questions-form";
+
 export type Route = {
   label: string;
   path: string;
@@ -8,6 +10,12 @@ export type BudgetLine = {
   uuid?: string;
   name: string;
   status?: any;
+};
+
+export type Form = {
+  uuid?: string;
+  name: string;
+  dto: string;
 };
 
 export type Window = {
@@ -104,7 +112,8 @@ export type Call = {
   description: string;
   appealDays: string;
   windows: Window[] | string[];
-  subWindows: SubWindow[] | string[];
+  form: Form | string;
+  subwindowForms: string;
   sectors: Sector[] | string[];
   attachment: File | string | null;
 };

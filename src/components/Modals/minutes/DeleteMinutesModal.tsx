@@ -1,4 +1,3 @@
-
 import { Checkbox, Modal, Select, Stepper } from "@mantine/core";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -31,7 +30,7 @@ const DeleteMinutesModal = ({
         notifications.show({
           message:
             err.response?.data?.message ??
-            "Failed to deleted contract negotiation!",  
+            "Failed to deleted contract negotiation!",
           color: "red",
         });
       });
