@@ -34,6 +34,11 @@ const adminRoutes: Route[] = [
     icon: <Icons.SolarSuitcaseBold />,
   },
   {
+    label: "Question Forms",
+    path: "/admin/forms",
+    icon: <Icons.SolarSuitcaseBold />,
+  },
+  {
     label: "Applicants",
     path: "/admin/applicants",
     icon: <Icons.SolarUsersGroupTwoRoundedBold />,
@@ -42,6 +47,11 @@ const adminRoutes: Route[] = [
     label: "Applications",
     path: "/admin/applications",
     icon: <Icons.SolarFolderWithFilesBold />,
+  },
+  {
+    label: "Appeals",
+    path: "/admin/appeals",
+    icon: <Icons.SolarDocumentTextBroken />,
   },
   {
     label: "Application Reports",

@@ -17,6 +17,8 @@ import RolesReducer from "./RolesReducer";
 import DashboardReducer from "./DashboardReducer";
 import BudgetLinesReducer from "./BudgetLinesReducer";
 import announcementsReducer from "./AnnouncementsReducer";
+import FormsReducer from "./FormsReducers";
+import AppealsReducer from "./AppealsReducer";
 const rootReducer = combineReducers({
   contacts: ContactsReducer,
   auth: authReducer,
@@ -36,6 +38,8 @@ const rootReducer = combineReducers({
   dashboard: DashboardReducer,
   budgetLines: BudgetLinesReducer,
   announcement: announcementsReducer,
+  forms: FormsReducer,
+  appeals: AppealsReducer,
 });
 
 export default rootReducer;

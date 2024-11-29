@@ -8,7 +8,12 @@ import RedVector2 from "@/assets/Vectors/redSideVector2.svg";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
-import { getContracts, getRejectedMinutes, getUploadedMinutes, getMinutes } from "@/utils/funcs";
+import {
+  getContracts,
+  getRejectedMinutes,
+  getUploadedMinutes,
+  getMinutes,
+} from "@/utils/funcs";
 import { useDispatch } from "react-redux";
 interface DeleteConfirmProps {
   isOpen: boolean;
@@ -76,9 +81,7 @@ const MinutesRejectionReason = ({
             <h1 className="block text-xs font-bold text-gray-700">
               Reason For {type === "rejected" ? "Rejection" : "Negotiation"}
             </h1>
-            <textarea
-              className="mt-1 block w-full resize-none p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
+            <textarea className="mt-1 block w-full resize-none p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
           </div>
           <div className="w-full flex justify-center mt-1 space-x-4 p-6">
             <button

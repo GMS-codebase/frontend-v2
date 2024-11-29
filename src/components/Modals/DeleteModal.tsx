@@ -18,6 +18,7 @@ import { DELETE_CALL_SUCCESS } from "@/actions/CallsActions";
 import { DELETE_CONTACT_SUCCESS } from "@/actions/ContactsActions";
 import { DELETE_EMPLOYEE_SUCCESS } from "@/actions/EmployeesActions";
 import { DELETE_BUDGET_LINE_SUCCESS } from "@/actions/BudgetLinesActions";
+import { DELETE_FORM_SUCCESS } from "@/actions/FormsActions";
 
 // Redux action mappings
 const actionMappings = {
@@ -29,6 +30,7 @@ const actionMappings = {
   contacts: DELETE_CONTACT_SUCCESS,
   employees: DELETE_EMPLOYEE_SUCCESS,
   budgetLines: DELETE_BUDGET_LINE_SUCCESS,
+  forms: DELETE_FORM_SUCCESS,
 };
 
 const routeMappings = {
@@ -40,6 +42,7 @@ const routeMappings = {
   contacts: "/contacts",
   employees: "/employees",
   budgetLines: "/budgetlines/delete",
+  forms: "/forms/delete",
 };
 const DeleteModal = ({
   isOpenModal,
@@ -60,7 +63,8 @@ const DeleteModal = ({
     | "calls"
     | "contacts"
     | "employees"
-    | "budgetLines";
+    | "budgetLines"
+    | "forms";
 }) => {
   const dispatch = useDispatch();
   const [deleteId, setDeleteId] = useState(id);
