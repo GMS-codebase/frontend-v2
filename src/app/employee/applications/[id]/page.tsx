@@ -17,6 +17,7 @@ import {
 } from "@/utils/funcs";
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 import Form from "@/components/forms/Form";
+import { Form as IForm, QuestionForm } from "@/types/questions-form";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
@@ -77,10 +78,35 @@ const Page = () => {
 
     return (
       form.uuid ===
-      JSON.parse(application?.call.subwindowForms || "{}")[foundSubWindow as any]
+      JSON.parse(application?.call.subwindowForms || "{}")[
+        foundSubWindow as any
+      ]
     );
   });
   const [comments, setComments] = useState<{ [key: string]: any }>({});
+
+  const hasCommentableQuestion = (): boolean => {
+    try {
+      if (!form.qns) {
+        throw new Error("The form structure is invalid or missing questions.");
+      }
+      const questionForm: QuestionForm = JSON.parse(form.qns);
+      for (const [sectionKey, section] of Object.entries(questionForm)) {
+        for (const page of section.pages) {
+          for (const question of page.questions) {
+            if (question.commentable) {
+              return true;
+            }
+          }
+        }
+      }
+      return false; // No commentable questions found.
+    } catch (error: any) {
+      throw new Error(
+        `An error occurred while checking commentable questions: ${error.message}`
+      );
+    }
+  };
 
   const [downloading, setDownloading] = useState(false);
 
@@ -91,8 +117,6 @@ const Page = () => {
       </div>
     );
   }
-  console.log(application);
-  console.log(Object.values(JSON.parse(application?.comments || "{}")).length);
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -130,14 +154,14 @@ const Page = () => {
                 notifications.show({
                   title: "Download Successful",
                   message: "The file has been downloaded successfully.",
-                  type: "success",
+                  color: "green",
                 });
               } catch (error) {
                 notifications.show({
                   title: "Download Failed",
                   message:
                     "There was an issue downloading the file. Please try again.",
-                  type: "error",
+                  color: "red",
                 });
               } finally {
                 setDownloading(false);
@@ -278,10 +302,9 @@ const Page = () => {
                 }}
               />
             )}
-            {(
-              Object.values(JSON.parse(application?.comments || "{}"))
-                .length === 0
-            ) &&
+            {Object.values(JSON.parse(application?.comments || "{}")).length ===
+              0 &&
+              hasCommentableQuestion() &&
               application?.currentStage !== "SUBMITTED" && (
                 <div className="w-full flex justify-center mt-4 space-x-4">
                   <button
@@ -330,11 +353,11 @@ const Page = () => {
                       : ""
                 } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
               >
-                {
-                  application?.stages?.find(
-                    (stage: any) => stage.stage === "EVALUATION",
-                  )?.status ?? application?.evaluationDecisions[0]?.decision ?? "PENDING"
-                }
+                {application?.stages?.find(
+                  (stage: any) => stage.stage === "EVALUATION"
+                )?.status ??
+                  application?.evaluationDecisions[0]?.decision ??
+                  "PENDING"}
               </div>
               {application?.evaluationDecisions.length < 3 &&
                 !application?.evaluationDecisions.find(
