@@ -359,8 +359,8 @@ const Page = () => {
                   application?.evaluationDecisions[0]?.decision ??
                   "PENDING"}
               </div>
-              {application?.evaluationDecisions.length < 3 &&
-                !application?.evaluationDecisions.find(
+              {application?.evaluationDecisions?.length < 3 &&
+                !application?.evaluationDecisions?.find(
                   (ev: any) =>
                     ev.employee.user_id.toString() ===
                     profile?.userProfile?.data.uuid.toString()
@@ -378,7 +378,7 @@ const Page = () => {
                   </>
                 )}
 
-              {application?.evaluationDecisions.length > 0 && (
+              {application?.evaluationDecisions?.length > 0 && (
                 <div className="flex flex-col gap-2 mt-4">
                   <button
                     onClick={openEvaluationDetails}
@@ -483,7 +483,7 @@ const Page = () => {
       />
       <MakeDecision
         type={selectedStage as any}
-        firstEvaluationModal={application?.evaluationDecisions.length === 0}
+        firstEvaluationModal={application?.evaluationDecisions?.length === 0}
         application={application}
         isOpen={isOpenMakeDecision}
         close={closeMakeDecision}

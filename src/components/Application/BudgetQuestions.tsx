@@ -253,6 +253,24 @@ const BudgetQuestions: React.FC<Props> = ({
             />
           </div>
         )}
+        {!isApplicant && !setData && comments && (
+          <div className="mt-2">
+            <p>Comment</p>
+            <textarea
+              value={comments?.budgetSummaryAttachmentComment || ""}
+              disabled={!setComments}
+              onChange={(e) =>
+                setComments &&
+                setComments((prev: any) => ({
+                  ...prev,
+                  budgetSummaryAttachmentComment: e.target.value,
+                }))
+              }
+              className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
+              placeholder="Add your comment"
+            />
+          </div>
+        )}
       </div>
       <div>
         <div className="flex items-center justify-between py-2">
@@ -323,13 +341,13 @@ const BudgetQuestions: React.FC<Props> = ({
           <div className="mt-2">
             <p>Comment</p>
             <textarea
-              value={comments?.budgetSummaryAttachmentComment || ""}
+              value={comments?.budgetLinesComment || ""}
               disabled={!setComments}
               onChange={(e) =>
                 setComments &&
                 setComments((prev: any) => ({
                   ...prev,
-                  budgetSummaryAttachmentComment: e.target.value,
+                  budgetLinesComment: e.target.value,
                 }))
               }
               className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
