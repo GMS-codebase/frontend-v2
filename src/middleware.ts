@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
 import { Role } from "@/types/base.type";
-
 const roles = [
   "ADMIN",
   "APPLICANT",
@@ -33,7 +32,6 @@ function getRolePath(role: Role): string {
       return "/";
   }
 }
-
 export const checkToken = (token: string) => {
   let decoded: any;
   try {
@@ -44,7 +42,6 @@ export const checkToken = (token: string) => {
     return false;
   }
 };
-
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("token");
   if (whitelist.includes(request.nextUrl.pathname) && !token?.value) {
@@ -62,11 +59,12 @@ export function middleware(request: NextRequest) {
     }
     const role = decoded?.role;
     const nextUrl = getRolePath(role ?? "");
-    if (whitelist.includes(request.nextUrl.pathname)) {
+    if (whitelist.includes(request.nextUrl.pathname) && request.nextUrl.pathname !== "/") {
       return NextResponse.next();
     }
+
     if (request.nextUrl.pathname === "/") {
-      return NextResponse.next();
+      return NextResponse.redirect(new URL(nextUrl, request.url));
     }
     const roleInRoute = request.nextUrl.pathname.split("/")[1].toUpperCase();
     if (
@@ -75,7 +73,6 @@ export function middleware(request: NextRequest) {
     ) {
       return NextResponse.next();
     }
-
     if (roles.includes(roleInRoute as Role) && role !== roleInRoute) {
       return NextResponse.redirect(new URL(nextUrl, request.url));
     }
@@ -85,7 +82,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 }
-
 export const config = {
   matcher: [
     "/((?!api|_next/static|public|_next/image|favicon.ico|images|logo.svg|logo.png|favicon.svg|favicon.png).*)",
