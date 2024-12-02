@@ -51,7 +51,7 @@ const DueDiligencyDetails = ({
           <div className="absolute right-3 m-4 text-center mt-0">
             <button
               onClick={close}
-              className="text-gray-500 hover:text-gray-700 focus:outline-none"
+              className="text-gray-500 hover:text-gray-700 focus:outline-none bg-gray-200 p-1 rounded-xl"
             >
               <IoMdClose size={24} />
             </button>
