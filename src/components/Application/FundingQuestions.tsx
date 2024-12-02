@@ -31,11 +31,6 @@ const FundingQuestions: React.FC<FundingQuestionsProps> = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const trades: any = application?.trades.map((trade: any, i: any) => ({
-    label: trade.trade.title,
-    value: trade.trade.title,
-  }));
-
   const handleChange = (input: string, value: any) => {
     errors[input] && setErrors((prev: any) => ({ ...prev, [input]: null }));
     setData && setData((prev: any) => ({ ...prev, [input]: value }));

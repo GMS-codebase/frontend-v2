@@ -15,6 +15,15 @@ import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
 import { getCalls } from "@/utils/funcs";
 import { ADD_CALL_SUCCESS, UPDATE_CALL_SUCCESS } from "@/actions/CallsActions";
+import {
+  SECTOR_STATUS,
+  SUBWINDOW_STATUS,
+  TRADE_STATUS,
+  WINDOW_STATUS,
+} from "@/utils/enums";
+import { tradesData } from "@/utils/constants/dummy";
+import { MdPlusOne } from "react-icons/md";
+import { FaPlus } from "react-icons/fa";
 
 const AddEditCall = ({
   isOpenAddEditCall,
@@ -29,6 +38,11 @@ const AddEditCall = ({
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<any>();
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
+  const [selectedSub, setSelectedSub] = useState<any>();
+  const [selectedForm, setSelectedForm] = useState<any>();
+  const [selectedSubWindowsForms, setSelectedSubWindowsForms] = useState<any>(
+    {}
+  );
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
   const dispatch = useDispatch();
@@ -39,15 +53,20 @@ const AddEditCall = ({
     endDate: "",
     appealDays: "",
     windows: [],
-    subWindows: [],
     sectors: [],
     attachment: null,
   });
   const windows = useSelector((state: any) => state.windows);
+  const forms = useSelector((state: any) => state.forms);
   const { sectors } = useSelector((state: any) => state.sectors);
   let MultiWindowData =
     windows?.windows
-      .filter((window: any) => window.subWindows.length !== 0)
+      .filter(
+        (window: any) =>
+          window.subWindows.filter(
+            (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE
+          ).length !== 0 && window.status === WINDOW_STATUS.ACTIVE
+      )
       ?.map((window: any) => ({
         value: window.uuid,
         label: window.title,
@@ -59,29 +78,47 @@ const AddEditCall = ({
         ?.filter((window: any) => selectedWindows?.includes(window.uuid))
         .flatMap((window: any) => {
           return (
-            window.subWindows?.map((subWindow: any) => ({
-              value: subWindow.uuid,
-              label: subWindow.title,
-            })) || []
+            window.subWindows
+              ?.filter(
+                (sub: any) =>
+                  sub.status === SUBWINDOW_STATUS.ACTIVE &&
+                  sub.sectors.filter(
+                    (sec: any) => sec.status === SECTOR_STATUS.ACTIVE
+                  )
+              )
+              .map((subWindow: any) => ({
+                value: subWindow.uuid,
+                label: subWindow.title,
+              })) || []
           );
         }) || [];
 
     return subWindowData;
   };
 
+  const FormsData = forms.forms.map((form: any) => ({
+    value: form.uuid,
+    label: form.name,
+  }));
+
   const getSectorData = () => {
     const sectorData = windows?.windows?.flatMap(
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid),
+            Object.keys(selectedSubWindowsForms).includes(subWindow.uuid)
           )
           .flatMap(
             (subWindow: any) =>
               subWindow.sectors
                 ?.map((sector: any) => {
                   const matchingSector = sectors.find(
-                    (s: any) => s.uuid === sector.uuid && s.trades.length > 0,
+                    (s: any) =>
+                      s.uuid === sector.uuid &&
+                      s.trades.filter(
+                        (trad: any) => trad.trade.status === TRADE_STATUS.ACTIVE
+                      ).length > 0 &&
+                      sector.status === SECTOR_STATUS.ACTIVE
                   );
                   return matchingSector
                     ? {
@@ -90,8 +127,8 @@ const AddEditCall = ({
                       }
                     : null;
                 })
-                .filter(Boolean) || [],
-          ) || [],
+                .filter(Boolean) || []
+          ) || []
     );
     return sectorData;
   };
@@ -102,8 +139,8 @@ const AddEditCall = ({
     if (defaultData) {
       setFormData(defaultData);
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
-      setSelectedSubWindows(
-        defaultData.subWindows.map((item: any) => item.uuid),
+      setSelectedSubWindowsForms(
+        JSON.parse(defaultData.subwindowForms || "{}")
       );
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
     }
@@ -123,11 +160,6 @@ const AddEditCall = ({
 
   const handleSubmit = () => {
     setLoading(true);
-    setFormData({
-      ...formData,
-      sectors: selectedSectors,
-      windows: selectedWindows,
-    });
     const submitData = new FormData();
     submitData.append("title", formData?.title as any);
     submitData.append("description", formData?.description as any);
@@ -136,7 +168,10 @@ const AddEditCall = ({
     submitData.append("applicationEndDate", formData?.endDate as any);
     submitData.append("window", JSON.stringify(selectedWindows));
     submitData.append("sector", JSON.stringify(selectedSectors));
-    submitData.append("subWindows", JSON.stringify(selectedSubWindows));
+    submitData.append(
+      "subWindowForms",
+      JSON.stringify(selectedSubWindowsForms)
+    );
     if (formData?.attachment) {
       submitData?.append("attachment", formData?.attachment);
     }
@@ -161,7 +196,7 @@ const AddEditCall = ({
               message: "Call updated successfully!",
               color: "blue",
             });
-            console.log(res.data);
+
             setFormData({
               title: "",
               description: "",
@@ -169,7 +204,6 @@ const AddEditCall = ({
               endDate: "",
               appealDays: "",
               windows: [],
-              subWindows: [],
               sectors: [],
               attachment: null,
             });
@@ -205,7 +239,6 @@ const AddEditCall = ({
               endDate: "",
               appealDays: "",
               windows: [],
-              subWindows: [],
               sectors: [],
               attachment: null,
             });
@@ -506,30 +539,113 @@ const AddEditCall = ({
                   </div>
                 </div>
 
-                <div className="">
-                  <label
-                    htmlFor="subWindows"
-                    className="block text-xs font-bold text-gray-700"
-                  >
-                    Select sub-windows
-                  </label>
-                  <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                    <span className="absolute left-2 top-3 text-black text-lg">
-                      <SolarSuitcaseLinear />
-                    </span>
-                    <MultiSelect
-                      name="subWindows"
-                      onChange={(value) => {
-                        setSelectedSubWindows(value);
-                        setSelectedSectors([]);
-                      }}
-                      data={MultiSubWindowData || []}
-                      value={selectedSubWindows}
-                      placeholder="Select or type in a sub-window"
-                      required
-                    />
+                <div className="flex flex-row gap-4 my-2 items-end">
+                  <div className="flex-grow">
+                    <label
+                      htmlFor="subWindow"
+                      className="block text-xs font-bold text-gray-700"
+                    >
+                      Select sub-windows
+                    </label>
+                    <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                      <span className="absolute left-2 top-3 text-black text-lg">
+                        <SolarSuitcaseLinear />
+                      </span>
+                      <Select
+                        name="subWindow"
+                        onChange={(value) => {
+                          setSelectedSub(value);
+                        }}
+                        data={
+                          MultiSubWindowData.filter(
+                            (sub: any) =>
+                              Object.keys(selectedSubWindowsForms).find(
+                                (k) => k == sub.value
+                              ) == null
+                          ) || []
+                        }
+                        value={selectedSub}
+                        placeholder="Select or type in a sub-window"
+                        required
+                      />
+                    </div>
                   </div>
+
+                  <div className="flex-grow">
+                    <label
+                      htmlFor="form"
+                      className="block text-xs font-bold text-gray-700"
+                    >
+                      Select form for the sub window
+                    </label>
+                    <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                      <span className="absolute left-2 top-3 text-black text-lg">
+                        <SolarSuitcaseLinear />
+                      </span>
+                      <Select
+                        name="form"
+                        onChange={(value) => {
+                          setSelectedForm(value);
+                        }}
+                        data={FormsData || []}
+                        value={selectedForm}
+                        placeholder="Select or type in a sub-window"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    className="bg-primary py-2 px-5  rounded-2xl h-fit text-white"
+                    onClick={() => {
+                      if (selectedSub && selectedForm) {
+                        setSelectedSubWindowsForms((prev: any) => ({
+                          ...prev,
+                          [selectedSub]: selectedForm,
+                        }));
+                        setSelectedForm(null);
+                        setSelectedSub(null);
+                        setSelectedSectors([]);
+                      }
+                    }}
+                  >
+                    Add
+                  </button>
                 </div>
+
+                {Object.keys(selectedSubWindowsForms).length > 0 && (
+                  <div className="my-2">
+                    <table className="min-w-full table-auto border-collapse border border-gray-300">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="px-4 py-2 text-left">Sub-Window</th>
+                          <th className="px-4 py-2 text-left">Form</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.entries(selectedSubWindowsForms).map(
+                          ([subWindow, form]) => (
+                            <tr key={subWindow} className="border-b">
+                              <td className="px-4 py-2">
+                                {
+                                  MultiSubWindowData.find(
+                                    (sub: any) => sub.value == subWindow
+                                  )?.label
+                                }
+                              </td>
+                              <td className="px-4 py-2">
+                                {
+                                  FormsData.find((fm: any) => fm.value == form)
+                                    ?.label
+                                }
+                              </td>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
 
                 <div className="">
                   <label

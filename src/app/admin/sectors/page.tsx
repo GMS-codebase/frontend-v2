@@ -19,6 +19,7 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
+import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
 
 const Page = () => {
   const sectors = useSelector((state: any) => state.sectors);
@@ -27,6 +28,13 @@ const Page = () => {
   const [
     isOpenCreateEdit,
     { open: openCreateEditModal, close: closeCreateEditModal },
+  ] = useDisclosure(false);
+  const [
+    isOpenActivateDeactivateSector,
+    {
+      open: openActivateDeactivateSectorModal,
+      close: closeActivateDeactivateSectorModal,
+    },
   ] = useDisclosure(false);
   const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
@@ -62,6 +70,13 @@ const Page = () => {
       ),
     },
     {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.status || "-"}</div>
+      ),
+    },
+    {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
@@ -91,6 +106,18 @@ const Page = () => {
                   <FiEye size={21} color="#576074" />
                   View
                 </Link>
+              </Menu.Item>
+              <Menu.Item>
+                <div
+                  onClick={() => {
+                    setSelectedSector(row.original);
+                    openActivateDeactivateSectorModal();
+                  }}
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <CiEdit size={21} color="#576074" />
+                  {row.original.status === "ACTIVE" ? "Deactivate" : "Activate"}
+                </div>
               </Menu.Item>
               <Menu.Item>
                 <div
@@ -177,6 +204,16 @@ const Page = () => {
         }}
         type="sectors"
         id={selectedSector?.uuid}
+      />
+      <ActivateDeactivateModal
+        type="sectors"
+        closeModal={() => {
+          closeActivateDeactivateSectorModal();
+          setSelectedSector(null);
+        }}
+        id={selectedSector?.uuid}
+        isActive={selectedSector?.status === "ACTIVE"}
+        isOpenModal={isOpenActivateDeactivateSector}
       />
     </div>
   );

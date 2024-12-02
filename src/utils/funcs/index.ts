@@ -77,9 +77,17 @@ import {
   GET_STAGES_SUCCESS,
 } from "@/actions/EmpStagesActions";
 import {
+  GET_APPLICATIONS_READY_FOR_MINUTES_LOADING,
+  GET_APPLICATIONS_READY_FOR_MINUTES_SUCCESS,
+  GET_APPROVED_MINUTES_LOADING,
+  GET_APPROVED_MINUTES_SUCCESS,
   GET_MINUTES_ERROR,
   GET_MINUTES_LOADING,
   GET_MINUTES_SUCCESS,
+  GET_REJECTED_MINUTES_LOADING,
+  GET_REJECTED_MINUTES_SUCCESS,
+  GET_UPLOADED_MINUTES_LOADING,
+  GET_UPLOADED_MINUTES_SUCCESS,
 } from "@/actions/MinutesActions";
 import {
   GET_ROLES_LOADING,
@@ -94,6 +102,47 @@ import {
 } from "@/actions/DashboardActions";
 import { prioritySectors } from "../constants";
 import { notifications } from "@mantine/notifications";
+import {
+  GET_BUDGET_LINES_ERROR,
+  GET_BUDGET_LINES_LOADING,
+  GET_BUDGET_LINES_SUCCESS,
+} from "@/actions/BudgetLinesActions";
+
+import {
+  GET_ANNOUNCEMENT_LOADING,
+  GET_ANNOUNCEMENT_SUCCESS,
+  GET_ANNOUNCEMENT_ERROR,
+} from "@/actions/AnnouncementActions";
+import {
+  GET_FORMS_ERROR,
+  GET_FORMS_LOADING,
+  GET_FORMS_SUCCESS,
+} from "@/actions/FormsActions";
+import { Form } from "@/types/questions-form";
+
+import {
+  GET_APPEALS_ERROR,
+  GET_APPEALS_LOADING,
+  GET_APPEALS_SUCCESS,
+} from "@/actions/AppealsActions";
+import { QuestionForm } from "@/types/questions-form";
+export const getAppeals = async (
+  dispatch: Dispatch<UnknownAction>,
+  user: string
+) => {
+  dispatch({ type: GET_APPEALS_LOADING });
+  const api =
+    user === "applicant" ? "/appeals/all-appeals/mine/all" : "/appeals/all";
+  authorizedApi
+    .get(api)
+    .then((res) => {
+      dispatch({ type: GET_APPEALS_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_APPEALS_ERROR, payload: err.response.data.error });
+    });
+};
+
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -130,7 +179,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -169,18 +218,18 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
 export const getDashboardData = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string,
+  stage: string
 ) => {
   try {
     dispatch({ type: GET_DASHBOARD_LOADING });
     const dashboardResponse = await authorizedApi.get(
-      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`,
+      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`
     );
     dispatch({ type: GET_DASHBOARD_SUCCESS, payload: dashboardResponse.data });
     for (const sector of prioritySectors) {
       try {
         const sectorResponse = await authorizedApi.get(
-          `/Sectors/${sector?.id}/count/applications/count/applicants`,
+          `/Sectors/${sector?.id}/count/applications/count/applicants`
         );
         dispatch({
           type: GET_PRIORITY_SECTORS_DATA,
@@ -214,6 +263,31 @@ export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_TRADES_ERROR, payload: err.response.data.error });
     });
 };
+export const getForms = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_FORMS_LOADING });
+  authorizedApi
+    .get("/forms/all")
+    .then((res) => {
+      dispatch({ type: GET_FORMS_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_FORMS_ERROR, payload: err.response.data.error });
+    });
+};
+export const getBudgetLines = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_BUDGET_LINES_LOADING });
+  authorizedApi
+    .get("/budgetlines/all")
+    .then((res) => {
+      dispatch({ type: GET_BUDGET_LINES_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_BUDGET_LINES_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
 export const getCalls = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_CALLS_LOADING });
   authorizedApi
@@ -245,7 +319,7 @@ export const handleDownloadFile = async (file: any, service: string) => {
       `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
         responseType: "blob",
-      },
+      }
     );
     const blob = new Blob([response.data], {
       type: response.headers["content-type"],
@@ -260,6 +334,16 @@ export const handleDownloadFile = async (file: any, service: string) => {
     document.body.removeChild(link);
   } catch (error) {
     console.error("Error downloading file:", error);
+  }
+};
+
+export const handleViewFile = (file: string, service: string): void => {
+  try {
+    const filename = encodeURIComponent(file.split("/").pop() || "");
+    const fileUrl = `/files/${service}/${filename}`;
+    window.open(fileUrl, "_blank");
+  } catch (error) {
+    console.error("Error opening file:", error);
   }
 };
 
@@ -287,11 +371,11 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
 export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_CONTRACTS_LOADING });
   authorizedApi
-    .get("/contracts")
+    .get("/negotiation-contract/contracts/sdf/all")
     .then((res) => {
       dispatch({
         type: GET_CONTRACTS_SUCCESS,
-        payload: res.data.data,
+        payload: res?.data?.data?.data,
       });
     })
     .catch((err) => {
@@ -302,7 +386,7 @@ export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
 export const getMinutes = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MINUTES_LOADING });
   authorizedApi
-    .get("/contracts/negotiations/docs/all")
+    .get("/application/contract-signing/all") //Todo: change this to the correct endpoint
     .then((res) => {
       dispatch({
         type: GET_MINUTES_SUCCESS,
@@ -327,12 +411,12 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_STAGES_ERROR, payload: err.response.data.error });
     });
 };
-export const getApplicationsForContracts = async (
-  dispatch: Dispatch<UnknownAction>,
+export const getApplicationsForContractSigning = async (
+  dispatch: Dispatch<UnknownAction>
 ) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
   authorizedApi
-    .get("/application/contract-signing/all")
+    .get("/negotiation-contract/applications/sdf/ready-contract-signing")
     .then((res) => {
       dispatch({
         type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
@@ -377,6 +461,25 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
+
+export const getAnnouncement = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_ANNOUNCEMENT_LOADING });
+  authorizedApi
+    .get("/announcements")
+    .then((res) => {
+      dispatch({
+        type: GET_ANNOUNCEMENT_SUCCESS,
+        payload: res.data.data.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_ANNOUNCEMENT_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+
 export const getMyContacts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_CONTACTS_LOADING });
   authorizedApi
@@ -397,6 +500,86 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
     .get("/application/all-application")
     .then((res) => {
       dispatch({ type: GET_MY_CONTRACTS_SUCCESS, payload: res.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTRACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getApplicationsReadyForMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+  role: string
+) => {
+  dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
+  authorizedApi
+    .get(`/application/contract-signing/all`)
+    .then((res) => {
+      dispatch({
+        type: GET_APPLICATIONS_READY_FOR_MINUTES_SUCCESS,
+        payload: res.data.data?.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MINUTES_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getUploadedMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+  role: string
+) => {
+  dispatch({ type: GET_UPLOADED_MINUTES_LOADING });
+  authorizedApi
+    .get(`/negotiation-contract/applications/${role}/pending`)
+    .then((res) => {
+      dispatch({
+        type: GET_UPLOADED_MINUTES_SUCCESS,
+        payload: res.data.data?.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTRACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getApprovedMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+  role: string
+) => {
+  dispatch({ type: GET_APPROVED_MINUTES_LOADING });
+  authorizedApi
+    .get(`/negotiation-contract/applications/${role}/approved`)
+    .then((res) => {
+      dispatch({
+        type: GET_APPROVED_MINUTES_SUCCESS,
+        payload: res.data?.data?.data?.applications,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTRACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getRejectedMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+  role: string
+) => {
+  dispatch({ type: GET_REJECTED_MINUTES_LOADING });
+  authorizedApi
+    .get("/negotiation-contract/applications/rejected")
+    .then((res) => {
+      dispatch({
+        type: GET_REJECTED_MINUTES_SUCCESS,
+        payload: res.data.data.data,
+      });
     })
     .catch((err) => {
       dispatch({
@@ -446,76 +629,78 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
 };
 
 const validateQuestions = async (
-  data: any,
-  window?: number,
-  subwindow?: number,
+  answers: { [key: string]: any },
+  form: Form
 ): Promise<string | null> => {
-  // Common validation messages
-  const commonMessages = {
-    title: "The title is required.",
-    activitiesAndOutcomes:
-      "Please provide the activities and expected outcomes.",
-    readinessExecute: "Indicate the readiness for execution.",
-    role: "Specify the role in the project.",
-    identificationEmployee: "Employee identification details are mandatory.",
-    trainingProcess: "A description of the training process is required.",
-    trainingManualAttachment: "Please upload the training manual attachment.",
-    trainingEquipment: "Training equipment details are required.",
-    trainingEquipmentAttachment: "Attach the equipment documentation.",
-    assessmentProcess: "A description of the assessment process is required.",
-    assessmentEquipment: "Assessment equipment details are required.",
-    assessmentEquipmentAttachment: "Attach the equipment documentation.",
-    staffs: "Staff information is required.",
-    staffAttachment: "Upload the staff-related attachment.",
-    sustainability: "Provide the sustainability plan.",
-    previousFinancialReportAttachment: "Upload the previous financial report.",
-    contributionFromApplicant: "Specify the applicant’s contribution.",
-  };
-  const isAssessmentWindow = window === 3 && subwindow === 2;
-  if (!data.title) return commonMessages.title;
-  if (!data.activitiesAndOutcomes) return commonMessages.activitiesAndOutcomes;
-  if (!data.readinessExecute) return commonMessages.readinessExecute;
-  if (!data.role) return commonMessages.role;
-  if (!data.identificationEmployee)
-    return commonMessages.identificationEmployee;
-  if (!data.sustainability) return commonMessages.sustainability;
-  if (isAssessmentWindow) {
-    if (!data.assessmentProcess) return commonMessages.assessmentProcess;
-    if (!data.assessmentEquipment) return commonMessages.assessmentEquipment;
-    if (!data.assessmentEquipmentAttachment)
-      return commonMessages.assessmentEquipmentAttachment;
-  } else {
-    if (!data.trainingProcess) return commonMessages.trainingProcess;
-    if (!data.trainingManualAttachment)
-      return commonMessages.trainingManualAttachment;
-    if (!data.trainingEquipment) return commonMessages.trainingEquipment;
-    if (!data.trainingEquipmentAttachment)
-      return commonMessages.trainingEquipmentAttachment;
+  try {
+    if (!form.qns) {
+      return "The form structure is invalid or missing questions.";
+    }
+    const questionForm: QuestionForm = JSON.parse(form.qns);
+    for (const [sectionKey, section] of Object.entries(questionForm)) {
+      for (const page of section.pages) {
+        for (const question of page.questions) {
+          if (question.required) {
+            const answer = answers[question.id];
+            if (
+              answer === undefined ||
+              answer === null ||
+              (typeof answer === "string" && answer.trim() === "") ||
+              (Array.isArray(answer) && answer.length === 0) ||
+              (question.type === "file" && typeof answer !== "string")
+            ) {
+              return `The question "${question.title}" is required but was not answered.`;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  } catch (error: any) {
+    return `An error occurred during validation: ${error.message}`;
   }
-  if (!data.staffs) return commonMessages.staffs;
-  if (!data.staffAttachment) return commonMessages.staffAttachment;
-  if (!data.previousFinancialReportAttachment)
-    return commonMessages.previousFinancialReportAttachment;
-  if (!data.contributionFromApplicant)
-    return commonMessages.contributionFromApplicant;
-  return null;
+};
+
+const validateComments = async (
+  comments: { [key: string]: any },
+  form: Form
+): Promise<string | null> => {
+  try {
+    if (!form.qns) {
+      return "The form structure is invalid or missing questions.";
+    }
+    const questionForm: QuestionForm = JSON.parse(form.qns);
+    for (const [sectionKey, section] of Object.entries(questionForm)) {
+      for (const page of section.pages) {
+        for (const question of page.questions) {
+          if (question.commentable) {
+            const comment = comments[question.id];
+            if (
+              comment !== undefined &&
+              (typeof comment !== "string" || comment.trim() === "")
+            ) {
+              return `The comment for question "${question.title}" is invalid. Comments should be non-empty strings.`;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  } catch (error: any) {
+    return `An error occurred during comment validation: ${error.message}`;
+  }
 };
 
 export const handleSubmit = async (
   type: "submit" | "save",
   setLoading: (type: any) => void,
-  data: any,
+  answers: any,
   application: any,
-  callback?: () => void,
+  form: any,
+  callback?: () => void
 ) => {
   const error =
-    type === "save"
-      ? undefined
-      : await validateQuestions(
-          data,
-          application.window.title.includes("3") && 3,
-          application.subWindow.title.includes("2") && 2,
-        );
+    type === "save" ? undefined : await validateQuestions(answers, form);
   if (error !== null && type === "submit") {
     notifications.show({
       message: error,
@@ -524,104 +709,12 @@ export const handleSubmit = async (
     return;
   }
   setLoading(type);
-  const submitData = new FormData();
-  if (data.title) submitData.append("title", data.title);
-  if (data.activitiesAndOutcomes)
-    submitData.append("activitiesAndOutcomes", data.activitiesAndOutcomes);
-  if (data.readinessExecute)
-    submitData.append("readinessExecute", data.readinessExecute);
-  if (data.role) submitData.append("role", data.role);
-  if (data.institution) submitData.append("institution", data.institution);
-  if (data.trainingProcess && data.trainingProcess.length > 0)
-    submitData.append("trainingProcess", JSON.stringify(data.trainingProcess));
-  if (data.trainingEquipment && data.trainingEquipment.length > 0)
-    submitData.append(
-      "trainingEquipment",
-      JSON.stringify(data.trainingEquipment),
-    );
-  if (data.identificationEmployee)
-    submitData.append("identificationEmployee", data.identificationEmployee);
-  if (data.staffs && data.staffs.length > 0)
-    submitData.append("staffs", JSON.stringify(data.staffs));
-  if (data.sustainability)
-    submitData.append("sustainability", data.sustainability);
-  if (data.contributionFromApplicant)
-    submitData.append(
-      "contributionFromApplicant",
-      data.contributionFromApplicant,
-    );
-  if (data.recruitmentTrainerNumber)
-    submitData.append(
-      "recruitmentTrainerNumber",
-      data.recruitmentTrainerNumber,
-    );
-  if (data.identificationMember)
-    submitData.append("identificationMember", data.identificationMember);
-  if (
-    data.assessmentAndCertificationProcess &&
-    data.assessmentAndCertificationProcess.length > 0
-  )
-    submitData.append(
-      "assessmentAndCertificationProcess",
-      JSON.stringify(data.assessmentAndCertificationProcess),
-    );
-  if (data.assessmentEquipment && data.assessmentEquipment.length > 0)
-    submitData.append(
-      "assessmentEquipment",
-      JSON.stringify(data.assessmentEquipment),
-    );
-  if (data.recruitmentCandidatesNumber)
-    submitData.append(
-      "recruitmentCandidatesNumber",
-      data.recruitmentCandidatesNumber,
-    );
-  if (data.assessorsAndFacilitators)
-    submitData.append(
-      "assessorsAndFacilitators",
-      data.assessorsAndFacilitators,
-    );
-  if (data.contribution) submitData.append("contribution", data.contribution);
-  if (data.roleAttachment)
-    submitData.append("roleAttachment", data.roleAttachment);
-  if (data.institutionAttachment)
-    submitData.append("institutionAttachment", data.institutionAttachment);
-  if (data.trainingManualAttachment)
-    submitData.append(
-      "trainingManualAttachment",
-      data.trainingManualAttachment,
-    );
-  if (data.staffAttachment)
-    submitData.append("staffAttachment", data.staffAttachment);
-  if (data.budgetLines)
-    submitData.append("budgetLines", JSON.stringify(data.budgetLines));
-  if (data.trainingEquipmentAttachment)
-    submitData.append(
-      "trainingEquipmentAttachment",
-      data.trainingEquipmentAttachment,
-    );
-  if (data.previousFinancialReportAttachment)
-    submitData.append(
-      "previousFinancialReportAttachment",
-      data.previousFinancialReportAttachment,
-    );
-  if (data.MOUsAttachment && data.MOUsAttachment.length > 0) {
-    data.MOUsAttachment.forEach((file: any, index: any) => {
-      submitData.append(`MOUsAttachment[${index}]`, file);
-    });
-  }
-  if (data.assessmentEquipmentAttachment)
-    submitData.append(
-      "assessmentEquipmentAttachment",
-      data.assessmentEquipmentAttachment,
-    );
-  if (data.budgetSummaryAttachment)
-    submitData.append("budgetSummaryAttachment", data.budgetSummaryAttachment);
-
-  console.log(application);
   try {
     await authorizedApi.post(
       `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${application.uuid}`,
-      submitData,
+      {
+        answers: JSON.stringify(answers),
+      }
     );
     notifications.show({
       message:
@@ -631,14 +724,76 @@ export const handleSubmit = async (
       color: "blue",
     });
     setLoading(false);
-    callback && callback();
+    // callback && callback();
   } catch (err: any) {
-    console.log(err);
     notifications.show({
       message: err.response?.data?.message ?? "Failed to submit the form!",
       color: "red",
     });
   } finally {
     setLoading(null);
+  }
+};
+
+export const handleAddComments = async (
+  comments: any,
+  form: any,
+  application: any,
+  callback?: () => void
+) => {
+  const validationError = await validateComments(comments, form);
+  if (validationError) {
+    notifications.show({
+      message: validationError,
+      color: "red",
+    });
+    return;
+  }
+  try {
+    await authorizedApi.patch(`/application/comment/${application.uuid}`, {
+      comments: JSON.stringify(comments),
+    });
+    notifications.show({
+      message: "Comments Added Successfully!",
+      color: "blue",
+    });
+    callback && callback();
+  } catch (err: any) {
+    notifications.show({
+      message: err.response?.data?.message ?? "Failed to submit the form!",
+      color: "red",
+    });
+  }
+};
+
+export const getApplicationStatus = (application: any) => {
+  if (!application.finishedAnswering) {
+    return "ANSWERING";
+  } else if (application.call.closed) {
+    return "SUBMITTED";
+  } else if (
+    application?.currentStage === "EVALUATION" &&
+    !application?.call?.closedEvaluation
+  ) {
+    return "EVALUATION IN PROGRESS";
+  } else if (
+    application?.currentStage === "DUE_DILIGENCY" &&
+    !application?.call?.closedDueDiligency
+  ) {
+    return "DUE DILIGENCY IN  PROGRESS";
+  } else if (
+    application?.currentStage === "GRANT_COMMITTEE" &&
+    !application?.call?.closedGrantCommittee
+  ) {
+    return "GRANT COMMITTEE IN PROGRESS";
+  } else if (
+    application?.currentStage === "CONTRACT_SIGNING" &&
+    (!application?.call?.closedGrantCommittee ||
+      !application?.call?.closedDueDiligency ||
+      !application?.call?.closedEvaluation)
+  ) {
+    return "CONTRACT SIGNING IN PROGRESS";
+  } else {
+    return application?.currentStage;
   }
 };

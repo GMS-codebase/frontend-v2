@@ -21,12 +21,20 @@ import {
   getSubWindows,
   getMyContracts,
   getContracts,
-  getApplicationsForContracts,
+  getApplicationsForContractSigning,
   getEmpStages,
   getMyApplications,
   getMinutes,
   getRoles,
   getSectorTrades,
+  getBudgetLines,
+  getApplicationsReadyForMinutes,
+  getRejectedMinutes,
+  getApprovedMinutes,
+  getUploadedMinutes,
+  getAnnouncement,
+  getForms,
+  getAppeals,
 } from "@/utils/funcs";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
@@ -79,16 +87,29 @@ const Navbar = () => {
       getApplicants(dispatch);
       getEmployees(dispatch);
       getRoles(dispatch);
+      getBudgetLines(dispatch);
+      getAppeals(dispatch, "admin");
     } else if (role === "SDF_SECRETARIATE") {
       getApplicants(dispatch);
       getContracts(dispatch);
       getMinutes(dispatch);
-      getApplicationsForContracts(dispatch);
+      getApplicationsReadyForMinutes(dispatch, "sdf");
+      getUploadedMinutes(dispatch, "sdf");
+      getApprovedMinutes(dispatch, "sdf");
+      getRejectedMinutes(dispatch, "sdf");
+      getAppeals(dispatch, "sdf");
     } else if (role === "APPLICANT") {
       getMyContacts(dispatch);
       getMyApplicantProfile(dispatch);
       getMyApplications(dispatch);
+      getUploadedMinutes(dispatch, "applicant");
+      getApprovedMinutes(dispatch, "applicant");
+      getRejectedMinutes(dispatch, "applicant");
+      getBudgetLines(dispatch);
+      getAppeals(dispatch, "applicant");
     }
+    getAnnouncement(dispatch);
+    getApplicationsForContractSigning(dispatch);
     getEmpStages(dispatch);
     getWindows(dispatch);
     getSectors(dispatch);
@@ -100,6 +121,7 @@ const Navbar = () => {
     getMEReports(dispatch);
     getProfile(dispatch);
     getSectorTrades(dispatch);
+    getForms(dispatch);
   }, []);
 
   const { profile } = useSelector((state: any) => state.profile);

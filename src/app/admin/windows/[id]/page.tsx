@@ -19,6 +19,8 @@ import { Menu } from "@mantine/core";
 import { FiEye } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import DeleteModal from "@/components/Modals/DeleteModal";
+import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
+import { getWindows } from "@/utils/funcs";
 
 const Page = () => {
   const navigate = useRouter();
@@ -31,15 +33,22 @@ const Page = () => {
     { open: openDeleteSubWindow, close: closeDeleteSubWindow },
   ] = useDisclosure(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { id: windowId } = useParams();
+  const { id: windowId } = useParams<{ id: string }>();
   const [isUpdateWindow, { open: openUpdate, close: closeUpdate }] =
     useDisclosure(false);
   const windows = useSelector((state: any) => state.windows);
   const window = windows.windows?.filter(
-    (window: any) => window.uuid === windowId,
+    (window: any) => window.uuid === windowId
   )[0];
+  const [
+    isOpenActivateDeactivateSubWindow,
+    {
+      open: openActivateDeactivateSubWindowModal,
+      close: closeActivateDeactivateSubWindowModal,
+    },
+  ] = useDisclosure(false);
   const filteredSubWindows = window?.subWindows?.filter((subW: any) =>
-    subW.title.toLowerCase().includes(searchQuery.toLowerCase()),
+    subW?.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const [selectedSubWindow, setSelectedSubWindow] = useState<any>();
   const columns: ColumnDef<any>[] = [
@@ -57,6 +66,13 @@ const Page = () => {
             ? row.original?.description?.slice(0, 50) + "..."
             : row.original?.description}
         </div>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.status || "-"}</div>
       ),
     },
     {
@@ -85,13 +101,25 @@ const Page = () => {
                 <div
                   onClick={() =>
                     navigate.push(
-                      `/admin/windows/${window?.uuid}/${row.original?.uuid}`,
+                      `/admin/windows/${window?.uuid}/${row.original?.uuid}`
                     )
                   }
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <FiEye size={21} color="#576074" />
                   View
+                </div>
+              </Menu.Item>
+              <Menu.Item>
+                <div
+                  onClick={() => {
+                    setSelectedSubWindow(row.original);
+                    openActivateDeactivateSubWindowModal();
+                  }}
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <CiEdit size={21} color="#576074" />
+                  {row.original.status === "ACTIVE" ? "Deactivate" : "Activate"}
                 </div>
               </Menu.Item>
               <Menu.Item>
@@ -227,7 +255,9 @@ const Page = () => {
         />
         <AddEditWindow
           isOpenAddEditWindow={isUpdateWindow}
-          closeAddEditWindow={closeUpdate}
+          closeAddEditWindow={() => {
+            closeUpdate();
+          }}
           defaultData={window}
         />
         <DeleteModal
@@ -239,6 +269,17 @@ const Page = () => {
           id={selectedSubWindow?.uuid}
           isOpenModal={isDeleteSubWindow}
           windowId={window?.uuid}
+        />
+        <ActivateDeactivateModal
+          type="subwindows"
+          closeModal={() => {
+            closeActivateDeactivateSubWindowModal();
+            setSelectedSubWindow(null);
+          }}
+          windowId={windowId}
+          id={selectedSubWindow?.uuid}
+          isActive={selectedSubWindow?.status === "ACTIVE"}
+          isOpenModal={isOpenActivateDeactivateSubWindow}
         />
       </div>
     </div>

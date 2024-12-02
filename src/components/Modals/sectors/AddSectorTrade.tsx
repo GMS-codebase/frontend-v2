@@ -22,14 +22,10 @@ const AddSectorTrade = ({
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     trade: "",
-    windows: [] as string[],
   });
   const [errors, setErrors] = useState({
     trade: "",
-    windows: "",
   });
-
-  const windows = useSelector((state: any) => state.windows);
   const trades = useSelector((state: any) => state.trades);
   const dispatch = useDispatch();
 
@@ -38,22 +34,9 @@ const AddSectorTrade = ({
     label: trade.title,
   }));
 
-  const windowOptions = windows.windows
-    .filter((window: any) =>
-      window?.subWindows?.filter((subWindow: any) =>
-        subWindow.sectors.filter((sec: any) => sec.uuid === id),
-      ),
-    )
-    .map((window: any) => ({
-      value: window.title,
-      label: window.title,
-    }));
-
   const validateForm = () => {
     const newErrors: any = {};
     if (!formData.trade) newErrors.trade = "Trade is required";
-    if (!formData.windows.length)
-      newErrors.windows = "At least one window is required"; // Validate for at least one window
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -76,7 +59,6 @@ const AddSectorTrade = ({
     try {
       await authorizedApi.put(`/Sectors/${id}/assign-trade`, {
         tradeId: formData.trade,
-        windows: formData.windows,
       });
       // dispatch({
       //   type: ADD_TRADE_SECTOR_SUCCESS,
@@ -89,6 +71,9 @@ const AddSectorTrade = ({
         message:
           "Trade assigned to sector for all selected windows successfully!",
         color: "blue",
+      });
+      setFormData({
+        trade: "",
       });
       closeAddSectorTrade();
     } catch (error: any) {
@@ -149,33 +134,6 @@ const AddSectorTrade = ({
               </div>
               {errors.trade && (
                 <div className="text-red-600 text-sm mt-1">{errors.trade}</div>
-              )}
-            </div>
-
-            <div className="w-full">
-              <label
-                htmlFor="windows"
-                className="block text-base font-medium text-black"
-              >
-                Select Windows
-              </label>
-              <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                <span className="absolute left-2 top-3 text-black text-lg">
-                  <SolarWindowFrameLinear />
-                </span>
-                <MultiSelect
-                  name="windows"
-                  value={formData.windows}
-                  onChange={(value: string[]) => handleChange("windows", value)}
-                  data={windowOptions}
-                  placeholder="Type in or select windows"
-                  required
-                />
-              </div>
-              {errors.windows && (
-                <div className="text-red-600 text-sm mt-1">
-                  {errors.windows}
-                </div>
               )}
             </div>
 
