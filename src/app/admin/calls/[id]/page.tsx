@@ -21,10 +21,17 @@ import AddEditCall from "@/components/Modals/call/AddEditCall";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import CloseStageModal from "@/components/Modals/call/CloseStage";
+import { Center } from "@mantine/core";
+import OpenCloseAppealModal from "@/components/Modals/call/OpenCloseAppeal";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
   const call = calls?.calls?.filter((call: any) => call?.uuid === callId)[0];
+  const [openCloseAppeal, setOpenCloseAppeal] = useState({
+    opened: false,
+    stage: "",
+    type: "",
+  });
   const [isEditCall, { open: openEditCall, close: closeEditCall }] =
     useDisclosure(false);
   const [isCloseCall, { open: openCloseCall, close: closeCloseCall }] =
@@ -64,7 +71,13 @@ const Page = () => {
         });
       });
   };
-  console.log(call);
+  if (calls.loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p className="text-gray-600 text-sm">Loading....</p>
+      </div>
+    );
+  }
   return (
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">
@@ -203,6 +216,7 @@ const Page = () => {
               </div>
               <div className="flex justify-between items-center bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 <h1>Due Diligency Stage</h1>
+
                 <button
                   disabled={!call?.closedEvaluation}
                   onClick={() =>
@@ -229,6 +243,43 @@ const Page = () => {
               </div>
             </div>
           </div>
+          <div>
+            <h1 className="mt-6 text-xl font-bold">Open or Close Appeals</h1>
+            <div className="flex flex-col gap-2 mt-4">
+              <div className="flex justify-between items-center bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                <h1>Evaluation Stage</h1>
+                <button
+                  onClick={() =>
+                    setOpenCloseAppeal({
+                      opened: true,
+                      stage: "EVALUATION",
+                      type: call?.evaluationAppealOpened ? "CLOSE" : "OPEN",
+                    })
+                  }
+                  className={`${call?.evaluationAppealOpened ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full`}
+                >
+                  {!call?.evaluationAppealOpened
+                    ? "Open Appeal"
+                    : "Close Appeal"}
+                </button>
+              </div>
+              <div className="flex justify-between items-center bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                <h1>Due Diligency Stage</h1>
+                <button
+                  onClick={() =>
+                    setOpenCloseAppeal({
+                      opened: true,
+                      stage: "DUE_DILIGENCY",
+                      type: call?.dueAppealOpened ? "CLOSE" : "OPEN",
+                    })
+                  }
+                  className={`${call?.dueAppealOpened ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  {!call?.dueAppealOpened ? "Open Appeal" : "Close Appeal"}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <CloseCallModal closeModal={closeCloseCall} isOpenModal={isCloseCall} />
@@ -242,6 +293,15 @@ const Page = () => {
         closeAddEditCall={closeEditCall}
         isOpenAddEditCall={isEditCall}
         defaultData={call}
+      />
+      <OpenCloseAppealModal
+        callId={callId}
+        closeModal={() =>
+          setOpenCloseAppeal({ opened: false, stage: "", type: "" })
+        }
+        stage={openCloseAppeal.stage as "EVALUATION" | "DUE_DILIGENCY"}
+        type={openCloseAppeal.type as "OPEN" | "CLOSE"}
+        opened={openCloseAppeal.opened}
       />
     </div>
   );

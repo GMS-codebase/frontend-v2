@@ -11,28 +11,53 @@ import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
 
 const Page = () => {
-  const { applications, loading } = useSelector(
-    (state: any) => state.applications,
+  // Select applications from Redux store
+  const { applications: rawApplications, loading } = useSelector(
+    (state: any) => state.applications
   );
+  const { stages } = useSelector((state: any) => state.empStages);
+  console.log(stages);
+
+  const applications = useMemo(
+    () =>
+      rawApplications
+        .map((app: any) => ({
+          ...app,
+          sector: app.sectors[0] || null,
+          trade: app.trades[0] || null,
+        }))
+        .filter((app: any) => {
+          const matchingStage = stages.find(
+            (stage: any) => stage.sector == app.sector.name
+          );
+          console.log("Filtering app:", app, "Matching stage:", matchingStage);
+          return matchingStage;
+        }),
+    [rawApplications, stages]
+  );
+
   const filtersContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
     stage: "All",
     window: "All",
+    subWindow: "All",
+    call: "All",
+    sector: "All",
+    trade: "All",
   });
 
+  // Helper function to get unique values for dropdown filters
   const getUniqueValues = (key: string) => {
     return [
       "All",
       ...new Set(
         applications
-          .map((app: any) => {
-            return key
-              .split(".")
-              .reduce((obj, property) => obj?.[property], app);
-          })
-          .filter(Boolean),
+          .map((app: any) =>
+            key.split(".").reduce((obj, property) => obj?.[property], app)
+          )
+          .filter(Boolean)
       ),
     ];
   };
@@ -41,10 +66,15 @@ const Page = () => {
     () => ({
       stages: getUniqueValues("currentStage"),
       windows: getUniqueValues("window.title"),
+      subwindows: getUniqueValues("subWindow.title"),
+      sectors: getUniqueValues("sector.name"),
+      trades: getUniqueValues("trade.trade.title"),
+      call: getUniqueValues("call.title"),
     }),
-    [applications],
+    [applications]
   );
 
+  // Format stage string
   const formatStage = (stage: string) => {
     return stage.replace(/_/g, " ").toUpperCase();
   };
@@ -53,27 +83,60 @@ const Page = () => {
     {
       accessorKey: "applicationNumber",
       header: "Application Number",
-      cell: ({ row }) => <div>{row.original?.applicationNumber}</div>,
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.applicationNumber}</div>
+      ),
     },
     {
       accessorKey: "applicantName",
       header: "Applicant Name",
-      cell: ({ row }) => <div>{row.original?.applicant?.name}</div>,
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.applicant?.name}</div>
+      ),
     },
     {
       accessorKey: "window",
       header: "Window",
-      cell: ({ row }) => <div>{row.original?.window?.title}</div>,
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.window?.title}</div>
+      ),
     },
     {
       accessorKey: "call",
       header: "Call",
-      cell: ({ row }) => <div>{row.original?.call?.title}</div>,
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.call?.title}</div>
+      ),
+    },
+    {
+      accessorKey: "subWindow",
+      header: "Sub Window",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.subWindow?.title}</div>
+      ),
+    },
+    {
+      accessorKey: "sector",
+      header: "Sector",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.sector?.name}</div>
+      ),
+    },
+    {
+      accessorKey: "trade",
+      header: "Trade",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.trade?.trade?.title}</div>
+      ),
     },
     {
       accessorKey: "stage",
       header: "Stage",
-      cell: ({ row }) => <div>{formatStage(row.original?.currentStage)}</div>,
+      cell: ({ row }) => (
+        <div className="truncate">
+          {formatStage(row.original?.currentStage)}
+        </div>
+      ),
     },
     {
       accessorKey: "actions",
@@ -117,20 +180,25 @@ const Page = () => {
     placeholderText,
     data,
     filterKey,
+    className,
   }: {
     placeholderText: string;
     data: any[];
     filterKey: keyof typeof selectedFilters;
+    className?: string;
   }) => {
+    const displayValue =
+      selectedFilters[filterKey] === "All" ? "" : selectedFilters[filterKey];
+
     return (
       <Select
         data={data.map((item) => ({ value: item, label: item }))}
         placeholder={placeholderText}
-        value={selectedFilters[filterKey]}
+        value={displayValue}
         onChange={(value) =>
           setSelectedFilters((prev) => ({ ...prev, [filterKey]: value }))
         }
-        className="w-full px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
+        className={`w-fit px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black ${className}`}
       />
     );
   };
@@ -147,26 +215,26 @@ const Page = () => {
   };
 
   const filteredApplications = useMemo(() => {
-    return (
-      applications
-        // .filter((app: any) => app.stages.length > 0)
-        .filter(
-          (app: any) =>
-            app.applicationNumber
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase()) ||
-            app.applicant?.name
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase()),
-        )
-        .filter((app: any) => {
-          const { stage, window } = selectedFilters;
-          return (
-            (stage === "All" || formatStage(app.currentStage) === stage) &&
-            (window === "All" || app.window?.title === window)
-          );
-        })
-    );
+    return applications
+      .filter(
+        (app: any) =>
+          app.applicationNumber
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .filter((app: any) => {
+        const { stage, window, call, subWindow, sector, trade } =
+          selectedFilters;
+        return (
+          (stage === "All" || formatStage(app.currentStage) === stage) &&
+          (call === "All" || app.call?.title === call) &&
+          (window === "All" || app.window?.title === window) &&
+          (subWindow === "All" || app.subWindow?.title === subWindow) &&
+          (sector === "All" || app.sector?.name === sector) &&
+          (trade === "All" || app.trade?.trade.title === trade)
+        );
+      });
   }, [applications, searchTerm, selectedFilters]);
 
   return (
@@ -194,23 +262,39 @@ const Page = () => {
 
           <div
             ref={filtersContainerRef}
-            className="flex items-center gap-3 overflow-x-hidden scrollbar-hide  flex-grow"
+            className="flex items-center gap-3 overflow-x-hidden scrollbar-hide flex-grow"
             style={{ scrollBehavior: "smooth" }}
           >
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Stage"
-                data={filterOptions.stages}
-                filterKey="stage"
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Window"
-                data={filterOptions.windows}
-                filterKey="window"
-              />
-            </div>
+            <FilterDropDown
+              placeholderText="Filter By Stage"
+              data={filterOptions.stages}
+              filterKey="stage"
+              className="flex-shrink-0"
+            />
+            <FilterDropDown
+              placeholderText="Filter By Window"
+              data={filterOptions.windows}
+              filterKey="window"
+              className="flex-shrink-0"
+            />
+            <FilterDropDown
+              placeholderText="Filter By Sub Window"
+              data={filterOptions.subwindows}
+              filterKey="subWindow"
+              className="flex-shrink-0"
+            />
+            <FilterDropDown
+              placeholderText="Filter By Sector"
+              data={filterOptions.sectors}
+              filterKey="sector"
+              className="flex-shrink-0"
+            />
+            <FilterDropDown
+              placeholderText="Filter By Trade"
+              data={filterOptions.trades}
+              filterKey="trade"
+              className="flex-shrink-0"
+            />
           </div>
 
           <button
@@ -221,19 +305,12 @@ const Page = () => {
           </button>
         </div>
       </div>
-      <div className="p-4">
-        <DataTable
-          columns={columns}
-          data={filteredApplications}
-          loading={loading}
-          noDataMessage={
-            applications?.length === 0
-              ? "No Applications So Far"
-              : filteredApplications.length === 0 &&
-                `No applications found matching your search term or filters.`
-          }
-        />
-      </div>
+
+      <DataTable
+        data={filteredApplications}
+        columns={columns}
+        loading={loading}
+      />
     </div>
   );
 };

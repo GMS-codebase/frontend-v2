@@ -73,7 +73,7 @@ const Page = () => {
     },
   ];
   const applicants = useSelector((state: any) => state.applicants);
-  console.log(applicants);
+
   const ApplicantsWithProfile = applicants?.applicants?.filter(
     (applicant: any) =>
       applicant.has_completed_profile || applicant.applications.length > 0,

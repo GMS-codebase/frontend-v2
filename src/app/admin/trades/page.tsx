@@ -14,12 +14,20 @@ import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 import Link from "next/link";
 import DeleteModal from "@/components/Modals/DeleteModal";
+import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
 
 const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [
     isOpenCreateEdit,
     { open: openCreateEditModal, close: closeCreateEditModal },
+  ] = useDisclosure(false);
+  const [
+    isOpenActivateDeactivateTrade,
+    {
+      open: openActivateDeactivateTradeModal,
+      close: closeActivateDeactivateTradeModal,
+    },
   ] = useDisclosure(false);
   const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
@@ -58,6 +66,13 @@ const Page = () => {
       ),
     },
     {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original?.status || "-"}</div>
+      ),
+    },
+    {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
@@ -79,6 +94,18 @@ const Page = () => {
                 <h1 className="text-lg">Actions</h1>
               </Menu.Label>
               <Menu.Divider />
+              <Menu.Item>
+                <div
+                  onClick={() => {
+                    setSelectedTrade(row.original);
+                    openActivateDeactivateTradeModal();
+                  }}
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <CiEdit size={21} color="#576074" />
+                  {row.original.status === "ACTIVE" ? "Deactivate" : "Activate"}
+                </div>
+              </Menu.Item>
               <Menu.Item>
                 <div
                   onClick={() => {
@@ -150,10 +177,7 @@ const Page = () => {
       </div>
       <AddTrade
         isOpenAddEditTrade={isOpenCreateEdit}
-        closeAddEditTrade={() => {
-          closeCreateEditModal();
-          setSelectedTrade(null);
-        }}
+        closeAddEditTrade={closeCreateEditModal}
         defaultData={selectedTrade}
       />
       <DeleteModal
@@ -164,6 +188,16 @@ const Page = () => {
         }}
         type="trades"
         id={selectedTrade?.uuid}
+      />
+      <ActivateDeactivateModal
+        type="trades"
+        closeModal={() => {
+          closeActivateDeactivateTradeModal();
+          setSelectedTrade(null);
+        }}
+        id={selectedTrade?.uuid}
+        isActive={selectedTrade?.status === "ACTIVE"}
+        isOpenModal={isOpenActivateDeactivateTrade}
       />
     </div>
   );

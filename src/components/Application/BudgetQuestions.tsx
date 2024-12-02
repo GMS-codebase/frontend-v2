@@ -1,10 +1,11 @@
 import { Comments } from "@/types";
 import { ApplicationQuestions } from "@/types/application";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
 import { Select } from "@mantine/core";
 import React, { useState, ChangeEvent } from "react";
 import { FaDownload, FaTrash } from "react-icons/fa6";
 import { FaEdit } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 interface Props {
   data: any;
@@ -27,6 +28,9 @@ const BudgetQuestions: React.FC<Props> = ({
     amount: 0,
     budgetLine: "",
   });
+  const { budgetLines, loading } = useSelector(
+    (state: any) => state.budgetLines,
+  );
   const [errors, setErrors] = useState({
     amount: "",
     budgetLine: "",
@@ -117,30 +121,26 @@ const BudgetQuestions: React.FC<Props> = ({
           >
             Budget Line
           </label>
-          <Select
+          <select
             name="budgetLine"
             value={budgetLineInputs.budgetLine ?? ""}
-            onChange={(selectedOption: any) =>
+            onChange={(e) =>
               setBudgetLineInputs((prev) => ({
                 ...prev,
-                budgetLine: selectedOption || "",
+                budgetLine: e.target.value || "",
               }))
             }
-            data={[
-              "Occupation, safety, health and environmental at Workplace (OSHE)",
-              "Consumables",
-              "Trainees Facilitation Fees",
-              "Trainers Allowances",
-              "Graduation Fees",
-              "Stationeries",
-              "Certificates",
-              "Insurance Cost for trainees",
-              "Other Related Training Cost (Communication fees, Mission Allowances, Public Awareness, Cleaning & Security)",
-              "Other (Specify)",
-            ]}
-            className="border pt-2 mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Select Budget Line"
-          />
+            className="border py-2.5 px-5 outline-none  mt-2 w-full bg-[#000F230A] rounded-2xl shadow-sm  sm:text-sm"
+          >
+            <option value="" disabled>
+              Select Budget Line
+            </option>
+            {budgetLines.map((budget: any, index: number) => (
+              <option key={index} value={budget.budgetLine}>
+                {budget.budgetLine}
+              </option>
+            ))}
+          </select>
           {errors.budgetLine && (
             <p className="text-red-600 text-sm">{errors.budgetLine}</p>
           )}
@@ -189,20 +189,26 @@ const BudgetQuestions: React.FC<Props> = ({
           Attach a file related to the budget summary
         </p>
         {comments || !setData ? (
-          <div className="mt-2">
+          <div className="grid grid-cols-2 gap-2 my-2">
             <button
-              disabled={data?.budgetSummaryAttachment === null}
+              onClick={() =>
+                handleViewFile(data?.budgetSummaryAttachment, "applications")
+              }
+              className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
+            >
+              View File
+            </button>
+            <button
               onClick={() =>
                 handleDownloadFile(
                   data?.budgetSummaryAttachment,
                   "applications",
                 )
               }
-              className={`w-full h-12 ${data?.budgetSummaryAttachment ? "bg-primary" : "bg-gray-600"} text-white rounded-full`}
+              className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
             >
-              {data?.budgetSummaryAttachment
-                ? "Download Budget Summary"
-                : "No Budget Summary Attached"}
+              <FaDownload />
+              <p>Download File</p>
             </button>
           </div>
         ) : (
@@ -217,7 +223,9 @@ const BudgetQuestions: React.FC<Props> = ({
               {data.budgetSummaryAttachment ? (
                 <div className="text-center">
                   <p className="text-xl font-medium text-gray-700">
-                    {data.budgetSummaryAttachment.name}
+                    {typeof data?.budgetSummaryAttachment === "string"
+                      ? data.budgetSummaryAttachment.split("/").pop()
+                      : data?.budgetSummaryAttachment?.name}
                   </p>
                   <p className="text-sm text-gray-500">File selected</p>
                 </div>
@@ -343,7 +351,6 @@ const BudgetQuestions: React.FC<Props> = ({
                 }))
               }
               className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-              placeholder="Add your comment"
             />
           </div>
         )}
@@ -380,7 +387,6 @@ const BudgetQuestions: React.FC<Props> = ({
                 }))
               }
               className="mt-2 p-2 border rounded-2xl bg-primaryText bg-opacity-5 outline-none w-full"
-              placeholder="Add your comment"
             />
           </>
         )}

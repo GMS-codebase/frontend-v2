@@ -16,7 +16,7 @@ const CreateApplication = ({
   existingApplication,
 }: {
   isOpenCreatingApplication: boolean;
-  closeCreatingApplication: () => void;
+  closeCreatingApplication: (val: boolean) => void;
   call: any;
   existingApplication: any;
 }) => {
@@ -49,7 +49,7 @@ const CreateApplication = ({
   }, [call]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -89,36 +89,39 @@ const CreateApplication = ({
     }
     try {
       setLoading(true);
+      console.log(formData);
       const res = await authorizedApi.post(
         `/application/create-application/${call.uuid}`,
         {
           window: formData.window,
-          subwindow: formData.subwindow,
+          subWindow: formData.subwindow,
           description: formData.description,
           sectors: [formData.sectors],
           trades: [formData.trades],
-        },
+        }
       );
       notifications.show({
         title: "Success",
         message: "Application created successfully!",
         color: "green",
       });
-      await getMyApplications(dispatch);
+      getMyApplications(dispatch);
       router.push(
-        `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`,
+        `/applicant/applications/call/${call.uuid}/${res.data.data.data.uuid}/apply`
       );
-      closeCreatingApplication();
+      closeCreatingApplication(false);
     } catch (error: any) {
       notifications.show({
-        title: "Error",
-        message: error.message || "Something went wrong.",
-        color: "red",
+        title: error.response.data.message.includes("exists")
+          ? "Application already exists"
+          : "Error",
+        message: error.response.data.message || "Something went wrong.",
+        color: error.response.data.message.includes("exists") ? "gray" : "red",
       });
     }
     setLoading(false);
   };
-  const windows = useSelector((state: any) => state.windows.windows);
+  const { windows, subWindows } = useSelector((state: any) => state.windows);
   const sectors = useSelector((state: any) => state.sectors.sectors);
 
   const windowOptions =
@@ -128,11 +131,17 @@ const CreateApplication = ({
     })) || [];
 
   const subwindowOptions = formData.window
-    ? call.subWindows
+    ? subWindows
         .filter((subWindow: any) =>
           windows
             .find((win: any) => win.uuid === formData.window)
-            ?.subWindows.some((subWin: any) => subWin.uuid === subWindow.uuid),
+            ?.subWindows.some(
+              (subWin: any) =>
+                subWin.uuid === subWindow.uuid &&
+                Object.keys(JSON.parse(call.subwindowForms) || "{}").some(
+                  (key: string) => key == subWindow.uuid
+                )
+            )
         )
         .map((subWindow: any) => ({
           label: subWindow.title,
@@ -143,16 +152,16 @@ const CreateApplication = ({
   const sectorOptions = formData.subwindow
     ? sectors
         .filter((sec: any) =>
-          call.sectors.some((sect: any) => sect.uuid === sec.uuid),
+          call.sectors.some((sect: any) => sect.uuid === sec.uuid)
         )
         .filter((sector: any) =>
           windows.map((window: any) =>
             window.subWindows
               .find((subWin: any) => subWin.uuid === formData.subwindow)
               ?.sectors.some(
-                (subWindowSector: any) => subWindowSector.uuid === sector.uuid,
-              ),
-          ),
+                (subWindowSector: any) => subWindowSector.uuid === sector.uuid
+              )
+          )
         )
         .map((sector: any) => ({
           label: sector.name,
@@ -164,25 +173,16 @@ const CreateApplication = ({
     ...new Map(
       sectors
         .filter((sec: any) =>
-          call?.sectors.some((sect: any) => sect.uuid === sec.uuid),
+          call?.sectors.some((sect: any) => sect.uuid === sec.uuid)
         )
         .filter((sector: any) => formData?.sectors?.includes(sector.uuid))
         .flatMap((sector: any) =>
-          sector?.trades
-            .filter(
-              (trade: any) =>
-                trade.theWindow.uuid === formData.window &&
-                trade.uuid !==
-                  existingApplication?.trades.find(
-                    (t: any) => t.uuid === trade.uuid,
-                  )?.uuid,
-            )
-            ?.map((trade: any) => ({
-              label: trade.trade.title,
-              value: trade.uuid,
-            })),
+          sector?.trades?.map((trade: any) => ({
+            label: trade.trade.title,
+            value: trade.uuid,
+          }))
         )
-        .map((trade: any) => [trade.value, trade]),
+        .map((trade: any) => [trade.value, trade])
     ).values(),
   ];
 
@@ -190,14 +190,18 @@ const CreateApplication = ({
     <Modal
       size=""
       opened={isOpenCreatingApplication}
-      onClose={closeCreatingApplication}
+      onClose={() => {
+        closeCreatingApplication(true);
+      }}
       closeOnClickOutside={false}
       withCloseButton={false}
     >
       <div className="max-w-[50vw] w-[50vw] max-h-[90vh] relative bg-white rounded-3xl p-4 pt-10 pb-10 flex flex-col items-center overflow-y-auto">
         <button
           className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
-          onClick={closeCreatingApplication}
+          onClick={() => {
+            closeCreatingApplication(true);
+          }}
         >
           <IoMdClose size={25} color="#000" />
         </button>
@@ -225,7 +229,7 @@ const CreateApplication = ({
                         window: value,
                         subwindow: null,
                         sectors: [],
-                      }) as any,
+                      }) as any
                   )
                 }
                 data={windowOptions}
@@ -258,7 +262,7 @@ const CreateApplication = ({
                         ...prevData,
                         subwindow: value,
                         sectors: [],
-                      }) as any,
+                      }) as any
                   )
                 }
                 data={subwindowOptions}
@@ -290,7 +294,7 @@ const CreateApplication = ({
                       ({
                         ...prevData,
                         sectors: value,
-                      }) as any,
+                      }) as any
                   )
                 }
                 data={sectorOptions}
@@ -322,7 +326,7 @@ const CreateApplication = ({
                       ({
                         ...prevData,
                         trades: value,
-                      }) as any,
+                      }) as any
                   )
                 }
                 data={tradesOptions as any}
@@ -360,7 +364,7 @@ const CreateApplication = ({
           <div className="w-full flex justify-center mt-4 space-x-4">
             <button
               type="button"
-              onClick={closeCreatingApplication}
+              onClick={() => closeCreatingApplication(true)}
               className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Cancel

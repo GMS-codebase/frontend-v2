@@ -16,7 +16,7 @@ interface MakeDecisionProps {
     | {
         decision: string;
         comment: string;
-        trades?: { trade: any; trainees: number }[];
+        numberOfTrainees: string;
       }
     | any;
   firstEvaluationModal?: boolean;
