@@ -38,7 +38,7 @@ const Page = () => {
     trades.trades?.filter(
       (trade: any) =>
         trade?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        trade?.shortname?.toLowerCase().includes(searchQuery.toLowerCase()),
+        trade?.shortname?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
 
   const columns: ColumnDef<any>[] = [
@@ -177,7 +177,10 @@ const Page = () => {
       </div>
       <AddTrade
         isOpenAddEditTrade={isOpenCreateEdit}
-        closeAddEditTrade={closeCreateEditModal}
+        closeAddEditTrade={() => {
+          closeCreateEditModal();
+          setSelectedTrade(null);
+        }}
         defaultData={selectedTrade}
       />
       <DeleteModal
@@ -192,8 +195,8 @@ const Page = () => {
       <ActivateDeactivateModal
         type="trades"
         closeModal={() => {
-          closeActivateDeactivateTradeModal();
           setSelectedTrade(null);
+          closeActivateDeactivateTradeModal();
         }}
         id={selectedTrade?.uuid}
         isActive={selectedTrade?.status === "ACTIVE"}

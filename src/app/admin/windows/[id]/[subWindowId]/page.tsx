@@ -205,7 +205,7 @@ const Page = () => {
           isOpenAddEditWindowSubwindow={isAddEditSubWindow}
           closeAddEditWindowSubwindow={() => {
             closeAddEditSubWindow();
-            selectedSubWindow && setSelectedSubWindow(null);
+            setSelectedSubWindow(null);
           }}
           defaultData={selectedSubWindow}
         />
@@ -218,7 +218,7 @@ const Page = () => {
           type="subwindows"
           closeModal={() => {
             closeDeleteSubWindow();
-            selectedSubWindow && setSelectedSubWindow(null);
+            setSelectedSubWindow(null);
           }}
           id={selectedSubWindow?.uuid}
           isOpenModal={isDeleteSubWindow}
