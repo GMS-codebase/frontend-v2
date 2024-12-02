@@ -29,7 +29,7 @@ const AddSectorTrade = ({
   const trades = useSelector((state: any) => state.trades);
   const dispatch = useDispatch();
 
-  const tradeOptions = trades.trades.map((trade: any) => ({
+  const tradeOptions = trades.trades?.map((trade: any) => ({
     value: trade.uuid,
     label: trade.title,
   }));
