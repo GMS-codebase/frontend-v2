@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCalls } from "@/utils/funcs";
 import { unauthorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
+import ForgotPasswordModal from "@/components/Modals/auth/ForgotPassword";
 
 function Page() {
   const dispatch = useDispatch();
@@ -23,22 +24,26 @@ function Page() {
     getCalls(dispatch);
   }, []);
   const { calls, loading: loadingCalls } = useSelector(
-    (state: any) => state.calls,
+    (state: any) => state.calls
   );
   const sortedCalls = calls
     ? [...calls]
         .filter(
           (call: any) =>
-            new Date(call.endDate) > new Date() && call.status === "OPEN",
+            new Date(call.endDate) > new Date() && call.status === "OPEN"
         )
         .sort(
           (a: any, b: any) =>
-            new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
+            new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
         )
     : [];
 
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
+  const [
+    isOpenForgotPassword,
+    { open: openForgotPassword, close: closeForgotPassword },
+  ] = useDisclosure(false);
   const [isOpenLogin, { open: openLogin, close: closeLogin }] =
     useDisclosure(false);
   const [isOpenSuccess, { open: openSuccess, close: closeSuccess }] =
@@ -158,6 +163,14 @@ function Page() {
         opened={isOpenLogin}
         close={closeLogin}
         openRegister={openRegister}
+        openForgotPassword={() => {
+          closeLogin();
+          openForgotPassword();
+        }}
+      />
+      <ForgotPasswordModal
+        opened={isOpenForgotPassword}
+        close={closeForgotPassword}
       />
       <SuccessModal opened={isOpenSuccess} close={closeSuccess} />
       <CallModal
