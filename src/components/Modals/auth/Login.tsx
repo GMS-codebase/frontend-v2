@@ -15,10 +15,12 @@ const LoginModal = ({
   opened,
   close,
   openRegister,
+  openForgotPassword,
 }: {
   opened: boolean;
   close: () => void;
   openRegister: () => void;
+  openForgotPassword: () => void;
 }) => {
   const navigate = useRouter();
   const [showPassword, setShowPassword] = useState(false);
@@ -55,7 +57,7 @@ const LoginModal = ({
           default:
             navigate.push("/");
         }
-      },
+      }
     );
     setLoading(false);
   };
@@ -170,7 +172,10 @@ const LoginModal = ({
             )}
           </div>
 
-          <div className="text-secondaryText font-medium  underline mb-10">
+          <div
+            onClick={openForgotPassword}
+            className="text-secondaryText font-medium  underline mb-10"
+          >
             Forgot password?
           </div>
           <button
