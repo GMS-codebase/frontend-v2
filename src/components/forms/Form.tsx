@@ -142,7 +142,7 @@ const Form: React.FC<Props> = ({
                       ...(prevFormData?.qns || {}),
                       [activeType]: data,
                     },
-                  }) as any
+                  }) as any,
               );
           }}
           formData={formData.qns}

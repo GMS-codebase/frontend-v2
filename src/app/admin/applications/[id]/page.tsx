@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  SolarPen2Bold,
-} from "@/components/core/icons";
+import { SolarPen2Bold } from "@/components/core/icons";
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
@@ -43,15 +41,16 @@ const Page = () => {
   const [application, setApplication] = useState<any>();
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}")
+      JSON.parse(application?.call.subwindowForms || "{}"),
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
       form.uuid ===
-      JSON.parse(application?.call.subwindowForms || "{}")[foundSubWindow as any]
+      JSON.parse(application?.call.subwindowForms || "{}")[
+        foundSubWindow as any
+      ]
     );
   });
-
 
   const fetchApplication = async () => {
     setApplicationLoading(true);
@@ -91,7 +90,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -216,7 +215,7 @@ const Page = () => {
               onClick={() =>
                 handleDownloadFile(
                   application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates"
+                  "business_certificates",
                 )
               }
             >
@@ -247,12 +246,17 @@ const Page = () => {
         <div
           className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"}  gap-4 p-5`}
         >
-          {form && <Form
-            mode={"viewing"}
-            answers={JSON.parse(application.answers)}
-            comments={JSON.parse(application.comments)}
-            formData={{name:form?.name,qns:JSON.parse(form?.qns || "{}")}}
-          />}
+          {form && (
+            <Form
+              mode={"viewing"}
+              answers={JSON.parse(application.answers)}
+              comments={JSON.parse(application.comments)}
+              formData={{
+                name: form?.name,
+                qns: JSON.parse(form?.qns || "{}"),
+              }}
+            />
+          )}
         </div>
 
         {application?.currentStage === "SUBMITTED" ? (
@@ -347,7 +351,7 @@ const Page = () => {
                 (decision: any, index: any) => ({
                   evaluator: application.evaluators[index],
                   evaluationDecision: decision,
-                })
+                }),
               )
             : []
         }

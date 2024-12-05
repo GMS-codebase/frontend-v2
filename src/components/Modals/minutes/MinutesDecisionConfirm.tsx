@@ -8,7 +8,12 @@ import RedVector2 from "@/assets/Vectors/redSideVector2.svg";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
-import { getApprovedMinutes, getNegotiatedMinutes, getRejectedMinutes, getUploadedMinutes } from "@/utils/funcs";
+import {
+  getApprovedMinutes,
+  getNegotiatedMinutes,
+  getRejectedMinutes,
+  getUploadedMinutes,
+} from "@/utils/funcs";
 import { useDispatch } from "react-redux";
 
 interface DeleteConfirmProps {
@@ -49,8 +54,8 @@ const MinutesDecisionConfirm = ({
           decision.toLowerCase() === "approve"
             ? "APPROVED"
             : decision.toLowerCase() === "reject"
-            ? "REJECTED"
-            : "NEGOTIATE",
+              ? "REJECTED"
+              : "NEGOTIATE",
         comment: comment.value,
       })
       .then(() => {
@@ -155,8 +160,19 @@ const MinutesDecisionConfirm = ({
       >
         <div className="w-[550px] h-fit relative rounded-3xl bg-white p-4 pt-10 flex flex-col items-center">
           <div className="flex justify-center mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-16 w-16 text-yellow-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
             </svg>
           </div>
           <h1 className="text-2xl font-extrabold text-center">
@@ -175,7 +191,9 @@ const MinutesDecisionConfirm = ({
             <button
               onClick={handleConfirmedSubmit}
               className={`px-4 py-2 text-white rounded-full ${
-                decision.toLowerCase() === 'reject' ? 'bg-red-500' : 'bg-blue-500'
+                decision.toLowerCase() === "reject"
+                  ? "bg-red-500"
+                  : "bg-blue-500"
               }`}
             >
               Yes, proceed

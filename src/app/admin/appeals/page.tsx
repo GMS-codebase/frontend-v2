@@ -18,7 +18,6 @@ import DeleteModal from "@/components/Modals/DeleteModal";
 import ViewAppealModal from "@/components/Modals/appeal/ViewAppeal";
 
 const Page = () => {
-
   const { appeals, loading } = useSelector((state: any) => state.appeals);
   const [viewAppeal, setViewAppeal] = useState<any>({
     open: false,

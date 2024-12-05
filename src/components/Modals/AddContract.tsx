@@ -163,7 +163,7 @@ const AddContract: React.FC<AddContractProps> = ({
         },
       );
       notifications.show({
-        message: res?.data?.message,
+        message: "Contract created successfully",
         color: "blue",
       });
       getApplicants(dispatch);
@@ -421,47 +421,74 @@ const AddContract: React.FC<AddContractProps> = ({
                       {installmentsError}
                     </p>
                   )}
-                  {formData.installments && formData.installments.length > 0 && (
-                    <div className="mt-4 overflow-x-auto">
-                      <h1 className="text-lg font-bold">Preview</h1>
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No.</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Percentage</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Condition</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          {formData.installments.map((installment, index) => (
-                            <tr key={index}>
-                              <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
-                              <td className="px-6 py-4 whitespace-nowrap">{installment.title}</td>
-                              <td className="px-6 py-4 whitespace-nowrap">{installment.percentage}%</td>
-                              <td className="px-6 py-4 whitespace-nowrap">{installment.amount.toLocaleString()} Rwf</td>
-                              <td className="px-6 py-4 whitespace-nowrap">{installment.condition.length > 20 ? `${installment.condition.substring(0, 20)}...` : installment.condition}</td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <button
-                                  onClick={() => {
-                                    setFormData(prev => ({
-                                      ...prev,
-                                      installments: prev.installments?.filter((_, i) => i !== index)
-                                    }));
-                                  }}
-                                  className="text-red-600 hover:text-red-900"
-                                >
-                                  Delete
-                                </button>
-                              </td>
+                  {formData.installments &&
+                    formData.installments.length > 0 && (
+                      <div className="mt-4 overflow-x-auto">
+                        <h1 className="text-lg font-bold">Preview</h1>
+                        <table className="min-w-full divide-y divide-gray-200">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                No.
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Title
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Percentage
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Amount
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Condition
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions
+                              </th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {formData.installments.map((installment, index) => (
+                              <tr key={index}>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  {index + 1}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  {installment.title}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  {installment.percentage}%
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  {installment.amount.toLocaleString()} Rwf
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  {installment.condition.length > 20
+                                    ? `${installment.condition.substring(0, 20)}...`
+                                    : installment.condition}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <button
+                                    onClick={() => {
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        installments: prev.installments?.filter(
+                                          (_, i) => i !== index,
+                                        ),
+                                      }));
+                                    }}
+                                    className="text-red-600 hover:text-red-900"
+                                  >
+                                    Delete
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                 </div>
               )}
             </div>

@@ -19,7 +19,7 @@ const Page = () => {
     setApplicationLoading(true);
     try {
       const res = await authorizedApi.get(
-        `/application/get-application/${applicationId}`
+        `/application/get-application/${applicationId}`,
       );
       setApplication(res.data.data.data);
       setApplicationLoading(false);
@@ -42,12 +42,14 @@ const Page = () => {
   const forms = useSelector((state: any) => state.forms);
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}")
+      JSON.parse(application?.call.subwindowForms || "{}"),
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
       form.uuid ===
-      JSON.parse(application?.call.subwindowForms || "{}")[foundSubWindow as any]
+      JSON.parse(application?.call.subwindowForms || "{}")[
+        foundSubWindow as any
+      ]
     );
   });
 
@@ -110,7 +112,7 @@ const Page = () => {
                 answers,
                 application,
                 form,
-                () => router.push("/applicant/applications")
+                () => router.push("/applicant/applications"),
               );
             }}
             disabled={loading}

@@ -33,10 +33,15 @@ const OpenCloseAppealModal = ({
   const handleAppealStatusChange = async () => {
     setLoading(true);
     authorizedApi
-      .put(`/appeals/${callId}/stage/${stage}/${isClosing ? "close" : "open"}`, !isClosing ? {
-        "from": fromDate,
-        "to": toDate
-      }: {})
+      .put(
+        `/appeals/${callId}/stage/${stage}/${isClosing ? "close" : "open"}`,
+        !isClosing
+          ? {
+              from: fromDate,
+              to: toDate,
+            }
+          : {},
+      )
       .then((res) => {
         notifications.show({
           title: `Appeal ${isClosing ? "Closed" : "Opened"} Successfully!`,
@@ -97,17 +102,28 @@ const OpenCloseAppealModal = ({
               this stage?
             </h1>
           </div>
-          {!isClosing && 
-          <div className="mt-6 w-full">
-          <h1 className="block text-xs font-bold text-gray-700">
-            From Date
-          </h1>
-          <DateInput value={fromDate} maxDate={toDate} onChange={setFromDate} className="mt-1 block w-full p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
-          <h1 className="block text-xs font-bold text-gray-700 mt-4">
-            To Date
-          </h1>
-          <DateInput value={toDate} minDate={fromDate} onChange={setToDate} className="mt-1 block w-full p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
-        </div>}
+          {!isClosing && (
+            <div className="mt-6 w-full">
+              <h1 className="block text-xs font-bold text-gray-700">
+                From Date
+              </h1>
+              <DateInput
+                value={fromDate}
+                maxDate={toDate}
+                onChange={setFromDate}
+                className="mt-1 block w-full p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+              <h1 className="block text-xs font-bold text-gray-700 mt-4">
+                To Date
+              </h1>
+              <DateInput
+                value={toDate}
+                minDate={fromDate}
+                onChange={setToDate}
+                className="mt-1 block w-full p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            </div>
+          )}
           <div className="w-full flex justify-center mt-4 space-x-4 p-6">
             <button
               type="button"

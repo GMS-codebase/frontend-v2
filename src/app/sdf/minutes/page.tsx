@@ -178,21 +178,27 @@ const Page = () => {
       accessorKey: "name",
       header: "Applicant Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.application?.applicant?.name}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.name}
+        </div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.application?.applicant?.phone}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.phone}
+        </div>
       ),
     },
     {
       accessorKey: "email",
       header: "Applicant Email",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.application?.applicant?.email}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.email}
+        </div>
       ),
     },
     {
@@ -225,7 +231,9 @@ const Page = () => {
       accessorKey: "name",
       header: "Applicant Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.application?.applicant?.name}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.name}
+        </div>
       ),
     },
     {

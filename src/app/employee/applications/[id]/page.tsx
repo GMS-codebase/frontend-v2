@@ -73,7 +73,7 @@ const Page = () => {
   }, [id]);
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}")
+      JSON.parse(application?.call.subwindowForms || "{}"),
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
@@ -103,7 +103,7 @@ const Page = () => {
       return false; // No commentable questions found.
     } catch (error: any) {
       throw new Error(
-        `An error occurred while checking commentable questions: ${error.message}`
+        `An error occurred while checking commentable questions: ${error.message}`,
       );
     }
   };
@@ -131,7 +131,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -256,7 +256,7 @@ const Page = () => {
               onClick={() =>
                 handleDownloadFile(
                   application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates"
+                  "business_certificates",
                 )
               }
             >
@@ -318,7 +318,7 @@ const Page = () => {
                     onClick={async () => {
                       setLoading(true);
                       handleAddComments(comments, form, application, () =>
-                        fetchApplication()
+                        fetchApplication(),
                       );
                       setLoading(false);
                     }}
@@ -345,7 +345,7 @@ const Page = () => {
               <div
                 className={`font-medium  ${
                   application?.stages?.find(
-                    (stage: any) => stage.stage === "EVALUATION"
+                    (stage: any) => stage.stage === "EVALUATION",
                   )?.status === "APPROVED"
                     ? "bg-[#4BC500] text-[#4BC500]"
                     : application?.status === "PENDING"
@@ -354,7 +354,7 @@ const Page = () => {
                 } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
               >
                 {application?.stages?.find(
-                  (stage: any) => stage.stage === "EVALUATION"
+                  (stage: any) => stage.stage === "EVALUATION",
                 )?.status ??
                   application?.evaluationDecisions[0]?.decision ??
                   "PENDING"}
@@ -363,7 +363,7 @@ const Page = () => {
                 !application?.evaluationDecisions.find(
                   (ev: any) =>
                     ev.employee.user_id.toString() ===
-                    profile?.userProfile?.data.uuid.toString()
+                    profile?.userProfile?.data.uuid.toString(),
                 ) && (
                   <>
                     <div
@@ -412,7 +412,7 @@ const Page = () => {
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>
                         dec?.employee?.user_id ===
-                        profile?.userProfile?.data.uuid
+                        profile?.userProfile?.data.uuid,
                     ) && (
                       <div
                         onClick={() => {
@@ -444,7 +444,7 @@ const Page = () => {
                 </div>
               )}
             {application?.stages?.find(
-              (stage: any) => stage?.stage === "GRANT_COMMITTEE"
+              (stage: any) => stage?.stage === "GRANT_COMMITTEE",
             ) && (
               <div className="flex flex-col gap-2">
                 <h3 className="font-semibold">Grant Committee</h3>
