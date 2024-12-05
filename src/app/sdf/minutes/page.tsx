@@ -17,9 +17,13 @@ const Page = () => {
     type: "",
   });
 
-  const { minutes, loading: loadingMinutes } = useSelector(
-    (state: any) => state.minutes,
-  );
+  const {
+    minutes,
+    rejectedMinutes: allRejectedMinutes,
+    negotiatedMinutes,
+    loading: loadingMinutes,
+    negotiatedMinutesLoading,
+  } = useSelector((state: any) => state.minutes);
 
   const { applicationsForContractSigning, loading: loadingApplications } =
     useSelector((state: any) => state.applications);
@@ -30,7 +34,6 @@ const Page = () => {
   >([]);
   const [approvedMinutes, setApprovedMinutes] = useState<any[]>([]);
   const [rejectedMinutes, setRejectedMinutes] = useState<any[]>([]);
-  const [negotiatedMinutes, setNegotiatedMinutes] = useState<any[]>([]);
 
   useEffect(() => {
     SetReadyForMinutesNegotiation(
@@ -68,15 +71,15 @@ const Page = () => {
           m?.minutesStatus === "REJECTED",
       ),
     );
-    setNegotiatedMinutes(
-      minutes.filter(
-        (m: any) =>
-          m?.uploadedMinutes &&
-          !m?.uploadedSignedMinutes &&
-          !m?.uploadedContract &&
-          m?.minutesStatus === "NEGOTIATE",
-      ),
-    );
+    // setNegotiatedMinutes(
+    //   minutes.filter(
+    //     (m: any) =>
+    //       m?.uploadedMinutes &&
+    //       !m?.uploadedSignedMinutes &&
+    //       !m?.uploadedContract &&
+    //       m?.minutesStatus === "NEGOTIATE",
+    //   ),
+    // );
   }, [minutes]);
   const minuteColumns: ColumnDef<any>[] = [
     {
@@ -175,21 +178,21 @@ const Page = () => {
       accessorKey: "name",
       header: "Applicant Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.name}</div>
+        <div className="w-full">{row.original?.application?.applicant?.name}</div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.phone}</div>
+        <div className="w-full">{row.original?.application?.applicant?.phone}</div>
       ),
     },
     {
       accessorKey: "email",
       header: "Applicant Email",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.email}</div>
+        <div className="w-full">{row.original?.application?.applicant?.email}</div>
       ),
     },
     {
@@ -197,7 +200,7 @@ const Page = () => {
       header: "Minute Approval Status",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.minutesStatus?.toUpperCase()}
+          {row.original?.minutes[0]?.status?.toUpperCase()}
         </div>
       ),
     },
@@ -209,7 +212,7 @@ const Page = () => {
           data={row.original}
           setIsMinute={setIsMinute}
           status="rejected"
-          minute={applicationsForContractSigning.find(
+          minute={allRejectedMinutes.find(
             (app: any) => app?.application?.uuid === row.original?.uuid,
           )}
         />
@@ -222,21 +225,25 @@ const Page = () => {
       accessorKey: "name",
       header: "Applicant Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.name}</div>
+        <div className="w-full">{row.original?.application?.applicant?.name}</div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.phone}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.phone}
+        </div>
       ),
     },
     {
       accessorKey: "email",
       header: "Applicant Email",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.email}</div>
+        <div className="w-full">
+          {row.original?.application?.applicant?.email}
+        </div>
       ),
     },
     {
@@ -244,7 +251,7 @@ const Page = () => {
       header: "Minute Approval Status",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.minutesStatus?.toUpperCase()}
+          {row.original?.application?.minutesStatus?.toUpperCase()}
         </div>
       ),
     },
@@ -416,7 +423,7 @@ const Page = () => {
           </h1>
           <DataTable
             columns={rejectedColumns}
-            data={rejectedMinutes}
+            data={allRejectedMinutes}
             loading={loadingMinutes}
             noDataMessage="No Rejected contract negotiations"
           />

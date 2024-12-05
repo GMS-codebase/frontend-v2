@@ -84,6 +84,8 @@ import {
   GET_MINUTES_ERROR,
   GET_MINUTES_LOADING,
   GET_MINUTES_SUCCESS,
+  GET_NEGOTIATED_MINUTES_LOADING,
+  GET_NEGOTIATED_MINUTES_SUCCESS,
   GET_REJECTED_MINUTES_LOADING,
   GET_REJECTED_MINUTES_SUCCESS,
   GET_UPLOADED_MINUTES_LOADING,
@@ -126,6 +128,7 @@ import {
   GET_APPEALS_SUCCESS,
 } from "@/actions/AppealsActions";
 import { QuestionForm } from "@/types/questions-form";
+import { useRouter } from "next/navigation";
 export const getAppeals = async (
   dispatch: Dispatch<UnknownAction>,
   user: string
@@ -418,6 +421,7 @@ export const getApplicationsForContractSigning = async (
   authorizedApi
     .get("/negotiation-contract/applications/sdf/ready-contract-signing")
     .then((res) => {
+      console.log("res --> ", res.data.data.data);
       dispatch({
         type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
         payload: res.data.data.data,
@@ -574,10 +578,34 @@ export const getRejectedMinutes = async (
 ) => {
   dispatch({ type: GET_REJECTED_MINUTES_LOADING });
   authorizedApi
-    .get("/negotiation-contract/applications/rejected")
+    .get(`/negotiation-contract/applications/${role}/rejected`)
     .then((res) => {
       dispatch({
         type: GET_REJECTED_MINUTES_SUCCESS,
+        payload: res.data.data.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTRACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getNegotiatedMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+  role: string
+) => {
+  dispatch({ type: GET_NEGOTIATED_MINUTES_LOADING });
+  authorizedApi
+    .get(
+      `/negotiation-contract/applications/${role}/${
+        role === "applicant" ? "negotiate" : "negotiating"
+      }`
+    )
+    .then((res) => {
+      dispatch({
+        type: GET_NEGOTIATED_MINUTES_SUCCESS,
         payload: res.data.data.data,
       });
     })
@@ -724,7 +752,7 @@ export const handleSubmit = async (
       color: "blue",
     });
     setLoading(false);
-    // callback && callback();
+    callback && callback();
   } catch (err: any) {
     notifications.show({
       message: err.response?.data?.message ?? "Failed to submit the form!",

@@ -13,6 +13,8 @@ import {
   GET_REJECTED_MINUTES_LOADING,
   GET_APPLICATIONS_READY_FOR_MINUTES_LOADING,
   GET_APPLICATIONS_READY_FOR_MINUTES_SUCCESS,
+  GET_NEGOTIATED_MINUTES_SUCCESS,
+  GET_NEGOTIATED_MINUTES_LOADING,
 } from "@/actions/MinutesActions";
 import { Contract } from "@/types";
 
@@ -21,9 +23,11 @@ const initialState = {
   uploadedMinutesLoading: false,
   approvedMinutesLoading: false,
   rejectedMinutesLoading: false,
+  negotiatedMinutesLoading: false,
   uploadedMinutes: [],
   approvedMinutes: [],
   rejectedMinutes: [],
+  negotiatedMinutes: [],
   applicationsReadyForMinutesLoading: false,
   applicationsReadyForMinutes: [],
   error: null,
@@ -133,6 +137,12 @@ export default function MinutesReducer(state = initialState, action: Action) {
         ...state,
         applicationsReadyForMinutes: action.payload,
         applicationsReadyForMinutesLoading: false,
+      };
+    case GET_NEGOTIATED_MINUTES_SUCCESS:
+      return {
+        ...state,
+        negotiatedMinutes: action.payload,
+        negotiatedMinutesLoading: false,
       };
     default:
       return state;

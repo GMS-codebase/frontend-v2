@@ -4,6 +4,7 @@ import {
   getApprovedMinutes,
   getContracts,
   getMinutes,
+  getNegotiatedMinutes,
   getRejectedMinutes,
   getUploadedMinutes,
 } from "@/utils/funcs";
@@ -60,8 +61,12 @@ const AddMinute: React.FC<AddMinuteProps> = ({
     setLoading(true);
     const newData = {
       minute: formData.file,
-      applicantId: data?.applicant.uuid,
-      applicationId: data?.uuid,
+      applicantId:
+        type == "signed"
+          ? data.applicant.uuid
+          : data?.application?.applicant.uuid,
+      applicationId:
+        type == "signed" ? data.uuid : data?.application?.uuid,
     };
     const submitForm = new FormData();
     submitForm.append("attachment", newData.minute as Blob);
@@ -104,6 +109,7 @@ const AddMinute: React.FC<AddMinuteProps> = ({
       getUploadedMinutes(dispatch, "sdf");
       getApprovedMinutes(dispatch, "sdf");
       getRejectedMinutes(dispatch, "sdf");
+      getNegotiatedMinutes(dispatch, "sdf");
       getContracts(dispatch);
       getApplications(dispatch);
       closeAddMinute();

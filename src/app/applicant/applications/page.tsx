@@ -78,7 +78,7 @@ const Page = () => {
                 <Link
                   href={
                     row.original.stages.length > 0 ||
-                    row.original.call.status === CALL_STATUS.OPEN
+                    row.original.call.status === CALL_STATUS.CLOSED
                       ? `/applicant/applications/application/${row.original.uuid}`
                       : `/applicant/applications/call/${row.original.call.uuid}/${row.original.uuid}/apply`
                   }

@@ -22,6 +22,7 @@ const MinutesActions = ({
   status: string;
   minute: any;
 }) => {
+  console.log("data --> ", data);
   const [isOpenAddMinute, { open: openMinute, close: closeMinute }] =
     useDisclosure(false);
   const [type, setType] = useState<
@@ -177,6 +178,7 @@ const MinutesActions = ({
         closeAddMinute={closeMinute}
       />
       <MinutesNegotiateRejectionReason
+        decision={data?.minutes?.[0]?.decision}
         isOpen={isOpenRejectionReason}
         onClose={closeRejectionReason}
         minute={data}
