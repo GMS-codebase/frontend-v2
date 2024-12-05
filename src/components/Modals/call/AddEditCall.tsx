@@ -122,8 +122,8 @@ const AddEditCall = ({
                   );
                   return matchingSector
                     ? {
-                        value: matchingSector.uuid,
-                        label: matchingSector.name,
+                        value: matchingSector.uuid + "@" + subWindow.uuid,
+                        label: matchingSector.name + "(" + subWindow.name + ")",
                       }
                     : null;
                 })
