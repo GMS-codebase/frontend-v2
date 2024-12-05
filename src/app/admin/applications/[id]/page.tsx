@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  SolarPen2Bold,
-} from "@/components/core/icons";
+import { SolarPen2Bold } from "@/components/core/icons";
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
@@ -48,10 +46,11 @@ const Page = () => {
 
     return (
       form.uuid ===
-      JSON.parse(application?.call.subwindowForms || "{}")[foundSubWindow as any]
+      JSON.parse(application?.call.subwindowForms || "{}")[
+        foundSubWindow as any
+      ]
     );
   });
-
 
   const fetchApplication = async () => {
     setApplicationLoading(true);
@@ -76,6 +75,8 @@ const Page = () => {
       </div>
     );
   }
+
+  console.log(application);
 
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
@@ -114,7 +115,7 @@ const Page = () => {
                 notifications.show({
                   title: "Download Successful",
                   message: "The file has been downloaded successfully.",
-                  type: "success",
+                  color: "green",
                 });
               } catch (error) {
                 console.error("Download error:", error);
@@ -122,7 +123,7 @@ const Page = () => {
                   title: "Download Failed",
                   message:
                     "There was an issue downloading the file. Please try again.",
-                  type: "error",
+                  color: "red",
                 });
               } finally {
                 setDownloading(false);
@@ -247,12 +248,17 @@ const Page = () => {
         <div
           className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"}  gap-4 p-5`}
         >
-          {form && <Form
-            mode={"viewing"}
-            answers={JSON.parse(application.answers)}
-            comments={JSON.parse(application.comments)}
-            formData={{name:form?.name,qns:JSON.parse(form?.qns || "{}")}}
-          />}
+          {form && (
+            <Form
+              mode={"viewing"}
+              answers={JSON.parse(application.answers)}
+              comments={JSON.parse(application.comments)}
+              formData={{
+                name: form?.name,
+                qns: JSON.parse(form?.qns || "{}"),
+              }}
+            />
+          )}
         </div>
 
         {application?.currentStage === "SUBMITTED" ? (
@@ -340,17 +346,7 @@ const Page = () => {
       <EvaluationDetails
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
-        evaluations={
-          application?.evaluationDecisions?.length &&
-          application?.evaluators?.length
-            ? application.evaluationDecisions.map(
-                (decision: any, index: any) => ({
-                  evaluator: application.evaluators[index],
-                  evaluationDecision: decision,
-                })
-              )
-            : []
-        }
+        evaluations={application?.evaluationDecisions}
         application={application}
       />
     </div>
