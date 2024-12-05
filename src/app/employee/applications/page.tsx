@@ -13,7 +13,7 @@ import { VscEye } from "react-icons/vsc";
 const Page = () => {
   // Select applications from Redux store
   const { applications: rawApplications, loading } = useSelector(
-    (state: any) => state.applications
+    (state: any) => state.applications,
   );
   const { stages } = useSelector((state: any) => state.empStages);
   console.log(stages);
@@ -28,12 +28,12 @@ const Page = () => {
         }))
         .filter((app: any) => {
           const matchingStage = stages.find(
-            (stage: any) => stage.sector == app.sector.name
+            (stage: any) => stage.sector == app.sector.name,
           );
           console.log("Filtering app:", app, "Matching stage:", matchingStage);
           return matchingStage;
         }),
-    [rawApplications, stages]
+    [rawApplications, stages],
   );
 
   const filtersContainerRef = useRef<HTMLDivElement>(null);
@@ -55,9 +55,9 @@ const Page = () => {
       ...new Set(
         applications
           .map((app: any) =>
-            key.split(".").reduce((obj, property) => obj?.[property], app)
+            key.split(".").reduce((obj, property) => obj?.[property], app),
           )
-          .filter(Boolean)
+          .filter(Boolean),
       ),
     ];
   };
@@ -71,7 +71,7 @@ const Page = () => {
       trades: getUniqueValues("trade.trade.title"),
       call: getUniqueValues("call.title"),
     }),
-    [applications]
+    [applications],
   );
 
   // Format stage string
@@ -221,7 +221,7 @@ const Page = () => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase())
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade } =

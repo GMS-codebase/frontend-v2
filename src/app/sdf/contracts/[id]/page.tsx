@@ -22,6 +22,7 @@ import DeleteModal from "@/components/Modals/DeleteModal";
 import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
 import PDFViewerModal from "@/components/PDFViewer";
 import InstallmentsActions from "./InstallmentsActions";
+import { unauthorizedApi } from "@/utils/api";
 
 const Page = () => {
   const { id: applicationId } = useParams();
@@ -89,7 +90,36 @@ const Page = () => {
 
   const [isOpenViewPDF, { open: openViewPDF, close: closeViewPDF }] =
     useDisclosure(false);
-  const pdfPath = contract?.contractAttachment;
+  const filename = contract?.contractAttachment?.split("/").pop();
+
+  const pdfPath = filename
+    ? `${process.env.NEXT_PUBLIC_API_URL}/api/v2/admin/download/contract/${encodeURIComponent(filename)}`
+    : null;
+
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
+
+  const getPDFBlob = async () => {
+    if (!filename) return null;
+    try {
+      const response = await unauthorizedApi.get(
+        `/admin/download/contract/${encodeURIComponent(filename)}`,
+        { responseType: "blob" },
+      );
+      return URL.createObjectURL(
+        new Blob([response.data], { type: "application/pdf" }),
+      );
+    } catch (error) {
+      console.error("Error fetching PDF:", error);
+      return null;
+    }
+  };
+
+  const handleOpenPDF = async () => {
+    const blobUrl = await getPDFBlob();
+    setPdfBlobUrl(blobUrl);
+    openViewPDF();
+  };
+
   return contract?.uuid ? (
     <div className="bg-white rounded-2xl py-10">
       <div className="flex flex-col gap-6">
@@ -98,7 +128,7 @@ const Page = () => {
             <div className="text-xl font-bold">Contract Details</div>
             <div className="flex gap-2">
               <button
-                onClick={openViewPDF}
+                onClick={handleOpenPDF}
                 className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
               >
                 <div>View Contract Attachment</div>
@@ -231,7 +261,7 @@ const Page = () => {
       <PDFViewerModal
         isOpenViewPDF={isOpenViewPDF}
         closeViewPDF={closeViewPDF}
-        pdfPath={pdfPath}
+        pdfPath={pdfBlobUrl}
       />
     </div>
   ) : (

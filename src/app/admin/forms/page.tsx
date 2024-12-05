@@ -35,7 +35,7 @@ const Page = () => {
   const [selectedForm, setSelectedForm] = useState<any>("");
   const filteredForms =
     forms.forms?.filter((form: any) =>
-      form?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      form?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
     ) ?? [];
 
   const columns: ColumnDef<any>[] = [

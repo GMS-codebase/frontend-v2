@@ -64,9 +64,7 @@ const Page = () => {
       accessorKey: "title",
       header: "Minutes Status",
       cell: ({ row }) => (
-        <div className="truncate">
-          {row.original.minutes[0]?.status}
-        </div>
+        <div className="truncate">{row.original.minutes[0]?.status}</div>
       ),
     },
     {
@@ -241,9 +239,7 @@ const Page = () => {
       accessorKey: "title",
       header: "Minutes Status",
       cell: ({ row }) => (
-        <div className="truncate">
-          {row.original.minutes[0]?.status}
-        </div>
+        <div className="truncate">{row.original.minutes[0]?.status}</div>
       ),
     },
     {

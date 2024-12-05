@@ -65,8 +65,7 @@ const AddMinute: React.FC<AddMinuteProps> = ({
         type == "signed"
           ? data.applicant.uuid
           : data?.application?.applicant.uuid,
-      applicationId:
-        type == "signed" ? data.uuid : data?.application?.uuid,
+      applicationId: type == "signed" ? data.uuid : data?.application?.uuid,
     };
     const submitForm = new FormData();
     submitForm.append("attachment", newData.minute as Blob);

@@ -2,8 +2,6 @@ import { Question, TableColumn } from "@/types/questions-form";
 import React, { useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 
-
-
 interface TableInputProps {
   value: any;
   onChange: (data: Record<string, any>[]) => void;
@@ -59,7 +57,11 @@ const TableInput: React.FC<TableInputProps> = ({
     onQuestionChange({ ...question, columns: updatedColumns });
   };
 
-  const handleColumnChange = (index: number, key: keyof TableColumn, value: any) => {
+  const handleColumnChange = (
+    index: number,
+    key: keyof TableColumn,
+    value: any,
+  ) => {
     const updatedColumns = [...columns];
     updatedColumns[index][key] = value;
     setColumns(updatedColumns);
@@ -112,7 +114,7 @@ const TableInput: React.FC<TableInputProps> = ({
                 className="px-4 py-2 border border-gray-200 bg-gray-100 text-left text-sm font-semibold"
               >
                 <div className="flex items-center gap-2">
-                  {mode === "creating" ?
+                  {mode === "creating" ? (
                     <input
                       type="text"
                       value={col.title}
@@ -121,9 +123,11 @@ const TableInput: React.FC<TableInputProps> = ({
                       }
                       className={` ${mode === "creating" ? "border border-gray-300" : "border-none"}  rounded py-1 px-2 flex-grow`}
                       disabled={disabled}
-                    /> : <p>{col.title}</p>
-                  }
-                  {mode === "creating" &&
+                    />
+                  ) : (
+                    <p>{col.title}</p>
+                  )}
+                  {mode === "creating" && (
                     <>
                       <select
                         value={col.type}
@@ -147,7 +151,7 @@ const TableInput: React.FC<TableInputProps> = ({
                             handleColumnChange(
                               idx,
                               "options",
-                              e.target.value.split(",")
+                              e.target.value.split(","),
                             )
                           }
                           className="border border-gray-300 rounded py-1 px-2"
@@ -162,13 +166,15 @@ const TableInput: React.FC<TableInputProps> = ({
                         <FaTrash />
                       </button>
                     </>
-                  }
+                  )}
                 </div>
               </th>
             ))}
-            {mode === "answering" && <th className="px-4 py-2 border border-gray-200 bg-gray-100 text-left text-sm font-semibold">
-              Actions
-            </th>}
+            {mode === "answering" && (
+              <th className="px-4 py-2 border border-gray-200 bg-gray-100 text-left text-sm font-semibold">
+                Actions
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -222,20 +228,24 @@ const TableInput: React.FC<TableInputProps> = ({
         </tbody>
       </table>
       <div className="flex justify-between mt-4">
-        {mode === "answering" && <button
-          onClick={handleAddRow}
-          className="bg-blue-500 text-white rounded px-4 py-2 flex items-center gap-2"
-          disabled={disabled}
-        >
-          <FaPlus /> Add Row
-        </button>}
-        {mode === "creating" && <button
-          onClick={handleAddColumn}
-          className="bg-green-500 text-white rounded px-4 py-2 flex items-center gap-2"
-          disabled={disabled}
-        >
-          <FaPlus /> Add Column
-        </button>}
+        {mode === "answering" && (
+          <button
+            onClick={handleAddRow}
+            className="bg-blue-500 text-white rounded px-4 py-2 flex items-center gap-2"
+            disabled={disabled}
+          >
+            <FaPlus /> Add Row
+          </button>
+        )}
+        {mode === "creating" && (
+          <button
+            onClick={handleAddColumn}
+            className="bg-green-500 text-white rounded px-4 py-2 flex items-center gap-2"
+            disabled={disabled}
+          >
+            <FaPlus /> Add Column
+          </button>
+        )}
       </div>
     </div>
   );
