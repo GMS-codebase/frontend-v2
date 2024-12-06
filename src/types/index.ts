@@ -101,6 +101,8 @@ export type Comments = {
   budgetSummaryAttachmentComment: string;
   contributionComment?: string;
   budgetLinesComment?: string;
+  trainingProcessComment?: string;
+  assessmentProcessComment?: string;
 };
 
 export type Call = {

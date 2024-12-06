@@ -29,6 +29,9 @@ const TableInput: React.FC<TableInputProps> = ({
     onChange([...rows, {}]);
   };
 
+  console.log(rows)
+  console.log(value)
+
   const handleRemoveRow = (index: number) => {
     const updatedRows = [...rows];
     updatedRows.splice(index, 1);
@@ -178,7 +181,7 @@ const TableInput: React.FC<TableInputProps> = ({
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, rowIndex) => (
+          {rows?.map((row, rowIndex) => (
             <tr key={rowIndex} className="hover:bg-gray-50">
               {columns?.map((col, colIndex) => (
                 <td
