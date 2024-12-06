@@ -287,6 +287,13 @@ export const Page2 = ({
             </table>
           </div>
         )}
+        {!isApplicant &&
+          setCommentsData &&
+          renderCommentsSection(
+            type === "assessment"
+              ? "assessmentProcessComment"
+              : "trainingDeliveryComment",
+          )}
       </div>
       {type !== "assessment" && (
         <div>
