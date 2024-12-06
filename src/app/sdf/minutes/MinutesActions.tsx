@@ -33,8 +33,10 @@ const MinutesActions = ({
     isOpenRejectionReason,
     { open: openRejectionReason, close: closeRejectionReason },
   ] = useDisclosure(false);
-  const [isOpenViewMinutes, { open: openViewMinutes, close: closeViewMinutes }] = 
-    useDisclosure(false);
+  const [
+    isOpenViewMinutes,
+    { open: openViewMinutes, close: closeViewMinutes },
+  ] = useDisclosure(false);
   return (
     <div>
       <Menu shadow="lg" width={300}>

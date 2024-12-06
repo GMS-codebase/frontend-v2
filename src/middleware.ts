@@ -11,7 +11,7 @@ const roles = [
   "GRANT_COMMITTEE",
   "DYNAMIC",
 ];
-const whitelist = ["/","/redirect", "/public"];
+const whitelist = ["/", "/redirect", "/public"];
 function getRolePath(role: Role): string {
   switch (role.toLowerCase()) {
     case "dynamic":

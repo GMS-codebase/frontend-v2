@@ -648,13 +648,15 @@ const AddEditCall = ({
                                 <div
                                   className="text-primary"
                                   onClick={() => {
-                                    setSelectedForm(form)
-                                    setSelectedSub(subWindow)
-                                    setSelectedSubWindowsForms((prev: { [key: string]: string }) => {
-                                      const updated = { ...prev };
-                                      delete updated[subWindow];
-                                      return updated;
-                                    });
+                                    setSelectedForm(form);
+                                    setSelectedSub(subWindow);
+                                    setSelectedSubWindowsForms(
+                                      (prev: { [key: string]: string }) => {
+                                        const updated = { ...prev };
+                                        delete updated[subWindow];
+                                        return updated;
+                                      },
+                                    );
                                   }}
                                 >
                                   <FaEdit className="w-5 h-5" />
@@ -662,11 +664,13 @@ const AddEditCall = ({
                                 <div
                                   className="text-red-500"
                                   onClick={() =>
-                                    setSelectedSubWindowsForms((prev: { [key: string]: string }) => {
-                                      const updated = { ...prev };
-                                      delete updated[subWindow];
-                                      return updated;
-                                    })
+                                    setSelectedSubWindowsForms(
+                                      (prev: { [key: string]: string }) => {
+                                        const updated = { ...prev };
+                                        delete updated[subWindow];
+                                        return updated;
+                                      },
+                                    )
                                   }
                                 >
                                   <IoTrash className="w-5 h-5" />

@@ -29,8 +29,8 @@ const TableInput: React.FC<TableInputProps> = ({
     onChange([...rows, {}]);
   };
 
-  console.log(rows)
-  console.log(value)
+  console.log(rows);
+  console.log(value);
 
   const handleRemoveRow = (index: number) => {
     const updatedRows = [...rows];

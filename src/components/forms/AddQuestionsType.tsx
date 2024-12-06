@@ -8,7 +8,7 @@ interface AddQuestionTypeProps {
   onAddType?: (newType: { name: string; description: string }) => void;
   onUpdateType?: (
     newType: { name: string; description: string },
-    recentName: string
+    recentName: string,
   ) => void;
   questionType?: any;
 }
@@ -47,7 +47,7 @@ const AddQuestionType = ({
   };
 
   const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
