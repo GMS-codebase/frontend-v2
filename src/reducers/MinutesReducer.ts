@@ -67,6 +67,11 @@ export default function MinutesReducer(state = initialState, action: Action) {
         ...state,
         rejectedMinutesLoading: true,
       };
+    case GET_NEGOTIATED_MINUTES_LOADING:
+      return {
+        ...state,
+        negotiatedMinutesLoading: true,
+      };
     case GET_MINUTES_SUCCESS:
       return {
         ...state,
