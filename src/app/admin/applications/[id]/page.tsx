@@ -296,7 +296,7 @@ const Page = () => {
                   ? "APPROVED"
                   : application?.status}
               </div>
-              {application?.currentStage !== ApplicationStage.DUE_DILIGENCY && (
+              {application?.duediligencyDecisions && (
                 <div className="flex flex-col gap-2 mt-4">
                   <button
                     onClick={openDueDiligencyDetails}
