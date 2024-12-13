@@ -12,6 +12,7 @@ import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { ClipLoader } from "react-spinners";
 import { useSelector } from "react-redux";
+import { ApplicationStage } from "@/types/application";
 
 const Page = () => {
   const [text, setText] = useState("");
