@@ -30,6 +30,7 @@ import {
   GET_APPLICATIONS_SUCCESS,
   GET_MY_APPLICATIONS_ERROR,
   GET_MY_APPLICATIONS_LOADING,
+  GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING,
   GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
   GET_MY_APPLICATIONS_SUCCESS,
 } from "@/actions/ApplicationsActions";
@@ -418,7 +419,7 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
 export const getApplicationsForContractSigning = async (
   dispatch: Dispatch<UnknownAction>,
 ) => {
-  dispatch({ type: GET_APPLICATIONS_LOADING });
+  dispatch({ type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING });
   authorizedApi
     .get("/negotiation-contract/applications/sdf/ready-contract-signing")
     .then((res) => {

@@ -10,6 +10,8 @@ import {
   GET_MY_APPLICATIONS_ERROR,
   GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
   GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOTIATION_SUCCESS,
+  GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING,
+  GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOTIATION_LOADING,
 } from "@/actions/ApplicationsActions";
 import { Application } from "@/types";
 
@@ -21,6 +23,9 @@ const initialState = {
   error: null,
   isError: false,
   loading: true,
+  myApplicationsLoading: true,
+  applicationsReadyForContractSigningLoading: true,
+  applicationsReadyForMinuteNegotiationLoading: true,
 };
 
 type Action = {
@@ -30,14 +35,29 @@ type Action = {
 
 export default function ApplicationsReducer(
   state = initialState,
-  action: Action,
+  action: Action
 ) {
   switch (action.type) {
     case GET_APPLICATIONS_LOADING:
-    case GET_MY_APPLICATIONS_LOADING:
       return {
         ...state,
         loading: true,
+      };
+    case GET_MY_APPLICATIONS_LOADING:
+      return {
+        ...state,
+        myLoading: true,
+      };
+    case GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING:
+      return {
+        ...state,
+        applicationsReadyForContractSigningLoading: true,
+      };
+
+    case GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOTIATION_LOADING:
+      return {
+        ...state,
+        applicationsReadyForMinuteNegotiationLoading: true,
       };
 
     case GET_APPLICATIONS_SUCCESS:
@@ -49,20 +69,20 @@ export default function ApplicationsReducer(
     case GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS:
       return {
         ...state,
-        loading: false,
+        applicationsReadyForContractSigningLoading: false,
         applicationsForContractSigning: action.payload,
       };
     case GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOTIATION_SUCCESS:
       return {
         ...state,
-        loading: false,
+        applicationsReadyForMinuteNegotiationLoading: false,
         GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOCIATION_SUCCESS:
           action.payload,
       };
     case GET_MY_APPLICATIONS_SUCCESS:
       return {
         ...state,
-        loading: false,
+        myLoading: false,
         myApplications: action.payload,
       };
 
@@ -90,7 +110,7 @@ export default function ApplicationsReducer(
         applications: state.applications.map((application: Application) =>
           application.uuid === action.payload.id
             ? { ...application, ...action.payload.data }
-            : application,
+            : application
         ),
         error: null,
         isError: false,
@@ -101,7 +121,7 @@ export default function ApplicationsReducer(
       return {
         ...state,
         applications: state.applications.filter(
-          (application: Application) => application.uuid !== action.payload.id,
+          (application: Application) => application.uuid !== action.payload.id
         ),
         error: null,
         isError: false,

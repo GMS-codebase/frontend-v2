@@ -79,6 +79,7 @@ const Page = () => {
       </div>
     );
   }
+  console.log(call)
   return (
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">

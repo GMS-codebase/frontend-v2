@@ -175,7 +175,7 @@ const Page = () => {
         ))}
       <div className={` w-full  flex gap-6`}>
         <div
-          className={`flex  ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 `}
+          className={`flex  ${application?.currentStage == "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 `}
         >
           {form && (
             <Form
