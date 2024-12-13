@@ -6,7 +6,7 @@ import {
 } from "@/actions/DashboardActions";
 
 const initialState = {
-  loading: false,
+  loading: true,
   error: "",
   isError: false,
   data: {
