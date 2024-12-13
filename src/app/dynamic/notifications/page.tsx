@@ -194,8 +194,8 @@ const Page = () => {
               }
               placeholderText="Filter By Stage"
               data={[
-                { value: "EVALUATION", label: "Evaluation" },
-                { value: "DUE_DILIGENCY", label: "Due Diligency" },
+                { value: ApplicationStage.EVALUATION, label: "Evaluation" },
+                { value: ApplicationStage.DUE_DILIGENCY, label: "Due Diligency" },
                 { value: "SDF_SECRETARIATE", label: "Sdf Secretariate" },
                 { value: "GRANT_COMMITTEE", label: "Grand Committee" },
                 { value: "CONTRACT_SIGNING", label: "Contract Signing" },

@@ -18,6 +18,7 @@ import {
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 import Form from "@/components/forms/Form";
 import { Form as IForm, QuestionForm } from "@/types/questions-form";
+import { ApplicationStage } from "@/types/application";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
@@ -73,7 +74,7 @@ const Page = () => {
   }, [id]);
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}"),
+      JSON.parse(application?.call.subwindowForms || "{}")
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
@@ -103,7 +104,7 @@ const Page = () => {
       return false; // No commentable questions found.
     } catch (error: any) {
       throw new Error(
-        `An error occurred while checking commentable questions: ${error.message}`,
+        `An error occurred while checking commentable questions: ${error.message}`
       );
     }
   };
@@ -117,6 +118,7 @@ const Page = () => {
       </div>
     );
   }
+  console.log(application)
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -131,7 +133,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  },
+                  }
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -256,7 +258,7 @@ const Page = () => {
               onClick={() =>
                 handleDownloadFile(
                   application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates",
+                  "business_certificates"
                 )
               }
             >
@@ -318,7 +320,7 @@ const Page = () => {
                     onClick={async () => {
                       setLoading(true);
                       handleAddComments(comments, form, application, () =>
-                        fetchApplication(),
+                        fetchApplication()
                       );
                       setLoading(false);
                     }}
@@ -345,25 +347,22 @@ const Page = () => {
               <div
                 className={`font-medium  ${
                   application?.stages?.find(
-                    (stage: any) => stage.stage === "EVALUATION",
-                  )?.status === "APPROVED"
+                    (stage: any) => stage.stage === ApplicationStage.EVALUATION
+                  )?.status == "APPROVED"
                     ? "bg-[#4BC500] text-[#4BC500]"
-                    : application?.status === "PENDING"
-                      ? "bg-red-600 text-red-600"
-                      : ""
+                    : "bg-red-600 text-red-600"
                 } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
               >
                 {application?.stages?.find(
-                  (stage: any) => stage.stage === "EVALUATION",
+                  (stage: any) => stage.stage === ApplicationStage.EVALUATION
                 )?.status ??
-                  application?.evaluationDecisions[0]?.decision ??
                   "PENDING"}
               </div>
               {application?.evaluationDecisions?.length < 3 &&
                 !application?.evaluationDecisions?.find(
                   (ev: any) =>
                     ev.employee.user_id.toString() ===
-                    profile?.userProfile?.data.uuid.toString(),
+                    profile?.userProfile?.data.uuid.toString()
                 ) && (
                   <>
                     <div
@@ -389,30 +388,29 @@ const Page = () => {
                 </div>
               )}
             </div>
-            {application?.currentStage !== "EVALUATION" &&
-              stagesArr?.includes("DUE_DILIGENCY") && (
+            {application?.currentStage !== ApplicationStage.EVALUATION &&
+              stagesArr?.includes(ApplicationStage.DUE_DILIGENCY) && (
                 <div className="flex flex-col gap-2">
                   <h3 className="font-bold">Due Diligence Stage</h3>
                   <div
-                    className={`font-medium  ${
-                      application?.status === "APPROVED" ||
-                      application?.currentStage !== "EVALUATION"
-                        ? "bg-[#4BC500] text-[#4BC500]"
-                        : application?.status === "PENDING"
-                          ? "bg-red-600 text-red-600"
-                          : ""
-                    } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-                  >
-                    {application?.currentStage !== "EVALUATION" &&
-                    application?.currentStage !== "DUE_DILIGENCY"
-                      ? "APPROVED"
-                      : application?.status}
-                  </div>
+                className={`font-medium  ${
+                  application?.stages?.find(
+                    (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY
+                  )?.status == "APPROVED"
+                    ? "bg-[#4BC500] text-[#4BC500]"
+                    : "bg-red-600 text-red-600"
+                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+              >
+                {application?.stages?.find(
+                  (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY
+                )?.status ??
+                  "PENDING"}
+              </div>
                   {application?.duediligencyDecisions?.length < 4 &&
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>
                         dec?.employee?.user_id ===
-                        profile?.userProfile?.data.uuid,
+                        profile?.userProfile?.data.uuid
                     ) && (
                       <div
                         onClick={() => {
@@ -443,29 +441,6 @@ const Page = () => {
                   )}
                 </div>
               )}
-            {application?.stages?.find(
-              (stage: any) => stage?.stage === "GRANT_COMMITTEE",
-            ) && (
-              <div className="flex flex-col gap-2">
-                <h3 className="font-semibold">Grant Committee</h3>
-                <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                  {!application?.grantCommitteeDecision
-                    ? "Pending"
-                    : "APPROVED"}
-                </div>
-
-                {application?.grantCommitteeDecision && (
-                  <div className="flex flex-col gap-2 mt-4">
-                    <button
-                      onClick={openGrantCommitteeDetails}
-                      className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                    >
-                      View details
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         )}
       </div>

@@ -13,14 +13,15 @@ import { SolarAddFolderBold } from "@/components/core/icons";
 import { DataTable } from "@/components/core/data-table";
 import { handleDownloadFile } from "@/utils/funcs";
 import MinutesDecisionConfirm from "@/components/Modals/minutes/MinutesDecisionConfirm";
+import { ApplicationStage } from "@/types/application";
 const getApplicationStatus = (application: any) => {
   if (
-    application?.currentStage === "EVALUATION" &&
+    application?.currentStage === ApplicationStage.EVALUATION &&
     !application?.call?.closedEvaluation
   ) {
     return "EVALUATION IN PROGRESS";
   } else if (
-    application?.currentStage === "DUE_DILIGENCY" &&
+    application?.currentStage === ApplicationStage.DUE_DILIGENCY &&
     !application?.call?.closedDueDiligency
   ) {
     return "DUE DILIGENCY IN  PROGRESS";
