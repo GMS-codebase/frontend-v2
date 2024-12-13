@@ -236,9 +236,9 @@ const Page = () => {
                   onClick={() =>
                     SetCloseStage({ opened: true, stage: "GRANT_COMMITTEE" })
                   }
-                  className={`${call?.closedGrantCommittee ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed`}
+                  className={`${call?.closedGrant ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  {call?.closedGrantCommittee ? "Open" : "Close"}
+                  {call?.closedGrant ? "Open" : "Close"}
                 </button>
               </div>
             </div>

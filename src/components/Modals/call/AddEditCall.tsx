@@ -42,7 +42,7 @@ const AddEditCall = ({
   const [selectedSub, setSelectedSub] = useState<any>();
   const [selectedForm, setSelectedForm] = useState<any>();
   const [selectedSubWindowsForms, setSelectedSubWindowsForms] = useState<any>(
-    {}
+    {},
   );
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
@@ -65,8 +65,8 @@ const AddEditCall = ({
       .filter(
         (window: any) =>
           window.subWindows.filter(
-            (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE
-          ).length !== 0 && window.status === WINDOW_STATUS.ACTIVE
+            (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE,
+          ).length !== 0 && window.status === WINDOW_STATUS.ACTIVE,
       )
       ?.map((window: any) => ({
         value: window.uuid,
@@ -84,8 +84,8 @@ const AddEditCall = ({
                 (sub: any) =>
                   sub.status === SUBWINDOW_STATUS.ACTIVE &&
                   sub.sectors.filter(
-                    (sec: any) => sec.status === SECTOR_STATUS.ACTIVE
-                  )
+                    (sec: any) => sec.status === SECTOR_STATUS.ACTIVE,
+                  ),
               )
               .map((subWindow: any) => ({
                 value: subWindow.uuid,
@@ -107,7 +107,7 @@ const AddEditCall = ({
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            Object.keys(selectedSubWindowsForms).includes(subWindow.uuid)
+            Object.keys(selectedSubWindowsForms).includes(subWindow.uuid),
           )
           .flatMap(
             (subWindow: any) =>
@@ -117,9 +117,10 @@ const AddEditCall = ({
                     (s: any) =>
                       s.uuid === sector.uuid &&
                       s.trades.filter(
-                        (trad: any) => trad.trade.status === TRADE_STATUS.ACTIVE
+                        (trad: any) =>
+                          trad.trade.status === TRADE_STATUS.ACTIVE,
                       ).length > 0 &&
-                      sector.status === SECTOR_STATUS.ACTIVE
+                      sector.status === SECTOR_STATUS.ACTIVE,
                   );
                   return matchingSector
                     ? {
@@ -128,8 +129,8 @@ const AddEditCall = ({
                       }
                     : null;
                 })
-                .filter(Boolean) || []
-          ) || []
+                .filter(Boolean) || [],
+          ) || [],
     );
     return sectorData;
   };
@@ -141,7 +142,7 @@ const AddEditCall = ({
       setFormData(defaultData);
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
       setSelectedSubWindowsForms(
-        JSON.parse(defaultData.subwindowForms || "{}")
+        JSON.parse(defaultData.subwindowForms || "{}"),
       );
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
     }
@@ -172,7 +173,7 @@ const AddEditCall = ({
     submitData.append("sector", JSON.stringify(updatedSectors));
     submitData.append(
       "subWindowForms",
-      JSON.stringify(selectedSubWindowsForms)
+      JSON.stringify(selectedSubWindowsForms),
     );
     if (formData?.attachment) {
       submitData?.append("attachment", formData?.attachment);
@@ -562,8 +563,8 @@ const AddEditCall = ({
                           MultiSubWindowData.filter(
                             (sub: any) =>
                               Object.keys(selectedSubWindowsForms).find(
-                                (k) => k == sub.value
-                              ) == null
+                                (k) => k == sub.value,
+                              ) == null,
                           ) || []
                         }
                         value={selectedSub}
@@ -632,7 +633,7 @@ const AddEditCall = ({
                               <td className="px-4 py-2">
                                 {
                                   MultiSubWindowData.find(
-                                    (sub: any) => sub.value == subWindow
+                                    (sub: any) => sub.value == subWindow,
                                   )?.label
                                 }
                               </td>
@@ -671,7 +672,7 @@ const AddEditCall = ({
                                 </div>
                               </td>
                             </tr>
-                          )
+                          ),
                         )}
                       </tbody>
                     </table>

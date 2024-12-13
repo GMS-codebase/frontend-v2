@@ -183,11 +183,11 @@ const Page = () => {
       ),
     },
     {
-      accessorKey: "applicationTitle",
-      header: "Application Title",
+      accessorKey: "numberOfTrainees",
+      header: "Number Of Trainees",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.application?.projectFunding?.title}
+          {row.original?.application?.numberOfTrainees}
         </div>
       ),
     },

@@ -94,7 +94,6 @@ const Page = () => {
     }
   };
 
-
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",

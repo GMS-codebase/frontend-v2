@@ -59,12 +59,12 @@ class AuthService {
   async setPassword(
     data: SetPasswordForm,
     token: string,
-    callback?: () => void
+    callback?: () => void,
   ) {
     try {
       const response = await unauthorizedApi.post(
         `/auth/set-password?token=${token}`,
-        data
+        data,
       );
       setCookie("token", response.data.token);
       callback && callback();
