@@ -20,6 +20,7 @@ import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDilig
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import { getApplications, handleDownloadFile } from "@/utils/funcs";
 import Form from "@/components/forms/Form";
+import { ApplicationStage } from "@/types/application";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
@@ -274,10 +275,19 @@ const Page = () => {
             <h2 className="font-bold">Decision</h2>
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Evaluation Stage</h3>
-              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                {application?.currentStage === "EVALUATION"
-                  ? "PENDING"
-                  : "APPROVED"}
+              <div
+                className={`font-medium  ${
+                  application?.stages?.find(
+                    (stage: any) => stage.stage === ApplicationStage.EVALUATION
+                  )?.status == "APPROVED"
+                    ? "bg-[#4BC500] text-[#4BC500]"
+                    : "bg-red-600 text-red-600"
+                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+              >
+                {application?.stages?.find(
+                  (stage: any) => stage.stage === ApplicationStage.EVALUATION
+                )?.status ??
+                  "PENDING"}
               </div>
               {application?.evaluationDecisions.length < 3 &&
                 !application?.evaluationDecisions.find(
@@ -309,25 +319,24 @@ const Page = () => {
                 </div>
               )}
             </div>
-            {application?.currentStage !== "EVALUATION" &&
-              stagesArr?.includes("DUE_DILIGENCY") && (
+            {application?.currentStage !== ApplicationStage.EVALUATION &&
+              stagesArr?.includes(ApplicationStage.DUE_DILIGENCY) && (
                 <div className="flex flex-col gap-2">
                   <h3 className="font-bold">Due Diligence Stage</h3>
                   <div
-                    className={`font-medium  ${
-                      application?.status === "APPROVED" ||
-                      application?.currentStage !== "EVALUATION"
-                        ? "bg-[#4BC500] text-[#4BC500]"
-                        : application?.status === "PENDING"
-                          ? "bg-red-600 text-red-600"
-                          : ""
-                    } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-                  >
-                    {application?.currentStage !== "EVALUATION" &&
-                    application?.currentStage !== "DUE_DILIGENCY"
-                      ? "APPROVED"
-                      : application?.status}
-                  </div>
+                className={`font-medium  ${
+                  application?.stages?.find(
+                    (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY
+                  )?.status == "APPROVED"
+                    ? "bg-[#4BC500] text-[#4BC500]"
+                    : "bg-red-600 text-red-600"
+                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+              >
+                {application?.stages?.find(
+                  (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY
+                )?.status ??
+                  "PENDING"}
+              </div>
                   {application?.duediligencyDecisions?.length < 4 &&
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>

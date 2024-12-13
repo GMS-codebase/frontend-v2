@@ -11,12 +11,13 @@ import {
   getApplications,
   getMyApplications,
 } from "@/utils/funcs";
+import { ApplicationStage } from "@/types/application";
 
 interface AppealModalProps {
   isOpen: boolean;
   onClose: () => void;
   application: any;
-  stage: "EVALUATION" | "DUE_DILIGENCY";
+  stage: ApplicationStage.EVALUATION | ApplicationStage.DUE_DILIGENCY;
 }
 
 const MakeAppealModal = ({

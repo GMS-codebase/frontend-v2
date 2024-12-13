@@ -31,6 +31,7 @@ export interface Question {
   commentable: boolean;
   columns?: TableColumn[];
   choices?: string[];
+  template?: string;
 }
 
 export interface TableColumn {

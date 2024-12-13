@@ -129,6 +129,7 @@ import {
 } from "@/actions/AppealsActions";
 import { QuestionForm } from "@/types/questions-form";
 import { useRouter } from "next/navigation";
+import { ApplicationStage } from "@/types/application";
 export const getAppeals = async (
   dispatch: Dispatch<UnknownAction>,
   user: string,
@@ -800,12 +801,12 @@ export const getApplicationStatus = (application: any) => {
   } else if (application.call.closed) {
     return "SUBMITTED";
   } else if (
-    application?.currentStage === "EVALUATION" &&
+    application?.currentStage === ApplicationStage.EVALUATION &&
     !application?.call?.closedEvaluation
   ) {
     return "EVALUATION IN PROGRESS";
   } else if (
-    application?.currentStage === "DUE_DILIGENCY" &&
+    application?.currentStage === ApplicationStage.DUE_DILIGENCY &&
     !application?.call?.closedDueDiligency
   ) {
     return "DUE DILIGENCY IN  PROGRESS";
