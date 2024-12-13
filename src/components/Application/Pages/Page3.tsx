@@ -219,6 +219,13 @@ export function Page3({
             </table>
           </div>
         )}
+        {!isApplicant &&
+          commentsData &&
+          renderCommentsSection(
+            type === "assessment"
+              ? "assessmentEquipmentsComment"
+              : "trainingEquipmentsComment",
+          )}
       </div>
       <div className="">
         <h3 className="text-lg font-bold capitalize">
