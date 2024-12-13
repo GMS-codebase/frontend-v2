@@ -13,7 +13,7 @@ const initialState = {
   trades: [],
   error: null,
   isError: false,
-  loading: false,
+  loading: true,
 };
 
 type Action = {
