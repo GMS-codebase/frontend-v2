@@ -77,7 +77,7 @@ const Page = () => {
           .includes(searchQuery.toLowerCase()) ||
         tradeSector.trade.shortname
           .toLowerCase()
-          .includes(searchQuery.toLowerCase())
+          .includes(searchQuery.toLowerCase()),
     );
   }, [trades, searchQuery]);
 
@@ -151,7 +151,7 @@ const Page = () => {
         ),
       },
     ],
-    [openRemoveTrade]
+    [openRemoveTrade],
   );
 
   return (

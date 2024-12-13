@@ -38,14 +38,14 @@ const Page = () => {
         ([_, type]: any) =>
           type.pages &&
           type.pages.some(
-            (page: any) => page.questions && page.questions.length > 0
-          )
+            (page: any) => page.questions && page.questions.length > 0,
+          ),
       )
       .reduce((acc, [key, type]: any) => {
         acc[key] = {
           ...type,
           pages: type.pages.filter(
-            (page: any) => page.questions && page.questions.length > 0
+            (page: any) => page.questions && page.questions.length > 0,
           ),
         };
         return acc;

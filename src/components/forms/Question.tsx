@@ -83,7 +83,7 @@ const CreateQuestion: React.FC<CreateQuestionProps> = ({
   const [showingDescription, setShowingDescription] = useState(true);
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    key: keyof Question
+    key: keyof Question,
   ) => {
     const updatedQuestion = { ...editingQuestion, [key]: e.target.value };
     if (key === "type" && e.target.value === "table")
@@ -185,7 +185,7 @@ const renderQuestionType = (
     setComments?: (key: string, value: any) => void;
     onQuestionChange?: (question: Question) => void;
     isEditing?: boolean;
-  }
+  },
 ) => (
   <>
     {question.type === "text" && (

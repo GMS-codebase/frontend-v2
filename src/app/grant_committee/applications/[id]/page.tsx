@@ -32,7 +32,7 @@ const Page = () => {
   const applications = useSelector((state: any) => state.applications);
   const forms = useSelector((state: any) => state.forms);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id
+    (application: any) => application.uuid === id,
   )[0];
   const [
     isOpenDueDiligencyDetails,
@@ -76,7 +76,7 @@ const Page = () => {
 
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}")
+      JSON.parse(application?.call.subwindowForms || "{}"),
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
@@ -124,7 +124,7 @@ const Page = () => {
                   `/admin/applicant-details/${id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -271,8 +271,8 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage?.stage === "EVALUATION"
-                        )
+                          (stage: any) => stage?.stage === "EVALUATION",
+                        ),
                       );
                       openNullifyModal();
                     }}
@@ -314,8 +314,8 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage?.stage === "DUE_DILIGENCY"
-                        )
+                          (stage: any) => stage?.stage === "DUE_DILIGENCY",
+                        ),
                       );
                       openNullifyModal();
                     }}
@@ -328,7 +328,7 @@ const Page = () => {
             )}
           </div>
           {application?.stages?.find(
-            (stage: any) => stage?.stage === "GRANT_COMMITTEE"
+            (stage: any) => stage?.stage === "GRANT_COMMITTEE",
           ) && (
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Grant Committee</h3>

@@ -59,7 +59,10 @@ export function middleware(request: NextRequest) {
     }
     const role = decoded?.role;
     const nextUrl = getRolePath(role ?? "");
-    if (whitelist.includes(request.nextUrl.pathname) && request.nextUrl.pathname !== "/") {
+    if (
+      whitelist.includes(request.nextUrl.pathname) &&
+      request.nextUrl.pathname !== "/"
+    ) {
       return NextResponse.next();
     }
 

@@ -43,7 +43,7 @@ jobs:
         run: |
           npm install --force
           npm run build
-          
+
       # Start the application using pm2
       - name: Start the application using pm2
         run: |

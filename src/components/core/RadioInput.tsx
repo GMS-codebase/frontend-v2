@@ -59,7 +59,7 @@ const RadioInput: React.FC<RadioInputProps> = ({
                 type="text"
                 value={choice}
                 onChange={(e) => handleChoiceChange(index, e.target.value)}
-                disabled={mode !== "creating" || disabled }
+                disabled={mode !== "creating" || disabled}
                 placeholder="Enter choice"
                 className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
