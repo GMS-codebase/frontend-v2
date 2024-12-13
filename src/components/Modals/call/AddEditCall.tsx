@@ -23,7 +23,8 @@ import {
 } from "@/utils/enums";
 import { tradesData } from "@/utils/constants/dummy";
 import { MdPlusOne } from "react-icons/md";
-import { FaPlus } from "react-icons/fa";
+import { FaEdit, FaPlus } from "react-icons/fa";
+import { IoTrash } from "react-icons/io5";
 
 const AddEditCall = ({
   isOpenAddEditCall,
@@ -122,8 +123,9 @@ const AddEditCall = ({
                   );
                   return matchingSector
                     ? {
-                        value: matchingSector.uuid,
-                        label: matchingSector.name,
+                        value: matchingSector.uuid + "@" + subWindow.uuid,
+                        label:
+                          matchingSector.name + " (" + subWindow.title + ")",
                       }
                     : null;
                 })
@@ -167,7 +169,8 @@ const AddEditCall = ({
     submitData.append("applicationStartDate", formData?.startDate as any);
     submitData.append("applicationEndDate", formData?.endDate as any);
     submitData.append("window", JSON.stringify(selectedWindows));
-    submitData.append("sector", JSON.stringify(selectedSectors));
+    const updatedSectors = selectedSectors.map((s: string) => s.split("@")[0]);
+    submitData.append("sector", JSON.stringify(updatedSectors));
     submitData.append(
       "subWindowForms",
       JSON.stringify(selectedSubWindowsForms)
@@ -620,6 +623,7 @@ const AddEditCall = ({
                         <tr className="bg-gray-100">
                           <th className="px-4 py-2 text-left">Sub-Window</th>
                           <th className="px-4 py-2 text-left">Form</th>
+                          <th className="px-4 py-2 text-left">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -638,6 +642,34 @@ const AddEditCall = ({
                                   FormsData.find((fm: any) => fm.value == form)
                                     ?.label
                                 }
+                              </td>
+                              <td className="flex items-center gap-2 px-4 py-2">
+                                <div
+                                  className="text-primary"
+                                  onClick={() => {
+                                    setSelectedForm(form)
+                                    setSelectedSub(subWindow)
+                                    setSelectedSubWindowsForms((prev: { [key: string]: string }) => {
+                                      const updated = { ...prev };
+                                      delete updated[subWindow];
+                                      return updated;
+                                    });
+                                  }}
+                                >
+                                  <FaEdit className="w-5 h-5" />
+                                </div>
+                                <div
+                                  className="text-red-500"
+                                  onClick={() =>
+                                    setSelectedSubWindowsForms((prev: { [key: string]: string }) => {
+                                      const updated = { ...prev };
+                                      delete updated[subWindow];
+                                      return updated;
+                                    })
+                                  }
+                                >
+                                  <IoTrash className="w-5 h-5" />
+                                </div>
                               </td>
                             </tr>
                           )

@@ -35,7 +35,7 @@ const Page = () => {
   const [selectedForm, setSelectedForm] = useState<any>("");
   const filteredForms =
     forms.forms?.filter((form: any) =>
-      form?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+      form?.name?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
 
   const columns: ColumnDef<any>[] = [
@@ -43,13 +43,6 @@ const Page = () => {
       accessorKey: "name",
       header: "Name",
       cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => (
-        <div className="truncate">{row.original?.status || "-"}</div>
-      ),
     },
     {
       accessorKey: "actions",
@@ -74,16 +67,13 @@ const Page = () => {
               </Menu.Label>
               <Menu.Divider />
               <Menu.Item>
-                <div
-                  onClick={() => {
-                    setSelectedForm(row.original);
-                    openActivateDeactivateFormModal();
-                  }}
+                <Link
+                  href={`/admin/forms/view/${row.original.uuid}`}
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
-                  <CiEdit size={21} color="#576074" />
-                  {row.original.status === "ACTIVE" ? "Deactivate" : "Activate"}
-                </div>
+                  <FiEye size={21} color="#576074" />
+                  View
+                </Link>
               </Menu.Item>
               <Menu.Item>
                 <Link
@@ -159,16 +149,6 @@ const Page = () => {
         }}
         type="forms"
         id={selectedForm?.uuid}
-      />
-      <ActivateDeactivateModal
-        type="forms"
-        closeModal={() => {
-          closeActivateDeactivateFormModal();
-          setSelectedForm(null);
-        }}
-        id={selectedForm?.uuid}
-        isActive={selectedForm?.status === "ACTIVE"}
-        isOpenModal={isOpenActivateDeactivateForm}
       />
     </div>
   );

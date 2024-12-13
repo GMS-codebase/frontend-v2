@@ -39,11 +39,13 @@ jobs:
       - name: Verify Git Status
         run: |
           cd test
+          cd test
           git status
 
       # Install dependencies and build the application
       - name: Install dependencies and build the application
         run: |
+          cd test
           cd test
           npm install --force
           npm run build
@@ -51,6 +53,8 @@ jobs:
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
+          cd test
+          pm2 restart gms-testing || pm2 start ecosystem.config.js --env .env.local
           cd test
           pm2 restart gms-testing || pm2 start ecosystem.config.js --env .env.local
           pm2 save
