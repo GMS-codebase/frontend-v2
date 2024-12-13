@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useEffect, useState } from "react";
 import {
@@ -342,9 +343,9 @@ const Page = () => {
         evaluations={
           application?.evaluationDecisions?.length &&
           application?.evaluators?.length
-            ? application.evaluationDecisions.map(
+            ? application?.evaluationDecisions?.map(
                 (decision: any, index: any) => ({
-                  evaluator: application.evaluators[index],
+                  evaluator: application?.evaluators[index],
                   evaluationDecision: decision,
                 })
               )

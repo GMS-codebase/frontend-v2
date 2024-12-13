@@ -35,6 +35,6 @@ export interface Question {
 
 export interface TableColumn {
   title: string;
-  type: "text" | "number" | "select";
+  type: "text" | "number" | "select" | "date";
   options?: string[];
 }
