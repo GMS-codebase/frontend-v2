@@ -58,7 +58,7 @@ export default function TradesReducer(state = initialState, action: Action) {
     case UPDATE_TRADE_SUCCESS:
       return {
         ...state,
-        trades: state.trades.map((trade: Trade) =>
+        trades: state.trades?.map((trade: Trade) =>
           trade.uuid == action.payload.uuid
             ? { ...trade, ...action.payload }
             : trade,
