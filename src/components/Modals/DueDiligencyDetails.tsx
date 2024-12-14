@@ -96,7 +96,7 @@ const DueDiligencyDetails = ({
                   </div>
                 </div>
               )}
-              <div className="py-4 w-full">
+              <div className="w-full">
                 <label
                   className="block text-sm text-gray-600"
                   htmlFor="textarea"
@@ -109,10 +109,10 @@ const DueDiligencyDetails = ({
                   value={application?.duediligencyForm?.financeInfo}
                   readOnly
                   rows={4}
-                  className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
+                  className="w-full p-3 border rounded-2xl outline-none bg-gray-100"
                 />
               </div>
-              <div className="p-4 w-full">
+              <div className="w-full">
                 <label
                   className="block text-sm text-gray-600"
                   htmlFor="textarea"
@@ -125,10 +125,10 @@ const DueDiligencyDetails = ({
                   value={application?.duediligencyForm?.equipmentInfo}
                   readOnly
                   rows={4}
-                  className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
+                  className="w-full p-3 border rounded-2xl outline-none bg-gray-100"
                 />
               </div>
-              <div className="p-4 w-full">
+              <div className="w-full">
                 <label
                   className="block text-sm text-gray-600"
                   htmlFor="textarea"
@@ -141,10 +141,10 @@ const DueDiligencyDetails = ({
                   value={application?.duediligencyForm?.workPlaceInfo}
                   readOnly
                   rows={4}
-                  className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
+                  className="w-full p-3 border rounded-2xl outline-none bg-gray-100"
                 />
               </div>
-              <div className="p-4 w-full">
+              <div className="w-full">
                 <label
                   className="block text-sm text-gray-600"
                   htmlFor="textarea"
@@ -157,10 +157,10 @@ const DueDiligencyDetails = ({
                   value={application?.duediligencyForm?.ohsInfo}
                   readOnly
                   rows={4}
-                  className="mt-2 p-2 w-full border border-primary rounded-xl shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-gray-100"
+                  className="w-full p-3 border rounded-2xl outline-none bg-gray-100"
                 />
               </div>
-              <div className="p-4 w-full">
+              <div className="w-full">
                 <label
                   className="block text-sm text-gray-600"
                   htmlFor="textarea"
@@ -174,16 +174,18 @@ const DueDiligencyDetails = ({
                   onChange={(e) => setText(e.target.value)}
                   readOnly={!isEditing}
                   rows={4}
-                  className={`mt-2 p-2 w-full border border-primary rounded-xl shadow-sm ${
+                  className={`w-full p-3 border rounded-2xl outline-none ${
                     isEditing ? "bg-white" : "bg-gray-100"
                   }`}
                 />
               </div>
             </>
           )}
+          
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
+          <p>All Employee Comments</p>
             {decisions?.length &&
-              [...decisions].reverse().map((evaluation: any, i: any) => {
+              [...decisions].map((evaluation: any, i: any) => {
                 if (viewer === "applicant" && i > 0) return null;
                 return (
                   <div key={i} className="w-full ">
@@ -225,7 +227,7 @@ const DueDiligencyDetails = ({
                         value={evaluation?.comment}
                         disabled
                         rows={2}
-                        className={`mt-2 p-2 w-full border border-gray-500  rounded-xl shadow-sm  ${
+                        className={`w-full p-3 border rounded-2xl outline-none  ${
                           isEditing ? "bg-white" : "bg-gray-100"
                         }`}
                       />

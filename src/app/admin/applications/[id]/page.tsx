@@ -12,28 +12,23 @@ import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDe
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
 import { handleDownloadFile } from "@/utils/funcs";
 import Form from "@/components/forms/Form";
+import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
+import { ApplicationStage } from "@/types/application";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const forms = useSelector((state: any) => state.forms);
-
-  const [isOpenAddDue, setIsOpenAddDue] = useState(false);
-  const openAddDue = () => setIsOpenAddDue(true);
-  const closeAddDue = () => setIsOpenAddDue(false);
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
   ] = useDisclosure(false);
   const [
-    isOpenGrantCommitteeDetails,
-    { open: openGrantCommitteeDetails, close: closeGrantCommitteeDetails },
+    isOpenDueDiligencyDetails,
+    { open: openDueDiligencyDetails, close: closeDueDiligencyDetails },
   ] = useDisclosure(false);
   const [
-    isOpenGrantCommitteeMakeDecision,
-    {
-      open: openGrantCommitteeMakeDecision,
-      close: closeGrantCommitteeMakeDecision,
-    },
+    isOpenGrantCommitteeDetails,
+    { open: openGrantCommitteeDetails, close: closeGrantCommitteeDetails },
   ] = useDisclosure(false);
 
   const [downloading, setDownloading] = useState(false);
@@ -76,6 +71,8 @@ const Page = () => {
     );
   }
 
+  console.log(application);
+
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -113,7 +110,7 @@ const Page = () => {
                 notifications.show({
                   title: "Download Successful",
                   message: "The file has been downloaded successfully.",
-                  // type: "success",
+                  color: "green",
                 });
               } catch (error) {
                 console.error("Download error:", error);
@@ -121,7 +118,7 @@ const Page = () => {
                   title: "Download Failed",
                   message:
                     "There was an issue downloading the file. Please try again.",
-                  // type: "error",
+                  color: "red",
                 });
               } finally {
                 setDownloading(false);
@@ -242,9 +239,9 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <div className="flex gap-2 p-5">
+      <div className="flex gap-2 ">
         <div
-          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"}  gap-4 p-5`}
+          className={`flex  rounded-2xl ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"}   `}
         >
           {form && (
             <Form
@@ -256,7 +253,7 @@ const Page = () => {
                 qns: JSON.parse(form?.qns || "{}"),
               }}
             />
-          )}
+          )} 
         </div>
 
         {application?.currentStage === "SUBMITTED" ? (
@@ -267,7 +264,7 @@ const Page = () => {
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Evaluation Stage</h3>
               <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                {application?.currentStage === "EVALUATION"
+                {application?.currentStage === ApplicationStage.EVALUATION
                   ? "Pending"
                   : "APPROVED"}
               </div>
@@ -287,22 +284,22 @@ const Page = () => {
               <div
                 className={`font-medium  ${
                   application?.status === "APPROVED" ||
-                  application?.currentStage !== "EVALUATION"
+                  application?.currentStage !== ApplicationStage.EVALUATION
                     ? "bg-[#4BC500] text-[#4BC500]"
                     : application?.status === "PENDING"
                       ? "bg-red-600 text-red-600"
                       : ""
                 } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
               >
-                {application?.currentStage !== "EVALUATION" &&
-                application?.currentStage !== "DUE_DILIGENCY"
+                {application?.currentStage !== ApplicationStage.EVALUATION &&
+                application?.currentStage !== ApplicationStage.DUE_DILIGENCY
                   ? "APPROVED"
                   : application?.status}
               </div>
-              {application?.currentStage !== "DUE_DILIGENCY" && (
+              {application?.duediligencyDecisions && (
                 <div className="flex flex-col gap-2 mt-4">
                   <button
-                    onClick={openAddDue}
+                    onClick={openDueDiligencyDetails}
                     className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
                   >
                     View details
@@ -330,31 +327,22 @@ const Page = () => {
           </div>
         )}
       </div>
-      <DueDiligenceModal
+      <DueDiligencyDetails
         application={application}
-        opened={isOpenAddDue}
-        close={closeAddDue}
+        opened={isOpenDueDiligencyDetails}
+        close={closeDueDiligencyDetails}
+        decisions={application?.duediligencyDecisions}
       />
       <MakeGrantCommitteeDecision
         application={application}
-        closeModal={closeGrantCommitteeMakeDecision}
-        isOpen={isOpenGrantCommitteeMakeDecision}
+        closeModal={closeGrantCommitteeDetails}
+        isOpen={isOpenGrantCommitteeDetails}
         onMakeDecision={() => {}}
       />
       <EvaluationDetails
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
-        evaluations={
-          application?.evaluationDecisions?.length &&
-          application?.evaluators?.length
-            ? application?.evaluationDecisions?.map(
-                (decision: any, index: any) => ({
-                  evaluator: application?.evaluators[index],
-                  evaluationDecision: decision,
-                }),
-              )
-            : []
-        }
+        evaluations={application?.evaluationDecisions}
         application={application}
       />
     </div>

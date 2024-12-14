@@ -20,19 +20,19 @@ import { Contract } from "@/types";
 
 const initialState = {
   minutes: [],
-  uploadedMinutesLoading: false,
-  approvedMinutesLoading: false,
-  rejectedMinutesLoading: false,
-  negotiatedMinutesLoading: false,
+  uploadedMinutesLoading: true,
+  approvedMinutesLoading: true,
+  rejectedMinutesLoading: true,
+  negotiatedMinutesLoading: true,
   uploadedMinutes: [],
   approvedMinutes: [],
   rejectedMinutes: [],
   negotiatedMinutes: [],
-  applicationsReadyForMinutesLoading: false,
+  applicationsReadyForMinutesLoading: true,
   applicationsReadyForMinutes: [],
   error: null,
   isError: false,
-  loading: false,
+  loading: true,
 };
 
 type Action = {

@@ -11,6 +11,7 @@ import { authorizedApi } from "@/utils/api";
 import { useParams } from "next/navigation";
 import { getCalls } from "@/utils/funcs";
 import { DateInput } from "@mantine/dates";
+import { ApplicationStage } from "@/types/application";
 
 const OpenCloseAppealModal = ({
   closeModal,
@@ -20,7 +21,7 @@ const OpenCloseAppealModal = ({
   opened,
 }: {
   closeModal: () => void;
-  stage: "EVALUATION" | "DUE_DILIGENCY";
+  stage: ApplicationStage.EVALUATION | ApplicationStage.DUE_DILIGENCY;
   callId: any;
   type: "OPEN" | "CLOSE";
   opened: boolean;

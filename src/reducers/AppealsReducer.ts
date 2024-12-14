@@ -11,7 +11,7 @@ const initialState = {
   appeals: [],
   error: null,
   isError: false,
-  loading: false,
+  loading: true,
 };
 
 type Action = {

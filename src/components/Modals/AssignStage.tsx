@@ -17,6 +17,7 @@ import { ClipLoader } from "react-spinners";
 import { notifications } from "@mantine/notifications";
 import { useDispatch, useSelector } from "react-redux";
 import { getEmployees } from "@/utils/funcs";
+import { ApplicationStage } from "@/types/application";
 type FormData = {
   firstName: string;
   lastName: string;
@@ -137,8 +138,8 @@ const AssignStage = ({
                   value={stage}
                   onChange={(value: any) => setStage(value)}
                   data={[
-                    { value: "EVALUATION", label: "Evaluation" },
-                    { value: "DUE_DILIGENCY", label: "DueDiligency" },
+                    { value: ApplicationStage.EVALUATION, label: "Evaluation" },
+                    { value: ApplicationStage.DUE_DILIGENCY, label: "DueDiligency" },
                   ]}
                   placeholder="Select stage"
                   className="text-base"

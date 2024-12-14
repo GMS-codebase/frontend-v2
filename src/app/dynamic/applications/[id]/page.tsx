@@ -19,6 +19,7 @@ import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
 import { handleDownloadFile } from "@/utils/funcs";
+import { ApplicationStage } from "@/types/application";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
@@ -155,7 +156,7 @@ const Page = () => {
                 notifications.show({
                   title: "Download Successful",
                   message: "The file has been downloaded successfully.",
-                  // type: "success",
+                 color:"green"
                 });
               } catch (error) {
                 console.error("Download error:", error);
@@ -163,7 +164,7 @@ const Page = () => {
                   title: "Download Failed",
                   message:
                     "There was an issue downloading the file. Please try again.",
-                  // type: "error",
+                 color:"red"
                 });
               } finally {
                 setDownloading(false);
@@ -320,7 +321,7 @@ const Page = () => {
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold">Evaluation Stage</h3>
             <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-              {application?.currentStage === "EVALUATION"
+              {application?.currentStage === ApplicationStage.EVALUATION
                 ? "PENDING"
                 : "APPROVED"}
             </div>
@@ -340,19 +341,19 @@ const Page = () => {
             <div
               className={`font-medium  ${
                 application?.status === "APPROVED" ||
-                application?.currentStage !== "EVALUATION"
+                application?.currentStage !== ApplicationStage.EVALUATION
                   ? "bg-[#4BC500] text-[#4BC500]"
                   : application?.status === "PENDING"
                     ? "bg-red-600 text-red-600"
                     : ""
               } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
             >
-              {application?.currentStage !== "EVALUATION" &&
-              application?.currentStage !== "DUE_DILIGENCY"
+              {application?.currentStage !== ApplicationStage.EVALUATION &&
+              application?.currentStage !== ApplicationStage.DUE_DILIGENCY
                 ? "APPROVED"
                 : application?.status}
             </div>
-            {application?.currentStage !== "DUE_DILIGENCY" && (
+            {application?.currentStage !== ApplicationStage.DUE_DILIGENCY && (
               <div className="flex flex-col gap-2 mt-4">
                 <button
                   onClick={openAddDue}

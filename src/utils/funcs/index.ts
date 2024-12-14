@@ -30,6 +30,7 @@ import {
   GET_APPLICATIONS_SUCCESS,
   GET_MY_APPLICATIONS_ERROR,
   GET_MY_APPLICATIONS_LOADING,
+  GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING,
   GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
   GET_MY_APPLICATIONS_SUCCESS,
 } from "@/actions/ApplicationsActions";
@@ -129,6 +130,7 @@ import {
 } from "@/actions/AppealsActions";
 import { QuestionForm } from "@/types/questions-form";
 import { useRouter } from "next/navigation";
+import { ApplicationStage } from "@/types/application";
 export const getAppeals = async (
   dispatch: Dispatch<UnknownAction>,
   user: string,
@@ -417,7 +419,7 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
 export const getApplicationsForContractSigning = async (
   dispatch: Dispatch<UnknownAction>,
 ) => {
-  dispatch({ type: GET_APPLICATIONS_LOADING });
+  dispatch({ type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING });
   authorizedApi
     .get("/negotiation-contract/applications/sdf/ready-contract-signing")
     .then((res) => {
@@ -800,12 +802,12 @@ export const getApplicationStatus = (application: any) => {
   } else if (application.call.closed) {
     return "SUBMITTED";
   } else if (
-    application?.currentStage === "EVALUATION" &&
+    application?.currentStage === ApplicationStage.EVALUATION &&
     !application?.call?.closedEvaluation
   ) {
     return "EVALUATION IN PROGRESS";
   } else if (
-    application?.currentStage === "DUE_DILIGENCY" &&
+    application?.currentStage === ApplicationStage.DUE_DILIGENCY &&
     !application?.call?.closedDueDiligency
   ) {
     return "DUE DILIGENCY IN  PROGRESS";

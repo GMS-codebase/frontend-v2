@@ -19,6 +19,7 @@ import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 import Form from "@/components/forms/Form";
 import MakeAppealModal from "@/components/Modals/appeal/MakeAppealModal";
 import ViewAppealResultsModal from "@/components/Modals/appeal/ViewAppealResults";
+import { ApplicationStage } from "@/types/application";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
@@ -30,7 +31,7 @@ const Page = () => {
   });
   const [openMakeAppeal, setOpenMakeAppeal] = useState({
     opened: false,
-    stage: "EVALUATION",
+    stage: ApplicationStage.EVALUATION,
   });
   const forms = useSelector((state: any) => state.forms);
   const application = myApplications.find((app: any) => app?.uuid === callId);
@@ -174,7 +175,7 @@ const Page = () => {
         ))}
       <div className={` w-full  flex gap-6`}>
         <div
-          className={`flex  ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 `}
+          className={`flex  ${application?.currentStage == "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 `}
         >
           {form && (
             <Form
@@ -257,7 +258,7 @@ const Page = () => {
                             onClick={() =>
                               setOpenMakeAppeal({
                                 opened: true,
-                                stage: "EVALUATION",
+                                stage: ApplicationStage.EVALUATION,
                               })
                             }
                             className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
@@ -332,7 +333,7 @@ const Page = () => {
                           onClick={() =>
                             setOpenMakeAppeal({
                               opened: true,
-                              stage: "DUE_DILIGENCY",
+                              stage: ApplicationStage.DUE_DILIGENCY,
                             })
                           }
                           className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
@@ -397,10 +398,10 @@ const Page = () => {
       <MakeAppealModal
         isOpen={openMakeAppeal.opened}
         onClose={() =>
-          setOpenMakeAppeal({ opened: false, stage: "EVALUATION" })
+          setOpenMakeAppeal({ opened: false, stage: ApplicationStage.EVALUATION })
         }
         application={application}
-        stage={openMakeAppeal.stage as "EVALUATION" | "DUE_DILIGENCY"}
+        stage={openMakeAppeal.stage as ApplicationStage.EVALUATION | ApplicationStage.DUE_DILIGENCY}
       />
       <ViewAppealResultsModal
         isOpen={viewAppealResults.opened}
