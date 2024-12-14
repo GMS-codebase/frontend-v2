@@ -12,7 +12,7 @@ const initialState = {
   applicants: [],
   error: null,
   isError: false,
-  loading: false,
+  loading: true,
 };
 
 type Action = {
