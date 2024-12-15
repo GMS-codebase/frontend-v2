@@ -13,7 +13,7 @@ jobs:
       # Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
-        with: 
+        with:
           path: /staging
 
       # Set Environment Variables

@@ -19,6 +19,7 @@ import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 import Form from "@/components/forms/Form";
 import { Form as IForm, QuestionForm } from "@/types/questions-form";
 import { ApplicationStage } from "@/types/application";
+import GeneralCommentModal from "@/components/Modals/GeneralCommentModal";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
@@ -53,8 +54,15 @@ const Page = () => {
       close: closeMakeFirstDueDiligencyDecision,
     },
   ] = useDisclosure(false);
+  const [
+    isOpenGeneralCommentModal,
+    { open: openGeneralCommentModal, close: closeGeneralCommentModal },
+  ] = useDisclosure(false);
   const [selectedStage, setSelectedStage] = useState<
     "Evaluation" | "Due Diligence"
+  >();
+  const [generalCommentType, setGeneralCommentType] = useState<
+    "EVALUATION" | "DUE_DILIGENCY"
   >();
   const fetchApplication = async () => {
     setApplicationLoading(true);
@@ -74,7 +82,7 @@ const Page = () => {
   }, [id]);
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}")
+      JSON.parse(application?.call.subwindowForms || "{}"),
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
@@ -104,7 +112,7 @@ const Page = () => {
       return false; // No commentable questions found.
     } catch (error: any) {
       throw new Error(
-        `An error occurred while checking commentable questions: ${error.message}`
+        `An error occurred while checking commentable questions: ${error.message}`,
       );
     }
   };
@@ -118,7 +126,7 @@ const Page = () => {
       </div>
     );
   }
-  console.log(application)
+  console.log(application);
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -133,7 +141,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -258,7 +266,7 @@ const Page = () => {
               onClick={() =>
                 handleDownloadFile(
                   application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates"
+                  "business_certificates",
                 )
               }
             >
@@ -320,7 +328,7 @@ const Page = () => {
                     onClick={async () => {
                       setLoading(true);
                       handleAddComments(comments, form, application, () =>
-                        fetchApplication()
+                        fetchApplication(),
                       );
                       setLoading(false);
                     }}
@@ -347,22 +355,21 @@ const Page = () => {
               <div
                 className={`font-medium  ${
                   application?.stages?.find(
-                    (stage: any) => stage.stage === ApplicationStage.EVALUATION
+                    (stage: any) => stage.stage === ApplicationStage.EVALUATION,
                   )?.status == "APPROVED"
                     ? "bg-[#4BC500] text-[#4BC500]"
                     : "bg-red-600 text-red-600"
                 } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
               >
                 {application?.stages?.find(
-                  (stage: any) => stage.stage === ApplicationStage.EVALUATION
-                )?.status ??
-                  "PENDING"}
+                  (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+                )?.status ?? "PENDING"}
               </div>
               {application?.evaluationDecisions?.length < 3 &&
                 !application?.evaluationDecisions?.find(
                   (ev: any) =>
                     ev.employee.user_id.toString() ===
-                    profile?.userProfile?.data.uuid.toString()
+                    profile?.userProfile?.data.uuid.toString(),
                 ) && (
                   <>
                     <div
@@ -373,6 +380,21 @@ const Page = () => {
                       className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
                     >
                       <p>Make a decision</p>
+                    </div>
+                  </>
+                )}
+
+              {application?.evaluationDecisions?.length == 3 &&
+                !application?.evaluationFinalDecision && (
+                  <>
+                    <div
+                      onClick={() => {
+                        setGeneralCommentType("EVALUATION");
+                        openGeneralCommentModal();
+                      }}
+                      className="flex items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                    >
+                      <p>Provide a general comment</p>
                     </div>
                   </>
                 )}
@@ -393,24 +415,25 @@ const Page = () => {
                 <div className="flex flex-col gap-2">
                   <h3 className="font-bold">Due Diligence Stage</h3>
                   <div
-                className={`font-medium  ${
-                  application?.stages?.find(
-                    (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY
-                  )?.status == "APPROVED"
-                    ? "bg-[#4BC500] text-[#4BC500]"
-                    : "bg-red-600 text-red-600"
-                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-              >
-                {application?.stages?.find(
-                  (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY
-                )?.status ??
-                  "PENDING"}
-              </div>
+                    className={`font-medium  ${
+                      application?.stages?.find(
+                        (stage: any) =>
+                          stage.stage === ApplicationStage.DUE_DILIGENCY,
+                      )?.status == "APPROVED"
+                        ? "bg-[#4BC500] text-[#4BC500]"
+                        : "bg-red-600 text-red-600"
+                    } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+                  >
+                    {application?.stages?.find(
+                      (stage: any) =>
+                        stage.stage === ApplicationStage.DUE_DILIGENCY,
+                    )?.status ?? "PENDING"}
+                  </div>
                   {application?.duediligencyDecisions?.length < 4 &&
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>
                         dec?.employee?.user_id ===
-                        profile?.userProfile?.data.uuid
+                        profile?.userProfile?.data.uuid,
                     ) && (
                       <div
                         onClick={() => {
@@ -428,6 +451,20 @@ const Page = () => {
                       >
                         <p>Make a decision</p>
                       </div>
+                    )}
+                  {application?.duediligencyDecisions?.length == 3 &&
+                    !application?.dueFinalDecision && (
+                      <>
+                        <div
+                          onClick={() => {
+                            setGeneralCommentType("DUE_DILIGENCY");
+                            openGeneralCommentModal();
+                          }}
+                          className="flex items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                        >
+                          <p>Provide a general comment</p>
+                        </div>
+                      </>
                     )}
                   {application?.duediligencyForm && (
                     <div className="flex flex-col gap-2 mt-4">
@@ -474,6 +511,13 @@ const Page = () => {
         close={closeEvaluationDetails}
         evaluations={application?.evaluationDecisions || []}
         application={application}
+      />
+      <GeneralCommentModal
+        isOpen={isOpenGeneralCommentModal}
+        close={closeGeneralCommentModal}
+        onClose={() => fetchApplication()}
+        application={application}
+        type={generalCommentType as any}
       />
     </div>
   );

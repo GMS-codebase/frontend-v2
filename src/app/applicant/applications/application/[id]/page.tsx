@@ -398,10 +398,17 @@ const Page = () => {
       <MakeAppealModal
         isOpen={openMakeAppeal.opened}
         onClose={() =>
-          setOpenMakeAppeal({ opened: false, stage: ApplicationStage.EVALUATION })
+          setOpenMakeAppeal({
+            opened: false,
+            stage: ApplicationStage.EVALUATION,
+          })
         }
         application={application}
-        stage={openMakeAppeal.stage as ApplicationStage.EVALUATION | ApplicationStage.DUE_DILIGENCY}
+        stage={
+          openMakeAppeal.stage as
+            | ApplicationStage.EVALUATION
+            | ApplicationStage.DUE_DILIGENCY
+        }
       />
       <ViewAppealResultsModal
         isOpen={viewAppealResults.opened}

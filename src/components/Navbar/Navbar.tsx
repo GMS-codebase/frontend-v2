@@ -110,6 +110,7 @@ const Navbar = () => {
       getBudgetLines(dispatch);
       getAppeals(dispatch, "applicant");
     }
+    getApplicants(dispatch);
     getAnnouncement(dispatch);
     getApplicationsForContractSigning(dispatch);
     getEmpStages(dispatch);

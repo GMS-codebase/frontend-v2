@@ -79,7 +79,7 @@ const Page = () => {
       </div>
     );
   }
-  console.log(call)
+  console.log(call);
   return (
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">
@@ -209,7 +209,10 @@ const Page = () => {
                 <button
                   disabled={call?.closedEvaluation}
                   onClick={() =>
-                    SetCloseStage({ opened: true, stage: ApplicationStage.EVALUATION })
+                    SetCloseStage({
+                      opened: true,
+                      stage: ApplicationStage.EVALUATION,
+                    })
                   }
                   className={`${call?.closedEvaluation ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full`}
                 >
@@ -222,7 +225,10 @@ const Page = () => {
                 <button
                   disabled={!call?.closedEvaluation}
                   onClick={() =>
-                    SetCloseStage({ opened: true, stage: ApplicationStage.DUE_DILIGENCY })
+                    SetCloseStage({
+                      opened: true,
+                      stage: ApplicationStage.DUE_DILIGENCY,
+                    })
                   }
                   className={`${call?.closedDueDiligency ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
@@ -301,7 +307,11 @@ const Page = () => {
         closeModal={() =>
           setOpenCloseAppeal({ opened: false, stage: "", type: "" })
         }
-        stage={openCloseAppeal.stage as ApplicationStage.EVALUATION | ApplicationStage.DUE_DILIGENCY}
+        stage={
+          openCloseAppeal.stage as
+            | ApplicationStage.EVALUATION
+            | ApplicationStage.DUE_DILIGENCY
+        }
         type={openCloseAppeal.type as "OPEN" | "CLOSE"}
         opened={openCloseAppeal.opened}
       />

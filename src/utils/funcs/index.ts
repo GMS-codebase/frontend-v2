@@ -147,7 +147,9 @@ export const getAppeals = async (
       dispatch({ type: GET_APPEALS_ERROR, payload: err.response.data.error });
     });
 };
-
+export const shortenString = (str: string, maxLength: number = 30) => {
+  return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+};
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
