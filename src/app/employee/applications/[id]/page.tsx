@@ -356,7 +356,7 @@ const Page = () => {
                 className={`font-medium  ${
                   application?.stages?.find(
                     (stage: any) => stage.stage === ApplicationStage.EVALUATION,
-                  )?.status == "APPROVED"
+                  )?.status !== "REJECTED"
                     ? "bg-[#4BC500] text-[#4BC500]"
                     : "bg-red-600 text-red-600"
                 } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
@@ -385,7 +385,7 @@ const Page = () => {
                 )}
 
               {application?.evaluationDecisions?.length == 3 &&
-                !application?.evaluationFinalDecision && (
+                 (
                   <>
                     <div
                       onClick={() => {
@@ -394,7 +394,7 @@ const Page = () => {
                       }}
                       className="flex items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
                     >
-                      <p>Provide a general comment</p>
+                      <p>{ application?.evaluationFinalDecision ? "View general comment" : "Provide a general comment"}</p>
                     </div>
                   </>
                 )}
@@ -419,7 +419,7 @@ const Page = () => {
                       application?.stages?.find(
                         (stage: any) =>
                           stage.stage === ApplicationStage.DUE_DILIGENCY,
-                      )?.status == "APPROVED"
+                      )?.status !== "REJECTED"
                         ? "bg-[#4BC500] text-[#4BC500]"
                         : "bg-red-600 text-red-600"
                     } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
