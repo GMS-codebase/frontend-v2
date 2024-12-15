@@ -306,9 +306,9 @@ const Page = () => {
         </div>
       </div>
       <CompleteProfile
-        closeCompleteProfile={()=>{
-          setApplyLoading(false)
-          closeAddProfile()
+        closeCompleteProfile={() => {
+          setApplyLoading(false);
+          closeAddProfile();
         }}
         isOpenCompleteProfile={isOpenCreateProfile}
         finishAddingProfile={() => {
@@ -322,9 +322,9 @@ const Page = () => {
       />
       <AddEditContact
         isOpenAddEditContact={isOpenAddContact}
-        closeAddEditContact={()=>{
-          setApplyLoading(false)
-          closeAddContact()
+        closeAddEditContact={() => {
+          setApplyLoading(false);
+          closeAddContact();
         }}
         finishAddingContact={() => {
           closeAddContact();
