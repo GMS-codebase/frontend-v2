@@ -348,7 +348,7 @@ const AddEditCall = ({
                       htmlFor="attachment"
                       className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
                     >
-                      {!formData.attachment ? (
+                      {!attachment ? (
                         <>
                           <SolarUploadBold className="text-blue-500 text-3xl" />
                           <div className="text-center">
@@ -368,9 +368,9 @@ const AddEditCall = ({
                               File Uploaded
                             </p>
                             <p className="text-xs text-gray-400">
-                              {formData?.attachment instanceof File
-                                ? formData.attachment.name
-                                : formData?.attachment}
+                              {attachment instanceof File
+                                ? attachment.name
+                                : attachment}
                             </p>
                           </div>
                         </>
