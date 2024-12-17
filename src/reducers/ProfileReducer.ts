@@ -9,7 +9,7 @@ const initialState = {
   profile: null,
   error: null,
   isError: false,
-  loading: false,
+  loading: true,
 };
 
 type Action = {

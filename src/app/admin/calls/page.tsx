@@ -37,7 +37,13 @@ const Page = () => {
     {
       accessorKey: "title",
       header: "Title",
-      cell: ({ row }) => <div>{row.original?.title}</div>,
+      cell: ({ row }) => (
+        <div>
+          {row.original?.title?.length > 30
+            ? row.original?.title?.slice(0, 30) + "..."
+            : row.original?.title}
+        </div>
+      ),
     },
     {
       accessorKey: "startDate",

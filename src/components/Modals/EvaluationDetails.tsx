@@ -38,7 +38,6 @@ const EvaluationDetails = ({
   const handleSave = () => {
     onSaveComment && onSaveComment(text);
   };
-
   return (
     <>
       <Modal
@@ -83,7 +82,7 @@ const EvaluationDetails = ({
                     <div className="flex gap-6 justify-start items-start">
                       {viewer !== "applicant" && (
                         <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
-                          {evaluation.employee.name}
+                          {evaluation?.employee?.name}
                         </p>
                       )}
                       {/* {i === 0 && <p className="mt-2">Selected</p>} */}
@@ -118,7 +117,7 @@ const EvaluationDetails = ({
                         Comment:
                       </label>
                       <textarea
-                        value={evaluation?.comment}
+                        value={viewer === "applicant" ? application?.evaluationFinalDecision : evaluation?.comment}
                         disabled
                         rows={2}
                         className={`mt-2 p-2 w-full border border-gray-500 rounded-xl shadow-sm ${

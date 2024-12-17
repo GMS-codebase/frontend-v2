@@ -5,8 +5,9 @@ import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { IoIosSave } from "react-icons/io";
 import { useRouter } from "next/navigation";
-import { handleSubmit } from "@/utils/funcs";
+import { getMyApplications, handleSubmit } from "@/utils/funcs";
 import Form from "@/components/forms/Form";
+import { useDispatch } from "react-redux";
 
 const Page = () => {
   const router = useRouter();
@@ -19,7 +20,7 @@ const Page = () => {
     setApplicationLoading(true);
     try {
       const res = await authorizedApi.get(
-        `/application/get-application/${applicationId}`
+        `/application/get-application/${applicationId}`,
       );
       setApplication(res.data.data.data);
       setApplicationLoading(false);
@@ -38,16 +39,19 @@ const Page = () => {
       setAnswers(JSON.parse(application?.answers || "{}"));
     }
   }, [application]);
+  const dispatch = useDispatch();
 
   const forms = useSelector((state: any) => state.forms);
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}")
+      JSON.parse(application?.call.subwindowForms || "{}"),
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
       form.uuid ===
-      JSON.parse(application?.call.subwindowForms || "{}")[foundSubWindow as any]
+      JSON.parse(application?.call.subwindowForms || "{}")[
+        foundSubWindow as any
+      ]
     );
   });
 
@@ -110,7 +114,10 @@ const Page = () => {
                 answers,
                 application,
                 form,
-                () => router.push("/applicant/applications")
+                () => {
+                  getMyApplications(dispatch);
+                  router.push("/applicant/applications");
+                },
               );
             }}
             disabled={loading}
