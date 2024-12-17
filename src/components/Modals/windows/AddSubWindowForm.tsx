@@ -63,7 +63,7 @@ const AddSubWindowForm = ({
         `/forms/link-with-subWindow/${formData.form}/${subWindowId}`,
         {
           formId: formData.form,
-        }
+        },
       );
       notifications.show({
         message: "Form assigned to subwindow successfully!",

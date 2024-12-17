@@ -208,7 +208,7 @@ export function DataTable({
               </thead>
               <tbody>
                 {table?.getRowModel().rows?.length ? (
-                  table?.getRowModel().rows.map((row, i) => (
+                  table?.getRowModel().rows?.map((row, i) => (
                     <tr
                       className={`overflow-hidden text-base ${
                         i % 2 === 0 ? "bg-[#FBFBFB]" : "bg-[#FFF]"

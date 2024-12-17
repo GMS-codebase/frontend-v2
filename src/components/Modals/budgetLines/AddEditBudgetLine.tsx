@@ -35,7 +35,7 @@ const AddEditBudgetLine = ({
   useEffect(() => {
     if (defaultData) {
       setFormData({
-        title: defaultData.title || "",
+        title: defaultData.budgetLine || "",
       });
     }
   }, [defaultData]);

@@ -68,6 +68,15 @@ const Page = () => {
               <Menu.Divider />
               <Menu.Item>
                 <Link
+                  href={`/admin/forms/view/${row.original.uuid}`}
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <FiEye size={21} color="#576074" />
+                  View
+                </Link>
+              </Menu.Item>
+              <Menu.Item>
+                <Link
                   href={`/admin/forms/create-edit/${row.original.uuid}`}
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >

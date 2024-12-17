@@ -13,7 +13,7 @@ jobs:
       # Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
-        with: 
+        with:
           path: /staging
 
       # Set Environment Variables
@@ -43,7 +43,7 @@ jobs:
         run: |
           npm install --force
           npm run build
-          
+
       # Start the application using pm2
       - name: Start the application using pm2
         run: |

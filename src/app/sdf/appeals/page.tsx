@@ -41,18 +41,12 @@ const Page = () => {
       cell: ({ row }) => <div>{row.original.legal_status}</div>,
     },
     {
-      accessorKey: "appeal_comment",
-      header: "Appeal Description",
-      cell: ({ row }) => (
-        <div>
-          {row.original?.appeal_comment?.length > 30
-            ? row.original?.appeal_comment?.slice(0, 30) + "..."
-            : row.original?.appeal_comment}
-        </div>
-      ),
+      accessorKey: "stage",
+      header: "Application Stage",
+      cell: ({ row }) => <div>{row.original?.stage}</div>,
     },
     {
-      accessorKey: "desicion",
+      accessorKey: "status",
       header: "Appeal Status",
       cell: ({ row }) => (
         <div

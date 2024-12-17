@@ -1,36 +1,33 @@
 import { Modal } from "@mantine/core";
-import { Document, Page } from "react-pdf";
-import { useDisclosure } from "@mantine/hooks";
-import { useState } from "react";
+import PDFViewer from "pdf-viewer-reactjs";
 
 const PDFViewerModal = ({
   pdfPath,
   closeViewPDF,
   isOpenViewPDF,
 }: {
-  pdfPath: string;
+  pdfPath: string | null;
   closeViewPDF: () => void;
   isOpenViewPDF: boolean;
 }) => {
-  const [numPages, setNumPages] = useState<number | null>(null);
-
-  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-    setNumPages(numPages);
-  };
   return (
-    <>
-      <Modal opened={isOpenViewPDF} onClose={closeViewPDF} size="xl" centered>
-        {pdfPath ? (
-          <Document file={pdfPath} onLoadSuccess={onDocumentLoadSuccess}>
-            {Array.from(new Array(numPages), (el, index) => (
-              <Page key={`page_${index + 1}`} pageNumber={index + 1} />
-            ))}
-          </Document>
-        ) : (
-          <div className="text-center py-10">No attachment found</div>
-        )}
-      </Modal>
-    </>
+    <Modal opened={isOpenViewPDF} onClose={closeViewPDF} size="xl" centered>
+      {pdfPath ? (
+        <div style={{ height: "70vh" }}>
+          <PDFViewer
+            document={{
+              url: pdfPath,
+            }}
+            hideNavbar
+            css="customViewer"
+          />
+        </div>
+      ) : (
+        <div className="text-center py-10 text-gray-600">
+          No PDF document found
+        </div>
+      )}
+    </Modal>
   );
 };
 

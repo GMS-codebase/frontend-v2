@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CallsList from "../../../components/CallsList/page";
 import { ColumnDef } from "@tanstack/react-table";
 import { useSelector } from "react-redux";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { Menu } from "@mantine/core";
+import { Menu, Tabs } from "@mantine/core";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { BiSearch } from "react-icons/bi";
@@ -13,14 +13,15 @@ import { SolarAddFolderBold } from "@/components/core/icons";
 import { DataTable } from "@/components/core/data-table";
 import { handleDownloadFile } from "@/utils/funcs";
 import MinutesDecisionConfirm from "@/components/Modals/minutes/MinutesDecisionConfirm";
+import { ApplicationStage } from "@/types/application";
 const getApplicationStatus = (application: any) => {
   if (
-    application?.currentStage === "EVALUATION" &&
+    application?.currentStage === ApplicationStage.EVALUATION &&
     !application?.call?.closedEvaluation
   ) {
     return "EVALUATION IN PROGRESS";
   } else if (
-    application?.currentStage === "DUE_DILIGENCY" &&
+    application?.currentStage === ApplicationStage.DUE_DILIGENCY &&
     !application?.call?.closedDueDiligency
   ) {
     return "DUE DILIGENCY IN  PROGRESS";
@@ -53,11 +54,18 @@ const Page = () => {
     },
     {
       accessorKey: "title",
-      header: "Application Title",
+      header: "Number of Trainees",
       cell: ({ row }) => (
         <div className="truncate">
-          {row.original.application.projectFunding?.title}
+          {row.original?.application?.numberOfTrainees}
         </div>
+      ),
+    },
+    {
+      accessorKey: "title",
+      header: "Minutes Status",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.minutes[0]?.status}</div>
       ),
     },
     {
@@ -156,14 +164,139 @@ const Page = () => {
     minute: null,
     decision: "",
   };
+  const {
+    minutes,
+    uploadedMinutes,
+    approvedMinutes,
+    rejectedMinutes,
+    negotiatedMinutes,
+    uploadedMinutesLoading,
+    approvedMinutesLoading,
+    rejectedMinutesLoading,
+    negotiatedMinutesLoading,
+    loading: loadingMinutes,
+  } = useSelector((state: any) => state.minutes);
+  console.log(
+    "minutes --> ",
+    minutes,
+    uploadedMinutes,
+    approvedMinutes,
+    rejectedMinutes,
+    negotiatedMinutes,
+  );
   const [openedMinute, setOpenedMinute] = React.useState({
     open: false,
     minute: null,
     decision: "",
   });
-  const { uploadedMinutes, uploadedMinutesLoading } = useSelector(
-    (state: any) => state.minutes,
+  const approvedColumns: ColumnDef<any>[] = [
+    {
+      accessorKey: "name",
+      header: "Applicant Name",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.name}</div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: "Applicant Phone",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.phone}</div>
+      ),
+    },
+    {
+      accessorKey: "email",
+      header: "Applicant Email",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.email}</div>
+      ),
+    },
+    {
+      accessorKey: "approval_status",
+      header: "Minute Approval Status",
+      cell: ({ row }) => (
+        <div className="w-full">
+          {row.original?.minutesStatus?.toUpperCase()}
+        </div>
+      ),
+    },
+  ];
+  const rejectedColumns: ColumnDef<any>[] = [
+    {
+      accessorKey: "number",
+      header: "Application number",
+      cell: ({ row }) => (
+        <div className="truncate">
+          {row.original.application.applicationNumber}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "title",
+      header: "Number of Trainees",
+      cell: ({ row }) => (
+        <div className="truncate">
+          {row.original?.application?.numberOfTrainees}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "title",
+      header: "Minutes Status",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.minutes[0]?.status}</div>
+      ),
+    },
+    {
+      accessorKey: "currentStage",
+      header: "Current Stage",
+      cell: ({ row }) => (
+        <div className="truncate">
+          {getApplicationStatus(row.original.application) || "-"}
+        </div>
+      ),
+    },
+  ];
+
+  const negotiatedColumns: ColumnDef<any>[] = [
+    {
+      accessorKey: "name",
+      header: "Applicant Name",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.name}</div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: "Applicant Phone",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.phone}</div>
+      ),
+    },
+    {
+      accessorKey: "email",
+      header: "Applicant Email",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.applicant?.email}</div>
+      ),
+    },
+    {
+      accessorKey: "approval_status",
+      header: "Minute Approval Status",
+      cell: ({ row }) => (
+        <div className="w-full">
+          {row.original?.minutesStatus?.toUpperCase()}
+        </div>
+      ),
+    },
+  ];
+
+  console.log(
+    "uploadedMinutesLoading --> ",
+    uploadedMinutesLoading,
+    uploadedMinutes,
   );
+
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 p-4">
       <h2 className="text-2xl font-bold mb-4">Minutes</h2>
@@ -186,15 +319,61 @@ const Page = () => {
           <h1 className="text-base font-medium text-white">Export as Excel</h1>
         </button>
       </div>
-      <div className="w-full h-full">
-        <DataTable
-          columns={columns}
-          data={uploadedMinutes}
-          loading={uploadedMinutesLoading}
-          noDataMessage={"You don't any minutes yet"}
-        />
-      </div>
+      <Tabs defaultValue="applications">
+        <Tabs.List className="w-auto my-2 ml-5 float-end">
+          <Tabs.Tab value="applications">Ready</Tabs.Tab>
+          <Tabs.Tab value="approved">Approved</Tabs.Tab>
+          <Tabs.Tab value="rejected">Rejected</Tabs.Tab>
+          <Tabs.Tab value="negotiated">Negotiated</Tabs.Tab>
+        </Tabs.List>
 
+        <Tabs.Panel value="applications">
+          <h1 className="text-base p-4 font-bold">
+            {" "}
+            Ready For Contract negotiation
+          </h1>
+          <DataTable
+            columns={columns}
+            data={uploadedMinutes ?? []}
+            loading={uploadedMinutesLoading}
+            noDataMessage="No Application ready for contract negotiation"
+          />
+        </Tabs.Panel>
+        <Tabs.Panel value="approved">
+          <h1 className="text-base p-4 font-bold">
+            Approved contract negotiations
+          </h1>
+          <DataTable
+            columns={approvedColumns}
+            loading={approvedMinutesLoading}
+            data={approvedMinutes ?? []}
+            noDataMessage="No Approved contract negotiation"
+          />
+        </Tabs.Panel>
+
+        <Tabs.Panel value="rejected">
+          <h1 className="text-base p-4 font-bold">
+            Rejected contract negotiations
+          </h1>
+          <DataTable
+            columns={rejectedColumns}
+            data={rejectedMinutes ?? []}
+            loading={rejectedMinutesLoading}
+            noDataMessage="No Rejected contract negotiations"
+          />
+        </Tabs.Panel>
+        <Tabs.Panel value="negotiated">
+          <h1 className="text-base p-4 font-bold">
+            Negotiated contract negotiations
+          </h1>
+          <DataTable
+            columns={negotiatedColumns}
+            data={negotiatedMinutes ?? []}
+            loading={negotiatedMinutesLoading}
+            noDataMessage="No Negotiated contract negotiations"
+          />
+        </Tabs.Panel>
+      </Tabs>
       <MinutesDecisionConfirm
         decision={openedMinute.decision}
         minute={openedMinute.minute}

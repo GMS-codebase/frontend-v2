@@ -11,7 +11,7 @@ import { Menu } from "@mantine/core";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
-import { getApplicationStatus } from "@/utils/funcs";
+import { getApplicationStatus, shortenString } from "@/utils/funcs";
 import { CALL_STATUS } from "@/utils/enums";
 const Page = () => {
   const columns: ColumnDef<any>[] = [
@@ -26,7 +26,7 @@ const Page = () => {
       accessorKey: "title",
       header: "Call title",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.call?.title}</div>
+        <div className="truncate">{shortenString(row.original.call?.title)}</div>
       ),
     },
     {
@@ -40,7 +40,7 @@ const Page = () => {
       accessorKey: "trade",
       header: "Trade",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.trades[0]?.trade?.title}</div>
+        <div className="truncate">{shortenString(row.original?.trades[0]?.trade?.title, 20)}</div>
       ),
     },
     {
@@ -78,7 +78,7 @@ const Page = () => {
                 <Link
                   href={
                     row.original.stages.length > 0 ||
-                    row.original.call.status === CALL_STATUS.OPEN
+                    row.original.call.status === CALL_STATUS.CLOSED
                       ? `/applicant/applications/application/${row.original.uuid}`
                       : `/applicant/applications/call/${row.original.call.uuid}/${row.original.uuid}/apply`
                   }
