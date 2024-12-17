@@ -20,6 +20,7 @@ jobs:
       - name: Set Environment Variables
         run: |
           echo "Staging branch detected"
+          ls -la
           chmod +x ./scripts/create_staging_env.sh
           if [ ! -f ./scripts/create_staging_env.sh ]; then
             echo "Script not found!"; exit 1;
