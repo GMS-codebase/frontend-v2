@@ -81,9 +81,9 @@ const GenericSidebar = ({
                   <Link
                     onClick={() => setCookie("breadcrumb", route.label)}
                     href={route.path}
-                    className={`flex items-center justify-center gap-5  py-3 my-1 ${
+                    className={`flex items-center justify-center gap-5 font-semibold py-3 my-1 ${
                       isActiveLink(route.path, index)
-                        ? "bg-primary text-white"
+                        ? "bg-primary font-extrabold text-white"
                         : "bg-white hover:bg-blue-200"
                     }  cursor-pointer rounded-full`}
                   >
@@ -105,9 +105,9 @@ const GenericSidebar = ({
                   <Link
                     onClick={() => setCookie("breadcrumb", route.label)}
                     href={route.path}
-                    className={`flex items-center gap-5  py-3 my-1  px-4 ${
+                    className={`flex items-center gap-5 font-semibold py-3 my-1  px-4 ${
                       isActiveLink(route.path, index)
-                        ? "bg-primary text-white"
+                        ? "bg-primary font-extrabold text-white"
                         : "bg-white hover:bg-blue-200"
                     }  cursor-pointer rounded-full`}
                   >

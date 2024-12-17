@@ -25,6 +25,7 @@ jobs:
       # Set Environment Variables
       - name: Set Environment Variables
         run: |
+          cd test
           echo "Test branch detected"
           chmod +x ./test/scripts/create_test_env.sh
           if [ ! -f ./test/scripts/create_test_env.sh ]; then
@@ -46,7 +47,7 @@ jobs:
           cd test
           npm install --force
           npm run build
-          
+
       # Start the application using pm2
       - name: Start the application using pm2
         run: |

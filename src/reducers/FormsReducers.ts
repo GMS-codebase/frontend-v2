@@ -12,7 +12,7 @@ const initialState = {
   forms: [],
   error: null,
   isError: false,
-  loading: false,
+  loading: true,
 };
 
 type Action = {

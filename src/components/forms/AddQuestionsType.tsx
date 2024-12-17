@@ -1,27 +1,47 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { notifications } from "@mantine/notifications";
 
 interface AddQuestionTypeProps {
   isOpen: boolean;
   closeModal: () => void;
-  onAddType: (newType: { name: string; description: string }) => void;
+  onAddType?: (newType: { name: string; description: string }) => void;
+  onUpdateType?: (
+    newType: { name: string; description: string },
+    recentName: string,
+  ) => void;
+  questionType?: any;
 }
 
 const AddQuestionType = ({
   isOpen,
   closeModal,
   onAddType,
+  onUpdateType,
+  questionType,
 }: AddQuestionTypeProps) => {
   const [formData, setFormData] = useState({ name: "", description: "" });
   const [errors, setErrors] = useState({ name: "", description: "" });
+
+  useEffect(() => {
+    console.log("fasdfasd");
+    console.log(questionType);
+    if (questionType) {
+      setFormData({
+        name: questionType.name,
+        description: questionType.description,
+      });
+    }
+  }, [questionType]);
 
   const handleAddType = () => {
     if (!formData.name.trim()) {
       setErrors({ ...errors, name: "Type name is required." });
       return;
     }
-    onAddType(formData);
+    questionType
+      ? onUpdateType && onUpdateType(formData, questionType.name)
+      : onAddType && onAddType(formData);
     setFormData({ name: "", description: "" });
     closeModal();
   };
@@ -85,7 +105,7 @@ const AddQuestionType = ({
             onClick={handleAddType}
             className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none"
           >
-            Add Type
+            {questionType ? "Update" : "Add"} Type
           </button>
         </div>
       </div>

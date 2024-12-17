@@ -18,6 +18,8 @@ import {
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 import Form from "@/components/forms/Form";
 import { Form as IForm, QuestionForm } from "@/types/questions-form";
+import { ApplicationStage } from "@/types/application";
+import GeneralCommentModal from "@/components/Modals/GeneralCommentModal";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
@@ -52,8 +54,15 @@ const Page = () => {
       close: closeMakeFirstDueDiligencyDecision,
     },
   ] = useDisclosure(false);
+  const [
+    isOpenGeneralCommentModal,
+    { open: openGeneralCommentModal, close: closeGeneralCommentModal },
+  ] = useDisclosure(false);
   const [selectedStage, setSelectedStage] = useState<
     "Evaluation" | "Due Diligence"
+  >();
+  const [generalCommentType, setGeneralCommentType] = useState<
+    "EVALUATION" | "DUE_DILIGENCY"
   >();
   const fetchApplication = async () => {
     setApplicationLoading(true);
@@ -73,7 +82,7 @@ const Page = () => {
   }, [id]);
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}")
+      JSON.parse(application?.call.subwindowForms || "{}"),
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
@@ -103,7 +112,7 @@ const Page = () => {
       return false; // No commentable questions found.
     } catch (error: any) {
       throw new Error(
-        `An error occurred while checking commentable questions: ${error.message}`
+        `An error occurred while checking commentable questions: ${error.message}`,
       );
     }
   };
@@ -117,6 +126,7 @@ const Page = () => {
       </div>
     );
   }
+  console.log(application);
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -131,7 +141,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -256,7 +266,7 @@ const Page = () => {
               onClick={() =>
                 handleDownloadFile(
                   application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates"
+                  "business_certificates",
                 )
               }
             >
@@ -318,7 +328,7 @@ const Page = () => {
                     onClick={async () => {
                       setLoading(true);
                       handleAddComments(comments, form, application, () =>
-                        fetchApplication()
+                        fetchApplication(),
                       );
                       setLoading(false);
                     }}
@@ -345,25 +355,21 @@ const Page = () => {
               <div
                 className={`font-medium  ${
                   application?.stages?.find(
-                    (stage: any) => stage.stage === "EVALUATION"
-                  )?.status === "APPROVED"
+                    (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+                  )?.status !== "REJECTED"
                     ? "bg-[#4BC500] text-[#4BC500]"
-                    : application?.status === "PENDING"
-                      ? "bg-red-600 text-red-600"
-                      : ""
+                    : "bg-red-600 text-red-600"
                 } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
               >
                 {application?.stages?.find(
-                  (stage: any) => stage.stage === "EVALUATION"
-                )?.status ??
-                  application?.evaluationDecisions[0]?.decision ??
-                  "PENDING"}
+                  (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+                )?.status ?? "PENDING"}
               </div>
-              {application?.evaluationDecisions.length < 3 &&
-                !application?.evaluationDecisions.find(
+              {application?.evaluationDecisions?.length < 3 &&
+                !application?.evaluationDecisions?.find(
                   (ev: any) =>
                     ev.employee.user_id.toString() ===
-                    profile?.userProfile?.data.uuid.toString()
+                    profile?.userProfile?.data.uuid.toString(),
                 ) && (
                   <>
                     <div
@@ -378,7 +384,22 @@ const Page = () => {
                   </>
                 )}
 
-              {application?.evaluationDecisions.length > 0 && (
+              {application?.evaluationDecisions?.length == 3 &&
+                 (
+                  <>
+                    <div
+                      onClick={() => {
+                        setGeneralCommentType("EVALUATION");
+                        openGeneralCommentModal();
+                      }}
+                      className="flex items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                    >
+                      <p>{ application?.evaluationFinalDecision ? "View general comment" : "Provide a general comment"}</p>
+                    </div>
+                  </>
+                )}
+
+              {application?.evaluationDecisions?.length > 0 && (
                 <div className="flex flex-col gap-2 mt-4">
                   <button
                     onClick={openEvaluationDetails}
@@ -389,30 +410,30 @@ const Page = () => {
                 </div>
               )}
             </div>
-            {application?.currentStage !== "EVALUATION" &&
-              stagesArr?.includes("DUE_DILIGENCY") && (
+            {application?.currentStage !== ApplicationStage.EVALUATION &&
+              stagesArr?.includes(ApplicationStage.DUE_DILIGENCY) && (
                 <div className="flex flex-col gap-2">
                   <h3 className="font-bold">Due Diligence Stage</h3>
                   <div
                     className={`font-medium  ${
-                      application?.status === "APPROVED" ||
-                      application?.currentStage !== "EVALUATION"
+                      application?.stages?.find(
+                        (stage: any) =>
+                          stage.stage === ApplicationStage.DUE_DILIGENCY,
+                      )?.status !== "REJECTED"
                         ? "bg-[#4BC500] text-[#4BC500]"
-                        : application?.status === "PENDING"
-                          ? "bg-red-600 text-red-600"
-                          : ""
+                        : "bg-red-600 text-red-600"
                     } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
                   >
-                    {application?.currentStage !== "EVALUATION" &&
-                    application?.currentStage !== "DUE_DILIGENCY"
-                      ? "APPROVED"
-                      : application?.status}
+                    {application?.stages?.find(
+                      (stage: any) =>
+                        stage.stage === ApplicationStage.DUE_DILIGENCY,
+                    )?.status ?? "PENDING"}
                   </div>
                   {application?.duediligencyDecisions?.length < 4 &&
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>
                         dec?.employee?.user_id ===
-                        profile?.userProfile?.data.uuid
+                        profile?.userProfile?.data.uuid,
                     ) && (
                       <div
                         onClick={() => {
@@ -431,6 +452,20 @@ const Page = () => {
                         <p>Make a decision</p>
                       </div>
                     )}
+                  {application?.duediligencyDecisions?.length == 3 &&
+                    !application?.dueFinalDecision && (
+                      <>
+                        <div
+                          onClick={() => {
+                            setGeneralCommentType("DUE_DILIGENCY");
+                            openGeneralCommentModal();
+                          }}
+                          className="flex items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                        >
+                          <p>Provide a general comment</p>
+                        </div>
+                      </>
+                    )}
                   {application?.duediligencyForm && (
                     <div className="flex flex-col gap-2 mt-4">
                       <button
@@ -443,29 +478,6 @@ const Page = () => {
                   )}
                 </div>
               )}
-            {application?.stages?.find(
-              (stage: any) => stage?.stage === "GRANT_COMMITTEE"
-            ) && (
-              <div className="flex flex-col gap-2">
-                <h3 className="font-semibold">Grant Committee</h3>
-                <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                  {!application?.grantCommitteeDecision
-                    ? "Pending"
-                    : "APPROVED"}
-                </div>
-
-                {application?.grantCommitteeDecision && (
-                  <div className="flex flex-col gap-2 mt-4">
-                    <button
-                      onClick={openGrantCommitteeDetails}
-                      className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                    >
-                      View details
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         )}
       </div>
@@ -483,7 +495,7 @@ const Page = () => {
       />
       <MakeDecision
         type={selectedStage as any}
-        firstEvaluationModal={application?.evaluationDecisions.length === 0}
+        firstEvaluationModal={application?.evaluationDecisions?.length === 0}
         application={application}
         isOpen={isOpenMakeDecision}
         close={closeMakeDecision}
@@ -499,6 +511,13 @@ const Page = () => {
         close={closeEvaluationDetails}
         evaluations={application?.evaluationDecisions || []}
         application={application}
+      />
+      <GeneralCommentModal
+        isOpen={isOpenGeneralCommentModal}
+        close={closeGeneralCommentModal}
+        onClose={() => fetchApplication()}
+        application={application}
+        type={generalCommentType as any}
       />
     </div>
   );

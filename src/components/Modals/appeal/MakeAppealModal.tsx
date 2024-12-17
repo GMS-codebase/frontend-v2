@@ -5,13 +5,19 @@ import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { getAppeals, getApplicants, getApplications, getMyApplications } from "@/utils/funcs";
+import {
+  getAppeals,
+  getApplicants,
+  getApplications,
+  getMyApplications,
+} from "@/utils/funcs";
+import { ApplicationStage } from "@/types/application";
 
 interface AppealModalProps {
   isOpen: boolean;
   onClose: () => void;
   application: any;
-  stage: "EVALUATION" | "DUE_DILIGENCY";
+  stage: ApplicationStage.EVALUATION | ApplicationStage.DUE_DILIGENCY;
 }
 
 const MakeAppealModal = ({

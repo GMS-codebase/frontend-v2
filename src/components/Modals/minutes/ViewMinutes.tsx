@@ -5,7 +5,7 @@ import SideVector1 from "@/assets/Vectors/sidevecto.svg";
 import SideVector2 from "@/assets/Vectors/sidevector2.svg";
 import RedVector1 from "@/assets/Vectors/redSideVector.svg";
 import RedVector2 from "@/assets/Vectors/redSideVector2.svg";
-import { authorizedApi } from "@/utils/api";
+import { authorizedApi, unauthorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import {
@@ -15,6 +15,7 @@ import {
   getMinutes,
 } from "@/utils/funcs";
 import { useDispatch } from "react-redux";
+import { SolarDownloadMinimalisticBold } from "@/components/core/icons";
 interface DeleteConfirmProps {
   isOpen: boolean;
   onClose: () => void;
@@ -23,47 +24,48 @@ interface DeleteConfirmProps {
   decision: any;
 }
 
-const MinutesRejectionReason = ({
+const ViewMinutes = ({
   isOpen,
   onClose,
   minute,
   type,
   decision,
 }: DeleteConfirmProps) => {
+  console.log(" --. ", minute, decision);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const action = type === "rejected" ? "revert" : "reject";
   const comment =
     type === "reject"
       ? JSON.parse(decision?.comment ?? "{}")?.value
       : decision?.comment;
-  const handleMinutesRevert = () => {
+  const handleDownloadInstructions = async () => {
     setLoading(true);
-    authorizedApi
-      .patch(
-        `/negotiation-contract/applications/sdf/${type === "rejected" ? "revert" : "reject"}/${minute?.application?.uuid}`,
-      )
-      .then(() => {
-        notifications.show({
-          message: `Application ${action}ed successfully!`,
-          color: "green",
-        });
-        onClose();
-        getUploadedMinutes(dispatch, "sdf");
-        getRejectedMinutes(dispatch, "sdf");
-        getContracts(dispatch);
-        getMinutes(dispatch);
-      })
-      .catch((error) => {
-        console.error(error);
-        notifications.show({
-          message: `Failed to ${action} the application!`,
-          color: "red",
-        });
-      })
-      .finally(() => setLoading(false));
-  };
+    try {
+      const filename = minute.minutesAttachment.split("/").pop();
 
+      const response = await unauthorizedApi.get(
+        `/admin/download/contract-negotiations/${filename}`,
+        {
+          responseType: "blob",
+        },
+      );
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = minute.minutesAttachment || "downloaded-file.jpg";
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Modal
       size=""
@@ -92,6 +94,18 @@ const MinutesRejectionReason = ({
               value={comment}
               className="mt-1 block w-full resize-none p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
+
+            <div
+              onClick={handleDownloadInstructions}
+              className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center"
+            >
+              <span>
+                <SolarDownloadMinimalisticBold />
+              </span>
+              <p>
+                {loading ? "Downloading . . ." : "Download Minutes Attachment"}
+              </p>
+            </div>
           </div>
           <div className="w-full flex justify-center mt-1 space-x-4 p-6">
             <button
@@ -101,14 +115,6 @@ const MinutesRejectionReason = ({
             >
               Close
             </button>
-            <button
-              onClick={handleMinutesRevert}
-              type="button"
-              disabled={loading}
-              className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2"
-            >
-              {loading ? "Loading . . ." : action}
-            </button>
           </div>
         </div>
       </div>
@@ -116,4 +122,4 @@ const MinutesRejectionReason = ({
   );
 };
 
-export default MinutesRejectionReason;
+export default ViewMinutes;

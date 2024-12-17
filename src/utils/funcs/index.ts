@@ -30,6 +30,7 @@ import {
   GET_APPLICATIONS_SUCCESS,
   GET_MY_APPLICATIONS_ERROR,
   GET_MY_APPLICATIONS_LOADING,
+  GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING,
   GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
   GET_MY_APPLICATIONS_SUCCESS,
 } from "@/actions/ApplicationsActions";
@@ -84,6 +85,8 @@ import {
   GET_MINUTES_ERROR,
   GET_MINUTES_LOADING,
   GET_MINUTES_SUCCESS,
+  GET_NEGOTIATED_MINUTES_LOADING,
+  GET_NEGOTIATED_MINUTES_SUCCESS,
   GET_REJECTED_MINUTES_LOADING,
   GET_REJECTED_MINUTES_SUCCESS,
   GET_UPLOADED_MINUTES_LOADING,
@@ -126,9 +129,11 @@ import {
   GET_APPEALS_SUCCESS,
 } from "@/actions/AppealsActions";
 import { QuestionForm } from "@/types/questions-form";
+import { useRouter } from "next/navigation";
+import { ApplicationStage } from "@/types/application";
 export const getAppeals = async (
   dispatch: Dispatch<UnknownAction>,
-  user: string
+  user: string,
 ) => {
   dispatch({ type: GET_APPEALS_LOADING });
   const api =
@@ -142,7 +147,9 @@ export const getAppeals = async (
       dispatch({ type: GET_APPEALS_ERROR, payload: err.response.data.error });
     });
 };
-
+export const shortenString = (str: string, maxLength: number = 30) => {
+  return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+};
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
   authorizedApi
@@ -179,7 +186,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -218,18 +225,18 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
 export const getDashboardData = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string
+  stage: string,
 ) => {
   try {
     dispatch({ type: GET_DASHBOARD_LOADING });
     const dashboardResponse = await authorizedApi.get(
-      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`
+      `/application/dashboard1?callUuid=${call}&currentStage=${stage}`,
     );
     dispatch({ type: GET_DASHBOARD_SUCCESS, payload: dashboardResponse.data });
     for (const sector of prioritySectors) {
       try {
         const sectorResponse = await authorizedApi.get(
-          `/Sectors/${sector?.id}/count/applications/count/applicants`
+          `/Sectors/${sector?.id}/count/applications/count/applicants`,
         );
         dispatch({
           type: GET_PRIORITY_SECTORS_DATA,
@@ -319,7 +326,7 @@ export const handleDownloadFile = async (file: any, service: string) => {
       `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
         responseType: "blob",
-      }
+      },
     );
     const blob = new Blob([response.data], {
       type: response.headers["content-type"],
@@ -412,12 +419,13 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplicationsForContractSigning = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
-  dispatch({ type: GET_APPLICATIONS_LOADING });
+  dispatch({ type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING });
   authorizedApi
     .get("/negotiation-contract/applications/sdf/ready-contract-signing")
     .then((res) => {
+      console.log("res --> ", res.data.data.data);
       dispatch({
         type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
         payload: res.data.data.data,
@@ -510,7 +518,7 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
 };
 export const getApplicationsReadyForMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
   authorizedApi
@@ -530,7 +538,7 @@ export const getApplicationsReadyForMinutes = async (
 };
 export const getUploadedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_UPLOADED_MINUTES_LOADING });
   authorizedApi
@@ -550,7 +558,7 @@ export const getUploadedMinutes = async (
 };
 export const getApprovedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_APPROVED_MINUTES_LOADING });
   authorizedApi
@@ -570,14 +578,38 @@ export const getApprovedMinutes = async (
 };
 export const getRejectedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_REJECTED_MINUTES_LOADING });
   authorizedApi
-    .get("/negotiation-contract/applications/rejected")
+    .get(`/negotiation-contract/applications/${role}/rejected`)
     .then((res) => {
       dispatch({
         type: GET_REJECTED_MINUTES_SUCCESS,
+        payload: res.data.data.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_MY_CONTRACTS_ERROR,
+        payload: err.response.data.error,
+      });
+    });
+};
+export const getNegotiatedMinutes = async (
+  dispatch: Dispatch<UnknownAction>,
+  role: string,
+) => {
+  dispatch({ type: GET_NEGOTIATED_MINUTES_LOADING });
+  authorizedApi
+    .get(
+      `/negotiation-contract/applications/${role}/${
+        role === "applicant" ? "negotiate" : "negotiating"
+      }`,
+    )
+    .then((res) => {
+      dispatch({
+        type: GET_NEGOTIATED_MINUTES_SUCCESS,
         payload: res.data.data.data,
       });
     })
@@ -630,7 +662,7 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
 
 const validateQuestions = async (
   answers: { [key: string]: any },
-  form: Form
+  form: Form,
 ): Promise<string | null> => {
   try {
     if (!form.qns) {
@@ -663,7 +695,7 @@ const validateQuestions = async (
 
 const validateComments = async (
   comments: { [key: string]: any },
-  form: Form
+  form: Form,
 ): Promise<string | null> => {
   try {
     if (!form.qns) {
@@ -697,7 +729,7 @@ export const handleSubmit = async (
   answers: any,
   application: any,
   form: any,
-  callback?: () => void
+  callback?: () => void,
 ) => {
   const error =
     type === "save" ? undefined : await validateQuestions(answers, form);
@@ -714,7 +746,7 @@ export const handleSubmit = async (
       `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${application.uuid}`,
       {
         answers: JSON.stringify(answers),
-      }
+      },
     );
     notifications.show({
       message:
@@ -724,7 +756,7 @@ export const handleSubmit = async (
       color: "blue",
     });
     setLoading(false);
-    // callback && callback();
+    callback && callback();
   } catch (err: any) {
     notifications.show({
       message: err.response?.data?.message ?? "Failed to submit the form!",
@@ -739,7 +771,7 @@ export const handleAddComments = async (
   comments: any,
   form: any,
   application: any,
-  callback?: () => void
+  callback?: () => void,
 ) => {
   const validationError = await validateComments(comments, form);
   if (validationError) {
@@ -772,12 +804,12 @@ export const getApplicationStatus = (application: any) => {
   } else if (application.call.closed) {
     return "SUBMITTED";
   } else if (
-    application?.currentStage === "EVALUATION" &&
+    application?.currentStage === ApplicationStage.EVALUATION &&
     !application?.call?.closedEvaluation
   ) {
     return "EVALUATION IN PROGRESS";
   } else if (
-    application?.currentStage === "DUE_DILIGENCY" &&
+    application?.currentStage === ApplicationStage.DUE_DILIGENCY &&
     !application?.call?.closedDueDiligency
   ) {
     return "DUE DILIGENCY IN  PROGRESS";
