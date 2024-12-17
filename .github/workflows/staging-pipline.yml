@@ -60,5 +60,5 @@ jobs:
       - name: Start the application using pm2
         run: |
           cd staging
-          pm2 restart gms-frontend
+          pm2 restart gms-staging || pm2 start ecosystem.config.js --env .env.local
           pm2 save
