@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          path: /staging
+          path: staging
 
       # Set Environment Variables
       - name: Set Environment Variables
@@ -37,6 +37,15 @@ jobs:
       - name: Verify Git Status
         run: |
           git status
+
+      # Cache npm dependencies
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       # Install dependencies and build the application
       - name: Install dependencies and build the application
