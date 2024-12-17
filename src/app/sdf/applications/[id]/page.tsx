@@ -20,6 +20,7 @@ import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDilig
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import { getApplications, handleDownloadFile } from "@/utils/funcs";
 import Form from "@/components/forms/Form";
+import { ApplicationStage } from "@/types/application";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
@@ -27,7 +28,7 @@ const Page = () => {
   const applications = useSelector((state: any) => state.applications);
   const profile = useSelector((state: any) => state.auth);
   const application = applications?.applications?.filter(
-    (application: any) => application?.uuid === id
+    (application: any) => application?.uuid === id,
   )[0];
 
   const [decisionsLoading, setDecisionsLoading] = useState(false);
@@ -68,7 +69,7 @@ const Page = () => {
 
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}")
+      JSON.parse(application?.call.subwindowForms || "{}"),
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
@@ -102,7 +103,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -227,7 +228,7 @@ const Page = () => {
               onClick={() =>
                 handleDownloadFile(
                   application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates"
+                  "business_certificates",
                 )
               }
             >
@@ -274,16 +275,24 @@ const Page = () => {
             <h2 className="font-bold">Decision</h2>
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Evaluation Stage</h3>
-              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                {application?.currentStage === "EVALUATION"
-                  ? "PENDING"
-                  : "APPROVED"}
+              <div
+                className={`font-medium  ${
+                  application?.stages?.find(
+                    (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+                  )?.status == "APPROVED"
+                    ? "bg-[#4BC500] text-[#4BC500]"
+                    : "bg-red-600 text-red-600"
+                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+              >
+                {application?.stages?.find(
+                  (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+                )?.status ?? "PENDING"}
               </div>
               {application?.evaluationDecisions.length < 3 &&
                 !application?.evaluationDecisions.find(
                   (ev: any) =>
                     ev.employee.user_id.toString() ===
-                    profile?.userProfile?.data.uuid.toString()
+                    profile?.userProfile?.data.uuid.toString(),
                 ) && (
                   <>
                     <div
@@ -309,30 +318,30 @@ const Page = () => {
                 </div>
               )}
             </div>
-            {application?.currentStage !== "EVALUATION" &&
-              stagesArr?.includes("DUE_DILIGENCY") && (
+            {application?.currentStage !== ApplicationStage.EVALUATION &&
+              stagesArr?.includes(ApplicationStage.DUE_DILIGENCY) && (
                 <div className="flex flex-col gap-2">
                   <h3 className="font-bold">Due Diligence Stage</h3>
                   <div
                     className={`font-medium  ${
-                      application?.status === "APPROVED" ||
-                      application?.currentStage !== "EVALUATION"
+                      application?.stages?.find(
+                        (stage: any) =>
+                          stage.stage === ApplicationStage.DUE_DILIGENCY,
+                      )?.status == "APPROVED"
                         ? "bg-[#4BC500] text-[#4BC500]"
-                        : application?.status === "PENDING"
-                          ? "bg-red-600 text-red-600"
-                          : ""
+                        : "bg-red-600 text-red-600"
                     } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
                   >
-                    {application?.currentStage !== "EVALUATION" &&
-                    application?.currentStage !== "DUE_DILIGENCY"
-                      ? "APPROVED"
-                      : application?.status}
+                    {application?.stages?.find(
+                      (stage: any) =>
+                        stage.stage === ApplicationStage.DUE_DILIGENCY,
+                    )?.status ?? "PENDING"}
                   </div>
                   {application?.duediligencyDecisions?.length < 4 &&
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>
                         dec?.employee?.user_id ===
-                        profile?.userProfile?.data.uuid
+                        profile?.userProfile?.data.uuid,
                     ) && (
                       <div
                         onClick={() => {

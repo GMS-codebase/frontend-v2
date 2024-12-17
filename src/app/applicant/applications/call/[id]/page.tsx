@@ -94,7 +94,6 @@ const Page = () => {
     }
   };
 
-
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
@@ -307,7 +306,10 @@ const Page = () => {
         </div>
       </div>
       <CompleteProfile
-        closeCompleteProfile={closeAddProfile}
+        closeCompleteProfile={() => {
+          setApplyLoading(false);
+          closeAddProfile();
+        }}
         isOpenCompleteProfile={isOpenCreateProfile}
         finishAddingProfile={() => {
           closeAddProfile();
@@ -320,7 +322,10 @@ const Page = () => {
       />
       <AddEditContact
         isOpenAddEditContact={isOpenAddContact}
-        closeAddEditContact={closeAddContact}
+        closeAddEditContact={() => {
+          setApplyLoading(false);
+          closeAddContact();
+        }}
         finishAddingContact={() => {
           closeAddContact();
           openCreateApplication();

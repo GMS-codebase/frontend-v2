@@ -11,6 +11,7 @@ import { authorizedApi } from "@/utils/api";
 import { useParams } from "next/navigation";
 import { getCalls } from "@/utils/funcs";
 import { DateInput } from "@mantine/dates";
+import { ApplicationStage } from "@/types/application";
 
 const OpenCloseAppealModal = ({
   closeModal,
@@ -20,7 +21,7 @@ const OpenCloseAppealModal = ({
   opened,
 }: {
   closeModal: () => void;
-  stage: "EVALUATION" | "DUE_DILIGENCY";
+  stage: ApplicationStage.EVALUATION | ApplicationStage.DUE_DILIGENCY;
   callId: any;
   type: "OPEN" | "CLOSE";
   opened: boolean;
@@ -28,15 +29,25 @@ const OpenCloseAppealModal = ({
   const [loading, setLoading] = useState(false);
   const [fromDate, setFromDate] = useState<any>("");
   const [toDate, setToDate] = useState<any>("");
+  const [dateError, setDateError] = useState(false);
   const isClosing = type === "CLOSE";
   const dispatch = useDispatch();
   const handleAppealStatusChange = async () => {
+    if (!isClosing && (!fromDate || !toDate)) {
+      setDateError(true);
+      return;
+    }
     setLoading(true);
     authorizedApi
-      .put(`/appeals/${callId}/stage/${stage}/${isClosing ? "close" : "open"}`, !isClosing ? {
-        "from": fromDate,
-        "to": toDate
-      }: {})
+      .put(
+        `/appeals/${callId}/stage/${stage}/${isClosing ? "close" : "open"}`,
+        !isClosing
+          ? {
+              from: fromDate,
+              to: toDate,
+            }
+          : {},
+      )
       .then((res) => {
         notifications.show({
           title: `Appeal ${isClosing ? "Closed" : "Opened"} Successfully!`,
@@ -97,17 +108,35 @@ const OpenCloseAppealModal = ({
               this stage?
             </h1>
           </div>
-          {!isClosing && 
-          <div className="mt-6 w-full">
-          <h1 className="block text-xs font-bold text-gray-700">
-            From Date
-          </h1>
-          <DateInput value={fromDate} maxDate={toDate} onChange={setFromDate} className="mt-1 block w-full p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
-          <h1 className="block text-xs font-bold text-gray-700 mt-4">
-            To Date
-          </h1>
-          <DateInput value={toDate} minDate={fromDate} onChange={setToDate} className="mt-1 block w-full p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
-        </div>}
+          {!isClosing && (
+            <div className="mt-6 w-full">
+              <h1 className="block text-xs font-bold text-gray-700">
+                From Date
+              </h1>
+              <DateInput
+                value={fromDate}
+                maxDate={toDate}
+                onChange={setFromDate}
+                className="mt-1 block w-full p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                required
+              />
+              <h1 className="block text-xs font-bold text-gray-700 mt-4">
+                To Date
+              </h1>
+              <DateInput
+                value={toDate}
+                minDate={fromDate}
+                onChange={setToDate}
+                className="mt-1 block w-full p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                required
+              />
+            </div>
+          )}
+          {dateError && (
+            <p className="text-red-500 text-base mt-1">
+              Please select both from and to dates
+            </p>
+          )}
           <div className="w-full flex justify-center mt-4 space-x-4 p-6">
             <button
               type="button"

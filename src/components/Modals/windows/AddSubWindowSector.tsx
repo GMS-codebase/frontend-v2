@@ -78,7 +78,7 @@ const AddSubWindowSector = ({
       setFormData({
         sector: [],
       });
-      getWindows(dispatch)
+      getWindows(dispatch);
       closeAddSubWindowSector();
     } catch (error: any) {
       notifications.show({
