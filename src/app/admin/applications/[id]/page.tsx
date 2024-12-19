@@ -269,7 +269,7 @@ const Page = () => {
                 qns: JSON.parse(form?.qns || "{}"),
               }}
             />
-          )} 
+          )}
         </div>
 
         {application?.currentStage === "SUBMITTED" ? (

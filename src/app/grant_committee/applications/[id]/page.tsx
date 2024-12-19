@@ -255,19 +255,18 @@ const Page = () => {
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold">Evaluation Stage</h3>
             <div
-                className={`font-medium  ${
-                  application?.stages?.find(
-                    (stage: any) => stage.stage === ApplicationStage.EVALUATION
-                  )?.status == "APPROVED"
-                    ? "bg-[#4BC500] text-[#4BC500]"
-                    : "bg-red-600 text-red-600"
-                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-              >
-                {application?.stages?.find(
-                  (stage: any) => stage.stage === ApplicationStage.EVALUATION
-                )?.status ??
-                  "PENDING"}
-              </div>
+              className={`font-medium  ${
+                application?.stages?.find(
+                  (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+                )?.status == "APPROVED"
+                  ? "bg-[#4BC500] text-[#4BC500]"
+                  : "bg-red-600 text-red-600"
+              } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+            >
+              {application?.stages?.find(
+                (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+              )?.status ?? "PENDING"}
+            </div>
             {application?.evaluationDecisions && (
               <div className="flex flex-col gap-2 mt-4">
                 <button
@@ -281,7 +280,8 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage?.stage === ApplicationStage.EVALUATION,
+                          (stage: any) =>
+                            stage?.stage === ApplicationStage.EVALUATION,
                         ),
                       );
                       openNullifyModal();
@@ -297,19 +297,19 @@ const Page = () => {
           <div className="flex flex-col gap-2">
             <h3 className="font-bold">Due Diligence Stage</h3>
             <div
-                className={`font-medium  ${
-                  application?.stages?.find(
-                    (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY
-                  )?.status == "APPROVED"
-                    ? "bg-[#4BC500] text-[#4BC500]"
-                    : "bg-red-600 text-red-600"
-                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-              >
-                {application?.stages?.find(
-                  (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY
-                )?.status ??
-                  "PENDING"}
-              </div>
+              className={`font-medium  ${
+                application?.stages?.find(
+                  (stage: any) =>
+                    stage.stage === ApplicationStage.DUE_DILIGENCY,
+                )?.status == "APPROVED"
+                  ? "bg-[#4BC500] text-[#4BC500]"
+                  : "bg-red-600 text-red-600"
+              } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+            >
+              {application?.stages?.find(
+                (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY,
+              )?.status ?? "PENDING"}
+            </div>
             {application?.currentStage !== ApplicationStage.DUE_DILIGENCY && (
               <div className="flex flex-col gap-2 mt-4">
                 <button
@@ -323,7 +323,8 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage?.stage === ApplicationStage.DUE_DILIGENCY,
+                          (stage: any) =>
+                            stage?.stage === ApplicationStage.DUE_DILIGENCY,
                         ),
                       );
                       openNullifyModal();

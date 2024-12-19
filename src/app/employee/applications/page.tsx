@@ -9,6 +9,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
+import { shortenString } from "@/utils/funcs";
 
 const Page = () => {
   // Select applications from Redux store
@@ -98,21 +99,27 @@ const Page = () => {
       accessorKey: "window",
       header: "Window",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.window?.title}</div>
+        <div className="truncate">
+          {shortenString(row.original?.window?.title)}
+        </div>
       ),
     },
     {
       accessorKey: "call",
       header: "Call",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.call?.title}</div>
+        <div className="truncate">
+          {shortenString(row.original?.call?.title)}
+        </div>
       ),
     },
     {
       accessorKey: "subWindow",
       header: "Sub Window",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.subWindow?.title}</div>
+        <div className="truncate">
+          {shortenString(row.original?.subWindow?.title)}
+        </div>
       ),
     },
     {
@@ -126,7 +133,9 @@ const Page = () => {
       accessorKey: "trade",
       header: "Trade",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.trade?.trade?.title}</div>
+        <div className="truncate">
+          {shortenString(row.original?.trade?.trade?.title)}
+        </div>
       ),
     },
     {

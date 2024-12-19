@@ -57,7 +57,6 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
     setCurrentPage(formData[questionType].pages.length - 1);
   };
 
-
   return (
     <div>
       <QuestionsPage

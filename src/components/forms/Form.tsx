@@ -59,7 +59,7 @@ const Form: React.FC<Props> = ({
   };
   const updateQuestionType = (
     newType: { name: string; description: string },
-    recentName: string
+    recentName: string,
   ) => {
     setFormData &&
       setFormData((prevFormData) => {
@@ -141,11 +141,11 @@ const Form: React.FC<Props> = ({
               {mode === "creating" && (
                 <>
                   <button
-                    className={`${activeType == type.name ? "text-white ":"text-primary"} rounded-full`}
+                    className={`${activeType == type.name ? "text-white " : "text-primary"} rounded-full`}
                     onClick={(e) => {
                       e.stopPropagation();
                       setSelectedQuestionType(type);
-                      console.log(type)
+                      console.log(type);
                       openAddQuestionType();
                     }}
                   >

@@ -170,6 +170,10 @@ const Page = () => {
     approvedMinutes,
     rejectedMinutes,
     negotiatedMinutes,
+    uploadedMinutesLoading,
+    approvedMinutesLoading,
+    rejectedMinutesLoading,
+    negotiatedMinutesLoading,
     loading: loadingMinutes,
   } = useSelector((state: any) => state.minutes);
   console.log(
@@ -287,6 +291,12 @@ const Page = () => {
     },
   ];
 
+  console.log(
+    "uploadedMinutesLoading --> ",
+    uploadedMinutesLoading,
+    uploadedMinutes,
+  );
+
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 p-4">
       <h2 className="text-2xl font-bold mb-4">Minutes</h2>
@@ -324,8 +334,8 @@ const Page = () => {
           </h1>
           <DataTable
             columns={columns}
-            data={uploadedMinutes}
-            // loading={loadingMinutes}
+            data={uploadedMinutes ?? []}
+            loading={uploadedMinutesLoading}
             noDataMessage="No Application ready for contract negotiation"
           />
         </Tabs.Panel>
@@ -335,8 +345,8 @@ const Page = () => {
           </h1>
           <DataTable
             columns={approvedColumns}
-            // loading={loadingMinutes}
-            data={approvedMinutes}
+            loading={approvedMinutesLoading}
+            data={approvedMinutes ?? []}
             noDataMessage="No Approved contract negotiation"
           />
         </Tabs.Panel>
@@ -347,8 +357,8 @@ const Page = () => {
           </h1>
           <DataTable
             columns={rejectedColumns}
-            data={rejectedMinutes}
-            // loading={loadingMinutes}
+            data={rejectedMinutes ?? []}
+            loading={rejectedMinutesLoading}
             noDataMessage="No Rejected contract negotiations"
           />
         </Tabs.Panel>
@@ -358,8 +368,8 @@ const Page = () => {
           </h1>
           <DataTable
             columns={negotiatedColumns}
-            data={negotiatedMinutes}
-            // loading={loadingMinutes}
+            data={negotiatedMinutes ?? []}
+            loading={negotiatedMinutesLoading}
             noDataMessage="No Negotiated contract negotiations"
           />
         </Tabs.Panel>

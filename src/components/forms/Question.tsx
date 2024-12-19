@@ -121,7 +121,7 @@ const CreateQuestion: React.FC<CreateQuestionProps> = ({
   };
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    key: keyof Question
+    key: keyof Question,
   ) => {
     const updatedQuestion = { ...editingQuestion, [key]: e.target.value };
     if (key === "type" && e.target.value === "table")
@@ -284,7 +284,7 @@ const renderQuestionType = (
     setComments?: (key: string, value: any) => void;
     onQuestionChange?: (question: Question) => void;
     isEditing?: boolean;
-  }
+  },
 ) => (
   <>
     {question.type === "text" && (
@@ -324,7 +324,7 @@ const renderQuestionType = (
     )}
     {question.type === "file" && (
       <FileInput
-      mode={mode}
+        mode={mode}
         question={question}
         onChange={(answer) => options?.setAnswers?.(question.id, answer)}
         value={options?.answers?.[question.id]}
@@ -389,7 +389,7 @@ const ViewQuestion: React.FC<ViewQuestionProps> = ({
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-10">
         <div>
-          <p className="text-gray-900 text-2xl ">{question.title}</p>
+          <p className="text-gray-900 text-2xl font-semibold">{question.title}</p>
           <p className="text-gray-600">{question.description}</p>
         </div>
         {question.type === "file" && question.template && (

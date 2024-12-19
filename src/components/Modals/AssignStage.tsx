@@ -139,7 +139,10 @@ const AssignStage = ({
                   onChange={(value: any) => setStage(value)}
                   data={[
                     { value: ApplicationStage.EVALUATION, label: "Evaluation" },
-                    { value: ApplicationStage.DUE_DILIGENCY, label: "DueDiligency" },
+                    {
+                      value: ApplicationStage.DUE_DILIGENCY,
+                      label: "DueDiligency",
+                    },
                   ]}
                   placeholder="Select stage"
                   className="text-base"
