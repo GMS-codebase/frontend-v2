@@ -53,7 +53,7 @@ const Page = () => {
                   notifications.show({
                     title: "Download Successful",
                     message: "The file has been downloaded successfully.",
-                   color:"green"
+                    color: "green",
                   });
                 } catch (error) {
                   console.error("Download error:", error);
@@ -61,7 +61,7 @@ const Page = () => {
                     title: "Download Failed",
                     message:
                       "There was an issue downloading the file. Please try again.",
-                   color:"red"
+                    color: "red",
                   });
                 } finally {
                   setDownloading(false);

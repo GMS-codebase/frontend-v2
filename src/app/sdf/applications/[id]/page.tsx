@@ -294,16 +294,15 @@ const Page = () => {
               <div
                 className={`font-medium  ${
                   application?.stages?.find(
-                    (stage: any) => stage.stage === ApplicationStage.EVALUATION
+                    (stage: any) => stage.stage === ApplicationStage.EVALUATION,
                   )?.status == "APPROVED"
                     ? "bg-[#4BC500] text-[#4BC500]"
                     : "bg-red-600 text-red-600"
                 } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
               >
                 {application?.stages?.find(
-                  (stage: any) => stage.stage === ApplicationStage.EVALUATION
-                )?.status ??
-                  "PENDING"}
+                  (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+                )?.status ?? "PENDING"}
               </div>
               {application?.evaluationDecisions.length < 3 &&
                 !application?.evaluationDecisions.find(
@@ -340,19 +339,20 @@ const Page = () => {
                 <div className="flex flex-col gap-2">
                   <h3 className="font-bold">Due Diligence Stage</h3>
                   <div
-                className={`font-medium  ${
-                  application?.stages?.find(
-                    (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY
-                  )?.status == "APPROVED"
-                    ? "bg-[#4BC500] text-[#4BC500]"
-                    : "bg-red-600 text-red-600"
-                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-              >
-                {application?.stages?.find(
-                  (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY
-                )?.status ??
-                  "PENDING"}
-              </div>
+                    className={`font-medium  ${
+                      application?.stages?.find(
+                        (stage: any) =>
+                          stage.stage === ApplicationStage.DUE_DILIGENCY,
+                      )?.status == "APPROVED"
+                        ? "bg-[#4BC500] text-[#4BC500]"
+                        : "bg-red-600 text-red-600"
+                    } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+                  >
+                    {application?.stages?.find(
+                      (stage: any) =>
+                        stage.stage === ApplicationStage.DUE_DILIGENCY,
+                    )?.status ?? "PENDING"}
+                  </div>
                   {application?.duediligencyDecisions?.length < 4 &&
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>

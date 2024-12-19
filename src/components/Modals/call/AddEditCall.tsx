@@ -44,8 +44,10 @@ const AddEditCall = ({
   const [selectedSubWindowsForms, setSelectedSubWindowsForms] = useState<any>(
     {},
   );
+  const [attachment, setAttachment] = useState<File | null>(null);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
+  const [selectedSectorsNames, setSelectedSectorsNames] = useState<any>([]);
   const dispatch = useDispatch();
   const [formData, setFormData] = useState<Partial<Call>>({
     title: "",
@@ -125,7 +127,8 @@ const AddEditCall = ({
                   return matchingSector
                     ? {
                         value: matchingSector.uuid + "@" + subWindow.uuid,
-                        label: matchingSector.name + "(" + subWindow.title + ")",
+                        label:
+                          matchingSector.name + "(" + subWindow.title + ")",
                       }
                     : null;
                 })
@@ -145,6 +148,7 @@ const AddEditCall = ({
         JSON.parse(defaultData.subwindowForms || "{}"),
       );
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
+      setSelectedSectorsNames(defaultData.sectors.map((item: any) => item.name));
     }
   }, [defaultData]);
   const nextStep = () =>
@@ -175,8 +179,8 @@ const AddEditCall = ({
       "subWindowForms",
       JSON.stringify(selectedSubWindowsForms),
     );
-    if (formData?.attachment) {
-      submitData?.append("attachment", formData?.attachment);
+    if (attachment) {
+      submitData?.append("attachment", attachment);
     }
 
     const apiUrl = defaultData
@@ -210,6 +214,7 @@ const AddEditCall = ({
               sectors: [],
               attachment: null,
             });
+            getCalls(dispatch)
             closeAddEditCall();
           })
           .catch((err) => {
@@ -274,9 +279,9 @@ const AddEditCall = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="w-full flex flex-col items-center ">
-          <h1 className="text-2xl font-extrabold">Create Call</h1>
+          <h1 className="text-2xl font-extrabold">{defaultData ? "Update Call" : "Create Call"}</h1>
           <h2 className="text-[#000F2369] text-lg font-medium">
-            Provide your call details to create a new call.
+            Provide your call details to {defaultData ? "update " : "create a new "} call.
           </h2>
         </div>
         <div className="w-full flex flex-col items-center mt-4  px-[5%]">
@@ -343,7 +348,7 @@ const AddEditCall = ({
                       htmlFor="attachment"
                       className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
                     >
-                      {!formData.attachment ? (
+                      {!attachment ? (
                         <>
                           <SolarUploadBold className="text-blue-500 text-3xl" />
                           <div className="text-center">
@@ -363,9 +368,9 @@ const AddEditCall = ({
                               File Uploaded
                             </p>
                             <p className="text-xs text-gray-400">
-                              {formData?.attachment instanceof File
-                                ? formData.attachment.name
-                                : formData?.attachment}
+                              {attachment instanceof File
+                                ? attachment.name
+                                : attachment}
                             </p>
                           </div>
                         </>
@@ -376,10 +381,10 @@ const AddEditCall = ({
                       type="file"
                       name="attachment"
                       accept=".pdf, .doc, .docx"
-                      onChange={handleChange}
+                      onChange={(e) => setAttachment(e.target.files?.[0] || null)}
                       style={{ display: "none" }}
                       className="content-none"
-                      required
+                      required={!defaultData}
                     />
                   </div>
                 </div>
@@ -647,13 +652,15 @@ const AddEditCall = ({
                                 <div
                                   className="text-primary"
                                   onClick={() => {
-                                    setSelectedForm(form)
-                                    setSelectedSub(subWindow)
-                                    setSelectedSubWindowsForms((prev: { [key: string]: string }) => {
-                                      const updated = { ...prev };
-                                      delete updated[subWindow];
-                                      return updated;
-                                    });
+                                    setSelectedForm(form);
+                                    setSelectedSub(subWindow);
+                                    setSelectedSubWindowsForms(
+                                      (prev: { [key: string]: string }) => {
+                                        const updated = { ...prev };
+                                        delete updated[subWindow];
+                                        return updated;
+                                      },
+                                    );
                                   }}
                                 >
                                   <FaEdit className="w-5 h-5" />
@@ -661,11 +668,13 @@ const AddEditCall = ({
                                 <div
                                   className="text-red-500"
                                   onClick={() =>
-                                    setSelectedSubWindowsForms((prev: { [key: string]: string }) => {
-                                      const updated = { ...prev };
-                                      delete updated[subWindow];
-                                      return updated;
-                                    })
+                                    setSelectedSubWindowsForms(
+                                      (prev: { [key: string]: string }) => {
+                                        const updated = { ...prev };
+                                        delete updated[subWindow];
+                                        return updated;
+                                      },
+                                    )
                                   }
                                 >
                                   <IoTrash className="w-5 h-5" />
@@ -692,9 +701,12 @@ const AddEditCall = ({
                     </span>
                     <MultiSelect
                       name="sectors"
-                      onChange={setSelectedSectors}
+                      onChange={(value) => {
+                        setSelectedSectors(value);
+                        setSelectedSectorsNames(value);
+                      }}
                       data={MultiSectorData || []}
-                      value={selectedSectors}
+                      value={selectedSectorsNames}
                       placeholder="Select or type in a sector"
                       required
                     />

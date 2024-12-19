@@ -29,9 +29,14 @@ const OpenCloseAppealModal = ({
   const [loading, setLoading] = useState(false);
   const [fromDate, setFromDate] = useState<any>("");
   const [toDate, setToDate] = useState<any>("");
+  const [dateError, setDateError] = useState(false);
   const isClosing = type === "CLOSE";
   const dispatch = useDispatch();
   const handleAppealStatusChange = async () => {
+    if (!isClosing && (!fromDate || !toDate)) {
+      setDateError(true);
+      return;
+    }
     setLoading(true);
     authorizedApi
       .put(
@@ -113,6 +118,7 @@ const OpenCloseAppealModal = ({
                 maxDate={toDate}
                 onChange={setFromDate}
                 className="mt-1 block w-full p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                required
               />
               <h1 className="block text-xs font-bold text-gray-700 mt-4">
                 To Date
@@ -122,8 +128,14 @@ const OpenCloseAppealModal = ({
                 minDate={fromDate}
                 onChange={setToDate}
                 className="mt-1 block w-full p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                required
               />
             </div>
+          )}
+          {dateError && (
+            <p className="text-red-500 text-base mt-1">
+              Please select both from and to dates
+            </p>
           )}
           <div className="w-full flex justify-center mt-4 space-x-4 p-6">
             <button

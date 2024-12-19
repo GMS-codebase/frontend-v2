@@ -13,13 +13,14 @@ jobs:
       # Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
-        with: 
-          path: /staging
+        with:
+          path: staging
 
       # Set Environment Variables
       - name: Set Environment Variables
         run: |
           echo "Staging branch detected"
+          cd staging
           chmod +x ./scripts/create_staging_env.sh
           if [ ! -f ./scripts/create_staging_env.sh ]; then
             echo "Script not found!"; exit 1;
@@ -31,21 +32,33 @@ jobs:
       - name: Verify Current Directory
         run: |
           echo "Current Directory: $(pwd)"
-          ls -la
+          ls -la ./staging
 
       # Verify Git Status
       - name: Verify Git Status
         run: |
+          cd staging
           git status
+
+      # Cache npm dependencies
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('staging/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       # Install dependencies and build the application
       - name: Install dependencies and build the application
         run: |
+          cd staging
           npm install --force
           npm run build
 
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-          pm2 restart gms-frontend
+          cd staging
+          pm2 restart gms-staging || pm2 start ecosystem.config.js --env .env.local
           pm2 save
