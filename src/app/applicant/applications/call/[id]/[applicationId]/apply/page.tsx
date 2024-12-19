@@ -68,8 +68,27 @@ const Page = () => {
       <div className="flex flex-col gap-4 w-full  ">
         <div className=" flex justify-between items-center">
           <p className="font-semibold text-2xl">Questions and answers</p>
+        </div>
+        {form && (
+          <Form
+            mode="answering"
+            formData={{ name: form?.name, qns: JSON.parse(form?.qns || "{}") }}
+            answers={answers}
+            setAnswers={(key: string, value: any) => {
+              setAnswers({ ...answers, [key]: value });
+            }}
+          />
+        )}
+        <div className="w-full grid  grid-cols-3 gap-x-4">
           <button
-            className="bg-primary text-white py-3 px-10 flex items-center gap-2 rounded-full "
+            type="button"
+            onClick={() => setAnswers({})}
+            className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          >
+            Reset
+          </button>
+          <button
+            className="bg-primary text-white py-3 px-10 flex items-center gap-2 rounded-full  w-full justify-center"
             onClick={() => {
               handleSubmit("save", setLoading, answers, application, form);
             }}
@@ -83,25 +102,6 @@ const Page = () => {
                 <p className="">Save Draft</p>
               </>
             )}
-          </button>
-        </div>
-        {form && (
-          <Form
-            mode="answering"
-            formData={{ name: form?.name, qns: JSON.parse(form?.qns || "{}") }}
-            answers={answers}
-            setAnswers={(key: string, value: any) => {
-              setAnswers({ ...answers, [key]: value });
-            }}
-          />
-        )}
-        <div className="w-full flex justify-center mt-4 space-x-4">
-          <button
-            type="button"
-            onClick={() => setAnswers({})}
-            className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-          >
-            Reset
           </button>
           <button
             type="button"
