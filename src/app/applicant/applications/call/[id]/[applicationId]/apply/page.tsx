@@ -68,22 +68,6 @@ const Page = () => {
       <div className="flex flex-col gap-4 w-full  ">
         <div className=" flex justify-between items-center">
           <p className="font-semibold text-2xl">Questions and answers</p>
-          <button
-            className="bg-primary text-white py-3 px-10 flex items-center gap-2 rounded-full "
-            onClick={() => {
-              handleSubmit("save", setLoading, answers, application, form);
-            }}
-            disabled={loading === "save"}
-          >
-            {loading === "save" ? (
-              <p>Loading...</p>
-            ) : (
-              <>
-                <IoIosSave />
-                <p className="">Save Draft</p>
-              </>
-            )}
-          </button>
         </div>
         {form && (
           <Form
@@ -126,7 +110,24 @@ const Page = () => {
           >
             {loading ? "Loading..." : "Send Application"}
           </button>
+            <button
+            className="bg-primary text-white text-center justify-center w-full px-4 py-2 flex items-center gap-2 rounded-full "
+            onClick={() => {
+              handleSubmit("save", setLoading, answers, application, form);
+            }}
+            disabled={loading === "save"}
+          >
+            {loading === "save" ? (
+              <p>Loading...</p>
+            ) : (
+              <>
+                <IoIosSave />
+                <p className="">Save Draft</p>
+              </>
+            )}
+          </button>
         </div>
+         
       </div>
     </div>
   );

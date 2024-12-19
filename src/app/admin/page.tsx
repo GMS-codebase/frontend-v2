@@ -190,6 +190,9 @@ const Page = () => {
                 {
                   sector: "Other",
                 },
+                {
+                  sector: "Total",
+                },
               ]?.map((sector: any, index: any) => (
                 <div
                   key={index}
