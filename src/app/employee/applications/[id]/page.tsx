@@ -14,6 +14,7 @@ import {
   getApplications,
   handleAddComments,
   handleDownloadFile,
+  handleViewFile,
 } from "@/utils/funcs";
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 import Form from "@/components/forms/Form";
@@ -118,7 +119,7 @@ const Page = () => {
       </div>
     );
   }
-  console.log(application)
+  console.log(application);
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -253,25 +254,41 @@ const Page = () => {
               </p>
             </div>
 
-            <div
-              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
-              onClick={() =>
-                handleDownloadFile(
-                  application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates"
-                )
-              }
-            >
-              {downloading ? (
-                <p>Loading ....</p>
-              ) : (
-                <>
-                  <span>
-                    <SolarPen2Bold />
-                  </span>
-                  <div>Download Certificate</div>
-                </>
-              )}
+            <div className="flex items-center gap-2">
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleViewFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates"
+                  )
+                }
+              >
+                <span>
+                  <SolarPen2Bold />
+                </span>
+                <div>View Certificate</div>
+              </div>
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleDownloadFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates"
+                  )
+                }
+              >
+                {downloading ? (
+                  <p>Loading ....</p>
+                ) : (
+                  <>
+                    <span>
+                      <SolarPen2Bold />
+                    </span>
+                    <div>Download Certificate</div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -355,8 +372,7 @@ const Page = () => {
               >
                 {application?.stages?.find(
                   (stage: any) => stage.stage === ApplicationStage.EVALUATION
-                )?.status ??
-                  "PENDING"}
+                )?.status ?? "PENDING"}
               </div>
               {application?.evaluationDecisions?.length < 3 &&
                 !application?.evaluationDecisions?.find(
@@ -393,19 +409,20 @@ const Page = () => {
                 <div className="flex flex-col gap-2">
                   <h3 className="font-bold">Due Diligence Stage</h3>
                   <div
-                className={`font-medium  ${
-                  application?.stages?.find(
-                    (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY
-                  )?.status == "APPROVED"
-                    ? "bg-[#4BC500] text-[#4BC500]"
-                    : "bg-red-600 text-red-600"
-                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-              >
-                {application?.stages?.find(
-                  (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY
-                )?.status ??
-                  "PENDING"}
-              </div>
+                    className={`font-medium  ${
+                      application?.stages?.find(
+                        (stage: any) =>
+                          stage.stage === ApplicationStage.DUE_DILIGENCY
+                      )?.status == "APPROVED"
+                        ? "bg-[#4BC500] text-[#4BC500]"
+                        : "bg-red-600 text-red-600"
+                    } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+                  >
+                    {application?.stages?.find(
+                      (stage: any) =>
+                        stage.stage === ApplicationStage.DUE_DILIGENCY
+                    )?.status ?? "PENDING"}
+                  </div>
                   {application?.duediligencyDecisions?.length < 4 &&
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>
