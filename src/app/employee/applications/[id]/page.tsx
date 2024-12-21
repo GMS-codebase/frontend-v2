@@ -12,6 +12,7 @@ import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDilig
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import {
   getApplications,
+  getApplicationStatus,
   handleAddComments,
   handleDownloadFile,
   handleViewFile,
@@ -303,7 +304,7 @@ const Page = () => {
       </div>
       <div className="flex gap-6">
         <div
-          className={`flex  ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 `}
+          className={`flex  ${getApplicationStatus(application) === "ANSWERING" ? "w-full" : "w-[70%]"} gap-4 `}
         >
           <div className="flex flex-col gap-4 w-full">
             {form && (
@@ -362,7 +363,7 @@ const Page = () => {
           <div className="flex  h-[500px] items-center justify-center bg-white w-[30%] rounded-2xl p-5 gap-4">
             <p>Loading ....</p>
           </div>
-        ) : application?.currentStage === "SUBMITTED" ? (
+        ) : getApplicationStatus(application) === "ANSWERING" ? (
           <div></div>
         ) : (
           <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
