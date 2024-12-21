@@ -4,7 +4,6 @@ import { SolarAddFolderBold, SolarFileBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { applicationsData as data } from "@/utils/constants/dummy";
 import CallsActions from "./CallsAction";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
@@ -181,7 +180,8 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable
           columns={columns}
-          data={data}
+          data={[]}
+          noDataMessage="No application reports available"
           tableWidth={1800}
           buttonElement={
             <div className="flex mb-3 justify-between text-center items-center gap-2 px-4 py-2 bg-[#005DE9] rounded-full text-white">

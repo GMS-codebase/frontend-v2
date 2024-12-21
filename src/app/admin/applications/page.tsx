@@ -9,11 +9,12 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
+import { getApplicationStatus } from "@/utils/funcs";
 
 const Page = () => {
   // Select applications from Redux store
   const { applications: rawApplications, loading } = useSelector(
-    (state: any) => state.applications,
+    (state: any) => state.applications
   );
 
   // Format applications to flatten nested arrays
@@ -24,7 +25,7 @@ const Page = () => {
         sector: app.sectors[0] || null,
         trade: app.trades[0] || null,
       })),
-    [rawApplications],
+    [rawApplications]
   );
 
   const filtersContainerRef = useRef<HTMLDivElement>(null);
@@ -46,9 +47,9 @@ const Page = () => {
       ...new Set(
         applications
           .map((app: any) =>
-            key.split(".").reduce((obj, property) => obj?.[property], app),
+            key.split(".").reduce((obj, property) => obj?.[property], app)
           )
-          .filter(Boolean),
+          .filter(Boolean)
       ),
     ];
   };
@@ -62,13 +63,13 @@ const Page = () => {
       trades: getUniqueValues("trade.trade.title"),
       call: getUniqueValues("call.title"),
     }),
-    [applications],
+    [applications]
   );
 
   // Format stage string
-  const formatStage = (stage: string) => {
-    return stage.replace(/_/g, " ").toUpperCase();
-  };
+  // const formatStage = (stage: string) => {
+  //   return stage.replace(/_/g, " ").toUpperCase();
+  // };
 
   const columns: ColumnDef<any>[] = [
     {
@@ -125,7 +126,7 @@ const Page = () => {
       header: "Stage",
       cell: ({ row }) => (
         <div className="truncate">
-          {formatStage(row.original?.currentStage)}
+          {getApplicationStatus(row.original) || "-"}
         </div>
       ),
     },
@@ -212,13 +213,13 @@ const Page = () => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade } =
           selectedFilters;
         return (
-          (stage === "All" || formatStage(app.currentStage) === stage) &&
+          (stage === "All" || getApplicationStatus(app) === stage) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&

@@ -56,6 +56,10 @@ const initialState = {
       countApplicants: 0,
       countApplications: 0,
     },
+    Total: {
+      countApplicants: 0,
+      countApplications: 0,
+    },
   },
 };
 
