@@ -18,7 +18,7 @@ import { useDisclosure } from "@mantine/hooks";
 import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
 import { ApplicationStage } from "@/types/application";
 
 const Page = () => {
@@ -253,25 +253,41 @@ const Page = () => {
                   application?.applicant?.businesses[0]?.businessName}
               </p>
             </div>
-            <div
-              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
-              onClick={() =>
-                handleDownloadFile(
-                  application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates",
-                )
-              }
-            >
-              {downloading ? (
-                <p>Loading ....</p>
-              ) : (
-                <>
-                  <span>
-                    <SolarPen2Bold />
-                  </span>
-                  <div>Download Certificate</div>
-                </>
-              )}
+            <div className="flex items-center gap-2">
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleViewFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates"
+                  )
+                }
+              >
+                <span>
+                  <SolarPen2Bold />
+                </span>
+                <div>View Certificate</div>
+              </div>
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleDownloadFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates"
+                  )
+                }
+              >
+                {downloading ? (
+                  <p>Loading ....</p>
+                ) : (
+                  <>
+                    <span>
+                      <SolarPen2Bold />
+                    </span>
+                    <div>Download Certificate</div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>

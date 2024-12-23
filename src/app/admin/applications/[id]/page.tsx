@@ -10,7 +10,7 @@ import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import { useDisclosure } from "@mantine/hooks";
 import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
 import Form from "@/components/forms/Form";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import { ApplicationStage } from "@/types/application";
@@ -207,25 +207,41 @@ const Page = () => {
                   application?.applicant?.businesses[0]?.businessName}
               </p>
             </div>
-            <div
-              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
-              onClick={() =>
-                handleDownloadFile(
-                  application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates",
-                )
-              }
-            >
-              {downloading ? (
-                <p>Loading ....</p>
-              ) : (
-                <>
-                  <span>
-                    <SolarPen2Bold />
-                  </span>
-                  <div>Download Certificate</div>
-                </>
-              )}
+            <div className="flex items-center gap-2">
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleViewFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates"
+                  )
+                }
+              >
+                <span>
+                  <SolarPen2Bold />
+                </span>
+                <div>View Certificate</div>
+              </div>
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleDownloadFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates"
+                  )
+                }
+              >
+                {downloading ? (
+                  <p>Loading ....</p>
+                ) : (
+                  <>
+                    <span>
+                      <SolarPen2Bold />
+                    </span>
+                    <div>Download Certificate</div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
