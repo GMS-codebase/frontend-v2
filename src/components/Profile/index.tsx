@@ -28,11 +28,12 @@ const Profile = () => {
     institution: profile?.profile?.institution,
   });
   useEffect(() => {
+    console.log(profile.profile);
     setFormData({
       firstName: profile?.profile?.firstname,
       lastName: profile?.profile?.lastname,
       email: profile?.profile?.email,
-      phoneNumber: profile?.profile?.phoneNumber,
+      phoneNumber: profile?.profile?.phone,
       gender: profile?.profile?.gender,
       position: profile?.profile?.position,
       institution: profile?.profile?.institution,
@@ -78,7 +79,7 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="w-full flex gap-4 p-5">
+          <div className="w-full flex gap-4 justify-center  p-5">
             <div className="w-[60%]">
               <div className="flex  mb-10 mt-5">
                 <button
@@ -119,10 +120,9 @@ const Profile = () => {
                         <input
                           type="text"
                           name="firstName"
-                          placeholder="Hugues"
                           value={formData.firstName}
                           className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                          required
+                          disabled
                         />
                       </div>
                     </div>
@@ -141,9 +141,8 @@ const Profile = () => {
                           type="text"
                           name="lastName"
                           value={formData.lastName}
-                          placeholder="Ishema"
                           className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                          required
+                          disabled
                         />
                       </div>
                     </div>
@@ -164,9 +163,8 @@ const Profile = () => {
                         type="text"
                         name="email"
                         value={formData.email}
-                        placeholder="huguesishema@gmail.com"
                         className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        required
+                        disabled
                       />
                     </div>
                   </div>
@@ -191,9 +189,8 @@ const Profile = () => {
                         type="text"
                         name="phoneNumber"
                         value={formData.phoneNumber}
-                        placeholder="789 175 211"
                         className="block w-full pl-[6.5rem] pr-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        required
+                        disabled
                       />
                     </div>
                   </div>
@@ -205,18 +202,24 @@ const Profile = () => {
                     >
                       Gender
                     </label>
-                    <Select
+                    <input
+                      type="text"
                       name="gender"
-                      value={formData.gender === 1 ? "male" : "female"}
+                      value={formData.gender}
+                      className="mt-1 block w-full px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
+                      disabled
+                    />
+                    {/* <Select
+                      name="gender"
+                      value={formData.gender?.toLowerCase()}
                       data={[
                         { value: "male", label: "Male" },
                         { value: "female", label: "Female" },
                         { value: "other", label: "Other" },
                       ]}
-                      placeholder="Select your gender"
-                      required
+                      
                       className="mt-1 block w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none sm:text-sm"
-                    />
+                    /> */}
                   </div>
                 </div>
               ) : (
@@ -235,7 +238,7 @@ const Profile = () => {
                       value={formData.position}
                       placeholder="Type in your position"
                       className="mt-1 block w-full px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
+                      disabled
                     />
                   </div>
 
@@ -252,13 +255,13 @@ const Profile = () => {
                       value={formData.institution}
                       placeholder="Type in your department"
                       className="mt-1 block w-full px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
+                      disabled
                     />
                   </div>
                 </div>
               )}
 
-              <div className="w-full gap-2 flex justify-center mt-4">
+              {/* <div className="w-full gap-2 flex justify-center mt-4">
                 <button
                   type="submit"
                   className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -271,9 +274,9 @@ const Profile = () => {
                 >
                   Save
                 </button>
-              </div>
+              </div> */}
             </div>
-            <div className="w-[50%] p-5">
+            {/* <div className="w-[50%] p-5">
               <label
                 htmlFor="fileUpload"
                 className="block text-xs font-bold text-gray-700"
@@ -285,7 +288,6 @@ const Profile = () => {
                   htmlFor="file-upload"
                   className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
                 >
-                  {/* <Icons.MingcuteUpload3Fill className="text-[#005DE9]  w-32 h-32 bg-[#005DE924] bg-opacity-50 rounded-full p-5 " /> */}
                   <div className="text-center">
                     <p className="text-lg text-gray-500">Upload file</p>
                     <p className="text-lg text-gray-400">or drag and drop</p>
@@ -296,10 +298,10 @@ const Profile = () => {
                   type="file"
                   style={{ display: "none" }}
                   className="content-none"
-                  required
+                  disabled
                 />
               </div>
-            </div>
+            </div> */}
           </div>
         </>
       )}
