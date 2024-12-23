@@ -79,13 +79,29 @@ const Page = () => {
             }}
           />
         )}
-        <div className="w-full flex justify-center mt-4 space-x-4">
+        <div className="w-full grid  grid-cols-3 gap-x-4">
           <button
             type="button"
             onClick={() => setAnswers({})}
             className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
           >
             Reset
+          </button>
+          <button
+            className="bg-primary text-white py-3 px-10 flex items-center gap-2 rounded-full  w-full justify-center"
+            onClick={() => {
+              handleSubmit("save", setLoading, answers, application, form);
+            }}
+            disabled={loading === "save"}
+          >
+            {loading === "save" ? (
+              <p>Loading...</p>
+            ) : (
+              <>
+                <IoIosSave />
+                <p className="">Save Draft</p>
+              </>
+            )}
           </button>
           <button
             type="button"
