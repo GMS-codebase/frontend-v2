@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, Suspense, useRef } from "react";
 import Image from "next/image";
 import bg from "../assets/Images/landing.jpg";
 import logo from "../assets/Images/logo.png";
@@ -17,6 +17,7 @@ import { getCalls } from "@/utils/funcs";
 import { unauthorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import ForgotPasswordModal from "@/components/Modals/auth/ForgotPassword";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 function Page() {
   const dispatch = useDispatch();
@@ -66,6 +67,21 @@ function Page() {
     }
   }, [token, openSetPassword]);
 
+   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -200, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 200, behavior: "smooth" });
+    }
+  };
+
+
   return (
     <div className="relative h-screen">
       <div className="absolute inset-0 bg-white opacity-60 z-10"></div>
@@ -79,11 +95,11 @@ function Page() {
           className="opacity-90"
         />
       </div>
-      <div className="absolute  w-full  py-6 flex items-center justify-between px-6 z-20">
+      <div className="absolute  w-full  py-6 md:flex items-center justify-between px-6 z-20">
         <div className="">
           <Image src={logo} alt="logo" width={360} height={360} />
         </div>
-        <div className="flex gap-4 ">
+        <div className="flex gap-4 justify-center">
           <button
             className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
             onClick={openLogin}
@@ -103,56 +119,68 @@ function Page() {
         <h1 className="font-extrabold text-black text-2xl w-[50%] md:text-4xl">
           Welcome To SDF GRANT MANAGEMENT SYSTEM
         </h1>
-        <div
-          className="w-[80%] overflow-x-auto no-scrollbar m-10"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <div className="flex space-x-4">
-            {sortedCalls.length ? (
-              sortedCalls.map((call: any) => (
-                <div
-                  key={call.id}
-                  className="min-w-[350px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
-                >
-                  <SolarFolder2Bold className="w-8 h-8 text-[#005DE9]" />
-                  <h3 className="font-bold text-black">
-                    {call.title?.length >= 15
-                      ? `${call?.title?.slice(0, 15)}...`
-                      : call?.title}
-                  </h3>
-                  <button
-                    className="bg-[#1F5DB014] text-primary font-bold rounded-full px-4 py-2"
-                    onClick={() =>
-                      setOpenCall({
-                        isOpen: true,
-                        call: call,
-                      })
-                    }
-                  >
-                    View details
-                  </button>
-                </div>
-              ))
-            ) : (
-              <h2 className="text-black w-full text-base text-center md:text-xl mt-4 font-normal">
-                Unfortunately there is no open call.
-              </h2>
-            )}
-          </div>
-        </div>
-      </div>
+          <div className="relative w-full">
+      <button
+        className=" lg:hidden absolute left-0 top-1/2 transform -translate-y-1/2 p-2 rounded-full z-10"
+        onClick={scrollLeft}
+      >
+        <FiChevronLeft className="w-6 h-6 text-gray-700" />
+      </button>
+      <button
+        className="lg:hidden absolute right-0 top-1/2 transform -translate-y-1/2 p-2  rounded-full z-10"
+        onClick={scrollRight}
+      >
+        <FiChevronRight className="w-6 h-6 text-gray-700" />
+      </button>
 
-      <div className="absolute bottom-0 left-0 p-4 z-30">
-        <h2 className="text-black font-extrabold">
-          © 2024 Rwanda TVET Board.
-        </h2>
+      <div
+        ref={scrollContainerRef}
+        className="w-[80%] overflow-x-auto no-scrollbar m-10 flex space-x-4"
+        style={{ scrollbarWidth: "none" }}
+      >
+        {sortedCalls.length ? (
+          sortedCalls.map((call: any) => (
+            <div
+              key={call.id}
+              className="min-w-[350px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
+            >
+              <SolarFolder2Bold className="w-8 h-8 text-[#005DE9]" />
+              <h3 className="font-bold text-black">
+                {call.title?.length >= 15
+                  ? `${call?.title?.slice(0, 15)}...`
+                  : call?.title}
+              </h3>
+              <button
+                className="bg-[#1F5DB014] text-primary font-bold rounded-full px-4 py-2"
+                onClick={() =>
+                  setOpenCall({
+                    isOpen: true,
+                    call: call,
+                  })
+                }
+              >
+                View details
+              </button>
+            </div>
+          ))
+        ) : (
+          <h2 className="text-black w-full text-base text-center md:text-xl mt-4 font-normal">
+            Unfortunately there is no open call.
+          </h2>
+        )}
       </div>
-      <div className="absolute bottom-0 right-0 p-4 z-30">
-        <button className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
-          <IoDownloadOutline className="w-4 h-4 mx-2" />
-          Download User Manual
-        </button>
+    </div>
       </div>
+      <div className="flex justify-between items-center p-4 w-full fixed bottom-0 z-30">
+  <h2 className="text-black font-extrabold text-sm md:text-base lg:text-lg">
+    © 2024 Rwanda TVET Board.
+  </h2>
+  <button className="py-2 px-4 md:px-6 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
+    <IoDownloadOutline className="w-4 h-4 mx-2" />
+    <span className="hidden sm:inline">Download User Manual</span>
+  </button>
+</div>
+
       <RegisterModal
         openSuccess={openSuccess}
         isOpenRegister={isOpenRegister}

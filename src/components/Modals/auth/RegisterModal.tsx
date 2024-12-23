@@ -168,12 +168,12 @@ const RegisterModal = ({
         />
         <div className="w-full flex flex-col items-center">
           <h1 className="text-3xl font-extrabold text-primaryText">Register</h1>
-          <h2 className="text-primaryText opacity-40 font-medium text-xl">
+          <h2 className="text-primaryText opacity-40 font-medium lg:text-xl">
             Provide your details to register your account.
           </h2>
         </div>
 
-        <div className="w-full px-10  flex flex-col items-center mt-4 lg:overflow-hidden overflow-auto">
+        <div className="w-full px-10  flex flex-col items-center mt-4 lg:overflow-hidden overflow-auto"   style={{ scrollbarWidth: "none" }}>
           <Stepper active={active} onStepClick={setActive} className="w-full">
             <Stepper.Step
               label="Applicant Info"
