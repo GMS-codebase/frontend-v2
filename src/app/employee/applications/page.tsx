@@ -9,7 +9,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { shortenString } from "@/utils/funcs";
+import { getApplicationStatus, shortenString } from "@/utils/funcs";
 
 const Page = () => {
   // Select applications from Redux store
@@ -143,7 +143,7 @@ const Page = () => {
       header: "Stage",
       cell: ({ row }) => (
         <div className="truncate">
-          {formatStage(row.original?.currentStage)}
+          {getApplicationStatus(row.original)}
         </div>
       ),
     },
@@ -236,7 +236,7 @@ const Page = () => {
         const { stage, window, call, subWindow, sector, trade } =
           selectedFilters;
         return (
-          (stage === "All" || formatStage(app.currentStage) === stage) &&
+          (stage === "All" || getApplicationStatus(app) === stage) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&
