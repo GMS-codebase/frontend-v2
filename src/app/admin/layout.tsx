@@ -23,7 +23,7 @@ export default function AdminLayout({
         />
       </div>
       <div
-        className={`${isCompresed ? "w-[93%]" : "w-[75%]"} h-[99%] bg-transparent side-section`}
+        className={`${isCompresed ? "w-[93%]" : "lg:w-[75%] w-full"} h-[99%] bg-transparent side-section`}
       >
         <Navbar />
         <div className="h-[95%] overflow-y-auto pt-8 pb-32  pages-parent">
