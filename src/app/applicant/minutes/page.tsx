@@ -37,7 +37,15 @@ const getApplicationStatus = (application: any) => {
       !application?.call?.closedEvaluation)
   ) {
     return "CONTRACT SIGNING IN PROGRESS";
-  } else {
+  } else if (
+    application?.currentStage === "CONTRACT_SIGNING" &&
+    ( application?.call?.closedGrantCommittee &&
+      application?.call?.closedDueDiligency &&
+      application?.call?.closedEvaluation) &&
+      application?.uploadedContract
+  ) {
+    return "FINISH GRANT PROPOSALS";
+  } {
     return application?.currentStage;
   }
 };
@@ -194,21 +202,21 @@ const Page = () => {
       accessorKey: "name",
       header: "Applicant Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.name}</div>
+        <div className="w-full">{row.original?.applicant?.name ?? row.original?.application?.applicant?.name}</div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.phone}</div>
+        <div className="w-full">{row.original?.applicant?.phone ?? row.original?.application?.applicant?.phone}</div>
       ),
     },
     {
       accessorKey: "email",
       header: "Applicant Email",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.email}</div>
+        <div className="w-full">{row.original?.applicant?.email ?? row.original?.application?.applicant?.email}</div>
       ),
     },
     {
@@ -216,7 +224,7 @@ const Page = () => {
       header: "Minute Approval Status",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.minutesStatus?.toUpperCase()}
+          {row.original?.minutesStatus?.toUpperCase() ?? row.original?.application?.minutesStatus?.toUpperCase()}
         </div>
       ),
     },
@@ -263,21 +271,21 @@ const Page = () => {
       accessorKey: "name",
       header: "Applicant Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.name}</div>
+        <div className="w-full">{row.original?.applicant?.name ?? row.original?.application?.applicant?.name}</div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.phone}</div>
+        <div className="w-full">{row.original?.applicant?.phone ?? row.original?.application?.applicant?.phone}</div>
       ),
     },
     {
       accessorKey: "email",
       header: "Applicant Email",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.email}</div>
+        <div className="w-full">{row.original?.applicant?.email ?? row.original?.application?.applicant?.email}</div>
       ),
     },
     {
@@ -285,7 +293,7 @@ const Page = () => {
       header: "Minute Approval Status",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.minutesStatus?.toUpperCase()}
+          {row.original?.minutesStatus?.toUpperCase() ?? row.original?.application?.minutesStatus?.toUpperCase()}
         </div>
       ),
     },
