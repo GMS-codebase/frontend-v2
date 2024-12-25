@@ -60,7 +60,7 @@ const AddSubWindowSector = ({
     if (!validateForm()) return;
     setLoading(true);
     try {
-      await authorizedApi.put(`/subwindow/${subWindowId}/assign-sector`, {
+      await authorizedApi.put(`/sub-window/${subWindowId}/assign-sector`, {
         sectorId: formData.sector,
       });
       // dispatch({
