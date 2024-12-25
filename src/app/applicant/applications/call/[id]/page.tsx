@@ -34,10 +34,10 @@ const Page = () => {
   const contacts = useSelector((state: any) => state.contacts);
   const call = calls?.calls?.filter((call: any) => call.uuid === callId)[0];
   const { myApplications, loading: myApplicationLoading } = useSelector(
-    (state: any) => state.applications,
+    (state: any) => state.applications
   );
   const existingApplication = myApplications.find(
-    (app: any) => app?.call?.uuid === callId && app.stages.length === 0,
+    (app: any) => app?.call?.uuid === callId && app.stages.length === 0
   );
   const [
     isOpenCreateProfile,
@@ -51,8 +51,11 @@ const Page = () => {
     { open: openCreateApplication, close: closeCreateApplication },
   ] = useDisclosure(false);
   const router = useRouter();
-  const handleApply = () => {
+  const handleApply = async () => {
     setApplyLoading(true);
+    while (profile.loading || contacts.loading) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
     if (!profile.applicantProfile || !profile.applicantProfile.business_name) {
       openAddProfile();
     } else if (
@@ -74,7 +77,7 @@ const Page = () => {
         `/admin/download/calls/${filename}`,
         {
           responseType: "blob",
-        },
+        }
       );
       const blob = new Blob([response.data], {
         type: response.headers["content-type"],
@@ -297,7 +300,7 @@ const Page = () => {
             <DataTable
               columns={columns}
               data={myApplications.filter(
-                (application: any) => application.call.uuid === callId,
+                (application: any) => application.call.uuid === callId
               )}
               loading={myApplicationLoading}
               noDataMessage={"You haven't made any applications yet"}
