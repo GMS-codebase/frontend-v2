@@ -167,8 +167,8 @@ const Page = () => {
   ];
   return (
     <div className="w-full flex flex-col mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[20rem]">
+      <div className="w-full overflow-auto lg:flex justify-between items-center p-4">
+        <div className="relative lg:w-[20rem] w-full mb-2">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} />
           </span>
@@ -180,17 +180,17 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-        <div className="flex items-center gap-3 right-2">
-          <FilterDropDown placeholderText="Filter By Call" data={["call 1"]} />
-          <FilterDropDown
-            placeholderText="Filter By Sector"
-            data={["ICT and innovations"]}
-          />
-          <FilterDropDown
-            placeholderText="Filter By Trade"
-            data={["Manufacturing"]}
-          />
-        </div>
+       <div className="flex gap-3 lg:flex-row lg:items-center">
+    <FilterDropDown placeholderText="Filter By Call" data={["call 1"]} />
+    <FilterDropDown
+      placeholderText="Filter By Sector"
+      data={["ICT and innovations"]}
+    />
+    <FilterDropDown
+      placeholderText="Filter By Trade"
+      data={["Manufacturing"]}
+    />
+  </div>
       </div>
       <Tabs defaultValue="contracts">
         <Tabs.List className="w-auto float-end my-6 mr-5">
