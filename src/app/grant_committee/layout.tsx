@@ -51,7 +51,7 @@ export default function AdminLayout({
             </button>
           </div>
         )}
-      <div className="flex flex-1">
+      <div className="flex">
         <div
           className={`${
             isCompressed ? "w-[6%]" : "w-[23%]"

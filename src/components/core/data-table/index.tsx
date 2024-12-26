@@ -36,6 +36,7 @@ interface Props {
   loader?: React.ReactNode;
   limit?: number;
   tableWidth?: string | number;
+  verticalPadding?: string | number
 }
 
 export function DataTable({
@@ -54,6 +55,7 @@ export function DataTable({
   limit,
   loader,
   tableWidth,
+  verticalPadding
 }: Props) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -219,7 +221,7 @@ export function DataTable({
                       {row.getVisibleCells().map((cell, i) => (
                         <td
                           className={clsx(
-                            "p-2 py-3 my-1 table-text",
+                            `p-2 py-${verticalPadding ?? "3"} my-1 table-text`,
                             row.getIsSelected()
                               ? "bg-mainPurple font-semibold"
                               : "",
