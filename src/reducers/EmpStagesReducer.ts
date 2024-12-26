@@ -12,7 +12,7 @@ const initialState = {
   stages: [],
   error: null,
   isError: false,
-  loading: false,
+  loading: true,
 };
 
 type Action = {

@@ -20,6 +20,7 @@ import { FiEye } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
+import { getWindows } from "@/utils/funcs";
 
 const Page = () => {
   const navigate = useRouter();
@@ -254,7 +255,9 @@ const Page = () => {
         />
         <AddEditWindow
           isOpenAddEditWindow={isUpdateWindow}
-          closeAddEditWindow={closeUpdate}
+          closeAddEditWindow={() => {
+            closeUpdate();
+          }}
           defaultData={window}
         />
         <DeleteModal

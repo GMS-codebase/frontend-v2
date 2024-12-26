@@ -25,11 +25,13 @@ import { getApplications } from "@/utils/funcs";
 import NullifyModal from "@/components/Modals/Nullify";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
+import Form from "@/components/forms/Form";
+import { ApplicationStage } from "@/types/application";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const applications = useSelector((state: any) => state.applications);
-  const profile = useSelector((state: any) => state.auth);
+  const forms = useSelector((state: any) => state.forms);
   const application = applications?.applications?.filter(
     (application: any) => application.uuid === id,
   )[0];
@@ -72,76 +74,19 @@ const Page = () => {
       setDecisionsLoading(false);
     }
   };
-  const [currentComponent, setCurrentComponent] = useState<
-    "Project" | "IndicativeBudget"
-  >("Project");
-  const [commentsData, setCommentsData] = useState<Comments>({
-    titleComment: application?.projectFunding.titleComment || "",
-    activitiesComment: application?.projectFunding.activitiesComment || "",
-    readinessExecuteComment:
-      application?.projectFunding.readinessExecuteComment || "",
-    roleComment: application?.projectFunding.roleComment || "",
-    institutionComment: application?.projectFunding.institutionComment || "",
-    trainingManualComment:
-      application?.projectFunding.trainingManualComment || "",
-    trainingEquipmentComment:
-      application?.projectFunding.trainingEquipmentComment || "",
-    identificationEmployeeComment:
-      application?.projectFunding.identificationEmployeeComment || "",
-    staffComment: application?.projectFunding.staffComment || "",
-    sustainabilityComment:
-      application?.projectFunding.sustainabilityComment || "",
-    previousFinancialReportComment:
-      application?.projectFunding.previousFinancialReportComment || "",
-    trainingPremisesComment:
-      application?.projectFunding.trainingPremisesComment || "",
-    contributionFromApplicantComment:
-      application?.projectFunding.contributionFromApplicantComment || "",
-    recruitmentTrainerComment:
-      application?.projectFunding.recruitmentTrainerComment || "",
-    MOUsAttachmentComment:
-      application?.projectFunding.MOUsAttachmentComment || "",
-    premisesAttachmentComment:
-      application?.projectFunding?.premisesAttachmentComment || "",
-    identificationMemberComment:
-      application?.projectFunding.identificationMemberComment || "",
-    assessmentEquipmentComment:
-      application?.projectFunding.assessmentEquipmentComment || "",
-    recruitmentCandidatesNumberComment:
-      application?.projectFunding.recruitmentCandidatesNumberComment || "",
-    assessorsAndFacilitatorsComment:
-      application?.projectFunding.assessorsAndFacilitatorsComment || "",
-    budgetSummaryAttachmentComment:
-      application?.projectFunding.budgetSummaryAttachmentComment || "",
-    contributionComment: application?.projectFunding.contributionComment || "",
-    assessmentComment: application?.projectFunding?.assessmentComment || "",
-    budgetLinesComment: application?.budget?.budgetLinesComment,
+
+  const form = forms.forms.find((form: any) => {
+    const foundSubWindow = Object.keys(
+      JSON.parse(application?.call.subwindowForms || "{}"),
+    ).find((key: string) => key === application?.subWindow.uuid);
+
+    return (
+      form.uuid ===
+      JSON.parse(application?.call.subwindowForms || "{}")[
+        foundSubWindow as any
+      ]
+    );
   });
-  const renderComponent = () => {
-    switch (currentComponent) {
-      case "Project":
-        return (
-          <FundingQuestions
-            application={application}
-            data={application?.projectFunding}
-            comments={commentsData}
-            // showComments={true}
-            goToBudget={() => setCurrentComponent("IndicativeBudget")}
-          />
-        );
-      case "IndicativeBudget":
-        return (
-          <BudgetQuestions
-            application={application}
-            data={application?.budget}
-            comments={commentsData}
-            // showComments={true}
-          />
-        );
-      default:
-        return null;
-    }
-  };
 
   const [downloading, setDownloading] = useState(false);
   const nullifyDecision = async (stageId: string, type: string) => {
@@ -203,7 +148,7 @@ const Page = () => {
                 notifications.show({
                   title: "Download Successful",
                   message: "The file has been downloaded successfully.",
-                  type: "success",
+                  color: "green",
                 });
               } catch (error) {
                 console.error("Download error:", error);
@@ -211,7 +156,7 @@ const Page = () => {
                   title: "Download Failed",
                   message:
                     "There was an issue downloading the file. Please try again.",
-                  type: "error",
+                  color: "red",
                 });
               } finally {
                 setDownloading(false);
@@ -288,42 +233,39 @@ const Page = () => {
         </div>
       </div>
       <div className="flex gap-6">
-        <div className="flex bg-white rounded-2xl w-[70%] gap-4 p-5">
+        <div
+          className={`flex  ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 `}
+        >
           <div className="flex flex-col gap-4 w-full">
-            <div className="font-semibold text-2xl">Questions and answers</div>
-            <div className="flex font-semibold">
-              <div
-                onClick={() => setCurrentComponent("Project")}
-                className={`cursor-pointer w-1/2 transition-all duration-200 ${
-                  currentComponent === "Project"
-                    ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
-                    : ""
-                } py-2.5  flex items-center justify-center`}
-              >
-                Project Funding Application
-              </div>
-              <div
-                onClick={() => setCurrentComponent("IndicativeBudget")}
-                className={`cursor-pointer w-1/2 transition-all duration-200  ${
-                  currentComponent === "IndicativeBudget"
-                    ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
-                    : ""
-                } py-2.5  flex items-center justify-center`}
-              >
-                Indicative Budget
-              </div>
-            </div>
-            <div className="mt-4 w-full">{renderComponent()}</div>
+            {form && (
+              <Form
+                mode="viewing"
+                answers={JSON.parse(application.answers)}
+                comments={JSON.parse(application.comments)}
+                formData={{
+                  name: form?.name,
+                  qns: JSON.parse(form?.qns || "{}"),
+                }}
+              />
+            )}
           </div>
         </div>
         <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
           <h2 className="font-bold">Decision</h2>
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold">Evaluation Stage</h3>
-            <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-              {application?.currentStage === "EVALUATION"
-                ? "PENDING"
-                : "APPROVED"}
+            <div
+              className={`font-medium  ${
+                application?.stages?.find(
+                  (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+                )?.status == "APPROVED"
+                  ? "bg-[#4BC500] text-[#4BC500]"
+                  : "bg-red-600 text-red-600"
+              } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+            >
+              {application?.stages?.find(
+                (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+              )?.status ?? "PENDING"}
             </div>
             {application?.evaluationDecisions && (
               <div className="flex flex-col gap-2 mt-4">
@@ -338,7 +280,8 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage?.stage === "EVALUATION",
+                          (stage: any) =>
+                            stage?.stage === ApplicationStage.EVALUATION,
                         ),
                       );
                       openNullifyModal();
@@ -355,20 +298,19 @@ const Page = () => {
             <h3 className="font-bold">Due Diligence Stage</h3>
             <div
               className={`font-medium  ${
-                application?.status === "APPROVED" ||
-                application?.currentStage !== "EVALUATION"
+                application?.stages?.find(
+                  (stage: any) =>
+                    stage.stage === ApplicationStage.DUE_DILIGENCY,
+                )?.status == "APPROVED"
                   ? "bg-[#4BC500] text-[#4BC500]"
-                  : application?.status === "PENDING"
-                    ? "bg-red-600 text-red-600"
-                    : ""
+                  : "bg-red-600 text-red-600"
               } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
             >
-              {application?.currentStage !== "EVALUATION" &&
-              application?.currentStage !== "DUE_DILIGENCY"
-                ? "APPROVED"
-                : application?.status}
+              {application?.stages?.find(
+                (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY,
+              )?.status ?? "PENDING"}
             </div>
-            {application?.currentStage !== "DUE_DILIGENCY" && (
+            {application?.currentStage !== ApplicationStage.DUE_DILIGENCY && (
               <div className="flex flex-col gap-2 mt-4">
                 <button
                   onClick={openDueDiligencyDetails}
@@ -381,7 +323,8 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage?.stage === "DUE_DILIGENCY",
+                          (stage: any) =>
+                            stage?.stage === ApplicationStage.DUE_DILIGENCY,
                         ),
                       );
                       openNullifyModal();

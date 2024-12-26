@@ -20,6 +20,7 @@ interface DeleteConfirmProps {
   onClose: () => void;
   minute: any;
   type: string;
+  decision: any;
 }
 
 const MinutesRejectionReason = ({
@@ -27,15 +28,20 @@ const MinutesRejectionReason = ({
   onClose,
   minute,
   type,
+  decision,
 }: DeleteConfirmProps) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const action = type === "rejected" ? "revert" : "reject";
+  const comment =
+    type === "reject"
+      ? JSON.parse(decision?.comment ?? "{}")?.value
+      : decision?.comment;
   const handleMinutesRevert = () => {
     setLoading(true);
     authorizedApi
       .patch(
-        `/negotiation-contract/applications/sdf/${type === "rejected" ? "revert" : "reject"}/${minute?.uuid}`,
+        `/negotiation-contract/applications/sdf/${type === "rejected" ? "revert" : "reject"}/${minute?.application?.uuid}`,
       )
       .then(() => {
         notifications.show({
@@ -43,8 +49,8 @@ const MinutesRejectionReason = ({
           color: "green",
         });
         onClose();
-        getUploadedMinutes(dispatch, "applicant");
-        getRejectedMinutes(dispatch, "applicant");
+        getUploadedMinutes(dispatch, "sdf");
+        getRejectedMinutes(dispatch, "sdf");
         getContracts(dispatch);
         getMinutes(dispatch);
       })
@@ -81,7 +87,11 @@ const MinutesRejectionReason = ({
             <h1 className="block text-xs font-bold text-gray-700">
               Reason For {type === "rejected" ? "Rejection" : "Negotiation"}
             </h1>
-            <textarea className="mt-1 block w-full resize-none p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+            <textarea
+              disabled
+              value={comment}
+              className="mt-1 block w-full resize-none p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
           </div>
           <div className="w-full flex justify-center mt-1 space-x-4 p-6">
             <button
@@ -89,7 +99,7 @@ const MinutesRejectionReason = ({
               onClick={onClose}
               className="w-full px-4 py-3 bg-gray-300 text-black rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2"
             >
-              Cancel
+              Close
             </button>
             <button
               onClick={handleMinutesRevert}

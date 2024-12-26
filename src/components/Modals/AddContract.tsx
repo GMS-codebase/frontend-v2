@@ -8,7 +8,8 @@ import { useDispatch } from "react-redux";
 import { SolarAddSquareBold } from "../core/icons";
 import { CashOut, Upload } from "solar-icon-set";
 import { Trade } from "@/types";
-import { getApplicants, getApplications, getContracts } from "@/utils/funcs";
+import { getApplicants, getApplications, getApplicationsForContractSigning, getContracts } from "@/utils/funcs";
+import { useRouter } from "next/navigation";
 
 interface AddContractProps {
   data: any;
@@ -24,6 +25,7 @@ const AddContract: React.FC<AddContractProps> = ({
   trades, // Added trades prop
 }) => {
   const dispatch = useDispatch();
+  const navigate = useRouter();
   const [loading, setLoading] = useState(false);
   const [installmentsInput, setInstallmentsInput] = useState(0);
   const [traineesNumber, setTraineesNumber] = useState(0);
@@ -62,6 +64,11 @@ const AddContract: React.FC<AddContractProps> = ({
     if ((currentTotal || 0) + installmentsInput > 100) {
       setInstallmentsError(
         "The total value of installments can not exceed 100%",
+      );
+      return true;
+    } else if (installmentsInput <= 0 || !comment || !title) {
+      setInstallmentsError(
+        "Title, Installment percentage and comment are required",
       );
       return true;
     } else {
@@ -156,13 +163,15 @@ const AddContract: React.FC<AddContractProps> = ({
         },
       );
       notifications.show({
-        message: res?.data?.message,
+        message: "Contract created successfully",
         color: "blue",
       });
       getApplicants(dispatch);
       getContracts(dispatch);
       getApplications(dispatch);
+      getApplicationsForContractSigning(dispatch)
       closeAddContract();
+      navigate.refresh();
     } catch (err: any) {
       notifications.show({
         message: err.response?.data?.message ?? "Failed to create contract",
@@ -380,7 +389,7 @@ const AddContract: React.FC<AddContractProps> = ({
                           </div>
                         </div>
                         <div
-                          className=" bg-blue-500 bg-opacity-15 py-1 rounded-2xl px-2 justify-self-end flex gap-1"
+                          className=" bg-blue-500 bg-opacity-15 py-1 rounded-2xl px-2 justify-self-end flex gap-1 cursor-pointer"
                           onClick={() => {
                             setInstallmentsError("");
                             if (validateAddingInstallment()) return;
@@ -413,16 +422,74 @@ const AddContract: React.FC<AddContractProps> = ({
                       {installmentsError}
                     </p>
                   )}
-                  <div className="flex items-center gap-4 flex-wrap mt-3">
-                    {formData.installments?.map((installment, index) => (
-                      <div
-                        className="bg-primary text-white font-medium px-4 py-2 rounded-full"
-                        key={index}
-                      >
-                        {index + 1} th : {installment.percentage} %
+                  {formData.installments &&
+                    formData.installments.length > 0 && (
+                      <div className="mt-4 overflow-x-auto">
+                        <h1 className="text-lg font-bold">Preview</h1>
+                        <table className="min-w-full divide-y divide-gray-200">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                No.
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Title
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Percentage
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Amount
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Condition
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {formData.installments.map((installment, index) => (
+                              <tr key={index}>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  {index + 1}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  {installment.title}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  {installment.percentage}%
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  {installment.amount.toLocaleString()} Rwf
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  {installment.condition.length > 20
+                                    ? `${installment.condition.substring(0, 20)}...`
+                                    : installment.condition}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <button
+                                    onClick={() => {
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        installments: prev.installments?.filter(
+                                          (_, i) => i !== index,
+                                        ),
+                                      }));
+                                    }}
+                                    className="text-red-600 hover:text-red-900"
+                                  >
+                                    Delete
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
-                    ))}
-                  </div>
+                    )}
                 </div>
               )}
             </div>

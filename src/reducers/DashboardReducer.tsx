@@ -6,7 +6,7 @@ import {
 } from "@/actions/DashboardActions";
 
 const initialState = {
-  loading: false,
+  loading: true,
   error: "",
   isError: false,
   data: {
@@ -53,6 +53,10 @@ const initialState = {
       countApplications: 0,
     },
     Other: {
+      countApplicants: 0,
+      countApplications: 0,
+    },
+    Total: {
       countApplicants: 0,
       countApplications: 0,
     },

@@ -1,133 +1,77 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import React, { useState } from "react";
-import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
-import {
-  SolarFileBold,
-  SolarFolder2Bold,
-  SolarEyeLinear,
-  SolarPen2Bold,
-} from "@/components/core/icons";
+import React, { useEffect, useState } from "react";
+import { SolarPen2Bold } from "@/components/core/icons";
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
-import { Comments } from "@/types";
-import FundingQuestions from "@/components/Application/FundingQuestions";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import MakeEvaluationDecision from "@/components/Modals/MakeDecision";
-import EditEvalModal from "@/components/Modals/EditEvalModal";
 import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import { useDisclosure } from "@mantine/hooks";
-import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
-import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
-import { handleDownloadFile } from "@/utils/funcs";
+import { getApplicationStatus, handleDownloadFile, handleViewFile } from "@/utils/funcs";
+import Form from "@/components/forms/Form";
+import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
+import { ApplicationStage } from "@/types/application";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
-  const applications = useSelector((state: any) => state.applications);
-  const profile = useSelector((state: any) => state.auth);
-  const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id,
-  )[0];
-
-  const [isOpenAddDue, setIsOpenAddDue] = useState(false);
-  const openAddDue = () => setIsOpenAddDue(true);
-  const closeAddDue = () => setIsOpenAddDue(false);
+  const forms = useSelector((state: any) => state.forms);
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
   ] = useDisclosure(false);
   const [
+    isOpenDueDiligencyDetails,
+    { open: openDueDiligencyDetails, close: closeDueDiligencyDetails },
+  ] = useDisclosure(false);
+  const [
     isOpenGrantCommitteeDetails,
     { open: openGrantCommitteeDetails, close: closeGrantCommitteeDetails },
   ] = useDisclosure(false);
-  const [
-    isOpenGrantCommitteeMakeDecision,
-    {
-      open: openGrantCommitteeMakeDecision,
-      close: closeGrantCommitteeMakeDecision,
-    },
-  ] = useDisclosure(false);
-
-  const [currentComponent, setCurrentComponent] = useState<
-    "Project" | "IndicativeBudget"
-  >("Project");
-  const [commentsData, setCommentsData] = useState<Comments>({
-    titleComment: application?.projectFunding?.titleComment || "",
-    activitiesComment: application?.projectFunding?.activitiesComment || "",
-    readinessExecuteComment:
-      application?.projectFunding?.readinessExecuteComment || "",
-    roleComment: application?.projectFunding?.roleComment || "",
-    institutionComment: application?.projectFunding?.institutionComment || "",
-    trainingManualComment:
-      application?.projectFunding?.trainingManualComment || "",
-    trainingEquipmentComment:
-      application?.projectFunding?.trainingEquipmentComment || "",
-    identificationEmployeeComment:
-      application?.projectFunding?.identificationEmployeeComment || "",
-    staffComment: application?.projectFunding?.staffComment || "",
-    sustainabilityComment:
-      application?.projectFunding?.sustainabilityComment || "",
-    previousFinancialReportComment:
-      application?.projectFunding?.previousFinancialReportComment || "",
-    trainingPremisesComment:
-      application?.projectFunding?.trainingPremisesComment || "",
-    contributionFromApplicantComment:
-      application?.projectFunding?.contributionFromApplicantComment || "",
-    recruitmentTrainerComment:
-      application?.projectFunding?.recruitmentTrainerComment || "",
-    MOUsAttachmentComment:
-      application?.projectFunding?.MOUsAttachmentComment || "",
-    premisesAttachmentComment:
-      application?.projectFunding?.premisesAttachmentComment || "",
-    identificationMemberComment:
-      application?.projectFunding?.identificationMemberComment || "",
-    assessmentEquipmentComment:
-      application?.projectFunding?.assessmentEquipmentComment || "",
-    recruitmentCandidatesNumberComment:
-      application?.projectFunding?.recruitmentCandidatesNumberComment || "",
-    assessorsAndFacilitatorsComment:
-      application?.projectFunding?.assessorsAndFacilitatorsComment || "",
-    budgetSummaryAttachmentComment:
-      application?.projectFunding?.budgetSummaryAttachmentComment || "",
-    contributionComment: application?.projectFunding?.contributionComment || "",
-    assessmentComment: application?.projectFunding?.assessmentComment || "",
-    budgetLinesComment: application?.budget?.budgetLinesComment,
-  });
-
-  const goToBudget = () => {
-    setCurrentComponent("IndicativeBudget");
-  };
-
-  const renderComponent = () => {
-    switch (currentComponent) {
-      case "Project":
-        return (
-          <FundingQuestions
-            data={application?.projectFunding}
-            setComments={setCommentsData}
-            comments={commentsData}
-            goToBudget={goToBudget}
-            // showComments={application?.currentStage !== "SUBMITTED"}
-          />
-        );
-      case "IndicativeBudget":
-        return (
-          <BudgetQuestions
-            application={application}
-            data={application?.budget}
-            comments={commentsData}
-            setComments={setCommentsData}
-            // showComments={application?.currentStage !== "SUBMITTED"}
-          />
-        );
-      default:
-        return null;
-    }
-  };
 
   const [downloading, setDownloading] = useState(false);
+  const [applicationLoading, setApplicationLoading] = useState(true);
+  const [application, setApplication] = useState<any>();
+  const form = forms.forms.find((form: any) => {
+    const foundSubWindow = Object.keys(
+      JSON.parse(application?.call.subwindowForms || "{}"),
+    ).find((key: string) => key === application?.subWindow.uuid);
+
+    return (
+      form.uuid ===
+      JSON.parse(application?.call.subwindowForms || "{}")[
+        foundSubWindow as any
+      ]
+    );
+  });
+
+  const fetchApplication = async () => {
+    setApplicationLoading(true);
+    try {
+      const res = await authorizedApi.get(`/application/get-application/${id}`);
+      setApplication(res.data.data.data);
+      setApplicationLoading(false);
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        window.history.back();
+      }
+    }
+  };
+  useEffect(() => {
+    fetchApplication();
+  }, [id]);
+
+  if (applicationLoading) {
+    return (
+      <div className="h-full w-full flex items-center justify-center text-sm">
+        Loading ...
+      </div>
+    );
+  }
+
+  console.log(application);
 
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
@@ -166,7 +110,7 @@ const Page = () => {
                 notifications.show({
                   title: "Download Successful",
                   message: "The file has been downloaded successfully.",
-                  type: "success",
+                  color: "green",
                 });
               } catch (error) {
                 console.error("Download error:", error);
@@ -174,7 +118,7 @@ const Page = () => {
                   title: "Download Failed",
                   message:
                     "There was an issue downloading the file. Please try again.",
-                  type: "error",
+                  color: "red",
                 });
               } finally {
                 setDownloading(false);
@@ -263,25 +207,41 @@ const Page = () => {
                   application?.applicant?.businesses[0]?.businessName}
               </p>
             </div>
-            <div
-              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
-              onClick={() =>
-                handleDownloadFile(
-                  application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates",
-                )
-              }
-            >
-              {downloading ? (
-                <p>Loading ....</p>
-              ) : (
-                <>
-                  <span>
-                    <SolarPen2Bold />
-                  </span>
-                  <div>Download Certificate</div>
-                </>
-              )}
+            <div className="flex items-center gap-2">
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleViewFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates"
+                  )
+                }
+              >
+                <span>
+                  <SolarPen2Bold />
+                </span>
+                <div>View Certificate</div>
+              </div>
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleDownloadFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates"
+                  )
+                }
+              >
+                {downloading ? (
+                  <p>Loading ....</p>
+                ) : (
+                  <>
+                    <span>
+                      <SolarPen2Bold />
+                    </span>
+                    <div>Download Certificate</div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -295,39 +255,24 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <div className="flex gap-2 p-5">
+      <div className="flex gap-2 ">
         <div
-          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"}  gap-4 p-5`}
+          className={`flex  rounded-2xl ${getApplicationStatus(application) === "ANSWERING" ? "w-full" : "w-[70%]"}   `}
         >
-          <div className="flex flex-col gap-4 w-full">
-            <div className="font-semibold text-2xl">Questions and answers</div>
-            <div className="flex font-semibold">
-              <div
-                onClick={() => setCurrentComponent("Project")}
-                className={`cursor-pointer w-1/2 ${
-                  currentComponent === "Project"
-                    ? "bg-[#005DE9] bg-opacity-10"
-                    : ""
-                } h-16 flex items-center justify-center`}
-              >
-                Project Funding Application
-              </div>
-              <div
-                onClick={() => setCurrentComponent("IndicativeBudget")}
-                className={`cursor-pointer w-1/2 ${
-                  currentComponent === "IndicativeBudget"
-                    ? "bg-[#C50000] bg-opacity-10"
-                    : ""
-                } h-16 flex items-center justify-center`}
-              >
-                Indicative Budget
-              </div>
-            </div>
-            <div className="mt-4 w-full">{renderComponent()}</div>
-          </div>
+          {form && (
+            <Form
+              mode={"viewing"}
+              answers={JSON.parse(application.answers)}
+              comments={JSON.parse(application.comments)}
+              formData={{
+                name: form?.name,
+                qns: JSON.parse(form?.qns || "{}"),
+              }}
+            />
+          )}
         </div>
 
-        {application?.currentStage === "SUBMITTED" ? (
+        {getApplicationStatus(application) === "ANSWERING" ? (
           <div></div>
         ) : (
           <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
@@ -335,7 +280,7 @@ const Page = () => {
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Evaluation Stage</h3>
               <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                {application?.currentStage === "EVALUATION"
+                {application?.currentStage === ApplicationStage.EVALUATION
                   ? "Pending"
                   : "APPROVED"}
               </div>
@@ -355,22 +300,22 @@ const Page = () => {
               <div
                 className={`font-medium  ${
                   application?.status === "APPROVED" ||
-                  application?.currentStage !== "EVALUATION"
+                  application?.currentStage !== ApplicationStage.EVALUATION
                     ? "bg-[#4BC500] text-[#4BC500]"
                     : application?.status === "PENDING"
                       ? "bg-red-600 text-red-600"
                       : ""
                 } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
               >
-                {application?.currentStage !== "EVALUATION" &&
-                application?.currentStage !== "DUE_DILIGENCY"
+                {application?.currentStage !== ApplicationStage.EVALUATION &&
+                application?.currentStage !== ApplicationStage.DUE_DILIGENCY
                   ? "APPROVED"
                   : application?.status}
               </div>
-              {application?.currentStage !== "DUE_DILIGENCY" && (
+              {application?.duediligencyDecisions && (
                 <div className="flex flex-col gap-2 mt-4">
                   <button
-                    onClick={openAddDue}
+                    onClick={openDueDiligencyDetails}
                     className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
                   >
                     View details
@@ -398,31 +343,22 @@ const Page = () => {
           </div>
         )}
       </div>
-      <DueDiligenceModal
+      <DueDiligencyDetails
         application={application}
-        opened={isOpenAddDue}
-        close={closeAddDue}
+        opened={isOpenDueDiligencyDetails}
+        close={closeDueDiligencyDetails}
+        decisions={application?.duediligencyDecisions}
       />
       <MakeGrantCommitteeDecision
         application={application}
-        closeModal={closeGrantCommitteeMakeDecision}
-        isOpen={isOpenGrantCommitteeMakeDecision}
+        closeModal={closeGrantCommitteeDetails}
+        isOpen={isOpenGrantCommitteeDetails}
         onMakeDecision={() => {}}
       />
       <EvaluationDetails
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
-        evaluations={
-          application?.evaluationDecisions?.length &&
-          application?.evaluators?.length
-            ? application.evaluationDecisions.map(
-                (decision: any, index: any) => ({
-                  evaluator: application.evaluators[index],
-                  evaluationDecision: decision,
-                }),
-              )
-            : []
-        }
+        evaluations={application?.evaluationDecisions}
         application={application}
       />
     </div>

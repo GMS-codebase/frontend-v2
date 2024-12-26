@@ -195,8 +195,8 @@ const Page = () => {
       <ActivateDeactivateModal
         type="trades"
         closeModal={() => {
-          closeActivateDeactivateTradeModal();
           setSelectedTrade(null);
+          closeActivateDeactivateTradeModal();
         }}
         id={selectedTrade?.uuid}
         isActive={selectedTrade?.status === "ACTIVE"}

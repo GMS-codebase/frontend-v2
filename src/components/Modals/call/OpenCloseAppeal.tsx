@@ -10,6 +10,8 @@ import { useDispatch } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { useParams } from "next/navigation";
 import { getCalls } from "@/utils/funcs";
+import { DateInput } from "@mantine/dates";
+import { ApplicationStage } from "@/types/application";
 
 const OpenCloseAppealModal = ({
   closeModal,
@@ -19,18 +21,33 @@ const OpenCloseAppealModal = ({
   opened,
 }: {
   closeModal: () => void;
-  stage: "EVALUATION" | "DUE_DILIGENCY";
+  stage: ApplicationStage.EVALUATION | ApplicationStage.DUE_DILIGENCY;
   callId: any;
   type: "OPEN" | "CLOSE";
   opened: boolean;
 }) => {
   const [loading, setLoading] = useState(false);
+  const [fromDate, setFromDate] = useState<any>("");
+  const [toDate, setToDate] = useState<any>("");
+  const [dateError, setDateError] = useState(false);
   const isClosing = type === "CLOSE";
   const dispatch = useDispatch();
   const handleAppealStatusChange = async () => {
+    if (!isClosing && (!fromDate || !toDate)) {
+      setDateError(true);
+      return;
+    }
     setLoading(true);
     authorizedApi
-      .put(`/appeals/${callId}/stage/${stage}/${isClosing ? "close" : "open"}`)
+      .put(
+        `/appeals/${callId}/stage/${stage}/${isClosing ? "close" : "open"}`,
+        !isClosing
+          ? {
+              from: fromDate,
+              to: toDate,
+            }
+          : {},
+      )
       .then((res) => {
         notifications.show({
           title: `Appeal ${isClosing ? "Closed" : "Opened"} Successfully!`,
@@ -62,7 +79,7 @@ const OpenCloseAppealModal = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[550px] h-[400px] relative bg-white rounded-3xl p-4 pt-10 pb-4 flex flex-col items-center">
+      <div className="w-[550px] h-fit relative bg-white rounded-3xl p-4 pt-10 pb-4 flex flex-col items-center">
         <button
           className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
           onClick={closeModal}
@@ -91,6 +108,35 @@ const OpenCloseAppealModal = ({
               this stage?
             </h1>
           </div>
+          {!isClosing && (
+            <div className="mt-6 w-full">
+              <h1 className="block text-xs font-bold text-gray-700">
+                From Date
+              </h1>
+              <DateInput
+                value={fromDate}
+                maxDate={toDate}
+                onChange={setFromDate}
+                className="mt-1 block w-full p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                required
+              />
+              <h1 className="block text-xs font-bold text-gray-700 mt-4">
+                To Date
+              </h1>
+              <DateInput
+                value={toDate}
+                minDate={fromDate}
+                onChange={setToDate}
+                className="mt-1 block w-full p-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                required
+              />
+            </div>
+          )}
+          {dateError && (
+            <p className="text-red-500 text-base mt-1">
+              Please select both from and to dates
+            </p>
+          )}
           <div className="w-full flex justify-center mt-4 space-x-4 p-6">
             <button
               type="button"

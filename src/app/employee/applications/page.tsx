@@ -9,22 +9,32 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
+import { getApplicationStatus, shortenString } from "@/utils/funcs";
 
 const Page = () => {
   // Select applications from Redux store
   const { applications: rawApplications, loading } = useSelector(
     (state: any) => state.applications,
   );
+  const { stages } = useSelector((state: any) => state.empStages);
+  console.log(stages);
 
-  // Format applications to flatten nested arrays
   const applications = useMemo(
     () =>
-      rawApplications.map((app: any) => ({
-        ...app,
-        sector: app.sectors[0] || null,
-        trade: app.trades[0] || null,
-      })),
-    [rawApplications],
+      rawApplications
+        .map((app: any) => ({
+          ...app,
+          sector: app.sectors[0] || null,
+          trade: app.trades[0] || null,
+        }))
+        .filter((app: any) => {
+          const matchingStage = stages.find(
+            (stage: any) => stage.sector == app.sector.name,
+          );
+          console.log("Filtering app:", app, "Matching stage:", matchingStage);
+          return matchingStage;
+        }),
+    [rawApplications, stages],
   );
 
   const filtersContainerRef = useRef<HTMLDivElement>(null);
@@ -89,21 +99,27 @@ const Page = () => {
       accessorKey: "window",
       header: "Window",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.window?.title}</div>
+        <div className="truncate">
+          {shortenString(row.original?.window?.title)}
+        </div>
       ),
     },
     {
       accessorKey: "call",
       header: "Call",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.call?.title}</div>
+        <div className="truncate">
+          {shortenString(row.original?.call?.title)}
+        </div>
       ),
     },
     {
       accessorKey: "subWindow",
       header: "Sub Window",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.subWindow?.title}</div>
+        <div className="truncate">
+          {shortenString(row.original?.subWindow?.title)}
+        </div>
       ),
     },
     {
@@ -117,7 +133,9 @@ const Page = () => {
       accessorKey: "trade",
       header: "Trade",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.trade?.trade?.title}</div>
+        <div className="truncate">
+          {shortenString(row.original?.trade?.trade?.title)}
+        </div>
       ),
     },
     {
@@ -125,7 +143,7 @@ const Page = () => {
       header: "Stage",
       cell: ({ row }) => (
         <div className="truncate">
-          {formatStage(row.original?.currentStage)}
+          {getApplicationStatus(row.original)}
         </div>
       ),
     },
@@ -218,7 +236,7 @@ const Page = () => {
         const { stage, window, call, subWindow, sector, trade } =
           selectedFilters;
         return (
-          (stage === "All" || formatStage(app.currentStage) === stage) &&
+          (stage === "All" || getApplicationStatus(app) === stage) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&

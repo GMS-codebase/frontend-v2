@@ -15,10 +15,12 @@ const LoginModal = ({
   opened,
   close,
   openRegister,
+  openForgotPassword,
 }: {
   opened: boolean;
   close: () => void;
   openRegister: () => void;
+  openForgotPassword: () => void;
 }) => {
   const navigate = useRouter();
   const [showPassword, setShowPassword] = useState(false);
@@ -38,10 +40,10 @@ const LoginModal = ({
             navigate.push("/dynamic");
             break;
           case "employee":
-            navigate.push("/employee");
+            navigate.push("/employee/applications");
             break;
           case "normal_employee":
-            navigate.push("/employee");
+            navigate.push("/employee/applications");
             break;
           case "applicant":
             navigate.push("/applicant/applications");
@@ -170,7 +172,10 @@ const LoginModal = ({
             )}
           </div>
 
-          <div className="text-secondaryText font-medium  underline mb-10">
+          <div
+            onClick={openForgotPassword}
+            className="text-secondaryText font-medium  underline mb-10"
+          >
             Forgot password?
           </div>
           <button

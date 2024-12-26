@@ -261,7 +261,6 @@ const Page = () => {
         />
         <RemoveTradeFromSectorModal
           tradeId={selectedTrade?.trade?.uuid || ""}
-          windowId={selectedTrade?.theWindow.uuid || ""}
           closeModal={() => {
             fetchTrades();
             closeRemoveTrade();
