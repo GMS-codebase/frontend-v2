@@ -300,8 +300,8 @@ const Page = () => {
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 p-4">
       <h2 className="text-2xl font-bold mb-4">Minutes</h2>
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[25rem]">
+      <div className="w-full lg:flex justify-between items-center p-4">
+        <div className="relative lg:w-[25rem] w-full">
           <span className="absolute top-4 left-2">
             <BiSearch size={25} />
           </span>
@@ -350,7 +350,6 @@ const Page = () => {
             noDataMessage="No Approved contract negotiation"
           />
         </Tabs.Panel>
-
         <Tabs.Panel value="rejected">
           <h1 className="text-base p-4 font-bold">
             Rejected contract negotiations

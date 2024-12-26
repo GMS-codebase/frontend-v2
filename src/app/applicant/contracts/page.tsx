@@ -10,7 +10,8 @@ import { useSelector } from "react-redux";
 import { unauthorizedApi } from "@/utils/api";
 import { Menu, Select, Tabs } from "@mantine/core";
 import { CiEdit, CiSearch } from "react-icons/ci";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const Page = () => {
   const [isOpenTrade, { open, close }] = useDisclosure(false);
@@ -165,6 +166,20 @@ const Page = () => {
       ),
     },
   ];
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -200, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 200, behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="w-full flex flex-col mb-20 pb-10">
       <div className="w-full overflow-auto lg:flex justify-between items-center p-4">
@@ -180,17 +195,36 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-       <div className="flex gap-3 lg:flex-row lg:items-center">
-    <FilterDropDown placeholderText="Filter By Call" data={["call 1"]} />
-    <FilterDropDown
-      placeholderText="Filter By Sector"
-      data={["ICT and innovations"]}
-    />
-    <FilterDropDown
-      placeholderText="Filter By Trade"
-      data={["Manufacturing"]}
-    />
-  </div>
+   <div className="relative flex lg:w-[80%] w-full overflow-auto">
+      <button
+        className="lg:hidden absolute left-0 top-1/2 transform -translate-y-1/2 p-2 rounded-full z-10 bg-white shadow-md"
+        onClick={scrollLeft}
+      >
+        <FiChevronLeft className="w-6 h-6 text-gray-700" />
+      </button>
+
+      <div
+        ref={scrollContainerRef}
+        className="flex w-full gap-3 lg:flex-row lg:items-center overflow-auto scroll-smooth"
+      >
+        <FilterDropDown placeholderText="Filter By Call" data={["call 1"]} />
+        <FilterDropDown
+          placeholderText="Filter By Sector"
+          data={["ICT and innovations"]}
+        />
+        <FilterDropDown
+          placeholderText="Filter By Trade"
+          data={["Manufacturing"]}
+        />
+      </div>
+
+      <button
+        className="lg:hidden absolute right-0 top-1/2 transform -translate-y-1/2 p-2 rounded-full z-10 bg-white shadow-md"
+        onClick={scrollRight}
+      >
+        <FiChevronRight className="w-6 h-6 text-gray-700" />
+      </button>
+    </div>
       </div>
       <Tabs defaultValue="contracts">
         <Tabs.List className="w-auto float-end my-6 mr-5">
