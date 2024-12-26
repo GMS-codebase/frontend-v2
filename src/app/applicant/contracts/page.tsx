@@ -10,9 +10,10 @@ import { useSelector } from "react-redux";
 import { unauthorizedApi } from "@/utils/api";
 import { Menu, Select, Tabs } from "@mantine/core";
 import { CiEdit, CiSearch } from "react-icons/ci";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const Page = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
