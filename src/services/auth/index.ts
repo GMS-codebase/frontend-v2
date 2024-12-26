@@ -38,6 +38,24 @@ class AuthService {
     }
   }
 
+  async requestReset(email: string) {
+    try {
+      await unauthorizedApi.post("/auth/forgot-password", {
+        email,
+      });
+      notifications.show({
+        title: "Reset password email sent successfully",
+        message: "Check your email for the reset password link",
+        color: "green",
+      });
+    } catch (error: any) {
+      notifications.show({
+        title: "Error requesting to reset password  ",
+        message: error?.response?.data?.message,
+        color: "red",
+      });
+    }
+  }
   async setPassword(
     data: SetPasswordForm,
     token: string,

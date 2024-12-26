@@ -10,6 +10,8 @@ import {
   GET_MY_APPLICATIONS_ERROR,
   GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
   GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOTIATION_SUCCESS,
+  GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING,
+  GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOTIATION_LOADING,
 } from "@/actions/ApplicationsActions";
 import { Application } from "@/types";
 
@@ -20,7 +22,10 @@ const initialState = {
   applicationsForMinuteNegotiation: [],
   error: null,
   isError: false,
-  loading: false,
+  loading: true,
+  myApplicationsLoading: true,
+  applicationsReadyForContractSigningLoading: true,
+  applicationsReadyForMinuteNegotiationLoading: true,
 };
 
 type Action = {
@@ -34,10 +39,25 @@ export default function ApplicationsReducer(
 ) {
   switch (action.type) {
     case GET_APPLICATIONS_LOADING:
-    case GET_MY_APPLICATIONS_LOADING:
       return {
         ...state,
         loading: true,
+      };
+    case GET_MY_APPLICATIONS_LOADING:
+      return {
+        ...state,
+        myLoading: true,
+      };
+    case GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING:
+      return {
+        ...state,
+        applicationsReadyForContractSigningLoading: true,
+      };
+
+    case GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOTIATION_LOADING:
+      return {
+        ...state,
+        applicationsReadyForMinuteNegotiationLoading: true,
       };
 
     case GET_APPLICATIONS_SUCCESS:
@@ -49,20 +69,20 @@ export default function ApplicationsReducer(
     case GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS:
       return {
         ...state,
-        loading: false,
+        applicationsReadyForContractSigningLoading: false,
         applicationsForContractSigning: action.payload,
       };
     case GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOTIATION_SUCCESS:
       return {
         ...state,
-        loading: false,
+        applicationsReadyForMinuteNegotiationLoading: false,
         GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOCIATION_SUCCESS:
           action.payload,
       };
     case GET_MY_APPLICATIONS_SUCCESS:
       return {
         ...state,
-        loading: false,
+        myApplicationsLoading: false,
         myApplications: action.payload,
       };
 

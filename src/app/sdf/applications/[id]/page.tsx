@@ -18,7 +18,9 @@ import { useDisclosure } from "@mantine/hooks";
 import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
-import { getApplications, handleDownloadFile } from "@/utils/funcs";
+import { getApplications, handleDownloadFile, handleViewFile } from "@/utils/funcs";
+import Form from "@/components/forms/Form";
+import { ApplicationStage } from "@/types/application";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
@@ -54,200 +56,7 @@ const Page = () => {
     "Evaluation" | "Due Diligence"
   >();
   const dispatch = useDispatch();
-  const [currentComponent, setCurrentComponent] = useState<
-    "Project" | "IndicativeBudget"
-  >("Project");
-  const [properties, setProperties] = useState({
-    isDataEditable: false,
-    isCommented: false,
-  });
-  const goToBudget = () => {
-    setCurrentComponent("IndicativeBudget");
-  };
-  const [commentsData, setCommentsData] = useState<any>({
-    titleComment: application?.projectFunding?.titleComment || "",
-    activitiesComment: application?.projectFunding?.activitiesComment || "",
-    readinessExecuteComment:
-      application?.projectFunding?.readinessExecuteComment || "",
-    roleComment: application?.projectFunding?.roleComment || "",
-    institutionComment: application?.projectFunding?.institutionComment || "",
-    trainingManualComment:
-      application?.projectFunding?.trainingManualComment || "",
-    trainingEquipmentComment:
-      application?.projectFunding?.trainingEquipmentComment || "",
-    identificationEmployeeComment:
-      application?.projectFunding?.identificationEmployeeComment || "",
-    staffComment: application?.projectFunding?.staffComment || "",
-    sustainabilityComment:
-      application?.projectFunding?.sustainabilityComment || "",
-    previousFinancialReportComment:
-      application?.projectFunding?.previousFinancialReportComment || "",
-    trainingPremisesComment:
-      application?.projectFunding?.trainingPremisesComment || "",
-    contributionFromApplicantComment:
-      application?.projectFunding?.contributionFromApplicantComment || "",
-    recruitmentTrainerComment:
-      application?.projectFunding?.recruitmentTrainerComment || "",
-    MOUsAttachmentComment:
-      application?.projectFunding?.MOUsAttachmentComment || "",
-    premisesAttachmentComment:
-      application?.projectFunding?.premisesAttachmentComment || "",
-    identificationMemberComment:
-      application?.projectFunding?.identificationMemberComment || "",
-    assessmentEquipmentComment:
-      application?.projectFunding?.assessmentEquipmentComment || "",
-    recruitmentCandidatesNumberComment:
-      application?.projectFunding?.recruitmentCandidatesNumberComment || "",
-    assessorsAndFacilitatorsComment:
-      application?.projectFunding?.assessorsAndFacilitatorsComment || "",
-    budgetSummaryAttachmentComment:
-      application?.budget?.budgetSummaryAttachmentComment || "",
-    contributionComment: application?.budget?.contributionComment || "",
-    assessmentComment: application?.projectFunding?.assessmentComment || "",
-    budgetLinesComment: application?.budget?.budgetLinesComment || "",
-  });
 
-  useEffect(() => {
-    if (application) {
-      const hasComments = Object.entries(application.projectFunding || {}).some(
-        ([key, value]) =>
-          key.includes("Comment") && value != null && value !== "",
-      );
-      setProperties({
-        isDataEditable:
-          application.isSubmitted || application.stages.length === 0,
-        isCommented: hasComments,
-      });
-    }
-  }, [application]);
-  const renderComponent = () => {
-    switch (currentComponent) {
-      case "Project":
-        return (
-          <FundingQuestions
-            application={application}
-            // showComments={application?.currentStage !== "SUBMITTED"}
-            data={application?.projectFunding}
-            setComments={!properties.isCommented ? setCommentsData : undefined}
-            comments={commentsData}
-            goToBudget={goToBudget}
-          />
-        );
-      case "IndicativeBudget":
-        return (
-          <BudgetQuestions
-            application={application}
-            // showComments={application?.currentStage !== "SUBMITTED"}
-            data={application?.budget}
-            comments={commentsData}
-            setComments={!properties.isCommented ? setCommentsData : undefined}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
-  const validateComments = async (): Promise<string | null> => {
-    // Common validation messages for comments
-    const commentMessages = {
-      titleComment: "The title comment is required.",
-      activitiesComment:
-        "Please provide comments on the activities and expected outcomes.",
-      readinessExecuteComment:
-        "Comments indicating readiness for execution are required.",
-      roleComment: "Specify comments regarding the role in the project.",
-      identificationEmployeeComment:
-        "Comments on employee identification details are mandatory.",
-      trainingProcessComment:
-        "A description of the training process is required in comments.",
-      trainingManualAttachmentComment:
-        "Please upload comments on the training manual attachment.",
-      trainingEquipmentComment:
-        "Comments on training equipment details are required.",
-      trainingEquipmentAttachmentComment:
-        "Attach comments regarding the equipment documentation.",
-      assessmentProcessComment:
-        "A description of the assessment process is required in comments.",
-      assessmentEquipmentComment:
-        "Comments on assessment equipment details are required.",
-      assessmentEquipmentAttachmentComment:
-        "Attach comments regarding the equipment documentation.",
-      staffComment: "Comments regarding staff information are required.",
-      staffAttachmentComment:
-        "Upload comments on the staff-related attachment.",
-      sustainabilityComment: "Provide comments on the sustainability plan.",
-      previousFinancialReportComment:
-        "Upload comments on the previous financial report.",
-      contributionFromApplicantComment:
-        "Specify comments regarding the applicant’s contribution.",
-      budgetAttachmentComment: "Upload comments on the budget attachment.",
-    };
-
-    if (!commentsData.titleComment) return commentMessages.titleComment;
-    if (!commentsData.activitiesComment)
-      return commentMessages.activitiesComment;
-    if (!commentsData.readinessExecuteComment)
-      return commentMessages.readinessExecuteComment;
-    if (!commentsData.roleComment) return commentMessages.roleComment;
-    if (!commentsData.identificationEmployeeComment)
-      return commentMessages.identificationEmployeeComment;
-    if (!commentsData.sustainabilityComment)
-      return commentMessages.sustainabilityComment;
-    if (!commentsData.staffComment) return commentMessages.staffComment;
-    if (!commentsData.previousFinancialReportComment)
-      return commentMessages.previousFinancialReportComment;
-    if (!commentsData.contributionFromApplicantComment)
-      return commentMessages.contributionFromApplicantComment;
-
-    return null;
-  };
-
-  const handleAddComments = async () => {
-    const validationError = await validateComments();
-    if (validationError) {
-      notifications.show({
-        message: validationError,
-        color: "red",
-      });
-      return;
-    }
-    setLoading(true);
-    try {
-      if (
-        // !commentsData.previousFinancialReportComment ||
-        // !commentsData.activitiesComment ||
-        // !commentsData.assessmentEquipmentComment ||
-        // !commentsData.budgetSummaryAttachmentComment ||
-        // !commentsData.contributionComment ||
-        // !commentsData.contributionFromApplicantComment ||
-        // !commentsData.identificationEmployeeComment ||
-        // !commentsData.identificationMemberComment ||
-        !commentsData.titleComment
-        // !commentsData.identificationEmployeeComment ||
-        // !commentsData.institutionComment
-      ) {
-        notifications.show({
-          message: "Please fill all comments data!",
-          color: "red",
-          duration: 10000,
-        });
-        return setLoading(false);
-      }
-      await authorizedApi.patch(`/application/comment/${id}`, commentsData);
-      notifications.show({
-        message: "Comments Added Successfully!",
-        color: "blue",
-      });
-      refetch();
-    } catch (err: any) {
-      notifications.show({
-        message: err.response?.data?.message ?? "Failed to submit the form!",
-        color: "red",
-      });
-    }
-    setLoading(false);
-  };
   const refetch = async () => {
     setDecisionsLoading(true);
     try {
@@ -256,6 +65,20 @@ const Page = () => {
       setDecisionsLoading(false);
     }
   };
+  const forms = useSelector((state: any) => state.forms);
+
+  const form = forms.forms.find((form: any) => {
+    const foundSubWindow = Object.keys(
+      JSON.parse(application?.call.subwindowForms || "{}"),
+    ).find((key: string) => key === application?.subWindow.uuid);
+
+    return (
+      form.uuid ===
+      JSON.parse(application?.call.subwindowForms || "{}")[
+        foundSubWindow as any
+      ]
+    );
+  });
 
   const [downloading, setDownloading] = useState(false);
 
@@ -303,14 +126,14 @@ const Page = () => {
                 notifications.show({
                   title: "Download Successful",
                   message: "The file has been downloaded successfully.",
-                  type: "success",
+                  color: "green",
                 });
               } catch (error) {
                 notifications.show({
                   title: "Download Failed",
                   message:
                     "There was an issue downloading the file. Please try again.",
-                  type: "error",
+                  color: "red",
                 });
               } finally {
                 setDownloading(false);
@@ -400,86 +223,61 @@ const Page = () => {
               </p>
             </div>
 
-            <div
-              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
-              onClick={() =>
-                handleDownloadFile(
-                  application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates",
-                )
-              }
-            >
-              {downloading ? (
-                <p>Loading ....</p>
-              ) : (
-                <>
-                  <span>
-                    <SolarPen2Bold />
-                  </span>
-                  <div>Download Certificate</div>
-                </>
-              )}
+            <div className="flex items-center gap-2">
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleViewFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates"
+                  )
+                }
+              >
+                <span>
+                  <SolarPen2Bold />
+                </span>
+                <div>View Certificate</div>
+              </div>
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleDownloadFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates"
+                  )
+                }
+              >
+                {downloading ? (
+                  <p>Loading ....</p>
+                ) : (
+                  <>
+                    <span>
+                      <SolarPen2Bold />
+                    </span>
+                    <div>Download Certificate</div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
-
-        {/* <div className="flex flex-col gap-6 mt-6">
-                  <div className="flex px-4 py-2 gap-2 bg-[#005DE9] rounded-full text-white items-center justify-start w-fit">
-                      <span>
-                          <SolarFolder2Bold />
-                      </span>
-                      <div className="">Apply for Appeal</div>
-                  </div>
-              </div> */}
       </div>
       <div className="flex gap-6">
         <div
-          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 p-5`}
+          className={`flex  ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 `}
         >
           <div className="flex flex-col gap-4 w-full">
-            <div className="font-semibold text-2xl">Questions and answers</div>
-            <div className="flex font-semibold">
-              <div
-                onClick={() => setCurrentComponent("Project")}
-                className={`cursor-pointer w-1/2 transition-all duration-200 ${
-                  currentComponent === "Project"
-                    ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
-                    : ""
-                } py-2.5  flex items-center justify-center`}
-              >
-                Project Funding Application
-              </div>
-              <div
-                onClick={() => setCurrentComponent("IndicativeBudget")}
-                className={`cursor-pointer w-1/2 transition-all duration-200  ${
-                  currentComponent === "IndicativeBudget"
-                    ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
-                    : ""
-                } py-2.5  flex items-center justify-center`}
-              >
-                Indicative Budget
-              </div>
-            </div>
-            <div className="mt-4 w-full">{renderComponent()}</div>
-            {!properties.isCommented &&
-              application?.currentStage !== "SUBMITTED" && (
-                <div className="w-full flex justify-center mt-4 space-x-4">
-                  <button
-                    type="button"
-                    className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleAddComments}
-                    disabled={loading}
-                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  >
-                    {loading ? "Loading..." : "Save Comments"}
-                  </button>
-                </div>
-              )}
+            {form && (
+              <Form
+                mode="viewing"
+                answers={JSON.parse(application.answers)}
+                comments={JSON.parse(application.comments)}
+                formData={{
+                  name: form?.name,
+                  qns: JSON.parse(form?.qns || "{}"),
+                }}
+              />
+            )}
           </div>
         </div>
         {decisionsLoading ? (
@@ -493,10 +291,18 @@ const Page = () => {
             <h2 className="font-bold">Decision</h2>
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Evaluation Stage</h3>
-              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                {application?.currentStage === "EVALUATION"
-                  ? "PENDING"
-                  : "APPROVED"}
+              <div
+                className={`font-medium  ${
+                  application?.stages?.find(
+                    (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+                  )?.status == "APPROVED"
+                    ? "bg-[#4BC500] text-[#4BC500]"
+                    : "bg-red-600 text-red-600"
+                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+              >
+                {application?.stages?.find(
+                  (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+                )?.status ?? "PENDING"}
               </div>
               {application?.evaluationDecisions.length < 3 &&
                 !application?.evaluationDecisions.find(
@@ -528,24 +334,24 @@ const Page = () => {
                 </div>
               )}
             </div>
-            {application?.currentStage !== "EVALUATION" &&
-              stagesArr?.includes("DUE_DILIGENCY") && (
+            {application?.currentStage !== ApplicationStage.EVALUATION &&
+              stagesArr?.includes(ApplicationStage.DUE_DILIGENCY) && (
                 <div className="flex flex-col gap-2">
                   <h3 className="font-bold">Due Diligence Stage</h3>
                   <div
                     className={`font-medium  ${
-                      application?.status === "APPROVED" ||
-                      application?.currentStage !== "EVALUATION"
+                      application?.stages?.find(
+                        (stage: any) =>
+                          stage.stage === ApplicationStage.DUE_DILIGENCY,
+                      )?.status == "APPROVED"
                         ? "bg-[#4BC500] text-[#4BC500]"
-                        : application?.status === "PENDING"
-                          ? "bg-red-600 text-red-600"
-                          : ""
+                        : "bg-red-600 text-red-600"
                     } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
                   >
-                    {application?.currentStage !== "EVALUATION" &&
-                    application?.currentStage !== "DUE_DILIGENCY"
-                      ? "APPROVED"
-                      : application?.status}
+                    {application?.stages?.find(
+                      (stage: any) =>
+                        stage.stage === ApplicationStage.DUE_DILIGENCY,
+                    )?.status ?? "PENDING"}
                   </div>
                   {application?.duediligencyDecisions?.length < 4 &&
                     !application?.duediligencyDecisions.find(

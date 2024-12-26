@@ -13,37 +13,44 @@ jobs:
       # Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
-
-      # Set Environment Variables
-      - name: Set Environment Variables
-        run: |
-          echo "Test branch detected"
-          chmod +x ./scripts/create_test_env.sh
-          if [ ! -f ./scripts/create_test_env.sh ]; then
-            echo "Script not found!"; exit 1;
-          fi
-          bash ./scripts/create_test_env.sh
-          echo "FRONTEND_DIR=frontend-v2-testing" >> $GITHUB_ENV
+        with:
+          path: test
 
       # Verify Current Directory
       - name: Verify Current Directory
         run: |
           echo "Current Directory: $(pwd)"
-          ls -la
+          ls -la ./test
+
+      # Set Environment Variables
+      - name: Set Environment Variables
+        run: |
+          cd test
+          echo "Test branch detected"
+          chmod +x ./test/scripts/create_test_env.sh
+          if [ ! -f ./test/scripts/create_test_env.sh ]; then
+            echo "Script not found! Exiting."; exit 1;
+          fi
+          bash ./test/scripts/create_test_env.sh
+          echo "FRONTEND_DIR=frontend-v2/testing" >> $GITHUB_ENV
+          echo "PORT=5700" >> $GITHUB_ENV
 
       # Verify Git Status
       - name: Verify Git Status
         run: |
+          cd test
           git status
 
       # Install dependencies and build the application
       - name: Install dependencies and build the application
         run: |
+          cd test
           npm install --force
           npm run build
-          
+
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-          pm2 restart gms-testing || pm2 start npm --name "gms-testing" -- start
+          cd test
+          pm2 restart gms-testing || pm2 start ecosystem.config.js --env .env.local
           pm2 save

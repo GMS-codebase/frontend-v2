@@ -22,6 +22,9 @@ import {
   WINDOW_STATUS,
 } from "@/utils/enums";
 import { tradesData } from "@/utils/constants/dummy";
+import { MdPlusOne } from "react-icons/md";
+import { FaEdit, FaPlus } from "react-icons/fa";
+import { IoTrash } from "react-icons/io5";
 
 const AddEditCall = ({
   isOpenAddEditCall,
@@ -36,9 +39,15 @@ const AddEditCall = ({
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<any>();
   const [selectedWindows, setSelectedWindows] = useState<any>([]);
-  const [selectedForm, setSelectedForm] = useState<any>("");
+  const [selectedSub, setSelectedSub] = useState<any>();
+  const [selectedForm, setSelectedForm] = useState<any>();
+  const [selectedSubWindowsForms, setSelectedSubWindowsForms] = useState<any>(
+    {},
+  );
+  const [attachment, setAttachment] = useState<File | null>(null);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
+  const [selectedSectorsNames, setSelectedSectorsNames] = useState<any>([]);
   const dispatch = useDispatch();
   const [formData, setFormData] = useState<Partial<Call>>({
     title: "",
@@ -47,7 +56,6 @@ const AddEditCall = ({
     endDate: "",
     appealDays: "",
     windows: [],
-    subWindows: [],
     sectors: [],
     attachment: null,
   });
@@ -67,10 +75,6 @@ const AddEditCall = ({
         label: window.title,
       })) ?? [];
 
-  const FormsData = forms.forms.map((form: any) => ({
-    label: form.name,
-    value: form.uuid,
-  }));
   const getSubWindowsData = () => {
     const subWindowData =
       windows?.windows
@@ -95,12 +99,17 @@ const AddEditCall = ({
     return subWindowData;
   };
 
+  const FormsData = forms.forms.map((form: any) => ({
+    value: form.uuid,
+    label: form.name,
+  }));
+
   const getSectorData = () => {
     const sectorData = windows?.windows?.flatMap(
       (window: any) =>
         window.subWindows
           ?.filter((subWindow: any) =>
-            selectedSubWindows.includes(subWindow.uuid),
+            Object.keys(selectedSubWindowsForms).includes(subWindow.uuid),
           )
           .flatMap(
             (subWindow: any) =>
@@ -117,8 +126,9 @@ const AddEditCall = ({
                   );
                   return matchingSector
                     ? {
-                        value: matchingSector.uuid,
-                        label: matchingSector.name,
+                        value: matchingSector.uuid + "@" + subWindow.uuid,
+                        label:
+                          matchingSector.name + "(" + subWindow.title + ")",
                       }
                     : null;
                 })
@@ -134,11 +144,11 @@ const AddEditCall = ({
     if (defaultData) {
       setFormData(defaultData);
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
-      setSelectedSubWindows(
-        defaultData.subWindows.map((item: any) => item.uuid),
+      setSelectedSubWindowsForms(
+        JSON.parse(defaultData.subwindowForms || "{}"),
       );
-      setSelectedForm(defaultData.form as any);
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
+      setSelectedSectorsNames(defaultData.sectors.map((item: any) => item.name));
     }
   }, [defaultData]);
   const nextStep = () =>
@@ -156,11 +166,6 @@ const AddEditCall = ({
 
   const handleSubmit = () => {
     setLoading(true);
-    setFormData({
-      ...formData,
-      sectors: selectedSectors,
-      windows: selectedWindows,
-    });
     const submitData = new FormData();
     submitData.append("title", formData?.title as any);
     submitData.append("description", formData?.description as any);
@@ -168,11 +173,14 @@ const AddEditCall = ({
     submitData.append("applicationStartDate", formData?.startDate as any);
     submitData.append("applicationEndDate", formData?.endDate as any);
     submitData.append("window", JSON.stringify(selectedWindows));
-    submitData.append("form", selectedForm);
-    submitData.append("sector", JSON.stringify(selectedSectors));
-    submitData.append("subWindows", JSON.stringify(selectedSubWindows));
-    if (formData?.attachment) {
-      submitData?.append("attachment", formData?.attachment);
+    const updatedSectors = selectedSectors.map((s: string) => s.split("@")[0]);
+    submitData.append("sector", JSON.stringify(updatedSectors));
+    submitData.append(
+      "subWindowForms",
+      JSON.stringify(selectedSubWindowsForms),
+    );
+    if (attachment) {
+      submitData?.append("attachment", attachment);
     }
 
     const apiUrl = defaultData
@@ -203,10 +211,10 @@ const AddEditCall = ({
               endDate: "",
               appealDays: "",
               windows: [],
-              subWindows: [],
               sectors: [],
               attachment: null,
             });
+            getCalls(dispatch)
             closeAddEditCall();
           })
           .catch((err) => {
@@ -239,7 +247,6 @@ const AddEditCall = ({
               endDate: "",
               appealDays: "",
               windows: [],
-              subWindows: [],
               sectors: [],
               attachment: null,
             });
@@ -272,9 +279,9 @@ const AddEditCall = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="w-full flex flex-col items-center ">
-          <h1 className="text-2xl font-extrabold">Create Call</h1>
+          <h1 className="text-2xl font-extrabold">{defaultData ? "Update Call" : "Create Call"}</h1>
           <h2 className="text-[#000F2369] text-lg font-medium">
-            Provide your call details to create a new call.
+            Provide your call details to {defaultData ? "update " : "create a new "} call.
           </h2>
         </div>
         <div className="w-full flex flex-col items-center mt-4  px-[5%]">
@@ -341,7 +348,7 @@ const AddEditCall = ({
                       htmlFor="attachment"
                       className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
                     >
-                      {!formData.attachment ? (
+                      {!attachment ? (
                         <>
                           <SolarUploadBold className="text-blue-500 text-3xl" />
                           <div className="text-center">
@@ -361,9 +368,9 @@ const AddEditCall = ({
                               File Uploaded
                             </p>
                             <p className="text-xs text-gray-400">
-                              {formData?.attachment instanceof File
-                                ? formData.attachment.name
-                                : formData?.attachment}
+                              {attachment instanceof File
+                                ? attachment.name
+                                : attachment}
                             </p>
                           </div>
                         </>
@@ -374,10 +381,10 @@ const AddEditCall = ({
                       type="file"
                       name="attachment"
                       accept=".pdf, .doc, .docx"
-                      onChange={handleChange}
+                      onChange={(e) => setAttachment(e.target.files?.[0] || null)}
                       style={{ display: "none" }}
                       className="content-none"
-                      required
+                      required={!defaultData}
                     />
                   </div>
                 </div>
@@ -540,30 +547,146 @@ const AddEditCall = ({
                   </div>
                 </div>
 
-                <div className="">
-                  <label
-                    htmlFor="subWindows"
-                    className="block text-xs font-bold text-gray-700"
-                  >
-                    Select sub-windows
-                  </label>
-                  <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                    <span className="absolute left-2 top-3 text-black text-lg">
-                      <SolarSuitcaseLinear />
-                    </span>
-                    <MultiSelect
-                      name="subWindows"
-                      onChange={(value) => {
-                        setSelectedSubWindows(value);
-                        setSelectedSectors([]);
-                      }}
-                      data={MultiSubWindowData || []}
-                      value={selectedSubWindows}
-                      placeholder="Select or type in a sub-window"
-                      required
-                    />
+                <div className="flex flex-row gap-4 my-2 items-end">
+                  <div className="flex-grow">
+                    <label
+                      htmlFor="subWindow"
+                      className="block text-xs font-bold text-gray-700"
+                    >
+                      Select sub-windows
+                    </label>
+                    <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                      <span className="absolute left-2 top-3 text-black text-lg">
+                        <SolarSuitcaseLinear />
+                      </span>
+                      <Select
+                        name="subWindow"
+                        onChange={(value) => {
+                          setSelectedSub(value);
+                        }}
+                        data={
+                          MultiSubWindowData.filter(
+                            (sub: any) =>
+                              Object.keys(selectedSubWindowsForms).find(
+                                (k) => k == sub.value,
+                              ) == null,
+                          ) || []
+                        }
+                        value={selectedSub}
+                        placeholder="Select or type in a sub-window"
+                        required
+                      />
+                    </div>
                   </div>
+
+                  <div className="flex-grow">
+                    <label
+                      htmlFor="form"
+                      className="block text-xs font-bold text-gray-700"
+                    >
+                      Select form for the sub window
+                    </label>
+                    <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                      <span className="absolute left-2 top-3 text-black text-lg">
+                        <SolarSuitcaseLinear />
+                      </span>
+                      <Select
+                        name="form"
+                        onChange={(value) => {
+                          setSelectedForm(value);
+                        }}
+                        data={FormsData || []}
+                        value={selectedForm}
+                        placeholder="Select or type in a sub-window"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    className="bg-primary py-2 px-5  rounded-2xl h-fit text-white"
+                    onClick={() => {
+                      if (selectedSub && selectedForm) {
+                        setSelectedSubWindowsForms((prev: any) => ({
+                          ...prev,
+                          [selectedSub]: selectedForm,
+                        }));
+                        setSelectedForm(null);
+                        setSelectedSub(null);
+                        setSelectedSectors([]);
+                      }
+                    }}
+                  >
+                    Add
+                  </button>
                 </div>
+
+                {Object.keys(selectedSubWindowsForms).length > 0 && (
+                  <div className="my-2">
+                    <table className="min-w-full table-auto border-collapse border border-gray-300">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="px-4 py-2 text-left">Sub-Window</th>
+                          <th className="px-4 py-2 text-left">Form</th>
+                          <th className="px-4 py-2 text-left">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.entries(selectedSubWindowsForms).map(
+                          ([subWindow, form]) => (
+                            <tr key={subWindow} className="border-b">
+                              <td className="px-4 py-2">
+                                {
+                                  MultiSubWindowData.find(
+                                    (sub: any) => sub.value == subWindow,
+                                  )?.label
+                                }
+                              </td>
+                              <td className="px-4 py-2">
+                                {
+                                  FormsData.find((fm: any) => fm.value == form)
+                                    ?.label
+                                }
+                              </td>
+                              <td className="flex items-center gap-2 px-4 py-2">
+                                <div
+                                  className="text-primary"
+                                  onClick={() => {
+                                    setSelectedForm(form);
+                                    setSelectedSub(subWindow);
+                                    setSelectedSubWindowsForms(
+                                      (prev: { [key: string]: string }) => {
+                                        const updated = { ...prev };
+                                        delete updated[subWindow];
+                                        return updated;
+                                      },
+                                    );
+                                  }}
+                                >
+                                  <FaEdit className="w-5 h-5" />
+                                </div>
+                                <div
+                                  className="text-red-500"
+                                  onClick={() =>
+                                    setSelectedSubWindowsForms(
+                                      (prev: { [key: string]: string }) => {
+                                        const updated = { ...prev };
+                                        delete updated[subWindow];
+                                        return updated;
+                                      },
+                                    )
+                                  }
+                                >
+                                  <IoTrash className="w-5 h-5" />
+                                </div>
+                              </td>
+                            </tr>
+                          ),
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
 
                 <div className="">
                   <label
@@ -578,33 +701,13 @@ const AddEditCall = ({
                     </span>
                     <MultiSelect
                       name="sectors"
-                      onChange={setSelectedSectors}
-                      data={MultiSectorData || []}
-                      value={selectedSectors}
-                      placeholder="Select or type in a sector"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="">
-                  <label
-                    htmlFor="windows"
-                    className="block text-xs font-bold text-gray-700"
-                  >
-                    Select Questions
-                  </label>
-                  <div className="mt-1 pl-6 relative block w-full bg-[#000F230A] py-1 rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                    <span className="absolute left-2 top-3 text-black text-lg">
-                      <SolarSuitcaseLinear />
-                    </span>
-                    <Select
-                      name="questions"
                       onChange={(value) => {
-                        setSelectedForm(value);
+                        setSelectedSectors(value);
+                        setSelectedSectorsNames(value);
                       }}
-                      data={FormsData || []}
-                      value={selectedForm}
-                      placeholder="Select or type in a given form of questions"
+                      data={MultiSectorData || []}
+                      value={selectedSectorsNames}
+                      placeholder="Select or type in a sector"
                       required
                     />
                   </div>

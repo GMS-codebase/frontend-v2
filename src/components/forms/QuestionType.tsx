@@ -3,15 +3,29 @@ import QuestionsPage from "./QuestionsPage"; // Import the QuestionsPage compone
 import { QuestionForm } from "@/types/questions-form";
 
 interface QuestionTypeProps {
+  mode: "creating" | "viewing" | "answering" | "commenting";
   questionType: string;
   formData: QuestionForm;
   onChange: (updatedFormData: any) => void;
+  answers?: { [key: string]: any };
+  setAnswers?: (key: string, value: any) => void;
+  comments?: { [key: string]: any };
+  setComments?: (key: string, value: any) => void;
+  goToNext?: () => void;
+  goToPrev?: () => void;
 }
 
 const QuestionType: React.FC<QuestionTypeProps> = ({
+  mode,
   questionType,
   formData,
   onChange,
+  answers,
+  setAnswers,
+  comments,
+  setComments,
+  goToNext,
+  goToPrev
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -24,12 +38,16 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
   const handleNextPage = () => {
     if (currentPage < pages.length - 1) {
       setCurrentPage((prev) => prev + 1);
+    } else {
+      goToNext && goToNext();
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 0) {
       setCurrentPage((prev) => prev - 1);
+    }else {
+      goToPrev && goToPrev();
     }
   };
 
@@ -39,44 +57,41 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
     };
 
     const updatedFormData = {
-      ...formData,
-      [questionType]: {
-        ...formData[questionType],
-        pages: [...pages, newPage],
-      },
+      ...formData[questionType],
+      pages: [...pages, newPage],
     };
 
     onChange(updatedFormData);
+    setCurrentPage(formData[questionType].pages.length - 1);
   };
 
   return (
-    <div className="p-4 border rounded-lg bg-gray-100 mb-4">
-      <h3 className="text-lg font-semibold mb-2">
-        Question Type: {questionType}
-      </h3>
+    <div>
       <QuestionsPage
+        onAddPage={handleAddPage}
+        answers={answers}
+        setAnswers={setAnswers}
+        comments={comments}
+        setComments={setComments}
+        mode={mode}
         pageIndex={currentPage}
         questionType={questionType}
         pageQuestions={pages[currentPage]?.questions}
         onChange={(updatedQuestions) => {
           const updatedPages = [...pages];
           updatedPages[currentPage].questions = updatedQuestions;
-          const updatedFormData = {
-            ...formData,
-            [questionType]: {
-              ...formData[questionType],
-              pages: updatedPages,
-            },
-          };
-          onChange(updatedFormData); // Update the form data from CreateForm
+          onChange({
+            ...formData[questionType],
+            pages: updatedPages,
+          });
         }}
       />{" "}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center gap-2 justify-end mb-4">
         <button
           onClick={handlePrevPage}
-          disabled={currentPage === 0}
+          disabled={currentPage === 0 && !goToPrev}
           className={`px-4 py-2 rounded-full ${
-            currentPage === 0
+            currentPage === 0 && !goToPrev
               ? "bg-gray-300 cursor-not-allowed"
               : "bg-primary text-white"
           }`}
@@ -88,19 +103,23 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
           Page {currentPage + 1} of {pages.length}
         </span>
 
-        {currentPage === pages.length - 1 ? (
-          <button
-            onClick={handleAddPage}
-            className="px-4 py-2 bg-primary text-white rounded-full"
-          >
-            Add Page
-          </button>
+        {currentPage === pages.length - 1 && !goToNext ? (
+          <>
+            {mode === "creating" && (
+              <button
+                onClick={handleAddPage}
+                className="px-4 py-2 bg-primary text-white rounded-full"
+              >
+                Add Page
+              </button>
+            )}
+          </>
         ) : (
           <button
             onClick={handleNextPage}
-            disabled={currentPage === pages.length - 1}
+            disabled={currentPage === pages.length - 1 && !goToNext}
             className={`px-4 py-2 rounded-full ${
-              currentPage === pages.length - 1
+              currentPage === pages.length - 1 && !goToNext
                 ? "bg-gray-300 cursor-not-allowed"
                 : "bg-primary text-white"
             }`}

@@ -1,9 +1,11 @@
 import { authorizedApi } from "@/utils/api";
 import {
   getApplications,
+  getApplicationsForContractSigning,
   getApprovedMinutes,
   getContracts,
   getMinutes,
+  getNegotiatedMinutes,
   getRejectedMinutes,
   getUploadedMinutes,
 } from "@/utils/funcs";
@@ -58,10 +60,11 @@ const AddMinute: React.FC<AddMinuteProps> = ({
     }
 
     setLoading(true);
+
     const newData = {
       minute: formData.file,
-      applicantId: data?.applicant.uuid,
-      applicationId: data?.uuid,
+      applicantId: data?.applicant?.uuid ?? data?.application?.applicant?.uuid,
+      applicationId: data?.uuid ?? data?.application?.uuid,
     };
     const submitForm = new FormData();
     submitForm.append("attachment", newData.minute as Blob);
@@ -104,8 +107,10 @@ const AddMinute: React.FC<AddMinuteProps> = ({
       getUploadedMinutes(dispatch, "sdf");
       getApprovedMinutes(dispatch, "sdf");
       getRejectedMinutes(dispatch, "sdf");
+      getNegotiatedMinutes(dispatch, "sdf");
       getContracts(dispatch);
       getApplications(dispatch);
+      getApplicationsForContractSigning(dispatch);
       closeAddMinute();
     } catch (err: any) {
       notifications.show({

@@ -19,7 +19,7 @@ const AddSubWindowSector = ({
   isOpenAddSubWindowSector: boolean;
   closeAddSubWindowSector: () => void;
 }) => {
-  const { id } = useParams<{ id: string }>();
+  const { subWindowId } = useParams<{ subWindowId: string }>();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     sector: [] as string[],
@@ -38,6 +38,7 @@ const AddSubWindowSector = ({
 
   const validateForm = () => {
     const newErrors: any = {};
+    if (!formData.sector) newErrors.sector = "Sector is required";
     if (!formData.sector) newErrors.sector = "Sector is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -59,13 +60,13 @@ const AddSubWindowSector = ({
     if (!validateForm()) return;
     setLoading(true);
     try {
-      await authorizedApi.put(`/subwindow/${id}/assign-sector`, {
+      await authorizedApi.put(`/subwindow/${subWindowId}/assign-sector`, {
         sectorId: formData.sector,
       });
       // dispatch({
       //   type: ADD_TRADE_SECTOR_SUCCESS,
       //   payload: {
-      //     sectorId: id,
+      //     sectorId: subWindowId,
       //     sector: sectors.sectors.find((tr: any) => tr.uuid === sectorId),
       //   },
       // });

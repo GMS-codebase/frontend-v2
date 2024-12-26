@@ -16,7 +16,6 @@ import { useParams } from "next/navigation";
 import AddEditWindow from "@/components/Modals/windows/AddEditWindow";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import AddSubWindowSector from "@/components/Modals/windows/AddSubWindowSector";
-import { getWindows } from "@/utils/funcs";
 
 const Page = () => {
   const [
@@ -206,7 +205,7 @@ const Page = () => {
           isOpenAddEditWindowSubwindow={isAddEditSubWindow}
           closeAddEditWindowSubwindow={() => {
             closeAddEditSubWindow();
-            selectedSubWindow && setSelectedSubWindow(null);
+            setSelectedSubWindow(null);
           }}
           defaultData={selectedSubWindow}
         />
@@ -219,7 +218,7 @@ const Page = () => {
           type="subwindows"
           closeModal={() => {
             closeDeleteSubWindow();
-            selectedSubWindow && setSelectedSubWindow(null);
+            setSelectedSubWindow(null);
           }}
           id={selectedSubWindow?.uuid}
           isOpenModal={isDeleteSubWindow}

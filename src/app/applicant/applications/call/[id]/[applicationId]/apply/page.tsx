@@ -1,29 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Project7 from "@/components/ApplicantDetails/Project7";
-import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
-import Questions from "@/components/Application/Questions";
-import {
-  indicativeBudgetQuestions,
-  questions,
-} from "@/utils/constants/questions";
-import FundingQuestions from "@/components/Application/FundingQuestions";
-import { ApplicationQuestions } from "@/types/application";
-import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
-import { notifications } from "@mantine/notifications";
 import { IoIosSave } from "react-icons/io";
 import { useRouter } from "next/navigation";
-import { handleSubmit } from "@/utils/funcs";
+import { getMyApplications, handleSubmit } from "@/utils/funcs";
+import Form from "@/components/forms/Form";
+import { useDispatch } from "react-redux";
 
 const Page = () => {
   const router = useRouter();
-  const [currentComponent, setCurrentComponent] = useState<
-    "Project" | "IndicativeBudget"
-  >("Project");
-
+  const [answers, setAnswers] = useState<{ [key: string]: any }>({});
   const { id, applicationId } = useParams();
   const [loading, setLoading] = useState<any>();
   const [applicationLoading, setApplicationLoading] = useState(true);
@@ -45,157 +33,27 @@ const Page = () => {
   useEffect(() => {
     fetchApplication();
   }, [applicationId]);
-  const [data, setData] = useState<ApplicationQuestions>({
-    title: "",
-    activitiesAndOutcomes: "",
-    readinessExecute: "",
-    role: "",
-    institution: "",
-    trainingProcess: [],
-    trainingEquipment: [],
-    identificationEmployee: "",
-    staffs: [],
-    sustainability: "",
-    contributionFromApplicant: "",
-    recruitmentTrainerNumber: "",
-    identificationMember: "",
-    assessmentAndCertificationProcess: [],
-    assessmentEquipment: [],
-    recruitmentCandidatesNumber: "",
-    assessorsAndFacilitators: "",
-    contribution: "",
-    roleAttachment: undefined,
-    institutionAttachment: undefined,
-    premisesAttachment: undefined,
-    trainingManualAttachment: undefined,
-    trainingEquipmentAttachment: undefined,
-    previousFinancialReportAttachment: undefined,
-    MOUsAttachment: [],
-    assessmentEquipmentAttachment: undefined,
-    budgetSummaryAttachment: undefined,
-    budgetLines: [],
-    staffAttachment: "",
-  });
 
   useEffect(() => {
     if (application) {
-      setData((prevData) => ({
-        ...prevData,
-        title: application.projectFunding?.title || prevData?.title,
-        activitiesAndOutcomes:
-          application.projectFunding?.activitiesAndOutcomes ||
-          prevData.activitiesAndOutcomes,
-        readinessExecute:
-          application.projectFunding?.readinessExecute ||
-          prevData.readinessExecute,
-        role: application.projectFunding?.role || prevData.role,
-        institution:
-          application.projectFunding?.institution || prevData.institution,
-        sustainability:
-          application.projectFunding?.sustainability || prevData.sustainability,
-        recruitmentTrainerNumber:
-          application.projectFunding?.recruitmentTrainerNumber ||
-          prevData.recruitmentTrainerNumber,
-        identificationMember:
-          application.projectFunding?.identificationMember ||
-          prevData.identificationMember,
-        identificationEmployee:
-          application.projectFunding?.identificationEmployee ||
-          prevData.identificationEmployee,
-        assessorsAndFacilitators:
-          application.projectFunding?.assessorsAndFacilitators ||
-          prevData.assessorsAndFacilitators,
-        staffAttachment:
-          application.projectFunding?.staffAttachment ||
-          prevData.staffAttachment,
-        trainingManualAttachment:
-          application.projectFunding?.trainingManualAttachment ||
-          prevData.trainingManualAttachment,
-        trainingProcess:
-          application.projectFunding?.trainingProcess ||
-          prevData.trainingProcess,
-        trainingEquipment:
-          application.projectFunding?.trainingEquipment ||
-          prevData.trainingEquipment,
-        trainingEquipmentAttachment:
-          application.projectFunding?.trainingEquipmentAttachment ||
-          prevData.trainingEquipmentAttachment,
-        premisesAttachment:
-          application.projectFunding?.premisesAttachment ||
-          prevData.premisesAttachment,
-        assessmentAndCertificationProcess:
-          application.projectFunding?.assessmentAndCertificationProcess ||
-          prevData.assessmentAndCertificationProcess,
-        assessmentEquipment:
-          application.projectFunding?.assessmentEquipment ||
-          prevData.assessmentEquipment,
-        budgetSummaryAttachment:
-          application.budget?.budgetSummaryAttachment ||
-          prevData.budgetSummaryAttachment,
-        contributionFromApplicant:
-          application.budget?.contributionFromApplicant ||
-          prevData.contributionFromApplicant,
-        budgetLines: application.budget?.budgetLines || prevData.budgetLines,
-      }));
+      setAnswers(JSON.parse(application?.answers || "{}"));
     }
   }, [application]);
+  const dispatch = useDispatch();
 
-  const handleReset = () => {
-    setData({
-      title: "",
-      activitiesAndOutcomes: "",
-      readinessExecute: "",
-      role: "",
-      institution: "",
-      trainingProcess: [],
-      trainingEquipment: [],
-      identificationEmployee: "",
-      staffs: [],
-      sustainability: "",
-      contributionFromApplicant: "",
-      recruitmentTrainerNumber: "",
-      identificationMember: "",
-      assessmentAndCertificationProcess: [],
-      assessmentEquipment: [],
-      staffAttachment: "",
-      recruitmentCandidatesNumber: "",
-      assessorsAndFacilitators: "",
-      contribution: "",
-      roleAttachment: undefined,
-      institutionAttachment: undefined,
-      premisesAttachment: undefined,
-      trainingManualAttachment: undefined,
-      trainingEquipmentAttachment: undefined,
-      previousFinancialReportAttachment: undefined,
-      MOUsAttachment: [],
-      assessmentEquipmentAttachment: undefined,
-      budgetSummaryAttachment: undefined,
-    });
-  };
+  const forms = useSelector((state: any) => state.forms);
+  const form = forms.forms.find((form: any) => {
+    const foundSubWindow = Object.keys(
+      JSON.parse(application?.call.subwindowForms || "{}"),
+    ).find((key: string) => key === application?.subWindow.uuid);
 
-  const renderComponent = () => {
-    switch (currentComponent) {
-      case "Project":
-        return (
-          <FundingQuestions
-            application={application}
-            data={data}
-            setData={setData}
-            goToBudget={() => setCurrentComponent("IndicativeBudget")}
-          />
-        );
-      case "IndicativeBudget":
-        return (
-          <BudgetQuestions
-            application={application}
-            data={data}
-            setData={setData}
-          />
-        );
-      default:
-        return null;
-    }
-  };
+    return (
+      form.uuid ===
+      JSON.parse(application?.call.subwindowForms || "{}")[
+        foundSubWindow as any
+      ]
+    );
+  });
 
   if (applicationLoading) {
     return (
@@ -207,13 +65,32 @@ const Page = () => {
 
   return (
     <div>
-      <div className="flex flex-col gap-4 w-full bg-white p-4 rounded-2xl ">
+      <div className="flex flex-col gap-4 w-full  ">
         <div className=" flex justify-between items-center">
           <p className="font-semibold text-2xl">Questions and answers</p>
+        </div>
+        {form && (
+          <Form
+            mode="answering"
+            formData={{ name: form?.name, qns: JSON.parse(form?.qns || "{}") }}
+            answers={answers}
+            setAnswers={(key: string, value: any) => {
+              setAnswers({ ...answers, [key]: value });
+            }}
+          />
+        )}
+        <div className="w-full grid  grid-cols-3 gap-x-4">
           <button
-            className="bg-primary text-white py-3 px-10 flex items-center gap-2 rounded-full "
+            type="button"
+            onClick={() => setAnswers({})}
+            className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          >
+            Reset
+          </button>
+          <button
+            className="bg-primary text-white py-3 px-10 flex items-center gap-2 rounded-full  w-full justify-center"
             onClick={() => {
-              handleSubmit("save", setLoading, data, application);
+              handleSubmit("save", setLoading, answers, application, form);
             }}
             disabled={loading === "save"}
           >
@@ -226,43 +103,21 @@ const Page = () => {
               </>
             )}
           </button>
-        </div>
-        <div className="flex font-semibold">
-          <div
-            onClick={() => setCurrentComponent("Project")}
-            className={`cursor-pointer w-1/2 transition-all duration-200 ${
-              currentComponent === "Project"
-                ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
-                : ""
-            } py-2.5 flex items-center justify-center`}
-          >
-            Project Funding Application
-          </div>
-          <div
-            onClick={() => setCurrentComponent("IndicativeBudget")}
-            className={`cursor-pointer w-1/2 transition-all duration-200  ${
-              currentComponent === "IndicativeBudget"
-                ? "bg-[#005DE9] bg-opacity-10 text-primary border-b border-b-primary"
-                : ""
-            } py-2.5 flex items-center justify-center`}
-          >
-            Indicative Budget
-          </div>
-        </div>
-        <div className="w-full">{renderComponent()}</div>
-        <div className="w-full flex justify-center mt-4 space-x-4">
-          <button
-            type="button"
-            onClick={handleReset}
-            className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-          >
-            Reset
-          </button>
           <button
             type="button"
             onClick={() => {
-              handleSubmit("submit", setLoading, data, application, () =>
-                router.push("/applicant/applications"),
+              console.log("Here");
+              console.log(application);
+              handleSubmit(
+                "submit",
+                setLoading,
+                answers,
+                application,
+                form,
+                () => {
+                  getMyApplications(dispatch);
+                  router.push("/applicant/applications");
+                },
               );
             }}
             disabled={loading}

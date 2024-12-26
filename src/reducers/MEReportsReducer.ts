@@ -12,7 +12,7 @@ const initialState = {
   mereports: [],
   error: null,
   isError: false,
-  loading: false,
+  loading: true,
 };
 
 type Action = {
