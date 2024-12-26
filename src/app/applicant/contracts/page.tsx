@@ -16,8 +16,26 @@ const Page = () => {
     const [isOpenTrade, { open, close }] = useDisclosure(false);
     const [searchTerm, setSearchTerm] = useState<string>("");
 
+<<<<<<< HEAD
     const { contracts, loading: loadingContracts } = useSelector(
         (state: any) => state.contracts
+=======
+  const { contracts, loading: loadingContracts } = useSelector(
+    (state: any) => state.contracts,
+  );
+  const { applicationsForContractSigning: applications, loading } = useSelector(
+    (state: any) => state.applications,
+  );
+
+  const [contractsSignedApplications, setContractsSignedApplications] =
+    useState<any[]>([]);
+  const [applicationsForContractSigning, setApplicationsForContractSigning] =
+    useState<any[]>([]);
+
+  useEffect(() => {
+    setContractsSignedApplications(
+      applications.filter((a: any) => a?.application?.uploadedContract),
+>>>>>>> ca2dcfc76f207bc01e11d87d5cca82a6d616d758
     );
     const { applicationsForContractSigning: applications, loading } =
         useSelector((state: any) => state.applications);

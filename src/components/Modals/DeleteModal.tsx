@@ -42,7 +42,7 @@ const routeMappings = {
   contacts: "/contacts",
   employees: "/employees",
   budgetLines: "/budgetlines/delete",
-  forms: "/forms",
+  forms: "/forms/delete",
 };
 const DeleteModal = ({
   isOpenModal,

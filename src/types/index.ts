@@ -1,3 +1,5 @@
+import { QuestionForm } from "./questions-form";
+
 export type Route = {
   label: string;
   path: string;
@@ -110,6 +112,7 @@ export type Call = {
   description: string;
   appealDays: string;
   windows: Window[] | string[];
+  form: Form | string;
   subWindows: SubWindow[] | string[];
   sectors: Sector[] | string[];
   attachment: File | string | null;
