@@ -80,8 +80,8 @@ const Profile = () => {
           </div>
 
           <div className="w-full flex gap-4 justify-center  p-5">
-            <div className="lg:w-[60%]">
-              <div className="flex  mb-10 mt-5">
+            <div className="lg:w-[60%] w-full">
+              <div className="flex mb-10 mt-5">
                 <button
                   className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 rounded-l-2xl ${
                     activeSection === "contact"
