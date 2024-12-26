@@ -10,11 +10,13 @@ import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import {
   getApprovedMinutes,
+  getMyApplications,
   getNegotiatedMinutes,
   getRejectedMinutes,
   getUploadedMinutes,
 } from "@/utils/funcs";
 import { useDispatch } from "react-redux";
+import { ClipLoader } from "react-spinners";
 
 interface DeleteConfirmProps {
   isOpen: boolean;
@@ -36,7 +38,7 @@ const MinutesDecisionConfirm = ({
     isError: "",
   });
   const [loading, setLoading] = useState(false);
-
+  const [confirming, setConfirming] = useState(false);
   const handleInitialSubmit = () => {
     if (!comment.value) {
       return setComment({ ...comment, isError: "Please enter a comment!" });
@@ -46,6 +48,7 @@ const MinutesDecisionConfirm = ({
 
   const handleConfirmedSubmit = () => {
     setLoading(true);
+    setConfirming(true);
     authorizedApi
       .post(`/negotiation-contract/applicant/decision`, {
         applicationID: minute.application.uuid,
@@ -65,6 +68,7 @@ const MinutesDecisionConfirm = ({
         setComment({ value: "", isError: "" });
         onClose();
         getUploadedMinutes(dispatch, "applicant");
+        getMyApplications(dispatch)
         getApprovedMinutes(dispatch, "applicant");
         getRejectedMinutes(dispatch, "applicant");
         getNegotiatedMinutes(dispatch, "applicant");
@@ -74,6 +78,7 @@ const MinutesDecisionConfirm = ({
       })
       .finally(() => {
         setLoading(false);
+        setConfirming(false);
         setConfirmModalOpen(false);
       });
   };
@@ -189,6 +194,7 @@ const MinutesDecisionConfirm = ({
               Cancel
             </button>
             <button
+              disabled={confirming}
               onClick={handleConfirmedSubmit}
               className={`px-4 py-2 text-white rounded-full ${
                 decision.toLowerCase() === "reject"
@@ -196,7 +202,7 @@ const MinutesDecisionConfirm = ({
                   : "bg-blue-500"
               }`}
             >
-              Yes, proceed
+              {confirming ? <span><ClipLoader color="white" size={20}/> Submitting . . .</span> : "Yes, proceed"}
             </button>
           </div>
         </div>

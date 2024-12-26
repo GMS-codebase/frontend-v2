@@ -101,6 +101,7 @@ const Navbar = () => {
       getAppeals(dispatch, "sdf");
     } else if (role === "APPLICANT") {
       getMyContacts(dispatch);
+      getMyContracts(dispatch);
       getMyApplicantProfile(dispatch);
       getMyApplications(dispatch);
       getUploadedMinutes(dispatch, "applicant");
