@@ -3,13 +3,14 @@ import React, { useState, useEffect } from "react";
 import AddQuestionType from "./AddQuestionsType";
 import QuestionType from "./QuestionType"; // Import the new component
 import { QuestionForm } from "@/types/questions-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams, useRouter } from "next/navigation";
 import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
 import { ADD_FORM_SUCCESS, UPDATE_FORM_SUCCESS } from "@/actions/FormsActions";
 
 const CreateForm: React.FC = () => {
+  const [pageLoading, setPageLoading] = useState(true);
   const [isAddTypeModalOpen, setIsAddTypeModalOpen] = useState(false);
   const [formTitle, setFormTitle] = useState("");
   const [activeType, setActiveType] = useState<string>("text");
@@ -18,6 +19,17 @@ const CreateForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const forms = useSelector((state: any) => state.forms);
+
+  const existingForm = forms.forms.find((form: any) => form.uuid === id);
+
+  useEffect(() => {
+    if (existingForm) {
+      setFormTitle(existingForm.name);
+      setFormData(JSON.parse(existingForm.qns));
+    }
+    setPageLoading(false);
+  }, [existingForm, id]);
 
   const addQuestionType = (newType: { name: string; description: string }) => {
     setFormData((prevFormData) => ({
@@ -32,27 +44,27 @@ const CreateForm: React.FC = () => {
 
   const handleSaveForm = () => {
     setLoading(true);
-    const request = id
-      ? authorizedApi.put(`/forms/${id}`, {
+    const request = existingForm
+      ? authorizedApi.put(`/forms/update/${id}`, {
           name: formTitle,
-          dto: JSON.stringify(formData),
+          qns: JSON.stringify(formData),
         })
-      : authorizedApi.post("/forms", {
+      : authorizedApi.post("/forms/create", {
           name: formTitle,
-          dto: JSON.stringify(formData),
+          qns: JSON.stringify(formData),
         });
 
     request
       .then((res) => {
         notifications.show({
-          message: id
+          message: existingForm
             ? "Question Form  is updated successfully"
             : "Question Form  is created successfully",
           color: "blue",
         });
 
         dispatch({
-          type: id ? UPDATE_FORM_SUCCESS : ADD_FORM_SUCCESS,
+          type: existingForm ? UPDATE_FORM_SUCCESS : ADD_FORM_SUCCESS,
           payload: res.data?.data,
         });
         router.back();
@@ -63,7 +75,7 @@ const CreateForm: React.FC = () => {
           if (errorMessage && errorMessage.includes("duplicate key")) {
             notifications.show({
               message: `Failed to ${
-                id ? "update" : "create"
+                existingForm ? "update" : "create"
               } form. It seems a form with similar details already exists.`,
               color: "red",
             });
@@ -71,7 +83,7 @@ const CreateForm: React.FC = () => {
             notifications.show({
               message:
                 errorMessage ??
-                `Failed to ${id ? "update" : "create"} form! Please try again.`,
+                `Failed to ${existingForm ? "update" : "create"} form! Please try again.`,
               color: "red",
             });
           }
@@ -81,6 +93,14 @@ const CreateForm: React.FC = () => {
         setLoading(false);
       });
   };
+
+  if (pageLoading) {
+    return (
+      <div className="flex items-center justify-center text-sm text-gray-800">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="p-4">

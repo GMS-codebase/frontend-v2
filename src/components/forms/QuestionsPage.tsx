@@ -17,7 +17,7 @@ const QuestionsPage: React.FC<QuestionsPageProps> = ({
 }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [newQuestion, setNewQuestion] = useState<IQuestion>({
-    id: `${questionType}-q-${pageIndex}-${pageQuestions.length}`,
+    id: `${questionType}-q-${pageIndex}-${pageQuestions?.length}`,
     title: "Question Title",
     subtitle: "Question SubTitle",
     type: "text",
@@ -27,7 +27,7 @@ const QuestionsPage: React.FC<QuestionsPageProps> = ({
   const handleAddQuestion = (question: any) => {
     onChange([question, ...pageQuestions]);
     setNewQuestion({
-      id: `${questionType}-q-${pageIndex}-${pageQuestions.length}`,
+      id: `${questionType}-q-${pageIndex}-${pageQuestions?.length}`,
       title: "Question Title",
       subtitle: "Question SubTitle",
       type: "text",

@@ -11,10 +11,12 @@ import { DataTable } from "@/components/core/data-table";
 import { CiEdit, CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
 import AddEditWindowSubwindow from "@/components/Modals/windows/AddEditWindowSubwindow";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "next/navigation";
 import AddEditWindow from "@/components/Modals/windows/AddEditWindow";
 import DeleteModal from "@/components/Modals/DeleteModal";
+import AddSubWindowSector from "@/components/Modals/windows/AddSubWindowSector";
+import { getWindows } from "@/utils/funcs";
 
 const Page = () => {
   const [
@@ -22,9 +24,14 @@ const Page = () => {
     { open: openAddEditSubWindow, close: closeAddEditSubWindow },
   ] = useDisclosure(false);
   const [
+    isAssignSectorSubWindow,
+    { open: openAssignSectorSubWindow, close: closeAssignSectorSubWindow },
+  ] = useDisclosure(false);
+  const [
     isDeleteSubWindow,
     { open: openDeleteSubWindow, close: closeDeleteSubWindow },
   ] = useDisclosure(false);
+  const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
   const { id: windowId } = useParams();
   const { subWindowId: subWindowId } = useParams();
@@ -99,6 +106,10 @@ const Page = () => {
     //   ),
     // },
   ];
+
+  if (windows.loading) {
+    return <div className="flex items-center justify-center ">Loading</div>;
+  }
   return (
     <div className="bg-white rounded-2xl py-10">
       <div className="flex flex-col gap-6">
@@ -164,17 +175,17 @@ const Page = () => {
                   />
                 </div>
 
-                {/* <button
-                  onClick={openAddEditSubWindow}
+                <button
+                  onClick={openAssignSectorSubWindow}
                   className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
                 >
                   <span className="text-2xl">
                     <SolarAddFolderBold />
                   </span>
                   <h1 className="text-base font-medium text-white">
-                    New Sub-Window
+                    Assign Sector To SubWindow
                   </h1>
-                </button> */}
+                </button>
               </div>
             </div>
 
@@ -213,6 +224,12 @@ const Page = () => {
           id={selectedSubWindow?.uuid}
           isOpenModal={isDeleteSubWindow}
           windowId={subWindow?.uuid}
+        />
+        <AddSubWindowSector
+          isOpenAddSubWindowSector={isAssignSectorSubWindow}
+          closeAddSubWindowSector={() => {
+            closeAssignSectorSubWindow();
+          }}
         />
       </div>
     </div>
