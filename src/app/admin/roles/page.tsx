@@ -32,8 +32,8 @@ const Page = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[20rem]">
+      <div className="w-full lg:flex justify-between items-center p-4">
+        <div className="relative lg:w-[20rem] w-full mb-4">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} />
           </span>
@@ -53,7 +53,7 @@ const Page = () => {
           <div>Add new Role</div>
         </div>
       </div>
-      <div className="grid grid-cols-4 p-4 gap-5">
+      <div className="grid lg:grid-cols-4 grid-cols-2 p-4 gap-5">
         {loading
           ? [0, 0, 0, 0, 0, 0].map((_, index) => (
               <Skeleton key={index} width={250} height={170} radius={30} />
