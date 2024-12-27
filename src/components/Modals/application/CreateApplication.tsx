@@ -39,15 +39,6 @@ const CreateApplication = ({
     trades: "",
   });
 
-  // useEffect(() => {
-  //   if (call?.windows) {
-  //     setFormData((prevData) => ({
-  //       ...prevData,
-  //       window: call?.windows[0]?.uuid || null,
-  //     }));
-  //   }
-  // }, [call]);
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {

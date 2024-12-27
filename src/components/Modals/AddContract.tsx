@@ -8,7 +8,12 @@ import { useDispatch } from "react-redux";
 import { SolarAddSquareBold } from "../core/icons";
 import { CashOut, Upload } from "solar-icon-set";
 import { Trade } from "@/types";
-import { getApplicants, getApplications, getApplicationsForContractSigning, getContracts } from "@/utils/funcs";
+import {
+  getApplicants,
+  getApplications,
+  getApplicationsForContractSigning,
+  getContracts,
+} from "@/utils/funcs";
 import { useRouter } from "next/navigation";
 
 interface AddContractProps {
@@ -169,7 +174,7 @@ const AddContract: React.FC<AddContractProps> = ({
       getApplicants(dispatch);
       getContracts(dispatch);
       getApplications(dispatch);
-      getApplicationsForContractSigning(dispatch)
+      getApplicationsForContractSigning(dispatch);
       closeAddContract();
       navigate.refresh();
     } catch (err: any) {

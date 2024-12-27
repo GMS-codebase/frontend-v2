@@ -117,7 +117,11 @@ const EvaluationDetails = ({
                         Comment:
                       </label>
                       <textarea
-                        value={viewer === "applicant" ? application?.evaluationFinalDecision : evaluation?.comment}
+                        value={
+                          viewer === "applicant"
+                            ? application?.evaluationFinalDecision
+                            : evaluation?.comment
+                        }
                         disabled
                         rows={2}
                         className={`mt-2 p-2 w-full border border-gray-500 rounded-xl shadow-sm ${

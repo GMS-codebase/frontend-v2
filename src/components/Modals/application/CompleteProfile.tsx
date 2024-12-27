@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { authorizedApi } from "@/utils/api";
 import { Checkbox, Modal, Select, Stepper } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { User } from "solar-icon-set";
 import { Upload } from "solar-icon-set";
@@ -35,10 +36,12 @@ const CompleteProfile = ({
   isOpenCompleteProfile,
   closeCompleteProfile,
   finishAddingProfile,
+  defaultData
 }: {
   isOpenCompleteProfile: boolean;
   closeCompleteProfile: () => void;
   finishAddingProfile?: () => void;
+  defaultData?: any;
 }) => {
   const [activeTab, setActiveTab] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -63,7 +66,47 @@ const CompleteProfile = ({
     cell: "",
     village: "",
   });
+  const ProvincesOptions = Provinces();
+  const DistrictOptions = formData.province ? Districts(formData.province) : [];
+  const SectorOptions =
+    formData.district && formData.province
+      ? Sectors(formData.province, formData.district)
+      : [];
+  const CellOptions =
+    formData.sector && formData.district && formData.province
+      ? Cells(formData.province, formData.district, formData.sector)
+      : [];
+  const VillageOptions =
+    formData.cell && formData.sector && formData.district && formData.province
+      ? Villages(
+          formData.province,
+          formData.district,
+          formData.sector,
+          formData.cell,
+        )
+      : [];
 
+  useEffect(()=>{
+    if(defaultData){
+      const locations = defaultData.address.split("-");
+      setFormData({
+       ...defaultData,
+       reg_no_or_school_code: defaultData.registration_number,
+       reg_date: defaultData.registration_date,
+       business_phone: defaultData.phone,
+       year_of_placement: defaultData.year_of_establishment,
+       business_address: defaultData?.address,
+       employee_number: defaultData.number_of_employees,
+        province: locations[4]?.split(" ")[1],
+        district: locations[3]?.split(" ")[1],
+        sector: locations[2]?.split(" ")[1],
+        cell: locations[1]?.split(" ")[1],
+        village: locations[0]?.split(" ")[0],
+      });
+      setErrors({});
+    }
+    console.log("form data ", formData);
+  }, [defaultData])
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const validate = () => {
@@ -79,7 +122,7 @@ const CompleteProfile = ({
         newErrors.is_private = "Private status is required.";
       if (!formData.business_type)
         newErrors.business_type = "Business type is required.";
-      if (!certificate) newErrors.certificate = "Certificate is required.";
+      if (!certificate && !defaultData) newErrors.certificate = "Certificate is required.";
     } else if (activeTab === 2) {
       if (!formData.employee_number)
         newErrors.employee_number = "Employee number is required.";
@@ -106,26 +149,6 @@ const CompleteProfile = ({
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  const ProvincesOptions = Provinces();
-  const DistrictOptions = formData.province ? Districts(formData.province) : [];
-  const SectorOptions =
-    formData.district && formData.province
-      ? Sectors(formData.province, formData.district)
-      : [];
-  const CellOptions =
-    formData.sector && formData.district && formData.province
-      ? Cells(formData.province, formData.district, formData.sector)
-      : [];
-  const VillageOptions =
-    formData.cell && formData.sector && formData.district && formData.province
-      ? Villages(
-          formData.province,
-          formData.district,
-          formData.sector,
-          formData.cell,
-        )
-      : [];
-
   const handleNext = () => {
     if (validate()) {
       setActiveTab((current) => (current < 3 ? current + 1 : current));
@@ -133,7 +156,7 @@ const CompleteProfile = ({
   };
 
   const handlePrev = () =>
-    setActiveTab((current) => (current > 0 ? current - 1 : current));
+    setActiveTab((current) => (current > 1 ? current - 1 : current));
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -219,48 +242,6 @@ const CompleteProfile = ({
     }
   };
 
-  const handleProvinceChange = (e: any) => {
-    const value = e.target.value;
-    setFormData((prevState) => ({
-      ...prevState,
-      province: value,
-      district: "",
-      sector: "",
-      cell: "",
-      village: "",
-    }));
-  };
-
-  const handleDistrictChange = (e: any) => {
-    const value = e.target.value;
-    setFormData((prevState) => ({
-      ...prevState,
-      district: value,
-      sector: "",
-      cell: "",
-      village: "",
-    }));
-  };
-
-  const handleSectorChange = (e: any) => {
-    const value = e.target.value;
-    setFormData((prevState) => ({
-      ...prevState,
-      sector: value,
-      cell: "",
-      village: "",
-    }));
-  };
-
-  const handleCellChange = (e: any) => {
-    const value = e.target.value;
-    setFormData((prevState) => ({
-      ...prevState,
-      cell: value,
-      village: "",
-    }));
-  };
-
   return (
     <Modal
       size={"xl"}
@@ -277,11 +258,10 @@ const CompleteProfile = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="  my-4 text-center w-full">
-          <h1 className="text-2xl font-extrabold">Complete your profile</h1>
-          <h2 className="text-[#000F2369] text-lg font-medium 5">
-            Provide the below details to complete. Provide the below details to
-            complete.
-          </h2>
+          <h1 className="text-2xl font-extrabold">{defaultData ? "Update":"Complete"} your profile</h1>
+          {!defaultData && <h2 className="text-[#000F2369] text-lg font-medium 5">
+            Provide the below details to complete.
+          </h2>}
         </div>
 
         <div className="w-11/12 flex flex-col items-center mt-4 overflow-hidden">
@@ -451,7 +431,7 @@ const CompleteProfile = ({
                     )}
                   </div>
                 </div>
-                <div className="w-full">
+                {!defaultData && <div className="w-full">
                   <label
                     htmlFor="fileUpload"
                     className="block text-xs font-bold text-gray-700"
@@ -505,7 +485,7 @@ const CompleteProfile = ({
                   {errors.certificate && (
                     <p className="text-red-500 text-sm">{errors.certificate}</p>
                   )}
-                </div>
+                </div>}
               </div>
 
               <div className="w-full flex justify-center mt-10 space-x-4">
