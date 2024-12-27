@@ -176,10 +176,10 @@ const Page = () => {
 
   return (
     <div className="w-full">
-      <div className="w-full flex justify-between items-center p-4">
-        <h1 className="text-2xl font-bold">Send Notifications</h1>
-        <div className="flex items-center gap-3 w-4/5 overflow-x-auto">
-          <div className="w-48">
+      <div className="w-full lg:flex justify-between items-center p-4">
+        <h1 className="text-2xl font-bold mb-3">Send Notifications</h1>
+        <div className="flex items-center gap-3 lg:w-4/5 w-full overflow-x-auto">
+          <div className="w-48 ">
             <FilterDropDown
               value={formData.filters.call}
               onChange={(value: string) =>

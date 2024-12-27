@@ -224,7 +224,7 @@ const Page = () => {
                 className="absolute right-0 bottom-0 rounded-b-2xl"
               />
             </div> */}
-            <div className=" bg-white rounded-2xl lg:w-[25%] w-full p-6 flex-grow">
+            <div className=" bg-white rounded-2xl lg:w-[25%] w-full p-6 lg:flex-grow">
               <div className="flex justify-end ">
                 <div className="rounded-full border-black-1">
                   <select className="p-2 border border-1 border-gray-400  text-gray-400 rounded-full text-md">
