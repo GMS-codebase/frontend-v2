@@ -36,6 +36,7 @@ import {
   getForms,
   getAppeals,
   getNegotiatedMinutes,
+  getApplicantProfile,
 } from "@/utils/funcs";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
@@ -100,6 +101,7 @@ const Navbar = () => {
       getNegotiatedMinutes(dispatch, "sdf");
       getAppeals(dispatch, "sdf");
     } else if (role === "APPLICANT") {
+      getApplicantProfile(dispatch);
       getMyContacts(dispatch);
       getMyContracts(dispatch);
       getMyApplicantProfile(dispatch);

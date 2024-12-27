@@ -26,7 +26,9 @@ const Page = () => {
     useState<any[]>([]);
   useEffect(() => {
     setContractsSignedApplications(
-      applications.filter((a: any) => (a?.application?.uploadedContract || a?.uploadedContract)),
+      applications.filter(
+        (a: any) => a?.application?.uploadedContract || a?.uploadedContract,
+      ),
     );
   }, [applications]);
   const FilterDropDown = ({
@@ -83,7 +85,8 @@ const Page = () => {
       header: "Applicant Name",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.application?.applicant?.name ?? row.original?.applicant?.name}
+          {row.original?.application?.applicant?.name ??
+            row.original?.applicant?.name}
         </div>
       ),
     },
@@ -92,7 +95,8 @@ const Page = () => {
       header: "Applicant Phone",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.application?.applicant?.phone ?? row.original?.applicant?.phone}
+          {row.original?.application?.applicant?.phone ??
+            row.original?.applicant?.phone}
         </div>
       ),
     },
@@ -101,7 +105,8 @@ const Page = () => {
       header: "Applicant Email",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.application?.applicant?.email ?? row.original?.applicant?.email}
+          {row.original?.application?.applicant?.email ??
+            row.original?.applicant?.email}
         </div>
       ),
     },
@@ -112,7 +117,7 @@ const Page = () => {
         <div className="w-full">
           {
             contracts.filter(
-              (c: any) => (c?.application_ID === row.original?.uuid)
+              (c: any) => c?.application_ID === row.original?.uuid,
             )?.[0]?.contractNumber
           }
         </div>
@@ -139,9 +144,11 @@ const Page = () => {
               <h1 className="text-lg">Actions</h1>
             </Menu.Label>
             <Menu.Divider />
-            <Menu.Item
-            >
-              <Link href={`/applicant/contracts/${row?.original?.uuid}`} className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+            <Menu.Item>
+              <Link
+                href={`/applicant/contracts/${row?.original?.uuid}`}
+                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+              >
                 <CiEdit size={21} color="#576074" />
                 View Contract
               </Link>
