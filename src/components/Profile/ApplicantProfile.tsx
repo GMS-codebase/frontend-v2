@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useEffect, useState } from "react";
 import * as Icons from "@/components/core/icons";
@@ -16,13 +17,16 @@ import { deleteCookie } from "cookies-next";
 import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import CompleteProfile from "../Modals/application/CompleteProfile";
+import UpdateApplicantProfile from "../Modals/applicantContacts/UpdateApplicantProfile";
 interface Props {
   type?: string;
 }
 const ApplicantProfile = ({ type }: Props) => {
-  const { profile, applicantProfile } = useSelector(
+  const { profile, applicantProfile: applicantData } = useSelector(
     (state: any) => state.profile,
   );
+  const applicantProfile = applicantData?.business;
+  console.log("applicant profile --> ", applicantProfile);
   const [activeSection, setActiveSection] = useState("contact");
   const [isUpdateProfile, { open: openUpdate, close }] = useDisclosure(false);
   const [applicant, setApplicant] = useState<any>({});
@@ -30,7 +34,7 @@ const ApplicantProfile = ({ type }: Props) => {
     firstName: profile?.firstname,
     lastName: profile?.lastname,
     email: profile?.email,
-    phoneNumber: profile?.phoneNumber,
+    phoneNumber: applicantData?.applicant?.phone,
     gender: profile?.gender,
     position: profile?.position,
     institution: profile?.institution,
@@ -40,7 +44,7 @@ const ApplicantProfile = ({ type }: Props) => {
       firstName: profile?.firstname,
       lastName: profile?.lastname,
       email: profile?.email,
-      phoneNumber: profile?.phone,
+      phoneNumber: applicantData?.applicant?.phone,
       gender: profile?.gender,
       position: profile?.position,
       institution: profile?.institution,
@@ -90,7 +94,9 @@ const ApplicantProfile = ({ type }: Props) => {
                   }`}
                   onClick={() => setActiveSection("contact")}
                 >
-                  <h1 className="text-base font-medium ">Contact Person</h1>
+                  <h1 className="text-base font-medium ">
+                    Applicant Information
+                  </h1>
                 </button>
                 <button
                   className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 rounded-r-2xl ${
@@ -100,7 +106,9 @@ const ApplicantProfile = ({ type }: Props) => {
                   }`}
                   onClick={() => setActiveSection("employment")}
                 >
-                  <h1 className="text-base font-medium ">Legal Details</h1>
+                  <h1 className="text-base font-medium ">
+                    Business Information
+                  </h1>
                 </button>
               </div>
               {activeSection === "contact" ? (
@@ -115,7 +123,7 @@ const ApplicantProfile = ({ type }: Props) => {
                       </label>
                       <div className="w-full relative">
                         <span className="absolute left-2 top-[13px]">
-                          <Icons.SolarUserBroken  />
+                          <Icons.SolarUserBroken />
                         </span>
                         <input
                           type="text"
@@ -182,14 +190,11 @@ const ApplicantProfile = ({ type }: Props) => {
                           <Icons.SolarIphoneLinear />
                         </span>
                       </div>
-                      <div className="absolute left-7 top-2 pl-1 py-1 flex items-center pointer-events-none pr-2 rounded-md bg-white">
-                        <span className="text-gray-500 text-sm ml-2">+250</span>
-                      </div>
                       <input
                         type="text"
                         name="phoneNumber"
                         value={formData.phoneNumber}
-                        className="block w-full pl-[6.5rem] pr-3 py-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        className="block w-full pl-8 pr-3 py-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                         disabled
                       />
                     </div>
@@ -224,7 +229,7 @@ const ApplicantProfile = ({ type }: Props) => {
                         <div>Business Name</div>
                       </div>
                       <div className="mt-2 ml-4">
-                        {applicantProfile?.business_name || ""}
+                        {applicantProfile?.businessName || ""}
                       </div>
                     </div>
                     <div className="flex w-1/2">
@@ -232,7 +237,7 @@ const ApplicantProfile = ({ type }: Props) => {
                         <div>Business Type </div>
                       </div>
                       <div className="mt-2 ml-4">
-                        {applicantProfile?.business_type || ""}
+                        {applicantProfile?.tinNumber || ""}
                       </div>
                     </div>
                   </div>
@@ -255,14 +260,16 @@ const ApplicantProfile = ({ type }: Props) => {
                       <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                         <div>TIN</div>
                       </div>
-                      <div className="mt-2 ml-4">{applicantProfile?.tin}</div>
+                      <div className="mt-2 ml-4">
+                        {applicantProfile?.tinNumber}
+                      </div>
                     </div>
                     <div className="flex w-1/2">
                       <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                         <div>Bank</div>
                       </div>
                       <div className="mt-2 ml-4">
-                        {applicantProfile?.bank_name}
+                        {applicantProfile?.bankName}
                       </div>
                     </div>
                   </div>
@@ -271,9 +278,7 @@ const ApplicantProfile = ({ type }: Props) => {
                       <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                         <div>PO Box</div>
                       </div>
-                      <div className="mt-2 ml-4">
-                        {applicantProfile?.po_box}
-                      </div>
+                      <div className="mt-2 ml-4">{applicantProfile?.poBox}</div>
                     </div>
                     <div className="flex w-1/2">
                       <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
@@ -281,7 +286,7 @@ const ApplicantProfile = ({ type }: Props) => {
                       </div>
                       <div className="mt-2 ml-4">
                         {new Date(
-                          applicantProfile?.registration_date,
+                          applicantProfile?.registrationDate,
                         )?.toLocaleDateString()}
                       </div>
                     </div>
@@ -292,7 +297,7 @@ const ApplicantProfile = ({ type }: Props) => {
                         <div>Bank Account</div>
                       </div>
                       <div className="mt-2 ml-4">
-                        {applicantProfile?.bank_account}
+                        {applicantProfile?.businessAccount}
                       </div>
                     </div>
                     <div className="flex w-1/2">
@@ -300,7 +305,7 @@ const ApplicantProfile = ({ type }: Props) => {
                         <div>Year of estabrishment</div>
                       </div>
                       <div className="mt-2 ml-4">
-                        {applicantProfile?.year_of_establishment}
+                        {applicantProfile?.yearOfEstablishment}
                       </div>
                     </div>
                   </div>
@@ -310,7 +315,7 @@ const ApplicantProfile = ({ type }: Props) => {
                         <div>Number of Employee</div>
                       </div>
                       <div className="mt-2 ml-4">
-                        {applicantProfile?.number_of_employees}
+                        {applicantProfile?.employeeNumber}
                       </div>
                     </div>
                     <div className="flex w-1/2 items-start">
@@ -318,17 +323,17 @@ const ApplicantProfile = ({ type }: Props) => {
                         <div>Address</div>
                       </div>
                       <div className="mt-2 ml-4">
-                        {applicantProfile?.address}{" "}
+                        {applicantProfile?.addressLine}{" "}
                       </div>
                     </div>
                   </div>
                   <div className="flex    font-semibold ">
                     <div className="flex w-1/2">
                       <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                        <div>Business Name</div>
+                        <div>Is Private</div>
                       </div>
                       <div className="mt-2 ml-4">
-                        {applicantProfile?.business_name}
+                        {applicantProfile?.private ? "Yes" : "No"}
                       </div>
                     </div>
                   </div>
@@ -348,7 +353,18 @@ const ApplicantProfile = ({ type }: Props) => {
           </div>
         </div>
       )}
-      <CompleteProfile defaultData={applicantProfile} isOpenCompleteProfile={isUpdateProfile} closeCompleteProfile={close} finishAddingProfile={()=> close()}/>
+      <CompleteProfile
+        defaultData={applicantData?.business}
+        isOpenCompleteProfile={isUpdateProfile && activeSection !== "contact"}
+        closeCompleteProfile={close}
+        finishAddingProfile={() => close()}
+      />
+      <UpdateApplicantProfile
+        defaultData={{ ...profile, phone: applicantData?.applicant?.phone }}
+        isOpenUpdateProfile={isUpdateProfile && activeSection === "contact"}
+        closeUpdateProfile={close}
+        onUpdateProfile={() => close()}
+      />
     </div>
   );
 };

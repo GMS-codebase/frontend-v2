@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { authorizedApi } from "@/utils/api";
-import { Checkbox, Modal, Select, Stepper } from "@mantine/core";
+import { getApplicantProfile } from "@/utils/funcs";
+import { Checkbox, Modal, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { useDispatch } from "react-redux";
 import { User } from "solar-icon-set";
 import { Upload } from "solar-icon-set";
 import { CalendarMinimalistic, Folder2, ShieldWarning } from "solar-icon-set";
@@ -36,13 +38,14 @@ const CompleteProfile = ({
   isOpenCompleteProfile,
   closeCompleteProfile,
   finishAddingProfile,
-  defaultData
+  defaultData,
 }: {
   isOpenCompleteProfile: boolean;
   closeCompleteProfile: () => void;
   finishAddingProfile?: () => void;
   defaultData?: any;
 }) => {
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState(1);
   const [loading, setLoading] = useState(false);
   const [certificate, setCertificate] = useState<any>();
@@ -86,27 +89,42 @@ const CompleteProfile = ({
         )
       : [];
 
-  useEffect(()=>{
-    if(defaultData){
-      const locations = defaultData.address.split("-");
+  useEffect(() => {
+    if (defaultData) {
+      console.log("default data --> ", defaultData);
+      const locations = defaultData?.addressLine?.split("-");
+      console.log("locations -> ", locations);
+      console.log("locations -> ", locations[0]);
+      console.log("locations -> ", locations[1]?.split(" ")[1]);
+      console.log("locations -> ", locations[2]?.split(" ")[1]);
+
+      console.log("defaultData.addressLine -> ", defaultData?.addressLine);
+
       setFormData({
-       ...defaultData,
-       reg_no_or_school_code: defaultData.registration_number,
-       reg_date: defaultData.registration_date,
-       business_phone: defaultData.phone,
-       year_of_placement: defaultData.year_of_establishment,
-       business_address: defaultData?.address,
-       employee_number: defaultData.number_of_employees,
-        province: locations[4]?.split(" ")[1],
-        district: locations[3]?.split(" ")[1],
-        sector: locations[2]?.split(" ")[1],
-        cell: locations[1]?.split(" ")[1],
-        village: locations[0]?.split(" ")[0],
+        ...defaultData,
+        tin: defaultData?.tinNumber,
+        is_private: defaultData?.private,
+        reg_no_or_school_code: defaultData?.registrationNumber,
+        reg_date: defaultData?.registrationDate,
+        business_phone: defaultData.phone,
+        year_of_placement: defaultData.yearOfEstablishment,
+        business_address: defaultData?.addressLine,
+        employee_number: defaultData.employeeNumber,
+        business_type: defaultData?.businessType,
+        bank_name: defaultData?.bankName,
+        bank_account: defaultData?.businessAccount,
+        po_box: defaultData?.poBox,
+        // province: "West",
+        // district: locations[0],
+        // sector: locations[1]?.split(" ")[1],
+        // cell: locations[2]?.split(" ")[1],
+        // village: defaultData?.village,
       });
+      setCertificate(defaultData?.businessCertificate);
       setErrors({});
     }
     console.log("form data ", formData);
-  }, [defaultData])
+  }, [defaultData]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const validate = () => {
@@ -122,7 +140,8 @@ const CompleteProfile = ({
         newErrors.is_private = "Private status is required.";
       if (!formData.business_type)
         newErrors.business_type = "Business type is required.";
-      if (!certificate && !defaultData) newErrors.certificate = "Certificate is required.";
+      if (!certificate && !defaultData)
+        newErrors.certificate = "Certificate is required.";
     } else if (activeTab === 2) {
       if (!formData.employee_number)
         newErrors.employee_number = "Employee number is required.";
@@ -195,8 +214,11 @@ const CompleteProfile = ({
       if (certificate) {
         submitData.append("certificate", certificate);
       }
+      const endPoint = defaultData
+        ? "/applicant/update/business"
+        : "/applicant/update/profile";
       authorizedApi
-        .put("/applicant/update/profile", submitData, {
+        .put(endPoint, submitData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -226,7 +248,9 @@ const CompleteProfile = ({
             cell: "",
             village: "",
           });
-          finishAddingProfile && finishAddingProfile();
+          console.log("profile updated successfully!");
+          getApplicantProfile(dispatch);
+          // finishAddingProfile && finishAddingProfile();
         })
         .catch((err) => {
           notifications.show({
@@ -258,10 +282,14 @@ const CompleteProfile = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="  my-4 text-center w-full">
-          <h1 className="text-2xl font-extrabold">{defaultData ? "Update":"Complete"} your profile</h1>
-          {!defaultData && <h2 className="text-[#000F2369] text-lg font-medium 5">
-            Provide the below details to complete.
-          </h2>}
+          <h1 className="text-2xl font-extrabold">
+            {defaultData ? "Update business" : "Complete your"} profile
+          </h1>
+          {!defaultData && (
+            <h2 className="text-[#000F2369] text-lg font-medium 5">
+              Provide the below details to complete.
+            </h2>
+          )}
         </div>
 
         <div className="w-11/12 flex flex-col items-center mt-4 overflow-hidden">
@@ -431,7 +459,7 @@ const CompleteProfile = ({
                     )}
                   </div>
                 </div>
-                {!defaultData && <div className="w-full">
+                <div className="w-full">
                   <label
                     htmlFor="fileUpload"
                     className="block text-xs font-bold text-gray-700"
@@ -485,7 +513,7 @@ const CompleteProfile = ({
                   {errors.certificate && (
                     <p className="text-red-500 text-sm">{errors.certificate}</p>
                   )}
-                </div>}
+                </div>
               </div>
 
               <div className="w-full flex justify-center mt-10 space-x-4">
