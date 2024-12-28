@@ -19,8 +19,6 @@ type FormData = {
   email: string,
   password: string,
   old_password: string,
-  institution: string,
-  role: string,
   phone_number: string,
   province: string,
   district: string,
@@ -52,13 +50,11 @@ const UpdateApplicantProfile = ({
     last_name: defaultData?.lastname,
     email: defaultData?.email,
     phone_number: defaultData?.phone,
-    institution: defaultData?.institution,
     province: "",
     district: "",
     sector: "",
     cell: "",
     village: "",
-    role: "",
     password: "",
     old_password: "",
     gender: "",
@@ -72,14 +68,12 @@ const UpdateApplicantProfile = ({
       phone_number: defaultData?.phone || "",
       gender: defaultData?.gender || "",
       position: defaultData?.position || "",
-      institution: defaultData?.institution || "",
       province: "",
       district: "",
       sector: "",
       cell: "",
       village: "",
       old_password: "",
-      role: "",
       password: ""
     });
   }, [defaultData]);
@@ -140,11 +134,7 @@ const UpdateApplicantProfile = ({
       submitData.append("certificate", certificate);
     }
     authorizedApi
-      .put("/auth/update/info", submitData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
+      .put("/auth/update/info", formData)
       .then((_res) => {
         notifications.show({
           message: "Profile updated successfully!",
@@ -167,7 +157,6 @@ const UpdateApplicantProfile = ({
         setLoading(false);
       });
   };
-  //   };
 
   return (
     <Modal

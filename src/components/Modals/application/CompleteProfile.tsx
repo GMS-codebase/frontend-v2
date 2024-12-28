@@ -17,6 +17,7 @@ type FormData = {
   tin: string;
   year_of_placement: string;
   business_type: string;
+  business_name: string;
   reg_no_or_school_code: string;
   reg_date: string;
   is_private: boolean;
@@ -51,6 +52,7 @@ const CompleteProfile = ({
   const [certificate, setCertificate] = useState<any>();
   const [formData, setFormData] = useState<FormData>({
     tin: "",
+    business_name: "",
     year_of_placement: "",
     business_type: "",
     reg_no_or_school_code: "",
@@ -93,17 +95,7 @@ const CompleteProfile = ({
     if (defaultData) {
       console.log("default data --> ", defaultData);
       const locations = defaultData?.addressLine?.split("-");
-      console.log("locations -> ", locations);
-      console.log("locations -> ", locations[0]?.split(" ")[0]);
-      console.log("locations -> ", locations[1]?.split(" ")[1]);
-      console.log("locations -> ", locations[2]?.split(" ")[1]);
-      console.log("locations -> ", locations[3]?.split(" ")[1]);
-      console.log("locations -> ", locations[4]?.split(" ")[1]);
-
-      console.log("defaultData.addressLine -> ", defaultData?.addressLine);
-
       setFormData({
-        ...defaultData,
         tin: defaultData?.tinNumber,
         is_private: defaultData?.private,
         reg_no_or_school_code: defaultData?.registrationNumber,
@@ -121,11 +113,12 @@ const CompleteProfile = ({
         sector: locations[2]?.split(" ")[1],
         cell: locations[1]?.split(" ")[1],
         village: locations[0]?.split(" ")[0],
+        email: defaultData?.email,
+        business_name: defaultData?.businessName,
       });
       setCertificate(defaultData?.businessCertificate);
       setErrors({});
     }
-    console.log("form data ", formData);
   }, [defaultData]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -213,16 +206,30 @@ const CompleteProfile = ({
       Object.keys(formData).forEach((key) => {
         submitData.append(key, formData[key as keyof FormData] as string);
       });
+      submitData.append("isprivate", String(formData.is_private))
+      const updateData = submitData;
+      const payload = defaultData ? updateData : submitData;
+      updateData.append("year_of_establishment", formData.year_of_placement);
+      updateData.append("number_of_employees", String(formData.employee_number));
+      updateData.append("phone", formData.business_phone);
       if (certificate) {
         submitData.append("certificate", certificate);
       }
-      const endPoint = "/applicant/update/business"
-      authorizedApi
-        .put(endPoint, submitData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
+      const endPoint = "/applicant/update/business";
+        (defaultData ? 
+          authorizedApi
+          .put(endPoint, payload, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }) :
+          authorizedApi
+          .post("/applicant/complete/profile", payload, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+        )
         .then((_res) => {
           notifications.show({
             message: "Profile updated successfully!",
@@ -238,6 +245,7 @@ const CompleteProfile = ({
             employee_number: 0,
             bank_name: "",
             bank_account: "",
+            business_name: "",
             business_phone: "",
             email: "",
             po_box: "",
@@ -296,12 +304,12 @@ const CompleteProfile = ({
           {activeTab === 1 && (
             <div className="w-full overflow-y-auto flex flex-col gap-2">
               <div className="w-full flex justify-between gap-3">
-                <div className="w-full">
+              <div className="w-full">
                   <label
-                    htmlFor="TIN"
+                    htmlFor="business_name"
                     className="block text-xs font-bold text-gray-700"
                   >
-                    TIN
+                    Business Name
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -309,15 +317,15 @@ const CompleteProfile = ({
                     </span>
                     <input
                       type="text"
-                      name="tin"
-                      value={formData.tin}
-                      placeholder="TIN"
+                      name="business_name"
+                      value={formData.business_name}
+                      placeholder="Business Name"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2.5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
-                  {errors.tin && (
+                  {errors.business_name && (
                     <p className="text-red-500 text-sm">{errors.tin}</p>
                   )}
                 </div>
@@ -350,6 +358,60 @@ const CompleteProfile = ({
                 </div>
               </div>
               <div className="w-full flex justify-between gap-3">
+              <div className="w-full">
+                  <label
+                    htmlFor="TIN"
+                    className="block text-xs font-bold text-gray-700"
+                  >
+                    TIN
+                  </label>
+                  <div className="w-full relative">
+                    <span className="absolute left-2 top-[10px]">
+                      <Folder2 />
+                    </span>
+                    <input
+                      type="text"
+                      name="tin"
+                      value={formData.tin}
+                      placeholder="TIN"
+                      onChange={handleChange}
+                      className="mt-1 block w-full pl-8 px-3 py-2.5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
+                      required
+                    />
+                  </div>
+                  {errors.tin && (
+                    <p className="text-red-500 text-sm">{errors.tin}</p>
+                  )}
+                </div>
+                <div className="w-full">
+                  <label
+                    htmlFor="reg_date"
+                    className="block text-xs font-bold text-gray-700"
+                  >
+                    Registration Date
+                  </label>
+                  <div className="w-full relative">
+                    <span className="absolute left-2 top-[10px]">
+                      <Folder2 />
+                    </span>
+                    <input
+                      type="date"
+                      name="reg_date"
+                      value={formData.reg_date}
+                      placeholder="Registration Date"
+                      onChange={handleChange}
+                      max={new Date().toISOString().split("T")[0]}
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
+                      required
+                    />
+                  </div>
+                  {errors.reg_date && (
+                    <p className="text-red-500 text-sm">{errors.reg_date}</p>
+                  )}
+                </div>
+              </div>
+              <div className="w-full flex justify-between gap-3">
+                <div className="w-full">
                 <div className="w-full">
                   <label
                     htmlFor="business_type"
@@ -400,35 +462,6 @@ const CompleteProfile = ({
                     </p>
                   )}
                 </div>
-                <div className="w-full">
-                  <label
-                    htmlFor="reg_date"
-                    className="block text-xs font-bold text-gray-700"
-                  >
-                    Registration Date
-                  </label>
-                  <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <Folder2 />
-                    </span>
-                    <input
-                      type="date"
-                      name="reg_date"
-                      value={formData.reg_date}
-                      placeholder="Registration Date"
-                      onChange={handleChange}
-                      max={new Date().toISOString().split("T")[0]}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
-                      required
-                    />
-                  </div>
-                  {errors.reg_date && (
-                    <p className="text-red-500 text-sm">{errors.reg_date}</p>
-                  )}
-                </div>
-              </div>
-              <div className="w-full flex justify-between gap-3">
-                <div className="w-full">
                   <div className="w-full mt-5">
                     <label
                       htmlFor="is_private"
