@@ -142,9 +142,7 @@ const Page = () => {
       accessorKey: "stage",
       header: "Stage",
       cell: ({ row }) => (
-        <div className="truncate">
-          {getApplicationStatus(row.original)}
-        </div>
+        <div className="truncate">{getApplicationStatus(row.original)}</div>
       ),
     },
     {

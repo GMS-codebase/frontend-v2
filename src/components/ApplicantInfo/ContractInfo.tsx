@@ -1,7 +1,9 @@
 import React from "react";
 import { SolarPen2Bold } from "../core/icons";
-
-function ContractInfo() {
+interface Props {
+  contract: any;
+}
+function ContractInfo({ contract }: Props) {
   return (
     <div className="w-1/2">
       <div className="bg-white rounded-2xl p-10 mb-10 flex flex-col gap-6">
@@ -14,7 +16,7 @@ function ContractInfo() {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Contract number</div>
               </div>
-              <div className="mt-2 ml-4">GMS-CON-00087</div>
+              <div className="mt-2 ml-4">{contract?.contractNumber}</div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -22,7 +24,7 @@ function ContractInfo() {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Remaining amount</div>
               </div>
-              <div className="mt-2 ml-4">14363666.50</div>
+              <div className="mt-2 ml-4">{contract?.remainedAmount}</div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -30,7 +32,7 @@ function ContractInfo() {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Contract amount</div>
               </div>
-              <div className="mt-2 ml-4">28727333.00</div>
+              <div className="mt-2 ml-4">{contract?.totalAmount}</div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -38,15 +40,17 @@ function ContractInfo() {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Contract Status</div>
               </div>
-              <div className="mt-2 ml-4">APPROVED</div>
+              <div className="mt-2 ml-4">{contract?.contractStatus}</div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
             <div className="flex w-full">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                <div>Networking</div>
+                <div>Number of Trainees</div>
               </div>
-              <div className="mt-2 ml-4">20 Beneficiaries</div>
+              <div className="mt-2 ml-4">
+                {contract?.numberOfTrainees} Trainees
+              </div>
             </div>
           </div>
           <div className=" flex  mt-4 space-x-4">

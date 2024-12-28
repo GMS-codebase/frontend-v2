@@ -1,7 +1,7 @@
 "use client";
-import Profile from "@/components/Profile";
+import ApplicantProfile from "@/components/Profile/ApplicantProfile";
 const Page = () => {
-  return <Profile />;
+  return <ApplicantProfile />;
 };
 
 export default Page;

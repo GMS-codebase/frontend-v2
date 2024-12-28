@@ -64,6 +64,8 @@ import {
   GET_MEREPORTS_SUCCESS,
 } from "@/actions/MEReportsActions";
 import {
+  GET_APPLICANT_PROFILE_LOADING,
+  GET_APPLICANT_PROFILE_SUCCESS,
   GET_PROFILE_ERROR,
   GET_PROFILE_LOADING,
   GET_PROFILE_SUCCESS,
@@ -148,7 +150,7 @@ export const getAppeals = async (
     });
 };
 export const shortenString = (str: string, maxLength: number = 30) => {
-  return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+  return str?.length > maxLength ? str?.slice(0, maxLength) + "..." : str;
 };
 export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_WINDOWS_LOADING });
@@ -425,7 +427,6 @@ export const getApplicationsForContractSigning = async (
   authorizedApi
     .get("/negotiation-contract/applications/sdf/ready-contract-signing")
     .then((res) => {
-      console.log("res --> ", res.data.data.data);
       dispatch({
         type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
         payload: res.data.data.data,
@@ -505,9 +506,9 @@ export const getMyContacts = async (dispatch: Dispatch<UnknownAction>) => {
 export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_CONTRACTS_LOADING });
   authorizedApi
-    .get("/application/all-application")
+    .get("/negotiation-contract/contracts/applicant")
     .then((res) => {
-      dispatch({ type: GET_MY_CONTRACTS_SUCCESS, payload: res.data.data });
+      dispatch({ type: GET_MY_CONTRACTS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
       dispatch({
@@ -566,7 +567,7 @@ export const getApprovedMinutes = async (
     .then((res) => {
       dispatch({
         type: GET_APPROVED_MINUTES_SUCCESS,
-        payload: res.data?.data?.data?.applications,
+        payload: res.data?.data?.data?.applications ?? res.data?.data?.data,
       });
     })
     .catch((err) => {
@@ -659,7 +660,25 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
-
+export const getApplicantProfile = async (
+  dispatch: Dispatch<UnknownAction>,
+) => {
+  dispatch({ type: GET_APPLICANT_PROFILE_LOADING });
+  authorizedApi
+    .get("/applicant/me")
+    .then((res) => {
+      dispatch({
+        type: GET_APPLICANT_PROFILE_SUCCESS,
+        payload: res.data?.data?.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_PROFILE_ERROR,
+        payload: err.response.data.error ?? "Network Error",
+      });
+    });
+};
 const validateQuestions = async (
   answers: { [key: string]: any },
   form: Form,
@@ -825,6 +844,14 @@ export const getApplicationStatus = (application: any) => {
       !application?.call?.closedEvaluation)
   ) {
     return "CONTRACT SIGNING IN PROGRESS";
+  } else if (
+    application?.currentStage === "CONTRACT_SIGNING" &&
+    application?.call?.closedGrantCommittee &&
+    application?.call?.closedDueDiligency &&
+    application?.call?.closedEvaluation &&
+    application?.uploadedContract
+  ) {
+    return "FINISH GRANT PROPOSALS";
   } else {
     return application?.currentStage;
   }

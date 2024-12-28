@@ -1,9 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { authorizedApi } from "@/utils/api";
-import { Checkbox, Modal, Select, Stepper } from "@mantine/core";
+import { getApplicantProfile } from "@/utils/funcs";
+import { Checkbox, Modal, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { useDispatch } from "react-redux";
 import { User } from "solar-icon-set";
 import { Upload } from "solar-icon-set";
 import { CalendarMinimalistic, Folder2, ShieldWarning } from "solar-icon-set";
@@ -35,11 +38,14 @@ const CompleteProfile = ({
   isOpenCompleteProfile,
   closeCompleteProfile,
   finishAddingProfile,
+  defaultData,
 }: {
   isOpenCompleteProfile: boolean;
   closeCompleteProfile: () => void;
   finishAddingProfile?: () => void;
+  defaultData?: any;
 }) => {
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState(1);
   const [loading, setLoading] = useState(false);
   const [certificate, setCertificate] = useState<any>();
@@ -63,7 +69,64 @@ const CompleteProfile = ({
     cell: "",
     village: "",
   });
+  const ProvincesOptions = Provinces();
+  const DistrictOptions = formData.province ? Districts(formData.province) : [];
+  const SectorOptions =
+    formData.district && formData.province
+      ? Sectors(formData.province, formData.district)
+      : [];
+  const CellOptions =
+    formData.sector && formData.district && formData.province
+      ? Cells(formData.province, formData.district, formData.sector)
+      : [];
+  const VillageOptions =
+    formData.cell && formData.sector && formData.district && formData.province
+      ? Villages(
+          formData.province,
+          formData.district,
+          formData.sector,
+          formData.cell,
+        )
+      : [];
 
+  useEffect(() => {
+    if (defaultData) {
+      console.log("default data --> ", defaultData);
+      const locations = defaultData?.addressLine?.split("-");
+      console.log("locations -> ", locations);
+      console.log("locations -> ", locations[0]?.split(" ")[0]);
+      console.log("locations -> ", locations[1]?.split(" ")[1]);
+      console.log("locations -> ", locations[2]?.split(" ")[1]);
+      console.log("locations -> ", locations[3]?.split(" ")[1]);
+      console.log("locations -> ", locations[4]?.split(" ")[1]);
+
+      console.log("defaultData.addressLine -> ", defaultData?.addressLine);
+
+      setFormData({
+        ...defaultData,
+        tin: defaultData?.tinNumber,
+        is_private: defaultData?.private,
+        reg_no_or_school_code: defaultData?.registrationNumber,
+        reg_date: defaultData?.registrationDate,
+        business_phone: defaultData.phone,
+        year_of_placement: defaultData.yearOfEstablishment,
+        business_address: defaultData?.addressLine,
+        employee_number: defaultData.employeeNumber,
+        business_type: defaultData?.businessType,
+        bank_name: defaultData?.bankName,
+        bank_account: defaultData?.businessAccount,
+        po_box: defaultData?.poBox,
+        province: locations[4]?.split(" ")[1],
+        district: locations[3]?.split(" ")[1],
+        sector: locations[2]?.split(" ")[1],
+        cell: locations[1]?.split(" ")[1],
+        village: locations[0]?.split(" ")[0],
+      });
+      setCertificate(defaultData?.businessCertificate);
+      setErrors({});
+    }
+    console.log("form data ", formData);
+  }, [defaultData]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const validate = () => {
@@ -79,7 +142,8 @@ const CompleteProfile = ({
         newErrors.is_private = "Private status is required.";
       if (!formData.business_type)
         newErrors.business_type = "Business type is required.";
-      if (!certificate) newErrors.certificate = "Certificate is required.";
+      if (!certificate && !defaultData)
+        newErrors.certificate = "Certificate is required.";
     } else if (activeTab === 2) {
       if (!formData.employee_number)
         newErrors.employee_number = "Employee number is required.";
@@ -106,26 +170,6 @@ const CompleteProfile = ({
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  const ProvincesOptions = Provinces();
-  const DistrictOptions = formData.province ? Districts(formData.province) : [];
-  const SectorOptions =
-    formData.district && formData.province
-      ? Sectors(formData.province, formData.district)
-      : [];
-  const CellOptions =
-    formData.sector && formData.district && formData.province
-      ? Cells(formData.province, formData.district, formData.sector)
-      : [];
-  const VillageOptions =
-    formData.cell && formData.sector && formData.district && formData.province
-      ? Villages(
-          formData.province,
-          formData.district,
-          formData.sector,
-          formData.cell,
-        )
-      : [];
-
   const handleNext = () => {
     if (validate()) {
       setActiveTab((current) => (current < 3 ? current + 1 : current));
@@ -133,7 +177,7 @@ const CompleteProfile = ({
   };
 
   const handlePrev = () =>
-    setActiveTab((current) => (current > 0 ? current - 1 : current));
+    setActiveTab((current) => (current > 1 ? current - 1 : current));
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -172,8 +216,9 @@ const CompleteProfile = ({
       if (certificate) {
         submitData.append("certificate", certificate);
       }
+      const endPoint = "/applicant/update/business"
       authorizedApi
-        .put("/applicant/update/profile", submitData, {
+        .put(endPoint, submitData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -203,6 +248,8 @@ const CompleteProfile = ({
             cell: "",
             village: "",
           });
+          console.log("profile updated successfully!");
+          getApplicantProfile(dispatch);
           finishAddingProfile && finishAddingProfile();
         })
         .catch((err) => {
@@ -217,48 +264,6 @@ const CompleteProfile = ({
           setLoading(false);
         });
     }
-  };
-
-  const handleProvinceChange = (e: any) => {
-    const value = e.target.value;
-    setFormData((prevState) => ({
-      ...prevState,
-      province: value,
-      district: "",
-      sector: "",
-      cell: "",
-      village: "",
-    }));
-  };
-
-  const handleDistrictChange = (e: any) => {
-    const value = e.target.value;
-    setFormData((prevState) => ({
-      ...prevState,
-      district: value,
-      sector: "",
-      cell: "",
-      village: "",
-    }));
-  };
-
-  const handleSectorChange = (e: any) => {
-    const value = e.target.value;
-    setFormData((prevState) => ({
-      ...prevState,
-      sector: value,
-      cell: "",
-      village: "",
-    }));
-  };
-
-  const handleCellChange = (e: any) => {
-    const value = e.target.value;
-    setFormData((prevState) => ({
-      ...prevState,
-      cell: value,
-      village: "",
-    }));
   };
 
   return (
@@ -277,11 +282,14 @@ const CompleteProfile = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="  my-4 text-center w-full">
-          <h1 className="text-2xl font-extrabold">Complete your profile</h1>
-          <h2 className="text-[#000F2369] text-lg font-medium 5">
-            Provide the below details to complete. Provide the below details to
-            complete.
-          </h2>
+          <h1 className="text-2xl font-extrabold">
+            {defaultData ? "Update business" : "Complete your"} profile
+          </h1>
+          {!defaultData && (
+            <h2 className="text-[#000F2369] text-lg font-medium 5">
+              Provide the below details to complete.
+            </h2>
+          )}
         </div>
 
         <div className="w-11/12 flex flex-col items-center mt-4 overflow-hidden">

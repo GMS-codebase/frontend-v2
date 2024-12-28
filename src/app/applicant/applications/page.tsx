@@ -26,7 +26,9 @@ const Page = () => {
       accessorKey: "title",
       header: "Call title",
       cell: ({ row }) => (
-        <div className="truncate">{shortenString(row.original.call?.title)}</div>
+        <div className="truncate">
+          {shortenString(row.original.call?.title)}
+        </div>
       ),
     },
     {
@@ -40,7 +42,9 @@ const Page = () => {
       accessorKey: "trade",
       header: "Trade",
       cell: ({ row }) => (
-        <div className="truncate">{shortenString(row.original?.trades[0]?.trade?.title, 20)}</div>
+        <div className="truncate">
+          {shortenString(row.original?.trades[0]?.trade?.title, 20)}
+        </div>
       ),
     },
     {

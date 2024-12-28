@@ -5,11 +5,15 @@ import {
   ADD_CONTRACTS_SUCCESS,
   UPDATE_CONTRACTS_SUCCESS,
   DELETE_CONTRACTS_SUCCESS,
+  GET_MY_CONTRACTS_LOADING,
+  GET_MY_CONTRACTS_SUCCESS,
 } from "@/actions/ContractActions";
 import { Contract } from "@/types";
 
 const initialState = {
   contracts: [],
+  myContracts: [],
+  myContractsLoading: true,
   error: null,
   isError: false,
   loading: true,
@@ -27,6 +31,11 @@ export default function ContractsReducer(state = initialState, action: Action) {
         ...state,
         loading: true,
       };
+    case GET_MY_CONTRACTS_LOADING:
+      return {
+        ...state,
+        myContractsLoading: true,
+      };
 
     case GET_CONTRACTS_SUCCESS:
       return {
@@ -34,7 +43,12 @@ export default function ContractsReducer(state = initialState, action: Action) {
         loading: false,
         contracts: action.payload,
       };
-
+    case GET_MY_CONTRACTS_SUCCESS:
+      return {
+        ...state,
+        myContractsLoading: false,
+        myContracts: action.payload,
+      };
     case GET_CONTRACTS_ERROR:
       return {
         ...state,
