@@ -14,7 +14,7 @@ import { getApplicationStatus } from "@/utils/funcs";
 const Page = () => {
   // Select applications from Redux store
   const { applications: rawApplications, loading } = useSelector(
-    (state: any) => state.applications
+    (state: any) => state.applications,
   );
 
   // Format applications to flatten nested arrays
@@ -25,7 +25,7 @@ const Page = () => {
         sector: app.sectors[0] || null,
         trade: app.trades[0] || null,
       })),
-    [rawApplications]
+    [rawApplications],
   );
 
   const filtersContainerRef = useRef<HTMLDivElement>(null);
@@ -47,9 +47,9 @@ const Page = () => {
       ...new Set(
         applications
           .map((app: any) =>
-            key.split(".").reduce((obj, property) => obj?.[property], app)
+            key.split(".").reduce((obj, property) => obj?.[property], app),
           )
-          .filter(Boolean)
+          .filter(Boolean),
       ),
     ];
   };
@@ -63,7 +63,7 @@ const Page = () => {
       trades: getUniqueValues("trade.trade.title"),
       call: getUniqueValues("call.title"),
     }),
-    [applications]
+    [applications],
   );
 
   // Format stage string
@@ -213,7 +213,7 @@ const Page = () => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase())
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade } =

@@ -82,7 +82,7 @@ export default function ApplicationsReducer(
     case GET_MY_APPLICATIONS_SUCCESS:
       return {
         ...state,
-        myLoading: false,
+        myApplicationsLoading: false,
         myApplications: action.payload,
       };
 

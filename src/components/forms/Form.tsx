@@ -59,7 +59,7 @@ const Form: React.FC<Props> = ({
   };
   const updateQuestionType = (
     newType: { name: string; description: string },
-    recentName: string
+    recentName: string,
   ) => {
     setFormData &&
       setFormData((prevFormData) => {
@@ -169,7 +169,7 @@ const Form: React.FC<Props> = ({
                 )}
               </div>
             </div>
-          )
+          ),
         )}
         {mode === "creating" && (
           <button
@@ -197,7 +197,7 @@ const Form: React.FC<Props> = ({
                   setActiveType(
                     Object.keys(formData.qns)[
                       Object.keys(formData.qns).indexOf(activeType) + 1
-                    ]
+                    ],
                   )
               : undefined
           }
@@ -209,7 +209,7 @@ const Form: React.FC<Props> = ({
                   setActiveType(
                     Object.keys(formData.qns)[
                       Object.keys(formData.qns).indexOf(activeType) - 1
-                    ]
+                    ],
                   )
               : undefined
           }
@@ -223,7 +223,7 @@ const Form: React.FC<Props> = ({
                       ...(prevFormData?.qns || {}),
                       [activeType]: data,
                     },
-                  }) as any
+                  }) as any,
               );
           }}
           formData={formData.qns}
