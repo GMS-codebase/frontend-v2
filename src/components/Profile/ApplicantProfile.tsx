@@ -237,7 +237,7 @@ const ApplicantProfile = ({ type }: Props) => {
                         <div>Business Type </div>
                       </div>
                       <div className="mt-2 ml-4">
-                        {applicantProfile?.tinNumber || ""}
+                        {applicantProfile?.businessType || ""}
                       </div>
                     </div>
                   </div>
