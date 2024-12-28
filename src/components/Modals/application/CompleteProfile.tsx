@@ -94,9 +94,11 @@ const CompleteProfile = ({
       console.log("default data --> ", defaultData);
       const locations = defaultData?.addressLine?.split("-");
       console.log("locations -> ", locations);
-      console.log("locations -> ", locations[0]);
+      console.log("locations -> ", locations[0]?.split(" ")[0]);
       console.log("locations -> ", locations[1]?.split(" ")[1]);
       console.log("locations -> ", locations[2]?.split(" ")[1]);
+      console.log("locations -> ", locations[3]?.split(" ")[1]);
+      console.log("locations -> ", locations[4]?.split(" ")[1]);
 
       console.log("defaultData.addressLine -> ", defaultData?.addressLine);
 
@@ -114,11 +116,11 @@ const CompleteProfile = ({
         bank_name: defaultData?.bankName,
         bank_account: defaultData?.businessAccount,
         po_box: defaultData?.poBox,
-        // province: "West",
-        // district: locations[0],
-        // sector: locations[1]?.split(" ")[1],
-        // cell: locations[2]?.split(" ")[1],
-        // village: defaultData?.village,
+        province: locations[4]?.split(" ")[1],
+        district: locations[3]?.split(" ")[1],
+        sector: locations[2]?.split(" ")[1],
+        cell: locations[1]?.split(" ")[1],
+        village: locations[0]?.split(" ")[0],
       });
       setCertificate(defaultData?.businessCertificate);
       setErrors({});
@@ -250,7 +252,7 @@ const CompleteProfile = ({
           });
           console.log("profile updated successfully!");
           getApplicantProfile(dispatch);
-          // finishAddingProfile && finishAddingProfile();
+          finishAddingProfile && finishAddingProfile();
         })
         .catch((err) => {
           notifications.show({
