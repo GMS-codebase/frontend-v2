@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { authorizedApi } from "@/utils/api";
-import { getApplicantProfile } from "@/utils/funcs";
+import { getApplicantProfile, getProfile } from "@/utils/funcs";
 import { Checkbox, Modal, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
@@ -152,6 +152,7 @@ const UpdateApplicantProfile = ({
         });
         console.log("profile updated successfully!");
         getApplicantProfile(dispatch);
+        getProfile(dispatch)
         onUpdateProfile && onUpdateProfile();
       })
       .catch((err) => {
