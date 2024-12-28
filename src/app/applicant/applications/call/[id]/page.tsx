@@ -53,10 +53,7 @@ const Page = () => {
   const router = useRouter();
   const handleApply = async () => {
     setApplyLoading(true);
-    while (profile.loading || contacts.loading) {
-      await new Promise((resolve) => setTimeout(resolve, 50));
-    }
-    if (!profile.applicantProfile || !profile.applicantProfile.business_name) {
+    if (!profile.applicantProfile || !profile.applicantProfile.business) {
       openAddProfile();
     } else if (
       !contacts.loading &&
