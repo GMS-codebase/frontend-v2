@@ -216,9 +216,7 @@ const CompleteProfile = ({
       if (certificate) {
         submitData.append("certificate", certificate);
       }
-      const endPoint = defaultData
-        ? "/applicant/update/business"
-        : "/applicant/update/profile";
+      const endPoint = "/applicant/update/business"
       authorizedApi
         .put(endPoint, submitData, {
           headers: {
