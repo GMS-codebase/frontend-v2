@@ -14,18 +14,21 @@ import * as Icons from "@/components/core/icons";
 const { Provinces, Districts, Sectors, Cells, Villages } = require("rwanda");
 
 type FormData = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  gender: string;
-  position: string;
-  institution: string;
-  province: string;
-  district: string;
-  sector: string;
-  cell: string;
-  village: string;
+  first_name: string,
+  last_name: string,
+  email: string,
+  password: string,
+  old_password: string,
+  institution: string,
+  role: string,
+  phone_number: string,
+  province: string,
+  district: string,
+  sector: string,
+  cell: string,
+  village: string,
+  gender: string,
+  position: string,
 };
 
 const UpdateApplicantProfile = ({
@@ -45,25 +48,28 @@ const UpdateApplicantProfile = ({
   const [certificate, setCertificate] = useState<any>();
   console.log("default data --> ", defaultData);
   const [formData, setFormData] = useState<FormData>({
-    firstName: defaultData?.firstname,
-    lastName: defaultData?.lastname,
+    first_name: defaultData?.firstname,
+    last_name: defaultData?.lastname,
     email: defaultData?.email,
-    phoneNumber: defaultData?.phone,
-    gender: defaultData?.gender,
-    position: defaultData?.position,
+    phone_number: defaultData?.phone,
     institution: defaultData?.institution,
     province: "",
     district: "",
     sector: "",
     cell: "",
     village: "",
+    role: "",
+    password: "",
+    old_password: "",
+    gender: "",
+    position: "",
   });
   useEffect(() => {
     setFormData({
-      firstName: defaultData?.firstname || "",
-      lastName: defaultData?.lastname || "",
+      first_name: defaultData?.firstname || "",
+      last_name: defaultData?.lastname || "",
       email: defaultData?.email || "",
-      phoneNumber: defaultData?.phone || "",
+      phone_number: defaultData?.phone || "",
       gender: defaultData?.gender || "",
       position: defaultData?.position || "",
       institution: defaultData?.institution || "",
@@ -72,6 +78,9 @@ const UpdateApplicantProfile = ({
       sector: "",
       cell: "",
       village: "",
+      old_password: "",
+      role: "",
+      password: ""
     });
   }, [defaultData]);
   const ProvincesOptions = Provinces();
@@ -131,7 +140,7 @@ const UpdateApplicantProfile = ({
       submitData.append("certificate", certificate);
     }
     authorizedApi
-      .put("/applicant/update/profile", submitData, {
+      .put("/auth/update/info", submitData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -143,7 +152,7 @@ const UpdateApplicantProfile = ({
         });
         console.log("profile updated successfully!");
         getApplicantProfile(dispatch);
-        // finishAddingProfile && finishAddingProfile();
+        onUpdateProfile && onUpdateProfile();
       })
       .catch((err) => {
         notifications.show({
@@ -199,8 +208,8 @@ const UpdateApplicantProfile = ({
                   </span>
                   <input
                     type="text"
-                    name="firstName"
-                    value={formData.firstName}
+                    name="first_name"
+                    value={formData.first_name}
                     onChange={handleChange}
                     className="mt-1 block w-full pl-8 px-3 py-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
@@ -219,8 +228,8 @@ const UpdateApplicantProfile = ({
                   </span>
                   <input
                     type="text"
-                    name="lastName"
-                    value={formData.lastName}
+                    name="last_name"
+                    value={formData.last_name}
                     onChange={handleChange}
                     className="mt-1 block w-full pl-8 px-3 py-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
@@ -264,8 +273,8 @@ const UpdateApplicantProfile = ({
                 </div>
                 <input
                   type="text"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
+                  name="phone_number"
+                  value={formData.phone_number}
                   onChange={handleChange}
                   className="block w-full pl-8 pr-3 py-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
@@ -286,7 +295,16 @@ const UpdateApplicantProfile = ({
                 <Select
                   name="gender"
                   placeholder="Select Gender"
-                  data={["Male", "Female"]}
+                  data={[
+                    {
+                      value: "male",
+                      label: "Male",
+                    },
+                    {
+                      value: "female",
+                      label: "Female",
+                    }
+                  ]}
                   value={formData.gender}
                   onChange={(e: any) => setFormData({ ...formData, gender: e })}
                   className="mt-1 block w-full pl-5 px-3 py-1 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
