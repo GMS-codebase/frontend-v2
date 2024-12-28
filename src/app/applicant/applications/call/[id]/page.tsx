@@ -52,8 +52,9 @@ const Page = () => {
   ] = useDisclosure(false);
   const router = useRouter();
   const handleApply = () => {
+    console.log("profile --> ", profile);
     setApplyLoading(true);
-    if (!profile.applicantProfile || !profile.applicantProfile.business_name) {
+    if (!profile.applicantProfile || !profile.applicantProfile.business) {
       openAddProfile();
     } else if (
       !contacts.loading &&

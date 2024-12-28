@@ -95,15 +95,6 @@ const CompleteProfile = ({
     if (defaultData) {
       console.log("default data --> ", defaultData);
       const locations = defaultData?.addressLine?.split("-");
-      console.log("locations -> ", locations);
-      console.log("locations -> ", locations[0]?.split(" ")[0]);
-      console.log("locations -> ", locations[1]?.split(" ")[1]);
-      console.log("locations -> ", locations[2]?.split(" ")[1]);
-      console.log("locations -> ", locations[3]?.split(" ")[1]);
-      console.log("locations -> ", locations[4]?.split(" ")[1]);
-
-      console.log("defaultData.addressLine -> ", defaultData?.addressLine);
-
       setFormData({
         tin: defaultData?.tinNumber,
         is_private: defaultData?.private,
@@ -128,7 +119,6 @@ const CompleteProfile = ({
       setCertificate(defaultData?.businessCertificate);
       setErrors({});
     }
-    console.log("form data ", formData);
   }, [defaultData]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -216,6 +206,7 @@ const CompleteProfile = ({
       Object.keys(formData).forEach((key) => {
         submitData.append(key, formData[key as keyof FormData] as string);
       });
+      submitData.append("isprivate", String(formData.is_private))
       const updateData = submitData;
       const payload = defaultData ? updateData : submitData;
       updateData.append("year_of_establishment", formData.year_of_placement);
@@ -224,13 +215,21 @@ const CompleteProfile = ({
       if (certificate) {
         submitData.append("certificate", certificate);
       }
-      const endPoint = "/applicant/update/business"
-      authorizedApi
-        .put(endPoint, payload, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
+      const endPoint = "/applicant/update/business";
+        (defaultData ? 
+          authorizedApi
+          .put(endPoint, payload, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }) :
+          authorizedApi
+          .post("/applicant/complete/profile", payload, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+        )
         .then((_res) => {
           notifications.show({
             message: "Profile updated successfully!",
