@@ -9,11 +9,11 @@ const Announcement = ({
     setShowAnnouncement
 }: AnnouncementProps)=>{
     return(
-        <div className="w-full bg-red-400 p-3 mb-2 relative rounded-sm">
+        <div className="w-full bg-red-400 p-3 mb-2 relative rounded-sm font-bold">
         <div
           className={`text-white pr-8 text-lg ${announcement?.announcement?.length > 100 ? "animate-scroll" : ""}`}
         >
-          <span className="font-bold relative pl-7"> <GoAlertFill className="absolute" size={23}/> Announcement: </span>{" "}
+          <span className="relative pl-7"> <GoAlertFill className="absolute" size={23}/> Announcement: </span>{" "}
           {announcement?.announcement}
         </div>
         <button
