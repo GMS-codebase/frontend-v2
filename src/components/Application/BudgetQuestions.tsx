@@ -1,6 +1,6 @@
 import { Comments } from "@/types";
 import { ApplicationQuestions } from "@/types/application";
-import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/services";
 import { Select } from "@mantine/core";
 import React, { useState, ChangeEvent } from "react";
 import { FaDownload, FaTrash } from "react-icons/fa6";

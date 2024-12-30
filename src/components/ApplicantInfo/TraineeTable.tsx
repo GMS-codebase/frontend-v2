@@ -6,7 +6,7 @@ import { DataTable } from "@/components/core/data-table";
 // import CallsActions from "@/app/admin/calls/CallsAction";
 import { Contact as contactData } from "@/utils/constants/contact";
 import ContractsAction from "@/components/Actions/ContractsAction";
-import { shortenString } from "@/utils/funcs";
+import { shortenString } from "@/services";
 interface Props {
   installments: any[];
   trainees: any[];

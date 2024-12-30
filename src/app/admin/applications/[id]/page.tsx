@@ -14,7 +14,7 @@ import {
   getApplicationStatus,
   handleDownloadFile,
   handleViewFile,
-} from "@/utils/funcs";
+} from "@/services";
 import Form from "@/components/forms/Form";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import { ApplicationStage } from "@/types/application";

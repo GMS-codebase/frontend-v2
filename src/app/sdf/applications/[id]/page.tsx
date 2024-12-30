@@ -22,7 +22,7 @@ import {
   getApplications,
   handleDownloadFile,
   handleViewFile,
-} from "@/utils/funcs";
+} from "@/services";
 import Form from "@/components/forms/Form";
 import { ApplicationStage } from "@/types/application";
 const Page = () => {

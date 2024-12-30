@@ -17,7 +17,7 @@ import Dash from "./dash";
 import AdminAction from "@/components/Actions/AdminAction";
 import { authorizedApi } from "@/utils/api";
 import { useDispatch, useSelector } from "react-redux";
-import { getDashboardData } from "@/utils/funcs";
+import { getDashboardData } from "@/services";
 
 const lineChartData = [
   { day: "Mon", completed: 60, ongoing: 30 },

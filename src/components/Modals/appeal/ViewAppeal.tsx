@@ -4,7 +4,7 @@ import { FaGavel } from "react-icons/fa";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
-import { getAppeals } from "@/utils/funcs";
+import { getAppeals } from "@/services";
 import { useDispatch } from "react-redux";
 
 interface ViewAppealModalProps {

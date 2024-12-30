@@ -18,6 +18,7 @@ import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import CompleteProfile from "../Modals/application/CompleteProfile";
 import UpdateApplicantProfile from "../Modals/applicantContacts/UpdateApplicantProfile";
+import capitalize from "@/utils/funcs";
 interface Props {
   type?: string;
 }
@@ -214,7 +215,7 @@ const ApplicantProfile = ({ type }: Props) => {
                       <input
                         type="text"
                         name="text"
-                        value={formData.gender}
+                        value={capitalize(formData.gender)}
                         className="mt-1 block w-full pl-8 px-3 py-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                         disabled
                       />
@@ -226,7 +227,7 @@ const ApplicantProfile = ({ type }: Props) => {
                   <div className="flex font-semibold ">
                     <div className="flex w-1/2">
                       <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                        <div>Business Name</div>
+                        <div>Institution Name</div>
                       </div>
                       <div className="mt-2 ml-4">
                         {applicantProfile?.businessName || ""}
@@ -237,7 +238,7 @@ const ApplicantProfile = ({ type }: Props) => {
                         <div>Business Type </div>
                       </div>
                       <div className="mt-2 ml-4">
-                        {applicantProfile?.businessType || ""}
+                        {capitalize(applicantProfile?.businessType) || ""}
                       </div>
                     </div>
                   </div>

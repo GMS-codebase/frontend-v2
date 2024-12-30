@@ -12,7 +12,7 @@ import DeleteQuestion from "./RemoveQuestion";
 import { useDisclosure } from "@mantine/hooks";
 import { authorizedApi } from "@/utils/api";
 import { FaDownload } from "react-icons/fa";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile } from "@/services";
 
 interface CreateQuestionProps {
   question: Question;

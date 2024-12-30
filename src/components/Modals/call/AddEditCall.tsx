@@ -13,7 +13,7 @@ import { authorizedApi } from "@/utils/api";
 import { Call } from "@/types";
 import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
-import { getCalls } from "@/utils/funcs";
+import { getCalls } from "@/services";
 import { ADD_CALL_SUCCESS, UPDATE_CALL_SUCCESS } from "@/actions/CallsActions";
 import {
   SECTOR_STATUS,

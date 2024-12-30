@@ -1,6 +1,6 @@
 import { Question } from "@/types/questions-form";
 import { authorizedApi } from "@/utils/api";
-import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/services";
 import React, { useState } from "react";
 import { FaDownload } from "react-icons/fa";
 

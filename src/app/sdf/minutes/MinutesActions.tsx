@@ -8,7 +8,7 @@ import AddMinute from "@/components/Modals/contracts/AddMinutes"; // Import AddM
 import { VscEye } from "react-icons/vsc";
 import { Upload } from "solar-icon-set";
 import { useState } from "react";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile } from "@/services";
 import MinutesNegotiateRejectionReason from "@/components/Modals/minutes/MinutesNegotiateRejectionReason";
 import ViewMinutes from "@/components/Modals/minutes/ViewMinutes"; // Add this import
 

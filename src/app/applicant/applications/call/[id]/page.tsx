@@ -26,7 +26,7 @@ import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import { getApplicationStatus } from "@/utils/funcs";
+import { getApplicationStatus } from "@/services";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);

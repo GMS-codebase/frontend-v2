@@ -16,7 +16,7 @@ import {
   handleAddComments,
   handleDownloadFile,
   handleViewFile,
-} from "@/utils/funcs";
+} from "@/services";
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 import Form from "@/components/forms/Form";
 import { Form as IForm, QuestionForm } from "@/types/questions-form";

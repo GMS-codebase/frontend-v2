@@ -9,7 +9,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { getApplicationStatus, shortenString } from "@/utils/funcs";
+import { getApplicationStatus, shortenString } from "@/services";
 
 const Page = () => {
   // Select applications from Redux store

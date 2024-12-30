@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { IoIosSave } from "react-icons/io";
 import { useRouter } from "next/navigation";
-import { getMyApplications, handleSubmit } from "@/utils/funcs";
+import { getMyApplications, handleSubmit } from "@/services";
 import Form from "@/components/forms/Form";
 import { useDispatch } from "react-redux";
 

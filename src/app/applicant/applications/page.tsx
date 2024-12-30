@@ -11,7 +11,7 @@ import { Menu } from "@mantine/core";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
-import { getApplicationStatus, shortenString } from "@/utils/funcs";
+import { getApplicationStatus, shortenString } from "@/services";
 import { CALL_STATUS } from "@/utils/enums";
 const Page = () => {
   const columns: ColumnDef<any>[] = [
