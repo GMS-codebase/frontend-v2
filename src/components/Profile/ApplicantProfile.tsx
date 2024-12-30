@@ -221,8 +221,22 @@ const ApplicantProfile = ({ type }: Props) => {
                       />
                     </div>
                   </div>
+                  <div className="w-full gap-2 flex justify-end mt-4">
+                    <button
+                      type="button"
+                      onClick={openUpdate}
+                      className="w- px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                      Update
+                    </button>
+                  </div>
                 </div>
-              ) : (
+              ) : !applicantProfile ? 
+              <div className="w-full flex flex-col gap-3 items-center justify-center h-[45vh]">
+                  <h1 className="font-bold text-lg text-center">Complete Your Business Profile First</h1>
+                  <button onClick={openUpdate} className="py-2 px-10 text-base bg-blue-500 text-white">Complete Profile</button>
+              </div>
+:
                 <div className="w-full flex flex-col gap-3">
                   <div className="flex font-semibold ">
                     <div className="flex w-1/2">
@@ -235,7 +249,7 @@ const ApplicantProfile = ({ type }: Props) => {
                     </div>
                     <div className="flex w-1/2">
                       <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                        <div>Business Type </div>
+                        <div>Institution Type </div>
                       </div>
                       <div className="mt-2 ml-4">
                         {capitalize(applicantProfile?.businessType) || ""}
@@ -328,7 +342,7 @@ const ApplicantProfile = ({ type }: Props) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex    font-semibold ">
+                  <div className="flex font-semibold ">
                     <div className="flex w-1/2">
                       <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                         <div>Is Private</div>
@@ -338,10 +352,7 @@ const ApplicantProfile = ({ type }: Props) => {
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-
-              <div className="w-full gap-2 flex justify-end mt-4">
+                  <div className="w-full gap-2 flex justify-end mt-4">
                 <button
                   type="button"
                   onClick={openUpdate}
@@ -350,6 +361,8 @@ const ApplicantProfile = ({ type }: Props) => {
                   Update
                 </button>
               </div>
+                </div>
+              }
             </div>
           </div>
         </div>
