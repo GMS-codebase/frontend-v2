@@ -7,7 +7,7 @@ import { Folder2, Subtitles } from "solar-icon-set";
 import { IoMdClose } from "react-icons/io";
 import { SolarSuitcaseLinear } from "@/components/core/icons";
 import { useRouter } from "next/navigation";
-import { getMyApplications } from "@/utils/funcs";
+import { getMyApplications } from "@/services";
 
 const CreateApplication = ({
   isOpenCreatingApplication,

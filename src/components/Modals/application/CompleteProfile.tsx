@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { authorizedApi } from "@/utils/api";
-import { getApplicantProfile } from "@/utils/funcs";
+import { getApplicantProfile } from "@/services";
 import { Checkbox, Modal, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
@@ -134,7 +134,7 @@ const CompleteProfile = ({
       if (formData.is_private === undefined)
         newErrors.is_private = "Private status is required.";
       if (!formData.business_type)
-        newErrors.business_type = "Business type is required.";
+        newErrors.business_type = "Institution type is required.";
       if (!certificate && !defaultData)
         newErrors.certificate = "Certificate is required.";
     } else if (activeTab === 2) {
@@ -309,7 +309,7 @@ const CompleteProfile = ({
                     htmlFor="business_name"
                     className="block text-xs font-bold text-gray-700"
                   >
-                    Business Name
+                    Institution Name
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -319,7 +319,7 @@ const CompleteProfile = ({
                       type="text"
                       name="business_name"
                       value={formData.business_name}
-                      placeholder="Business Name"
+                      placeholder="Institution Name"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2.5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
@@ -417,7 +417,7 @@ const CompleteProfile = ({
                     htmlFor="business_type"
                     className="block text-xs font-bold text-gray-700"
                   >
-                    Business Type
+                    Institution Type
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -453,7 +453,7 @@ const CompleteProfile = ({
                         },
                       ]}
                       className="mt-1 block w-full  pl-5  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
-                      placeholder="Select Business Type"
+                      placeholder="Select Institution type"
                     />
                   </div>
                   {errors.business_type && (

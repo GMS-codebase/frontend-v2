@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { authorizedApi } from "@/utils/api";
-import { getApplicantProfile, getProfile } from "@/utils/funcs";
+import { getApplicantProfile, getProfile } from "@/services";
 import { Checkbox, Modal, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";

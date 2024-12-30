@@ -14,7 +14,7 @@ import {
   getNegotiatedMinutes,
   getRejectedMinutes,
   getUploadedMinutes,
-} from "@/utils/funcs";
+} from "@/services";
 import { useDispatch } from "react-redux";
 import { ClipLoader } from "react-spinners";
 

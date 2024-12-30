@@ -10,7 +10,7 @@ import {
   getApplicants,
   getApplications,
   getMyApplications,
-} from "@/utils/funcs";
+} from "@/services";
 import { ApplicationStage } from "@/types/application";
 
 interface AppealModalProps {

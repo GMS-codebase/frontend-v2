@@ -20,7 +20,7 @@ import { FiEye } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
-import { getWindows } from "@/utils/funcs";
+import { getWindows } from "@/services";
 
 const Page = () => {
   const navigate = useRouter();

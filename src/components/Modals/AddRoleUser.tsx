@@ -7,7 +7,7 @@ import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { useDispatch } from "react-redux";
 import { ADD_ROLE_SUCCESS } from "@/actions/RolesActions";
-import { getRoles } from "@/utils/funcs";
+import { getRoles } from "@/services";
 interface AddRoleModalProps {
   isOpenAddRoleUser: boolean;
   closeAddRoleUser: () => void;

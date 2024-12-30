@@ -8,7 +8,7 @@ import { CiEdit } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
 import MakeDecision from "./MakeDecision";
 import { SolarFileBold } from "../core/icons";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile } from "@/services";
 
 const GrantCommitteeDetails = ({
   application,

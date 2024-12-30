@@ -83,7 +83,7 @@ const Page = () => {
           <div className="flex  w-4/5  font-semibold ">
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                <div>Business Name</div>
+                <div>Institution Name</div>
               </div>
               <div className="mt-2 ml-4">
                 {applicant?.businesses[0]?.businessName || ""}
@@ -179,13 +179,13 @@ const Page = () => {
           <div className="flex  w-4/5  font-semibold ">
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                <div>Business Name</div>
+                <div>Institution Name</div>
               </div>
               <div className="mt-2 ml-4">Butare Tvet</div>
             </div>
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                <div>Business Name</div>
+                <div>Institution Name</div>
               </div>
               <div className="mt-2 ml-4">Butare Tvet</div>
             </div>

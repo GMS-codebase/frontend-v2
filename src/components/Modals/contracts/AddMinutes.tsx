@@ -8,7 +8,7 @@ import {
   getNegotiatedMinutes,
   getRejectedMinutes,
   getUploadedMinutes,
-} from "@/utils/funcs";
+} from "@/services";
 import { Modal } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import React, { useState } from "react";
