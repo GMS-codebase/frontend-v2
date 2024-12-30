@@ -231,12 +231,19 @@ const ApplicantProfile = ({ type }: Props) => {
                     </button>
                   </div>
                 </div>
-              ) : !applicantProfile ? 
-              <div className="w-full flex flex-col gap-3 items-center justify-center h-[45vh]">
-                  <h1 className="font-bold text-lg text-center">Complete Your Business Profile First</h1>
-                  <button onClick={openUpdate} className="py-2 px-10 text-base bg-blue-500 text-white">Complete Profile</button>
-              </div>
-:
+              ) : !applicantProfile ? (
+                <div className="w-full flex flex-col gap-3 items-center justify-center h-[45vh]">
+                  <h1 className="font-bold text-lg text-center">
+                    Complete Your Business Profile First
+                  </h1>
+                  <button
+                    onClick={openUpdate}
+                    className="py-2 px-10 text-base bg-blue-500 text-white"
+                  >
+                    Complete Profile
+                  </button>
+                </div>
+              ) : (
                 <div className="w-full flex flex-col gap-3">
                   <div className="flex font-semibold ">
                     <div className="flex w-1/2">
@@ -353,16 +360,16 @@ const ApplicantProfile = ({ type }: Props) => {
                     </div>
                   </div>
                   <div className="w-full gap-2 flex justify-end mt-4">
-                <button
-                  type="button"
-                  onClick={openUpdate}
-                  className="w- px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Update
-                </button>
-              </div>
+                    <button
+                      type="button"
+                      onClick={openUpdate}
+                      className="w- px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                      Update
+                    </button>
+                  </div>
                 </div>
-              }
+              )}
             </div>
           </div>
         </div>

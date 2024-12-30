@@ -24,7 +24,10 @@ export default function AdminLayout({
         announcement?.roles?.includes("NORMAL_EMPLOYEE") &&
         announcement.status === "ACTIVE" &&
         showAnnouncement && (
-          <Announcement announcement={announcement} setShowAnnouncement={setShowAnnouncement}/>
+          <Announcement
+            announcement={announcement}
+            setShowAnnouncement={setShowAnnouncement}
+          />
         )}
       <div className="flex flex-1 justify-between">
         <div
