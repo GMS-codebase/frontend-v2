@@ -75,19 +75,6 @@ const Page = () => {
       <div className="bg-white rounded-2xl p-10 flex flex-col gap-6  text-black">
         <div className="flex justify-between">
           <div className="text-xl font-bold">Call Info</div>
-          {/* <div
-              onClick={handleDownloadInstructions}
-              className="flex gap-2 text-[#005DE9] bg-[#005DE9] bg-opacity-10 px-4 py-2 rounded-full  w-fit font-bold items-center justify-center"
-            >
-              <span>
-                <SolarDownloadMinimalisticBold />
-              </span>
-              <p>
-                {loading
-                  ? "Downloading . . ."
-                  : "Download application instructions"}
-              </p>
-            </div> */}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="space-y-8">
