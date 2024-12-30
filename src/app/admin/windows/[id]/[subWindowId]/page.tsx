@@ -37,13 +37,13 @@ const Page = () => {
 
   const windows = useSelector((state: any) => state.windows);
   const window = windows.windows?.filter(
-    (window: any) => window.uuid === windowId
+    (window: any) => window.uuid === windowId,
   )[0];
   const subWindow = window?.subWindows?.filter(
-    (sbWindow: any, index: any) => sbWindow?.uuid === subWindowId
+    (sbWindow: any, index: any) => sbWindow?.uuid === subWindowId,
   )[0];
   const filteredSectors = subWindow?.sectors.filter((sector: any) =>
-    sector?.name.toLowerCase().includes(searchQuery.toLowerCase())
+    sector?.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const columns: ColumnDef<any>[] = [

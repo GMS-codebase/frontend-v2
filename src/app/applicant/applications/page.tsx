@@ -35,14 +35,16 @@ const Page = () => {
       accessorKey: "window",
       header: "Window",
       cell: ({ row }) => (
-        <div className="truncate">{shortenString(row.original.window.title)}</div>
+        <div className="truncate">
+          {shortenString(row.original?.window?.title)}
+        </div>
       ),
     },
     {
       accessorKey: "sector",
       header: "Sector",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.sectors[0].name}</div>
+        <div className="truncate">{row?.original?.sectors[0]?.name}</div>
       ),
     },
     {

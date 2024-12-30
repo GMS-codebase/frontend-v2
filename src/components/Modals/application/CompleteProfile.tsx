@@ -206,30 +206,31 @@ const CompleteProfile = ({
       Object.keys(formData).forEach((key) => {
         submitData.append(key, formData[key as keyof FormData] as string);
       });
-      submitData.append("isprivate", String(formData.is_private))
+      submitData.append("isprivate", String(formData.is_private));
       const updateData = submitData;
       const payload = defaultData ? updateData : submitData;
       updateData.append("year_of_establishment", formData.year_of_placement);
-      updateData.append("number_of_employees", String(formData.employee_number));
+      updateData.append(
+        "number_of_employees",
+        String(formData.employee_number),
+      );
       updateData.append("phone", formData.business_phone);
       if (certificate) {
         submitData.append("certificate", certificate);
       }
       const endPoint = "/applicant/update/business";
-        (defaultData ? 
-          authorizedApi
-          .put(endPoint, payload, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }) :
-          authorizedApi
-          .post("/applicant/complete/profile", payload, {
+      (defaultData
+        ? authorizedApi.put(endPoint, payload, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
           })
-        )
+        : authorizedApi.post("/applicant/complete/profile", payload, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+      )
         .then((_res) => {
           notifications.show({
             message: "Profile updated successfully!",
@@ -304,7 +305,7 @@ const CompleteProfile = ({
           {activeTab === 1 && (
             <div className="w-full overflow-y-auto flex flex-col gap-2">
               <div className="w-full flex justify-between gap-3">
-              <div className="w-full">
+                <div className="w-full">
                   <label
                     htmlFor="business_name"
                     className="block text-xs font-bold text-gray-700"
@@ -358,7 +359,7 @@ const CompleteProfile = ({
                 </div>
               </div>
               <div className="w-full flex justify-between gap-3">
-              <div className="w-full">
+                <div className="w-full">
                   <label
                     htmlFor="TIN"
                     className="block text-xs font-bold text-gray-700"
@@ -412,56 +413,56 @@ const CompleteProfile = ({
               </div>
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
-                <div className="w-full">
-                  <label
-                    htmlFor="business_type"
-                    className="block text-xs font-bold text-gray-700"
-                  >
-                    Institution Type
-                  </label>
-                  <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <Folder2 />
-                    </span>
-                    <Select
-                      defaultValue={null}
-                      clearable={true}
-                      name="business_type"
-                      value={formData.business_type}
-                      onChange={(value: any) => {
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          business_type: value,
-                        }));
-                        //@ts-ignore
-                        errors.business_type &&
-                          setErrors((prevData) => ({
+                  <div className="w-full">
+                    <label
+                      htmlFor="business_type"
+                      className="block text-xs font-bold text-gray-700"
+                    >
+                      Institution Type
+                    </label>
+                    <div className="w-full relative">
+                      <span className="absolute left-2 top-[10px]">
+                        <Folder2 />
+                      </span>
+                      <Select
+                        defaultValue={null}
+                        clearable={true}
+                        name="business_type"
+                        value={formData.business_type}
+                        onChange={(value: any) => {
+                          setFormData((prevData) => ({
                             ...prevData,
-                            business_type: "",
+                            business_type: value,
                           }));
-                      }}
-                      data={[
-                        { label: "Company", value: "company" },
-                        { label: "Cooperative", value: "cooperative" },
-                        { label: "NGO", value: "ngo" },
-                        { label: "Trade Union", value: "tradeUnion" },
-                        { label: "Association", value: "association" },
-                        { label: "School", value: "school" },
-                        {
-                          label: "Training Center(VTC)",
-                          value: "training center",
-                        },
-                      ]}
-                      className="mt-1 block w-full  pl-5  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
-                      placeholder="Select Institution type"
-                    />
+                          //@ts-ignore
+                          errors.business_type &&
+                            setErrors((prevData) => ({
+                              ...prevData,
+                              business_type: "",
+                            }));
+                        }}
+                        data={[
+                          { label: "Company", value: "company" },
+                          { label: "Cooperative", value: "cooperative" },
+                          { label: "NGO", value: "ngo" },
+                          { label: "Trade Union", value: "tradeUnion" },
+                          { label: "Association", value: "association" },
+                          { label: "School", value: "school" },
+                          {
+                            label: "Training Center(VTC)",
+                            value: "training center",
+                          },
+                        ]}
+                        className="mt-1 block w-full  pl-5  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
+                        placeholder="Select Institution type"
+                      />
+                    </div>
+                    {errors.business_type && (
+                      <p className="text-red-500 text-sm">
+                        {errors.business_type}
+                      </p>
+                    )}
                   </div>
-                  {errors.business_type && (
-                    <p className="text-red-500 text-sm">
-                      {errors.business_type}
-                    </p>
-                  )}
-                </div>
                   <div className="w-full mt-5">
                     <label
                       htmlFor="is_private"

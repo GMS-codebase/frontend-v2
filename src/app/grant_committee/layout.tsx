@@ -25,7 +25,10 @@ export default function AdminLayout({
         announcement?.roles?.includes("GRANT_COMMITTEE") &&
         announcement.status === "ACTIVE" &&
         showAnnouncement && (
-          <Announcement announcement={announcement} setShowAnnouncement={setShowAnnouncement}/>
+          <Announcement
+            announcement={announcement}
+            setShowAnnouncement={setShowAnnouncement}
+          />
         )}
       <div className="flex">
         <div
