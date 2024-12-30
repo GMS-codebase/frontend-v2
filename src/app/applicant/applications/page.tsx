@@ -32,6 +32,13 @@ const Page = () => {
       ),
     },
     {
+      accessorKey: "window",
+      header: "Window",
+      cell: ({ row }) => (
+        <div className="truncate">{shortenString(row.original.window.title)}</div>
+      ),
+    },
+    {
       accessorKey: "sector",
       header: "Sector",
       cell: ({ row }) => (
