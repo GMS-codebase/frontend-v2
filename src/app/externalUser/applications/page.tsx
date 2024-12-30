@@ -79,10 +79,10 @@ const Page = () => {
       ),
     },
     {
-      accessorKey: "applicantName",
-      header: "Applicant Name",
+      accessorKey: "institutionName",
+      header: "Institution Name",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.applicant?.name}</div>
+        <div className="truncate">{row.original?.applicant?.businesses[0].businessName}</div>
       ),
     },
     {
