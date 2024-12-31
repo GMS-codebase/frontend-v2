@@ -148,7 +148,9 @@ const AddEditCall = ({
         JSON.parse(defaultData.subwindowForms || "{}"),
       );
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
-      setSelectedSectorsNames(defaultData.sectors.map((item: any) => item.name));
+      setSelectedSectorsNames(
+        defaultData.sectors.map((item: any) => item.name),
+      );
     }
   }, [defaultData]);
   const nextStep = () =>
@@ -214,7 +216,7 @@ const AddEditCall = ({
               sectors: [],
               attachment: null,
             });
-            getCalls(dispatch)
+            getCalls(dispatch);
             closeAddEditCall();
           })
           .catch((err) => {
@@ -279,9 +281,12 @@ const AddEditCall = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="w-full flex flex-col items-center ">
-          <h1 className="text-2xl font-extrabold">{defaultData ? "Update Call" : "Create Call"}</h1>
+          <h1 className="text-2xl font-extrabold">
+            {defaultData ? "Update Call" : "Create Call"}
+          </h1>
           <h2 className="text-[#000F2369] text-lg font-medium">
-            Provide your call details to {defaultData ? "update " : "create a new "} call.
+            Provide your call details to{" "}
+            {defaultData ? "update " : "create a new "} call.
           </h2>
         </div>
         <div className="w-full flex flex-col items-center mt-4  px-[5%]">
@@ -381,7 +386,9 @@ const AddEditCall = ({
                       type="file"
                       name="attachment"
                       accept=".pdf, .doc, .docx"
-                      onChange={(e) => setAttachment(e.target.files?.[0] || null)}
+                      onChange={(e) =>
+                        setAttachment(e.target.files?.[0] || null)
+                      }
                       style={{ display: "none" }}
                       className="content-none"
                       required={!defaultData}

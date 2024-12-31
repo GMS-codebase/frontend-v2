@@ -1,11 +1,9 @@
 import React from "react";
 import { SolarPen2Bold } from "../core/icons";
 interface Props {
-  contract: any
+  contract: any;
 }
-function ContractInfo({
-  contract
-}: Props) {
+function ContractInfo({ contract }: Props) {
   return (
     <div className="w-1/2">
       <div className="bg-white rounded-2xl p-10 mb-10 flex flex-col gap-6">
@@ -50,7 +48,9 @@ function ContractInfo({
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Number of Trainees</div>
               </div>
-              <div className="mt-2 ml-4">{contract?.numberOfTrainees} Trainees</div>
+              <div className="mt-2 ml-4">
+                {contract?.numberOfTrainees} Trainees
+              </div>
             </div>
           </div>
           <div className=" flex  mt-4 space-x-4">

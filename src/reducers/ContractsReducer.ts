@@ -31,12 +31,12 @@ export default function ContractsReducer(state = initialState, action: Action) {
         ...state,
         loading: true,
       };
-      case GET_MY_CONTRACTS_LOADING:
+    case GET_MY_CONTRACTS_LOADING:
       return {
         ...state,
         myContractsLoading: true,
       };
-    
+
     case GET_CONTRACTS_SUCCESS:
       return {
         ...state,

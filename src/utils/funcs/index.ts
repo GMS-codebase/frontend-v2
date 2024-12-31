@@ -64,6 +64,8 @@ import {
   GET_MEREPORTS_SUCCESS,
 } from "@/actions/MEReportsActions";
 import {
+  GET_APPLICANT_PROFILE_LOADING,
+  GET_APPLICANT_PROFILE_SUCCESS,
   GET_PROFILE_ERROR,
   GET_PROFILE_LOADING,
   GET_PROFILE_SUCCESS,
@@ -658,7 +660,25 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
       });
     });
 };
-
+export const getApplicantProfile = async (
+  dispatch: Dispatch<UnknownAction>,
+) => {
+  dispatch({ type: GET_APPLICANT_PROFILE_LOADING });
+  authorizedApi
+    .get("/applicant/me")
+    .then((res) => {
+      dispatch({
+        type: GET_APPLICANT_PROFILE_SUCCESS,
+        payload: res.data?.data?.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_PROFILE_ERROR,
+        payload: err.response.data.error ?? "Network Error",
+      });
+    });
+};
 const validateQuestions = async (
   answers: { [key: string]: any },
   form: Form,
@@ -825,11 +845,11 @@ export const getApplicationStatus = (application: any) => {
   ) {
     return "CONTRACT SIGNING IN PROGRESS";
   } else if (
-    application?.currentStage === "CONTRACT_SIGNING" && 
-    ( application?.call?.closedGrantCommittee &&
-      application?.call?.closedDueDiligency &&
-      application?.call?.closedEvaluation) &&
-      application?.uploadedContract
+    application?.currentStage === "CONTRACT_SIGNING" &&
+    application?.call?.closedGrantCommittee &&
+    application?.call?.closedDueDiligency &&
+    application?.call?.closedEvaluation &&
+    application?.uploadedContract
   ) {
     return "FINISH GRANT PROPOSALS";
   } else {

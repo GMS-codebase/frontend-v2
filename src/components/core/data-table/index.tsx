@@ -36,7 +36,7 @@ interface Props {
   loader?: React.ReactNode;
   limit?: number;
   tableWidth?: string | number;
-  verticalPadding?: string | number
+  verticalPadding?: string | number;
 }
 
 export function DataTable({
@@ -55,7 +55,7 @@ export function DataTable({
   limit,
   loader,
   tableWidth,
-  verticalPadding
+  verticalPadding,
 }: Props) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(

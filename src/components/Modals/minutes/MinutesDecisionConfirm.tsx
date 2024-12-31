@@ -68,7 +68,7 @@ const MinutesDecisionConfirm = ({
         setComment({ value: "", isError: "" });
         onClose();
         getUploadedMinutes(dispatch, "applicant");
-        getMyApplications(dispatch)
+        getMyApplications(dispatch);
         getApprovedMinutes(dispatch, "applicant");
         getRejectedMinutes(dispatch, "applicant");
         getNegotiatedMinutes(dispatch, "applicant");
@@ -202,7 +202,13 @@ const MinutesDecisionConfirm = ({
                   : "bg-blue-500"
               }`}
             >
-              {confirming ? <span><ClipLoader color="white" size={20}/> Submitting . . .</span> : "Yes, proceed"}
+              {confirming ? (
+                <span>
+                  <ClipLoader color="white" size={20} /> Submitting . . .
+                </span>
+              ) : (
+                "Yes, proceed"
+              )}
             </button>
           </div>
         </div>
