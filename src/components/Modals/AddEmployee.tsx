@@ -378,7 +378,7 @@ const RegisterModal = ({
               </form>
             </Stepper.Step>
             <Stepper.Step
-              label="Applicant Info"
+              label="Employee Info"
               description=""
               className="text-xs"
             >

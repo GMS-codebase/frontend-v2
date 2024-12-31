@@ -25,7 +25,7 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
   comments,
   setComments,
   goToNext,
-  goToPrev
+  goToPrev,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -46,7 +46,7 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
   const handlePrevPage = () => {
     if (currentPage > 0) {
       setCurrentPage((prev) => prev - 1);
-    }else {
+    } else {
       goToPrev && goToPrev();
     }
   };

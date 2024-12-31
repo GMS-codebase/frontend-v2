@@ -10,7 +10,6 @@ import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { useEffect, useState } from "react";
 
-
 const Page = () => {
   const columns: ColumnDef<any>[] = [
     {
@@ -22,7 +21,9 @@ const Page = () => {
       accessorKey: "institution",
       header: "Institution Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.businesses[0]?.businessName ?? "N/A"}</div>
+        <div className="w-full">
+          {row.original?.businesses[0]?.businessName ?? "N/A"}
+        </div>
       ),
     },
     {
@@ -77,15 +78,18 @@ const Page = () => {
   const [filteredApplicants, setFilteredApplicants] = useState(applicants);
   const [selectedFilters, setSelectedFilters] = useState<string>("All");
 
-  console.log("applicants --> ", applicants)
-  useEffect(()=>{
+  console.log("applicants --> ", applicants);
+  useEffect(() => {
     setFilteredApplicants(
-      applicants?.filter(
-        (applicant: any) => selectedFilters === "All" ? true : selectedFilters === "Completed Profile" ? applicant.has_completed_profile : !applicant.has_completed_profile,
-      )
-    )
-  }, [applicants, selectedFilters])
-
+      applicants?.filter((applicant: any) =>
+        selectedFilters === "All"
+          ? true
+          : selectedFilters === "Completed Profile"
+            ? applicant.has_completed_profile
+            : !applicant.has_completed_profile,
+      ),
+    );
+  }, [applicants, selectedFilters]);
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
@@ -103,9 +107,7 @@ const Page = () => {
         <Select
           data={["All", "Completed Profile", "Incomplete Profile"]}
           placeholder="Filter by"
-          onChange={(value) =>
-            setSelectedFilters(value ?? "All")
-          }
+          onChange={(value) => setSelectedFilters(value ?? "All")}
           value={selectedFilters}
           className="w-fit px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
         />
@@ -114,7 +116,9 @@ const Page = () => {
         {loading ? (
           <TableSkeleton columns={columns} />
         ) : filteredApplicants?.length === 0 ? (
-          <h1 className="text-center text-2xl font-bold py-10">No Applicants Found!</h1>
+          <h1 className="text-center text-2xl font-bold py-10">
+            No Applicants Found!
+          </h1>
         ) : (
           <DataTable columns={columns} data={filteredApplicants ?? []} />
         )}
