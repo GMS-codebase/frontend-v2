@@ -13,8 +13,7 @@ import { DatePicker } from "@mantine/dates";
 interface Props {
   data: any[];
   exportPdf?: () => void;
-  exportExcel?: (data: any) => void;
-  exportAllToExcel?: () => void;
+  exportAllToExcel?: any;
   title?: string;
   onClose: () => void;
   isFiltered?: boolean;
@@ -51,20 +50,7 @@ const ExportForm: FC<Props> = ({
           >
             All Data
           </Tabs.Tab>
-          <Tabs.Tab
-            className=" w-1/4"
-            value="date"
-            leftSection={<BsCalendar2 />}
-          >
-            Select Date
-          </Tabs.Tab>
-          <Tabs.Tab
-            className=" w-1/4"
-            value="range"
-            leftSection={<BsCalendar2RangeFill />}
-          >
-            Select Range
-          </Tabs.Tab>
+
         </Tabs.List>
         {/* all data */}
         <Tabs.Panel value="all">
@@ -84,10 +70,6 @@ const ExportForm: FC<Props> = ({
                 <BsFileExcel className="mr-2" />
                 Export Excel
               </Button>
-              {/* <Button className="flex items-center" color="red">
-                <BsFilePdf className="mr-2" />
-                Export PDF
-              </Button> */}
             </div>
           </div>
         </Tabs.Panel>
@@ -150,36 +132,7 @@ const ExportForm: FC<Props> = ({
             </div>
           </div>
         </Tabs.Panel>
-        {/* select range */}
-        <Tabs.Panel value="range">
-          <div className="flex w-full mt-3 flex-col gap-y-3 items-center">
-            <span className=" text-sm text-gray-800">
-              Export data from a specific date range (from date - to date)
-            </span>
-            <DatePicker type="range" value={range} onChange={setRange} />
-            <div className="flex items-center gap-x-3">
-              {/* <Button
-                className="flex items-center"
-                color="green"
-                onClick={() => {
-                  exportToExcel(
-                    "Tables",
-                    data,
-                    ".xlsx",
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
-                  );
-                }}
-              >
-                <BsFileExcel className="mr-2" />
-                Export Excel
-              </Button> */}
-              {/* <Button className="flex items-center" color="red">
-                <BsFilePdf className="mr-2" />
-                Export PDF
-              </Button> */}
-            </div>
-          </div>
-        </Tabs.Panel>
+
       </Tabs>
       {/* clos button */}
       <div className="flex w-full justify-center">
