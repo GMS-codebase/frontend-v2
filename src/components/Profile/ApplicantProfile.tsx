@@ -108,7 +108,7 @@ const ApplicantProfile = ({ type }: Props) => {
                   onClick={() => setActiveSection("employment")}
                 >
                   <h1 className="text-base font-medium ">
-                    Business Information
+                    Institution Information
                   </h1>
                 </button>
               </div>
@@ -234,7 +234,7 @@ const ApplicantProfile = ({ type }: Props) => {
               ) : !applicantProfile ? (
                 <div className="w-full flex flex-col gap-3 items-center justify-center h-[45vh]">
                   <h1 className="font-bold text-lg text-center">
-                    Complete Your Business Profile First
+                    Complete Your Institution Profile First
                   </h1>
                   <button
                     onClick={openUpdate}
