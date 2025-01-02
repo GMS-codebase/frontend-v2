@@ -3,7 +3,7 @@ import { IoMdClose } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
-import { getApplications } from "@/utils/funcs";
+import { getApplications } from "@/services";
 import { useDispatch } from "react-redux";
 
 interface GeneralCommentModalProps {

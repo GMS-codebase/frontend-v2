@@ -1,5 +1,5 @@
 import { Comments } from "@/types";
-import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/services";
 import { Select } from "@mantine/core";
 import { useState } from "react";
 import { FaDownload, FaRegEdit } from "react-icons/fa";

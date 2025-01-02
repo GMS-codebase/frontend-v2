@@ -13,7 +13,7 @@ import { authorizedApi } from "@/utils/api";
 import { Call } from "@/types";
 import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
-import { getCalls } from "@/utils/funcs";
+import { getCalls } from "@/services";
 import { ADD_CALL_SUCCESS, UPDATE_CALL_SUCCESS } from "@/actions/CallsActions";
 import {
   SECTOR_STATUS,
@@ -44,10 +44,9 @@ const AddEditCall = ({
   const [selectedSubWindowsForms, setSelectedSubWindowsForms] = useState<any>(
     {},
   );
-  const [attachment, setAttachment] = useState<File | null>(null);
+  const [attachment, setAttachment] = useState<File | string | null>(null);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
-  const [selectedSectorsNames, setSelectedSectorsNames] = useState<any>([]);
   const dispatch = useDispatch();
   const [formData, setFormData] = useState<Partial<Call>>({
     title: "",
@@ -105,52 +104,62 @@ const AddEditCall = ({
   }));
 
   const getSectorData = () => {
-    const sectorData = windows?.windows?.flatMap(
-      (window: any) =>
-        window.subWindows
-          ?.filter((subWindow: any) =>
-            Object.keys(selectedSubWindowsForms).includes(subWindow.uuid),
-          )
-          .flatMap(
-            (subWindow: any) =>
-              subWindow.sectors
-                ?.map((sector: any) => {
-                  const matchingSector = sectors.find(
-                    (s: any) =>
-                      s.uuid === sector.uuid &&
-                      s.trades.filter(
-                        (trad: any) =>
-                          trad.trade.status === TRADE_STATUS.ACTIVE,
-                      ).length > 0 &&
-                      sector.status === SECTOR_STATUS.ACTIVE,
-                  );
-                  return matchingSector
-                    ? {
-                        value: matchingSector.uuid + "@" + subWindow.uuid,
-                        label:
-                          matchingSector.name + "(" + subWindow.title + ")",
-                      }
-                    : null;
-                })
-                .filter(Boolean) || [],
-          ) || [],
+    const sectorDataMap = new Map();
+
+    windows?.windows?.forEach((window: any) =>
+      window.subWindows
+        ?.filter((subWindow: any) =>
+          Object.keys(selectedSubWindowsForms).includes(subWindow.uuid),
+        )
+        .forEach((subWindow: any) =>
+          subWindow.sectors?.forEach((sector: any) => {
+            const matchingSector = sectors.find(
+              (s: any) =>
+                s.uuid === sector.uuid &&
+                s.trades.some(
+                  (trad: any) => trad.trade.status === TRADE_STATUS.ACTIVE,
+                ) &&
+                sector.status === SECTOR_STATUS.ACTIVE,
+            );
+            if (matchingSector && !sectorDataMap.has(matchingSector.uuid)) {
+              sectorDataMap.set(matchingSector.uuid, {
+                value: matchingSector.uuid,
+                label: matchingSector.name,
+              });
+            }
+          }),
+        ),
     );
-    return sectorData;
+
+    return Array.from(sectorDataMap.values());
   };
 
   const MultiSubWindowData = getSubWindowsData();
   const MultiSectorData = getSectorData();
   useEffect(() => {
     if (defaultData) {
-      setFormData(defaultData);
+      console.log({
+        title: defaultData.title,
+        description: defaultData.description,
+        startDate: defaultData.startDate,
+        endDate: defaultData.endDate,
+        appealDays: defaultData.appealDays,
+        attachment: defaultData.attachment,
+      });
+      setAttachment(defaultData.attachment);
+      setFormData({
+        title: defaultData.title,
+        description: defaultData.description,
+        startDate: defaultData.startDate.toString(),
+        endDate: defaultData.endDate.toString(),
+        appealDays: defaultData.appealDays,
+        attachment: defaultData.attachment,
+      });
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
       setSelectedSubWindowsForms(
         JSON.parse(defaultData.subwindowForms || "{}"),
       );
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
-      setSelectedSectorsNames(
-        defaultData.sectors.map((item: any) => item.name),
-      );
     }
   }, [defaultData]);
   const nextStep = () =>
@@ -175,8 +184,7 @@ const AddEditCall = ({
     submitData.append("applicationStartDate", formData?.startDate as any);
     submitData.append("applicationEndDate", formData?.endDate as any);
     submitData.append("window", JSON.stringify(selectedWindows));
-    const updatedSectors = selectedSectors.map((s: string) => s.split("@")[0]);
-    submitData.append("sector", JSON.stringify(updatedSectors));
+    submitData.append("sector", JSON.stringify(selectedSectors));
     submitData.append(
       "subWindowForms",
       JSON.stringify(selectedSubWindowsForms),
@@ -431,7 +439,11 @@ const AddEditCall = ({
                     </label>
                     <div className="w-full relative ">
                       <DatePicker
-                        minDate={new Date()}
+                        minDate={
+                          defaultData
+                            ? new Date(defaultData.startDate)
+                            : new Date()
+                        }
                         value={
                           formData.startDate
                             ? new Date(formData.startDate)
@@ -710,10 +722,9 @@ const AddEditCall = ({
                       name="sectors"
                       onChange={(value) => {
                         setSelectedSectors(value);
-                        setSelectedSectorsNames(value);
                       }}
                       data={MultiSectorData || []}
-                      value={selectedSectorsNames}
+                      value={selectedSectors}
                       placeholder="Select or type in a sector"
                       required
                     />

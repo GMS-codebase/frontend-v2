@@ -8,7 +8,7 @@ import { useState } from "react";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { useDispatch } from "react-redux";
-import { getRoles } from "@/utils/funcs";
+import { getRoles } from "@/services";
 
 const RemoveRole = ({
   isOpen,

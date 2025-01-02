@@ -16,7 +16,7 @@ import { authorizedApi } from "@/utils/api";
 import { ClipLoader } from "react-spinners";
 import { notifications } from "@mantine/notifications";
 import { useDispatch, useSelector } from "react-redux";
-import { getEmployees } from "@/utils/funcs";
+import { getEmployees } from "@/services";
 import { ApplicationStage } from "@/types/application";
 type FormData = {
   firstName: string;

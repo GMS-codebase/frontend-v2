@@ -11,7 +11,7 @@ import DeleteEmployee from "@/components/Modals/DeleteEmployee";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
-import { getEmployees } from "@/utils/funcs";
+import { getEmployees } from "@/services";
 
 const Page = () => {
   const [

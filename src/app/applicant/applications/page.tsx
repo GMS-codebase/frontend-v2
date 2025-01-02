@@ -11,7 +11,7 @@ import { Menu } from "@mantine/core";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
-import { getApplicationStatus, shortenString } from "@/utils/funcs";
+import { getApplicationStatus, shortenString } from "@/services";
 import { CALL_STATUS } from "@/utils/enums";
 const Page = () => {
   const columns: ColumnDef<any>[] = [
@@ -32,10 +32,19 @@ const Page = () => {
       ),
     },
     {
+      accessorKey: "window",
+      header: "Window",
+      cell: ({ row }) => (
+        <div className="truncate">
+          {shortenString(row.original?.window?.title)}
+        </div>
+      ),
+    },
+    {
       accessorKey: "sector",
       header: "Sector",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.sectors[0].name}</div>
+        <div className="truncate">{row?.original?.sectors[0]?.name}</div>
       ),
     },
     {

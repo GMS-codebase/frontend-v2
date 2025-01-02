@@ -14,7 +14,7 @@ import {
   getApplicationStatus,
   handleDownloadFile,
   handleViewFile,
-} from "@/utils/funcs";
+} from "@/services";
 import Form from "@/components/forms/Form";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import { ApplicationStage } from "@/types/application";
@@ -74,8 +74,6 @@ const Page = () => {
       </div>
     );
   }
-
-  console.log(application);
 
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
@@ -180,12 +178,6 @@ const Page = () => {
                 Submitted
               </p>
               <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
-            </div>
-            <div className="flex flex-col gap-4 font-semibold">
-              <h2 className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start w-fit">
-                Description
-              </h2>
-              <div>{application?.description}</div>
             </div>
           </div>
           <div className="flex flex-col justify-start items-start gap-6 font-semibold w-1/2">

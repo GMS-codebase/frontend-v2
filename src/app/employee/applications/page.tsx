@@ -9,7 +9,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { getApplicationStatus, shortenString } from "@/utils/funcs";
+import { getApplicationStatus, shortenString } from "@/services";
 
 const Page = () => {
   // Select applications from Redux store
@@ -89,10 +89,12 @@ const Page = () => {
       ),
     },
     {
-      accessorKey: "applicantName",
-      header: "Applicant Name",
+      accessorKey: "institutionName",
+      header: "Institution Name",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.applicant?.name}</div>
+        <div className="truncate">
+          {row.original?.applicant?.businesses[0].businessName}
+        </div>
       ),
     },
     {

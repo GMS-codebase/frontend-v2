@@ -13,7 +13,7 @@ import {
   getApplications,
   getApplicationsForContractSigning,
   getContracts,
-} from "@/utils/funcs";
+} from "@/services";
 import { useRouter } from "next/navigation";
 
 interface AddContractProps {

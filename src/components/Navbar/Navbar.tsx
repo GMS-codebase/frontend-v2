@@ -37,7 +37,7 @@ import {
   getAppeals,
   getNegotiatedMinutes,
   getApplicantProfile,
-} from "@/utils/funcs";
+} from "@/services";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
 import { LOGOUT } from "@/actions/AuthActions";

@@ -7,7 +7,7 @@ import { Folder2, Subtitles } from "solar-icon-set";
 import { IoMdClose } from "react-icons/io";
 import { SolarSuitcaseLinear } from "@/components/core/icons";
 import { useRouter } from "next/navigation";
-import { getMyApplications } from "@/utils/funcs";
+import { getMyApplications } from "@/services";
 
 const CreateApplication = ({
   isOpenCreatingApplication,
@@ -142,22 +142,46 @@ const CreateApplication = ({
 
   const sectorOptions = formData.subwindow
     ? sectors
-        .filter((sec: any) =>
-          call.sectors.some((sect: any) => sect.uuid === sec.uuid),
-        )
-        .filter((sector: any) =>
-          windows.map((window: any) =>
-            window.subWindows
-              .find((subWin: any) => subWin.uuid === formData.subwindow)
-              ?.sectors.some(
-                (subWindowSector: any) => subWindowSector.uuid === sector.uuid,
-              ),
-          ),
-        )
-        .map((sector: any) => ({
-          label: sector.name,
-          value: sector.uuid,
-        })) || []
+        .filter((sec: any) => {
+          const isSectorInCall = call.sectors.some(
+            (sect: any) => sect.uuid === sec.uuid,
+          );
+          console.log("Sector being checked:", sec);
+          console.log("Call sectors:", call.sectors);
+          console.log(
+            `Sector ${sec.name} (${sec.uuid}) is in call:`,
+            isSectorInCall,
+          );
+          return isSectorInCall;
+        })
+        .filter((sector: any) => {
+          const subWindow = subWindows.find(
+            (subWin: any) => subWin.uuid === formData.subwindow,
+          );
+
+          if (subWindow) {
+            const isSectorInSubWindow = subWindow.sectors.some(
+              (sec: any) => sec.uuid === sector.uuid,
+            );
+            console.log("SubWindow:", subWindow);
+            console.log(
+              `Sector ${sector.name} (${sector.uuid}) in SubWindow:`,
+              isSectorInSubWindow,
+            );
+            return isSectorInSubWindow;
+          }
+
+          console.log("SubWindow not found for UUID:", formData.subwindow);
+          return false;
+        })
+        .map((sector: any) => {
+          const mappedSector = {
+            label: sector.name,
+            value: sector.uuid,
+          };
+          console.log("Mapped sector:", mappedSector);
+          return mappedSector;
+        })
     : [];
 
   const tradesOptions = [

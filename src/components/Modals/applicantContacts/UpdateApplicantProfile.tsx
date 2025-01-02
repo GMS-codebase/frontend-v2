@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { authorizedApi } from "@/utils/api";
-import { getApplicantProfile, getProfile } from "@/utils/funcs";
+import { getApplicantProfile, getProfile } from "@/services";
 import { Checkbox, Modal, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
@@ -14,19 +14,19 @@ import * as Icons from "@/components/core/icons";
 const { Provinces, Districts, Sectors, Cells, Villages } = require("rwanda");
 
 type FormData = {
-  first_name: string,
-  last_name: string,
-  email: string,
-  password: string,
-  old_password: string,
-  phone_number: string,
-  province: string,
-  district: string,
-  sector: string,
-  cell: string,
-  village: string,
-  gender: string,
-  position: string,
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  old_password: string;
+  phone_number: string;
+  province: string;
+  district: string;
+  sector: string;
+  cell: string;
+  village: string;
+  gender: string;
+  position: string;
 };
 
 const UpdateApplicantProfile = ({
@@ -74,7 +74,7 @@ const UpdateApplicantProfile = ({
       cell: "",
       village: "",
       old_password: "",
-      password: ""
+      password: "",
     });
   }, [defaultData]);
   const ProvincesOptions = Provinces();
@@ -142,7 +142,7 @@ const UpdateApplicantProfile = ({
         });
         console.log("profile updated successfully!");
         getApplicantProfile(dispatch);
-        getProfile(dispatch)
+        getProfile(dispatch);
         onUpdateProfile && onUpdateProfile();
       })
       .catch((err) => {
@@ -293,7 +293,7 @@ const UpdateApplicantProfile = ({
                     {
                       value: "female",
                       label: "Female",
-                    }
+                    },
                   ]}
                   value={formData.gender}
                   onChange={(e: any) => setFormData({ ...formData, gender: e })}
@@ -302,22 +302,22 @@ const UpdateApplicantProfile = ({
               </div>
             </div>
             <div className="w-full flex justify-center mt-10 space-x-4">
-                <button
-                  type="button"
-                  onClick={closeUpdateProfile}
-                  className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSubmit}
-                  type="button"
-                  disabled={loading}
-                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  {loading ? "Loading" : "Update"}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={closeUpdateProfile}
+                className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmit}
+                type="button"
+                disabled={loading}
+                className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                {loading ? "Loading" : "Update"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
