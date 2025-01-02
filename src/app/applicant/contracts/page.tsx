@@ -178,7 +178,7 @@ const Page = () => {
       <div className="w-full overflow-auto lg:flex justify-between items-center p-4">
         <div className="relative lg:w-[20rem] w-full mb-2">
           <span className="absolute top-4 left-4">
-            <CiSearch size={25} />
+            <CiSearch size={25}   />
           </span>
           <input
             name="search"
