@@ -86,7 +86,7 @@ const ApplicantProfile = ({ type }: Props) => {
           </div>
           <div className="w-full flex flex-col gap-4 justify-center  p-5">
             <div className="w-full flex flex-col items-center">
-              <div className="w-3/5 flex mx-auto mb-10 mt-5">
+              <div className="lg:w-3/5 w-full flex mx-auto mb-10 mt-5">
                 <button
                   className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 rounded-l-2xl ${
                     activeSection === "contact"
@@ -113,7 +113,7 @@ const ApplicantProfile = ({ type }: Props) => {
                 </button>
               </div>
               {activeSection === "contact" ? (
-                <div className="w-3/4">
+                <div className="lg:w-3/4 w-full">
                   <div className="w-full flex justify-between gap-3 my-2">
                     <div className="w-full">
                       <label

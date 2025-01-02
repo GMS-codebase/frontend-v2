@@ -28,7 +28,7 @@ const Page = () => {
         <div className="relative lg:w-[20rem] w-full mb-4">
           <h1 className="font-bold text-xl">Export Report</h1>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 overflow-x-auto">
           <div className="w-44">
             <FilterDropDown
               placeholderText="Filter By Call"
