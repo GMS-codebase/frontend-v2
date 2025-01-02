@@ -13,7 +13,7 @@ import SetPasswordModal from "@/components/Modals/auth/SetPasswordModal";
 import { SolarFolder2Bold } from "@/components/core/icons";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { getCalls } from "@/utils/funcs";
+import { getCalls } from "@/services";
 import { unauthorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import ForgotPasswordModal from "@/components/Modals/auth/ForgotPassword";

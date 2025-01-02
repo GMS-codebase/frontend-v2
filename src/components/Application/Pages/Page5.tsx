@@ -1,6 +1,6 @@
 import React from "react";
 import { Comments } from "@/types";
-import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/services";
 import { FaDownload } from "react-icons/fa";
 
 export const Page5 = ({

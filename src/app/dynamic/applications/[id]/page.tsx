@@ -18,7 +18,7 @@ import { useDisclosure } from "@mantine/hooks";
 import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
-import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/services";
 import { ApplicationStage } from "@/types/application";
 
 const Page = () => {

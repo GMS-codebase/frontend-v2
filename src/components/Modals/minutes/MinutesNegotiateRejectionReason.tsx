@@ -13,7 +13,7 @@ import {
   getRejectedMinutes,
   getUploadedMinutes,
   getMinutes,
-} from "@/utils/funcs";
+} from "@/services";
 import { useDispatch } from "react-redux";
 interface DeleteConfirmProps {
   isOpen: boolean;

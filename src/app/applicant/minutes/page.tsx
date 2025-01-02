@@ -11,7 +11,7 @@ import { FiEye } from "react-icons/fi";
 import { BiSearch } from "react-icons/bi";
 import { SolarAddFolderBold } from "@/components/core/icons";
 import { DataTable } from "@/components/core/data-table";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile } from "@/services";
 import MinutesDecisionConfirm from "@/components/Modals/minutes/MinutesDecisionConfirm";
 import { ApplicationStage } from "@/types/application";
 const getApplicationStatus = (application: any) => {

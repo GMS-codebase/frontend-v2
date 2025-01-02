@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "next/navigation";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import { getForms, getWindows } from "@/utils/funcs";
+import { getForms, getWindows } from "@/services";
 import {
   ADD_TRADE_SECTOR_SUCCESS,
   UPDATE_SECTOR_SUCCESS,
