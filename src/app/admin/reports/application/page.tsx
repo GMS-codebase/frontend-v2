@@ -1,31 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import { HiDotsHorizontal } from "react-icons/hi";
 import { CiSearch } from "react-icons/ci";
-import { Menu, Select } from "@mantine/core";
+import { Select } from "@mantine/core";
 import { useRef, useState, useMemo } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
-import Link from "next/link";
-import { VscEye } from "react-icons/vsc";
-import { getApplicationStatus, shortenString } from "@/services";
-import { SolarFileBold } from "@/components/core/icons";
+import { getApplicationStatus } from "@/services";
 import ExportForm from "@/components/core/data-table/ExportForm";
 import MainModal from "./MainModal";
 import { useDisclosure } from "@mantine/hooks";
 import { exportDataToExcel } from "@/utils/funcs";
+import { submissionColumns } from "./Columns";
+import { formatDate } from "date-fns";
 
 const Page = () => {
-  // Select applications from Redux store
   const [isShowExport, {open: showExport, close: closeExport}] = useDisclosure(false);
-  const [reportType, setReportType] = useState("None");
+  const [reportType, setReportType] = useState("Submission Report");
   const { applications: rawApplications, loading } = useSelector(
     (state: any) => state.applications,
   );
 
-  // Format applications to flatten nested arrays
   const applications = useMemo(
     () =>
       rawApplications.map((app: any) => ({
@@ -48,7 +43,6 @@ const Page = () => {
     trade: "All",
   });
 
-  // Helper function to get unique values for dropdown filters
   const getUniqueValues = (key: string) => {
     return [
       "All",
@@ -74,104 +68,7 @@ const Page = () => {
     [applications],
   );
 
-  const columns: ColumnDef<any>[] = [
-    {
-      accessorKey: "applicationNumber",
-      header: "applicationNumber",
-      cell: ({ row }) => (
-        <div className="truncate">{row.original?.applicationNumber}</div>
-      ),
-    },
-    {
-      accessorKey: "applicant",
-      header: "Institution Name",
-      cell: ({ row }) => (
-        <div className="truncate">
-          {row.original?.applicant?.businesses?.[0]?.businessName}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "window",
-      header: "Window",
-      cell: ({ row }) => (
-        <div className="truncate">{shortenString(row.original?.window?.title)}</div>
-      ),
-    },
-    {
-      accessorKey: "call",
-      header: "Call",
-      cell: ({ row }) => (
-        <div className="truncate">{shortenString(row.original?.call?.title)}</div>
-      ),
-    },
-    {
-      accessorKey: "subWindow",
-      header: "Sub Window",
-      cell: ({ row }) => (
-        <div className="truncate">{shortenString(row.original?.subWindow?.title)}</div>
-      ),
-    },
-    {
-      accessorKey: "sector",
-      header: "Sector",
-      cell: ({ row }) => (
-        <div className="truncate">{shortenString(row.original?.sector?.name)}</div>
-      ),
-    },
-    {
-      accessorKey: "trade",
-      header: "Trade",
-      cell: ({ row }) => (
-        <div className="truncate">{shortenString(row.original?.trade?.trade?.title)}</div>
-      ),
-    },
-    {
-      accessorKey: "stage",
-      header: "Stage",
-      cell: ({ row }) => (
-        <div className="truncate">
-          {getApplicationStatus(row.original) || "-"}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div>
-          <Menu shadow="lg" width={200}>
-            <Menu.Target>
-              <button
-                style={{
-                  background:
-                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-                }}
-                className="p-3 rounded-full border text-white hover:bg-red-100"
-              >
-                <HiDotsHorizontal size={25} color="white" />
-              </button>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Label>
-                <h1 className="text-lg">Actions</h1>
-              </Menu.Label>
-              <Menu.Divider />
-              <Menu.Item className="bg-[#F0F0F0]">
-                <Link
-                  href={`/admin/applications/${row.original.uuid}`}
-                  className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                >
-                  <VscEye size={21} color="#576074" />
-                  View
-                </Link>
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </div>
-      ),
-    },
-  ];
+
   const FilterDropDown = ({
     placeholderText,
     data,
@@ -212,6 +109,9 @@ const Page = () => {
     }
   };
 
+  const getReportName = (call: string, sector: string, type: string): string =>{
+    return `${call == "All" ? "All Calls" : call} - ${sector == "All" ? "All Sectors" : sector} - ${type}`;
+  }
   const filteredApplications = useMemo(() => {
     return applications
       .filter(
@@ -236,16 +136,25 @@ const Page = () => {
   }, [applications, searchTerm, selectedFilters]);
 
   console.log("data ---> ", rawApplications)
-  const formattedSubmissionData = rawApplications.map((row: any, index: any)=>{
+  const formattedSubmissionData = filteredApplications.map((row: any, index: any)=>{
     return {
       index: index,
       applicationNumber: row.applicationNumber,
-      applicant: row.applicant?.businesses?.[0]?.businessName,
+      institutionName: row.applicant?.businesses?.[0]?.businessName,
       window: row.window?.title,
       call: row.call?.title,
       subWindow: row.subWindow?.title,
       sector: row.sectors[0]?.name,
       trade: row.trades[0]?.trade?.title,
+      stage: row.currentStage,
+      contacts: row.applicant?.phone,
+      institutionType: row.applicant.businesses?.[0]?.businessType,
+      legalStatus: row.applicant.businesses?.[0]?.private ? "Private": "Public",
+      requestedBeneficiaries: "",
+      district: row.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "",
+      businessSector: row.applicant.businesses?.[0]?.addressLine?.split("-")[1] ?? "",
+      cell:row.applicant.businesses?.[0]?.addressLine?.split("-")[2] ?? "",
+      submissionDate: formatDate(row?.lastUpdatedAt, "yyyy-MM-dd")
     }
   })
 
@@ -284,14 +193,14 @@ const Page = () => {
               className="flex-shrink-0"
             />
             <FilterDropDown
-              placeholderText="Select Trade"
-              data={filterOptions.trades}
-              filterKey="trade"
+              placeholderText="Select Sector"
+              data={filterOptions.sectors}
+              filterKey="sector"
               className="flex-shrink-0"
             />
             <Select
-              data={["None","Submission Report", "Evaluation Report", "Due Diligence Report", "Grant Committee Report"]}
-              placeholder={"Select Type"}
+              data={["Submission Report", "Evaluation Report", "Due Diligence Report", "Grant Committee Report"]}
+              placeholder={"Select Report Type"}
               value={reportType}
               onChange={(value: any)=> setReportType(value)}
               className={`w-fit px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
@@ -305,23 +214,29 @@ const Page = () => {
             <FiChevronRight size={25} />
           </button>
         </div>
-      </div>
-
-      <DataTable
-        data={filteredApplications}
-        columns={columns}
-        loading={loading}
-        buttonElement={
-          <button
-            className="p-3 bg-blue-500 rounded-full text-white hover:bg-blue-600 m-4"
+        <button
+            className="w-[8rem] p-3 bg-blue-500 rounded-full text-white hover:bg-blue-600 m-4"
             onClick={showExport}
           >
             Export Data
           </button>
-        }
+      </div>
+
+      <DataTable
+        data={filteredApplications}
+        columns={submissionColumns}
+        loading={loading}
+        // buttonElement={
+        //   <button
+        //     className="p-3 bg-blue-500 rounded-full text-white hover:bg-blue-600 m-4"
+        //     onClick={showExport}
+        //   >
+        //     Export Data
+        //   </button>
+        // }
       />
       <MainModal title="Export data" isOpen={isShowExport} onClose={closeExport}>
-        <ExportForm exportAllToExcel={()=> exportDataToExcel("Report",formattedSubmissionData, columns)} data={formattedSubmissionData!} onClose={closeExport} />
+        <ExportForm exportAllToExcel={()=> exportDataToExcel(getReportName(selectedFilters.call, selectedFilters.sector, reportType),formattedSubmissionData, submissionColumns)} data={formattedSubmissionData!} onClose={closeExport} />
       </MainModal>
     </div>
   );
