@@ -38,27 +38,42 @@ const Page = () => {
         ([_, type]: any) =>
           type.pages &&
           type.pages.some(
-            (page: any) => page.questions && page.questions.length > 0,
-          ),
+            (page: any) => page.questions && page.questions.length > 0
+          )
       )
       .reduce((acc, [key, type]: any) => {
         acc[key] = {
           ...type,
           pages: type.pages.filter(
-            (page: any) => page.questions && page.questions.length > 0,
+            (page: any) => page.questions && page.questions.length > 0
           ),
         };
         return acc;
       }, {} as QuestionForm);
 
+    const updatedFormData = Object.fromEntries(
+      Object.entries(sanitizedQns).map(([key, module]) => [
+        key,
+        {
+          ...module,
+          pages: module.pages.map((page, pageIndex) => ({
+            ...page,
+            questions: page.questions.map((question, questionIndex) => ({
+              ...question,
+              id: `${key}-q-${pageIndex}-${questionIndex}`,
+            })),
+          })),
+        },
+      ])
+    );
     const request = form
       ? authorizedApi.put(`/forms/update/${id}`, {
           name: formData?.name,
-          qns: JSON.stringify(sanitizedQns),
+          qns: JSON.stringify(updatedFormData),
         })
       : authorizedApi.post("/forms/create", {
           name: formData?.name,
-          qns: JSON.stringify(sanitizedQns),
+          qns: JSON.stringify(updatedFormData),
         });
 
     request

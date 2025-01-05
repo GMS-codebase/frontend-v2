@@ -1,58 +1,51 @@
-import * as React from "react";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
+import React from "react";
 import GaugeChart from "react-gauge-chart";
 
 export default function BasicGauges({
-  totalApplicants,
+  applicationsByBusinessType,
 }: {
-  totalApplicants: number;
+  applicationsByBusinessType: { [key: string]: number };
 }) {
-  const companyApplicants = 60;
-  const schoolApplicants = 80;
-  const ngoApplicants = 40;
-  const associationApplicants = 30;
-  const tradeUnionApplicants = 50;
-  const cooperativeApplicants = 20;
+  const totalApplicants = Object.values(applicationsByBusinessType).reduce(
+    (sum, value) => sum + value,
+    0
+  );
 
-  const companyPercentage = (companyApplicants / totalApplicants) * 100;
-  const schoolPercentage = (schoolApplicants / totalApplicants) * 100;
-  const ngoPercentage = (ngoApplicants / totalApplicants) * 100;
-  const associationPercentage = (associationApplicants / totalApplicants) * 100;
-  const tradeUnionPercentage = (tradeUnionApplicants / totalApplicants) * 100;
-  const cooperativePercentage = (cooperativeApplicants / totalApplicants) * 100;
+  const colors = [
+    "#005DE9", 
+    "#90EE90", 
+    "#EA4228", 
+    "#FFAA33", 
+    "#00C49A", 
+    "#FF69B4",
+    "#FFD700",
+    "#8A2BE2",
+  ];
+
+  const chartData = Object.entries(applicationsByBusinessType).map(
+    ([key, value], index) => ({
+      key,
+      value,
+      percentage: totalApplicants > 0 ? (value / totalApplicants) * 100 : 0,
+      color: colors[index % colors.length],
+    })
+  );
 
   return (
-    <Stack direction="column" spacing={2} alignItems="center">
+    <div className="flex items-center justify-center flex-col ">
       <div style={{ position: "relative", display: "inline-block" }}>
         <GaugeChart
-          id="gauge-chart5"
-          nrOfLevels={6}
-          // arcsLength={[
-          //   companyPercentage / 100,
-          //   schoolPercentage / 100,
-          //   ngoPercentage / 100,
-          //   associationPercentage / 100,
-          //   tradeUnionPercentage / 100,
-          //   cooperativePercentage / 100,
-          // ]}
-          colors={[
-            "#005DE9",
-            "#90EE90",
-            "#EA4228",
-            "#FFAA33",
-            "#00C49A",
-            "#FF69B4",
-          ]}
+          id="gauge-chart"
+          nrOfLevels={chartData.length}
+          arcsLength={chartData.map((data) => data.percentage / 100)}
+          colors={chartData.map((data) => data.color)}
           percent={0.5}
           arcPadding={0.02}
           hideText={true}
           needleColor="transparent"
           needleBaseColor="transparent"
         />
-        <Typography
-          variant="h6"
-          component="div"
+        <p
           style={{
             position: "absolute",
             top: "60%",
@@ -64,39 +57,22 @@ export default function BasicGauges({
             <p>{totalApplicants}</p>
             <p className="text-sm">Applicants</p>
           </div>
-        </Typography>
+        </p>
       </div>
 
-      <Stack
-        direction="column"
-        spacing={2}
-        className="grid grid-cols-2 gap-x-10"
-      >
-        <div className="flex items-center">
-          <div className="w-4 h-4 mr-2 bg-[#005DE9]" />
-          <Typography>Companies</Typography>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 mr-2 bg-[#90EE90]" />
-          <Typography>Schools</Typography>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 mr-2 bg-[#EA4228]" />
-          <Typography>NGOs</Typography>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 mr-2 bg-[#FFAA33]" />
-          <Typography>Associations</Typography>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 mr-2 bg-[#00C49A]" />
-          <Typography>Trade Unions</Typography>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 mr-2 bg-[#FF69B4]" />
-          <Typography>Cooperatives</Typography>
-        </div>
-      </Stack>
-    </Stack>
+      <div className="grid grid-cols-2 gap-x-10">
+        {chartData
+          .filter(({ key }) => key) 
+          .map(({ key, color }, index) => (
+            <div key={index} className="flex items-center">
+              <div
+                className="w-4 h-4 mr-2"
+                style={{ backgroundColor: color }}
+              />
+              <p className="capitalize">{key}</p>
+            </div>
+          ))}
+      </div>
+    </div>
   );
 }
