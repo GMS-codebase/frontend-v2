@@ -77,7 +77,7 @@ const FileInput: React.FC<FileInputProps> = ({
 
   return (
     <div
-      className={`flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+      className={`flex mt-2 p-4 flex-col items-center justify-center w-full min-h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
     >
       <label
         htmlFor="file-upload"
@@ -89,7 +89,9 @@ const FileInput: React.FC<FileInputProps> = ({
         {selectedFile || value ? (
           <div className="text-center">
             <p className="text-xl font-medium text-gray-700">
-              {value ? value : selectedFile?.name}
+              {value 
+  ? (typeof value === "string" && value.split("/").pop()  )
+  : selectedFile?.name}
             </p>
             <p className="text-sm text-gray-500">
               {isUploading ? "Uploading..." : "File selected"}
@@ -102,6 +104,14 @@ const FileInput: React.FC<FileInputProps> = ({
           </div>
         )}
       </label>
+      {(selectedFile || value) && (
+        <button
+          onClick={() => handleViewFile(value as any, question.id)}
+          className={`bg-gray-200 px-5  text-black font-semibold rounded-full w-fit py-2 flex gap-2 items-center justify-center`}
+        >
+          View Current Selected File
+        </button>
+      )}
       <input
         id="file-upload"
         type="file"

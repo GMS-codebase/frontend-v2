@@ -100,6 +100,7 @@ const Navbar = () => {
       getRejectedMinutes(dispatch, "sdf");
       getNegotiatedMinutes(dispatch, "sdf");
       getAppeals(dispatch, "sdf");
+      getApplicationsForContractSigning(dispatch);
     } else if (role === "APPLICANT") {
       getApplicantProfile(dispatch);
       getMyContacts(dispatch);
@@ -115,7 +116,6 @@ const Navbar = () => {
     }
     getApplicants(dispatch);
     getAnnouncement(dispatch);
-    getApplicationsForContractSigning(dispatch);
     getEmpStages(dispatch);
     getWindows(dispatch);
     getSectors(dispatch);
