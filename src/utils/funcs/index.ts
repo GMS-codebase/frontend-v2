@@ -1,34 +1,27 @@
 import ExcelJS from "exceljs";
 import * as FileSaver from "file-saver";
-
-// Column Definition Type
 export interface ColumnDef<T = any> {
-  header: string; // Header to be displayed in the Excel file
-  accessorKey: keyof T; // Key to access data from the row
+  header: string;
+  accessorKey: keyof T;
 }
-
-// Function to export data to a styled Excel file
 export const exportDataToExcel = async <T extends Record<string, any>>(
-  fileName: string, // Name of the file to save
-  excelData: T[], // Data to be exported
-  columns: T[], // Column definitions
+  fileName: string,
+  excelData: T[],
+  columns: T[],
 ): Promise<void> => {
   try {
-    // Create a new workbook and worksheet
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Report");
 
-    // Define worksheet columns based on the provided column definitions
-    worksheet.columns = columns.map((column) => ({
+    worksheet.columns = columns.filter((column)=> column.accessorKey.toLowerCase() !== "actions").map((column) => ({
       header: column.header,
-      key: column.accessorKey as string,
-      width: 20, // Set default column width
+      key: column.accessorKey,
+      width: 20, // default column width
     }));
 
-    // Style the header row
     const headerRow = worksheet.getRow(1);
     headerRow.eachCell((cell) => {
-      cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+      cell.font = { name: "Poppins", bold: true, color: { argb: "FFFFFFFF" } }; // Set font to Poppins
       cell.alignment = { vertical: "middle", horizontal: "center" };
       cell.fill = {
         type: "pattern",
@@ -39,30 +32,31 @@ export const exportDataToExcel = async <T extends Record<string, any>>(
 
     console.log("excel data --> ", excelData);
     console.log("excel columns --> ", columns);
-    // Add data rows to the worksheet
+
     excelData.forEach((row) => {
       const formattedRow: Record<string, any> = {};
       columns.forEach((column) => {
-        formattedRow[column.accessorKey] = row[column.accessorKey] || "";
+        if(column.accessorKey?.toLowerCase() !== "actions") {
+          formattedRow[column.accessorKey] = row[column.accessorKey] || "";
+        }
       });
       worksheet.addRow(formattedRow);
     });
 
-    // Apply alternating row styles
     worksheet.eachRow((row, rowIndex) => {
-      if (rowIndex > 1) {
-        row.eachCell((cell) => {
+      row.eachCell((cell) => {
+        cell.font = { name: "Poppins", color: { argb: "FF000000" } };
+        if (rowIndex > 1) {
           cell.fill = {
             type: "pattern",
             pattern: "solid",
             fgColor: { argb: rowIndex % 2 === 0 ? "FFDAEEF3" : "FFFFFFFF" },
           };
           cell.alignment = { vertical: "middle", horizontal: "left" };
-        });
-      }
+        }
+      });
     });
 
-    // Apply borders to all cells
     worksheet.eachRow((row) => {
       row.eachCell((cell) => {
         cell.border = {
@@ -74,7 +68,6 @@ export const exportDataToExcel = async <T extends Record<string, any>>(
       });
     });
 
-    // Generate Excel buffer and trigger file download
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
