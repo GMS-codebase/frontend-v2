@@ -9,12 +9,12 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { getApplicationStatus } from "@/utils/funcs";
+import { getApplicationStatus } from "@/services";
 
 const Page = () => {
   // Select applications from Redux store
   const { applications: rawApplications, loading } = useSelector(
-    (state: any) => state.applications
+    (state: any) => state.applications,
   );
 
   // Format applications to flatten nested arrays
@@ -25,7 +25,7 @@ const Page = () => {
         sector: app.sectors[0] || null,
         trade: app.trades[0] || null,
       })),
-    [rawApplications]
+    [rawApplications],
   );
 
   const filtersContainerRef = useRef<HTMLDivElement>(null);
@@ -47,9 +47,9 @@ const Page = () => {
       ...new Set(
         applications
           .map((app: any) =>
-            key.split(".").reduce((obj, property) => obj?.[property], app)
+            key.split(".").reduce((obj, property) => obj?.[property], app),
           )
-          .filter(Boolean)
+          .filter(Boolean),
       ),
     ];
   };
@@ -63,7 +63,7 @@ const Page = () => {
       trades: getUniqueValues("trade.trade.title"),
       call: getUniqueValues("call.title"),
     }),
-    [applications]
+    [applications],
   );
 
   // Format stage string
@@ -80,10 +80,12 @@ const Page = () => {
       ),
     },
     {
-      accessorKey: "applicantName",
-      header: "Applicant Name",
+      accessorKey: "institutionName",
+      header: "Institution Name",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.applicant?.name}</div>
+        <div className="truncate">
+          {row.original?.applicant?.businesses?.[0]?.businessName}
+        </div>
       ),
     },
     {
@@ -213,7 +215,7 @@ const Page = () => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase())
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade } =
@@ -231,8 +233,8 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4 gap-5">
-        <div className="relative w-[20rem]">
+      <div className="w-full lg:flex justify-between items-center p-4 gap-5">
+        <div className="relative lg:w-[20rem] w-full mb-4">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} color="" />
           </span>
@@ -244,7 +246,7 @@ const Page = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex items-center max-w-[70%]">
+        <div className="flex items-center lg:max-w-[70%] w-full">
           <button
             onClick={() => handleScroll("left")}
             className="p-2 bg-white shadow-lg rounded-full mr-2"

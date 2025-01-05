@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import * as Icons from "@/components/core/icons";
 import { SolarUploadBold } from "@/components/core/icons";
-import { Select, Skeleton } from "@mantine/core";
+import { isOptionsGroup, Select, Skeleton } from "@mantine/core";
 import Image from "next/image";
 import { BsPerson } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
@@ -11,10 +11,10 @@ import { Upload } from "solar-icon-set";
 import { useDispatch, useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
 import { LOGOUT } from "@/actions/AuthActions";
-import { GET_PROFILE_ERROR } from "@/actions/ProfileActions";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "cookies-next";
 import { notifications } from "@mantine/notifications";
+import { useDisclosure } from "@mantine/hooks";
 const Profile = () => {
   const profile = useSelector((state: any) => state.profile);
   const [activeSection, setActiveSection] = useState("contact");
@@ -80,8 +80,8 @@ const Profile = () => {
           </div>
 
           <div className="w-full flex gap-4 justify-center  p-5">
-            <div className="w-[60%]">
-              <div className="flex  mb-10 mt-5">
+            <div className="lg:w-[60%] w-full">
+              <div className="flex mb-10 mt-5">
                 <button
                   className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 rounded-l-2xl ${
                     activeSection === "contact"
@@ -209,17 +209,6 @@ const Profile = () => {
                       className="mt-1 block w-full px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
                       disabled
                     />
-                    {/* <Select
-                      name="gender"
-                      value={formData.gender?.toLowerCase()}
-                      data={[
-                        { value: "male", label: "Male" },
-                        { value: "female", label: "Female" },
-                        { value: "other", label: "Other" },
-                      ]}
-                      
-                      className="mt-1 block w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none sm:text-sm"
-                    /> */}
                   </div>
                 </div>
               ) : (
@@ -260,48 +249,7 @@ const Profile = () => {
                   </div>
                 </div>
               )}
-
-              {/* <div className="w-full gap-2 flex justify-center mt-4">
-                <button
-                  type="submit"
-                  className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Save
-                </button>
-              </div> */}
             </div>
-            {/* <div className="w-[50%] p-5">
-              <label
-                htmlFor="fileUpload"
-                className="block text-xs font-bold text-gray-700"
-              >
-                Attachment
-              </label>
-              <div className="relative mt-1 flex flex-col items-center justify-center w-full h-[90%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                <label
-                  htmlFor="file-upload"
-                  className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
-                >
-                  <div className="text-center">
-                    <p className="text-lg text-gray-500">Upload file</p>
-                    <p className="text-lg text-gray-400">or drag and drop</p>
-                  </div>
-                </label>
-                <input
-                  id="file-upload"
-                  type="file"
-                  style={{ display: "none" }}
-                  className="content-none"
-                  disabled
-                />
-              </div>
-            </div> */}
           </div>
         </>
       )}

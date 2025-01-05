@@ -9,10 +9,11 @@ import { useSelector } from "react-redux";
 const Page = () => {
   const { id: applicationId } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const { myContracts: contracts, loading } = useSelector((state: any) => state.contracts);
-  const { myApplications: applications, loading: loadingApplications } = useSelector(
-    (state: any) => state.applications,
+  const { myContracts: contracts, loading } = useSelector(
+    (state: any) => state.contracts,
   );
+  const { myApplications: applications, loading: loadingApplications } =
+    useSelector((state: any) => state.applications);
   const application = applications.find(
     (a: any) => a.uuid === applicationId,
   ) ?? [0];
@@ -22,10 +23,13 @@ const Page = () => {
   return (
     <div className="">
       <div className="flex gap-2">
-        <ContractInfo contract={contract}/>
-        <ApplicationInfo application={application}/>
+        <ContractInfo contract={contract} />
+        <ApplicationInfo application={application} />
       </div>
-      <TraineeTable installments={contract?.installments ?? []} trainees={contract?.trainees ?? []}/>
+      <TraineeTable
+        installments={contract?.installments ?? []}
+        trainees={contract?.trainees ?? []}
+      />
     </div>
   );
 };

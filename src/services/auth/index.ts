@@ -38,9 +38,9 @@ class AuthService {
     }
   }
 
-  async requestReset(email: string) {
+  async requestReset(email: string, callback?: () => void) {
     try {
-      await unauthorizedApi.post("/auth/forgot-password", {
+      await unauthorizedApi.put("/auth/password/reset", {
         email,
       });
       notifications.show({
@@ -48,6 +48,7 @@ class AuthService {
         message: "Check your email for the reset password link",
         color: "green",
       });
+      callback && callback();
     } catch (error: any) {
       notifications.show({
         title: "Error requesting to reset password  ",
@@ -70,8 +71,9 @@ class AuthService {
       callback && callback();
     } catch (error) {
       notifications.show({
-        title: "Error Logging In ",
-        message: "There was an error logging in",
+        title: "Error Setting Up Your Password ",
+        message:
+          "There was an error while setting up your password, Please recheck the link from your email or contact our team",
         color: "red",
       });
     }

@@ -16,7 +16,7 @@ import {
   handleAddComments,
   handleDownloadFile,
   handleViewFile,
-} from "@/utils/funcs";
+} from "@/services";
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 import Form from "@/components/forms/Form";
 import { Form as IForm, QuestionForm } from "@/types/questions-form";
@@ -269,7 +269,7 @@ const Page = () => {
                 onClick={() =>
                   handleViewFile(
                     application?.applicant?.businesses[0]?.businessCertificate,
-                    "business_certificates"
+                    "business_certificates",
                   )
                 }
               >
@@ -283,7 +283,7 @@ const Page = () => {
                 onClick={() =>
                   handleDownloadFile(
                     application?.applicant?.businesses[0]?.businessCertificate,
-                    "business_certificates"
+                    "business_certificates",
                   )
                 }
               >
@@ -380,7 +380,7 @@ const Page = () => {
                 } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
               >
                 {application?.stages?.find(
-                  (stage: any) => stage.stage === ApplicationStage.EVALUATION
+                  (stage: any) => stage.stage === ApplicationStage.EVALUATION,
                 )?.status ?? "PENDING"}
               </div>
               {application?.evaluationDecisions?.length < 3 &&
@@ -402,20 +402,23 @@ const Page = () => {
                   </>
                 )}
 
-              {application?.evaluationDecisions?.length == 3 &&
-                 (
-                  <>
-                    <div
-                      onClick={() => {
-                        setGeneralCommentType("EVALUATION");
-                        openGeneralCommentModal();
-                      }}
-                      className="flex items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
-                    >
-                      <p>{ application?.evaluationFinalDecision ? "View general comment" : "Provide a general comment"}</p>
-                    </div>
-                  </>
-                )}
+              {application?.evaluationDecisions?.length == 3 && (
+                <>
+                  <div
+                    onClick={() => {
+                      setGeneralCommentType("EVALUATION");
+                      openGeneralCommentModal();
+                    }}
+                    className="flex items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                  >
+                    <p>
+                      {application?.evaluationFinalDecision
+                        ? "View general comment"
+                        : "Provide a general comment"}
+                    </p>
+                  </div>
+                </>
+              )}
 
               {application?.evaluationDecisions?.length > 0 && (
                 <div className="flex flex-col gap-2 mt-4">

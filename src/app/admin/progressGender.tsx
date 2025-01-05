@@ -64,12 +64,12 @@ const ProgressGender: React.FC<ProgressGenderProps> = ({
     totalCount > 0 ? (female / totalCount) * 100 : "None";
 
   return (
-    <div className="relative flex items-center justify-center flex-col">
+    <div className="relative w-full flex items-center justify-center flex-col">
       <div className="">
         <PieChart
-          width={300}
-          height={300}
-          className="flex items-center ml-24"
+          width={270}
+          height={280}
+          className="flex items-center justify-center text-center ml-20"
           series={[
             {
               data: [
@@ -82,7 +82,7 @@ const ProgressGender: React.FC<ProgressGenderProps> = ({
       </div>
 
       {/* Overlay for total count and text */}
-      <div className="absolute inset-0 m-0 flex  flex-col items-center justify-center mb-20">
+      <div className="absolute inset-0 m-0 flex flex-col items-center justify-center mb-24 mr-4">
         {/* <Image src={Group} alt="sign" /> */}
         <div className="text-3xl  font-bold text-white">{totalCount}</div>
         <div className="text-sm text-white">in this level</div>

@@ -8,7 +8,7 @@ import { notifications } from "@mantine/notifications";
 import { useDispatch } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import Image from "next/image";
-import { getApplications, getContracts } from "@/utils/funcs";
+import { getApplications, getContracts } from "@/services";
 
 type EntityType = "paid" | "unpaid";
 
