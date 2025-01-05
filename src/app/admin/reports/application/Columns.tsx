@@ -19,7 +19,7 @@ export const submissionColumns: ColumnDef<any>[] = [
       header: "Institution Name",
       cell: ({ row }) => (
         <div className="truncate">
-          {row.original?.applicant?.businesses?.[0]?.businessName ?? "Not Set"}
+          {shortenString(row.original?.applicant?.businesses?.[0]?.businessName) ?? "Not Set"}
         </div>
       ),
     },
