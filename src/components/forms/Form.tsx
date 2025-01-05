@@ -106,7 +106,7 @@ const Form: React.FC<Props> = ({
   }, [formData]);
 
   return (
-    <div className="p-4">
+    <div className="p-4 w-full">
       {mode === "creating" && (
         <div className="rounded-xl bg-white">
           <div className="h-4 bg-primary rounded-t-xl" />
