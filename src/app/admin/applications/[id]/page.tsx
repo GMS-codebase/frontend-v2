@@ -10,7 +10,11 @@ import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import { useDisclosure } from "@mantine/hooks";
 import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
-import { getApplicationStatus, handleDownloadFile, handleViewFile } from "@/utils/funcs";
+import {
+  getApplicationStatus,
+  handleDownloadFile,
+  handleViewFile,
+} from "@/services";
 import Form from "@/components/forms/Form";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import { ApplicationStage } from "@/types/application";
@@ -70,8 +74,6 @@ const Page = () => {
       </div>
     );
   }
-
-  console.log(application);
 
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
@@ -177,12 +179,6 @@ const Page = () => {
               </p>
               <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
             </div>
-            <div className="flex flex-col gap-4 font-semibold">
-              <h2 className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start w-fit">
-                Description
-              </h2>
-              <div>{application?.description}</div>
-            </div>
           </div>
           <div className="flex flex-col justify-start items-start gap-6 font-semibold w-1/2">
             <h1 className="text-2xl font-bold">Applicant Information</h1>
@@ -213,7 +209,7 @@ const Page = () => {
                 onClick={() =>
                   handleViewFile(
                     application?.applicant?.businesses[0]?.businessCertificate,
-                    "business_certificates"
+                    "business_certificates",
                   )
                 }
               >
@@ -227,7 +223,7 @@ const Page = () => {
                 onClick={() =>
                   handleDownloadFile(
                     application?.applicant?.businesses[0]?.businessCertificate,
-                    "business_certificates"
+                    "business_certificates",
                   )
                 }
               >

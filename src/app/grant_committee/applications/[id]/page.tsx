@@ -21,7 +21,7 @@ import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
 import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
-import { getApplications } from "@/utils/funcs";
+import { getApplications } from "@/services";
 import NullifyModal from "@/components/Modals/Nullify";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";

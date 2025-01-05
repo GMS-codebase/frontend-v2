@@ -12,7 +12,7 @@ import DeleteQuestion from "./RemoveQuestion";
 import { useDisclosure } from "@mantine/hooks";
 import { authorizedApi } from "@/utils/api";
 import { FaDownload } from "react-icons/fa";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile } from "@/services";
 
 interface CreateQuestionProps {
   question: Question;
@@ -389,7 +389,9 @@ const ViewQuestion: React.FC<ViewQuestionProps> = ({
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-10">
         <div>
-          <p className="text-gray-900 text-2xl font-semibold">{question.title}</p>
+          <p className="text-gray-900 text-2xl font-semibold">
+            {question.title}
+          </p>
           <p className="text-gray-600">{question.description}</p>
         </div>
         {question.type === "file" && question.template && (

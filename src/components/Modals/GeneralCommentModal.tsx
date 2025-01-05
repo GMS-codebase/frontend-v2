@@ -3,7 +3,7 @@ import { IoMdClose } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { authorizedApi } from "@/utils/api";
-import { getApplications } from "@/utils/funcs";
+import { getApplications } from "@/services";
 import { useDispatch } from "react-redux";
 
 interface GeneralCommentModalProps {
@@ -21,18 +21,25 @@ const GeneralCommentModal = ({
   type,
 }: GeneralCommentModalProps) => {
   const dispatch = useDispatch();
-  const isEditing = application?.evaluationFinalDecision || application?.dueFinalDecision;
+  const isEditing =
+    application?.evaluationFinalDecision || application?.dueFinalDecision;
   const [formData, setFormData] = useState({
-    comment: type === "EVALUATION" ? application?.evaluationFinalDecision ?? "" : application?.dueFinalDecision ?? "",
+    comment:
+      type === "EVALUATION"
+        ? (application?.evaluationFinalDecision ?? "")
+        : (application?.dueFinalDecision ?? ""),
   });
   const [errors, setErrors] = useState({
     comment: "",
   });
   useEffect(() => {
     setFormData({
-      comment: type === "EVALUATION" ? application?.evaluationFinalDecision ?? "" : application?.dueFinalDecision ?? "",
+      comment:
+        type === "EVALUATION"
+          ? (application?.evaluationFinalDecision ?? "")
+          : (application?.dueFinalDecision ?? ""),
     });
-  }, [application, type])
+  }, [application, type]);
   const [loading, setLoading] = useState(false);
 
   const validate = () => {
@@ -94,7 +101,9 @@ const GeneralCommentModal = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="w-full flex flex-col items-center">
-          <h1 className="text-2xl font-extrabold">{isEditing ? "View general comment" : "Provide a general comment"}</h1>
+          <h1 className="text-2xl font-extrabold">
+            {isEditing ? "View general comment" : "Provide a general comment"}
+          </h1>
         </div>
         <div className="w-11/12 flex flex-col items-center mt-10 overflow-hidden">
           <form
@@ -110,7 +119,11 @@ const GeneralCommentModal = ({
               </label>
               <textarea
                 name="comment"
-                defaultValue={type === "EVALUATION" ? application?.evaluationFinalDecision ?? "" : application?.dueFinalDecision ?? ""}
+                defaultValue={
+                  type === "EVALUATION"
+                    ? (application?.evaluationFinalDecision ?? "")
+                    : (application?.dueFinalDecision ?? "")
+                }
                 value={formData.comment}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, comment: e.target.value }))

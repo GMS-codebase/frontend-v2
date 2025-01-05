@@ -17,7 +17,7 @@ import Dash from "./dash";
 import AdminAction from "@/components/Actions/AdminAction";
 import { authorizedApi } from "@/utils/api";
 import { useDispatch, useSelector } from "react-redux";
-import { getDashboardData } from "@/utils/funcs";
+import { getDashboardData } from "@/services";
 
 const lineChartData = [
   { day: "Mon", completed: 60, ongoing: 30 },
@@ -131,24 +131,24 @@ const Page = () => {
   ];
 
   return (
-    <div className="w-full text-secondaryText pb-20 overflow-y-auto">
+    <div className="w-full text-secondaryText pb-20 lg:overflow-y-auto">
       {loading ? (
         <Skeleton w={"100%"} h={1000} />
       ) : (
         <>
-          <div className="flex flex-col mb-4">
-            <div className="flex justify-between">
+          <div className="w-full flex flex-col mb-4">
+            <div className="lg:flex w-full justify-between">
               <p>Evaluation</p>
               <div className="text-md gap-2 flex self-end">
                 <div className="rounded-full border-black-1">
                   <select
                     value={call}
                     onChange={(e: any) => setCall(e.target.value)}
-                    className="p-2 border border-1 border-black rounded-full text-md"
+                    className="w-full p-2 border border-1 border-black rounded-full text-md"
                   >
                     {calls.map((call: any, index: number) => (
                       <option key={index} value={call.uuid}>
-                        {call.title}
+                        {call.title.slice(0,50)}
                       </option>
                     ))}
                   </select>
@@ -224,7 +224,7 @@ const Page = () => {
                 className="absolute right-0 bottom-0 rounded-b-2xl"
               />
             </div> */}
-            <div className=" bg-white rounded-2xl w-[25%] p-6 flex-grow">
+            <div className=" bg-white rounded-2xl lg:w-[25%] w-full p-6 lg:flex-grow">
               <div className="flex justify-end ">
                 <div className="rounded-full border-black-1">
                   <select className="p-2 border border-1 border-gray-400  text-gray-400 rounded-full text-md">
@@ -269,9 +269,9 @@ const Page = () => {
               <DashboardLineChart data={transformedData} />
             </div>
           </div> */}
-          <div className=" flex justify-between items-center">
+          <div className="lg:flex justify-between items-center">
             <div>Priority Sector Analysis</div>
-            <div className="flex gap-2 bg-[#005de9] px-24 py-2 rounded-full text-white items-center justify-center p-4 mt-4">
+            <div className="flex gap-2 bg-[#005de9] lg:px-24 py-2 rounded-full text-white items-center justify-center p-4 mt-4">
               <span>
                 <SolarFileBold />
               </span>
@@ -279,7 +279,7 @@ const Page = () => {
             </div>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 grid-rows-3 gap-6 w-full">
+          <div className="mt-8 grid lg:grid-cols-2 grid-cols-1 grid-rows-3 gap-6 w-full">
             <div className="bg-white p-6 rounded-2xl">
               <div className="flex justify-between">
                 <p>Number of submission</p>
@@ -405,7 +405,7 @@ const Page = () => {
             <div className="bg-white p-6 rounded-2xl">
               <div className=" justify-center items-center">
                 <p>Number of Trainees Starting from 2025</p>
-                <div className="text-md gap-2 flex my-2 ">
+                <div className="text-md gap-2 lg:flex grid grid-cols-2 my-2 ">
                   <div className="flex gap-2 rounded-full bg-slate-400 bg-opacity-10 items-center justify-center py-2 px-5">
                     <span className="text-gray-400">
                       <SolarCalendarBold />

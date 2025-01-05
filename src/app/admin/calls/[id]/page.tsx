@@ -149,7 +149,7 @@ const Page = () => {
                 </span>
                 <div>Timeline</div>
               </div>
-              <div className="flex  gap-5">
+              <div className="lg:flex  gap-5">
                 <div className="flex  ">
                   <ProgressCircle
                     activeColor="#005DE9"

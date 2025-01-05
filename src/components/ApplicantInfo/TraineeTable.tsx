@@ -6,15 +6,12 @@ import { DataTable } from "@/components/core/data-table";
 // import CallsActions from "@/app/admin/calls/CallsAction";
 import { Contact as contactData } from "@/utils/constants/contact";
 import ContractsAction from "@/components/Actions/ContractsAction";
-import { shortenString } from "@/utils/funcs";
+import { shortenString } from "@/services";
 interface Props {
-  installments: any[],
-  trainees: any[]
+  installments: any[];
+  trainees: any[];
 }
-const TraineeTable = ({
-  installments,
-  trainees
-}: Props) => {
+const TraineeTable = ({ installments, trainees }: Props) => {
   const [activeTable, setActiveTable] = useState("installments");
   const [isOpenCall, setIsOpenCall] = useState({
     openUpdate: false,
@@ -81,7 +78,9 @@ const TraineeTable = ({
     {
       accessorKey: "condition",
       header: "Condition",
-      cell: ({ row }) => <div>{shortenString(row.original?.condition, 40)}</div>,
+      cell: ({ row }) => (
+        <div>{shortenString(row.original?.condition, 40)}</div>
+      ),
     },
     {
       accessorKey: "paid",
@@ -116,9 +115,7 @@ const TraineeTable = ({
                 : "bg-[#000F2303] text-black"
             }`}
           >
-            <h1 className="text-base font-medium">
-              Contract Installments
-            </h1>
+            <h1 className="text-base font-medium">Contract Installments</h1>
           </button>
           {/* <button //Todo: to be uncommented when starting trainees module
             onClick={() => handleTableChange("trainees")}
@@ -134,10 +131,19 @@ const TraineeTable = ({
       </div>
       <div className="w-full h-full">
         {activeTable === "trainees" && (
-          <DataTable columns={contactColumns} data={trainees} verticalPadding={5} tableWidth={trainees ? "100rem" : "100%"}/>
+          <DataTable
+            columns={contactColumns}
+            data={trainees}
+            verticalPadding={5}
+            tableWidth={trainees ? "100rem" : "100%"}
+          />
         )}
         {activeTable === "installments" && (
-          <DataTable columns={applicationColumns} data={installments} verticalPadding={5}/>
+          <DataTable
+            columns={applicationColumns}
+            data={installments}
+            verticalPadding={5}
+          />
         )}
       </div>
     </div>

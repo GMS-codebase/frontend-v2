@@ -66,12 +66,12 @@ const CallModal = ({
           </button>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className=" flex flex-col gap-3">
           <h2 className="font-bold text-xl text-start">{call?.title}</h2>
           <div className="text-gray-400 text-start">
             <p>{call?.description}</p>
           </div>
-          <div className="flex gap-4 mt-4 justify-around items-stretch">
+          <div className="md:flex md:gap-4 mt-4 justify-around items-stretch">
             <div className="flex items-center gap-2  bg-[#E97E00] bg-opacity-10 px-4 py-2 rounded-full font-bold">
               <FaClock className="text-[#E97E00]" />
               <p className="text-[#E97E00]">
@@ -91,10 +91,10 @@ const CallModal = ({
               </div>
             </div>
           </div>
-          <div className="flex gap-4 mt-4 justify-around ">
+          <div className="w-full flex gap-4 mt-4 lg:justify-around">
             <button
               onClick={close}
-              className="bg-black cursor-pointer text-white px-36 py-2 rounded-full font-bold"
+              className="bg-black cursor-pointer text-white lg:px-36 px-10 py-2 rounded-full font-bold"
             >
               {" "}
               Back
@@ -104,7 +104,7 @@ const CallModal = ({
                 close();
                 openLogin();
               }}
-              className="bg-primary cursor-pointer text-white px-36 py-2 rounded-full font-bold"
+              className="bg-primary cursor-pointer text-white lg:px-36 px-10 py-2 rounded-full font-bold"
             >
               Apply
             </button>

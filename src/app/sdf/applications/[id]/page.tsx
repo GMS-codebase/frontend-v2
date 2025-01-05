@@ -18,7 +18,11 @@ import { useDisclosure } from "@mantine/hooks";
 import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
-import { getApplications, handleDownloadFile, handleViewFile } from "@/utils/funcs";
+import {
+  getApplications,
+  handleDownloadFile,
+  handleViewFile,
+} from "@/services";
 import Form from "@/components/forms/Form";
 import { ApplicationStage } from "@/types/application";
 const Page = () => {
@@ -229,7 +233,7 @@ const Page = () => {
                 onClick={() =>
                   handleViewFile(
                     application?.applicant?.businesses[0]?.businessCertificate,
-                    "business_certificates"
+                    "business_certificates",
                   )
                 }
               >
@@ -243,7 +247,7 @@ const Page = () => {
                 onClick={() =>
                   handleDownloadFile(
                     application?.applicant?.businesses[0]?.businessCertificate,
-                    "business_certificates"
+                    "business_certificates",
                   )
                 }
               >

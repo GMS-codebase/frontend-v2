@@ -11,7 +11,7 @@ import { FiEye } from "react-icons/fi";
 import { BiSearch } from "react-icons/bi";
 import { SolarAddFolderBold } from "@/components/core/icons";
 import { DataTable } from "@/components/core/data-table";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile } from "@/services";
 import MinutesDecisionConfirm from "@/components/Modals/minutes/MinutesDecisionConfirm";
 import { ApplicationStage } from "@/types/application";
 const getApplicationStatus = (application: any) => {
@@ -39,13 +39,14 @@ const getApplicationStatus = (application: any) => {
     return "CONTRACT SIGNING IN PROGRESS";
   } else if (
     application?.currentStage === "CONTRACT_SIGNING" &&
-    ( application?.call?.closedGrantCommittee &&
-      application?.call?.closedDueDiligency &&
-      application?.call?.closedEvaluation) &&
-      application?.uploadedContract
+    application?.call?.closedGrantCommittee &&
+    application?.call?.closedDueDiligency &&
+    application?.call?.closedEvaluation &&
+    application?.uploadedContract
   ) {
     return "FINISH GRANT PROPOSALS";
-  } {
+  }
+  {
     return application?.currentStage;
   }
 };
@@ -202,21 +203,30 @@ const Page = () => {
       accessorKey: "name",
       header: "Applicant Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.name ?? row.original?.application?.applicant?.name}</div>
+        <div className="w-full">
+          {row.original?.applicant?.name ??
+            row.original?.application?.applicant?.name}
+        </div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.phone ?? row.original?.application?.applicant?.phone}</div>
+        <div className="w-full">
+          {row.original?.applicant?.phone ??
+            row.original?.application?.applicant?.phone}
+        </div>
       ),
     },
     {
       accessorKey: "email",
       header: "Applicant Email",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.email ?? row.original?.application?.applicant?.email}</div>
+        <div className="w-full">
+          {row.original?.applicant?.email ??
+            row.original?.application?.applicant?.email}
+        </div>
       ),
     },
     {
@@ -224,7 +234,8 @@ const Page = () => {
       header: "Minute Approval Status",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.minutesStatus?.toUpperCase() ?? row.original?.application?.minutesStatus?.toUpperCase()}
+          {row.original?.minutesStatus?.toUpperCase() ??
+            row.original?.application?.minutesStatus?.toUpperCase()}
         </div>
       ),
     },
@@ -271,21 +282,30 @@ const Page = () => {
       accessorKey: "name",
       header: "Applicant Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.name ?? row.original?.application?.applicant?.name}</div>
+        <div className="w-full">
+          {row.original?.applicant?.name ??
+            row.original?.application?.applicant?.name}
+        </div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Applicant Phone",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.phone ?? row.original?.application?.applicant?.phone}</div>
+        <div className="w-full">
+          {row.original?.applicant?.phone ??
+            row.original?.application?.applicant?.phone}
+        </div>
       ),
     },
     {
       accessorKey: "email",
       header: "Applicant Email",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.applicant?.email ?? row.original?.application?.applicant?.email}</div>
+        <div className="w-full">
+          {row.original?.applicant?.email ??
+            row.original?.application?.applicant?.email}
+        </div>
       ),
     },
     {
@@ -293,7 +313,8 @@ const Page = () => {
       header: "Minute Approval Status",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.minutesStatus?.toUpperCase() ?? row.original?.application?.minutesStatus?.toUpperCase()}
+          {row.original?.minutesStatus?.toUpperCase() ??
+            row.original?.application?.minutesStatus?.toUpperCase()}
         </div>
       ),
     },
@@ -308,8 +329,8 @@ const Page = () => {
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 p-4">
       <h2 className="text-2xl font-bold mb-4">Minutes</h2>
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[25rem]">
+      <div className="w-full lg:flex justify-between items-center p-4">
+        <div className="relative lg:w-[25rem] w-full">
           <span className="absolute top-4 left-2">
             <BiSearch size={25} />
           </span>
@@ -358,7 +379,6 @@ const Page = () => {
             noDataMessage="No Approved contract negotiation"
           />
         </Tabs.Panel>
-
         <Tabs.Panel value="rejected">
           <h1 className="text-base p-4 font-bold">
             Rejected contract negotiations

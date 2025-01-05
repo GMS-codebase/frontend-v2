@@ -9,7 +9,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { getApplicationStatus, shortenString } from "@/utils/funcs";
+import { getApplicationStatus, shortenString } from "@/services";
 
 const Page = () => {
   // Select applications from Redux store
@@ -89,10 +89,12 @@ const Page = () => {
       ),
     },
     {
-      accessorKey: "applicantName",
-      header: "Applicant Name",
+      accessorKey: "institutionName",
+      header: "Institution Name",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.applicant?.name}</div>
+        <div className="truncate">
+          {row.original?.applicant?.businesses[0].businessName}
+        </div>
       ),
     },
     {
@@ -142,9 +144,7 @@ const Page = () => {
       accessorKey: "stage",
       header: "Stage",
       cell: ({ row }) => (
-        <div className="truncate">
-          {getApplicationStatus(row.original)}
-        </div>
+        <div className="truncate">{getApplicationStatus(row.original)}</div>
       ),
     },
     {
@@ -248,8 +248,8 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4 gap-5">
-        <div className="relative w-[20rem]">
+      <div className="w-full lg:flex justify-between items-center p-4 gap-5">
+        <div className="relative lg:w-[20rem] w-full mb-4">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} color="" />
           </span>
