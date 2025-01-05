@@ -38,11 +38,8 @@ const ExportForm: FC<Props> = ({
       <p className=" text-center font-semibold text-sm">
         Select What To Export
       </p>
-      <Tabs defaultValue="table">
+      <Tabs defaultValue="all">
         <Tabs.List>
-          <Tabs.Tab className=" w-1/4" value="table" leftSection={<BiTable />}>
-            Current Table
-          </Tabs.Tab>
           <Tabs.Tab
             className=" w-1/4"
             value="all"
@@ -50,7 +47,6 @@ const ExportForm: FC<Props> = ({
           >
             All Data
           </Tabs.Tab>
-
         </Tabs.List>
         {/* all data */}
         <Tabs.Panel value="all">
@@ -63,8 +59,8 @@ const ExportForm: FC<Props> = ({
                 className="flex items-center"
                 color="green"
                 onClick={() => {
-                  exportAllToExcel?.();
-                  onClose();
+                  exportAllToExcel()
+                  // onClose();
                 }}
               >
                 <BsFileExcel className="mr-2" />
@@ -73,36 +69,6 @@ const ExportForm: FC<Props> = ({
             </div>
           </div>
         </Tabs.Panel>
-        {/* selected table data */}
-        <Tabs.Panel value="table">
-          <div className="flex w-full mt-3 flex-col gap-y-3 items-center">
-            <span className=" text-sm text-gray-800">
-              Export the current table data selected by the filters
-            </span>
-            <div className="flex items-center gap-x-3">
-              {/* <Button
-                className="flex items-center"
-                color="green"
-                onClick={() => {
-                  exportToExcel(
-                    tableName ?? "Tables",
-                    filteredData,
-                    ".xlsx",
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
-                  );
-                }}
-              >
-                <BsFileExcel className="mr-2" />
-                Export Excel
-              </Button> */}
-              {/* <Button className="flex items-center" color="red">
-                <BsFilePdf className="mr-2" />
-                Export PDF
-              </Button> */}
-            </div>
-          </div>
-        </Tabs.Panel>
-        {/* select date */}
         <Tabs.Panel value="date">
           <div className="flex w-full mt-3 flex-col gap-y-3 items-center">
             <span className=" text-sm text-gray-800">

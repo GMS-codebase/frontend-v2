@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
@@ -9,7 +10,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { getApplicationStatus } from "@/services";
+import { getApplicationStatus, shortenString } from "@/services";
 import { SolarFileBold } from "@/components/core/icons";
 import ExportForm from "@/components/core/data-table/ExportForm";
 import MainModal from "./MainModal";
@@ -19,6 +20,7 @@ import { exportDataToExcel } from "@/utils/funcs";
 const Page = () => {
   // Select applications from Redux store
   const [isShowExport, {open: showExport, close: closeExport}] = useDisclosure(false);
+  const [reportType, setReportType] = useState("None");
   const { applications: rawApplications, loading } = useSelector(
     (state: any) => state.applications,
   );
@@ -72,21 +74,16 @@ const Page = () => {
     [applications],
   );
 
-  // Format stage string
-  // const formatStage = (stage: string) => {
-  //   return stage.replace(/_/g, " ").toUpperCase();
-  // };
-
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "applicationNumber",
-      header: "Application Number",
+      header: "applicationNumber",
       cell: ({ row }) => (
         <div className="truncate">{row.original?.applicationNumber}</div>
       ),
     },
     {
-      accessorKey: "institutionName",
+      accessorKey: "applicant",
       header: "Institution Name",
       cell: ({ row }) => (
         <div className="truncate">
@@ -98,35 +95,35 @@ const Page = () => {
       accessorKey: "window",
       header: "Window",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.window?.title}</div>
+        <div className="truncate">{shortenString(row.original?.window?.title)}</div>
       ),
     },
     {
       accessorKey: "call",
       header: "Call",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.call?.title}</div>
+        <div className="truncate">{shortenString(row.original?.call?.title)}</div>
       ),
     },
     {
       accessorKey: "subWindow",
       header: "Sub Window",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.subWindow?.title}</div>
+        <div className="truncate">{shortenString(row.original?.subWindow?.title)}</div>
       ),
     },
     {
       accessorKey: "sector",
       header: "Sector",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.sector?.name}</div>
+        <div className="truncate">{shortenString(row.original?.sector?.name)}</div>
       ),
     },
     {
       accessorKey: "trade",
       header: "Trade",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.trade?.trade?.title}</div>
+        <div className="truncate">{shortenString(row.original?.trade?.trade?.title)}</div>
       ),
     },
     {
@@ -175,21 +172,21 @@ const Page = () => {
       ),
     },
   ];
-
   const FilterDropDown = ({
     placeholderText,
     data,
     filterKey,
     className,
+    defaultValue
   }: {
     placeholderText: string;
     data: any[];
     filterKey: keyof typeof selectedFilters;
     className?: string;
+    defaultValue?: string;
   }) => {
     const displayValue =
       selectedFilters[filterKey] === "All" ? "" : selectedFilters[filterKey];
-
     return (
       <Select
         data={data.map((item) => ({ value: item, label: item }))}
@@ -198,6 +195,7 @@ const Page = () => {
         onChange={(value) =>
           setSelectedFilters((prev) => ({ ...prev, [filterKey]: value }))
         }
+        defaultValue={defaultValue}
         className={`w-fit px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black ${className}`}
       />
     );
@@ -237,6 +235,20 @@ const Page = () => {
       });
   }, [applications, searchTerm, selectedFilters]);
 
+  console.log("data ---> ", rawApplications)
+  const formattedSubmissionData = rawApplications.map((row: any, index: any)=>{
+    return {
+      index: index,
+      applicationNumber: row.applicationNumber,
+      applicant: row.applicant?.businesses?.[0]?.businessName,
+      window: row.window?.title,
+      call: row.call?.title,
+      subWindow: row.subWindow?.title,
+      sector: row.sectors[0]?.name,
+      trade: row.trades[0]?.trade?.title,
+    }
+  })
+
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4 gap-5">
@@ -266,40 +278,23 @@ const Page = () => {
             style={{ scrollBehavior: "smooth" }}
           >
             <FilterDropDown
-              placeholderText="Filter By Call"
+              placeholderText="Select Call"
               data={filterOptions.call}
               filterKey="call"
               className="flex-shrink-0"
             />
             <FilterDropDown
-              placeholderText="Filter By Stage"
-              data={filterOptions.stages}
-              filterKey="stage"
-              className="flex-shrink-0"
-            />
-            <FilterDropDown
-              placeholderText="Filter By Window"
-              data={filterOptions.windows}
-              filterKey="window"
-              className="flex-shrink-0"
-            />
-            <FilterDropDown
-              placeholderText="Filter By Sub Window"
-              data={filterOptions.subwindows}
-              filterKey="subWindow"
-              className="flex-shrink-0"
-            />
-            <FilterDropDown
-              placeholderText="Filter By Sector"
-              data={filterOptions.sectors}
-              filterKey="sector"
-              className="flex-shrink-0"
-            />
-            <FilterDropDown
-              placeholderText="Filter By Trade"
+              placeholderText="Select Trade"
               data={filterOptions.trades}
               filterKey="trade"
               className="flex-shrink-0"
+            />
+            <Select
+              data={["None","Submission Report", "Evaluation Report", "Due Diligence Report", "Grant Committee Report"]}
+              placeholder={"Select Type"}
+              value={reportType}
+              onChange={(value: any)=> setReportType(value)}
+              className={`w-fit px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
             />
           </div>
 
@@ -326,7 +321,7 @@ const Page = () => {
         }
       />
       <MainModal title="Export data" isOpen={isShowExport} onClose={closeExport}>
-        <ExportForm exportAllToExcel={exportDataToExcel("data", filteredApplications, ".csv","excel")} data={filteredApplications!} onClose={closeExport} />
+        <ExportForm exportAllToExcel={()=> exportDataToExcel("Report",formattedSubmissionData, columns)} data={formattedSubmissionData!} onClose={closeExport} />
       </MainModal>
     </div>
   );
