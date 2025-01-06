@@ -1,4 +1,5 @@
 import { getApplicationStatus, shortenString } from "@/services";
+import { calculateTotalTrainees, capitalize } from "@/utils/funcs";
 import { Menu } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatDate } from "date-fns";
@@ -28,7 +29,7 @@ export const submissionColumns: ColumnDef<any>[] = [
         header: "Institution Type",
         cell: ({ row }) => (
           <div className="truncate">
-            {row.original?.applicant.businesses?.[0]?.businessType ?? "Not Set"}
+            {capitalize(row.original?.applicant.businesses?.[0]?.businessType) ?? "Not Set"}
           </div>
         ),
       },
@@ -82,28 +83,28 @@ export const submissionColumns: ColumnDef<any>[] = [
         accessorKey: "requestedBeneficiaries",
         header: "Requested Beneficiaries",
         cell: ({ row }) => (
-          <div className="truncate">{shortenString(row.original?.trade?.trade?.title)}</div>
+          <div className="truncate">{calculateTotalTrainees(JSON.parse(row?.original.answers))! ?? "None"}</div>
         ),
       },
       {
         accessorKey: "district",
         header: "District",
         cell: ({ row }) => (
-          <div className="truncate">{row.original.applicant.businesses?.[0]?.addressLine?.split("-")[0]}</div>
+          <div className="truncate">{row.original.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "Not set"}</div>
         ),
       },
       {
         accessorKey: "businessSector",
         header: "Sector",
         cell: ({ row }) => (
-          <div className="truncate">{row.original.applicant.businesses?.[0]?.addressLine?.split("-")[1]}</div>
+          <div className="truncate">{row.original.applicant.businesses?.[0]?.addressLine?.split("-")[1] ?? "Not set"}</div>
         ),
       },
       {
         accessorKey: "cell",
         header: "Cell",
         cell: ({ row }) => (
-          <div className="truncate">{row.original.applicant.businesses?.[0]?.addressLine?.split("-")[2]}</div>
+          <div className="truncate">{row.original.applicant.businesses?.[0]?.addressLine?.split("-")[2] ?? "Not set"}</div>
         ),
       },
     {
