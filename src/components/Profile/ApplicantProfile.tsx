@@ -18,7 +18,7 @@ import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import CompleteProfile from "../Modals/application/CompleteProfile";
 import UpdateApplicantProfile from "../Modals/applicantContacts/UpdateApplicantProfile";
-import capitalize from "@/utils/funcs";
+
 interface Props {
   type?: string;
 }
@@ -215,7 +215,7 @@ const ApplicantProfile = ({ type }: Props) => {
                       <input
                         type="text"
                         name="text"
-                        value={capitalize(formData.gender)}
+                        value={formData.gender}
                         className="mt-1 block w-full pl-8 px-3 py-3 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                         disabled
                       />
@@ -248,7 +248,7 @@ const ApplicantProfile = ({ type }: Props) => {
                   <div className="flex font-semibold ">
                     <div className="flex w-1/2">
                       <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                        <div>Institution Name</div>
+                        <div>Business Name</div>
                       </div>
                       <div className="mt-2 ml-4">
                         {applicantProfile?.businessName || ""}
@@ -256,10 +256,10 @@ const ApplicantProfile = ({ type }: Props) => {
                     </div>
                     <div className="flex w-1/2">
                       <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                        <div>Institution Type </div>
+                        <div>Business Type </div>
                       </div>
                       <div className="mt-2 ml-4">
-                        {capitalize(applicantProfile?.businessType) || ""}
+                        {applicantProfile?.businessType || ""}
                       </div>
                     </div>
                   </div>
@@ -349,7 +349,7 @@ const ApplicantProfile = ({ type }: Props) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex font-semibold ">
+                  <div className="flex    font-semibold ">
                     <div className="flex w-1/2">
                       <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                         <div>Is Private</div>
@@ -359,17 +359,18 @@ const ApplicantProfile = ({ type }: Props) => {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full gap-2 flex justify-end mt-4">
-                    <button
-                      type="button"
-                      onClick={openUpdate}
-                      className="w- px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    >
-                      Update
-                    </button>
-                  </div>
                 </div>
               )}
+
+              <div className="w-full gap-2 flex justify-end mt-4">
+                <button
+                  type="button"
+                  onClick={openUpdate}
+                  className="w- px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Update
+                </button>
+              </div>
             </div>
           </div>
         </div>
