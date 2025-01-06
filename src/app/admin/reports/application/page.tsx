@@ -10,7 +10,7 @@ import { getApplicationStatus } from "@/services";
 import ExportForm from "@/components/core/data-table/ExportForm";
 import MainModal from "./MainModal";
 import { useDisclosure } from "@mantine/hooks";
-import { exportDataToExcel } from "@/utils/funcs";
+import { calculateTotalTrainees, exportDataToExcel } from "@/utils/funcs";
 import { submissionColumns } from "./Columns";
 import { formatDate } from "date-fns";
 
@@ -136,7 +136,13 @@ const Page = () => {
   }, [applications, searchTerm, selectedFilters]);
 
   console.log("data ---> ", rawApplications)
+
+
+  // console.log(filteredApplications?.[0])
+  // console.log("requested beneficiaries -->",calculateTotalTrainees(JSON.parse(filteredApplications?.[0]?.answers ?? "{}")))
+
   const formattedSubmissionData = filteredApplications.map((row: any, index: any)=>{
+    // console.log("requested beneficiaries -->",calculateTotalTrainees(JSON.parse(row?.answers)))
     return {
       index: index,
       applicationNumber: row.applicationNumber,
@@ -150,11 +156,11 @@ const Page = () => {
       contacts: row.applicant?.phone,
       institutionType: row.applicant.businesses?.[0]?.businessType,
       legalStatus: row.applicant.businesses?.[0]?.private ? "Private": "Public",
-      requestedBeneficiaries: "",
+      requestedBeneficiaries: calculateTotalTrainees(JSON.parse(row?.answers)) ?? "None",
       district: row.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "",
       businessSector: row.applicant.businesses?.[0]?.addressLine?.split("-")[1] ?? "",
       cell:row.applicant.businesses?.[0]?.addressLine?.split("-")[2] ?? "",
-      submissionDate: formatDate(row?.lastUpdatedAt, "yyyy-MM-dd")
+      submissionDate: formatDate(row?.lastUpdatedAt, "yyyy-MM-dd"),
     }
   })
 
