@@ -4,6 +4,9 @@ export interface ColumnDef<T = any> {
   header: string;
   accessorKey: keyof T;
 }
+export const capitalize = (str: string): string =>{
+  return str?.charAt(0)?.toUpperCase() + str?.slice(1);
+}
 export const exportDataToExcel = async <T extends Record<string, any>>(
   fileName: string,
   excelData: T[],
