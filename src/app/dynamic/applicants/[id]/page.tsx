@@ -26,7 +26,7 @@ const Page = () => {
             </div>
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                <div>Business Type </div>
+                <div>Institution Type </div>
               </div>
               <div className="mt-2 ml-4">TRAINING_INSTITUTE</div>
             </div>

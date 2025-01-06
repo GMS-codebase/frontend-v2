@@ -17,6 +17,7 @@ import { getCalls } from "@/services";
 import { unauthorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import ForgotPasswordModal from "@/components/Modals/auth/ForgotPassword";
+import Link from "next/link";
 
 function Page() {
   const dispatch = useDispatch();
@@ -148,10 +149,10 @@ function Page() {
         </h2>
       </div>
       <div className="absolute bottom-0 right-0 p-4 z-30">
-        <button className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
+        <a href={"/files/user_guide.pdf"} download={true} className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
           <IoDownloadOutline className="w-4 h-4 mx-2" />
           Download User Manual
-        </button>
+        </a>
       </div>
       <RegisterModal
         openSuccess={openSuccess}
