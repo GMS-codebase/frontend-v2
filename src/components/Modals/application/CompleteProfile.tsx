@@ -126,6 +126,7 @@ const CompleteProfile = ({
     const newErrors: { [key: string]: string } = {};
     if (activeTab === 1) {
       if (!formData.tin) newErrors.tin = "TIN is required.";
+      if (!formData.business_name) newErrors.business_name = "Institution Name is required.";
       if (!formData.reg_no_or_school_code)
         newErrors.reg_no_or_school_code =
           "Registration number or school code is required.";
@@ -141,15 +142,15 @@ const CompleteProfile = ({
       if (!formData.employee_number)
         newErrors.employee_number = "Employee number is required.";
       if (!formData.business_phone)
-        newErrors.business_phone = "Business phone is required.";
+        newErrors.business_phone = "Institution phone is required.";
       if (!formData.po_box) newErrors.po_box = "PO Box is required.";
       if (!formData.business_address)
-        newErrors.business_address = "Business address is required.";
+        newErrors.business_address = "Institution address is required.";
       if (!formData.bank_account)
         newErrors.bank_account = "Bank account is required.";
       if (!formData.year_of_placement)
         newErrors.year_of_placement = "Year of establishment is required.";
-      if (!formData.email) newErrors.email = "Business Email  is required.";
+      if (!formData.email) newErrors.email = "Institution Email  is required.";
       if (!formData.bank_name) newErrors.bank_name = "Bank name is required.";
     } else if (activeTab === 3) {
       if (!formData.year_of_placement)
@@ -327,7 +328,7 @@ const CompleteProfile = ({
                     />
                   </div>
                   {errors.business_name && (
-                    <p className="text-red-500 text-sm">{errors.tin}</p>
+                    <p className="text-red-500 text-sm">{errors.business_name}</p>
                   )}
                 </div>
                 <div className="w-full">
