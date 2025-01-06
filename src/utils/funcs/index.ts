@@ -4,8 +4,12 @@ export interface ColumnDef<T = any> {
   header: string;
   accessorKey: keyof T;
 }
+type ReportType = "Submission Report" |  "Evaluation Report" | "Due Diligence Report" | "Grant Committee Report"
 export const capitalize = (str: string): string =>{
   return str?.charAt(0)?.toUpperCase() + str?.slice(1);
+}
+export const getStage = (type: ReportType) => {
+  return type == "Submission Report" ? "SUBMITTED" : type == "Evaluation Report" ? "EVALUATION" : type == "Due Diligence Report" ? "DUE_DILIGENCE" : "GRANT_COMMITTEE"
 }
 export function calculateTotalTrainees(data: any) {
   let totalTrainees = 0;
