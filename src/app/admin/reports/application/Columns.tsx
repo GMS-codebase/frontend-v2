@@ -83,7 +83,7 @@ export const submissionColumns: ColumnDef<any>[] = [
         accessorKey: "requestedBeneficiaries",
         header: "Requested Beneficiaries",
         cell: ({ row }) => (
-          <div className="truncate">{calculateTotalTrainees(JSON.parse(row?.original.answers))! ?? "None"}</div>
+          <div className="truncate w-full text-center">{calculateTotalTrainees(JSON.parse(row?.original.answers))! ?? "None"}</div>
         ),
       },
       {
