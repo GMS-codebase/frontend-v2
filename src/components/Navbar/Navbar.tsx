@@ -35,7 +35,9 @@ import {
   getAnnouncement,
   getForms,
   getAppeals,
-} from "@/utils/funcs";
+  getNegotiatedMinutes,
+  getApplicantProfile,
+} from "@/services";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
 import { LOGOUT } from "@/actions/AuthActions";
@@ -59,7 +61,6 @@ const Navbar = () => {
     notifications.show({
       message: "Logged Out Successfully!",
       color: "blue",
-      duration: 6000,
     });
   };
 
@@ -97,19 +98,24 @@ const Navbar = () => {
       getUploadedMinutes(dispatch, "sdf");
       getApprovedMinutes(dispatch, "sdf");
       getRejectedMinutes(dispatch, "sdf");
+      getNegotiatedMinutes(dispatch, "sdf");
       getAppeals(dispatch, "sdf");
+      getApplicationsForContractSigning(dispatch);
     } else if (role === "APPLICANT") {
+      getApplicantProfile(dispatch);
       getMyContacts(dispatch);
+      getMyContracts(dispatch);
       getMyApplicantProfile(dispatch);
       getMyApplications(dispatch);
       getUploadedMinutes(dispatch, "applicant");
       getApprovedMinutes(dispatch, "applicant");
       getRejectedMinutes(dispatch, "applicant");
+      getNegotiatedMinutes(dispatch, "applicant");
       getBudgetLines(dispatch);
       getAppeals(dispatch, "applicant");
     }
+    getApplicants(dispatch);
     getAnnouncement(dispatch);
-    getApplicationsForContractSigning(dispatch);
     getEmpStages(dispatch);
     getWindows(dispatch);
     getSectors(dispatch);

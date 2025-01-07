@@ -6,7 +6,7 @@ import SideVector2 from "@/assets/Vectors/redSideVector2.svg";
 import deleteSvg from "@/assets/Vectors/delete.svg";
 import { useState } from "react";
 import { authorizedApi } from "@/utils/api";
-import { getRoles } from "@/utils/funcs";
+import { getRoles } from "@/services";
 import { useDispatch } from "react-redux";
 import { notifications } from "@mantine/notifications";
 

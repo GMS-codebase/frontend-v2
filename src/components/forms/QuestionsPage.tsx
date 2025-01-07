@@ -52,7 +52,7 @@ const QuestionsPage: React.FC<QuestionsPageProps> = ({
 
   const handleQuestionChange = (updatedQuestion: IQuestion) => {
     const updatedQuestions = pageQuestions?.map((q) =>
-      q.id === updatedQuestion.id ? updatedQuestion : q
+      q.id === updatedQuestion.id ? updatedQuestion : q,
     );
     onChange(updatedQuestions);
   };

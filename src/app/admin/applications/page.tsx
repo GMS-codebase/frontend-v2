@@ -9,6 +9,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
+import { getApplicationStatus } from "@/services";
 
 const Page = () => {
   // Select applications from Redux store
@@ -66,9 +67,9 @@ const Page = () => {
   );
 
   // Format stage string
-  const formatStage = (stage: string) => {
-    return stage.replace(/_/g, " ").toUpperCase();
-  };
+  // const formatStage = (stage: string) => {
+  //   return stage.replace(/_/g, " ").toUpperCase();
+  // };
 
   const columns: ColumnDef<any>[] = [
     {
@@ -79,10 +80,12 @@ const Page = () => {
       ),
     },
     {
-      accessorKey: "applicantName",
-      header: "Applicant Name",
+      accessorKey: "institutionName",
+      header: "Institution Name",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.applicant?.name}</div>
+        <div className="truncate">
+          {row.original?.applicant?.businesses?.[0]?.businessName}
+        </div>
       ),
     },
     {
@@ -125,7 +128,7 @@ const Page = () => {
       header: "Stage",
       cell: ({ row }) => (
         <div className="truncate">
-          {formatStage(row.original?.currentStage)}
+          {getApplicationStatus(row.original) || "-"}
         </div>
       ),
     },
@@ -218,7 +221,7 @@ const Page = () => {
         const { stage, window, call, subWindow, sector, trade } =
           selectedFilters;
         return (
-          (stage === "All" || formatStage(app.currentStage) === stage) &&
+          (stage === "All" || getApplicationStatus(app) === stage) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&
