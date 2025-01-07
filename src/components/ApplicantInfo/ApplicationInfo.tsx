@@ -1,7 +1,12 @@
 import React from "react";
 import { SolarPen2Bold } from "../core/icons";
-
-function ApplicationInfo() {
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+interface Props {
+  application: any;
+}
+function ApplicationInfo({ application }: Props) {
+  const navigate = useRouter();
   return (
     <div className="w-1/2">
       <div className="bg-white rounded-2xl p-10 mb-10 flex flex-col gap-6">
@@ -14,7 +19,7 @@ function ApplicationInfo() {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Application number</div>
               </div>
-              <div className="mt-2 ml-4">GMS-CON-00087</div>
+              <div className="mt-2 ml-4">{application?.applicationNumber}</div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -22,7 +27,7 @@ function ApplicationInfo() {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Call</div>
               </div>
-              <div className="mt-2 ml-4">NEET: Call for Grant Proposal </div>
+              <div className="mt-2 ml-4">{application?.call?.title}</div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -30,7 +35,7 @@ function ApplicationInfo() {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Window</div>
               </div>
-              <div className="mt-2 ml-4">Window 2: Out of school youth</div>
+              <div className="mt-2 ml-4">{application?.window?.title}</div>
             </div>
           </div>
           <div className="flex  w-4/5  font-semibold ">
@@ -38,14 +43,17 @@ function ApplicationInfo() {
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Current stage</div>
               </div>
-              <div className="mt-2 ml-4">Contract signing </div>
+              <div className="mt-2 ml-4">{application?.currentStage}</div>
             </div>
           </div>
 
           <div className=" flex  mt-20 space-x-4">
-            <div className="flex gap-2 p-2 bg-[#005DE9] rounded-full w-full text-center justify-center text-white px-4  py-2 ">
+            <Link
+              href={`/applicant/applications/application/${application?.uuid}`}
+              className="flex gap-2 p-2 bg-[#005DE9] rounded-full w-full text-center justify-center text-white px-4  py-2 "
+            >
               <div>View more application info</div>
-            </div>
+            </Link>
           </div>
         </div>
       </div>

@@ -21,7 +21,7 @@ import RemoveTradeFromSectorModal from "@/components/Modals/sectors/RemoveTradeF
 import AddEditSector from "@/components/Modals/sectors/AddEditSector";
 import { Trade, Sector, Window, TradeSector } from "@/types";
 import { authorizedApi } from "@/utils/api";
-import { getSectors } from "@/utils/funcs";
+import { getSectors } from "@/services";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
@@ -77,7 +77,7 @@ const Page = () => {
           .includes(searchQuery.toLowerCase()) ||
         tradeSector.trade.shortname
           .toLowerCase()
-          .includes(searchQuery.toLowerCase())
+          .includes(searchQuery.toLowerCase()),
     );
   }, [trades, searchQuery]);
 
@@ -151,7 +151,7 @@ const Page = () => {
         ),
       },
     ],
-    [openRemoveTrade]
+    [openRemoveTrade],
   );
 
   return (

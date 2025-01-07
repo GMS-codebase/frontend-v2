@@ -36,6 +36,7 @@ interface Props {
   loader?: React.ReactNode;
   limit?: number;
   tableWidth?: string | number;
+  verticalPadding?: string | number;
 }
 
 export function DataTable({
@@ -54,6 +55,7 @@ export function DataTable({
   limit,
   loader,
   tableWidth,
+  verticalPadding,
 }: Props) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -219,7 +221,7 @@ export function DataTable({
                       {row.getVisibleCells().map((cell, i) => (
                         <td
                           className={clsx(
-                            "p-2 py-3 my-1 table-text",
+                            `p-2 py-${verticalPadding ?? "3"} my-1 table-text`,
                             row.getIsSelected()
                               ? "bg-mainPurple font-semibold"
                               : "",
@@ -287,7 +289,9 @@ export function DataTable({
             />
             <div className="flex md:flex-row flex-col text-sm items-center gap-2 justify-center">
               <h1 className="text-lg font-medium text-[#B5B7C0]">
-                Showing data 1 to 10 of {table.getRowCount()} entries
+                Showing data 1 to{" "}
+                {table.getRowCount() < 10 ? table.getRowCount() : 10} of{" "}
+                {table.getRowCount()} entries
               </h1>
             </div>
           </div>

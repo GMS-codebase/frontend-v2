@@ -1,9 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { authorizedApi } from "@/utils/api";
-import { Checkbox, Modal, Select, Stepper } from "@mantine/core";
+import { getApplicantProfile } from "@/services";
+import { Checkbox, Modal, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { useDispatch } from "react-redux";
 import { User } from "solar-icon-set";
 import { Upload } from "solar-icon-set";
 import { CalendarMinimalistic, Folder2, ShieldWarning } from "solar-icon-set";
@@ -14,6 +17,7 @@ type FormData = {
   tin: string;
   year_of_placement: string;
   business_type: string;
+  business_name: string;
   reg_no_or_school_code: string;
   reg_date: string;
   is_private: boolean;
@@ -35,16 +39,20 @@ const CompleteProfile = ({
   isOpenCompleteProfile,
   closeCompleteProfile,
   finishAddingProfile,
+  defaultData,
 }: {
   isOpenCompleteProfile: boolean;
   closeCompleteProfile: () => void;
   finishAddingProfile?: () => void;
+  defaultData?: any;
 }) => {
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState(1);
   const [loading, setLoading] = useState(false);
   const [certificate, setCertificate] = useState<any>();
   const [formData, setFormData] = useState<FormData>({
     tin: "",
+    business_name: "",
     year_of_placement: "",
     business_type: "",
     reg_no_or_school_code: "",
@@ -63,49 +71,6 @@ const CompleteProfile = ({
     cell: "",
     village: "",
   });
-
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-  const validate = () => {
-    const newErrors: { [key: string]: string } = {};
-    if (activeTab === 1) {
-      if (!formData.tin) newErrors.tin = "TIN is required.";
-      if (!formData.reg_no_or_school_code)
-        newErrors.reg_no_or_school_code =
-          "Registration number or school code is required.";
-      if (!formData.reg_date)
-        newErrors.reg_date = "Registration date is required.";
-      if (formData.is_private === undefined)
-        newErrors.is_private = "Private status is required.";
-      if (!formData.business_type)
-        newErrors.business_type = "Business type is required.";
-      if (!certificate) newErrors.certificate = "Certificate is required.";
-    } else if (activeTab === 2) {
-      if (!formData.employee_number)
-        newErrors.employee_number = "Employee number is required.";
-      if (!formData.business_phone)
-        newErrors.business_phone = "Business phone is required.";
-      if (!formData.po_box) newErrors.po_box = "PO Box is required.";
-      if (!formData.business_address)
-        newErrors.business_address = "Business address is required.";
-      if (!formData.bank_account)
-        newErrors.bank_account = "Bank account is required.";
-      if (!formData.year_of_placement)
-        newErrors.year_of_placement = "Year of establishment is required.";
-      if (!formData.email) newErrors.email = "Business Email  is required.";
-      if (!formData.bank_name) newErrors.bank_name = "Bank name is required.";
-    } else if (activeTab === 3) {
-      if (!formData.year_of_placement)
-        newErrors.year_of_placement = "Year of placement is required.";
-      if (!formData.sector) newErrors.sector = "Sector is required.";
-      if (!formData.province) newErrors.province = "Province is required.";
-      if (!formData.district) newErrors.district = "District is required.";
-      if (!formData.cell) newErrors.cell = "Cell is required.";
-      if (!formData.village) newErrors.village = "Village is required.";
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
   const ProvincesOptions = Provinces();
   const DistrictOptions = formData.province ? Districts(formData.province) : [];
   const SectorOptions =
@@ -126,6 +91,79 @@ const CompleteProfile = ({
         )
       : [];
 
+  useEffect(() => {
+    if (defaultData) {
+      console.log("default data --> ", defaultData);
+      const locations = defaultData?.addressLine?.split("-");
+      setFormData({
+        tin: defaultData?.tinNumber,
+        is_private: defaultData?.private,
+        reg_no_or_school_code: defaultData?.registrationNumber,
+        reg_date: defaultData?.registrationDate,
+        business_phone: defaultData.phone,
+        year_of_placement: defaultData.yearOfEstablishment,
+        business_address: defaultData?.addressLine,
+        employee_number: defaultData.employeeNumber,
+        business_type: defaultData?.businessType,
+        bank_name: defaultData?.bankName,
+        bank_account: defaultData?.businessAccount,
+        po_box: defaultData?.poBox,
+        province: locations[4]?.split(" ")[1],
+        district: locations[3]?.split(" ")[1],
+        sector: locations[2]?.split(" ")[1],
+        cell: locations[1]?.split(" ")[1],
+        village: locations[0]?.split(" ")[0],
+        email: defaultData?.email,
+        business_name: defaultData?.businessName,
+      });
+      setCertificate(defaultData?.businessCertificate);
+      setErrors({});
+    }
+  }, [defaultData]);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const validate = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (activeTab === 1) {
+      if (!formData.tin) newErrors.tin = "TIN is required.";
+      if (!formData.business_name) newErrors.business_name = "Institution Name is required.";
+      if (!formData.reg_no_or_school_code)
+        newErrors.reg_no_or_school_code =
+          "Registration number or school code is required.";
+      if (!formData.reg_date)
+        newErrors.reg_date = "Registration date is required.";
+      if (formData.is_private === undefined)
+        newErrors.is_private = "Private status is required.";
+      if (!formData.business_type)
+        newErrors.business_type = "Institution type is required.";
+      if (!certificate && !defaultData)
+        newErrors.certificate = "Certificate is required.";
+    } else if (activeTab === 2) {
+      if (!formData.employee_number)
+        newErrors.employee_number = "Employee number is required.";
+      if (!formData.business_phone)
+        newErrors.business_phone = "Institution phone is required.";
+      if (!formData.po_box) newErrors.po_box = "PO Box is required.";
+      if (!formData.business_address)
+        newErrors.business_address = "Institution address is required.";
+      if (!formData.bank_account)
+        newErrors.bank_account = "Bank account is required.";
+      if (!formData.year_of_placement)
+        newErrors.year_of_placement = "Year of establishment is required.";
+      if (!formData.email) newErrors.email = "Institution Email  is required.";
+      if (!formData.bank_name) newErrors.bank_name = "Bank name is required.";
+    } else if (activeTab === 3) {
+      if (!formData.year_of_placement)
+        newErrors.year_of_placement = "Year of placement is required.";
+      if (!formData.sector) newErrors.sector = "Sector is required.";
+      if (!formData.province) newErrors.province = "Province is required.";
+      if (!formData.district) newErrors.district = "District is required.";
+      if (!formData.cell) newErrors.cell = "Cell is required.";
+      if (!formData.village) newErrors.village = "Village is required.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   const handleNext = () => {
     if (validate()) {
       setActiveTab((current) => (current < 3 ? current + 1 : current));
@@ -133,7 +171,7 @@ const CompleteProfile = ({
   };
 
   const handlePrev = () =>
-    setActiveTab((current) => (current > 0 ? current - 1 : current));
+    setActiveTab((current) => (current > 1 ? current - 1 : current));
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -169,15 +207,31 @@ const CompleteProfile = ({
       Object.keys(formData).forEach((key) => {
         submitData.append(key, formData[key as keyof FormData] as string);
       });
+      submitData.append("isprivate", String(formData.is_private));
+      const updateData = submitData;
+      const payload = defaultData ? updateData : submitData;
+      updateData.append("year_of_establishment", formData.year_of_placement);
+      updateData.append(
+        "number_of_employees",
+        String(formData.employee_number),
+      );
+      updateData.append("phone", formData.business_phone);
       if (certificate) {
         submitData.append("certificate", certificate);
       }
-      authorizedApi
-        .put("/applicant/update/profile", submitData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
+      const endPoint = "/applicant/update/business";
+      (defaultData
+        ? authorizedApi.put(endPoint, payload, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+        : authorizedApi.post("/applicant/complete/profile", payload, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+      )
         .then((_res) => {
           notifications.show({
             message: "Profile updated successfully!",
@@ -193,6 +247,7 @@ const CompleteProfile = ({
             employee_number: 0,
             bank_name: "",
             bank_account: "",
+            business_name: "",
             business_phone: "",
             email: "",
             po_box: "",
@@ -203,6 +258,8 @@ const CompleteProfile = ({
             cell: "",
             village: "",
           });
+          console.log("profile updated successfully!");
+          getApplicantProfile(dispatch);
           finishAddingProfile && finishAddingProfile();
         })
         .catch((err) => {
@@ -217,48 +274,6 @@ const CompleteProfile = ({
           setLoading(false);
         });
     }
-  };
-
-  const handleProvinceChange = (e: any) => {
-    const value = e.target.value;
-    setFormData((prevState) => ({
-      ...prevState,
-      province: value,
-      district: "",
-      sector: "",
-      cell: "",
-      village: "",
-    }));
-  };
-
-  const handleDistrictChange = (e: any) => {
-    const value = e.target.value;
-    setFormData((prevState) => ({
-      ...prevState,
-      district: value,
-      sector: "",
-      cell: "",
-      village: "",
-    }));
-  };
-
-  const handleSectorChange = (e: any) => {
-    const value = e.target.value;
-    setFormData((prevState) => ({
-      ...prevState,
-      sector: value,
-      cell: "",
-      village: "",
-    }));
-  };
-
-  const handleCellChange = (e: any) => {
-    const value = e.target.value;
-    setFormData((prevState) => ({
-      ...prevState,
-      cell: value,
-      village: "",
-    }));
   };
 
   return (
@@ -277,11 +292,14 @@ const CompleteProfile = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="  my-4 text-center w-full">
-          <h1 className="text-2xl font-extrabold">Complete your profile</h1>
-          <h2 className="text-[#000F2369] text-lg font-medium 5">
-            Provide the below details to complete. Provide the below details to
-            complete.
-          </h2>
+          <h1 className="text-2xl font-extrabold">
+            {defaultData ? "Update business" : "Complete your"} profile
+          </h1>
+          {!defaultData && (
+            <h2 className="text-[#000F2369] text-lg font-medium 5">
+              Provide the below details to complete.
+            </h2>
+          )}
         </div>
 
         <div className="w-11/12 flex flex-col items-center mt-4 overflow-hidden">
@@ -290,10 +308,10 @@ const CompleteProfile = ({
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
                   <label
-                    htmlFor="TIN"
+                    htmlFor="business_name"
                     className="block text-xs font-bold text-gray-700"
                   >
-                    TIN
+                    Institution Name
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -301,16 +319,16 @@ const CompleteProfile = ({
                     </span>
                     <input
                       type="text"
-                      name="tin"
-                      value={formData.tin}
-                      placeholder="TIN"
+                      name="business_name"
+                      value={formData.business_name}
+                      placeholder="Institution Name"
                       onChange={handleChange}
                       className="mt-1 block w-full pl-8 px-3 py-2.5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
-                  {errors.tin && (
-                    <p className="text-red-500 text-sm">{errors.tin}</p>
+                  {errors.business_name && (
+                    <p className="text-red-500 text-sm">{errors.business_name}</p>
                   )}
                 </div>
                 <div className="w-full">
@@ -344,52 +362,27 @@ const CompleteProfile = ({
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
                   <label
-                    htmlFor="business_type"
+                    htmlFor="TIN"
                     className="block text-xs font-bold text-gray-700"
                   >
-                    Business Type
+                    TIN
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
                       <Folder2 />
                     </span>
-                    <Select
-                      defaultValue={null}
-                      clearable={true}
-                      name="business_type"
-                      value={formData.business_type}
-                      onChange={(value: any) => {
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          business_type: value,
-                        }));
-                        //@ts-ignore
-                        errors.business_type &&
-                          setErrors((prevData) => ({
-                            ...prevData,
-                            business_type: "",
-                          }));
-                      }}
-                      data={[
-                        { label: "Company", value: "company" },
-                        { label: "Cooperative", value: "cooperative" },
-                        { label: "NGO", value: "ngo" },
-                        { label: "Trade Union", value: "tradeUnion" },
-                        { label: "Association", value: "association" },
-                        { label: "School", value: "school" },
-                        {
-                          label: "Training Center(VTC)",
-                          value: "training center",
-                        },
-                      ]}
-                      className="mt-1 block w-full  pl-5  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
-                      placeholder="Select Business Type"
+                    <input
+                      type="text"
+                      name="tin"
+                      value={formData.tin}
+                      placeholder="TIN"
+                      onChange={handleChange}
+                      className="mt-1 block w-full pl-8 px-3 py-2.5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
+                      required
                     />
                   </div>
-                  {errors.business_type && (
-                    <p className="text-red-500 text-sm">
-                      {errors.business_type}
-                    </p>
+                  {errors.tin && (
+                    <p className="text-red-500 text-sm">{errors.tin}</p>
                   )}
                 </div>
                 <div className="w-full">
@@ -421,6 +414,56 @@ const CompleteProfile = ({
               </div>
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
+                  <div className="w-full">
+                    <label
+                      htmlFor="business_type"
+                      className="block text-xs font-bold text-gray-700"
+                    >
+                      Institution Type
+                    </label>
+                    <div className="w-full relative">
+                      <span className="absolute left-2 top-[10px]">
+                        <Folder2 />
+                      </span>
+                      <Select
+                        defaultValue={null}
+                        clearable={true}
+                        name="business_type"
+                        value={formData.business_type}
+                        onChange={(value: any) => {
+                          setFormData((prevData) => ({
+                            ...prevData,
+                            business_type: value,
+                          }));
+                          //@ts-ignore
+                          errors.business_type &&
+                            setErrors((prevData) => ({
+                              ...prevData,
+                              business_type: "",
+                            }));
+                        }}
+                        data={[
+                          { label: "Company", value: "company" },
+                          { label: "Cooperative", value: "cooperative" },
+                          { label: "NGO", value: "ngo" },
+                          { label: "Trade Union", value: "tradeUnion" },
+                          { label: "Association", value: "association" },
+                          { label: "School", value: "school" },
+                          {
+                            label: "Training Center(VTC)",
+                            value: "training center",
+                          },
+                        ]}
+                        className="mt-1 block w-full  pl-5  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
+                        placeholder="Select Institution type"
+                      />
+                    </div>
+                    {errors.business_type && (
+                      <p className="text-red-500 text-sm">
+                        {errors.business_type}
+                      </p>
+                    )}
+                  </div>
                   <div className="w-full mt-5">
                     <label
                       htmlFor="is_private"

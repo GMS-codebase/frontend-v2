@@ -8,8 +8,9 @@ import AddMinute from "@/components/Modals/contracts/AddMinutes"; // Import AddM
 import { VscEye } from "react-icons/vsc";
 import { Upload } from "solar-icon-set";
 import { useState } from "react";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile } from "@/services";
 import MinutesNegotiateRejectionReason from "@/components/Modals/minutes/MinutesNegotiateRejectionReason";
+import ViewMinutes from "@/components/Modals/minutes/ViewMinutes"; // Add this import
 
 const MinutesActions = ({
   setIsMinute,
@@ -22,6 +23,7 @@ const MinutesActions = ({
   status: string;
   minute: any;
 }) => {
+  console.log("data --> ", data);
   const [isOpenAddMinute, { open: openMinute, close: closeMinute }] =
     useDisclosure(false);
   const [type, setType] = useState<
@@ -30,6 +32,10 @@ const MinutesActions = ({
   const [
     isOpenRejectionReason,
     { open: openRejectionReason, close: closeRejectionReason },
+  ] = useDisclosure(false);
+  const [
+    isOpenViewMinutes,
+    { open: openViewMinutes, close: closeViewMinutes },
   ] = useDisclosure(false);
   return (
     <div>
@@ -68,15 +74,15 @@ const MinutesActions = ({
 
           {status === "uploaded" && (
             <>
-              <Menu.Item
-                onClick={() => setIsMinute(data)}
+              {/* <Menu.Item
+                onClick={openViewMinutes}
                 className="w-full py-1 text-[#576074]"
               >
                 <div className="flex items-center gap-3 py-1">
                   <VscEye size={21} />
                   <span>View</span>
                 </div>
-              </Menu.Item>
+              </Menu.Item> */}
               <Menu.Item
                 onClick={() => {
                   openMinute(), setType("updated");
@@ -93,7 +99,7 @@ const MinutesActions = ({
 
           {status === "approved" && (
             <>
-              <Menu.Item
+              {/* <Menu.Item
                 onClick={() => setIsMinute(data)}
                 className="w-full py-1 text-[#576074]"
               >
@@ -109,7 +115,7 @@ const MinutesActions = ({
                   <VscEye size={21} />
                   <span>View</span>
                 </div>
-              </Menu.Item>
+              </Menu.Item> */}
               <Menu.Item
                 onClick={() => {
                   openMinute();
@@ -177,11 +183,19 @@ const MinutesActions = ({
         closeAddMinute={closeMinute}
       />
       <MinutesNegotiateRejectionReason
+        decision={data?.minutes?.[0]?.decision}
         isOpen={isOpenRejectionReason}
         onClose={closeRejectionReason}
         minute={data}
         type={status}
       />
+      {/* <ViewMinutes
+        isOpen={isOpenViewMinutes}
+        onClose={closeViewMinutes}
+        minute={data}
+        decision={data?.minutes?.[0]?.decision}
+        type={status}
+      /> */}
     </div>
   );
 };

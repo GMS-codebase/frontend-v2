@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Select } from "@mantine/core";
 import { Comments } from "@/types";
-import { handleDownloadFile, handleViewFile } from "@/utils/funcs";
+import { handleDownloadFile, handleViewFile } from "@/services";
 import { FaDownload, FaRegEdit } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 

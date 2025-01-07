@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 5800",
+    "dev": "next dev -p 5700",
     "build": "next build",
     "start": "next start -p 5700",
     "lint": "next lint",
     "format": "npx prettier --write ./",
     "prepare": "husky",
     "clean:next": "rimraf .next",
-    "development": "next start -p 5800",
+    "development": "next start -p 5600",
     "staging": "next start -p 5800"
   },
   "dependencies": {
@@ -39,11 +39,14 @@
     "crypto": "^1.0.1",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.12",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "husky": "^9.1.6",
     "jwt-decode": "^4.0.0",
     "mammoth": "^1.8.0",
     "next": "14.2.5",
     "next13-progressbar": "^1.2.1",
+    "pdf-viewer-reactjs": "^2.2.3",
     "pdfjs-dist": "^4.8.69",
     "react": "^18",
     "react-beautiful-dnd": "^13.1.1",
@@ -58,10 +61,13 @@
     "redux": "^5.0.1",
     "redux-devtools-extension": "^2.13.9",
     "rwanda": "^2.1.6",
+    "sharp": "^0.33.5",
     "solar-icon-set": "^1.0.0",
-    "tabler-icons": "^1.35.0"
+    "tabler-icons": "^1.35.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-beautiful-dnd": "^13.1.8",

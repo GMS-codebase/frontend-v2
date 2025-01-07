@@ -1,6 +1,6 @@
 "use client";
 import { authorizedApi } from "@/utils/api";
-import { getAnnouncement } from "@/utils/funcs";
+import { getAnnouncement } from "@/services";
 import { MultiSelect, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useState, useEffect } from "react";

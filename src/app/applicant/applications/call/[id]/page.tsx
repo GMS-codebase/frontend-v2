@@ -26,7 +26,7 @@ import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import { getApplicationStatus } from "@/utils/funcs";
+import { getApplicationStatus } from "@/services";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
@@ -51,9 +51,9 @@ const Page = () => {
     { open: openCreateApplication, close: closeCreateApplication },
   ] = useDisclosure(false);
   const router = useRouter();
-  const handleApply = () => {
+  const handleApply = async () => {
     setApplyLoading(true);
-    if (!profile.applicantProfile || !profile.applicantProfile.business_name) {
+    if (!profile.applicantProfile || !profile.applicantProfile.business) {
       openAddProfile();
     } else if (
       !contacts.loading &&
@@ -93,7 +93,6 @@ const Page = () => {
       setLoading(false);
     }
   };
-
 
   const columns: ColumnDef<any>[] = [
     {
@@ -307,7 +306,10 @@ const Page = () => {
         </div>
       </div>
       <CompleteProfile
-        closeCompleteProfile={closeAddProfile}
+        closeCompleteProfile={() => {
+          setApplyLoading(false);
+          closeAddProfile();
+        }}
         isOpenCompleteProfile={isOpenCreateProfile}
         finishAddingProfile={() => {
           closeAddProfile();
@@ -320,7 +322,10 @@ const Page = () => {
       />
       <AddEditContact
         isOpenAddEditContact={isOpenAddContact}
-        closeAddEditContact={closeAddContact}
+        closeAddEditContact={() => {
+          setApplyLoading(false);
+          closeAddContact();
+        }}
         finishAddingContact={() => {
           closeAddContact();
           openCreateApplication();

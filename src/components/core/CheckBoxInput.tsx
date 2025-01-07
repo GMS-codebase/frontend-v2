@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 
 interface CheckboxInputProps {
   question: Question;
-  value: string[]; 
+  value: string[];
   onChange: (value: string[]) => void;
   onQuestionChange: (updatedQuestion: Question) => void;
   mode: "creating" | "viewing" | "answering" | "commenting";
@@ -35,9 +35,9 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
   };
 
   const handleCheckboxToggle = (toggledValue: string) => {
-    console.log(value)
+    console.log(value);
     const updatedValue = value?.includes(toggledValue)
-      ? value.filter((val) => val !== toggledValue) 
+      ? value.filter((val) => val !== toggledValue)
       : [...value, toggledValue];
     console.log(updatedValue);
     onChange(updatedValue);

@@ -18,7 +18,6 @@ import DeleteModal from "@/components/Modals/DeleteModal";
 import ViewAppealModal from "@/components/Modals/appeal/ViewAppeal";
 
 const Page = () => {
-
   const { appeals, loading } = useSelector((state: any) => state.appeals);
   const [viewAppeal, setViewAppeal] = useState<any>({
     open: false,
@@ -43,15 +42,9 @@ const Page = () => {
       cell: ({ row }) => <div>{row.original?.call?.title ?? "-"}</div>,
     },
     {
-      accessorKey: "appeal_comment",
-      header: "Appeal Description",
-      cell: ({ row }) => (
-        <div>
-          {row.original?.appeal_comment?.length > 30
-            ? row.original?.appeal_comment?.slice(0, 30) + "..."
-            : row.original?.appeal_comment}
-        </div>
-      ),
+      accessorKey: "stage",
+      header: "Application Stage",
+      cell: ({ row }) => <div>{row.original?.stage}</div>,
     },
     {
       accessorKey: "status",

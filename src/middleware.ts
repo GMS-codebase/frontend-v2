@@ -11,7 +11,7 @@ const roles = [
   "GRANT_COMMITTEE",
   "DYNAMIC",
 ];
-const whitelist = ["/","/redirect", "/public"];
+const whitelist = ["/", "/redirect", "/public"];
 function getRolePath(role: Role): string {
   switch (role.toLowerCase()) {
     case "dynamic":
@@ -59,7 +59,10 @@ export function middleware(request: NextRequest) {
     }
     const role = decoded?.role;
     const nextUrl = getRolePath(role ?? "");
-    if (whitelist.includes(request.nextUrl.pathname) && request.nextUrl.pathname !== "/") {
+    if (
+      whitelist.includes(request.nextUrl.pathname) &&
+      request.nextUrl.pathname !== "/"
+    ) {
       return NextResponse.next();
     }
 
@@ -84,6 +87,6 @@ export function middleware(request: NextRequest) {
 }
 export const config = {
   matcher: [
-    "/((?!api|_next/static|public|_next/image|favicon.ico|images|logo.svg|logo.png|favicon.svg|favicon.png).*)",
+    "/((?!api|_next/static|public|files|_next/image|favicon.ico|images|logo.svg|logo.png|favicon.svg|favicon.png).*)",
   ],
 };

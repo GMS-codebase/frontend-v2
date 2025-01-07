@@ -9,7 +9,7 @@ import { notifications } from "@mantine/notifications";
 import { useDispatch } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { useParams } from "next/navigation";
-import { getCalls } from "@/utils/funcs";
+import { getCalls } from "@/services";
 
 const CloseCallModal = ({
   isOpenModal,

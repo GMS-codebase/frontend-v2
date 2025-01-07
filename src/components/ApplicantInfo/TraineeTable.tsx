@@ -5,11 +5,14 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 // import CallsActions from "@/app/admin/calls/CallsAction";
 import { Contact as contactData } from "@/utils/constants/contact";
-import { ContractDetails as contract } from "@/utils/constants/dummy";
 import ContractsAction from "@/components/Actions/ContractsAction";
-
-const TraineeTable = () => {
-  const [activeTable, setActiveTable] = useState("trainees");
+import { shortenString } from "@/services";
+interface Props {
+  installments: any[];
+  trainees: any[];
+}
+const TraineeTable = ({ installments, trainees }: Props) => {
+  const [activeTable, setActiveTable] = useState("installments");
   const [isOpenCall, setIsOpenCall] = useState({
     openUpdate: false,
     openDelete: false,
@@ -70,17 +73,19 @@ const TraineeTable = () => {
     {
       accessorKey: "percentage",
       header: "Percentage",
-      cell: ({ row }) => <div>{row.original?.percentage}</div>,
+      cell: ({ row }) => <div>{row.original?.percentage}%</div>,
+    },
+    {
+      accessorKey: "condition",
+      header: "Condition",
+      cell: ({ row }) => (
+        <div>{shortenString(row.original?.condition, 40)}</div>
+      ),
     },
     {
       accessorKey: "paid",
       header: "Paid",
-      cell: ({ row }) => <div>{row.original?.paid}</div>,
-    },
-    {
-      accessorKey: "actions",
-      header: "Actions",
-      cell: ({ row }) => <ContractsAction />,
+      cell: ({ row }) => <div>{row.original?.paid ? "Yes" : "No"}</div>,
     },
   ];
 
@@ -101,37 +106,44 @@ const TraineeTable = () => {
             placeholder="Search"
           />
         </div>
-        <div className="flex gap-2 w-[35rem]">
+        <div className="flex gap-2 w-[35rem] justify-end">
           <button
+            onClick={() => handleTableChange("installments")}
+            className={`w-[48%] text-center justify-center  rounded-md py-3 px-7 flex flex-row items-center gap-3 ${
+              activeTable === "installments"
+                ? "bg-[#005DE90A] border-b-[#005DE9] border-b-2 font-semibold text-blue-500"
+                : "bg-[#000F2303] text-black"
+            }`}
+          >
+            <h1 className="text-base font-medium">Contract Installments</h1>
+          </button>
+          {/* <button //Todo: to be uncommented when starting trainees module
             onClick={() => handleTableChange("trainees")}
-            className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 ${
+            className={`w-full text-center justify-center  py-3 px-7 flex flex-row items-center gap-3 rounded-md ${
               activeTable === "trainees"
-                ? "bg-[#005DE9] border-b-[#005DE9] text-blue-500 bg-opacity-20"
-                : "bg-[#005DE9] bg-opacity-20 text-blue-500"
+                ? "bg-[#005DE90A] border-b-[#005DE9] border-b-2 font-semibold text-blue-500"
+                : "bg-[#000F2303] text-black"
             }`}
           >
-            <h1 className="text-base font-medium text-blue-500">Trainees</h1>
-          </button>
-          <button
-            onClick={() => handleTableChange("contractInstallments")}
-            className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 ${
-              activeTable === "contractInstallments"
-                ? "bg-[#005DE9] border-b-[#005DE9] text-blue-500 bg-opacity-20"
-                : "bg-[#005DE9] bg-opacity-20 text-blue-500"
-            }`}
-          >
-            <h1 className="text-base font-medium text-blue-500">
-              Contract Installments
-            </h1>
-          </button>
+            <h1 className="text-base font-medium">Trainees</h1>
+          </button> */}
         </div>
       </div>
       <div className="w-full h-full">
         {activeTable === "trainees" && (
-          <DataTable columns={contactColumns} data={contactData} />
+          <DataTable
+            columns={contactColumns}
+            data={trainees}
+            verticalPadding={5}
+            tableWidth={trainees ? "100rem" : "100%"}
+          />
         )}
-        {activeTable === "contractInstallments" && (
-          <DataTable columns={applicationColumns} data={contract} />
+        {activeTable === "installments" && (
+          <DataTable
+            columns={applicationColumns}
+            data={installments}
+            verticalPadding={5}
+          />
         )}
       </div>
     </div>

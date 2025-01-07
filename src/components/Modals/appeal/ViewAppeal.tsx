@@ -4,7 +4,7 @@ import { FaGavel } from "react-icons/fa";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
-import { getAppeals } from "@/utils/funcs";
+import { getAppeals } from "@/services";
 import { useDispatch } from "react-redux";
 
 interface ViewAppealModalProps {
@@ -17,9 +17,9 @@ const ViewAppealModal = ({ isOpen, onClose, appeal }: ViewAppealModalProps) => {
   console.log("appeal ", appeal);
   const [loading, setLoading] = useState(false);
   const [decisionComment, setDecisionComment] = useState("");
-  useEffect(()=>{
+  useEffect(() => {
     setDecisionComment(appeal?.appeal_answer ?? "");
-  },[appeal])
+  }, [appeal]);
   const [required, setRequired] = useState(false);
   const dispatch = useDispatch();
   const handleAppealDecision = (isApproved: boolean) => {
@@ -102,7 +102,7 @@ const ViewAppealModal = ({ isOpen, onClose, appeal }: ViewAppealModalProps) => {
             type="button"
             onClick={() => handleAppealDecision(false)}
             disabled={loading || appeal?.status === "REJECTED"}
-            className={`w-full px-4 py-3 ${appeal?.status === "REJECTED" ? "bg-red-400 cursor-not-allowed":"bg-red-500"} text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2`}
+            className={`w-full px-4 py-3 ${appeal?.status === "REJECTED" ? "bg-red-400 cursor-not-allowed" : "bg-red-500"} text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2`}
           >
             {loading ? "Processing..." : "Reject Appeal"}
           </button>
@@ -110,7 +110,7 @@ const ViewAppealModal = ({ isOpen, onClose, appeal }: ViewAppealModalProps) => {
             onClick={() => handleAppealDecision(true)}
             type="button"
             disabled={loading || appeal?.status === "APPROVED"}
-            className={`w-full px-4 py-3 ${appeal?.status === "APPROVED" ? "bg-green-400 cursor-not-allowed":"bg-green-500"} text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2`}
+            className={`w-full px-4 py-3 ${appeal?.status === "APPROVED" ? "bg-green-400 cursor-not-allowed" : "bg-green-500"} text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2`}
           >
             {loading ? "Processing..." : "Accept Appeal"}
           </button>

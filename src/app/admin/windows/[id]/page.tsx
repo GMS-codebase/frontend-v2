@@ -20,7 +20,7 @@ import { FiEye } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
-import { getWindows } from "@/utils/funcs";
+import { getWindows } from "@/services";
 
 const Page = () => {
   const navigate = useRouter();
@@ -38,7 +38,7 @@ const Page = () => {
     useDisclosure(false);
   const windows = useSelector((state: any) => state.windows);
   const window = windows.windows?.filter(
-    (window: any) => window.uuid === windowId
+    (window: any) => window.uuid === windowId,
   )[0];
   const [
     isOpenActivateDeactivateSubWindow,
@@ -48,7 +48,7 @@ const Page = () => {
     },
   ] = useDisclosure(false);
   const filteredSubWindows = window?.subWindows?.filter((subW: any) =>
-    subW?.title.toLowerCase().includes(searchQuery.toLowerCase())
+    subW?.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
   const [selectedSubWindow, setSelectedSubWindow] = useState<any>();
   const columns: ColumnDef<any>[] = [
@@ -101,7 +101,7 @@ const Page = () => {
                 <div
                   onClick={() =>
                     navigate.push(
-                      `/admin/windows/${window?.uuid}/${row.original?.uuid}`
+                      `/admin/windows/${window?.uuid}/${row.original?.uuid}`,
                     )
                   }
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"

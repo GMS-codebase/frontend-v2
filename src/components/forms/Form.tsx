@@ -59,7 +59,7 @@ const Form: React.FC<Props> = ({
   };
   const updateQuestionType = (
     newType: { name: string; description: string },
-    recentName: string
+    recentName: string,
   ) => {
     setFormData &&
       setFormData((prevFormData) => {
@@ -106,7 +106,7 @@ const Form: React.FC<Props> = ({
   }, [formData]);
 
   return (
-    <div className="p-4">
+    <div className="p-4 w-full">
       {mode === "creating" && (
         <div className="rounded-xl bg-white">
           <div className="h-4 bg-primary rounded-t-xl" />
@@ -126,46 +126,51 @@ const Form: React.FC<Props> = ({
       )}
 
       <div className="flex overflow-x-auto py-4 space-x-4 mb-4">
-        {Object.values(formData?.qns ?? {}).map((type: any) => (
-          <div
-            key={type.name}
-            onClick={() => setActiveType(type.name)}
-            className={`flex-shrink-0 px-4 py-2 rounded-full transition-colors duration-200 ${
-              activeType === type.name
-                ? "bg-primary text-white"
-                : "bg-primary/20 text-gray-700"
-            }`}
-          >
-            <div className="flex items-center gap-4">
-              <p>{type.name}</p>
-              {mode === "creating" && (
-                <>
-                  <button
-                    className={`${activeType == type.name ? "text-white ":"text-primary"} rounded-full`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedQuestionType(type);
-                      console.log(type)
-                      openAddQuestionType();
-                    }}
-                  >
-                    <CiEdit className="w-6 h-6" />
-                  </button>
-                  <button
-                    className="text-danger bg-white rounded-full"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedQuestionType(type.name);
-                      openDeleteQuestionType();
-                    }}
-                  >
-                    <IoIosCloseCircle className="w-6 h-6" />
-                  </button>
-                </>
-              )}
+        {Object.values(formData?.qns ?? {}).map(
+          (type: any, index: number, array) => (
+            <div
+              key={type.name}
+              onClick={() => setActiveType(type.name)}
+              className={`flex-shrink-0 px-4 py-2 rounded-full transition-colors duration-200 ${
+                activeType === type.name
+                  ? "bg-primary text-white"
+                  : "bg-primary/20 text-gray-700"
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <p>{type.name}</p>
+                {mode === "creating" && (
+                  <>
+                    <button
+                      className={`${
+                        activeType === type.name
+                          ? "text-white "
+                          : "text-primary"
+                      } rounded-full`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedQuestionType(type);
+                        openAddQuestionType();
+                      }}
+                    >
+                      <CiEdit className="w-6 h-6" />
+                    </button>
+                    <button
+                      className="text-danger bg-white rounded-full"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedQuestionType(type.name);
+                        openDeleteQuestionType();
+                      }}
+                    >
+                      <IoIosCloseCircle className="w-6 h-6" />
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ),
+        )}
         {mode === "creating" && (
           <button
             onClick={openAddQuestionType}
@@ -184,6 +189,30 @@ const Form: React.FC<Props> = ({
           setAnswers={setAnswers}
           comments={comments}
           setComments={setComments}
+          goToNext={
+            Object.keys(formData.qns)[
+              Object.keys(formData.qns).indexOf(activeType) + 1
+            ]
+              ? () =>
+                  setActiveType(
+                    Object.keys(formData.qns)[
+                      Object.keys(formData.qns).indexOf(activeType) + 1
+                    ],
+                  )
+              : undefined
+          }
+          goToPrev={
+            Object.keys(formData.qns)[
+              Object.keys(formData.qns).indexOf(activeType) - 1
+            ]
+              ? () =>
+                  setActiveType(
+                    Object.keys(formData.qns)[
+                      Object.keys(formData.qns).indexOf(activeType) - 1
+                    ],
+                  )
+              : undefined
+          }
           onChange={(data: any) => {
             setFormData &&
               setFormData(
@@ -194,7 +223,7 @@ const Form: React.FC<Props> = ({
                       ...(prevFormData?.qns || {}),
                       [activeType]: data,
                     },
-                  }) as any
+                  }) as any,
               );
           }}
           formData={formData.qns}

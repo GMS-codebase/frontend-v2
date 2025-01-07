@@ -51,14 +51,29 @@ const Page = () => {
         return acc;
       }, {} as QuestionForm);
 
+    const updatedFormData = Object.fromEntries(
+      Object.entries(sanitizedQns).map(([key, module]) => [
+        key,
+        {
+          ...module,
+          pages: module.pages.map((page, pageIndex) => ({
+            ...page,
+            questions: page.questions.map((question, questionIndex) => ({
+              ...question,
+              id: `${key}-q-${pageIndex}-${questionIndex}`,
+            })),
+          })),
+        },
+      ])
+    );
     const request = form
       ? authorizedApi.put(`/forms/update/${id}`, {
           name: formData?.name,
-          qns: JSON.stringify(sanitizedQns),
+          qns: JSON.stringify(updatedFormData),
         })
       : authorizedApi.post("/forms/create", {
           name: formData?.name,
-          qns: JSON.stringify(sanitizedQns),
+          qns: JSON.stringify(updatedFormData),
         });
 
     request

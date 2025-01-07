@@ -13,10 +13,11 @@ import SetPasswordModal from "@/components/Modals/auth/SetPasswordModal";
 import { SolarFolder2Bold } from "@/components/core/icons";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { getCalls } from "@/utils/funcs";
+import { getCalls } from "@/services";
 import { unauthorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import ForgotPasswordModal from "@/components/Modals/auth/ForgotPassword";
+import Link from "next/link";
 
 function Page() {
   const dispatch = useDispatch();
@@ -24,17 +25,17 @@ function Page() {
     getCalls(dispatch);
   }, []);
   const { calls, loading: loadingCalls } = useSelector(
-    (state: any) => state.calls
+    (state: any) => state.calls,
   );
   const sortedCalls = calls
     ? [...calls]
         .filter(
           (call: any) =>
-            new Date(call.endDate) > new Date() && call.status === "OPEN"
+            new Date(call.endDate) > new Date() && call.status === "OPEN",
         )
         .sort(
           (a: any, b: any) =>
-            new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+            new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
         )
     : [];
 
@@ -148,10 +149,10 @@ function Page() {
         </h2>
       </div>
       <div className="absolute bottom-0 right-0 p-4 z-30">
-        <button className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
+        <a href={"/files/user_guide.pdf"} download={true} className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
           <IoDownloadOutline className="w-4 h-4 mx-2" />
           Download User Manual
-        </button>
+        </a>
       </div>
       <RegisterModal
         openSuccess={openSuccess}
