@@ -65,6 +65,7 @@ export const getCallStats = (
   const genderCount: GenderCount = { male: 0, female: 0 };
   const businessTypeGroupings: businessTypeGroupings = {};
   const applicantsPerSector: ApplicantsPerSector = {};
+  const applicantsData: any = {};
 
   applications
     .filter((app) => app.call.uuid === callId)
@@ -95,6 +96,22 @@ export const getCallStats = (
 
       // Sector count
       application.sectors.forEach((sector) => {
+        const sectorName = sector.name;
+
+        if (!applicantsData[sectorName]) {
+          applicantsData[sectorName] = {
+            applicants: 0, // Initialize the count of applicants
+            applicantUuids: new Set<string>(), // Track unique applicant UUIDs
+          };
+        }
+
+        const applicantUuid = application.applicant.uuid;
+
+        // Check if the applicant has already applied to this sector
+        if (!applicantsData[sectorName].applicantUuids.has(applicantUuid)) {
+          applicantsData[sectorName].applicantUuids.add(applicantUuid); // Add to set to ensure uniqueness
+          applicantsData[sectorName].applicants++; // Increase the count for this sector
+        }
         if (!applicantsPerSector[sector.name]) {
           applicantsPerSector[sector.name] = 0;
         }
@@ -102,7 +119,16 @@ export const getCallStats = (
       });
     });
 
-  return { genderCount, businessTypeGroupings, applicantsPerSector };
+  const finalApplicantsData: ApplicantsData = {};
+  Object.keys(applicantsData).forEach((sectorName) => {
+    finalApplicantsData[sectorName] = applicantsData[sectorName].applicants;
+  });
+
+  return {
+    genderCount,
+    businessTypeGroupings,
+    applicantsPerSector: finalApplicantsData,
+  };
 };
 
 // Function to get submissions data (count of applicants and applications per sector)
