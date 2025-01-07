@@ -1,3 +1,5 @@
+import { getApplicationStatus } from "@/services";
+
 type GenderCount = {
   male: number;
   female: number;
@@ -110,30 +112,32 @@ export const getSubmissionsData = (
   console.log("Here");
   const submissionsData: SubmissionsData = {};
 
-  applications.forEach((application) => {
-    application.sectors.forEach((sector) => {
-      const sectorName = sector.name;
+  applications
+    .filter((app) => getApplicationStatus(app) !== "ANSWERING")
+    .forEach((application) => {
+      application.sectors.forEach((sector) => {
+        const sectorName = sector.name;
 
-      if (!submissionsData[sectorName]) {
-        submissionsData[sectorName] = {
-          applicants: 0,
-          applications: 0,
-        };
-      }
+        if (!submissionsData[sectorName]) {
+          submissionsData[sectorName] = {
+            applicants: 0,
+            applications: 0,
+          };
+        }
 
-      // Count applications for this sector
-      submissionsData[sectorName].applications++;
+        // Count applications for this sector
+        submissionsData[sectorName].applications++;
 
-      // Ensure distinct applicants for the sector
-      const applicantUuid = application.applicant.uuid;
-      //@ts-ignore
-      if (!submissionsData[sectorName][applicantUuid]) {
-        submissionsData[sectorName].applicants++;
+        // Ensure distinct applicants for the sector
+        const applicantUuid = application.applicant.uuid;
         //@ts-ignore
-        submissionsData[sectorName][applicantUuid] = true; // Track distinct applicants
-      }
+        if (!submissionsData[sectorName][applicantUuid]) {
+          submissionsData[sectorName].applicants++;
+          //@ts-ignore
+          submissionsData[sectorName][applicantUuid] = true; // Track distinct applicants
+        }
+      });
     });
-  });
 
   return submissionsData;
 };
