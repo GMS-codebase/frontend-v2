@@ -423,7 +423,14 @@ const Dashboard = () => {
               {Object.keys(submissionsData || {}).length === 0 ? (
                 <div>
                   <div className="flex items-center justify-center h-60 w-full text-center text-gray-500">
-                    No submissions found
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
+                      <p className="text-lg font-semibold text-gray-700">
+                        No data Available
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Please select a different stage
+                      </p>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -515,7 +522,14 @@ const Dashboard = () => {
               {Object.keys(applicantsData || {}).length === 0 ? (
                 <div>
                   <div className="flex items-center justify-center h-60 w-full text-center text-gray-500">
-                    No applicants found
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
+                      <p className="text-lg font-semibold text-gray-700">
+                        No data Available
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Please select a different stage
+                      </p>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -598,7 +612,14 @@ const Dashboard = () => {
               {Object.keys(applicationsData || {}).length === 0 ? (
                 <div>
                   <div className="flex items-center justify-center h-60 w-full text-center text-gray-500">
-                    No applications found
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
+                      <p className="text-lg font-semibold text-gray-700">
+                        No data Available
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Please select a different stage
+                      </p>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -767,10 +788,10 @@ function BasicGauges({
       <div className="flex flex-col items-center justify-center h-full">
         <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
           <p className="text-lg font-semibold text-gray-700">
-            No Data Available
+            No data Available
           </p>
           <p className="text-sm text-gray-500">
-            Please select a different stage 
+            Please select a different stage
           </p>
         </div>
       </div>
