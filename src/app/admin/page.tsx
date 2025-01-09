@@ -770,7 +770,7 @@ function BasicGauges({
             No Data Available
           </p>
           <p className="text-sm text-gray-500">
-            Please select a different stage or provide valid data.
+            Please select a different stage 
           </p>
         </div>
       </div>
