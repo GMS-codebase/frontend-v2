@@ -39,6 +39,7 @@ function Page() {
         )
     : [];
 
+  console.log(new Date("13 January 2025"), new Date());
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
   const [
@@ -110,10 +111,12 @@ function Page() {
         >
           <div className="flex flex-col space-x-4 items-start">
             <div className="w-full flex justify-center">
-            <div className="bg-white rounded-md p-4  w-fit flex items-center mb-3">
+            { (new Date("13 January 2025") > new Date()) && 
+              <div className="bg-white rounded-md p-4  w-fit flex items-center mb-3">
               <SolarShieldWarningBold className="w-8 h-8 text-[#be1f1f]" />
-              <h3 className="text-[#be1f1f]">We have extended the call from 10th January to 13th January 2025 at 12:00AM Sharp.</h3>
+              <h3 className="text-[#be1f1f]">We would like to announce that we have extended the call from 10th January to 13th January 2025 at 12.00AM Sharp.Thank you</h3>
             </div>
+            }
             </div>
             {sortedCalls.length ? (
               sortedCalls.map((call: any) => (
