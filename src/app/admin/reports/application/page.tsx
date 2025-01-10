@@ -125,7 +125,7 @@ const Page = () => {
         const { stage, window, call, subWindow, sector, trade } =
           selectedFilters;
         return (
-          (stage === "All" || getApplicationStatus(app) === stage) &&
+          (stage === "All" || app?.currentStage === stage) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&
