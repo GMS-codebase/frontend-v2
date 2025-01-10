@@ -440,9 +440,7 @@ const AddEditCall = ({
                     <div className="w-full relative ">
                       <DatePicker
                         minDate={
-                          defaultData
-                            ? new Date(defaultData.startDate)
-                            : new Date()
+                          new Date()
                         }
                         value={
                           formData.startDate

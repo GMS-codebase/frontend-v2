@@ -10,7 +10,7 @@ import { getApplicationStatus } from "@/services";
 import ExportForm from "@/components/core/data-table/ExportForm";
 import MainModal from "./MainModal";
 import { useDisclosure } from "@mantine/hooks";
-import { calculateTotalTrainees, exportDataToExcel, getStage } from "@/utils/funcs";
+import { calculateTotalTrainees, capitalize, exportDataToExcel, getStage } from "@/utils/funcs";
 import { submissionColumns } from "./Columns";
 import { formatDate } from "date-fns";
 
@@ -139,7 +139,7 @@ const Page = () => {
     return {
       index: index,
       applicationNumber: row.applicationNumber,
-      institutionName: row.applicant?.businesses?.[0]?.businessName,
+      institutionName: row.applicant?.businesses?.[0]?.businessName ?? "Not set",
       window: row.window?.title,
       call: row.call?.title,
       subWindow: row.subWindow?.title,
@@ -147,7 +147,7 @@ const Page = () => {
       trade: row.trades[0]?.trade?.title,
       stage: row.currentStage,
       contacts: row.applicant?.phone,
-      institutionType: row.applicant.businesses?.[0]?.businessType,
+      institutionType: capitalize(row.applicant.businesses?.[0]?.businessType),
       legalStatus: row.applicant.businesses?.[0]?.private ? "Private": "Public",
       requestedBeneficiaries: calculateTotalTrainees(JSON.parse(row?.answers)) ?? "None",
       district: row.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "",
