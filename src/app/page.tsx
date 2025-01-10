@@ -10,7 +10,7 @@ import LoginModal from "@/components/Modals/auth/Login";
 import CallModal from "@/components/Modals/techInnov";
 import SuccessModal from "@/components/Modals/success";
 import SetPasswordModal from "@/components/Modals/auth/SetPasswordModal";
-import { SolarFolder2Bold } from "@/components/core/icons";
+import { SolarFolder2Bold,SolarShieldWarningBold } from "@/components/core/icons";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getCalls } from "@/services";
@@ -31,7 +31,7 @@ function Page() {
     ? [...calls]
         .filter(
           (call: any) =>
-            new Date(call.endDate) > new Date() && call.status === "OPEN",
+            new Date(call.endDate) >= new Date() && call.status === "OPEN",
         )
         .sort(
           (a: any, b: any) =>
@@ -108,7 +108,13 @@ function Page() {
           className="w-[80%] overflow-x-auto no-scrollbar m-10"
           style={{ scrollbarWidth: "none" }}
         >
-          <div className="flex space-x-4">
+          <div className="flex flex-col space-x-4 items-start">
+            <div className="w-full flex justify-center">
+            <div className="bg-white rounded-md p-4  w-fit flex items-center mb-3">
+              <SolarShieldWarningBold className="w-8 h-8 text-[#be1f1f]" />
+              <h3 className="text-[#be1f1f]">We have extended the call from 10th January to 13th January 2025 at 12:00AM Sharp.</h3>
+            </div>
+            </div>
             {sortedCalls.length ? (
               sortedCalls.map((call: any) => (
                 <div
@@ -196,3 +202,7 @@ export default function DefaultPage() {
     </Suspense>
   );
 }
+
+
+
+

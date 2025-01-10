@@ -15,10 +15,10 @@ export function calculateTotalTrainees(data: any) {
   let totalTrainees = 0;
   for (const key in data) {
     const value = data[key];
-    if (Array.isArray(value) && value.some(item => "Number of trainees" in item)) {
+    if (Array.isArray(value) && value.some(item => "Number of trainees" in item || "Number of Trainees" in item)) {
       console.log(key,value);
       totalTrainees = value.reduce(
-        (total, item) => total + parseInt(item["Number of trainees"] ? item["Number of trainees"] : 0, 10),
+        (total, item) => total + parseInt(item["Number of trainees"] ? item["Number of trainees"] : item["Number of Trainees"] ? item["Number of Trainees"] : 0, 10),
         0
       );
       break;
