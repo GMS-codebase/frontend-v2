@@ -108,10 +108,12 @@ function Page() {
           className="w-[80%] overflow-x-auto no-scrollbar m-10"
           style={{ scrollbarWidth: "none" }}
         >
-          <div className="flex flex-col space-x-4 items-center">
-            <div className="bg-white rounded-md p-4  w-fit flex items-center">
+          <div className="flex flex-col space-x-4 items-start">
+            <div className="w-full flex justify-center">
+            <div className="bg-white rounded-md p-4  w-fit flex items-center mb-3">
               <SolarShieldWarningBold className="w-8 h-8 text-[#be1f1f]" />
               <h3 className="text-[#be1f1f]">We have extended the call from 10th January to 13th January 2025 at 12:00AM Sharp.</h3>
+            </div>
             </div>
             {sortedCalls.length ? (
               sortedCalls.map((call: any) => (
