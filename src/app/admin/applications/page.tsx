@@ -1,23 +1,40 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/core/data-table";
+import { DataTable } from "@/components/core/data-table/paginated";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { CiSearch } from "react-icons/ci";
 import { Menu, Select } from "@mantine/core";
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { getApplicationStatus } from "@/services";
+import { getApplications, getApplicationStatus } from "@/services";
+import { useDispatch } from "react-redux";
+import { UnknownAction } from "redux";
 
 const Page = () => {
   // Select applications from Redux store
-  const { applications: rawApplications, loading } = useSelector(
+  const { applications: rawApplications, loading, total: totalApplications } = useSelector(
     (state: any) => state.applications,
   );
+  const dispatch = useDispatch()
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10); 
+  const totalPages = totalApplications / limit;
+  console.log("application total ----> ",totalApplications);
+  useEffect(() => {
+      dispatch(getApplications(page, limit) as unknown as UnknownAction);
+  }, [dispatch, page, limit]);
 
-  // Format applications to flatten nested arrays
+  const handlePageChange = (newPage: number) => {
+      setPage(newPage);
+  };
+
+  const handleLimitChange = (newLimit: number) => {
+      setLimit(newLimit);
+      setPage(1);
+  };
   const applications = useMemo(
     () =>
       rawApplications.map((app: any) => ({
@@ -40,7 +57,6 @@ const Page = () => {
     trade: "All",
   });
 
-  // Helper function to get unique values for dropdown filters
   const getUniqueValues = (key: string) => {
     return [
       "All",
@@ -65,11 +81,6 @@ const Page = () => {
     }),
     [applications],
   );
-
-  // Format stage string
-  // const formatStage = (stage: string) => {
-  //   return stage.replace(/_/g, " ").toUpperCase();
-  // };
 
   const columns: ColumnDef<any>[] = [
     {
@@ -230,7 +241,13 @@ const Page = () => {
         );
       });
   }, [applications, searchTerm, selectedFilters]);
+  const onPageChange = (newPage: number) => {
+    dispatch(getApplications(newPage, limit) as unknown as UnknownAction);
+};
 
+const onLimitChange = (newLimit: number) => {
+    dispatch(getApplications(page, newLimit) as unknown as UnknownAction);
+};
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4 gap-5">
@@ -304,6 +321,24 @@ const Page = () => {
         data={filteredApplications}
         columns={columns}
         loading={loading}
+        totalApplications={totalApplications}
+        paginationProps={{
+          isPaginated: true,
+          paginateOpts: {
+              page: page - 1, // Pagination in DataTable is 0-based
+              totalPages: totalPages,
+              limit: limit,
+          },
+          setPaginateOpts: () => {
+            if (page !== undefined) {
+              setPage(page + 1); // Adjust back to 1-based index for display
+            }
+            if (limit !== undefined) {
+              setLimit(limit);
+              setPage(page);
+            }
+          }
+      }}
       />
     </div>
   );

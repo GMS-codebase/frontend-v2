@@ -19,6 +19,9 @@ import clsx from "clsx";
 import * as React from "react";
 import PaginationForm from "./PaginateForm";
 import TableSkeleton from "./TableSkeleton";
+import { getApplications } from "@/services";
+import { useDispatch } from "react-redux";
+import { UnknownAction } from "redux";
 
 interface Props {
   data: any;
@@ -63,6 +66,7 @@ export function DataTable({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
+  const dispatch = useDispatch();
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
@@ -70,7 +74,7 @@ export function DataTable({
     pageIndex: paginationProps?.paginateOpts.page ?? 0,
     pageSize: paginationProps?.paginateOpts.limit ?? limit ?? 10,
   });
-
+  const [newPage, setPage] = React.useState(0);
   const pagination = React.useMemo(
     () => ({
       pageIndex,
@@ -102,6 +106,7 @@ export function DataTable({
     debugTable: true,
     onPaginationChange: setPagination,
     manualPagination: paginationProps?.isPaginated,
+    rowCount: totalApplications,
     enableGlobalFilter: true,
   });
   const isPaginated = paginationProps?.isPaginated ?? false;
@@ -255,26 +260,39 @@ export function DataTable({
           </div>
           <div className="flex w-full justify-between items-start flex-row-reverse px-10 mt-4">
             <Pagination
-              total={
-                isPaginated
-                  ? (paginationProps?.paginateOpts?.totalPages ?? 1)
-                  : table?.getPageCount()
-              }
+            total={paginationProps?.paginateOpts?.totalPages ?? table?.getPageCount()}
+            value={(paginationProps?.paginateOpts?.page ?? 0) + 1}
+            onChange={(page) => {
+              onPaginate(page - 1); // Convert back to 0-based for the backend
+            }}
+            // const onPageChange = (newPage: number) => {
+            //   setPage(newPage + 1); // Display as 1-based
+            //   dispatch(getApplications(newPage, limit)); // Pass 0-based index to the backend
+            // };
+              // total={
+              //   isPaginated
+              //     ? (paginationProps?.paginateOpts?.totalPages ?? 1)
+              //     : table?.getPageCount()
+              // }
+              // onNextPage={() => {
+              //   if (isPaginated) {
+              //     paginationProps?.setPaginateOpts({
+              //       ...paginationProps?.paginateOpts,
+              //       page: (paginationProps?.paginateOpts?.page ?? 0) + 1,
+              //     });
+              //     return;
+              //   }
+              //   table?.nextPage();
+              // }}
               onNextPage={() => {
-                if (isPaginated) {
-                  paginationProps?.setPaginateOpts({
-                    ...paginationProps?.paginateOpts,
-                    page: (paginationProps?.paginateOpts?.page ?? 0) + 1,
-                  });
-                  return;
-                }
-                table?.nextPage();
-              }}
-              value={
-                isPaginated
-                  ? (paginationProps?.paginateOpts?.page ?? 0) + 1
-                  : table?.getState().pagination.pageIndex + 1
-              }
+                  setPage(newPage + 1); // Display as 1-based
+                  dispatch(getApplications(newPage, limit) as unknown as UnknownAction); // Pass 0-based index to the backend
+                }}
+              // value={
+              //   isPaginated
+              //     ? (paginationProps?.paginateOpts?.page ?? 0) + 1
+              //     : table?.getState().pagination.pageIndex + 1
+              // }
               onPreviousPage={() => {
                 if (isPaginated) {
                   paginationProps?.setPaginateOpts({
@@ -285,10 +303,11 @@ export function DataTable({
                 }
                 table?.previousPage();
               }}
-              onChange={(page) => {
-                onPaginate(page - 1);
-              }}
+              // onChange={(page) => {
+              //   onPaginate(page - 1);
+              // }}
             />
+            
             <div className="flex md:flex-row flex-col text-sm items-center gap-2 justify-center">
               <h1 className="text-lg font-medium text-[#B5B7C0]">
                 Showing data 1 to{" "}

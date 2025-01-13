@@ -502,20 +502,31 @@ export const getApplicationsForContractSigning = async (
       });
     });
 };
-export const getApplications = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_APPLICATIONS_LOADING });
-  authorizedApi
-    .get("/application/all")
-    .then((res) => {
-      dispatch({ type: GET_APPLICATIONS_SUCCESS, payload: res.data.data.data });
-    })
-    .catch((err) => {
+export const getApplications =
+  (page = 1, limit = 100) =>
+  async (dispatch: Dispatch) => {
+    dispatch({ type: GET_APPLICATIONS_LOADING });
+
+    try {
+      const response = await authorizedApi.get(
+        `/application/all?page=${page}&limit=${limit}`
+      );
+    console.log("applications, ", response.data.data)
+      dispatch({
+        type: GET_APPLICATIONS_SUCCESS,
+        payload: {
+          applications: response?.data?.data?.data.applications,
+          total: response?.data?.data?.data.total,
+          page: response?.data?.data?.data?.page,
+        },
+      });
+    } catch (error: any) {
       dispatch({
         type: GET_APPLICATIONS_ERROR,
-        payload: err.response.data.error,
+        payload: error.response?.data?.error || "Something went wrong",
       });
-    });
-};
+    }
+  };
 export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_APPLICATIONS_LOADING });
   authorizedApi
