@@ -18,7 +18,7 @@ import { Application } from "@/types";
 const initialState = {
   applications: [],
   total: 0,
-  page: 0,
+  page: 1,
   myApplications: [],
   applicationsForContractSigning: [],
   applicationsForMinuteNegotiation: [],
@@ -63,6 +63,7 @@ export default function ApplicationsReducer(
       };
 
     case GET_APPLICATIONS_SUCCESS:
+      console.log(action.payload.page, action.payload.total)
       return {
         ...state,
         loading: false,
