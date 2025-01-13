@@ -362,7 +362,7 @@ const ApplicantProfile = ({ type }: Props) => {
                 </div>
               )}
 
-              <div className="w-full gap-2 flex justify-end mt-4">
+            {activeSection === "employment" && <div className="w-full gap-2 flex justify-end mt-4">
                 <button
                   type="button"
                   onClick={openUpdate}
@@ -370,7 +370,7 @@ const ApplicantProfile = ({ type }: Props) => {
                 >
                   Update
                 </button>
-              </div>
+              </div>}
             </div>
           </div>
         </div>

@@ -822,10 +822,10 @@ const CompleteProfile = ({
                     name="province"
                     value={formData.province}
                     onChange={handleChange}
-                    className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                    className="items-center px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
                   >
                     <option value="">Select Province</option>
-                    {ProvincesOptions.map((option: string, index: number) => (
+                    {ProvincesOptions?.map((option: string, index: number) => (
                       <option key={index} value={option}>
                         {option}
                       </option>
@@ -850,7 +850,7 @@ const CompleteProfile = ({
                     className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
                   >
                     <option value="">Select District</option>
-                    {DistrictOptions.map((option: string, index: number) => (
+                    {DistrictOptions?.map((option: string, index: number) => (
                       <option key={index} value={option}>
                         {option}
                       </option>
@@ -877,7 +877,7 @@ const CompleteProfile = ({
                     className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
                   >
                     <option value="">Select Sector</option>
-                    {SectorOptions.map((option: string, index: number) => (
+                    {SectorOptions?.map((option: string, index: number) => (
                       <option key={index} value={option}>
                         {option}
                       </option>
@@ -902,7 +902,7 @@ const CompleteProfile = ({
                     className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
                   >
                     <option value="">Select Cell</option>
-                    {CellOptions.map((option: string, index: number) => (
+                    {CellOptions?.map((option: string, index: number) => (
                       <option key={index} value={option}>
                         {option}
                       </option>
@@ -928,7 +928,7 @@ const CompleteProfile = ({
                   className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
                 >
                   <option value="">Select Village</option>
-                  {VillageOptions.map((option: string, index: number) => (
+                  {VillageOptions?.map((option: string, index: number) => (
                     <option key={index} value={option}>
                       {option}
                     </option>
