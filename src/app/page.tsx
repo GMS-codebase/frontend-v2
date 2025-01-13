@@ -31,7 +31,7 @@ function Page() {
     ? [...calls]
         .filter(
           (call: any) =>
-            new Date(call.endDate) >= new Date() && call.status === "OPEN",
+            call.status === "OPEN",
         )
         .sort(
           (a: any, b: any) =>
