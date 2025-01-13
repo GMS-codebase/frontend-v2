@@ -63,7 +63,6 @@ export default function ApplicationsReducer(
       };
 
     case GET_APPLICATIONS_SUCCESS:
-      console.log(action.payload.page, action.payload.total)
       return {
         ...state,
         loading: false,

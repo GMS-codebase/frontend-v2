@@ -22,11 +22,8 @@ const Page = () => {
   const [pageState, setPage] = useState(page ?? 1);
   const [limit, setLimit] = useState(10); 
   const totalPages = totalApplications / limit;
-  console.log("application total ----> ",totalApplications);
-  // console.log("current page ----> ",page);
 
   useEffect(() => {
-      console.log("current page ----> ",page);
       dispatch(getApplications(page, limit) as unknown as UnknownAction);
   }, [dispatch, page, limit]);
 
