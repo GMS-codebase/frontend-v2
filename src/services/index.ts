@@ -503,7 +503,7 @@ export const getApplicationsForContractSigning = async (
     });
 };
 export const getApplications =
-  (page: any, limit: any) =>
+  (page?: any, limit?: any) =>
   async (dispatch: Dispatch) => {
     dispatch({ type: GET_APPLICATIONS_LOADING });
 
