@@ -23,6 +23,7 @@ import { getApplications } from "@/services";
 import { useDispatch } from "react-redux";
 import { UnknownAction } from "redux";
 
+
 interface Props {
   data: any;
   columns: ColumnDef<any>[];
@@ -40,7 +41,9 @@ interface Props {
   limit?: number;
   tableWidth?: string | number;
   verticalPadding?: string | number;
-  totalApplications?: number
+  totalApplications?: number;
+  page: number;
+  setPage: (page: number) => void;
 }
 
 export function DataTable({
@@ -60,7 +63,9 @@ export function DataTable({
   loader,
   tableWidth,
   verticalPadding,
-  totalApplications
+  totalApplications,
+  page,
+  setPage,
 }: Props) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -74,7 +79,7 @@ export function DataTable({
     pageIndex: paginationProps?.paginateOpts.page ?? 0,
     pageSize: paginationProps?.paginateOpts.limit ?? limit ?? 10,
   });
-  const [newPage, setPage] = React.useState(0);
+  // const [newPage, setPage] = React.useState(0);
   const pagination = React.useMemo(
     () => ({
       pageIndex,
@@ -263,49 +268,17 @@ export function DataTable({
             total={paginationProps?.paginateOpts?.totalPages ?? table?.getPageCount()}
             value={(paginationProps?.paginateOpts?.page ?? 0) + 1}
             onChange={(page) => {
-              onPaginate(page - 1); // Convert back to 0-based for the backend
+              setPage(page);
+              dispatch(getApplications(page, limit) as unknown as UnknownAction);
             }}
-            // const onPageChange = (newPage: number) => {
-            //   setPage(newPage + 1); // Display as 1-based
-            //   dispatch(getApplications(newPage, limit)); // Pass 0-based index to the backend
-            // };
-              // total={
-              //   isPaginated
-              //     ? (paginationProps?.paginateOpts?.totalPages ?? 1)
-              //     : table?.getPageCount()
-              // }
-              // onNextPage={() => {
-              //   if (isPaginated) {
-              //     paginationProps?.setPaginateOpts({
-              //       ...paginationProps?.paginateOpts,
-              //       page: (paginationProps?.paginateOpts?.page ?? 0) + 1,
-              //     });
-              //     return;
-              //   }
-              //   table?.nextPage();
-              // }}
               onNextPage={() => {
-                  setPage(newPage + 1); // Display as 1-based
-                  dispatch(getApplications(newPage, limit) as unknown as UnknownAction); // Pass 0-based index to the backend
+                  setPage(page + 1);
+                  dispatch(getApplications(page + 1, limit) as unknown as UnknownAction);
                 }}
-              // value={
-              //   isPaginated
-              //     ? (paginationProps?.paginateOpts?.page ?? 0) + 1
-              //     : table?.getState().pagination.pageIndex + 1
-              // }
               onPreviousPage={() => {
-                if (isPaginated) {
-                  paginationProps?.setPaginateOpts({
-                    ...paginationProps?.paginateOpts,
-                    page: (paginationProps?.paginateOpts?.page ?? 0) - 1,
-                  });
-                  return;
-                }
-                table?.previousPage();
+                setPage(page -1);
+                dispatch(getApplications(page -1, limit) as unknown as UnknownAction);
               }}
-              // onChange={(page) => {
-              //   onPaginate(page - 1);
-              // }}
             />
             
             <div className="flex md:flex-row flex-col text-sm items-center gap-2 justify-center">

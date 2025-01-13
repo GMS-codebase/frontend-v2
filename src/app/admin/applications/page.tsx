@@ -15,15 +15,18 @@ import { UnknownAction } from "redux";
 
 const Page = () => {
   // Select applications from Redux store
-  const { applications: rawApplications, loading, total: totalApplications } = useSelector(
+  const { applications: rawApplications, loading, total: totalApplications, page } = useSelector(
     (state: any) => state.applications,
   );
   const dispatch = useDispatch()
-  const [page, setPage] = useState(1);
+  const [pageState, setPage] = useState(page ?? 1);
   const [limit, setLimit] = useState(10); 
   const totalPages = totalApplications / limit;
   console.log("application total ----> ",totalApplications);
+  // console.log("current page ----> ",page);
+
   useEffect(() => {
+      console.log("current page ----> ",page);
       dispatch(getApplications(page, limit) as unknown as UnknownAction);
   }, [dispatch, page, limit]);
 
@@ -241,13 +244,13 @@ const Page = () => {
         );
       });
   }, [applications, searchTerm, selectedFilters]);
-  const onPageChange = (newPage: number) => {
-    dispatch(getApplications(newPage, limit) as unknown as UnknownAction);
-};
+//   const onPageChange = (newPage: number) => {
+//     dispatch(getApplications(newPage, limit) as unknown as UnknownAction);
+// };
 
-const onLimitChange = (newLimit: number) => {
-    dispatch(getApplications(page, newLimit) as unknown as UnknownAction);
-};
+// const onLimitChange = (newLimit: number) => {
+//     dispatch(getApplications(page, newLimit) as unknown as UnknownAction);
+// };
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4 gap-5">
@@ -322,6 +325,8 @@ const onLimitChange = (newLimit: number) => {
         columns={columns}
         loading={loading}
         totalApplications={totalApplications}
+        page={page}
+        setPage={setPage}
         paginationProps={{
           isPaginated: true,
           paginateOpts: {

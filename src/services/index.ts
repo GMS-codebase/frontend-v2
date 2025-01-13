@@ -503,15 +503,14 @@ export const getApplicationsForContractSigning = async (
     });
 };
 export const getApplications =
-  (page = 1, limit = 100) =>
+  (page: any, limit: any) =>
   async (dispatch: Dispatch) => {
     dispatch({ type: GET_APPLICATIONS_LOADING });
 
     try {
       const response = await authorizedApi.get(
-        `/application/all?page=${page}&limit=${limit}`
+        `/application/all?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
       );
-    console.log("applications, ", response.data.data)
       dispatch({
         type: GET_APPLICATIONS_SUCCESS,
         payload: {
