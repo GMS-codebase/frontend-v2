@@ -12,62 +12,6 @@ import { Menu } from "@mantine/core";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 
-//   const columns: ColumnDef<any>[] = [
-//     {
-//       accessorKey: "name",
-//       header: "Name",
-//       cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
-//     },
-//     {
-//       accessorKey: "institution",
-//       header: "Institution Name",
-//       cell: ({ row }) => (
-//         <div className="w-full">{row.original?.institution}</div>
-//       ),
-//     },
-//     {
-//       accessorKey: "email",
-//       header: "Email",
-//       cell: ({ row }) => <div className="w-full">{row.original?.email}</div>,
-//     },
-//     {
-//       accessorKey: "phone",
-//       header: "Phone",
-//       cell: ({ row }) => <div className="w-full">{row.original?.phone}</div>,
-//     },
-//     {
-//       accessorKey: "actions",
-//       header: "Actions",
-//       cell: ({ row }) => (
-//         <div>
-//           <Menu shadow="lg" width={300}>
-//             <Menu.Target>
-//               <button
-//                 style={{
-//                   background:
-//                     "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-//                 }}
-//                 className="p-3 rounded-full border text-white hover:bg-red-100"
-//               >
-//                 <HiDotsHorizontal size={25} color="white" />
-//               </button>
-//             </Menu.Target>
-//             <Menu.Dropdown>
-//               <Menu.Label>
-//                 <h1 className="text-lg">Actions</h1>
-//               </Menu.Label>
-//               <Menu.Divider />
-//               <Menu.Item className="bg-[#F0F0F0]">
-//                 <Link
-//                   href={`/admin/applicants/${row.original.uuid}`}
-//                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-//                 >
-//                   <FiEye size={21} color="#576074" />
-//                   View
-//                 </Link>
-//               </Menu.Item>
-//             </Menu.Dropdown>
-//           </Menu>
 const Page = () => {
   const columns: ColumnDef<any>[] = [
     {
@@ -135,7 +79,7 @@ const Page = () => {
   const applicants = useSelector((state: any) => state.applicants);
 
   const ApplicantsWithProfile = applicants?.applicants?.filter(
-    (applicant: any) => applicant.has_completed_profile,
+    (applicant: any) => applicant,
   );
 
   return (
