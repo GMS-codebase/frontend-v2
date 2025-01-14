@@ -9,12 +9,28 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { getApplicationsPaginated, getApplicationStatus, shortenString } from "@/services";
+import { getApplicationsPaginated, getApplicationStatus, getEmployeeApplicationsPaginated, shortenString } from "@/services";
 import { UnknownAction } from "redux";
 import { useDispatch } from "react-redux";
-
+const filterByStep = (app: any, step: string ): boolean => {
+  if (step.toLowerCase() === "pending" && app.currentStage === "EVALUATION" && !app.evaluationFinalDecision!) {
+    return true
+  }
+  else if (step.toLowerCase() === "evaluated" && app.currentStage === "EVALUATION" && app.evaluationFinalDecision!) {
+    return true
+  }
+  else if (step.toLowerCase() === "pending" && app.currentStage === "DUE_DILIGENCE" && !app.dueFinalDecision!) {
+    return true
+  }
+  else if (step.toLowerCase() === "evaluated" && app.currentStage === "DUE_DILIGENCE" && app.dueFinalDecision!) {
+    return true
+  }
+  else {
+    return false;
+  }
+}
 const Page = () => {
-  const { paginatedApplications: rawApplications, loading,total: totalApplications, page } = useSelector(
+  const { paginatedApplications: rawApplications, paginationLoading: loading,total: totalApplications, page } = useSelector(
     (state: any) => state.applications,
   );
   const [pageState, setPage] = useState(page ?? 1);
@@ -22,17 +38,17 @@ const Page = () => {
   const totalPages = totalApplications / limit;
   const dispatch = useDispatch();
   useEffect(() => {
-      dispatch(getApplicationsPaginated(page, limit) as unknown as UnknownAction);
+      dispatch(getEmployeeApplicationsPaginated(page, limit) as unknown as UnknownAction);
   }, [dispatch, page, limit]);
 
   const handleNextPage = (newPage: number, limit: number) => {
-      dispatch(getApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction);
+      dispatch(getEmployeeApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction);
   };
   const handlePreviousPage = (newPage: number, limit: number) => {
-    dispatch(getApplicationsPaginated(newPage -1, limit) as unknown as UnknownAction);
+    dispatch(getEmployeeApplicationsPaginated(newPage -1, limit) as unknown as UnknownAction);
 };
 const handleChangePage = (newPage: number, limit: number) => {
-  dispatch(getApplicationsPaginated(newPage, limit) as unknown as UnknownAction);
+  dispatch(getEmployeeApplicationsPaginated(newPage, limit) as unknown as UnknownAction);
 };
   const { stages } = useSelector((state: any) => state.empStages);
   console.log(stages);
@@ -42,8 +58,8 @@ const handleChangePage = (newPage: number, limit: number) => {
       rawApplications
         .map((app: any) => ({
           ...app,
-          sector: app.sectors[0] || null,
-          trade: app.trades[0] || null,
+          sector: app.sectors?.[0] || null,
+          trade: app.trades?.[0] || null,
         }))
         .filter((app: any) => {
           const matchingStage = stages.find(
@@ -60,6 +76,7 @@ const handleChangePage = (newPage: number, limit: number) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
     stage: "All",
+    step: "PENDING",
     window: "All",
     subWindow: "All",
     call: "All",
@@ -246,10 +263,10 @@ const handleChangePage = (newPage: number, limit: number) => {
           app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
       )
       .filter((app: any) => {
-        const { stage, window, call, subWindow, sector, trade } =
+        const { stage, window, call, subWindow, sector, trade, step } =
           selectedFilters;
         return (
-          (stage === "All" || getApplicationStatus(app) === stage) &&
+          (stage === "All" || (app?.currentStage === stage && filterByStep(app, step))) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&
@@ -293,6 +310,12 @@ const handleChangePage = (newPage: number, limit: number) => {
               filterKey="stage"
               className="flex-shrink-0"
             />
+            {selectedFilters.stage.toLowerCase() !== "all"  && (
+              <div className="flex items-center gap-3 ">
+                <button onClick={()=> setSelectedFilters({...selectedFilters, step: "PENDING"})} className={`py-3 px-5 transition-all duration-200 rounded-full ${selectedFilters.step === "PENDING" ? "bg-blue-400" : "bg-blue-100"} font-semibold text-white`}>PENDING</button>
+                <button onClick={()=> setSelectedFilters({...selectedFilters, step: "EVALUATED"})} className={`py-3 px-5 transition-all duration-200 rounded-full ${selectedFilters.step === "EVALUATED" ? "bg-blue-400" : "bg-blue-100"} font-semibold text-white`}>EVALUATED</button>
+              </div>
+            )}
             <FilterDropDown
               placeholderText="Filter By Window"
               data={filterOptions.windows}
