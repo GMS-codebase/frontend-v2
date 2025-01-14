@@ -19,7 +19,15 @@ import clsx from "clsx";
 import * as React from "react";
 import PaginationForm from "./PaginateForm";
 import TableSkeleton from "./TableSkeleton";
+import { getApplications, getApplicationsPaginated } from "@/services";
+import { useDispatch } from "react-redux";
+import { UnknownAction } from "redux";
 
+interface PaginationFuncs {
+  onChangePage: (page: number, limit: number) => void;
+  onNextPage: (page: number, limit: number) => void;
+  onPreviousPage: (page: number, limit: number) => void;
+}
 interface Props {
   data: any;
   columns: ColumnDef<any>[];
@@ -37,7 +45,10 @@ interface Props {
   limit?: number;
   tableWidth?: string | number;
   verticalPadding?: string | number;
-  totalApplications?: number
+  totalApplications?: number;
+  page: number;
+  setPage: (page: number) => void;
+  paginationFuncs: PaginationFuncs
 }
 
 export function DataTable({
@@ -53,16 +64,20 @@ export function DataTable({
   renderCustomElement,
   noDataMessage,
   loading,
-  limit,
+  limit = 10,
   loader,
   tableWidth,
   verticalPadding,
-  totalApplications
+  totalApplications,
+  page,
+  setPage,
+  paginationFuncs
 }: Props) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
+  const dispatch = useDispatch();
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
@@ -70,7 +85,6 @@ export function DataTable({
     pageIndex: paginationProps?.paginateOpts.page ?? 0,
     pageSize: paginationProps?.paginateOpts.limit ?? limit ?? 10,
   });
-
   const pagination = React.useMemo(
     () => ({
       pageIndex,
@@ -102,6 +116,7 @@ export function DataTable({
     debugTable: true,
     onPaginationChange: setPagination,
     manualPagination: paginationProps?.isPaginated,
+    rowCount: totalApplications,
     enableGlobalFilter: true,
   });
   const isPaginated = paginationProps?.isPaginated ?? false;
@@ -255,40 +270,22 @@ export function DataTable({
           </div>
           <div className="flex w-full justify-between items-start flex-row-reverse px-10 mt-4">
             <Pagination
-              total={
-                isPaginated
-                  ? (paginationProps?.paginateOpts?.totalPages ?? 1)
-                  : table?.getPageCount()
-              }
+            total={paginationProps?.paginateOpts?.totalPages ?? table?.getPageCount()}
+            value={(paginationProps?.paginateOpts?.page ?? 0) + 1}
+            onChange={(page) => {
+              setPage(page);
+              paginationFuncs.onChangePage(page, limit);
+            }}
               onNextPage={() => {
-                if (isPaginated) {
-                  paginationProps?.setPaginateOpts({
-                    ...paginationProps?.paginateOpts,
-                    page: (paginationProps?.paginateOpts?.page ?? 0) + 1,
-                  });
-                  return;
-                }
-                table?.nextPage();
-              }}
-              value={
-                isPaginated
-                  ? (paginationProps?.paginateOpts?.page ?? 0) + 1
-                  : table?.getState().pagination.pageIndex + 1
-              }
+                  setPage(page + 1);
+                  paginationFuncs.onNextPage(page, limit);
+                }}
               onPreviousPage={() => {
-                if (isPaginated) {
-                  paginationProps?.setPaginateOpts({
-                    ...paginationProps?.paginateOpts,
-                    page: (paginationProps?.paginateOpts?.page ?? 0) - 1,
-                  });
-                  return;
-                }
-                table?.previousPage();
-              }}
-              onChange={(page) => {
-                onPaginate(page - 1);
+                setPage(page -1);
+                paginationFuncs.onPreviousPage(page, limit);
               }}
             />
+            
             <div className="flex md:flex-row flex-col text-sm items-center gap-2 justify-center">
               <h1 className="text-lg font-medium text-[#B5B7C0]">
                 Showing data 1 to{" "}
