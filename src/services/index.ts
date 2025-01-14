@@ -502,20 +502,55 @@ export const getApplicationsForContractSigning = async (
       });
     });
 };
-export const getApplications = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_APPLICATIONS_LOADING });
-  authorizedApi
-    .get("/application/all")
-    .then((res) => {
-      dispatch({ type: GET_APPLICATIONS_SUCCESS, payload: res.data.data.data });
-    })
-    .catch((err) => {
+export const getApplications =
+  () =>
+  async (dispatch: Dispatch) => {
+    dispatch({ type: GET_APPLICATIONS_LOADING });
+
+    try {
+      const response = await authorizedApi.get(
+        `/application/all/not-paginated`
+      );
+      dispatch({
+        type: GET_APPLICATIONS_SUCCESS,
+        payload: {
+          applications: response?.data?.data?.data.applications,
+          total: response?.data?.data?.data.total,
+          page: response?.data?.data?.data?.page,
+        },
+      });
+    } catch (error: any) {
       dispatch({
         type: GET_APPLICATIONS_ERROR,
-        payload: err.response.data.error,
+        payload: error.response?.data?.error || "Something went wrong",
       });
-    });
-};
+    }
+  };
+
+  export const getApplicationsPaginated =
+  (page?: any, limit?: any) =>
+  async (dispatch: Dispatch) => {
+    dispatch({ type: GET_APPLICATIONS_LOADING });
+
+    try {
+      const response = await authorizedApi.get(
+        `/application/all?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      );
+      dispatch({
+        type: GET_APPLICATIONS_SUCCESS,
+        payload: {
+          applications: response?.data?.data?.data.applications,
+          total: response?.data?.data?.data.total,
+          page: response?.data?.data?.data?.page,
+        },
+      });
+    } catch (error: any) {
+      dispatch({
+        type: GET_APPLICATIONS_ERROR,
+        payload: error.response?.data?.error || "Something went wrong",
+      });
+    }
+  };
 export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_APPLICATIONS_LOADING });
   authorizedApi
