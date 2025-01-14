@@ -549,6 +549,30 @@ export const getApplications = async (dispatch: Dispatch) => {
       });
     }
   };
+  export const getEmployeeApplicationsPaginated =
+  (page?: any, limit?: any) =>
+  async (dispatch: Dispatch) => {
+    dispatch({ type: GET_PAGINATED_APPLICATIONS_LOADING });
+
+    try {
+      const response = await authorizedApi.get(
+        `/application/all/paginated/by-employee?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      );
+      dispatch({
+        type: GET_PAGINATED_APPLICATIONS_SUCCESS,
+        payload: {
+          applications: response?.data?.data?.data.data,
+          total: response?.data?.data?.data.total,
+          page: response?.data?.data?.data?.page,
+        },
+      });
+    } catch (error: any) {
+      dispatch({
+        type: GET_APPLICATIONS_ERROR,
+        payload: error.response?.data?.error || "Something went wrong",
+      });
+    }
+  };
 export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_APPLICATIONS_LOADING });
   authorizedApi
@@ -914,7 +938,7 @@ export const handleAddComments = async (
 };
 
 export const getApplicationStatus = (application: any) => {
-  if (!application.finishedAnswering) {
+  if (!application.finishedAnswering && application.call.status === "OPEN") {
     return "ANSWERING";
   } else if (application.call.closed) {
     return "SUBMITTED";
