@@ -9,12 +9,11 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { getApplications, getApplicationStatus } from "@/services";
+import { getApplicationsPaginated, getApplicationStatus } from "@/services";
 import { useDispatch } from "react-redux";
 import { UnknownAction } from "redux";
 
 const Page = () => {
-  // Select applications from Redux store
   const { applications: rawApplications, loading, total: totalApplications, page } = useSelector(
     (state: any) => state.applications,
   );
@@ -24,17 +23,19 @@ const Page = () => {
   const totalPages = totalApplications / limit;
 
   useEffect(() => {
-      dispatch(getApplications(page, limit) as unknown as UnknownAction);
+      dispatch(getApplicationsPaginated(page, limit) as unknown as UnknownAction);
   }, [dispatch, page, limit]);
 
-  const handlePageChange = (newPage: number) => {
-      setPage(newPage);
+  const handleNextPage = (newPage: number, limit: number) => {
+      dispatch(getApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction);
   };
+  const handlePreviousPage = (newPage: number, limit: number) => {
+    dispatch(getApplicationsPaginated(newPage -1, limit) as unknown as UnknownAction);
+};
+const handleChangePage = (newPage: number, limit: number) => {
+  dispatch(getApplicationsPaginated(newPage, limit) as unknown as UnknownAction);
+};
 
-  const handleLimitChange = (newLimit: number) => {
-      setLimit(newLimit);
-      setPage(1);
-  };
   const applications = useMemo(
     () =>
       rawApplications.map((app: any) => ({
@@ -241,13 +242,7 @@ const Page = () => {
         );
       });
   }, [applications, searchTerm, selectedFilters]);
-//   const onPageChange = (newPage: number) => {
-//     dispatch(getApplications(newPage, limit) as unknown as UnknownAction);
-// };
 
-// const onLimitChange = (newLimit: number) => {
-//     dispatch(getApplications(page, newLimit) as unknown as UnknownAction);
-// };
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4 gap-5">
@@ -324,22 +319,19 @@ const Page = () => {
         totalApplications={totalApplications}
         page={page}
         setPage={setPage}
+        paginationFuncs={{
+          onChangePage: handleChangePage,
+          onNextPage: handleNextPage,
+          onPreviousPage: handlePreviousPage
+        }}
         paginationProps={{
           isPaginated: true,
           paginateOpts: {
-              page: page - 1, // Pagination in DataTable is 0-based
+              page: page - 1,
               totalPages: totalPages,
               limit: limit,
           },
-          setPaginateOpts: () => {
-            if (page !== undefined) {
-              setPage(page + 1); // Adjust back to 1-based index for display
-            }
-            if (limit !== undefined) {
-              setLimit(limit);
-              setPage(page);
-            }
-          }
+          setPaginateOpts: () => {}
       }}
       />
     </div>
