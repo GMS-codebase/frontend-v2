@@ -19,11 +19,15 @@ import clsx from "clsx";
 import * as React from "react";
 import PaginationForm from "./PaginateForm";
 import TableSkeleton from "./TableSkeleton";
-import { getApplications } from "@/services";
+import { getApplications, getApplicationsPaginated } from "@/services";
 import { useDispatch } from "react-redux";
 import { UnknownAction } from "redux";
 
-
+interface PaginationFuncs {
+  onChangePage: (page: number, limit: number) => void;
+  onNextPage: (page: number, limit: number) => void;
+  onPreviousPage: (page: number, limit: number) => void;
+}
 interface Props {
   data: any;
   columns: ColumnDef<any>[];
@@ -44,6 +48,7 @@ interface Props {
   totalApplications?: number;
   page: number;
   setPage: (page: number) => void;
+  paginationFuncs: PaginationFuncs
 }
 
 export function DataTable({
@@ -59,13 +64,14 @@ export function DataTable({
   renderCustomElement,
   noDataMessage,
   loading,
-  limit,
+  limit = 10,
   loader,
   tableWidth,
   verticalPadding,
   totalApplications,
   page,
   setPage,
+  paginationFuncs
 }: Props) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -79,7 +85,6 @@ export function DataTable({
     pageIndex: paginationProps?.paginateOpts.page ?? 0,
     pageSize: paginationProps?.paginateOpts.limit ?? limit ?? 10,
   });
-  // const [newPage, setPage] = React.useState(0);
   const pagination = React.useMemo(
     () => ({
       pageIndex,
@@ -269,15 +274,15 @@ export function DataTable({
             value={(paginationProps?.paginateOpts?.page ?? 0) + 1}
             onChange={(page) => {
               setPage(page);
-              dispatch(getApplications(page, limit) as unknown as UnknownAction);
+              paginationFuncs.onChangePage(page, limit);
             }}
               onNextPage={() => {
                   setPage(page + 1);
-                  dispatch(getApplications(page + 1, limit) as unknown as UnknownAction);
+                  paginationFuncs.onNextPage(page, limit);
                 }}
               onPreviousPage={() => {
                 setPage(page -1);
-                dispatch(getApplications(page -1, limit) as unknown as UnknownAction);
+                paginationFuncs.onPreviousPage(page, limit);
               }}
             />
             

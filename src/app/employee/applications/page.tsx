@@ -1,21 +1,39 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/core/data-table";
+import { DataTable } from "@/components/core/data-table/paginated";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { CiSearch } from "react-icons/ci";
 import { Menu, Select } from "@mantine/core";
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { getApplicationStatus, shortenString } from "@/services";
+import { getApplicationsPaginated, getApplicationStatus, shortenString } from "@/services";
+import { UnknownAction } from "redux";
+import { useDispatch } from "react-redux";
 
 const Page = () => {
-  // Select applications from Redux store
-  const { applications: rawApplications, loading } = useSelector(
+  const { applications: rawApplications, loading,total: totalApplications, page } = useSelector(
     (state: any) => state.applications,
   );
+  const [pageState, setPage] = useState(page ?? 1);
+  const [limit, setLimit] = useState(10); 
+  const totalPages = totalApplications / limit;
+  const dispatch = useDispatch();
+  useEffect(() => {
+      dispatch(getApplicationsPaginated(page, limit) as unknown as UnknownAction);
+  }, [dispatch, page, limit]);
+
+  const handleNextPage = (newPage: number, limit: number) => {
+      dispatch(getApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction);
+  };
+  const handlePreviousPage = (newPage: number, limit: number) => {
+    dispatch(getApplicationsPaginated(newPage -1, limit) as unknown as UnknownAction);
+};
+const handleChangePage = (newPage: number, limit: number) => {
+  dispatch(getApplicationsPaginated(newPage, limit) as unknown as UnknownAction);
+};
   const { stages } = useSelector((state: any) => state.empStages);
   console.log(stages);
 
@@ -74,11 +92,6 @@ const Page = () => {
     }),
     [applications],
   );
-
-  // Format stage string
-  const formatStage = (stage: string) => {
-    return stage.replace(/_/g, " ").toUpperCase();
-  };
 
   const columns: ColumnDef<any>[] = [
     {
@@ -314,11 +327,27 @@ const Page = () => {
           </button>
         </div>
       </div>
-
       <DataTable
         data={filteredApplications}
         columns={columns}
         loading={loading}
+        totalApplications={totalApplications}
+        page={page}
+        setPage={setPage}
+        paginationFuncs={{
+          onChangePage: handleChangePage,
+          onNextPage: handleNextPage,
+          onPreviousPage: handlePreviousPage
+        }}
+        paginationProps={{
+          isPaginated: true,
+          paginateOpts: {
+              page: page - 1,
+              totalPages: totalPages,
+              limit: limit,
+          },
+          setPaginateOpts: () => {}
+      }}
       />
     </div>
   );
