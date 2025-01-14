@@ -504,9 +504,7 @@ export const getApplicationsForContractSigning = async (
       });
     });
 };
-export const getApplications =
-  (dispatch: Dispatch) =>
-  async (dispatch: Dispatch) => {
+export const getApplications = async (dispatch: Dispatch) => {
     dispatch({ type: GET_APPLICATIONS_LOADING });
 
     try {
@@ -516,7 +514,7 @@ export const getApplications =
       dispatch({
         type: GET_APPLICATIONS_SUCCESS,
         payload: {
-          applications: response?.data?.data?.data.applications,
+          applications: response?.data?.data?.data,
         },
       });
     } catch (error: any) {
