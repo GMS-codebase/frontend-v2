@@ -14,7 +14,7 @@ import { UnknownAction } from "redux";
 import { useDispatch } from "react-redux";
 
 const Page = () => {
-  const { applications: rawApplications, loading,total: totalApplications, page } = useSelector(
+  const { paginatedApplications: rawApplications, loading,total: totalApplications, page } = useSelector(
     (state: any) => state.applications,
   );
   const [pageState, setPage] = useState(page ?? 1);

@@ -12,11 +12,14 @@ import {
   GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOTIATION_SUCCESS,
   GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING,
   GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOTIATION_LOADING,
+  GET_PAGINATED_APPLICATIONS_LOADING,
+  GET_PAGINATED_APPLICATIONS_SUCCESS,
 } from "@/actions/ApplicationsActions";
 import { Application } from "@/types";
 
 const initialState = {
   applications: [],
+  paginatedApplications: [],
   total: 0,
   page: 1,
   myApplications: [],
@@ -25,6 +28,7 @@ const initialState = {
   error: null,
   isError: false,
   loading: true,
+  paginationLoading: true,
   myApplicationsLoading: true,
   applicationsReadyForContractSigningLoading: true,
   applicationsReadyForMinuteNegotiationLoading: true,
@@ -44,6 +48,11 @@ export default function ApplicationsReducer(
       return {
         ...state,
         loading: true,
+      };
+    case GET_PAGINATED_APPLICATIONS_LOADING:
+      return {
+        ...state,
+        paginationLoading: true,
       };
     case GET_MY_APPLICATIONS_LOADING:
       return {
@@ -67,6 +76,12 @@ export default function ApplicationsReducer(
         ...state,
         loading: false,
         applications: action.payload.applications,
+      };
+    case GET_PAGINATED_APPLICATIONS_SUCCESS:
+      return {
+        ...state,
+        paginationLoading: false,
+        paginatedApplications: action.payload.applications,
         total: action.payload.total,
         page: action.payload.page,
         totalPages: action.payload.totalPages,
