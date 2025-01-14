@@ -17,7 +17,7 @@ import { formatDate } from "date-fns";
 const Page = () => {
   const [isShowExport, {open: showExport, close: closeExport}] = useDisclosure(false);
   const [reportType, setReportType] = useState("Submission Report");
-  const { applications: rawApplications, loading } = useSelector(
+  const { paginatedApplications: rawApplications, loading } = useSelector(
     (state: any) => state.applications,
   );
 

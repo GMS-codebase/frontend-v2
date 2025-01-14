@@ -33,6 +33,8 @@ import {
   GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING,
   GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
   GET_MY_APPLICATIONS_SUCCESS,
+  GET_PAGINATED_APPLICATIONS_LOADING,
+  GET_PAGINATED_APPLICATIONS_SUCCESS,
 } from "@/actions/ApplicationsActions";
 import {
   GET_CONTRACTS_ERROR,
@@ -515,8 +517,6 @@ export const getApplications =
         type: GET_APPLICATIONS_SUCCESS,
         payload: {
           applications: response?.data?.data?.data.applications,
-          total: response?.data?.data?.data.total,
-          page: response?.data?.data?.data?.page,
         },
       });
     } catch (error: any) {
@@ -530,14 +530,14 @@ export const getApplications =
   export const getApplicationsPaginated =
   (page?: any, limit?: any) =>
   async (dispatch: Dispatch) => {
-    dispatch({ type: GET_APPLICATIONS_LOADING });
+    dispatch({ type: GET_PAGINATED_APPLICATIONS_LOADING });
 
     try {
       const response = await authorizedApi.get(
         `/application/all?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
       );
       dispatch({
-        type: GET_APPLICATIONS_SUCCESS,
+        type: GET_PAGINATED_APPLICATIONS_SUCCESS,
         payload: {
           applications: response?.data?.data?.data.applications,
           total: response?.data?.data?.data.total,
