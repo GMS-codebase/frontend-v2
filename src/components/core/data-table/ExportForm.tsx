@@ -34,7 +34,7 @@ const ExportForm: FC<Props> = ({
   const [date, setDate] = useState<Date | null>(null);
   const [range, setRange] = useState<[Date | null, Date | null]>([null, null]);
   return (
-    <div className=" w-full flex gap-y-3 flex-col">
+    <div className=" w-full flex gap-y-3 flex-col pb-4">
       <p className=" text-center font-semibold text-sm">
         Select What To Export
       </p>
@@ -57,7 +57,7 @@ const ExportForm: FC<Props> = ({
             <div className="flex items-center gap-x-3">
               <Button
                 className="flex items-center"
-                color="green"
+                color="blue"
                 onClick={() => {
                   exportAllToExcel()
                   // onClose();
@@ -100,12 +100,6 @@ const ExportForm: FC<Props> = ({
         </Tabs.Panel>
 
       </Tabs>
-      {/* clos button */}
-      <div className="flex w-full justify-center">
-        <Button onClick={onClose} color="blue" variant="light">
-          Close
-        </Button>
-      </div>
     </div>
   );
 };

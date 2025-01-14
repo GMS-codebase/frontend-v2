@@ -3,24 +3,25 @@
 import { DataTable } from "@/components/core/data-table";
 import { CiSearch } from "react-icons/ci";
 import { Select } from "@mantine/core";
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
-import { getApplicationStatus } from "@/services";
+import { getApplications, getApplicationStatus } from "@/services";
 import ExportForm from "@/components/core/data-table/ExportForm";
 import MainModal from "./MainModal";
 import { useDisclosure } from "@mantine/hooks";
 import { calculateTotalTrainees, capitalize, exportDataToExcel, getStage } from "@/utils/funcs";
 import { submissionColumns } from "./Columns";
 import { formatDate } from "date-fns";
+import { useDispatch } from "react-redux";
 
 const Page = () => {
   const [isShowExport, {open: showExport, close: closeExport}] = useDisclosure(false);
   const [reportType, setReportType] = useState("Submission Report");
-  const { paginatedApplications: rawApplications, loading } = useSelector(
+  const { applications: rawApplications, paginatedApplications, loading } = useSelector(
     (state: any) => state.applications,
   );
-
+  const dispatch = useDispatch();
   const applications = useMemo(
     () =>
       rawApplications.map((app: any) => ({
@@ -225,16 +226,8 @@ const Page = () => {
         data={filteredApplications}
         columns={submissionColumns}
         loading={loading}
-        // buttonElement={
-        //   <button
-        //     className="p-3 bg-blue-500 rounded-full text-white hover:bg-blue-600 m-4"
-        //     onClick={showExport}
-        //   >
-        //     Export Data
-        //   </button>
-        // }
       />
-      <MainModal title="Export data" isOpen={isShowExport} onClose={closeExport}>
+      <MainModal title={"Export " + reportType}isOpen={isShowExport} onClose={closeExport}>
         <ExportForm exportAllToExcel={()=> exportDataToExcel(getReportName(selectedFilters.call, selectedFilters.sector, reportType),formattedSubmissionData, submissionColumns)} data={formattedSubmissionData!} onClose={closeExport} />
       </MainModal>
     </div>
