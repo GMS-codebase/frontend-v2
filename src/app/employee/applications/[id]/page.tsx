@@ -255,6 +255,12 @@ const Page = () => {
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Sector
+              </p>
+              <p>{application?.sector?.name}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Sub Window
               </p>
               <p>{application?.subWindow?.title}</p>

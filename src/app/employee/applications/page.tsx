@@ -1,6 +1,6 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/core/data-table/paginated";
+import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { CiSearch } from "react-icons/ci";
 import { Menu, Select } from "@mantine/core";
@@ -30,7 +30,7 @@ const filterByStep = (app: any, step: string ): boolean => {
   }
 }
 const Page = () => {
-  const { paginatedApplications: rawApplications, paginationLoading: loading,total: totalApplications, page } = useSelector(
+  const { paginatedApplications: UrawApplications, applications: rawApplications , loading, total: totalApplications, page } = useSelector( //Todo: to update incase of an error
     (state: any) => state.applications,
   );
   const [pageState, setPage] = useState(page ?? 1);
@@ -260,7 +260,7 @@ const handleChangePage = (newPage: number, limit: number) => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase() || app.applicant?.businesses?.[0].businessName.toLowerCase().includes(searchTerm.toLowerCase())),
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade, step } =
@@ -355,13 +355,13 @@ const handleChangePage = (newPage: number, limit: number) => {
         columns={columns}
         loading={loading}
         totalApplications={totalApplications}
-        page={page}
-        setPage={setPage}
-        paginationFuncs={{
-          onChangePage: handleChangePage,
-          onNextPage: handleNextPage,
-          onPreviousPage: handlePreviousPage
-        }}
+        // page={page} // Todo: to update in case of an error
+        // setPage={setPage}
+        // paginationFuncs={{
+        //   onChangePage: handleChangePage,
+        //   onNextPage: handleNextPage,
+        //   onPreviousPage: handlePreviousPage
+        // }}
         paginationProps={{
           isPaginated: true,
           paginateOpts: {

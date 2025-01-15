@@ -9,7 +9,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { getApplicationsPaginated, getApplicationStatus } from "@/services";
+import { getApplicationsPaginated, getApplicationStatus, getEmployeeApplicationsPaginated } from "@/services";
 import { useDispatch } from "react-redux";
 import { UnknownAction } from "redux";
 
@@ -23,17 +23,17 @@ const Page = () => {
   const totalPages = totalApplications / limit;
 
   useEffect(() => {
-      dispatch(getApplicationsPaginated(page, limit) as unknown as UnknownAction);
+      dispatch(getEmployeeApplicationsPaginated(page, limit) as unknown as UnknownAction);
   }, [dispatch, page, limit]);
 
   const handleNextPage = (newPage: number, limit: number) => {
-      dispatch(getApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction);
+      dispatch(getEmployeeApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction);
   };
   const handlePreviousPage = (newPage: number, limit: number) => {
-    dispatch(getApplicationsPaginated(newPage -1, limit) as unknown as UnknownAction);
+    dispatch(getEmployeeApplicationsPaginated(newPage -1, limit) as unknown as UnknownAction);
 };
 const handleChangePage = (newPage: number, limit: number) => {
-  dispatch(getApplicationsPaginated(newPage, limit) as unknown as UnknownAction);
+  dispatch(getEmployeeApplicationsPaginated(newPage, limit) as unknown as UnknownAction);
 };
 
   const applications = useMemo(
