@@ -530,7 +530,7 @@ export const getApplications = async (dispatch: Dispatch) => {
 
     try {
       const response = await authorizedApi.get(
-        `/all/not-paginated/by-employee`
+        `/application/all/not-paginated/by-employee`
       );
       dispatch({
         type: GET_APPLICATIONS_SUCCESS,
