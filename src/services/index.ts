@@ -525,6 +525,27 @@ export const getApplications = async (dispatch: Dispatch) => {
     }
   };
 
+  export const getApplicationsByEmployee = async (dispatch: Dispatch) => {
+    dispatch({ type: GET_APPLICATIONS_LOADING });
+
+    try {
+      const response = await authorizedApi.get(
+        `/all/not-paginated/by-employee`
+      );
+      dispatch({
+        type: GET_APPLICATIONS_SUCCESS,
+        payload: {
+          applications: response?.data?.data?.data,
+        },
+      });
+    } catch (error: any) {
+      dispatch({
+        type: GET_APPLICATIONS_ERROR,
+        payload: error.response?.data?.error || "Something went wrong",
+      });
+    }
+  };
+
   export const getApplicationsPaginated =
   (page?: any, limit?: any) =>
   async (dispatch: Dispatch) => {
