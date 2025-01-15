@@ -1,6 +1,6 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/core/data-table/paginated";
+import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { CiSearch } from "react-icons/ci";
 import { Menu, Select } from "@mantine/core";
@@ -9,19 +9,34 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { getApplicationsPaginated, getApplicationStatus, getEmployeeApplicationsPaginated } from "@/services";
-import { useDispatch } from "react-redux";
+import { getApplicationsPaginated, getApplicationStatus, getEmployeeApplicationsPaginated, shortenString } from "@/services";
 import { UnknownAction } from "redux";
-
+import { useDispatch } from "react-redux";
+const filterByStep = (app: any, step: string ): boolean => {
+  if (step.toLowerCase() === "pending" && app.currentStage === "EVALUATION" && !app.evaluationFinalDecision!) {
+    return true
+  }
+  else if (step.toLowerCase() === "evaluated" && app.currentStage === "EVALUATION" && app.evaluationFinalDecision!) {
+    return true
+  }
+  else if (step.toLowerCase() === "pending" && app.currentStage === "DUE_DILIGENCE" && !app.dueFinalDecision!) {
+    return true
+  }
+  else if (step.toLowerCase() === "evaluated" && app.currentStage === "DUE_DILIGENCE" && app.dueFinalDecision!) {
+    return true
+  }
+  else {
+    return false;
+  }
+}
 const Page = () => {
-  const { paginatedApplications: rawApplications, paginationLoading: loading, total: totalApplications, page } = useSelector(
+  const { paginatedApplications: UrawApplications, applications: rawApplications , loading, total: totalApplications, page } = useSelector( //Todo: to update incase of an error
     (state: any) => state.applications,
   );
-  const dispatch = useDispatch()
   const [pageState, setPage] = useState(page ?? 1);
   const [limit, setLimit] = useState(10); 
   const totalPages = totalApplications / limit;
-
+  const dispatch = useDispatch();
   useEffect(() => {
       dispatch(getEmployeeApplicationsPaginated(page, limit) as unknown as UnknownAction);
   }, [dispatch, page, limit]);
@@ -35,15 +50,25 @@ const Page = () => {
 const handleChangePage = (newPage: number, limit: number) => {
   dispatch(getEmployeeApplicationsPaginated(newPage, limit) as unknown as UnknownAction);
 };
+  const { stages } = useSelector((state: any) => state.empStages);
+  console.log(stages);
 
   const applications = useMemo(
     () =>
-      rawApplications.map((app: any) => ({
-        ...app,
-        sector: app.sectors[0] || null,
-        trade: app.trades[0] || null,
-      })),
-    [rawApplications],
+      rawApplications
+        .map((app: any) => ({
+          ...app,
+          sector: app.sectors?.[0] || null,
+          trade: app.trades?.[0] || null,
+        }))
+        .filter((app: any) => {
+          const matchingStage = stages.find(
+            (stage: any) => stage.sector == app.sector.name,
+          );
+          console.log("Filtering app:", app, "Matching stage:", matchingStage);
+          return matchingStage;
+        }),
+    [rawApplications, stages],
   );
 
   const filtersContainerRef = useRef<HTMLDivElement>(null);
@@ -51,6 +76,7 @@ const handleChangePage = (newPage: number, limit: number) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
     stage: "All",
+    step: "PENDING",
     window: "All",
     subWindow: "All",
     call: "All",
@@ -58,6 +84,7 @@ const handleChangePage = (newPage: number, limit: number) => {
     trade: "All",
   });
 
+  // Helper function to get unique values for dropdown filters
   const getUniqueValues = (key: string) => {
     return [
       "All",
@@ -96,7 +123,7 @@ const handleChangePage = (newPage: number, limit: number) => {
       header: "Institution Name",
       cell: ({ row }) => (
         <div className="truncate">
-          {row.original?.applicant?.businesses?.[0]?.businessName}
+          {row.original?.applicant?.businesses[0].businessName}
         </div>
       ),
     },
@@ -104,21 +131,27 @@ const handleChangePage = (newPage: number, limit: number) => {
       accessorKey: "window",
       header: "Window",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.window?.title}</div>
+        <div className="truncate">
+          {shortenString(row.original?.window?.title)}
+        </div>
       ),
     },
     {
       accessorKey: "call",
       header: "Call",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.call?.title}</div>
+        <div className="truncate">
+          {shortenString(row.original?.call?.title)}
+        </div>
       ),
     },
     {
       accessorKey: "subWindow",
       header: "Sub Window",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.subWindow?.title}</div>
+        <div className="truncate">
+          {shortenString(row.original?.subWindow?.title)}
+        </div>
       ),
     },
     {
@@ -132,16 +165,16 @@ const handleChangePage = (newPage: number, limit: number) => {
       accessorKey: "trade",
       header: "Trade",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.trade?.trade?.title}</div>
+        <div className="truncate">
+          {shortenString(row.original?.trade?.trade?.title)}
+        </div>
       ),
     },
     {
       accessorKey: "stage",
       header: "Stage",
       cell: ({ row }) => (
-        <div className="truncate">
-          {getApplicationStatus(row.original) || "-"}
-        </div>
+        <div className="truncate">{getApplicationStatus(row.original)}</div>
       ),
     },
     {
@@ -227,13 +260,13 @@ const handleChangePage = (newPage: number, limit: number) => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase() || app.applicant?.businesses?.[0].businessName.toLowerCase().includes(searchTerm.toLowerCase())),
       )
       .filter((app: any) => {
-        const { stage, window, call, subWindow, sector, trade } =
+        const { stage, window, call, subWindow, sector, trade, step } =
           selectedFilters;
         return (
-          (stage === "All" || app?.currentStage === stage) &&
+          (stage === "All" || (app?.currentStage === stage && filterByStep(app, step))) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&
@@ -277,6 +310,12 @@ const handleChangePage = (newPage: number, limit: number) => {
               filterKey="stage"
               className="flex-shrink-0"
             />
+            {selectedFilters.stage.toLowerCase() !== "all"  && (
+              <div className="flex items-center gap-3 ">
+                <button onClick={()=> setSelectedFilters({...selectedFilters, step: "PENDING"})} className={`py-3 px-5 transition-all duration-200 rounded-full ${selectedFilters.step === "PENDING" ? "bg-blue-400" : "bg-blue-100"} font-semibold text-white`}>PENDING</button>
+                <button onClick={()=> setSelectedFilters({...selectedFilters, step: "EVALUATED"})} className={`py-3 px-5 transition-all duration-200 rounded-full ${selectedFilters.step === "EVALUATED" ? "bg-blue-400" : "bg-blue-100"} font-semibold text-white`}>EVALUATED</button>
+              </div>
+            )}
             <FilterDropDown
               placeholderText="Filter By Window"
               data={filterOptions.windows}
@@ -311,19 +350,18 @@ const handleChangePage = (newPage: number, limit: number) => {
           </button>
         </div>
       </div>
-
       <DataTable
         data={filteredApplications}
         columns={columns}
         loading={loading}
         totalApplications={totalApplications}
-        page={page}
-        setPage={setPage}
-        paginationFuncs={{
-          onChangePage: handleChangePage,
-          onNextPage: handleNextPage,
-          onPreviousPage: handlePreviousPage
-        }}
+        // page={page} // Todo: to update in case of an error
+        // setPage={setPage}
+        // paginationFuncs={{
+        //   onChangePage: handleChangePage,
+        //   onNextPage: handleNextPage,
+        //   onPreviousPage: handlePreviousPage
+        // }}
         paginationProps={{
           isPaginated: true,
           paginateOpts: {
