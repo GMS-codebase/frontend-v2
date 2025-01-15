@@ -37,6 +37,7 @@ const Page = () => {
   const [limit, setLimit] = useState(10); 
   const totalPages = totalApplications / limit;
   const dispatch = useDispatch();
+  console.log("all applications --> ", rawApplications);
   useEffect(() => {
       dispatch(getEmployeeApplicationsPaginated(page, limit) as unknown as UnknownAction);
   }, [dispatch, page, limit]);
