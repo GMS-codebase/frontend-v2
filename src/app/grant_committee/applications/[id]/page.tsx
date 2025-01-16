@@ -27,6 +27,7 @@ import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 import Form from "@/components/forms/Form";
 import { ApplicationStage } from "@/types/application";
+import { UnknownAction } from "redux";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();

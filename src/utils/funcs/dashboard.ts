@@ -1,3 +1,6 @@
+import { getApplicationStatus } from "@/services";
+import * as XLSX from "xlsx";
+
 type GenderCount = {
   male: number;
   female: number;
@@ -63,12 +66,13 @@ export const getCallStats = (
   const genderCount: GenderCount = { male: 0, female: 0 };
   const businessTypeGroupings: businessTypeGroupings = {};
   const applicantsPerSector: ApplicantsPerSector = {};
+  const applicantsData: any = {};
 
   applications
     .filter((app) => app.call.uuid === callId)
     .map((application) => {
       const gender = application.applicant.gender;
-      const stage = application.currentStage;
+      const stage = getApplicationStatus(application);
 
       // Gender count
       if (gender.toLowerCase() === "male") {
@@ -93,6 +97,22 @@ export const getCallStats = (
 
       // Sector count
       application.sectors.forEach((sector) => {
+        const sectorName = sector.name;
+
+        if (!applicantsData[sectorName]) {
+          applicantsData[sectorName] = {
+            applicants: 0, // Initialize the count of applicants
+            applicantUuids: new Set<string>(), // Track unique applicant UUIDs
+          };
+        }
+
+        const applicantUuid = application.applicant.uuid;
+
+        // Check if the applicant has already applied to this sector
+        if (!applicantsData[sectorName].applicantUuids.has(applicantUuid)) {
+          applicantsData[sectorName].applicantUuids.add(applicantUuid); // Add to set to ensure uniqueness
+          applicantsData[sectorName].applicants++; // Increase the count for this sector
+        }
         if (!applicantsPerSector[sector.name]) {
           applicantsPerSector[sector.name] = 0;
         }
@@ -100,69 +120,84 @@ export const getCallStats = (
       });
     });
 
-  return { genderCount, businessTypeGroupings, applicantsPerSector };
+  const finalApplicantsData: ApplicantsData = {};
+  Object.keys(applicantsData).forEach((sectorName) => {
+    finalApplicantsData[sectorName] = applicantsData[sectorName].applicants;
+  });
+
+  return {
+    genderCount,
+    businessTypeGroupings,
+    applicantsPerSector: finalApplicantsData,
+  };
 };
 
 // Function to get submissions data (count of applicants and applications per sector)
 export const getSubmissionsData = (
-  applications: Application[]
+  applications: Application[],
+  stage: string
 ): SubmissionsData => {
-  console.log("Here");
   const submissionsData: SubmissionsData = {};
 
-  applications.forEach((application) => {
-    application.sectors.forEach((sector) => {
-      const sectorName = sector.name;
+  applications
+    .filter((app) => stage === "ALL" || getApplicationStatus(app) === stage)
+    .filter((app) => getApplicationStatus(app) !== "ANSWERING")
+    .forEach((application) => {
+      application.sectors.forEach((sector) => {
+        const sectorName = sector.name;
 
-      if (!submissionsData[sectorName]) {
-        submissionsData[sectorName] = {
-          applicants: 0,
-          applications: 0,
-        };
-      }
+        if (!submissionsData[sectorName]) {
+          submissionsData[sectorName] = {
+            applicants: 0,
+            applications: 0,
+          };
+        }
 
-      // Count applications for this sector
-      submissionsData[sectorName].applications++;
+        // Count applications for this sector
+        submissionsData[sectorName].applications++;
 
-      // Ensure distinct applicants for the sector
-      const applicantUuid = application.applicant.uuid;
-      //@ts-ignore
-      if (!submissionsData[sectorName][applicantUuid]) {
-        submissionsData[sectorName].applicants++;
+        // Ensure distinct applicants for the sector
+        const applicantUuid = application.applicant.uuid;
         //@ts-ignore
-        submissionsData[sectorName][applicantUuid] = true; // Track distinct applicants
-      }
+        if (!submissionsData[sectorName][applicantUuid]) {
+          submissionsData[sectorName].applicants++;
+          //@ts-ignore
+          submissionsData[sectorName][applicantUuid] = true; // Track distinct applicants
+        }
+      });
     });
-  });
 
   return submissionsData;
 };
-// Function to get applicants data (count of distinct applicants per sector)
+
 export const getApplicantsData = (
-  applications: Application[]
+  applications: Application[],
+  stage: string
 ): ApplicantsData => {
   const applicantsData: any = {};
 
-  applications.forEach((application) => {
-    application.sectors.forEach((sector) => {
-      const sectorName = sector.name;
+  applications
+    .filter((app) => stage === "ALL" || getApplicationStatus(app) === stage)
+    .forEach((application) => {
+      application.sectors.forEach((sector) => {
+        const sectorName = sector.name;
 
-      if (!applicantsData[sectorName]) {
-        applicantsData[sectorName] = {
-          applicants: 0, // Initialize the count of applicants
-          applicantUuids: new Set<string>(), // Track unique applicant UUIDs
-        };
-      }
+        if (!applicantsData[sectorName]) {
+          applicantsData[sectorName] = {
+            applicants: 0, // Initialize the count of applicants
+            applicantUuids: new Set<string>(), // Track unique applicant UUIDs
+          };
+        }
 
-      const applicantUuid = application.applicant.uuid;
+        const applicantUuid = application.applicant.uuid;
 
-      // Check if the applicant has already applied to this sector
-      if (!applicantsData[sectorName].applicantUuids.has(applicantUuid)) {
-        applicantsData[sectorName].applicantUuids.add(applicantUuid); // Add to set to ensure uniqueness
-        applicantsData[sectorName].applicants++; // Increase the count for this sector
-      }
+        // Check if the applicant has already applied to this sector
+        if (!applicantsData[sectorName].applicantUuids.has(applicantUuid)) {
+          applicantsData[sectorName].applicantUuids.add(applicantUuid); // Add to set to ensure uniqueness
+          applicantsData[sectorName].applicants++; // Increase the count for this sector
+        }
+      });
     });
-  });
 
   // Transform applicantsData to return just the count of applicants per sector
   const finalApplicantsData: ApplicantsData = {};
@@ -173,25 +208,89 @@ export const getApplicantsData = (
   return finalApplicantsData;
 };
 
-// Function to get applications data (count of applications per sector)
 export const getApplicationsData = (
-  applications: Application[]
+  applications: Application[],
+  stage: string
 ): ApplicationsData => {
-  console.log("Here");
   const applicationsData: ApplicationsData = {};
 
-  applications.forEach((application) => {
-    application.sectors.forEach((sector) => {
-      const sectorName = sector.name;
+  applications
+    .filter((app) => stage === "ALL" || getApplicationStatus(app) === stage)
+    .forEach((application) => {
+      application.sectors.forEach((sector) => {
+        const sectorName = sector.name;
 
-      if (!applicationsData[sectorName]) {
-        applicationsData[sectorName] = 0;
-      }
+        if (!applicationsData[sectorName]) {
+          applicationsData[sectorName] = 0;
+        }
 
-      // Count applications
-      applicationsData[sectorName]++;
+        // Count applications
+        applicationsData[sectorName]++;
+      });
     });
-  });
 
   return applicationsData;
+};
+
+export const exportToExcel = (
+  data: Record<string, any[]>,
+  fileName: string = "data.xlsx"
+): void => {
+  if (!data || typeof data !== "object") {
+    console.error("Invalid data provided for export");
+    return;
+  }
+
+  const workbook = XLSX.utils.book_new();
+
+  Object.keys(data).forEach((sheetName) => {
+    const sheetData = data[sheetName];
+
+    if (Array.isArray(sheetData)) {
+      const worksheet = XLSX.utils.json_to_sheet(sheetData);
+      XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+    } else {
+      console.warn(`Skipping invalid sheet data for sheet: ${sheetName}`);
+    }
+  });
+
+  XLSX.writeFile(workbook, fileName);
+};
+
+export const downloadDashboardExcelFile = (
+  applicationsData?: ApplicationsData,
+  applicantsData?: ApplicantsData,
+  submissionsData?: SubmissionsData
+): void => {
+  const data: Record<string, any[]> = {};
+
+  if (applicationsData) {
+    data["Applications Data"] = Object.entries(applicationsData).map(
+      ([sector, count]) => ({
+        Sector: sector,
+        Applications: count,
+      })
+    );
+  }
+
+  if (applicantsData) {
+    data["Applicants Data"] = Object.entries(applicantsData).map(
+      ([sector, count]) => ({
+        Sector: sector,
+        Applicants: count,
+      })
+    );
+  }
+
+  if (submissionsData) {
+    data["Submissions Data"] = Object.entries(submissionsData).map(
+      ([sector, details]) => ({
+        Sector: sector,
+        Applications: details.applications,
+        Applicants: details.applicants,
+      })
+    );
+  }
+
+  exportToExcel(data, "exported_data.xlsx");
 };

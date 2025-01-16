@@ -11,7 +11,7 @@
     "prepare": "husky",
     "clean:next": "rimraf .next",
     "development": "next start -p 5600",
-    "staging": "next start -p 5600"
+    "staging": "next start -p 5800"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",

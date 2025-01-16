@@ -37,6 +37,7 @@ interface Props {
   limit?: number;
   tableWidth?: string | number;
   verticalPadding?: string | number;
+  totalApplications?: number
 }
 
 export function DataTable({
@@ -56,6 +57,7 @@ export function DataTable({
   loader,
   tableWidth,
   verticalPadding,
+  totalApplications
 }: Props) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -291,7 +293,7 @@ export function DataTable({
               <h1 className="text-lg font-medium text-[#B5B7C0]">
                 Showing data 1 to{" "}
                 {table.getRowCount() < 10 ? table.getRowCount() : 10} of{" "}
-                {table.getRowCount()} entries
+                {isPaginated ? totalApplications : table.getRowCount()} entries
               </h1>
             </div>
           </div>
