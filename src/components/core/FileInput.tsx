@@ -31,14 +31,21 @@ const FileInput: React.FC<FileInputProps> = ({
     setSelectedFile(file);
 
     setIsUploading(true);
-    try {
-      if (value) {
-        await authorizedApi.post("/api/v2/files/delete", {
-          folder: question.id,
-          filename: value,
-        });
-      }
 
+    if (value) {
+      try {
+        await authorizedApi.delete("/files/delete", {
+          data: {
+            folder: question.id,
+            filename: value,
+          },
+        });
+      } catch (error) {
+        console.warn("Failed to delete the file, proceeding anyway:", error);
+      }
+    }
+
+    try {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("folder", question.id);
@@ -86,12 +93,17 @@ const FileInput: React.FC<FileInputProps> = ({
         <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
           <span className="text-2xl font-bold">+</span>
         </div>
+        {(selectedFile || value) && (
+          <div className="mt-4 bg-gray-200 text-black font-semibold rounded-full px-4 py-2">
+            Select Another File
+          </div>
+        )}
         {selectedFile || value ? (
           <div className="text-center">
             <p className="text-xl font-medium text-gray-700">
-              {value 
-  ? (typeof value === "string" && value.split("/").pop()  )
-  : selectedFile?.name}
+              {selectedFile
+                ? selectedFile?.name
+                : value && typeof value === "string" && value.split("/").pop()}
             </p>
             <p className="text-sm text-gray-500">
               {isUploading ? "Uploading..." : "File selected"}
@@ -120,14 +132,6 @@ const FileInput: React.FC<FileInputProps> = ({
         style={{ display: "none" }}
         onChange={(e) => handleFileChange(e.target.files)}
       />
-      {(selectedFile || value) && (
-        <button
-          onClick={() => setSelectedFile(null)}
-          className="mt-4 bg-gray-200 text-black font-semibold rounded-full px-4 py-2"
-        >
-          Select Another File
-        </button>
-      )}
     </div>
   );
 };

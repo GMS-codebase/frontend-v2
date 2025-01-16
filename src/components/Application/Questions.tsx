@@ -228,7 +228,7 @@ const Questions: React.FC<QuestionsProps> = ({
           }}
           data={options}
           className="mt-1 block w-full  pl-5  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          placeholder="Select Business Type"
+          placeholder="Select Institution Type"
         />
       );
     } else {

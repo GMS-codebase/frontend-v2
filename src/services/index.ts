@@ -33,6 +33,8 @@ import {
   GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING,
   GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
   GET_MY_APPLICATIONS_SUCCESS,
+  GET_PAGINATED_APPLICATIONS_LOADING,
+  GET_PAGINATED_APPLICATIONS_SUCCESS,
 } from "@/actions/ApplicationsActions";
 import {
   GET_CONTRACTS_ERROR,
@@ -503,20 +505,96 @@ export const getApplicationsForContractSigning = async (
       });
     });
 };
-export const getApplications = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_APPLICATIONS_LOADING });
-  authorizedApi
-    .get("/application/all")
-    .then((res) => {
-      dispatch({ type: GET_APPLICATIONS_SUCCESS, payload: res.data.data.data });
-    })
-    .catch((err) => {
+export const getApplications = async (dispatch: Dispatch) => {
+    dispatch({ type: GET_APPLICATIONS_LOADING });
+
+    try {
+      const response = await authorizedApi.get(
+        `/application/all/not-paginated`
+      );
+      dispatch({
+        type: GET_APPLICATIONS_SUCCESS,
+        payload: {
+          applications: response?.data?.data?.data,
+        },
+      });
+    } catch (error: any) {
       dispatch({
         type: GET_APPLICATIONS_ERROR,
-        payload: err.response.data.error,
+        payload: error.response?.data?.error || "Something went wrong",
       });
-    });
-};
+    }
+  };
+
+  export const getApplicationsByEmployee = async (dispatch: Dispatch) => {
+    dispatch({ type: GET_APPLICATIONS_LOADING });
+
+    try {
+      const response = await authorizedApi.get(
+        `/application/all/not-paginated/by-employee`
+      );
+      dispatch({
+        type: GET_APPLICATIONS_SUCCESS,
+        payload: {
+          applications: response?.data?.data?.data,
+        },
+      });
+    } catch (error: any) {
+      dispatch({
+        type: GET_APPLICATIONS_ERROR,
+        payload: error.response?.data?.error || "Something went wrong",
+      });
+    }
+  };
+
+  export const getApplicationsPaginated =
+  (page?: any, limit?: any) =>
+  async (dispatch: Dispatch) => {
+    dispatch({ type: GET_PAGINATED_APPLICATIONS_LOADING });
+
+    try {
+      const response = await authorizedApi.get(
+        `/application/all?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      );
+      dispatch({
+        type: GET_PAGINATED_APPLICATIONS_SUCCESS,
+        payload: {
+          applications: response?.data?.data?.data.applications,
+          total: response?.data?.data?.data.total,
+          page: response?.data?.data?.data?.page,
+        },
+      });
+    } catch (error: any) {
+      dispatch({
+        type: GET_APPLICATIONS_ERROR,
+        payload: error.response?.data?.error || "Something went wrong",
+      });
+    }
+  };
+  export const getEmployeeApplicationsPaginated =
+  (page?: any, limit?: any) =>
+  async (dispatch: Dispatch) => {
+    dispatch({ type: GET_PAGINATED_APPLICATIONS_LOADING });
+
+    try {
+      const response = await authorizedApi.get(
+        `/application/all/paginated/by-employee?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      );
+      dispatch({
+        type: GET_PAGINATED_APPLICATIONS_SUCCESS,
+        payload: {
+          applications: response?.data?.data?.data.data,
+          total: response?.data?.data?.data.total,
+          page: response?.data?.data?.data?.page,
+        },
+      });
+    } catch (error: any) {
+      dispatch({
+        type: GET_APPLICATIONS_ERROR,
+        payload: error.response?.data?.error || "Something went wrong",
+      });
+    }
+  };
 export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_MY_APPLICATIONS_LOADING });
   authorizedApi
@@ -882,7 +960,7 @@ export const handleAddComments = async (
 };
 
 export const getApplicationStatus = (application: any) => {
-  if (!application.finishedAnswering) {
+  if (!application.finishedAnswering && application.call.status === "OPEN") {
     return "ANSWERING";
   } else if (application.call.closed) {
     return "SUBMITTED";

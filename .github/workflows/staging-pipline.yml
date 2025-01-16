@@ -45,7 +45,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('staging/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('staging/package-lock.json', 'staging/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-node-
 

@@ -4,6 +4,29 @@ export interface ColumnDef<T = any> {
   header: string;
   accessorKey: keyof T;
 }
+type ReportType = "Submission Report" |  "Evaluation Report" | "Due Diligence Report" | "Grant Committee Report"
+export const capitalize = (str: string): string =>{
+  return str?.charAt(0)?.toUpperCase() + str?.slice(1);
+}
+export const getStage = (type: ReportType) => {
+  return type == "Submission Report" ? "SUBMITTED" : type == "Evaluation Report" ? "EVALUATION" : type == "Due Diligence Report" ? "DUE_DILIGENCE" : "GRANT_COMMITTEE"
+}
+export function calculateTotalTrainees(data: any) {
+  let totalTrainees = 0;
+  for (const key in data) {
+    const value = data[key];
+    if (Array.isArray(value) && value.some(item => "Number of trainees" in item || "Number of Trainees" in item)) {
+      console.log(key,value);
+      totalTrainees = value.reduce(
+        (total, item) => total + parseInt(item["Number of trainees"] ? item["Number of trainees"] : item["Number of Trainees"] ? item["Number of Trainees"] : 0, 10),
+        0
+      );
+      break;
+    }
+  }
+
+  return totalTrainees;
+}
 export const exportDataToExcel = async <T extends Record<string, any>>(
   fileName: string,
   excelData: T[],
@@ -37,7 +60,7 @@ export const exportDataToExcel = async <T extends Record<string, any>>(
       const formattedRow: Record<string, any> = {};
       columns.forEach((column) => {
         if(column.accessorKey?.toLowerCase() !== "actions") {
-          formattedRow[column.accessorKey] = row[column.accessorKey] || "";
+          formattedRow[column.accessorKey] = row[column.accessorKey];
         }
       });
       worksheet.addRow(formattedRow);

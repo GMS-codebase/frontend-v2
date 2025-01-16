@@ -3,24 +3,25 @@
 import { DataTable } from "@/components/core/data-table";
 import { CiSearch } from "react-icons/ci";
 import { Select } from "@mantine/core";
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
-import { getApplicationStatus } from "@/services";
+import { getApplications, getApplicationStatus } from "@/services";
 import ExportForm from "@/components/core/data-table/ExportForm";
 import MainModal from "./MainModal";
 import { useDisclosure } from "@mantine/hooks";
-import { exportDataToExcel } from "@/utils/funcs";
+import { calculateTotalTrainees, capitalize, exportDataToExcel, getStage } from "@/utils/funcs";
 import { submissionColumns } from "./Columns";
 import { formatDate } from "date-fns";
+import { useDispatch } from "react-redux";
 
 const Page = () => {
   const [isShowExport, {open: showExport, close: closeExport}] = useDisclosure(false);
   const [reportType, setReportType] = useState("Submission Report");
-  const { applications: rawApplications, loading } = useSelector(
+  const { applications: rawApplications, paginatedApplications, loading } = useSelector(
     (state: any) => state.applications,
   );
-
+  const dispatch = useDispatch();
   const applications = useMemo(
     () =>
       rawApplications.map((app: any) => ({
@@ -125,7 +126,7 @@ const Page = () => {
         const { stage, window, call, subWindow, sector, trade } =
           selectedFilters;
         return (
-          (stage === "All" || getApplicationStatus(app) === stage) &&
+          (stage === "All" || app?.currentStage === stage) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&
@@ -135,12 +136,11 @@ const Page = () => {
       });
   }, [applications, searchTerm, selectedFilters]);
 
-  console.log("data ---> ", rawApplications)
   const formattedSubmissionData = filteredApplications.map((row: any, index: any)=>{
     return {
       index: index,
       applicationNumber: row.applicationNumber,
-      institutionName: row.applicant?.businesses?.[0]?.businessName,
+      institutionName: row.applicant?.businesses?.[0]?.businessName ?? "Not set",
       window: row.window?.title,
       call: row.call?.title,
       subWindow: row.subWindow?.title,
@@ -148,13 +148,13 @@ const Page = () => {
       trade: row.trades[0]?.trade?.title,
       stage: row.currentStage,
       contacts: row.applicant?.phone,
-      institutionType: row.applicant.businesses?.[0]?.businessType,
+      institutionType: capitalize(row.applicant.businesses?.[0]?.businessType),
       legalStatus: row.applicant.businesses?.[0]?.private ? "Private": "Public",
-      requestedBeneficiaries: "",
+      requestedBeneficiaries: calculateTotalTrainees(JSON.parse(row?.answers)) ?? "None",
       district: row.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "",
       businessSector: row.applicant.businesses?.[0]?.addressLine?.split("-")[1] ?? "",
       cell:row.applicant.businesses?.[0]?.addressLine?.split("-")[2] ?? "",
-      submissionDate: formatDate(row?.lastUpdatedAt, "yyyy-MM-dd")
+      submissionDate: formatDate(row?.lastUpdatedAt, "yyyy-MM-dd"),
     }
   })
 
@@ -175,7 +175,7 @@ const Page = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex items-center max-w-[70%]">
+        <div className="flex items-center max-w-[60%]">
           <button
             onClick={() => handleScroll("left")}
             className="p-2 bg-white shadow-lg rounded-full mr-2"
@@ -204,8 +204,8 @@ const Page = () => {
               data={["Submission Report", "Evaluation Report", "Due Diligence Report", "Grant Committee Report"]}
               placeholder={"Select Report Type"}
               value={reportType}
-              onChange={(value: any)=> setReportType(value)}
-              className={`w-fit px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
+              onChange={(value: any)=> {setReportType(value); setSelectedFilters({...selectedFilters, stage: getStage(value)})}}
+              className={`w-[33%] px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
             />
           </div>
 
@@ -228,16 +228,8 @@ const Page = () => {
         data={filteredApplications}
         columns={submissionColumns}
         loading={loading}
-        // buttonElement={
-        //   <button
-        //     className="p-3 bg-blue-500 rounded-full text-white hover:bg-blue-600 m-4"
-        //     onClick={showExport}
-        //   >
-        //     Export Data
-        //   </button>
-        // }
       />
-      <MainModal title="Export data" isOpen={isShowExport} onClose={closeExport}>
+      <MainModal title={"Export " + reportType}isOpen={isShowExport} onClose={closeExport}>
         <ExportForm exportAllToExcel={()=> exportDataToExcel(getReportName(selectedFilters.call, selectedFilters.sector, reportType),formattedSubmissionData, submissionColumns)} data={formattedSubmissionData!} onClose={closeExport} />
       </MainModal>
     </div>
