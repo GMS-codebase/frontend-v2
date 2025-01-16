@@ -115,7 +115,7 @@ const Dashboard = () => {
   return (
     <div>
       {!callsLoading && (
-        <div className="flex items-center justify-end">
+        <div className="flex items-center lg:justify-end">
           <Select
             value={activeCall}
             data={calls.map((call: any) => ({
@@ -123,7 +123,7 @@ const Dashboard = () => {
               label: call.title,
             }))}
             onChange={(value) => setActiveCall(value as any)}
-            className="bg-white p-2.5 rounded-2xl outline-none  w-[30vw]"
+            className="bg-white p-2.5 rounded-2xl outline-none  lg:w-[30vw] md:w-[50vw] w-full"
           />
         </div>
       )}
@@ -260,33 +260,10 @@ const Dashboard = () => {
                 }
               />
             </div>
-          </div> */}
-          <div className="lg:flex justify-between items-center">
-            <div>Priority Sector Analysis</div>
-            <div className="flex gap-2 bg-[#005de9] lg:px-24 py-2 rounded-full text-white items-center justify-center p-4 mt-4">
-              <span>
-                <SolarFileBold />
-              </span>
-              Export as excel
-            </div>
-          </div>
-
-          <div className="mt-8 grid lg:grid-cols-2 grid-cols-1 grid-rows-3 gap-6 w-full">
-            <div className="bg-white p-6 rounded-2xl">
-              <div className="flex justify-between">
-                <p>Number of submission</p>
-                <div className="text-xl">
-                  <AdminAction call={null} setIsCall={() => {}} />{" "}
-                </div>
-              </div>
-              <Dash
-                col1="Applicants"
-                col2="Applications"
-                data={dashTablesData}
           </div>
         </div>
       )}
-      <div className=" flex justify-between items-center mt-10 mb-5">
+      <div className=" md:flex justify-between items-center mt-10 mb-5">
         <div>Priority Sector Analysis</div>
         <div className="flex gap-2 bg-[#005de9] px-24 py-2 rounded-full text-white items-center justify-center p-4 mt-4">
           <span>
@@ -295,7 +272,7 @@ const Dashboard = () => {
           Export as excel
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-10">
+      <div className="grid md:grid-cols-2 gap-10">
         {submissionsDataLoading ? (
           <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
         ) : (
