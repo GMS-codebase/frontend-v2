@@ -123,7 +123,7 @@ const handleChangePage = (newPage: number, limit: number) => {
       header: "Institution Name",
       cell: ({ row }) => (
         <div className="truncate">
-          {row.original?.applicant?.businesses[0].businessName}
+          {row.original?.applicant?.businesses?.[0]?.businessName}
         </div>
       ),
     },
@@ -260,7 +260,7 @@ const handleChangePage = (newPage: number, limit: number) => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase() || app.applicant?.businesses?.[0].businessName.toLowerCase().includes(searchTerm.toLowerCase())),
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase() || app.applicant?.businesses?.[0]?.businessName.toLowerCase().includes(searchTerm.toLowerCase())),
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade, step } =
