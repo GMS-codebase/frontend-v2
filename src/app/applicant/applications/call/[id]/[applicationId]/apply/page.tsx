@@ -369,8 +369,31 @@ const Page = () => {
                   )}
               </>
             )}
-          </div>
-        )}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              console.log("Here");
+              console.log(application);
+              handleSubmit(
+                "submit",
+                setLoading,
+                answers,
+                application,
+                form,
+                () => {
+                  getMyApplications(dispatch);
+                  router.push("/applicant/applications");
+                },
+              );
+            }}
+            disabled={loading === "submit"}
+            className={`w-full px-4 py-2 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 bg-primary text-white
+              `}
+          >
+            {loading === "submit" ? "Loading..." : "Send Application"}
+          </button>
+        </div>
       </div>
       <EvaluationDetails
         opened={isOpenEvaluationDetails}
