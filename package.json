@@ -3,15 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 5800",
+    "dev": "next dev -p 5600",
     "build": "next build",
-    "start": "next start -p 5800",
+    "start": "next start -p 5600",
     "lint": "next lint",
     "format": "npx prettier --write ./",
     "prepare": "husky",
     "clean:next": "rimraf .next",
     "development": "next start -p 5600",
-    "staging": "next start -p 5800"
+    "staging": "next start -p 5600"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
