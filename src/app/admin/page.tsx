@@ -183,7 +183,7 @@ const Dashboard = () => {
               label: call.title,
             }))}
             onChange={(value) => setActiveCall(value as any)}
-            className="bg-white p-2.5 rounded-2xl outline-none  lg:w-[30vw] md:w-[50vw] w-full"
+            className="bg-white p-2.5 rounded-2xl outline-none  w-[30vw]"
           />
         )}
       </div>
@@ -349,7 +349,7 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-      <div className=" md:flex justify-between items-center mt-10 mb-5">
+      <div className=" flex justify-between items-center mt-10 mb-5">
         <div>Priority Sector Analysis</div>
         <div
           className="flex gap-2 bg-[#005de9] px-24 py-2 rounded-full text-white items-center justify-center p-4 mt-4"
@@ -367,7 +367,7 @@ const Dashboard = () => {
           Export as excel
         </div>
       </div>
-      <div className="grid md:grid-cols-2 gap-10">
+      <div className="grid grid-cols-2 gap-10">
         {submissionsDataLoading ? (
           <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
         ) : (

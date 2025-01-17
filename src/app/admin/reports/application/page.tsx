@@ -233,6 +233,8 @@ const Page = () => {
         <ExportForm exportAllToExcel={()=> exportDataToExcel(getReportName(selectedFilters.call, selectedFilters.sector, reportType),formattedSubmissionData, submissionColumns)} data={formattedSubmissionData!} onClose={closeExport} />
       </MainModal>
     </div>
+    </div>
+    </div>
   );
 };
 
