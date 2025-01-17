@@ -962,7 +962,7 @@ export const handleAddComments = async (
 };
 
 export const getApplicationStatus = (application: any) => {
-  if (application.finishedAnswering) {
+  if (application.finishedAnswering && application.call.status === "OPEN") {
     return "SUBMITTED";
   } else if (!application.finishedAnswering) {
     return "ANSWERING";
