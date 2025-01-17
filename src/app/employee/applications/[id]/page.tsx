@@ -349,9 +349,7 @@ const Page = () => {
                 }}
               />
             )}
-            {Object.values(JSON.parse(application?.comments || "{}")).length ===
-              0 &&
-              hasCommentableQuestion() &&
+            {hasCommentableQuestion() &&
               application?.currentStage !== "SUBMITTED" && (
                 <div className="w-full flex justify-center mt-4 space-x-4">
                   <button
