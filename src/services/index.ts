@@ -505,50 +505,47 @@ export const getApplicationsForContractSigning = async (
     });
 };
 export const getApplications = async (dispatch: Dispatch) => {
-    dispatch({ type: GET_APPLICATIONS_LOADING });
+  dispatch({ type: GET_APPLICATIONS_LOADING });
 
-    try {
-      const response = await authorizedApi.get(
-        `/application/all/not-paginated`
-      );
-      dispatch({
-        type: GET_APPLICATIONS_SUCCESS,
-        payload: {
-          applications: response?.data?.data?.data,
-        },
-      });
-    } catch (error: any) {
-      dispatch({
-        type: GET_APPLICATIONS_ERROR,
-        payload: error.response?.data?.error || "Something went wrong",
-      });
-    }
-  };
+  try {
+    const response = await authorizedApi.get(`/application/all/not-paginated`);
+    dispatch({
+      type: GET_APPLICATIONS_SUCCESS,
+      payload: {
+        applications: response?.data?.data?.data,
+      },
+    });
+  } catch (error: any) {
+    dispatch({
+      type: GET_APPLICATIONS_ERROR,
+      payload: error.response?.data?.error || "Something went wrong",
+    });
+  }
+};
 
-  export const getApplicationsByEmployee = async (dispatch: Dispatch) => {
-    dispatch({ type: GET_APPLICATIONS_LOADING });
+export const getApplicationsByEmployee = async (dispatch: Dispatch) => {
+  dispatch({ type: GET_APPLICATIONS_LOADING });
 
-    try {
-      const response = await authorizedApi.get(
-        `/application/all/not-paginated/by-employee`
-      );
-      dispatch({
-        type: GET_APPLICATIONS_SUCCESS,
-        payload: {
-          applications: response?.data?.data?.data,
-        },
-      });
-    } catch (error: any) {
-      dispatch({
-        type: GET_APPLICATIONS_ERROR,
-        payload: error.response?.data?.error || "Something went wrong",
-      });
-    }
-  };
+  try {
+    const response = await authorizedApi.get(
+      `/application/all/not-paginated/by-employee`
+    );
+    dispatch({
+      type: GET_APPLICATIONS_SUCCESS,
+      payload: {
+        applications: response?.data?.data?.data,
+      },
+    });
+  } catch (error: any) {
+    dispatch({
+      type: GET_APPLICATIONS_ERROR,
+      payload: error.response?.data?.error || "Something went wrong",
+    });
+  }
+};
 
-  export const getApplicationsPaginated =
-  (page?: any, limit?: any) =>
-  async (dispatch: Dispatch) => {
+export const getApplicationsPaginated =
+  (page?: any, limit?: any) => async (dispatch: Dispatch) => {
     dispatch({ type: GET_PAGINATED_APPLICATIONS_LOADING });
 
     try {
@@ -570,9 +567,8 @@ export const getApplications = async (dispatch: Dispatch) => {
       });
     }
   };
-  export const getEmployeeApplicationsPaginated =
-  (page?: any, limit?: any) =>
-  async (dispatch: Dispatch) => {
+export const getEmployeeApplicationsPaginated =
+  (page?: any, limit?: any) => async (dispatch: Dispatch) => {
     dispatch({ type: GET_PAGINATED_APPLICATIONS_LOADING });
 
     try {
@@ -928,23 +924,30 @@ export const handleSubmit = async (
 };
 
 export const handleAddComments = async (
+  action: string,
   comments: any,
   form: any,
   application: any,
   callback?: () => void
 ) => {
-  const validationError = await validateComments(comments, form);
-  if (validationError) {
+  const error =
+    action === "save" ? undefined : await validateComments(comments, form);
+  if (error !== null && action === "submit") {
     notifications.show({
-      message: validationError,
+      message: error,
       color: "red",
     });
     return;
   }
   try {
-    await authorizedApi.patch(`/application/comment/${application.uuid}`, {
-      comments: JSON.stringify(comments),
-    });
+    await authorizedApi.patch(
+      action === "save"
+        ? `/application/draft-comments/${application.uuid}`
+        : `/application/comment/${application.uuid}`,
+      {
+        comments: JSON.stringify(comments),
+      }
+    );
     notifications.show({
       message: "Comments Added Successfully!",
       color: "blue",
@@ -959,10 +962,10 @@ export const handleAddComments = async (
 };
 
 export const getApplicationStatus = (application: any) => {
-  if (!application.finishedAnswering && application.call.status === "OPEN") {
-    return "ANSWERING";
-  } else if (application.call.closed) {
+  if (application.finishedAnswering) {
     return "SUBMITTED";
+  } else if (!application.finishedAnswering) {
+    return "ANSWERING";
   } else if (
     application?.currentStage === ApplicationStage.EVALUATION &&
     !application?.call?.closedEvaluation

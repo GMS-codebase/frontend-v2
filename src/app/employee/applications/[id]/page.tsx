@@ -28,7 +28,7 @@ const Page = () => {
   const stagesArr = stages?.map((stage: any) => stage?.stage);
   const profile = useSelector((state: any) => state.auth);
   const [decisionsLoading, setDecisionsLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<any>("");
   const forms = useSelector((state: any) => state.forms);
   const [applicationLoading, setApplicationLoading] = useState(true);
 
@@ -70,6 +70,7 @@ const Page = () => {
     setApplicationLoading(true);
     try {
       const res = await authorizedApi.get(`/application/get-application/${id}`);
+      console.log(res.data.data.data);
       setApplication(res.data.data.data);
       setComments(JSON.parse(res.data.data.data.comments));
       setApplicationLoading(false);
@@ -84,7 +85,7 @@ const Page = () => {
   }, [id]);
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}"),
+      JSON.parse(application?.call.subwindowForms || "{}")
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
@@ -114,7 +115,7 @@ const Page = () => {
       return false; // No commentable questions found.
     } catch (error: any) {
       throw new Error(
-        `An error occurred while checking commentable questions: ${error.message}`,
+        `An error occurred while checking commentable questions: ${error.message}`
       );
     }
   };
@@ -143,7 +144,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  },
+                  }
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -257,7 +258,7 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Sector
               </p>
-              <p>{application?.sector?.name}</p>
+              <p>{application?.sector[0]?.name}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
@@ -287,7 +288,7 @@ const Page = () => {
                 onClick={() =>
                   handleViewFile(
                     application?.applicant?.businesses[0]?.businessCertificate,
-                    "business_certificates",
+                    "business_certificates"
                   )
                 }
               >
@@ -301,7 +302,7 @@ const Page = () => {
                 onClick={() =>
                   handleDownloadFile(
                     application?.applicant?.businesses[0]?.businessCertificate,
-                    "business_certificates",
+                    "business_certificates"
                   )
                 }
               >
@@ -362,16 +363,38 @@ const Page = () => {
                   <button
                     type="button"
                     onClick={async () => {
-                      setLoading(true);
-                      handleAddComments(comments, form, application, () =>
-                        fetchApplication(),
+                      setLoading("save");
+                      handleAddComments(
+                        "save",
+                        comments,
+                        form,
+                        application,
+                        () => fetchApplication()
                       );
-                      setLoading(false);
+                      setLoading(null);
                     }}
                     disabled={loading}
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                    {loading ? "Loading..." : "Save Comments"}
+                    {loading == "save" ? "Loading..." : "Save Comments"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setLoading("submit");
+                      handleAddComments(
+                        "submit",
+                        comments,
+                        form,
+                        application,
+                        () => fetchApplication()
+                      );
+                      setLoading(null);
+                    }}
+                    disabled={loading}
+                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    {loading === "submit" ? "Loading..." : "Submit Comments"}
                   </button>
                 </div>
               )}
@@ -391,21 +414,21 @@ const Page = () => {
               <div
                 className={`font-medium  ${
                   application?.stages?.find(
-                    (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+                    (stage: any) => stage.stage === ApplicationStage.EVALUATION
                   )?.status !== "REJECTED"
                     ? "bg-[#4BC500] text-[#4BC500]"
                     : "bg-red-600 text-red-600"
                 } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
               >
                 {application?.stages?.find(
-                  (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+                  (stage: any) => stage.stage === ApplicationStage.EVALUATION
                 )?.status ?? "PENDING"}
               </div>
               {application?.evaluationDecisions?.length < 3 &&
                 !application?.evaluationDecisions?.find(
                   (ev: any) =>
                     ev.employee.user_id.toString() ===
-                    profile?.userProfile?.data.uuid.toString(),
+                    profile?.userProfile?.data.uuid.toString()
                 ) && (
                   <>
                     <div
@@ -457,7 +480,7 @@ const Page = () => {
                     className={`font-medium  ${
                       application?.stages?.find(
                         (stage: any) =>
-                          stage.stage === ApplicationStage.DUE_DILIGENCY,
+                          stage.stage === ApplicationStage.DUE_DILIGENCY
                       )?.status !== "REJECTED"
                         ? "bg-[#4BC500] text-[#4BC500]"
                         : "bg-red-600 text-red-600"
@@ -465,14 +488,14 @@ const Page = () => {
                   >
                     {application?.stages?.find(
                       (stage: any) =>
-                        stage.stage === ApplicationStage.DUE_DILIGENCY,
+                        stage.stage === ApplicationStage.DUE_DILIGENCY
                     )?.status ?? "PENDING"}
                   </div>
                   {application?.duediligencyDecisions?.length < 4 &&
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>
                         dec?.employee?.user_id ===
-                        profile?.userProfile?.data.uuid,
+                        profile?.userProfile?.data.uuid
                     ) && (
                       <div
                         onClick={() => {
