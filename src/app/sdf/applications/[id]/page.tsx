@@ -252,24 +252,24 @@ const Page = () => {
               </p>
               <p>{application?.applicant?.phone}</p>
             </div>
-            <div className="flex gap-3 justify-start items-center">
+            {/* <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Sector
               </p>
               <p>{application?.sector?.name}</p>
-            </div>
+            </div> */}
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Sub Window
               </p>
               <p>{application?.subWindow?.title}</p>
             </div>
-            <div className="flex gap-3 justify-start items-center">
+            {/* <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Trade
               </p>
               <p>{application?.trades?.[0]?.trade?.title}</p>
-            </div>
+            </div> */}
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Institution name
