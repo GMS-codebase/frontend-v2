@@ -10,12 +10,18 @@ import { getApplicationStatus } from "@/services";
 import ExportForm from "@/components/core/data-table/ExportForm";
 import MainModal from "./MainModal";
 import { useDisclosure } from "@mantine/hooks";
-import { calculateTotalTrainees, capitalize, exportDataToExcel, getStage } from "@/utils/funcs";
+import {
+  calculateTotalTrainees,
+  capitalize,
+  exportDataToExcel,
+  getStage,
+} from "@/utils/funcs";
 import { submissionColumns } from "./Columns";
 import { formatDate } from "date-fns";
 
 const Page = () => {
-  const [isShowExport, {open: showExport, close: closeExport}] = useDisclosure(false);
+  const [isShowExport, { open: showExport, close: closeExport }] =
+    useDisclosure(false);
   const [reportType, setReportType] = useState("Submission Report");
   const { paginatedApplications: rawApplications, loading } = useSelector(
     (state: any) => state.applications,
@@ -68,13 +74,12 @@ const Page = () => {
     [applications],
   );
 
-
   const FilterDropDown = ({
     placeholderText,
     data,
     filterKey,
     className,
-    defaultValue
+    defaultValue,
   }: {
     placeholderText: string;
     data: any[];
@@ -109,9 +114,13 @@ const Page = () => {
     }
   };
 
-  const getReportName = (call: string, sector: string, type: string): string =>{
+  const getReportName = (
+    call: string,
+    sector: string,
+    type: string,
+  ): string => {
     return `${call == "All" ? "All Calls" : call} - ${sector == "All" ? "All Sectors" : sector} - ${type}`;
-  }
+  };
   const filteredApplications = useMemo(() => {
     return applications
       .filter(
@@ -135,27 +144,37 @@ const Page = () => {
       });
   }, [applications, searchTerm, selectedFilters]);
 
-  const formattedSubmissionData = filteredApplications.map((row: any, index: any)=>{
-    return {
-      index: index,
-      applicationNumber: row.applicationNumber,
-      institutionName: row.applicant?.businesses?.[0]?.businessName ?? "Not set",
-      window: row.window?.title,
-      call: row.call?.title,
-      subWindow: row.subWindow?.title,
-      sector: row.sectors[0]?.name,
-      trade: row.trades[0]?.trade?.title,
-      stage: row.currentStage,
-      contacts: row.applicant?.phone,
-      institutionType: capitalize(row.applicant.businesses?.[0]?.businessType),
-      legalStatus: row.applicant.businesses?.[0]?.private ? "Private": "Public",
-      requestedBeneficiaries: calculateTotalTrainees(JSON.parse(row?.answers)) ?? "None",
-      district: row.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "",
-      businessSector: row.applicant.businesses?.[0]?.addressLine?.split("-")[1] ?? "",
-      cell:row.applicant.businesses?.[0]?.addressLine?.split("-")[2] ?? "",
-      submissionDate: formatDate(row?.lastUpdatedAt, "yyyy-MM-dd"),
-    }
-  })
+  const formattedSubmissionData = filteredApplications.map(
+    (row: any, index: any) => {
+      return {
+        index: index,
+        applicationNumber: row.applicationNumber,
+        institutionName:
+          row.applicant?.businesses?.[0]?.businessName ?? "Not set",
+        window: row.window?.title,
+        call: row.call?.title,
+        subWindow: row.subWindow?.title,
+        sector: row.sectors[0]?.name,
+        trade: row.trades[0]?.trade?.title,
+        stage: row.currentStage,
+        contacts: row.applicant?.phone,
+        institutionType: capitalize(
+          row.applicant.businesses?.[0]?.businessType,
+        ),
+        legalStatus: row.applicant.businesses?.[0]?.private
+          ? "Private"
+          : "Public",
+        requestedBeneficiaries:
+          calculateTotalTrainees(JSON.parse(row?.answers)) ?? "None",
+        district:
+          row.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "",
+        businessSector:
+          row.applicant.businesses?.[0]?.addressLine?.split("-")[1] ?? "",
+        cell: row.applicant.businesses?.[0]?.addressLine?.split("-")[2] ?? "",
+        submissionDate: formatDate(row?.lastUpdatedAt, "yyyy-MM-dd"),
+      };
+    },
+  );
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
@@ -198,10 +217,21 @@ const Page = () => {
               className="flex-shrink-0"
             />
             <Select
-              data={["Submission Report", "Evaluation Report", "Due Diligence Report", "Grant Committee Report"]}
+              data={[
+                "Submission Report",
+                "Evaluation Report",
+                "Due Diligence Report",
+                "Grant Committee Report",
+              ]}
               placeholder={"Select Report Type"}
               value={reportType}
-              onChange={(value: any)=> {setReportType(value); setSelectedFilters({...selectedFilters, stage: getStage(value)})}}
+              onChange={(value: any) => {
+                setReportType(value);
+                setSelectedFilters({
+                  ...selectedFilters,
+                  stage: getStage(value),
+                });
+              }}
               className={`w-[33%] px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
             />
           </div>
@@ -214,11 +244,11 @@ const Page = () => {
           </button>
         </div>
         <button
-            className="w-[8rem] p-3 bg-blue-500 rounded-full text-white hover:bg-blue-600 m-4"
-            onClick={showExport}
-          >
-            Export Data
-          </button>
+          className="w-[8rem] p-3 bg-blue-500 rounded-full text-white hover:bg-blue-600 m-4"
+          onClick={showExport}
+        >
+          Export Data
+        </button>
       </div>
 
       <DataTable
@@ -234,8 +264,26 @@ const Page = () => {
         //   </button>
         // }
       />
-      <MainModal title="Export data" isOpen={isShowExport} onClose={closeExport}>
-        <ExportForm exportAllToExcel={()=> exportDataToExcel(getReportName(selectedFilters.call, selectedFilters.sector, reportType),formattedSubmissionData, submissionColumns)} data={formattedSubmissionData!} onClose={closeExport} />
+      <MainModal
+        title="Export data"
+        isOpen={isShowExport}
+        onClose={closeExport}
+      >
+        <ExportForm
+          exportAllToExcel={() =>
+            exportDataToExcel(
+              getReportName(
+                selectedFilters.call,
+                selectedFilters.sector,
+                reportType,
+              ),
+              formattedSubmissionData,
+              submissionColumns,
+            )
+          }
+          data={formattedSubmissionData!}
+          onClose={closeExport}
+        />
       </MainModal>
     </div>
   );

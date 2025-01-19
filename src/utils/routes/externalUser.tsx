@@ -2,21 +2,22 @@
 import * as Icons from "@/components/core/icons";
 import { Route } from "@/types";
 
-const externalUserRoutes: Route[] = [
-  {
-    label: "Dashboard",
-    path: "/externalUser",
-    icon: <Icons.SolarPieChart2Bold />,
-  },
+const externalEmployeeRoutes: Route[] = [
   {
     label: "Applications",
-    path: "/externalUser/applications",
+    path: "/employee/applications",
     icon: <Icons.SolarFolderWithFilesBold />,
   },
   {
+    label: "Applicants",
+    path: "/employee/applicants",
+    icon: <Icons.SolarUsersGroupTwoRoundedBold />,
+  },
+  {
     label: "Profile",
-    path: "/externalUser/profile",
+    path: "/employee/profile",
     icon: <Icons.SolarUserCircleBold />,
   },
 ];
-export default externalUserRoutes;
+
+export default externalEmployeeRoutes;

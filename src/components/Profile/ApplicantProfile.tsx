@@ -362,15 +362,17 @@ const ApplicantProfile = ({ type }: Props) => {
                 </div>
               )}
 
-            {activeSection === "employment" && <div className="w-full gap-2 flex justify-end mt-4">
-                <button
-                  type="button"
-                  onClick={openUpdate}
-                  className="w- px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Update
-                </button>
-              </div>}
+              {activeSection === "employment" && (
+                <div className="w-full gap-2 flex justify-end mt-4">
+                  <button
+                    type="button"
+                    onClick={openUpdate}
+                    className="w- px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    Update
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

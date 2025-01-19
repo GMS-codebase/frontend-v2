@@ -84,7 +84,7 @@ const Page = () => {
   }, [id]);
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}")
+      JSON.parse(application?.call.subwindowForms || "{}"),
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
@@ -114,7 +114,7 @@ const Page = () => {
       return false;
     } catch (error: any) {
       throw new Error(
-        `An error occurred while checking commentable questions: ${error.message}`
+        `An error occurred while checking commentable questions: ${error.message}`,
       );
     }
   };
@@ -142,7 +142,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -256,7 +256,7 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Sector
               </p>
-              <p>{application?.sector?.name}</p>
+              <p>{application?.sectors?.[0]?.name ?? ""}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
@@ -286,7 +286,7 @@ const Page = () => {
                 onClick={() =>
                   handleViewFile(
                     application?.applicant?.businesses[0]?.businessCertificate,
-                    "business_certificates"
+                    "business_certificates",
                   )
                 }
               >
@@ -300,7 +300,7 @@ const Page = () => {
                 onClick={() =>
                   handleDownloadFile(
                     application?.applicant?.businesses[0]?.businessCertificate,
-                    "business_certificates"
+                    "business_certificates",
                   )
                 }
               >
@@ -365,7 +365,7 @@ const Page = () => {
                         comments,
                         form,
                         application,
-                        () => fetchApplication()
+                        () => fetchApplication(),
                       );
                       setLoading(null);
                     }}
@@ -383,7 +383,7 @@ const Page = () => {
                         comments,
                         form,
                         application,
-                        () => fetchApplication()
+                        () => fetchApplication(),
                       );
                       setLoading(null);
                     }}
@@ -410,21 +410,21 @@ const Page = () => {
               <div
                 className={`font-medium  ${
                   application?.stages?.find(
-                    (stage: any) => stage.stage === ApplicationStage.EVALUATION
+                    (stage: any) => stage.stage === ApplicationStage.EVALUATION,
                   )?.status !== "REJECTED"
                     ? "bg-[#4BC500] text-[#4BC500]"
                     : "bg-red-600 text-red-600"
                 } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
               >
                 {application?.stages?.find(
-                  (stage: any) => stage.stage === ApplicationStage.EVALUATION
+                  (stage: any) => stage.stage === ApplicationStage.EVALUATION,
                 )?.status ?? "PENDING"}
               </div>
               {application?.evaluationDecisions?.length < 3 &&
                 !application?.evaluationDecisions?.find(
                   (ev: any) =>
                     ev.employee.user_id.toString() ===
-                    profile?.userProfile?.data.uuid.toString()
+                    profile?.userProfile?.data.uuid.toString(),
                 ) && (
                   <>
                     <div
@@ -476,7 +476,7 @@ const Page = () => {
                     className={`font-medium  ${
                       application?.stages?.find(
                         (stage: any) =>
-                          stage.stage === ApplicationStage.DUE_DILIGENCY
+                          stage.stage === ApplicationStage.DUE_DILIGENCY,
                       )?.status !== "REJECTED"
                         ? "bg-[#4BC500] text-[#4BC500]"
                         : "bg-red-600 text-red-600"
@@ -484,14 +484,14 @@ const Page = () => {
                   >
                     {application?.stages?.find(
                       (stage: any) =>
-                        stage.stage === ApplicationStage.DUE_DILIGENCY
+                        stage.stage === ApplicationStage.DUE_DILIGENCY,
                     )?.status ?? "PENDING"}
                   </div>
                   {application?.duediligencyDecisions?.length < 4 &&
                     !application?.duediligencyDecisions.find(
                       (dec: any) =>
                         dec?.employee?.user_id ===
-                        profile?.userProfile?.data.uuid
+                        profile?.userProfile?.data.uuid,
                     ) && (
                       <div
                         onClick={() => {

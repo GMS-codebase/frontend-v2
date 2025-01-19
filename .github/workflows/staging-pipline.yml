@@ -41,13 +41,13 @@ jobs:
           git status
 
       # Cache npm dependencies
-      - name: Cache npm dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('staging/package-lock.json', 'staging/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      # - name: Cache npm dependencies
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/.npm
+      #     key: ${{ runner.os }}-node-${{ hashFiles('staging/package-lock.json', 'staging/yarn.lock') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-node-
 
       # Install dependencies and build the application
       - name: Install dependencies and build the application

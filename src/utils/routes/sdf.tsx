@@ -9,14 +9,14 @@ const sdfRoutes: Route[] = [
     icon: <Icons.SolarDocumentBold />,
   },
   {
+    label: "Minutes",
+    path: "/sdf/minutes",
+    icon: <Icons.SolarDocumentBold />,
+  },
+  {
     label: "Applications",
     path: "/sdf/applications",
     icon: <Icons.SolarFolderWithFilesBold />,
-  },
-  {
-    label: "Appeals",
-    path: "/sdf/appeals",
-    icon: <Icons.SolarDocumentTextBroken />,
   },
   {
     label: "Applicants",
@@ -24,9 +24,19 @@ const sdfRoutes: Route[] = [
     icon: <Icons.SolarFileBold />,
   },
   {
-    label: "Minutes",
-    path: "/sdf/minutes",
+    label: "Appeals",
+    path: "/sdf/appeals",
+    icon: <Icons.SolarDocumentTextBroken />,
+  },
+  {
+    label: "Application Reports",
+    path: "/sdf/reports/application",
     icon: <Icons.SolarDocumentBold />,
+  },
+  {
+    label: "Reports",
+    path: "/sdf/reports/reports",
+    icon: <Icons.SolarDocumentsBold />,
   },
   {
     label: "M&E and OSHE Reports",

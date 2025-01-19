@@ -4,22 +4,76 @@ export interface ColumnDef<T = any> {
   header: string;
   accessorKey: keyof T;
 }
-type ReportType = "Submission Report" |  "Evaluation Report" | "Due Diligence Report" | "Grant Committee Report"
-export const capitalize = (str: string): string =>{
+type ReportType =
+  | "Submission Report"
+  | "Evaluation Report"
+  | "Due Diligence Report"
+  | "Grant Committee Report";
+export const capitalize = (str: string): string => {
   return str?.charAt(0)?.toUpperCase() + str?.slice(1);
-}
+};
+
+export const filterByStep = (app: any, step: string): boolean => {
+  if (
+    step.toLowerCase() === "pending" &&
+    app.currentStage === "EVALUATION" &&
+    !app.evaluationFinalDecision!
+  ) {
+    return true;
+  } else if (
+    step.toLowerCase() === "evaluated" &&
+    app.currentStage === "EVALUATION" &&
+    app.evaluationFinalDecision!
+  ) {
+    return true;
+  } else if (
+    step.toLowerCase() === "pending" &&
+    app.currentStage === "DUE_DILIGENCE" &&
+    !app.dueFinalDecision!
+  ) {
+    return true;
+  } else if (
+    step.toLowerCase() === "evaluated" &&
+    app.currentStage === "DUE_DILIGENCE" &&
+    app.dueFinalDecision!
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
 export const getStage = (type: ReportType) => {
-  return type == "Submission Report" ? "SUBMITTED" : type == "Evaluation Report" ? "EVALUATION" : type == "Due Diligence Report" ? "DUE_DILIGENCE" : "GRANT_COMMITTEE"
-}
+  return type == "Submission Report"
+    ? "SUBMITTED"
+    : type == "Evaluation Report"
+      ? "EVALUATION"
+      : type == "Due Diligence Report"
+        ? "DUE_DILIGENCE"
+        : "GRANT_COMMITTEE";
+};
 export function calculateTotalTrainees(data: any) {
   let totalTrainees = 0;
   for (const key in data) {
     const value = data[key];
-    if (Array.isArray(value) && value.some(item => "Number of trainees" in item || "Number of Trainees" in item)) {
-      console.log(key,value);
+    if (
+      Array.isArray(value) &&
+      value.some(
+        (item) => "Number of trainees" in item || "Number of Trainees" in item,
+      )
+    ) {
+      console.log(key, value);
       totalTrainees = value.reduce(
-        (total, item) => total + parseInt(item["Number of trainees"] ? item["Number of trainees"] : item["Number of Trainees"] ? item["Number of Trainees"] : 0, 10),
-        0
+        (total, item) =>
+          total +
+          parseInt(
+            item["Number of trainees"]
+              ? item["Number of trainees"]
+              : item["Number of Trainees"]
+                ? item["Number of Trainees"]
+                : 0,
+            10,
+          ),
+        0,
       );
       break;
     }
@@ -36,11 +90,13 @@ export const exportDataToExcel = async <T extends Record<string, any>>(
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Report");
 
-    worksheet.columns = columns.filter((column)=> column.accessorKey.toLowerCase() !== "actions").map((column) => ({
-      header: column.header,
-      key: column.accessorKey,
-      width: 20, // default column width
-    }));
+    worksheet.columns = columns
+      .filter((column) => column.accessorKey.toLowerCase() !== "actions")
+      .map((column) => ({
+        header: column.header,
+        key: column.accessorKey,
+        width: 20, // default column width
+      }));
 
     const headerRow = worksheet.getRow(1);
     headerRow.eachCell((cell) => {
@@ -59,7 +115,7 @@ export const exportDataToExcel = async <T extends Record<string, any>>(
     excelData.forEach((row) => {
       const formattedRow: Record<string, any> = {};
       columns.forEach((column) => {
-        if(column.accessorKey?.toLowerCase() !== "actions") {
+        if (column.accessorKey?.toLowerCase() !== "actions") {
           formattedRow[column.accessorKey] = row[column.accessorKey];
         }
       });
