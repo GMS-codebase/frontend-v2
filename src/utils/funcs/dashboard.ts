@@ -57,7 +57,7 @@ type Call = {
 
 export const getCallStats = (
   callId: string,
-  applications: Application[]
+  applications: Application[],
 ): {
   genderCount: GenderCount;
   businessTypeGroupings: businessTypeGroupings;
@@ -135,7 +135,7 @@ export const getCallStats = (
 // Function to get submissions data (count of applicants and applications per sector)
 export const getSubmissionsData = (
   applications: Application[],
-  stage: string
+  stage: string,
 ): SubmissionsData => {
   const submissionsData: SubmissionsData = {};
 
@@ -172,7 +172,7 @@ export const getSubmissionsData = (
 
 export const getApplicantsData = (
   applications: Application[],
-  stage: string
+  stage: string,
 ): ApplicantsData => {
   const applicantsData: any = {};
 
@@ -210,7 +210,7 @@ export const getApplicantsData = (
 
 export const getApplicationsData = (
   applications: Application[],
-  stage: string
+  stage: string,
 ): ApplicationsData => {
   const applicationsData: ApplicationsData = {};
 
@@ -234,7 +234,7 @@ export const getApplicationsData = (
 
 export const exportToExcel = (
   data: Record<string, any[]>,
-  fileName: string = "data.xlsx"
+  fileName: string = "data.xlsx",
 ): void => {
   if (!data || typeof data !== "object") {
     console.error("Invalid data provided for export");
@@ -260,7 +260,7 @@ export const exportToExcel = (
 export const downloadDashboardExcelFile = (
   applicationsData?: ApplicationsData,
   applicantsData?: ApplicantsData,
-  submissionsData?: SubmissionsData
+  submissionsData?: SubmissionsData,
 ): void => {
   const data: Record<string, any[]> = {};
 
@@ -269,7 +269,7 @@ export const downloadDashboardExcelFile = (
       ([sector, count]) => ({
         Sector: sector,
         Applications: count,
-      })
+      }),
     );
   }
 
@@ -278,7 +278,7 @@ export const downloadDashboardExcelFile = (
       ([sector, count]) => ({
         Sector: sector,
         Applicants: count,
-      })
+      }),
     );
   }
 
@@ -288,7 +288,7 @@ export const downloadDashboardExcelFile = (
         Sector: sector,
         Applications: details.applications,
         Applicants: details.applicants,
-      })
+      }),
     );
   }
 

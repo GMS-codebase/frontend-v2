@@ -53,7 +53,7 @@ const CallsList = () => {
       <div className="flex flex-shrink-0 gap-2 w-[600px] bg-[#005DE9] bg-opacity-10 rounded-3xl p-5">
         <div className="flex flex-col gap-4 flex-grow">
           <h2 className="font-semibold text-[#005DE9]">{call.title}</h2>
-          <ContentCollapse str={call?.description} visibleLength={90}/>
+          <ContentCollapse str={call?.description} visibleLength={90} />
           {/* <div className="font-medium ">{call.description}</div> */}
           <div className="flex flex-col  items-start gap-2">
             <Link href={`/applicant/applications/call/${call.uuid}`}>

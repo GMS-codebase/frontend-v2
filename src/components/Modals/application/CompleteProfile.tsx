@@ -126,7 +126,8 @@ const CompleteProfile = ({
     const newErrors: { [key: string]: string } = {};
     if (activeTab === 1) {
       if (!formData.tin) newErrors.tin = "TIN is required.";
-      if (!formData.business_name) newErrors.business_name = "Institution Name is required.";
+      if (!formData.business_name)
+        newErrors.business_name = "Institution Name is required.";
       if (!formData.reg_no_or_school_code)
         newErrors.reg_no_or_school_code =
           "Registration number or school code is required.";
@@ -328,7 +329,9 @@ const CompleteProfile = ({
                     />
                   </div>
                   {errors.business_name && (
-                    <p className="text-red-500 text-sm">{errors.business_name}</p>
+                    <p className="text-red-500 text-sm">
+                      {errors.business_name}
+                    </p>
                   )}
                 </div>
                 <div className="w-full">

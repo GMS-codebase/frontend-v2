@@ -12,47 +12,49 @@ import { VscEye } from "react-icons/vsc";
 import { getApplicationsPaginated, getApplicationStatus } from "@/services";
 import { useDispatch } from "react-redux";
 import { UnknownAction } from "redux";
+import { filterByStep } from "@/utils/funcs";
 
 const Page = () => {
-  const { paginatedApplications: rawApplications, paginationLoading: loading, total: totalApplications, page } = useSelector(
-    (state: any) => state.applications,
-  );
+  const {
+    // applications: rawApplications,
+    paginatedApplications: applications,
+    paginationLoading: loading,
+    total: totalApplications,
+    page,
+  } = useSelector((state: any) => state.applications);
 
-  console.log("applications ---> ", rawApplications);
-  const dispatch = useDispatch()
+  console.log("application one --> ", applications?.[0]);
+  const dispatch = useDispatch();
   const [pageState, setPage] = useState(page ?? 1);
-  const [limit, setLimit] = useState(10); 
+  const [limit, setLimit] = useState(10);
   const totalPages = totalApplications / limit;
 
   useEffect(() => {
-      dispatch(getApplicationsPaginated(page, limit) as unknown as UnknownAction);
+    dispatch(getApplicationsPaginated(page, limit) as unknown as UnknownAction);
   }, [dispatch, page, limit]);
 
   const handleNextPage = (newPage: number, limit: number) => {
-      dispatch(getApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction);
+    dispatch(
+      getApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction,
+    );
   };
   const handlePreviousPage = (newPage: number, limit: number) => {
-    dispatch(getApplicationsPaginated(newPage -1, limit) as unknown as UnknownAction);
-};
-const handleChangePage = (newPage: number, limit: number) => {
-  dispatch(getApplicationsPaginated(newPage, limit) as unknown as UnknownAction);
-};
-
-  const applications = useMemo(
-    () =>
-      rawApplications.map((app: any) => ({
-        ...app,
-        sector: app.sectors[0] || null,
-        trade: app.trades[0] || null,
-      })),
-    [rawApplications],
-  );
+    dispatch(
+      getApplicationsPaginated(newPage - 1, limit) as unknown as UnknownAction,
+    );
+  };
+  const handleChangePage = (newPage: number, limit: number) => {
+    dispatch(
+      getApplicationsPaginated(newPage, limit) as unknown as UnknownAction,
+    );
+  };
 
   const filtersContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
     stage: "All",
+    step: "PENDING",
     window: "All",
     subWindow: "All",
     call: "All",
@@ -127,14 +129,16 @@ const handleChangePage = (newPage: number, limit: number) => {
       accessorKey: "sector",
       header: "Sector",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.sector?.name}</div>
+        <div className="truncate">{row.original?.sectors?.[0]?.name}</div>
       ),
     },
     {
       accessorKey: "trade",
       header: "Trade",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.trade?.trade?.title}</div>
+        <div className="truncate">
+          {row.original?.trades?.[0]?.trade?.title}
+        </div>
       ),
     },
     {
@@ -229,13 +233,21 @@ const handleChangePage = (newPage: number, limit: number) => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
+          app.applicant?.name
+            .toLowerCase()
+            .includes(
+              searchTerm.toLowerCase() ||
+                app.applicant?.businesses?.[0]?.businessName
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase()),
+            ),
       )
       .filter((app: any) => {
-        const { stage, window, call, subWindow, sector, trade } =
+        const { stage, window, call, subWindow, sector, trade, step } =
           selectedFilters;
         return (
-          (stage === "All" || app?.currentStage === stage) &&
+          (stage === "All" ||
+            (app?.currentStage === stage && filterByStep(app, step))) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&
@@ -279,6 +291,51 @@ const handleChangePage = (newPage: number, limit: number) => {
               filterKey="stage"
               className="flex-shrink-0"
             />
+            {selectedFilters.stage.toLowerCase() !== "all" && (
+              <div className="flex items-center gap-3 ">
+                <button
+                  onClick={() =>
+                    setSelectedFilters({ ...selectedFilters, step: "PENDING" })
+                  }
+                  className={`py-3 px-5 transition-all duration-200 rounded-full ${selectedFilters.step === "PENDING" ? "bg-blue-400" : "bg-blue-100"} font-semibold text-white`}
+                >
+                  PENDING
+                </button>
+                <button
+                  onClick={() =>
+                    setSelectedFilters({
+                      ...selectedFilters,
+                      step: "EVALUATED",
+                    })
+                  }
+                  className={`py-3 px-5 transition-all duration-200 rounded-full ${selectedFilters.step === "EVALUATED" ? "bg-blue-400" : "bg-blue-100"} font-semibold text-white`}
+                >
+                  EVALUATED
+                </button>
+                <button
+                  onClick={() =>
+                    setSelectedFilters({
+                      ...selectedFilters,
+                      step: "APPROVED",
+                    })
+                  }
+                  className={`py-3 px-5 transition-all duration-200 rounded-full ${selectedFilters.step === "APPROVED" ? "bg-green-400" : "bg-green-100"} font-semibold text-white`}
+                >
+                  APPROVED
+                </button>
+                <button
+                  onClick={() =>
+                    setSelectedFilters({
+                      ...selectedFilters,
+                      step: "REJECTED",
+                    })
+                  }
+                  className={`py-3 px-5 transition-all duration-200 rounded-full ${selectedFilters.step === "REJECTED" ? "bg-red-400" : "bg-red-100"} font-semibold text-white`}
+                >
+                  REJECTED
+                </button>
+              </div>
+            )}
             <FilterDropDown
               placeholderText="Filter By Window"
               data={filterOptions.windows}
@@ -324,17 +381,17 @@ const handleChangePage = (newPage: number, limit: number) => {
         paginationFuncs={{
           onChangePage: handleChangePage,
           onNextPage: handleNextPage,
-          onPreviousPage: handlePreviousPage
+          onPreviousPage: handlePreviousPage,
         }}
         paginationProps={{
           isPaginated: true,
           paginateOpts: {
-              page: page - 1,
-              totalPages: totalPages,
-              limit: limit,
+            page: page - 1,
+            totalPages: totalPages,
+            limit: limit,
           },
-          setPaginateOpts: () => {}
-      }}
+          setPaginateOpts: () => {},
+        }}
       />
     </div>
   );

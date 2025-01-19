@@ -54,7 +54,6 @@ export function middleware(request: NextRequest) {
     const decoded: any = jwtDecode(token.value);
     const isExpired = decoded.exp * 1000 < Date.now();
     if (isExpired && !whitelist.includes(request.nextUrl.pathname)) {
-      request.cookies.delete("token");
       return NextResponse.redirect(new URL("/", request.url));
     }
     const role = decoded?.role;
