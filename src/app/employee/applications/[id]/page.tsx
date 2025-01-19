@@ -258,7 +258,7 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Sector
               </p>
-              <p>{application?.sector[0]?.name}</p>
+              <p>{application?.sector?.[0]?.name}</p>
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">

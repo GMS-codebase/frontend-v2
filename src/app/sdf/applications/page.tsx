@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
@@ -30,7 +31,7 @@ const filterByStep = (app: any, step: string ): boolean => {
   }
 }
 const Page = () => {
-  const { paginatedApplications: UrawApplications, applications: rawApplications , loading, total: totalApplications, page } = useSelector( //Todo: to update incase of an error
+  const { applications: rawApplications , loading, total: totalApplications, page } = useSelector(
     (state: any) => state.applications,
   );
   const [pageState, setPage] = useState(page ?? 1);
@@ -355,13 +356,6 @@ const handleChangePage = (newPage: number, limit: number) => {
         columns={columns}
         loading={loading}
         totalApplications={totalApplications}
-        // page={page} // Todo: to update in case of an error
-        // setPage={setPage}
-        // paginationFuncs={{
-        //   onChangePage: handleChangePage,
-        //   onNextPage: handleNextPage,
-        //   onPreviousPage: handlePreviousPage
-        // }}
         paginationProps={{
           isPaginated: true,
           paginateOpts: {

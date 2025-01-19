@@ -17,7 +17,8 @@ export default function AdminLayout({
   const { announcement, loading } = useSelector(
     (state: any) => state.announcement,
   );
-
+  const {profile} = useSelector((state: any) => state.profile);
+  console.log("profile ---> ", profile);
   return (
     <div className="w-screen h-screen flex flex-col justify-between bg-background p-3 overflow-hidden">
       {announcement &&
