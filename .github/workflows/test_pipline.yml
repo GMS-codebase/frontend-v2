@@ -47,7 +47,13 @@ jobs:
           cd test
           npm install --force
           npm run build
-
+      - name: Mode .next, package.json, node_modules folder to builds folder
+        run: |
+          cd test
+          cp -r .next ~/frontend-actions-runner/_work/frontend-v2/frontend-v2/builds/test/
+          cp -r package.json ~/frontend-actions-runner/_work/frontend-v2/frontend-v2/builds/test/
+          cp -r node_modules ~/frontend-actions-runner/_work/frontend-v2/frontend-v2/builds/test/
+  
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
