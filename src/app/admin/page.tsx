@@ -26,10 +26,10 @@ import AdminAction from "@/components/Actions/AdminAction";
 
 const Dashboard = () => {
   const { calls, loading: callsLoading } = useSelector(
-    (state: any) => state.calls,
+    (state: any) => state.calls
   );
   const { applications, loading: applicationsLoading } = useSelector(
-    (state: any) => state.applications,
+    (state: any) => state.applications
   );
 
   const [callStats, setCallStats] = useState<any>(null);
@@ -218,7 +218,7 @@ const Dashboard = () => {
                 {
                   Object.values(callStats?.applicantsPerSector || {}).reduce(
                     (sum: any, value) => sum + value,
-                    0,
+                    0
                   ) as any
                 }
               </span>
@@ -332,7 +332,7 @@ const Dashboard = () => {
                     (acc: any, item: any) => {
                       if (gaugeStage === "ALL") {
                         acc[item] = Object.values(
-                          callStats?.businessTypeGroupings[item] || {},
+                          callStats?.businessTypeGroupings[item] || {}
                         ).reduce((sum: any, value: any) => sum + value, 0);
                       } else {
                         acc[item] =
@@ -341,7 +341,7 @@ const Dashboard = () => {
                       }
                       return acc;
                     },
-                    {} as { [key: string]: number },
+                    {} as { [key: string]: number }
                   ) || {}
                 }
               />
@@ -357,7 +357,7 @@ const Dashboard = () => {
             downloadDashboardExcelFile(
               applicationsData,
               applicantsData,
-              submissionsData,
+              submissionsData
             )
           }
         >
@@ -407,7 +407,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         undefined,
                         undefined,
-                        submissionsData,
+                        submissionsData
                       )
                     }
                   />{" "}
@@ -454,13 +454,13 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(submissionsData || {}).reduce(
                     (sum, key) => sum + submissionsData[key].applicants,
-                    0,
+                    0
                   )}
                 </span>
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(submissionsData || {}).reduce(
                     (sum, key) => sum + submissionsData[key].applications,
-                    0,
+                    0
                   )}
                 </span>
               </div>
@@ -507,7 +507,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         undefined,
                         applicantsData,
-                        undefined,
+                        undefined
                       )
                     }
                   />{" "}
@@ -550,7 +550,7 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(applicantsData || {}).reduce(
                     (sum, key) => sum + applicantsData[key],
-                    0,
+                    0
                   )}
                 </span>
               </div>
@@ -597,7 +597,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         applicationsData,
                         undefined,
-                        undefined,
+                        undefined
                       )
                     }
                   />{" "}
@@ -640,7 +640,7 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(applicationsData || {}).reduce(
                     (sum, key) => sum + applicationsData[key],
-                    0,
+                    0
                   )}
                 </span>
               </div>
@@ -760,7 +760,7 @@ function BasicGauges({
 }) {
   const totalApplicants = Object.values(applicationsByBusinessType).reduce(
     (sum, value) => sum + value,
-    0,
+    0
   );
 
   const colors = [
@@ -780,7 +780,7 @@ function BasicGauges({
       value,
       percentage: totalApplicants > 0 ? (value / totalApplicants) * 100 : 0,
       color: colors[index % colors.length],
-    }),
+    })
   );
 
   if (totalApplicants === 0) {
