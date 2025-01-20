@@ -962,7 +962,7 @@ export const handleAddComments = async (
 };
 
 export const getApplicationStatus = (application: any) => {
-  if (!application.finishedAnswering) {
+  if (!application.finishedAnswering && application.call.status == "OPEN") {
     return "ANSWERING";
   }
   if (application.finishedAnswering && application.call.status === "OPEN") {
@@ -970,7 +970,7 @@ export const getApplicationStatus = (application: any) => {
   } else if (
     application?.currentStage === ApplicationStage.EVALUATION &&
     !application?.call?.closedEvaluation &&
-    (application?.evaluationDecisions?.length < 3 ||
+    (application?.evaluationDecisions?.length != 3 &&
       !application?.evaluationFinalDecision)
   ) {
     return "EVALUATION IN PROGRESS";

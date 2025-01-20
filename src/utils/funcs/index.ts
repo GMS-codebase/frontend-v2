@@ -13,17 +13,48 @@ export const capitalize = (str: string): string => {
   return str?.charAt(0)?.toUpperCase() + str?.slice(1);
 };
 
+export const getFinalDecisionFromDecisionsArray = (decisions: any[]) =>{
+  let numberOfApprovals = 0;
+  let numberOfRejections = 0;
+  if(!decisions) return null;
+  for (const decision of decisions) {
+    if (decision?.decision?.toLowerCase() === "approved") {
+      numberOfApprovals += 1;
+    } else if (decision.decision?.toLowerCase() === "rejected") {
+      numberOfRejections +=1;
+    }
+}
+
+  if (numberOfApprovals > numberOfRejections) {
+    return "APPROVED"
+  }else {
+    return "REJECTED"
+  }
+}
 export const filterByStep = (app: any, step: string): boolean => {
   if (
     step.toLowerCase() === "pending" &&
     app.currentStage === "EVALUATION" &&
-    !app.evaluationFinalDecision!
+    app?.evaluationDecisions?.length < 3
   ) {
     return true;
   } else if (
     step.toLowerCase() === "evaluated" &&
     app.currentStage === "EVALUATION" &&
-    app.evaluationFinalDecision!
+    app?.evaluationDecisions?.length == 3
+  ) {
+    return true;
+  }else if (
+    step.toLowerCase() === "rejected" &&
+    app.currentStage === "EVALUATION" &&
+    app?.evaluationDecisions?.length == 3 && getFinalDecisionFromDecisionsArray(app?.evaluationDecisions) === "REJECTED"
+  ) {
+    return true;
+  }else if (
+    step.toLowerCase() === "approved" &&
+    app.currentStage === "EVALUATION" &&
+    app?.evaluationDecisions?.length == 3 &&
+    getFinalDecisionFromDecisionsArray(app?.evaluationDecisions) === "APPROVED"
   ) {
     return true;
   } else if (
@@ -36,6 +67,18 @@ export const filterByStep = (app: any, step: string): boolean => {
     step.toLowerCase() === "evaluated" &&
     app.currentStage === "DUE_DILIGENCE" &&
     app.dueFinalDecision!
+  ) {
+    return true;
+  }else if (
+    step.toLowerCase() === "rejected" &&
+    app.currentStage === "DUE_DILIGENCE" &&
+    getFinalDecisionFromDecisionsArray(app.duediligencyDecisions) === "REJECTED"
+  ) {
+    return true;
+  }else if (
+    step.toLowerCase() === "approved" &&
+    app.currentStage === "DUE_DILIGENCE" &&
+    getFinalDecisionFromDecisionsArray(app.duediligencyDecisions) === "APPROVED"
   ) {
     return true;
   } else {
@@ -61,7 +104,6 @@ export function calculateTotalTrainees(data: any) {
         (item) => "Number of trainees" in item || "Number of Trainees" in item,
       )
     ) {
-      console.log(key, value);
       totalTrainees = value.reduce(
         (total, item) =>
           total +
@@ -108,9 +150,6 @@ export const exportDataToExcel = async <T extends Record<string, any>>(
         fgColor: { argb: "FF0070C0" },
       };
     });
-
-    console.log("excel data --> ", excelData);
-    console.log("excel columns --> ", columns);
 
     excelData.forEach((row) => {
       const formattedRow: Record<string, any> = {};
