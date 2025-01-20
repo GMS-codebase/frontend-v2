@@ -141,7 +141,7 @@ export const submissionColumns: ColumnDef<any>[] = [
     header: "Stage",
     cell: ({ row }) => (
       <div className="truncate">
-        {getApplicationStatus(row.original) || "-"}
+        {row.original.currentStage || "-"}
       </div>
     ),
   },

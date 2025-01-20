@@ -962,6 +962,9 @@ export const handleAddComments = async (
 };
 
 export const getApplicationStatus = (application: any) => {
+  if(!application.finishedAnswering && application.call.status === "OPEN"){
+    return "ANSWERING"
+  }
   if (application.finishedAnswering && application.call.status === "OPEN") {
     return "SUBMITTED";
   } else if (
@@ -981,14 +984,14 @@ export const getApplicationStatus = (application: any) => {
     application?.currentStage === ApplicationStage.DUE_DILIGENCY &&
     !application?.call?.closedDueDiligency && application?.duediligencyDecisions?.length < 3
   ) {
-    return "DUE DILIGENCY IN  PROGRESS";
+    return "DUE DILIGENCY IN PROGRESS";
   } else if (
     application?.currentStage === ApplicationStage.DUE_DILIGENCY &&
     !application?.call?.closedDueDiligency &&
-    (application?.dueDecisions?.length == 3 ||
+    (application?.duediligencyDecisions?.length == 3 ||
     application?.dueFinalDecision)
   ) {
-    return "EVALUATION COMPLETED";
+    return "DUE DILIGENCE COMPLETED";
   } else if (
     application?.currentStage === "GRANT_COMMITTEE" &&
     !application?.call?.closedGrantCommittee
