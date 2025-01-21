@@ -210,14 +210,17 @@ const Page = () => {
                         <FilterDropDown
                             placeholderText="Filter By Call"
                             data={["call 1"]}
+                       
                         />
                         <FilterDropDown
                             placeholderText="Filter By Sector"
                             data={["ICT and innovations"]}
+                     
                         />
                         <FilterDropDown
                             placeholderText="Filter By Trade"
                             data={["Manufacturing"]}
+                    
                         />
                     </div>
 

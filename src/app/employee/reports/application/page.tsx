@@ -159,8 +159,8 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4 gap-5">
-        <div className="relative w-[20rem]">
+      <div className="w-full lg:flex justify-between items-center p-4 gap-5">
+        <div className="relative lg:w-[20rem] w-full mt-4 lg:mt-0">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} color="" />
           </span>
@@ -172,7 +172,7 @@ const Page = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex items-center max-w-[60%]">
+        <div className="flex items-center lg:max-w-[60%] w-full mt-4 lg:mt-0">
           <button
             onClick={() => handleScroll("left")}
             className="p-2 bg-white shadow-lg rounded-full mr-2"
@@ -202,7 +202,7 @@ const Page = () => {
               placeholder={"Select Report Type"}
               value={reportType}
               onChange={(value: any)=> {setReportType(value); setSelectedFilters({...selectedFilters, stage: getStage(value)})}}
-              className={`w-[33%] px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
+              className={`lg:w-[33%] flex shrink-0 px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
             />
           </div>
 
