@@ -31,14 +31,21 @@ const FileInput: React.FC<FileInputProps> = ({
     setSelectedFile(file);
 
     setIsUploading(true);
-    try {
-      if (value) {
-        await authorizedApi.post("/api/v2/files/delete", {
-          folder: question.id,
-          filename: value,
-        });
-      }
 
+    if (value) {
+      try {
+        await authorizedApi.delete("/files/delete", {
+          data: {
+            folder: question.id,
+            filename: value,
+          },
+        });
+      } catch (error) {
+        console.warn("Failed to delete the file, proceeding anyway:", error);
+      }
+    }
+
+    try {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("folder", question.id);
@@ -77,7 +84,7 @@ const FileInput: React.FC<FileInputProps> = ({
 
   return (
     <div
-      className={`flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+      className={`flex mt-2 p-4 flex-col items-center justify-center w-full min-h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
     >
       <label
         htmlFor="file-upload"
@@ -86,10 +93,17 @@ const FileInput: React.FC<FileInputProps> = ({
         <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
           <span className="text-2xl font-bold">+</span>
         </div>
+        {(selectedFile || value) && (
+          <div className="mt-4 bg-gray-200 text-black font-semibold rounded-full px-4 py-2">
+            Select Another File
+          </div>
+        )}
         {selectedFile || value ? (
           <div className="text-center">
             <p className="text-xl font-medium text-gray-700">
-              {value ? value : selectedFile?.name}
+              {selectedFile
+                ? selectedFile?.name
+                : value && typeof value === "string" && value.split("/").pop()}
             </p>
             <p className="text-sm text-gray-500">
               {isUploading ? "Uploading..." : "File selected"}
@@ -102,6 +116,14 @@ const FileInput: React.FC<FileInputProps> = ({
           </div>
         )}
       </label>
+      {(selectedFile || value) && (
+        <button
+          onClick={() => handleViewFile(value as any, question.id)}
+          className={`bg-gray-200 px-5  text-black font-semibold rounded-full w-fit py-2 flex gap-2 items-center justify-center`}
+        >
+          View Current Selected File
+        </button>
+      )}
       <input
         id="file-upload"
         type="file"
@@ -110,14 +132,6 @@ const FileInput: React.FC<FileInputProps> = ({
         style={{ display: "none" }}
         onChange={(e) => handleFileChange(e.target.files)}
       />
-      {(selectedFile || value) && (
-        <button
-          onClick={() => setSelectedFile(null)}
-          className="mt-4 bg-gray-200 text-black font-semibold rounded-full px-4 py-2"
-        >
-          Select Another File
-        </button>
-      )}
     </div>
   );
 };

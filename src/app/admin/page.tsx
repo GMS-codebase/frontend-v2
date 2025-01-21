@@ -1,448 +1,845 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import React, { useEffect, useState } from "react";
-import CustomBarChart from "@/components/core/charts/CustomBarChart";
 import {
   SolarBenzeneRingBroken,
   SolarCalendarBold,
   SolarFileBold,
 } from "@/components/core/icons";
-import { Select, Skeleton } from "@mantine/core";
-import dashVector from "@/assets/Vectors/dashVector.png";
-import DashboardLineChart from "@/components/core/charts/DashboardLineChart";
-import Image from "next/image";
+import {
+  downloadDashboardExcelFile,
+  getApplicantsData,
+  getApplicationsData,
+  getCallStats,
+  getSubmissionsData,
+} from "@/utils/funcs/dashboard";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import ProgressGender from "./progressGender";
-import BasicGauges from "./BasicGauges";
+import Image from "next/image";
+import { PieChart } from "@mui/x-charts";
+import Male from "../../assets/Vectors/ion_male.svg";
+import Female from "../../assets/Vectors/icon-park-outline_female.svg";
+import GaugeChart from "react-gauge-chart";
+import { Select } from "@mantine/core";
 import Dash from "./dash";
 import AdminAction from "@/components/Actions/AdminAction";
-import { authorizedApi } from "@/utils/api";
-import { useDispatch, useSelector } from "react-redux";
-import { getDashboardData } from "@/services";
 
-const lineChartData = [
-  { day: "Mon", completed: 60, ongoing: 30 },
-  { day: "Tue", completed: 70, ongoing: 50 },
-  { day: "Wed", completed: 80, ongoing: 40 },
-  { day: "Thu", completed: 50, ongoing: 70 },
-  { day: "Fri", completed: 90, ongoing: 60 },
-  { day: "Sat", completed: 40, ongoing: 30 },
-  { day: "Sun", completed: 80, ongoing: 90 },
-];
-
-const transformedData = {
-  labels: lineChartData.map((item) => item.day),
-  datasets: [
-    {
-      label: "Completed",
-      data: lineChartData.map((item) => item.completed),
-      borderColor: "#005DE9",
-      backgroundColor: "#005DE9",
-      fill: true,
-    },
-    {
-      label: "Ongoing",
-      data: lineChartData.map((item) => item.ongoing),
-      borderColor: "#FF5722",
-      backgroundColor: "#FF5722",
-      fill: true,
-    },
-  ],
-};
-
-const Page = () => {
-  const boysCount = 20;
-  const girlsCount = 15;
-  const totalCount = boysCount + girlsCount;
-  const startDate = "2023-05-01";
-  const endDate = "2023-12-31";
-  const { data: dashboardData, loading } = useSelector(
-    (state: any) => state.dashboard,
+const Dashboard = () => {
+  const { calls, loading: callsLoading } = useSelector(
+    (state: any) => state.calls
   );
-  const { sectorsData } = useSelector((state: any) => state.dashboard);
-  const companyApplicants = 12345;
-  const schoolApplicants = 11123;
-  const totalApplicants = companyApplicants + schoolApplicants;
-  const [selectedOption, setSelectedOption] = useState("Option 1");
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedOption(event.target.value);
-  };
-  const [call, setCall] = useState("");
-  const { calls } = useSelector((state: any) => state.calls);
-  const [stage, setStage] = useState("");
-  const dispatch = useDispatch();
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      await getDashboardData(dispatch, call, stage);
-    };
-    fetchDashboardData();
-  }, [call, dispatch, stage]);
+  const { applications, loading: applicationsLoading } = useSelector(
+    (state: any) => state.applications
+  );
+
+  const [callStats, setCallStats] = useState<any>(null);
+  const [applicantsData, setApplicantsData] = useState<any>({});
+  const [applicationsData, setApplicationsData] = useState<any>({});
+  const [submissionsData, setSubmissionsData] = useState<any>({});
+  const [activeCall, setActiveCall] = useState<string>("");
+  const [applicantsStage, setApplicantsStage] = useState<string>("ALL");
+  const [applicationsStage, setApplicationsStage] = useState<string>("ALL");
+  const [submissionsStage, setSubmissionsStage] = useState<string>("ALL");
+  const [gaugeStage, setGaugeStage] = useState<string>("ALL");
+  const [callStatsLoading, setCallStatsLoading] = useState<boolean>(true);
+  const [applicantsDataLoading, setApplicantsDataLoading] =
+    useState<boolean>(true);
+  const [applicationsDataLoading, setApplicationsDataLoading] =
+    useState<boolean>(true);
+  const [submissionsDataLoading, setSubmissionsDataLoading] =
+    useState<boolean>(true);
 
   const dashTablesData = [
     {
       sector: "Manufacturing",
-      col1Data: sectorsData["Manufacturing"]?.countApplicants,
-      col2Data: sectorsData["Manufacturing"]?.countApplicants,
+      col1Data: 0,
+      col2Data: 0,
     },
     {
       sector: "Hospitality & Tourism",
-      col1Data: sectorsData["Hospitality & Tourism"]?.countApplicants,
-      col2Data: sectorsData["Hospitality & Tourism"]?.countApplicants,
+      col1Data: 0,
+      col2Data: 0,
     },
     {
       sector: "Transport & Logistics",
-      col1Data: sectorsData["Transport & Logistics"]?.countApplicants,
-      col2Data: sectorsData["Transport & Logistics"]?.countApplicants,
+      col1Data: 0,
+      col2Data: 0,
     },
     {
       sector: "Agriculture",
-      col1Data: sectorsData["Agriculture"]?.countApplicants,
-      col2Data: sectorsData["Agriculture"]?.countApplicants,
+      col1Data: 0,
+      col2Data: 0,
     },
     {
       sector: "Energy",
-      col1Data: sectorsData["Energy"]?.countApplicants,
-      col2Data: sectorsData["Energy"]?.countApplicants,
+      col1Data: 0,
+      col2Data: 0,
     },
     {
       sector: "Mining",
-      col1Data: sectorsData["Mining"]?.countApplicants,
-      col2Data: sectorsData["Mining"]?.countApplicants,
+      col1Data: 0,
+      col2Data: 0,
     },
     {
       sector: "ICT & Digital Skills",
-      col1Data: sectorsData["Mining"]?.countApplicants,
-      col2Data: sectorsData["Mining"]?.countApplicants,
+      col1Data: 0,
+      col2Data: 0,
     },
     {
       sector: "Construction",
-      col1Data: sectorsData["Mining"]?.countApplicants,
-      col2Data: sectorsData["Mining"]?.countApplicants,
+      col1Data: 0,
+      col2Data: 0,
     },
     {
       sector: "Other",
-      col1Data: sectorsData["Mining"]?.countApplicants,
-      col2Data: sectorsData["Mining"]?.countApplicants,
+      col1Data: 0,
+      col2Data: 0,
     },
     {
       sector: "Total",
-      col1Data: sectorsData["Mining"]?.countApplicants,
-      col2Data: sectorsData["Mining"]?.countApplicants,
+      col1Data: 0,
+      col2Data: 0,
     },
   ];
 
-  return (
-    <div className="w-full text-secondaryText pb-20 lg:overflow-y-auto">
-      {loading ? (
-        <Skeleton w={"100%"} h={1000} />
-      ) : (
-        <>
-          <div className="w-full flex flex-col mb-4">
-            <div className="lg:flex w-full justify-between">
-              <p>Evaluation</p>
-              <div className="text-md gap-2 flex self-end">
-                <div className="rounded-full border-black-1">
-                  <select
-                    value={call}
-                    onChange={(e: any) => setCall(e.target.value)}
-                    className="w-full p-2 border border-1 border-black rounded-full text-md"
-                  >
-                    {calls.map((call: any, index: number) => (
-                      <option key={index} value={call.uuid}>
-                        {call.title.slice(0,50)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
+  useEffect(() => {
+    if (!callsLoading) {
+      setActiveCall(calls[0].uuid);
+    }
+  }, [callsLoading]);
 
-          <div className="mt-8 flex flex-wrap gap-6">
-            <div className="bg-white p-6 rounded-2xl flex-grow">
-              <h2 className="text-lg font-semibold mb-4">
-                Applicants per Priority Sector
-              </h2>
-              {[
-                {
-                  sector: "Manufacturing",
-                },
-                {
-                  sector: "Hospitality & Tourism",
-                },
-                {
-                  sector: "Transport & Logistics",
-                },
-                {
-                  sector: "Agriculture",
-                },
-                {
-                  sector: "Energy",
-                },
-                {
-                  sector: "Mining",
-                },
-                {
-                  sector: "ICT & Digital Skills",
-                },
-                {
-                  sector: "Construction",
-                },
-                {
-                  sector: "Other",
-                },
-                {
-                  sector: "Total",
-                },
-              ]?.map((sector: any, index: any) => (
+  useEffect(() => {
+    if (
+      !callsLoading &&
+      !applicationsLoading &&
+      applications.length > 0 &&
+      activeCall
+    ) {
+      const stats = getCallStats(activeCall, applications);
+      setCallStats(stats);
+      console.log(stats);
+      setCallStatsLoading(false);
+    }
+  }, [callsLoading, applicationsLoading, activeCall]);
+
+  useEffect(() => {
+    if (
+      !callsLoading &&
+      !applicationsLoading &&
+      applications.length > 0 &&
+      applicantsStage
+    ) {
+      const data = getApplicantsData(applications, applicantsStage);
+      setApplicantsData(data);
+      setApplicantsDataLoading(false);
+    }
+  }, [callsLoading, applicationsLoading, applicantsStage]);
+
+  useEffect(() => {
+    if (
+      !callsLoading &&
+      !applicationsLoading &&
+      applications.length > 0 &&
+      applicationsStage
+    ) {
+      const data = getApplicationsData(applications, applicationsStage);
+      setApplicationsData(data);
+      setApplicationsDataLoading(false);
+    }
+  }, [callsLoading, applicationsLoading, applicationsStage]);
+
+  useEffect(() => {
+    if (
+      !callsLoading &&
+      !applicationsLoading &&
+      applications.length > 0 &&
+      submissionsStage
+    ) {
+      const data = getSubmissionsData(applications, submissionsStage);
+      setSubmissionsData(data);
+      setSubmissionsDataLoading(false);
+    }
+  }, [callsLoading, applicationsLoading, submissionsStage]);
+
+  const sortedSectors = Object.entries(callStats?.applicantsPerSector || {})
+    .sort((a: any, b: any) => b[1] - a[1])
+    .slice(0, 5);
+  const othersTotal = Object.entries(callStats?.applicantsPerSector || {})
+    .slice(5)
+    .reduce((sum, [, value]: any[]) => sum + value, 0);
+  const displayedSectors = [
+    ...sortedSectors,
+    othersTotal > 0 ? ["Others", othersTotal] : null,
+  ].filter(Boolean);
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <p>Evaluation</p>
+        {!callsLoading && (
+          <Select
+            value={activeCall}
+            data={calls.map((call: any) => ({
+              value: call.uuid,
+              label: call.title,
+            }))}
+            onChange={(value) => setActiveCall(value as any)}
+            className="bg-white p-2.5 rounded-2xl outline-none  w-[30vw]"
+          />
+        )}
+      </div>
+
+      {callStatsLoading ? (
+        <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full mt-8"></div>
+      ) : (
+        <div className="mt-8 flex flex-wrap gap-6">
+          <div className="bg-white p-6 rounded-2xl flex-grow">
+            <h2 className="text-lg font-semibold mb-4">
+              Applicants per Priority Sector
+            </h2>
+            {
+              //@ts-ignore
+              displayedSectors.map(([sector, count], index) => (
                 <div
                   key={index}
                   className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2"
                 >
-                  <span className="text-base">{sector?.sector}</span>
+                  <span className="text-base">{sector}</span>
                   <span className="text-base bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
-                    {sectorsData[sector?.sector]?.countApplicants}
+                    {count}
                   </span>
                 </div>
-              ))}
-            </div>
+              ))
+            }
 
-            {/* <div className="bg-white p-6 rounded-2xl flex-grow relative">
-              <div className="flex justify-between items-center mb-8">
-                <p className="text-xl font-medium">Selected Applicants</p>
-                <div className="rounded-full border-black-1">
-                  <select className="p-2 border border-1 border-gray-400  text-gray-400 rounded-full text-md">
-                    <option value="select-level">evaluation </option>
-                  </select>
-                </div>
-              </div>
-              <p className="text-primary text-7xl font-extrabold">
-                {dashboardData?.totalApplicants}
-              </p>
-              <Image
-                src={dashVector}
-                alt="dash vector"
-                className="absolute right-0 bottom-0 rounded-b-2xl"
-              />
-            </div> */}
-            <div className=" bg-white rounded-2xl lg:w-[25%] w-full p-6 lg:flex-grow">
-              <div className="flex justify-end ">
-                <div className="rounded-full border-black-1">
-                  <select className="p-2 border border-1 border-gray-400  text-gray-400 rounded-full text-md">
-                    <option value="select-level">evaluation</option>
-                  </select>
-                </div>
-              </div>
-              <div className="my-5">
-                <ProgressGender
-                  callId={call}
-                  startDate={startDate}
-                  endDate={endDate}
-                />
-              </div>
-            </div>
-            <div className="bg-white rounded-2xl flex-grow p-4">
-              <div className="flex justify-between">
-                <h2 className="text-lg font-semibold mb-8">Total Applicants</h2>
-                <div className="rounded-full border-black-1">
-                  <select className="py-2 px-4 border border-1 rounded-full border-gray-400  text-gray-400 text-md">
-                    <option value="select-level">All</option>
-                  </select>
-                </div>
-              </div>
-              <div className="h-[90%] rounded-lg flex flex-col gap-3">
-                <BasicGauges totalApplicants={dashboardData?.totalApplicants} />
-              </div>
-            </div>
-          </div>
-
-          {/* <p className="my-3">Overview</p>
-          <div className="flex items-center gap-2">
-            <div className="w-full bg-white rounded-2xl shadow p-3">
-              <div className="flex justify-between">
-                <p className="text-xl font-medium">SDF Graduates Per Year</p>
-                <div className="rounded-full border-black-1">
-                  <select className="p-2 border border-1 border-gray-400  text-gray-400 rounded-full text-md">
-                    <option value="select-level">construction</option>
-                  </select>
-                </div>
-              </div>
-              <DashboardLineChart data={transformedData} />
-            </div>
-          </div> */}
-          <div className="lg:flex justify-between items-center">
-            <div>Priority Sector Analysis</div>
-            <div className="flex gap-2 bg-[#005de9] lg:px-24 py-2 rounded-full text-white items-center justify-center p-4 mt-4">
-              <span>
-                <SolarFileBold />
+            {/* Total count */}
+            <div className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2">
+              <span className="text-base">Total</span>
+              <span className="text-base bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                {
+                  Object.values(callStats?.applicantsPerSector || {}).reduce(
+                    (sum: any, value) => sum + value,
+                    0
+                  ) as any
+                }
               </span>
-              Export as excel
             </div>
           </div>
-
-          <div className="mt-8 grid lg:grid-cols-2 grid-cols-1 grid-rows-3 gap-6 w-full">
-            <div className="bg-white p-6 rounded-2xl">
-              <div className="flex justify-between">
-                <p>Number of submission</p>
-                <div className="text-xl">
-                  <AdminAction call={null} setIsCall={() => {}} />{" "}
+          <div className=" bg-white rounded-2xl w-[25%] p-6 flex-grow">
+            <div className="my-5">
+              <div className="relative flex items-center justify-center flex-col">
+                <div className="">
+                  <PieChart
+                    width={300}
+                    height={300}
+                    className="flex items-center ml-24"
+                    series={[
+                      {
+                        data: [
+                          {
+                            id: 2,
+                            value: callStats?.genderCount.female,
+                            color: "#FF00A8",
+                          },
+                          {
+                            id: 1,
+                            value: callStats?.genderCount.male,
+                            color: "#005DE9",
+                          },
+                        ],
+                      },
+                    ]}
+                  />
+                </div>
+                <div className="absolute inset-0 m-0 flex  flex-col items-center justify-center mb-20">
+                  <div className="text-3xl  font-bold text-white">
+                    {callStats?.genderCount.male +
+                      callStats?.genderCount.female}
+                  </div>
+                  <div className="text-sm text-white">in this level</div>
+                </div>
+                <div className="flex justify-between w-full mt-2 text-sm text-gray-700">
+                  <div className="flex gap-2">
+                    <span>
+                      <Image src={Male} alt="male" />
+                    </span>
+                    Male:{" "}
+                    {(
+                      (callStats?.genderCount.male /
+                        (callStats?.genderCount.male +
+                          callStats?.genderCount.female)) *
+                      100
+                    ).toFixed(0)}
+                    %
+                  </div>
+                  <div className="flex gap-2">
+                    <span>
+                      <Image src={Female} alt="female" />
+                    </span>
+                    Female:{" "}
+                    {(
+                      (callStats?.genderCount.female /
+                        (callStats?.genderCount.male +
+                          callStats?.genderCount.female)) *
+                      100
+                    ).toFixed(0)}
+                    %
+                  </div>
+                </div>
+                <div className="flex justify-between w-full mt-2 text-lg">
+                  <div className="text-blue-600">
+                    Male Count: {callStats?.genderCount.male}
+                  </div>
+                  <div className="text-purple-600">
+                    Female Count: {callStats?.genderCount.female}
+                  </div>
                 </div>
               </div>
-              <Dash
-                col1="Applicants"
-                col2="Applications"
-                data={dashTablesData}
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl flex-grow p-4">
+            <div className="flex justify-between mb-8">
+              <h2 className="text-lg font-semibold ">Total Applicants</h2>
+              <div className="rounded-full bg-slate-400 bg-opacity-10">
+                <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                  <span className="text-gray-400">
+                    <SolarBenzeneRingBroken />
+                  </span>
+                  <select
+                    className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none"
+                    value={gaugeStage}
+                    onChange={(e) => setGaugeStage(e.target.value)}
+                  >
+                    <option value="ALL">All</option>
+                    <option value="SUBMITTED">Submitted</option>
+                    <option value="EVALUATION IN PROGRESS">Evaluation</option>
+                    <option value="DUE DILIGENCY IN  PROGRESS">
+                      Due Diligency
+                    </option>
+                    <option value="GRANT COMMITTEE IN PROGRESS">
+                      Grant Committee
+                    </option>
+                    <option value="CONTRACT SIGNING IN PROGRESS">
+                      Contract Signing
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="h-[90%] rounded-lg flex flex-col items-center justify-center gap-3">
+              <BasicGauges
+                applicationsByBusinessType={
+                  Object.keys(callStats?.businessTypeGroupings || {}).reduce(
+                    (acc: any, item: any) => {
+                      if (gaugeStage === "ALL") {
+                        acc[item] = Object.values(
+                          callStats?.businessTypeGroupings[item] || {}
+                        ).reduce((sum: any, value: any) => sum + value, 0);
+                      } else {
+                        acc[item] =
+                          callStats?.businessTypeGroupings[item][gaugeStage] ||
+                          0;
+                      }
+                      return acc;
+                    },
+                    {} as { [key: string]: number }
+                  ) || {}
+                }
               />
             </div>
-            <div className="bg-white p-6 rounded-2sm">
-              <div className="flex justify-between">
-                <p>Applications</p>
-                <div className="text-md gap-4 flex items-center justify-center">
-                  <div className="rounded-full bg-slate-400 bg-opacity-10">
-                    <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
-                      <span className="text-gray-400">
-                        <SolarBenzeneRingBroken />
-                      </span>
-                      <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
-                        <option value="select-stage">All</option>
-                        <option value="select-stage">Evaluation</option>
-                        <option value="select-stage">Due Diligency</option>
-                        <option value="select-stage">Grant Committee</option>
-                        <option value="select-stage">Contract Signing</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <AdminAction call={null} setIsCall={() => {}} />{" "}
-                  </div>
-                </div>
-              </div>
-              <Dash col1="Selected" col2="Rejected" data={dashTablesData} />
-            </div>
-            <div className="bg-white p-6 rounded-2sm">
-              <div className="flex justify-between">
-                <p>Applicants</p>
-                <div className="text-md gap-4 flex items-center justify-center">
-                  <div className="rounded-full bg-slate-400 bg-opacity-10">
-                    <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
-                      <span className="text-gray-400">
-                        <SolarBenzeneRingBroken />
-                      </span>
-                      <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
-                        <option value="select-stage">All</option>
-                        <option value="select-stage">Evaluation</option>
-                        <option value="select-stage">Due Diligency</option>
-                        <option value="select-stage">Grant Committee</option>
-                        <option value="select-stage">Contract Signing</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <AdminAction call={null} setIsCall={() => {}} />{" "}
-                  </div>
-                </div>
-              </div>
-              <Dash col1="Selected" col2="Rejected" data={dashTablesData} />
-            </div>
-            <div className="bg-white p-6 rounded-2sm">
-              <div className="flex justify-between">
-                <p>Selected Trainees</p>
-                <div className="text-md gap-4 flex items-center justify-center">
-                  <div className="rounded-full bg-slate-400 bg-opacity-10">
-                    <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
-                      <span className="text-gray-400">
-                        <SolarBenzeneRingBroken />
-                      </span>
-                      <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
-                        <option value="select-stage">All</option>
-                        <option value="select-stage">Evaluation</option>
-                        <option value="select-stage">Due Diligency</option>
-                        <option value="select-stage">Grant Committee</option>
-                        <option value="select-stage">Contract Signing</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <AdminAction call={null} setIsCall={() => {}} />{" "}
-                  </div>
-                </div>
-              </div>
-              <Dash col1="Number" data={dashTablesData} showSingleRow={true} />
-            </div>
-            <div className="bg-white p-6 rounded-2xl">
-              <div className="flex justify-between gap-3 w-full">
-                <p className="w-full">
-                  Number of graduates trainees before 2025
-                </p>
-                <div className="rounded-full bg-slate-400 bg-opacity-10 w-[40%] px-3">
-                  <label
-                    htmlFor="call"
-                    className="w-full flex items-center py-2 gap-2 rounded-full"
-                  >
-                    <span id="call" className="text-gray-400">
+          </div>
+        </div>
+      )}
+      <div className=" flex justify-between items-center mt-10 mb-5">
+        <div>Priority Sector Analysis</div>
+        <div
+          className="flex gap-2 bg-[#005de9] px-24 py-2 rounded-full text-white items-center justify-center p-4 mt-4"
+          onClick={() =>
+            downloadDashboardExcelFile(
+              applicationsData,
+              applicantsData,
+              submissionsData
+            )
+          }
+        >
+          <span>
+            <SolarFileBold />
+          </span>
+          Export as excel
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-10">
+        {submissionsDataLoading ? (
+          <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
+        ) : (
+          <div className="bg-white p-6 rounded-2xl">
+            <div className="flex justify-between mb-5">
+              <p className="font-bold text-xl">Number of Submissions</p>
+              <div className="text-md gap-4 flex items-center justify-center">
+                <div className="rounded-full bg-slate-400 bg-opacity-10">
+                  <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                    <span className="text-gray-400">
                       <SolarBenzeneRingBroken />
                     </span>
                     <select
-                      id="call"
-                      className="w-full px-0 rounded-full text-md bg-transparent outline-none border-none appearance-none"
+                      className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none"
+                      onChange={(e) => setSubmissionsStage(e.target.value)}
                     >
-                      <option value="call1">Call 1</option>
-                      <option value="call1">Call 2</option>
-                      <option value="call1">Call 3</option>
-                      <option value="call1">Call 4</option>
-                      <option value="call1">Call 5</option>
-                      <option value="call1">NEET 1</option>
+                      <option value="ALL">All</option>
+                      <option value="SUBMITTED">Submitted</option>
+                      <option value="EVALUATION IN PROGRESS">Evaluation</option>
+                      <option value="DUE DILIGENCY IN  PROGRESS">
+                        Due Diligency
+                      </option>
+                      <option value="GRANT COMMITTEE IN PROGRESS">
+                        Grant Committee
+                      </option>
+                      <option value="CONTRACT SIGNING IN PROGRESS">
+                        Contract Signing
+                      </option>
                     </select>
-                  </label>
-                </div>
-                <div className="text-md gap-4 flex items-center justify-center">
-                  <div>
-                    <AdminAction call={null} setIsCall={() => {}} />{" "}
                   </div>
+                </div>
+                <div>
+                  <AdminAction
+                    call={null}
+                    setIsCall={() => {}}
+                    exportFunction={() =>
+                      downloadDashboardExcelFile(
+                        undefined,
+                        undefined,
+                        submissionsData
+                      )
+                    }
+                  />{" "}
                 </div>
               </div>
-              <Dash col1="Male" col2="Female" data={dashTablesData} />
             </div>
-            <div className="bg-white p-6 rounded-2xl">
-              <div className=" justify-center items-center">
-                <p>Number of Trainees Starting from 2025</p>
-                <div className="text-md gap-2 lg:flex grid grid-cols-2 my-2 ">
-                  <div className="flex gap-2 rounded-full bg-slate-400 bg-opacity-10 items-center justify-center py-2 px-5">
-                    <span className="text-gray-400">
-                      <SolarCalendarBold />
-                    </span>
-                    <p className="text-xs">Starting date</p>
-                  </div>
-                  <div className="flex gap-2 rounded-full bg-slate-400 bg-opacity-10 items-center justify-center py-2 px-5">
-                    <span className="text-gray-400">
-                      <SolarCalendarBold />
-                    </span>
-                    <p className="text-xs">Ending date</p>
-                  </div>
-                  <div className="rounded-full bg-slate-400 bg-opacity-10">
-                    <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
-                      <span className="text-gray-400">
-                        <SolarBenzeneRingBroken />
-                      </span>
-                      <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none text-xs">
-                        <option value="select-stage">All</option>
-                        <option value="select-stage">Ongoing</option>
-                        <option value="select-stage">Completed</option>
-                        <option value="select-stage">Graduated</option>
-                      </select>
+            <div className="flex justify-between ">
+              <span className="w-1/2">Sector</span>
+              <span className="w-1/5 text-center">Applicants</span>
+              <span className="w-1/5 text-center">Applications</span>
+            </div>
+            <div className="space-y-4">
+              {Object.keys(submissionsData || {}).length === 0 ? (
+                <div>
+                  <div className="flex items-center justify-center h-60 w-full text-center text-gray-500">
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
+                      <p className="text-lg font-semibold text-gray-700">
+                        No data Available
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Please select a different stage
+                      </p>
                     </div>
                   </div>
-                  <div>
-                    <AdminAction call={null} setIsCall={() => {}} />{" "}
-                  </div>
                 </div>
+              ) : (
+                Object.keys(submissionsData || {}).map((key: any, index) => (
+                  <div
+                    key={key}
+                    className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2"
+                  >
+                    <span className="w-1/2">{key}</span>
+                    <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                      {submissionsData[key].applicants}
+                    </span>
+                    <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                      {submissionsData[key].applications}
+                    </span>
+                  </div>
+                ))
+              )}
+              <div className="flex justify-between px-4 py-2 rounded-xl bg-[#005DE91F] text-primary font-bold">
+                <span>Total</span>
+                <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                  {Object.keys(submissionsData || {}).reduce(
+                    (sum, key) => sum + submissionsData[key].applicants,
+                    0
+                  )}
+                </span>
+                <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                  {Object.keys(submissionsData || {}).reduce(
+                    (sum, key) => sum + submissionsData[key].applications,
+                    0
+                  )}
+                </span>
               </div>
-              <Dash col1="Male" col2="Female" data={dashTablesData} />
             </div>
           </div>
-        </>
-      )}
+        )}
+
+        {applicantsDataLoading ? (
+          <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
+        ) : (
+          <div className="bg-white p-6 rounded-2xl">
+            <div className="flex justify-between mb-5">
+              <p className="font-bold text-xl">Applicants</p>
+              <div className="text-md gap-4 flex items-center justify-center">
+                <div className="rounded-full bg-slate-400 bg-opacity-10">
+                  <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                    <span className="text-gray-400">
+                      <SolarBenzeneRingBroken />
+                    </span>
+                    <select
+                      className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none"
+                      onChange={(e) => setApplicantsStage(e.target.value)}
+                    >
+                      <option value="ALL">All</option>
+                      <option value="SUBMITTED">Submitted</option>
+                      <option value="EVALUATION IN PROGRESS">Evaluation</option>
+                      <option value="DUE DILIGENCY IN  PROGRESS">
+                        Due Diligency
+                      </option>
+                      <option value="GRANT COMMITTEE IN PROGRESS">
+                        Grant Committee
+                      </option>
+                      <option value="CONTRACT SIGNING IN PROGRESS">
+                        Contract Signing
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <AdminAction
+                    call={null}
+                    setIsCall={() => {}}
+                    exportFunction={() =>
+                      downloadDashboardExcelFile(
+                        undefined,
+                        applicantsData,
+                        undefined
+                      )
+                    }
+                  />{" "}
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-between ">
+              <span className="w-1/2">Sector</span>
+              <span className="w-1/5 text-center">Applicants</span>
+            </div>
+            <div className="space-y-4">
+              {Object.keys(applicantsData || {}).length === 0 ? (
+                <div>
+                  <div className="flex items-center justify-center h-60 w-full text-center text-gray-500">
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
+                      <p className="text-lg font-semibold text-gray-700">
+                        No data Available
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Please select a different stage
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                Object.keys(applicantsData || {}).map((key: any, index) => (
+                  <div
+                    key={key}
+                    className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2"
+                  >
+                    <span className="w-1/2">{key}</span>
+                    <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                      {applicantsData[key]}
+                    </span>
+                  </div>
+                ))
+              )}
+              <div className="flex justify-between px-4 py-2 rounded-xl bg-[#005DE91F] text-primary font-bold">
+                <span>Total</span>
+                <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                  {Object.keys(applicantsData || {}).reduce(
+                    (sum, key) => sum + applicantsData[key],
+                    0
+                  )}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {applicationsDataLoading ? (
+          <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
+        ) : (
+          <div className="bg-white p-6 rounded-2xl">
+            <div className="flex justify-between mb-5">
+              <p className="font-bold text-lg">Applications</p>
+              <div className="text-md gap-4 flex items-center justify-center">
+                <div className="rounded-full bg-slate-400 bg-opacity-10">
+                  <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                    <span className="text-gray-400">
+                      <SolarBenzeneRingBroken />
+                    </span>
+                    <select
+                      className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none"
+                      onChange={(e) => setApplicationsStage(e.target.value)}
+                    >
+                      <option value="ALL">All</option>
+                      <option value="SUBMITTED">Submitted</option>
+                      <option value="EVALUATION IN PROGRESS">Evaluation</option>
+                      <option value="DUE DILIGENCY IN  PROGRESS">
+                        Due Diligency
+                      </option>
+                      <option value="GRANT COMMITTEE IN PROGRESS">
+                        Grant Committee
+                      </option>
+                      <option value="CONTRACT SIGNING IN PROGRESS">
+                        Contract Signing
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <AdminAction
+                    call={null}
+                    setIsCall={() => {}}
+                    exportFunction={() =>
+                      downloadDashboardExcelFile(
+                        applicationsData,
+                        undefined,
+                        undefined
+                      )
+                    }
+                  />{" "}
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-between ">
+              <span className="w-1/2">Sector</span>
+              <span className="w-1/5 text-center">Applications</span>
+            </div>
+            <div className="space-y-4">
+              {Object.keys(applicationsData || {}).length === 0 ? (
+                <div>
+                  <div className="flex items-center justify-center h-60 w-full text-center text-gray-500">
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
+                      <p className="text-lg font-semibold text-gray-700">
+                        No data Available
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Please select a different stage
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                Object.keys(applicationsData || {}).map((key: any, index) => (
+                  <div
+                    key={key}
+                    className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2"
+                  >
+                    <span className="w-1/2">{key}</span>
+                    <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                      {applicationsData[key]}
+                    </span>
+                  </div>
+                ))
+              )}
+              <div className="flex justify-between px-4 py-2 rounded-xl bg-[#005DE91F] text-primary font-bold">
+                <span>Total</span>
+                <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                  {Object.keys(applicationsData || {}).reduce(
+                    (sum, key) => sum + applicationsData[key],
+                    0
+                  )}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="bg-white p-6 rounded-2sm">
+          <div className="flex justify-between">
+            <p className="font-bold text-lg">Selected Trainees</p>
+            <div className="text-md gap-4 flex items-center justify-center">
+              <div className="rounded-full bg-slate-400 bg-opacity-10">
+                <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                  <span className="text-gray-400">
+                    <SolarBenzeneRingBroken />
+                  </span>
+                  <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none">
+                    <option value="select-stage">All</option>
+                    <option value="select-stage">Evaluation</option>
+                    <option value="select-stage">Due Diligency</option>
+                    <option value="select-stage">Grant Committee</option>
+                    <option value="select-stage">Contract Signing</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <AdminAction call={null} setIsCall={() => {}} />{" "}
+              </div>
+            </div>
+          </div>
+          <Dash col1="Number" data={dashTablesData} showSingleRow={true} />
+        </div>
+        <div className="bg-white p-6 rounded-2xl">
+          <div className="flex flex-col justify-between gap-3 w-full">
+            <p className="w-full font-bold text-lg">
+              Number of graduates trainees before 2025
+            </p>
+            <div className="flex items-center justify-between w-full">
+              <div className="rounded-full bg-slate-400 bg-opacity-10 w-[40%] px-3">
+                <label
+                  htmlFor="call"
+                  className="w-full flex items-center py-2 gap-2 rounded-full"
+                >
+                  <span id="call" className="text-gray-400">
+                    <SolarBenzeneRingBroken />
+                  </span>
+                  <select
+                    id="call"
+                    className="w-full px-0 rounded-full text-md bg-transparent outline-none border-none appearance-none"
+                  >
+                    {calls.map((call: any) => (
+                      <option value={call.uuid} key={call.uuid}>
+                        {call.title}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="text-md gap-4 flex items-center justify-center">
+                <div>
+                  <AdminAction call={null} setIsCall={() => {}} />{" "}
+                </div>
+              </div>
+            </div>
+          </div>
+          <Dash col1="Male" col2="Female" data={dashTablesData} />
+        </div>
+        <div className="bg-white p-6 rounded-2xl">
+          <div className=" justify-center items-center">
+            <p className="font-bold text-lg">
+              Number of Trainees Starting from 2025
+            </p>
+            <div className="text-md gap-2 flex my-2 ">
+              <div className="flex gap-2 rounded-full bg-slate-400 bg-opacity-10 items-center justify-center py-2 px-5">
+                <span className="text-gray-400">
+                  <SolarCalendarBold />
+                </span>
+                <p className="text-xs">Starting date</p>
+              </div>
+              <div className="flex gap-2 rounded-full bg-slate-400 bg-opacity-10 items-center justify-center py-2 px-5">
+                <span className="text-gray-400">
+                  <SolarCalendarBold />
+                </span>
+                <p className="text-xs">Ending date</p>
+              </div>
+              <div className="rounded-full bg-slate-400 bg-opacity-10">
+                <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                  <span className="text-gray-400">
+                    <SolarBenzeneRingBroken />
+                  </span>
+                  <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none text-xs">
+                    <option value="select-stage">All</option>
+                    <option value="select-stage">Ongoing</option>
+                    <option value="select-stage">Completed</option>
+                    <option value="select-stage">Graduated</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <AdminAction call={null} setIsCall={() => {}} />{" "}
+              </div>
+            </div>
+          </div>
+          <Dash col1="Male" col2="Female" data={dashTablesData} />
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Page;
+export default Dashboard;
+
+function BasicGauges({
+  applicationsByBusinessType,
+}: {
+  applicationsByBusinessType: { [key: string]: number };
+}) {
+  const totalApplicants = Object.values(applicationsByBusinessType).reduce(
+    (sum, value) => sum + value,
+    0
+  );
+
+  const colors = [
+    "#005DE9",
+    "#90EE90",
+    "#EA4228",
+    "#FFAA33",
+    "#00C49A",
+    "#FF69B4",
+    "#FFD700",
+    "#8A2BE2",
+  ];
+
+  const chartData = Object.entries(applicationsByBusinessType).map(
+    ([key, value], index) => ({
+      key,
+      value,
+      percentage: totalApplicants > 0 ? (value / totalApplicants) * 100 : 0,
+      color: colors[index % colors.length],
+    })
+  );
+
+  if (totalApplicants === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <div className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
+          <p className="text-lg font-semibold text-gray-700">
+            No data Available
+          </p>
+          <p className="text-sm text-gray-500">
+            Please select a different stage
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center justify-center flex-col">
+      <div style={{ position: "relative", display: "inline-block" }}>
+        <GaugeChart
+          id="gauge-chart"
+          nrOfLevels={chartData.length}
+          arcsLength={chartData.map((data) => data.percentage / 100)}
+          colors={chartData.map((data) => data.color)}
+          percent={0.5}
+          arcPadding={0.02}
+          hideText={true}
+          needleColor="transparent"
+          needleBaseColor="transparent"
+        />
+        <p
+          style={{
+            position: "absolute",
+            top: "60%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <div className="flex flex-col justify-center items-center">
+            <p>{totalApplicants}</p>
+            <p className="text-sm">Applicants</p>
+          </div>
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-x-10">
+        {chartData
+          .filter(({ key }) => key)
+          .map(({ key, color }, index) => (
+            <div key={index} className="flex items-center">
+              <div
+                className="w-4 h-4 mr-2"
+                style={{ backgroundColor: color }}
+              />
+              <p className="capitalize">{key}</p>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+}

@@ -1,102 +1,147 @@
 import {
-  GET_DASHBOARD_ERROR,
-  GET_DASHBOARD_LOADING,
-  GET_DASHBOARD_SUCCESS,
-  GET_PRIORITY_SECTORS_DATA,
+  GET_APPLICATIONS_BY_STAGE,
+  GET_APPLICANTS_BY_STAGE,
+  GET_GENDER_COUNT_BY_STAGE,
+  GET_BUSINESS_TYPE_BY_STAGE,
+  GET_SUBMISSIONS_BY_SECTOR,
+  SET_APPLICATIONS_BY_STAGE_LOADING,
+  SET_APPLICANTS_BY_STAGE_LOADING,
+  SET_GENDER_COUNT_BY_STAGE_LOADING,
+  SET_BUSINESS_TYPE_BY_STAGE_LOADING,
+  SET_SUBMISSIONS_BY_SECTOR_LOADING,
+  SET_APPLICATIONS_BY_STAGE_ERROR,
+  SET_APPLICANTS_BY_STAGE_ERROR,
+  SET_GENDER_COUNT_BY_STAGE_ERROR,
+  SET_BUSINESS_TYPE_BY_STAGE_ERROR,
+  SET_SUBMISSIONS_BY_SECTOR_ERROR,
 } from "@/actions/DashboardActions";
 
 const initialState = {
-  loading: true,
-  error: "",
-  isError: false,
   data: {
-    applications: [],
-    totalApplications: 0,
-    totalApplicants: 0,
-    applicationsBySector: {},
-    currentStage: "",
-    sectorSummary: [],
-    applicants: [],
-    sectorWithNumberOfAPplicants: [],
+    applicationsByStage: {},
+    applicantsByStage: {},
+    genderCountByStage: {},
+    businessTypeByStage: {},
+    submissionsBySector: {},
   },
-  sectorsData: {
-    Manufacturing: {
-      countApplicants: 0,
-      countApplications: 0,
-    },
-    "Hospitality & Tourism": {
-      countApplicants: 0,
-      countApplications: 0,
-    },
-    "Transport & Logistics": {
-      countApplicants: 0,
-      countApplications: 0,
-    },
-    Agriculture: {
-      countApplicants: 0,
-      countApplications: 0,
-    },
-    Energy: {
-      countApplicants: 0,
-      countApplications: 0,
-    },
-    Mining: {
-      countApplicants: 0,
-      countApplications: 0,
-    },
-    "ICT & Digital Skills": {
-      countApplicants: 0,
-      countApplications: 0,
-    },
-    Construction: {
-      countApplicants: 0,
-      countApplications: 0,
-    },
-    Other: {
-      countApplicants: 0,
-      countApplications: 0,
-    },
-    Total: {
-      countApplicants: 0,
-      countApplications: 0,
-    },
+  loading: {
+    applicationsByStage: true,
+    applicantsByStage: true,
+    genderCountByStage: true,
+    businessTypeByStage: true,
+    submissionsBySector: true,
+  },
+  error: {
+    applicationsByStage: "",
+    applicantsByStage: "",
+    genderCountByStage: "",
+    businessTypeByStage: "",
+    submissionsBySector: "",
   },
 };
 
 type Action = {
   type: string;
-  payload: any;
+  payload?: any;
 };
 
 export default function DashboardReducer(state = initialState, action: Action) {
   switch (action.type) {
-    case GET_DASHBOARD_LOADING:
+    case SET_APPLICATIONS_BY_STAGE_LOADING:
       return {
         ...state,
-        loading: true,
+        loading: { ...state.loading, applicationsByStage: true },
+        error: { ...state.error, applicationsByStage: "" },
       };
-    case GET_DASHBOARD_SUCCESS:
+    case GET_APPLICATIONS_BY_STAGE:
       return {
         ...state,
-        loading: false,
-        data: action.payload,
+        loading: { ...state.loading, applicationsByStage: false },
+        data: { ...state.data, applicationsByStage: action.payload },
       };
-    case GET_PRIORITY_SECTORS_DATA:
+    case SET_APPLICATIONS_BY_STAGE_ERROR:
       return {
         ...state,
-        loading: false,
-        sectorsData: {
-          ...state.sectorsData,
-          [action.payload.sectorName]: action.payload.data,
-        },
+        loading: { ...state.loading, applicationsByStage: false },
+        error: { ...state.error, applicationsByStage: action.payload },
       };
-    case GET_DASHBOARD_ERROR:
+
+    case SET_APPLICANTS_BY_STAGE_LOADING:
       return {
         ...state,
-        isError: true,
-        loading: false,
-        error: action.payload,
+        loading: { ...state.loading, applicantsByStage: true },
+        error: { ...state.error, applicantsByStage: "" },
       };
+    case GET_APPLICANTS_BY_STAGE:
+      return {
+        ...state,
+        loading: { ...state.loading, applicantsByStage: false },
+        data: { ...state.data, applicantsByStage: action.payload },
+      };
+    case SET_APPLICANTS_BY_STAGE_ERROR:
+      return {
+        ...state,
+        loading: { ...state.loading, applicantsByStage: false },
+        error: { ...state.error, applicantsByStage: action.payload },
+      };
+
+    case SET_GENDER_COUNT_BY_STAGE_LOADING:
+      return {
+        ...state,
+        loading: { ...state.loading, genderCountByStage: true },
+        error: { ...state.error, genderCountByStage: "" },
+      };
+    case GET_GENDER_COUNT_BY_STAGE:
+      return {
+        ...state,
+        loading: { ...state.loading, genderCountByStage: false },
+        data: { ...state.data, genderCountByStage: action.payload },
+      };
+    case SET_GENDER_COUNT_BY_STAGE_ERROR:
+      return {
+        ...state,
+        loading: { ...state.loading, genderCountByStage: false },
+        error: { ...state.error, genderCountByStage: action.payload },
+      };
+
+    case SET_BUSINESS_TYPE_BY_STAGE_LOADING:
+      return {
+        ...state,
+        loading: { ...state.loading, businessTypeByStage: true },
+        error: { ...state.error, businessTypeByStage: "" },
+      };
+    case GET_BUSINESS_TYPE_BY_STAGE:
+      return {
+        ...state,
+        loading: { ...state.loading, businessTypeByStage: false },
+        data: { ...state.data, businessTypeByStage: action.payload },
+      };
+    case SET_BUSINESS_TYPE_BY_STAGE_ERROR:
+      return {
+        ...state,
+        loading: { ...state.loading, businessTypeByStage: false },
+        error: { ...state.error, businessTypeByStage: action.payload },
+      };
+
+    case SET_SUBMISSIONS_BY_SECTOR_LOADING:
+      return {
+        ...state,
+        loading: { ...state.loading, submissionsBySector: true },
+        error: { ...state.error, submissionsBySector: "" },
+      };
+    case GET_SUBMISSIONS_BY_SECTOR:
+      return {
+        ...state,
+        loading: { ...state.loading, submissionsBySector: false },
+        data: { ...state.data, submissionsBySector: action.payload },
+      };
+    case SET_SUBMISSIONS_BY_SECTOR_ERROR:
+      return {
+        ...state,
+        loading: { ...state.loading, submissionsBySector: false },
+        error: { ...state.error, submissionsBySector: action.payload },
+      };
+
     default:
       return state;
   }
