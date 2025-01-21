@@ -45,7 +45,7 @@ export default function AdminLayout({
         </div>
         <div
           className={`${
-            isCompressed ? "w-[93%]" : "w-[75%]"
+            isCompressed ? "w-[93%]" : "lg:w-[75%] w-full"
           } h-screen flex flex-col bg-transparent side-section`}
         >
           <Navbar />
