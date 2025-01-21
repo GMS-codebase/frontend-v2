@@ -10,22 +10,24 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { getApplicationsPaginated, getApplicationStatus } from "@/services";
+import {
+  getApplicationsPaginated,
+  getApplicationStatus,
+  getApplicationStatus2,
+} from "@/services";
 import { useDispatch } from "react-redux";
 import { UnknownAction } from "redux";
 import { filterByStep } from "@/utils/funcs";
 import EmployeeApplicationsPage from "@/components/pages/applications/employees";
 
 const Page = () => {
-  const {
-    applications,
-    loading,
-    page,
-  } = useSelector((state: any) => state.applications);
+  const { applications, loading, page } = useSelector(
+    (state: any) => state.applications
+  );
 
   const dispatch = useDispatch();
   const [limit] = useState(10);
-  console.log("first application --> ", applications.slice(1,5));
+  console.log("first application --> ", applications.slice(1, 5));
   useEffect(() => {
     dispatch(getApplicationsPaginated(page, limit) as unknown as UnknownAction);
   }, [dispatch, page, limit]);
@@ -40,7 +42,6 @@ const Page = () => {
     trade: "All",
   });
 
-
   const filteredApplications = useMemo(() => {
     return applications
       .filter(
@@ -54,15 +55,16 @@ const Page = () => {
               searchTerm.toLowerCase() ||
                 app.applicant?.businesses?.[0]?.businessName
                   .toLowerCase()
-                  .includes(searchTerm.toLowerCase()),
-            ),
+                  .includes(searchTerm.toLowerCase())
+            )
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade, step } =
           selectedFilters;
         return (
           (stage === "All" ||
-            (app?.currentStage === stage && filterByStep(app, step))) &&
+            (getApplicationStatus2(app) === stage &&
+              filterByStep(app, step))) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&
@@ -73,7 +75,18 @@ const Page = () => {
   }, [applications, searchTerm, selectedFilters]);
 
   return (
-    <EmployeeApplicationsPage applications={filteredApplications} type="admin" loading={loading}  selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
+    <EmployeeApplicationsPage
+      applications={filteredApplications.map((app: any) => ({
+        ...app,
+        currentStage: getApplicationStatus2(app),
+      }))}
+      type="admin"
+      loading={loading}
+      selectedFilters={selectedFilters}
+      setSelectedFilters={setSelectedFilters}
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm}
+    />
   );
 };
 
