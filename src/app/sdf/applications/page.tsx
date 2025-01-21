@@ -13,6 +13,7 @@ import { VscEye } from "react-icons/vsc";
 import {
   getApplicationsPaginated,
   getApplicationStatus,
+  getApplicationStatus2,
   getEmployeeApplicationsPaginated,
   shortenString,
 } from "@/services";
@@ -33,7 +34,7 @@ const Page = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(
-      getEmployeeApplicationsPaginated(page, limit) as unknown as UnknownAction,
+      getEmployeeApplicationsPaginated(page, limit) as unknown as UnknownAction
     );
   }, [dispatch, page, limit]);
 
@@ -41,24 +42,24 @@ const Page = () => {
     dispatch(
       getEmployeeApplicationsPaginated(
         newPage + 1,
-        limit,
-      ) as unknown as UnknownAction,
+        limit
+      ) as unknown as UnknownAction
     );
   };
   const handlePreviousPage = (newPage: number, limit: number) => {
     dispatch(
       getEmployeeApplicationsPaginated(
         newPage - 1,
-        limit,
-      ) as unknown as UnknownAction,
+        limit
+      ) as unknown as UnknownAction
     );
   };
   const handleChangePage = (newPage: number, limit: number) => {
     dispatch(
       getEmployeeApplicationsPaginated(
         newPage,
-        limit,
-      ) as unknown as UnknownAction,
+        limit
+      ) as unknown as UnknownAction
     );
   };
   const { stages } = useSelector((state: any) => state.empStages);
@@ -74,11 +75,11 @@ const Page = () => {
         }))
         .filter((app: any) => {
           const matchingStage = stages.find(
-            (stage: any) => stage.sector == app.sector.name,
+            (stage: any) => stage.sector == app.sector.name
           );
           return matchingStage;
         }),
-    [rawApplications, stages],
+    [rawApplications, stages]
   );
 
   const filtersContainerRef = useRef<HTMLDivElement>(null);
@@ -107,15 +108,16 @@ const Page = () => {
               searchTerm.toLowerCase() ||
                 app.applicant?.businesses?.[0]?.businessName
                   .toLowerCase()
-                  .includes(searchTerm.toLowerCase()),
-            ),
+                  .includes(searchTerm.toLowerCase())
+            )
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade, step } =
           selectedFilters;
         return (
           (stage === "All" ||
-            (app?.currentStage === stage && filterByStep(app, step))) &&
+            (getApplicationStatus2(app?.currentStage) === stage &&
+              filterByStep(app, step))) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&
@@ -126,7 +128,18 @@ const Page = () => {
   }, [applications, searchTerm, selectedFilters]);
 
   return (
-    <EmployeeApplicationsPage applications={filteredApplications} type="sdf" loading={loading}  selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
+    <EmployeeApplicationsPage
+      applications={filteredApplications.map((app: any) => ({
+        ...app,
+        currentStage: getApplicationStatus2(app),
+      }))}
+      type="sdf"
+      loading={loading}
+      selectedFilters={selectedFilters}
+      setSelectedFilters={setSelectedFilters}
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm}
+    />
   );
 };
 

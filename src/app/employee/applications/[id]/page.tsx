@@ -258,7 +258,7 @@ const Page = () => {
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Sector
               </p>
-              {application.sector && <p>{application?.sector?.name || application?.sector?.[0]?.name}</p>}
+              {application?.sectors?.[0]?.name || ""}
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
@@ -329,16 +329,12 @@ const Page = () => {
             {form && (
               <Form
                 mode={
-                  Object.values(JSON.parse(application?.comments || "{}"))
-                    .length === 0
-                    ? "commenting"
-                    : "viewing"
+                  !application.areCommentsSubmitted ? "commenting" : "viewing"
                 }
                 answers={JSON.parse(application.answers)}
                 comments={comments}
                 setComments={
-                  Object.values(JSON.parse(application?.comments || "{}"))
-                    .length === 0
+                  !application.areCommentsSubmitted
                     ? (key: string, value: any) =>
                         setComments({ ...comments, [key]: value })
                     : undefined
@@ -349,8 +345,9 @@ const Page = () => {
                 }}
               />
             )}
-            {hasCommentableQuestion() && application.
-              application?.currentStage !== "SUBMITTED" && (
+            {hasCommentableQuestion() &&
+              application.application?.currentStage !== "SUBMITTED" &&
+              !application.areCommentsSubmitted && (
                 <div className="w-full flex justify-center mt-4 space-x-4">
                   <button
                     type="button"

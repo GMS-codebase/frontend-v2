@@ -939,6 +939,7 @@ export const handleAddComments = async (
     });
     return;
   }
+  console.log("Going to make application");
   try {
     await authorizedApi.patch(
       action === "save"
@@ -1016,5 +1017,13 @@ export const getApplicationStatus = (application: any) => {
     return "FINISH GRANT PROPOSALS";
   } else {
     return application?.currentStage;
+  }
+};
+
+export const getApplicationStatus2 = (application: any) => {
+  if (!application.finishedAnswering) {
+    return "ANSWERING";
+  } else {
+    return application.currentStage;
   }
 };

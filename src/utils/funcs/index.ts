@@ -23,7 +23,25 @@ export const filterByStep = (app: any, step: string): boolean => {
   } else if (
     step.toLowerCase() === "evaluated" &&
     app.currentStage === "EVALUATION" &&
-    app.evaluationFinalDecision!
+    app.evaluationFinalDecision
+  ) {
+    return true;
+  } else if (
+    step.toLowerCase() === "approved" &&
+    app.currentStage === "EVALUATION" &&
+    app.evaluationFinalDecision &&
+    app.evaluationDecisions.filter(
+      (decision: any) => decision.decision === "APPROVED"
+    ).length >= 2
+  ) {
+    return true;
+  } else if (
+    step.toLowerCase() === "rejected" &&
+    app.currentStage === "EVALUATION" &&
+    app.evaluationFinalDecision &&
+    app.evaluationDecisions.filter(
+      (decision: any) => decision.decision === "REJECTED"
+    ).length >= 2
   ) {
     return true;
   } else if (
@@ -58,7 +76,7 @@ export function calculateTotalTrainees(data: any) {
     if (
       Array.isArray(value) &&
       value.some(
-        (item) => "Number of trainees" in item || "Number of Trainees" in item,
+        (item) => "Number of trainees" in item || "Number of Trainees" in item
       )
     ) {
       console.log(key, value);
@@ -71,9 +89,9 @@ export function calculateTotalTrainees(data: any) {
               : item["Number of Trainees"]
                 ? item["Number of Trainees"]
                 : 0,
-            10,
+            10
           ),
-        0,
+        0
       );
       break;
     }
@@ -84,7 +102,7 @@ export function calculateTotalTrainees(data: any) {
 export const exportDataToExcel = async <T extends Record<string, any>>(
   fileName: string,
   excelData: T[],
-  columns: T[],
+  columns: T[]
 ): Promise<void> => {
   try {
     const workbook = new ExcelJS.Workbook();
