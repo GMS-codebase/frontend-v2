@@ -288,7 +288,7 @@ const handleChangePage = (newPage: number, limit: number) => {
 
   return (
       <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-          <div className="w-full lg:flex justify-between items-center p-4 gap-5">
+          {/* <div className="w-full lg:flex justify-between items-center p-4 gap-5">
               <div className="relative lg:w-[20rem] w-full mb-4">
                   <span className="absolute top-4 left-4">
                       <CiSearch size={25} color="" />
@@ -303,55 +303,8 @@ const handleChangePage = (newPage: number, limit: number) => {
               </div>
               <div className="relative flex lg:w-[80%] w-full items-center">
                   {/* Left Scroll Button */}
-                  <button
-                      onClick={() => handleScroll("left")}
-                      className="absolute left-0 z-10 bg-white p-2 rounded-full shadow-md"
-                  >
-                      <FiChevronLeft size={30} />
-                  </button>
 
-                  {/* Scrollable Filter Container */}
-                  <div
-                      ref={filtersContainerRef}
-                      className="flex w-full overflow-x-scroll scrollbar-hide scroll-smooth space-x-4 py-2"
-                  >
-                      <FilterDropDown
-                          placeholderText="Select Stage"
-                          data={filterOptions.stages}
-                          filterKey="stage"
-                      />
-                      <FilterDropDown
-                          placeholderText="Select Window"
-                          data={filterOptions.windows}
-                          filterKey="window"
-                      />
-                      <FilterDropDown
-                          placeholderText="Select SubWindow"
-                          data={filterOptions.subwindows}
-                          filterKey="subWindow"
-                      />
-                      <FilterDropDown
-                          placeholderText="Select Sector"
-                          data={filterOptions.sectors}
-                          filterKey="sector"
-                      />
-                      <FilterDropDown
-                          placeholderText="Select Trade"
-                          data={filterOptions.trades}
-                          filterKey="trade"
-                      />
-                  </div>
-
-                  {/* Right Scroll Button */}
-                  <button
-                      onClick={() => handleScroll("right")}
-                      className="absolute right-0 z-10 bg-white p-2 rounded-full shadow-md"
-                  >
-                      <FiChevronRight size={30} />
-                  </button>
-              </div>
-          </div>
-          <DataTable
+          {/* <DataTable
               data={filteredApplications}
               columns={columns}
               loading={loading}
@@ -372,7 +325,105 @@ const handleChangePage = (newPage: number, limit: number) => {
                   },
                   setPaginateOpts: () => {},
               }}
-          />
+          /> */}
+
+          <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
+              <div className="w-full lg:flex justify-between items-center p-4 gap-5">
+                  {/* Search Bar */}
+                  <div className="relative w-full lg:w-[20rem] mb-4">
+                      <span className="absolute top-4 left-4">
+                          <CiSearch size={25} color="" />
+                      </span>
+                      <input
+                          name="search"
+                          className="w-full p-3 py-4 pl-12 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
+                          placeholder="Search"
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                  </div>
+
+                  {/* Filters Container */}
+                  <div className="relative flex w-full lg:w-[80%] items-center">
+                      {/* Left Scroll Button */}
+                      <button
+                          onClick={() => handleScroll("left")}
+                          className="absolute left-0 z-10 bg-white p-2 rounded-full shadow-md"
+                      >
+                          <FiChevronLeft size={30} />
+                      </button>
+
+                      {/* Scrollable Filters */}
+                      <div
+                          ref={filtersContainerRef}
+                          className="flex w-full overflow-x-auto space-x-4 py-2 scrollbar-hide lg:space-x-6 sm:space-x-3"
+                      >
+                          <FilterDropDown
+                              placeholderText="Select Stage"
+                              data={filterOptions.stages}
+                              filterKey="stage"
+                              className="min-w-[200px] sm:min-w-[150px] lg:min-w-[250px]"
+                          />
+                          <FilterDropDown
+                              placeholderText="Select Window"
+                              data={filterOptions.windows}
+                              filterKey="window"
+                              className="min-w-[200px] sm:min-w-[150px] lg:min-w-[250px]"
+                          />
+                          <FilterDropDown
+                              placeholderText="Select SubWindow"
+                              data={filterOptions.subwindows}
+                              filterKey="subWindow"
+                              className="min-w-[200px] sm:min-w-[150px] lg:min-w-[250px]"
+                          />
+                          <FilterDropDown
+                              placeholderText="Select Sector"
+                              data={filterOptions.sectors}
+                              filterKey="sector"
+                              className="min-w-[200px] sm:min-w-[150px] lg:min-w-[250px]"
+                          />
+                          <FilterDropDown
+                              placeholderText="Select Trade"
+                              data={filterOptions.trades}
+                              filterKey="trade"
+                              className="min-w-[200px] sm:min-w-[150px] lg:min-w-[250px]"
+                          />
+                      </div>
+
+                      {/* Right Scroll Button */}
+                      <button
+                          onClick={() => handleScroll("right")}
+                          className="absolute right-0 z-10 bg-white p-2 rounded-full shadow-md"
+                      >
+                          <FiChevronRight size={30} />
+                      </button>
+                  </div>
+              </div>
+
+              {/* Data Table */}
+              <DataTable
+                  data={filteredApplications}
+                  columns={columns}
+                  loading={loading}
+                  totalApplications={totalApplications}
+                  // page={page}
+                  // setPage={setPage}
+                  // paginationFuncs={{
+                  //     onChangePage: handleChangePage,
+                  //     onNextPage: handleNextPage,
+                  //     onPreviousPage: handlePreviousPage,
+                  // }}
+                  paginationProps={{
+                      isPaginated: true,
+                      paginateOpts: {
+                          page: page - 1,
+                          totalPages: totalPages,
+                          limit: limit,
+                      },
+                      setPaginateOpts: () => {},
+                  }}
+              />
+          </div>
       </div>
   );
 };
