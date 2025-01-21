@@ -89,7 +89,10 @@ const GenericSidebar = ({
                 return (
                   <div key={index} className="mx-2">
                     <Link
-                      onClick={() => setCookie("breadcrumb", route.label)}
+                      onClick={() => 
+                        setCookie("breadcrumb", route.label)
+                     
+                      }
                       href={route.path}
                       className={`flex items-center justify-center gap-5 font-semibold py-3 my-1 ${
                         isActiveLink(route.path, index)
@@ -113,7 +116,12 @@ const GenericSidebar = ({
                 return (
                   <div key={index} className="mx-2">
                     <Link
-                      onClick={() => setCookie("breadcrumb", route.label)}
+                      onClick={
+                        () => {
+                          setCookie("breadcrumb", route.label)
+                          setSidebarOpen(false)
+                        }
+                      }
                       href={route.path}
                       className={`flex items-center gap-5 font-semibold py-3 my-1 px-4 ${
                         isActiveLink(route.path, index)
