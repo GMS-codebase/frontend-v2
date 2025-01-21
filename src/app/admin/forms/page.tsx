@@ -16,20 +16,20 @@ import DeleteModal from "@/components/Modals/DeleteModal";
 import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
 
 const Page = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [
-    isOpenCreateEdit,
-    { open: openCreateEditModal, close: closeCreateEditModal },
-  ] = useDisclosure(false);
-  const [
-    isOpenActivateDeactivateForm,
-    {
-      open: openActivateDeactivateFormModal,
-      close: closeActivateDeactivateFormModal,
-    },
-  ] = useDisclosure(false);
-  const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
-    useDisclosure(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [
+        isOpenCreateEdit,
+        { open: openCreateEditModal, close: closeCreateEditModal },
+    ] = useDisclosure(false);
+    const [
+        isOpenActivateDeactivateForm,
+        {
+            open: openActivateDeactivateFormModal,
+            close: closeActivateDeactivateFormModal,
+        },
+    ] = useDisclosure(false);
+    const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
+        useDisclosure(false);
 
   const forms = useSelector((state: any) => state.forms);
   const [selectedForm, setSelectedForm] = useState<any>("");
