@@ -140,8 +140,8 @@ const Page = () => {
           </div>
         </div>
 
-        <div className="flex justify-between items-start mt-5">
-          <div className="flex flex-col justify-start items-start gap-6 font-semibold w-1/2">
+        <div className="lg:flex justify-between items-start mt-5">
+          <div className="flex flex-col justify-start items-start gap-6 font-semibold lg:w-1/2">
             <h1 className="text-2xl font-bold">Application Information</h1>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
@@ -180,7 +180,7 @@ const Page = () => {
               <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
             </div>
           </div>
-          <div className="flex flex-col justify-start items-start gap-6 font-semibold w-1/2">
+          <div className="flex flex-col justify-start items-start gap-6 font-semibold lg:w-1/2">
             <h1 className="text-2xl font-bold">Applicant Information</h1>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
@@ -251,9 +251,9 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <div className="flex gap-2 ">
+      <div className="lg:flex gap-2 ">
         <div
-          className={`flex  rounded-2xl ${getApplicationStatus(application) === "ANSWERING" ? "w-full" : "w-[70%]"}   `}
+          className={`flex  rounded-2xl ${getApplicationStatus(application) === "ANSWERING" ? "w-full" : "lg:w-[70%] w-full"}   `}
         >
           {form && (
             <Form
@@ -271,7 +271,7 @@ const Page = () => {
         {getApplicationStatus(application) === "ANSWERING" ? (
           <div></div>
         ) : (
-          <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
+          <div className="flex flex-col bg-white lg:w-[30%] w-full rounded-2xl p-5 gap-4">
             <h2 className="font-bold">Decision</h2>
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Evaluation Stage</h3>

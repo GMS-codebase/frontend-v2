@@ -173,7 +173,7 @@ const Page = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex items-center max-w-[60%]">
+        <div className="flex items-center lg:max-w-[60%]">
           <button
             onClick={() => handleScroll("left")}
             className="p-2 bg-white shadow-lg rounded-full mr-2"

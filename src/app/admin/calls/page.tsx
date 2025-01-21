@@ -169,7 +169,7 @@ const Page = () => {
 
         <button
           onClick={openAddEditModal}
-          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+          className="bg-primary text-white py-3 px-7 lg:mt-0 mt-4 rounded-full flex flex-row items-center gap-3"
         >
           <span className="text-2xl">
             <SolarAddFolderBold />
