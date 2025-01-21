@@ -10,14 +10,14 @@ import LoginModal from "@/components/Modals/auth/Login";
 import CallModal from "@/components/Modals/techInnov";
 import SuccessModal from "@/components/Modals/success";
 import SetPasswordModal from "@/components/Modals/auth/SetPasswordModal";
-import { SolarFolder2Bold } from "@/components/core/icons";
+import { SolarFolder2Bold,SolarShieldWarningBold } from "@/components/core/icons";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getCalls } from "@/services";
 import { unauthorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import ForgotPasswordModal from "@/components/Modals/auth/ForgotPassword";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import Link from "next/link";
 
 function Page() {
   const dispatch = useDispatch();
@@ -31,7 +31,7 @@ function Page() {
     ? [...calls]
         .filter(
           (call: any) =>
-            new Date(call.endDate) > new Date() && call.status === "OPEN",
+             call.status === "OPEN",
         )
         .sort(
           (a: any, b: any) =>
@@ -39,6 +39,7 @@ function Page() {
         )
     : [];
 
+  console.log(new Date("13 January 2025"), new Date());
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
   const [
@@ -119,68 +120,64 @@ function Page() {
         <h1 className="font-extrabold text-black text-2xl w-[50%] md:text-4xl">
           Welcome To SDF GRANT MANAGEMENT SYSTEM
         </h1>
-          <div className="relative w-full">
-      <button
-        className=" lg:hidden absolute left-0 top-1/2 transform -translate-y-1/2 p-2 rounded-full z-10"
-        onClick={scrollLeft}
-      >
-        <FiChevronLeft className="w-6 h-6 text-gray-700" />
-      </button>
-      <button
-        className="lg:hidden absolute right-0 top-1/2 transform -translate-y-1/2 p-2  rounded-full z-10"
-        onClick={scrollRight}
-      >
-        <FiChevronRight className="w-6 h-6 text-gray-700" />
-      </button>
-
-      <div
-        ref={scrollContainerRef}
-        className="w-[80%] overflow-x-auto no-scrollbar m-10 flex space-x-4"
-        style={{ scrollbarWidth: "none" }}
-      >
-        {sortedCalls.length ? (
-          sortedCalls.map((call: any) => (
-            <div
-              key={call.id}
-              className="min-w-[350px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
-            >
-              <SolarFolder2Bold className="w-8 h-8 text-[#005DE9]" />
-              <h3 className="font-bold text-black">
-                {call.title?.length >= 15
-                  ? `${call?.title?.slice(0, 15)}...`
-                  : call?.title}
-              </h3>
-              <button
-                className="bg-[#1F5DB014] text-primary font-bold rounded-full px-4 py-2"
-                onClick={() =>
-                  setOpenCall({
-                    isOpen: true,
-                    call: call,
-                  })
-                }
-              >
-                View details
-              </button>
+        <div
+          className="w-[80%] overflow-x-auto no-scrollbar m-10"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <div className="flex flex-col space-x-4 items-start">
+            <div className="w-full flex justify-center">
+            { (new Date("13 January 2025") > new Date()) && 
+              <div className="bg-white rounded-md p-4  w-fit flex items-center mb-3">
+              <SolarShieldWarningBold className="w-8 h-8 text-[#be1f1f]" />
+              <h3 className="text-[#be1f1f]">We would like to announce that we have extended the call from 10th January to 13th January 2025 at 12.00AM Sharp.Thank you</h3>
             </div>
-          ))
-        ) : (
-          <h2 className="text-black w-full text-base text-center md:text-xl mt-4 font-normal">
-            Unfortunately there is no open call.
-          </h2>
-        )}
+            }
+            </div>
+            {sortedCalls.length ? (
+              sortedCalls.map((call: any) => (
+                <div
+                  key={call.id}
+                  className="min-w-[350px] p-4 bg-white rounded-full flex justify-between items-center shadow-md"
+                >
+                  <SolarFolder2Bold className="w-8 h-8 text-[#005DE9]" />
+                  <h3 className="font-bold text-black">
+                    {call.title?.length >= 15
+                      ? `${call?.title?.slice(0, 15)}...`
+                      : call?.title}
+                  </h3>
+                  <button
+                    className="bg-[#1F5DB014] text-primary font-bold rounded-full px-4 py-2"
+                    onClick={() =>
+                      setOpenCall({
+                        isOpen: true,
+                        call: call,
+                      })
+                    }
+                  >
+                    View details
+                  </button>
+                </div>
+              ))
+            ) : (
+              <h2 className="text-black w-full text-base text-center md:text-xl mt-4 font-normal">
+                Unfortunately there is no open call.
+              </h2>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
-      </div>
-      <div className="flex justify-between items-center p-4 w-full fixed bottom-0 z-30">
-  <h2 className="text-black font-extrabold text-sm md:text-base lg:text-lg">
-    © 2024 Rwanda TVET Board.
-  </h2>
-  <button className="py-2 px-4 md:px-6 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
-    <IoDownloadOutline className="w-4 h-4 mx-2" />
-    <span className="hidden sm:inline">Download User Manual</span>
-  </button>
-</div>
 
+      <div className="absolute bottom-0 left-0 p-4 z-30">
+        <h2 className="text-black font-extrabold">
+          © 2024 Rwanda TVET Board.
+        </h2>
+      </div>
+      <div className="absolute bottom-0 right-0 p-4 z-30">
+        <a href={"/files/user_guide.pdf"} download={true} className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
+          <IoDownloadOutline className="w-4 h-4 mx-2" />
+          Download User Manual
+        </a>
+      </div>
       <RegisterModal
         openSuccess={openSuccess}
         isOpenRegister={isOpenRegister}
@@ -223,3 +220,7 @@ export default function DefaultPage() {
     </Suspense>
   );
 }
+
+
+
+

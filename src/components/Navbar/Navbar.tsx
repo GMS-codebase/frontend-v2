@@ -37,6 +37,7 @@ import {
   getAppeals,
   getNegotiatedMinutes,
   getApplicantProfile,
+  getApplicationsByEmployee,
 } from "@/services";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
@@ -81,7 +82,11 @@ const Navbar = () => {
       : active.startsWith("/applicant")
         ? "APPLICANT"
         : active.startsWith("/sdf")
-          ? "SDF_SECRETARIATE"
+          ? "SDF_SECRETARIATE" :
+          active.startsWith("/employee")
+          ? "EMPLOYEE" :
+          active.startsWith("/grant_committee")
+          ? "GRANT_COMMITTEE"
           : null;
 
     if (role === "ADMIN") {
@@ -90,6 +95,22 @@ const Navbar = () => {
       getRoles(dispatch);
       getBudgetLines(dispatch);
       getAppeals(dispatch, "admin");
+      getApplications(dispatch);
+    } else if (role === "EMPLOYEE") {
+      getApplicants(dispatch);
+      getAnnouncement(dispatch);
+      getEmpStages(dispatch);
+      getWindows(dispatch);
+      getSectors(dispatch);
+      getSubWindows(dispatch);
+      getTrades(dispatch);
+      getCalls(dispatch);
+      getMyProfile(dispatch);
+      getApplicationsByEmployee(dispatch);
+      getMEReports(dispatch);
+      getProfile(dispatch);
+      getSectorTrades(dispatch);
+      getForms(dispatch);
     } else if (role === "SDF_SECRETARIATE") {
       getApplicants(dispatch);
       getContracts(dispatch);
@@ -100,6 +121,12 @@ const Navbar = () => {
       getRejectedMinutes(dispatch, "sdf");
       getNegotiatedMinutes(dispatch, "sdf");
       getAppeals(dispatch, "sdf");
+      getApplicationsForContractSigning(dispatch);
+      getApplications(dispatch);
+
+    } else if (role === "GRANT_COMMITTEE") {
+      getApplications(dispatch);
+
     } else if (role === "APPLICANT") {
       getApplicantProfile(dispatch);
       getMyContacts(dispatch);
@@ -112,10 +139,10 @@ const Navbar = () => {
       getNegotiatedMinutes(dispatch, "applicant");
       getBudgetLines(dispatch);
       getAppeals(dispatch, "applicant");
+      getApplications(dispatch);
     }
     getApplicants(dispatch);
     getAnnouncement(dispatch);
-    getApplicationsForContractSigning(dispatch);
     getEmpStages(dispatch);
     getWindows(dispatch);
     getSectors(dispatch);
@@ -123,7 +150,6 @@ const Navbar = () => {
     getTrades(dispatch);
     getCalls(dispatch);
     getMyProfile(dispatch);
-    getApplications(dispatch);
     getMEReports(dispatch);
     getProfile(dispatch);
     getSectorTrades(dispatch);
