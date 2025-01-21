@@ -54,7 +54,7 @@ export const ApplicationsColumns = (type: "admin" | "employee" | "sdf") => {
       accessorKey: "sector",
       header: "Sector",
       cell: ({ row }: { row: Row<any> }) => (
-        <div className="truncate">{row.original?.sector?.name}</div>
+        <div className="truncate">{row.original?.sectors?.[0]?.name}</div>
       ),
     },
     {
@@ -62,7 +62,7 @@ export const ApplicationsColumns = (type: "admin" | "employee" | "sdf") => {
       header: "Trade",
       cell: ({ row }: { row: Row<any> }) => (
         <div className="truncate">
-          {shortenString(row.original?.trade?.trade?.title)}
+          {shortenString(row.original?.trades?.[0]?.trade?.title)}
         </div>
       ),
     },

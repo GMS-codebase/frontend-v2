@@ -1,12 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/core/data-table";
-import { HiDotsHorizontal } from "react-icons/hi";
-import { CiSearch } from "react-icons/ci";
-import { Menu, Select } from "@mantine/core";
-import { useRef, useState, useMemo, useEffect } from "react";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import {  useState, useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
