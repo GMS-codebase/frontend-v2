@@ -54,8 +54,8 @@ const EmployeeApplicationsPage = ({
       stages: getUniqueValues("currentStage"),
       windows: getUniqueValues("window.title"),
       subwindows: getUniqueValues("subWindow.title"),
-      sectors: getUniqueValues("sector.name"),
-      trades: getUniqueValues("trade.trade.title"),
+      sectors: getUniqueValues("sectors.name"),
+      trades: getUniqueValues("trades.trade.title"),
       call: getUniqueValues("call.title"),
     }),
     [applications]
