@@ -160,13 +160,8 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-<<<<<<< HEAD
       <div className="w-full lg:flex justify-between items-center p-4">
         <div className="relative lg:w-[20rem] w-full mb-4">
-=======
-      <div className="w-full flex justify-between items-center p-4 gap-5">
-        <div className="relative w-[20rem]">
->>>>>>> origin/main
           <span className="absolute top-4 left-4">
             <CiSearch size={25} color="" />
           </span>
@@ -235,8 +230,6 @@ const Page = () => {
       <MainModal title={"Export " + reportType}isOpen={isShowExport} onClose={closeExport}>
         <ExportForm exportAllToExcel={()=> exportDataToExcel(getReportName(selectedFilters.call, selectedFilters.sector, reportType),formattedSubmissionData, submissionColumns)} data={formattedSubmissionData!} onClose={closeExport} />
       </MainModal>
-    </div>
-    </div>
     </div>
   );
 };
