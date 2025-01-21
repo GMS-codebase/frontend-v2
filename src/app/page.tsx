@@ -100,7 +100,7 @@ function Page() {
         <div className="">
           <Image src={logo} alt="logo" width={360} height={360} />
         </div>
-        <div className="flex gap-4 justify-center">
+        <div className="flex gap-4 justify-center ml-12">
           <button
             className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
             onClick={openLogin}
@@ -175,7 +175,7 @@ function Page() {
       <div className="absolute bottom-0 right-0 p-4 z-30">
         <a href={"/files/user_guide.pdf"} download={true} className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
           <IoDownloadOutline className="w-4 h-4 mx-2" />
-          Download User Manual
+         <span className="hidden lg:flex"> Download User Manual</span>
         </a>
       </div>
       <RegisterModal
