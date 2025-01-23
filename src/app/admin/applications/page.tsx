@@ -22,9 +22,7 @@ const Page = () => {
   const dispatch = useDispatch();
   const [limit] = useState(10);
   console.log("first application --> ", applications.slice(1, 5));
-  useEffect(() => {
-    dispatch(getApplicationsPaginated(page, limit) as unknown as UnknownAction);
-  }, [dispatch, page, limit]);
+  console.log(loading);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
     stage: "All",
