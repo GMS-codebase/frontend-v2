@@ -355,7 +355,7 @@ export const evaluationColumns: ColumnDef<any>[] = [
     header: "Approved Beneficiaries",
     cell: ({ row }) => (
       <div className="truncate text-center">
-        {row?.original?.numberofapprovedtrainees == null ? (
+        {row?.original?.numberOfTrainees == null ? (
           <AddTraineesModal
           applicationId={
             row.original?.uuid
