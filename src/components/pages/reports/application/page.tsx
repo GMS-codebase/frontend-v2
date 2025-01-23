@@ -160,7 +160,7 @@ const ApplicationReports = () => {
         subWindow: row.subWindow?.title,
         sector: row.sectors[0]?.name,
         trade: row.trades[0]?.trade?.title,
-        stage: row.currentStage,
+        stage: row?.finishedAnswering! ? "SUBMITTED" : "ANSWERING",
         contacts: row.applicant?.phone,
         institutionType: capitalize(
           row.applicant.businesses?.[0]?.businessType,
