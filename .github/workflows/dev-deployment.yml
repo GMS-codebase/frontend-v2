@@ -67,7 +67,7 @@ jobs:
       # Start the application using pm2
       - name: Start the application using pm2
         run: |
-          
+
           cd ~/frontend-actions-runner/_work/frontend-v2/frontend-v2/builds/dev/
           pm2 restart gms-dev || pm2 start ecosystem.config.js
           pm2 save

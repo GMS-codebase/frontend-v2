@@ -40,11 +40,11 @@ const Page = () => {
         }))
         .filter((app: any) => {
           const matchingStage = stages.find(
-            (stage: any) => stage.sector == app.sector.name
+            (stage: any) => stage.sector == app.sector.name,
           );
           return matchingStage;
         }),
-    [rawApplications, stages]
+    [rawApplications, stages],
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
@@ -70,8 +70,8 @@ const Page = () => {
               searchTerm.toLowerCase() ||
                 app.applicant?.businesses?.[0]?.businessName
                   .toLowerCase()
-                  .includes(searchTerm.toLowerCase())
-            )
+                  .includes(searchTerm.toLowerCase()),
+            ),
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade, step } =
