@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import {  useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
@@ -16,7 +16,7 @@ import EmployeeApplicationsPage from "@/components/pages/applications/employees"
 
 const Page = () => {
   const { applications, loading, page } = useSelector(
-    (state: any) => state.applications
+    (state: any) => state.applications,
   );
 
   const dispatch = useDispatch();
@@ -47,8 +47,8 @@ const Page = () => {
               searchTerm.toLowerCase() ||
                 app.applicant?.businesses?.[0]?.businessName
                   .toLowerCase()
-                  .includes(searchTerm.toLowerCase())
-            )
+                  .includes(searchTerm.toLowerCase()),
+            ),
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade, step } =

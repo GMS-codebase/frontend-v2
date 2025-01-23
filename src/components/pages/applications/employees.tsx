@@ -40,9 +40,9 @@ const EmployeeApplicationsPage = ({
       ...new Set(
         applications
           .map((app: any) =>
-            key.split(".").reduce((obj, property) => obj?.[property], app)
+            key.split(".").reduce((obj, property) => obj?.[property], app),
           )
-          .filter(Boolean)
+          .filter(Boolean),
       ),
     ];
   };
@@ -56,7 +56,7 @@ const EmployeeApplicationsPage = ({
       trades: getUniqueValues("trades.trade.title"),
       call: getUniqueValues("call.title"),
     }),
-    [applications]
+    [applications],
   );
   const filters = [
     {
