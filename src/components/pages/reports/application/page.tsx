@@ -149,7 +149,6 @@ const ApplicationReports = () => {
 
   const formattedSubmissionData = filteredApplications.map(
     (row: any, index: any) => {
-      console.log("row -----> ", row);
       return {
         index: index,
         applicationNumber: row.applicationNumber,
