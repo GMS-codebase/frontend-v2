@@ -25,43 +25,8 @@ const Page = () => {
   const {
     applications: rawApplications,
     loading,
-    total: totalApplications,
     page,
   } = useSelector((state: any) => state.applications);
-  const [pageState, setPage] = useState(page ?? 1);
-  const [limit, setLimit] = useState(10);
-  const totalPages = totalApplications / limit;
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(
-      getEmployeeApplicationsPaginated(page, limit) as unknown as UnknownAction
-    );
-  }, [dispatch, page, limit]);
-
-  const handleNextPage = (newPage: number, limit: number) => {
-    dispatch(
-      getEmployeeApplicationsPaginated(
-        newPage + 1,
-        limit
-      ) as unknown as UnknownAction
-    );
-  };
-  const handlePreviousPage = (newPage: number, limit: number) => {
-    dispatch(
-      getEmployeeApplicationsPaginated(
-        newPage - 1,
-        limit
-      ) as unknown as UnknownAction
-    );
-  };
-  const handleChangePage = (newPage: number, limit: number) => {
-    dispatch(
-      getEmployeeApplicationsPaginated(
-        newPage,
-        limit
-      ) as unknown as UnknownAction
-    );
-  };
   const { stages } = useSelector((state: any) => state.empStages);
   console.log(stages);
 
@@ -75,15 +40,12 @@ const Page = () => {
         }))
         .filter((app: any) => {
           const matchingStage = stages.find(
-            (stage: any) => stage.sector == app.sector.name
+            (stage: any) => stage.sector == app.sector.name,
           );
           return matchingStage;
         }),
-    [rawApplications, stages]
+    [rawApplications, stages],
   );
-
-  const filtersContainerRef = useRef<HTMLDivElement>(null);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
     stage: "All",
@@ -108,8 +70,8 @@ const Page = () => {
               searchTerm.toLowerCase() ||
                 app.applicant?.businesses?.[0]?.businessName
                   .toLowerCase()
-                  .includes(searchTerm.toLowerCase())
-            )
+                  .includes(searchTerm.toLowerCase()),
+            ),
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade, step } =
