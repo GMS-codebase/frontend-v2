@@ -147,7 +147,7 @@ import { useRouter } from "next/navigation";
 import { ApplicationStage } from "@/types/application";
 export const getAppeals = async (
   dispatch: Dispatch<UnknownAction>,
-  user: string
+  user: string,
 ) => {
   dispatch({ type: GET_APPEALS_LOADING });
   const api =
@@ -200,7 +200,7 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -237,7 +237,7 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplicationsByStage = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   try {
     dispatch({ type: SET_APPLICATIONS_BY_STAGE_LOADING });
@@ -255,12 +255,12 @@ export const getApplicationsByStage = async (
 export const getApplicantsByStage = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string
+  stage: string,
 ) => {
   try {
     dispatch({ type: SET_APPLICANTS_BY_STAGE_LOADING });
     const response = await authorizedApi.get(
-      `/applicants/stage?callUuid=${call}&currentStage=${stage}`
+      `/applicants/stage?callUuid=${call}&currentStage=${stage}`,
     );
     dispatch({ type: GET_APPLICANTS_BY_STAGE, payload: response.data });
   } catch (err: any) {
@@ -275,12 +275,12 @@ export const getApplicantsByStage = async (
 export const getGenderCountByStage = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string
+  stage: string,
 ) => {
   try {
     dispatch({ type: SET_GENDER_COUNT_BY_STAGE_LOADING });
     const response = await authorizedApi.get(
-      `/gender-count/stage?callUuid=${call}&currentStage=${stage}`
+      `/gender-count/stage?callUuid=${call}&currentStage=${stage}`,
     );
     dispatch({ type: GET_GENDER_COUNT_BY_STAGE, payload: response.data });
   } catch (err: any) {
@@ -295,12 +295,12 @@ export const getGenderCountByStage = async (
 export const getBusinessTypeByStage = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string
+  stage: string,
 ) => {
   try {
     dispatch({ type: SET_BUSINESS_TYPE_BY_STAGE_LOADING });
     const response = await authorizedApi.get(
-      `/business-type/stage?callUuid=${call}&currentStage=${stage}`
+      `/business-type/stage?callUuid=${call}&currentStage=${stage}`,
     );
     dispatch({ type: GET_BUSINESS_TYPE_BY_STAGE, payload: response.data });
   } catch (err: any) {
@@ -313,7 +313,7 @@ export const getBusinessTypeByStage = async (
 
 // Fetch submissions by sector
 export const getSubmissionsBySector = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   try {
     dispatch({ type: SET_SUBMISSIONS_BY_SECTOR_LOADING });
@@ -393,7 +393,7 @@ export const handleDownloadFile = async (file: any, service: string) => {
       `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
         responseType: "blob",
-      }
+      },
     );
     const blob = new Blob([response.data], {
       type: response.headers["content-type"],
@@ -486,7 +486,7 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplicationsForContractSigning = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   dispatch({ type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING });
   authorizedApi
@@ -528,7 +528,7 @@ export const getApplicationsByEmployee = async (dispatch: Dispatch) => {
 
   try {
     const response = await authorizedApi.get(
-      `/application/all/not-paginated/by-employee`
+      `/application/all/not-paginated/by-employee`,
     );
     dispatch({
       type: GET_APPLICATIONS_SUCCESS,
@@ -550,7 +550,7 @@ export const getApplicationsPaginated =
 
     try {
       const response = await authorizedApi.get(
-        `/application/all?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+        `/application/all?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`,
       );
       dispatch({
         type: GET_PAGINATED_APPLICATIONS_SUCCESS,
@@ -573,7 +573,7 @@ export const getEmployeeApplicationsPaginated =
 
     try {
       const response = await authorizedApi.get(
-        `/application/all/paginated/by-employee?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+        `/application/all/paginated/by-employee?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`,
       );
       dispatch({
         type: GET_PAGINATED_APPLICATIONS_SUCCESS,
@@ -656,7 +656,7 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
 };
 export const getApplicationsReadyForMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
   authorizedApi
@@ -676,7 +676,7 @@ export const getApplicationsReadyForMinutes = async (
 };
 export const getUploadedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_UPLOADED_MINUTES_LOADING });
   authorizedApi
@@ -696,7 +696,7 @@ export const getUploadedMinutes = async (
 };
 export const getApprovedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_APPROVED_MINUTES_LOADING });
   authorizedApi
@@ -716,7 +716,7 @@ export const getApprovedMinutes = async (
 };
 export const getRejectedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_REJECTED_MINUTES_LOADING });
   authorizedApi
@@ -736,14 +736,14 @@ export const getRejectedMinutes = async (
 };
 export const getNegotiatedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string
+  role: string,
 ) => {
   dispatch({ type: GET_NEGOTIATED_MINUTES_LOADING });
   authorizedApi
     .get(
       `/negotiation-contract/applications/${role}/${
         role === "applicant" ? "negotiate" : "negotiating"
-      }`
+      }`,
     )
     .then((res) => {
       dispatch({
@@ -798,7 +798,7 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
     });
 };
 export const getApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>
+  dispatch: Dispatch<UnknownAction>,
 ) => {
   dispatch({ type: GET_APPLICANT_PROFILE_LOADING });
   authorizedApi
@@ -818,7 +818,7 @@ export const getApplicantProfile = async (
 };
 const validateQuestions = async (
   answers: { [key: string]: any },
-  form: Form
+  form: Form,
 ): Promise<string | null> => {
   try {
     if (!form.qns) {
@@ -851,7 +851,7 @@ const validateQuestions = async (
 
 const validateComments = async (
   comments: { [key: string]: any },
-  form: Form
+  form: Form,
 ): Promise<string | null> => {
   try {
     if (!form.qns) {
@@ -885,7 +885,7 @@ export const handleSubmit = async (
   answers: any,
   application: any,
   form: any,
-  callback?: () => void
+  callback?: () => void,
 ) => {
   const error =
     type === "save" ? undefined : await validateQuestions(answers, form);
@@ -902,7 +902,7 @@ export const handleSubmit = async (
       `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${application.uuid}`,
       {
         answers: JSON.stringify(answers),
-      }
+      },
     );
     notifications.show({
       message:
@@ -928,7 +928,7 @@ export const handleAddComments = async (
   comments: any,
   form: any,
   application: any,
-  callback?: () => void
+  callback?: () => void,
 ) => {
   const error =
     action === "save" ? undefined : await validateComments(comments, form);
@@ -947,7 +947,7 @@ export const handleAddComments = async (
         : `/application/comment/${application.uuid}`,
       {
         comments: JSON.stringify(comments),
-      }
+      },
     );
     notifications.show({
       message: "Comments Added Successfully!",
@@ -971,8 +971,8 @@ export const getApplicationStatus = (application: any) => {
   } else if (
     application?.currentStage === ApplicationStage.EVALUATION &&
     !application?.call?.closedEvaluation &&
-    (application?.evaluationDecisions?.length != 3 &&
-      !application?.evaluationFinalDecision)
+    application?.evaluationDecisions?.length != 3 &&
+    !application?.evaluationFinalDecision
   ) {
     return "EVALUATION IN PROGRESS";
   } else if (

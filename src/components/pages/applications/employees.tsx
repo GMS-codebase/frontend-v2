@@ -34,17 +34,15 @@ const EmployeeApplicationsPage = ({
 }: IApplicationsPage) => {
   const filtersContainerRef = useRef<HTMLDivElement>(null);
   console.log(applications);
-
-  // Helper function to get unique values for dropdown filters
   const getUniqueValues = (key: string) => {
     return [
       "All",
       ...new Set(
         applications
           .map((app: any) =>
-            key.split(".").reduce((obj, property) => obj?.[property], app)
+            key.split(".").reduce((obj, property) => obj?.[property], app),
           )
-          .filter(Boolean)
+          .filter(Boolean),
       ),
     ];
   };
@@ -58,7 +56,7 @@ const EmployeeApplicationsPage = ({
       trades: getUniqueValues("trades.trade.title"),
       call: getUniqueValues("call.title"),
     }),
-    [applications]
+    [applications],
   );
   const filters = [
     {
@@ -92,38 +90,6 @@ const EmployeeApplicationsPage = ({
       }
     }
   };
-
-  const filteredApplications = useMemo(() => {
-    return applications
-      .filter(
-        (app: any) =>
-          app.applicationNumber
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name
-            .toLowerCase()
-            .includes(
-              searchTerm.toLowerCase() ||
-                app.applicant?.businesses?.[0]?.businessName
-                  .toLowerCase()
-                  .includes(searchTerm.toLowerCase())
-            )
-      )
-      .filter((app: any) => {
-        const { stage, window, call, subWindow, sector, trade, step } =
-          selectedFilters;
-        return (
-          (stage === "All" ||
-            (app?.currentStage === stage && filterByStep(app, step))) &&
-          (call === "All" || app.call?.title === call) &&
-          (window === "All" || app.window?.title === window) &&
-          (subWindow === "All" || app.subWindow?.title === subWindow) &&
-          (sector === "All" || app.sector?.name === sector) &&
-          (trade === "All" || app.trade?.trade.title === trade)
-        );
-      });
-  }, [applications, searchTerm, selectedFilters]);
-
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4 gap-5">

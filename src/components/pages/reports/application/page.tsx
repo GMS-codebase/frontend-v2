@@ -20,15 +20,19 @@ import {
 import { evaluationColumns, submissionColumns } from "./Columns";
 import { formatDate } from "date-fns";
 import { useDispatch } from "react-redux";
-type IReportType = "Submission Report" | "Evaluation Report" | "Due Diligence Report" | "Grant Committee Report"
+type IReportType =
+  | "Submission Report"
+  | "Evaluation Report"
+  | "Due Diligence Report"
+  | "Grant Committee Report";
 const ApplicationReports = () => {
   const [isShowExport, { open: showExport, close: closeExport }] =
     useDisclosure(false);
-  const [reportType, setReportType] = useState<IReportType>("Submission Report");
-  const {
-    applications: rawApplications,
-    loading,
-  } = useSelector((state: any) => state.applications);
+  const [reportType, setReportType] =
+    useState<IReportType>("Submission Report");
+  const { applications: rawApplications, loading } = useSelector(
+    (state: any) => state.applications,
+  );
   console.log("raw application ---> ", rawApplications?.[0]);
   const dispatch = useDispatch();
   const applications = useMemo(
@@ -169,9 +173,11 @@ const ApplicationReports = () => {
           : "Public",
         requestedBeneficiaries:
           calculateTotalTrainees(JSON.parse(row?.answers)) ?? "None",
-        approvedBeneficiaries: row?.numberOfTrainees === null ? "0" : row?.numberOfTrainees,
+        approvedBeneficiaries:
+          row?.numberOfTrainees === null ? "0" : row?.numberOfTrainees,
         generalComment: row?.evaluationFinalDecision ?? "-",
-        evaluationStatus: getFinalDecisionFromDecisionsArray(row?.evaluationDecisions) || "-",
+        evaluationStatus:
+          getFinalDecisionFromDecisionsArray(row?.evaluationDecisions) || "-",
         district:
           row.applicant.businesses?.[0]?.addressLine?.split("-")[3] ?? "",
         businessSector:
@@ -181,7 +187,8 @@ const ApplicationReports = () => {
       };
     },
   );
-  const columns = reportType === "Submission Report" ? submissionColumns : evaluationColumns;
+  const columns =
+    reportType === "Submission Report" ? submissionColumns : evaluationColumns;
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4 gap-5">
