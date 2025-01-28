@@ -145,7 +145,7 @@ const Page = () => {
       })
       .catch((error) => {
         notifications.show({
-          message: error.response.data.message,
+          message: error.response?.data.message,
           color: "red",
         });
       })
@@ -293,6 +293,7 @@ const Page = () => {
             name="subject"
             value={formData.subject}
             onChange={handleChange}
+            required
             className="mt-2 p-2 w-full border border-primary rounded-md shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-white"
           />
         </div>
@@ -305,6 +306,7 @@ const Page = () => {
           value={formData.message}
           onChange={handleChange}
           rows={4}
+          required
           className="mt-2 p-2 w-full border border-primary rounded-md shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-white"
         />
         <button

@@ -33,8 +33,6 @@ const ApplicationReports = () => {
   const { applications: rawApplications, loading } = useSelector(
     (state: any) => state.applications,
   );
-  console.log("raw application ---> ", rawApplications?.[0]);
-  const dispatch = useDispatch();
   const applications = useMemo(
     () =>
       rawApplications.map((app: any) => ({
@@ -151,8 +149,10 @@ const ApplicationReports = () => {
       });
   }, [applications, searchTerm, selectedFilters]);
 
+  
   const formattedSubmissionData = filteredApplications.map(
     (row: any, index: any) => {
+      const contact = row.applicant.name + " " + row.applicant.phone + " " + row.applicant.email;
       return {
         index: index,
         applicationNumber: row.applicationNumber,
@@ -164,7 +164,7 @@ const ApplicationReports = () => {
         sector: row.sectors[0]?.name,
         trade: row.trades[0]?.trade?.title,
         stage: row?.finishedAnswering! ? "SUBMITTED" : "ANSWERING",
-        contacts: row.applicant?.phone,
+        contacts: contact,
         institutionType: capitalize(
           row.applicant.businesses?.[0]?.businessType,
         ),
@@ -183,6 +183,7 @@ const ApplicationReports = () => {
         businessSector:
           row.applicant.businesses?.[0]?.addressLine?.split("-")[2] ?? "",
         cell: row.applicant.businesses?.[0]?.addressLine?.split("-")[1] ?? "",
+        village: row.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "",
         submissionDate: formatDate(row?.lastUpdatedAt, "yyyy-MM-dd"),
       };
     },

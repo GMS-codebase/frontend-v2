@@ -28,7 +28,9 @@ export default function RootLayout({
         />
       </head>
       <body className={urbanist.className}>
-        <RootProvider>{children}</RootProvider>
+        <RootProvider>
+          {children}
+        </RootProvider>
       </body>
     </html>
   );
