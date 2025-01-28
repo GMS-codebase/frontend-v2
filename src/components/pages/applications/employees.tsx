@@ -2,14 +2,8 @@
 "use client";
 import { DataTable } from "@/components/core/data-table";
 import { CiSearch } from "react-icons/ci";
-import { Select } from "@mantine/core";
-import { useRef, useState, useMemo, useEffect } from "react";
+import { useRef, useMemo } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { useSelector } from "react-redux";
-import { getEmployeeApplicationsPaginated } from "@/services";
-import { UnknownAction } from "redux";
-import { useDispatch } from "react-redux";
-import { filterByStep } from "@/utils/funcs";
 import { ApplicationsColumns } from "./columns";
 import { FilterDropDown } from "./filters";
 

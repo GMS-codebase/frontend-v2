@@ -62,7 +62,11 @@ export const submissionColumns: ColumnDef<any>[] = [
     accessorKey: "contacts",
     header: "Contacts",
     cell: ({ row }) => (
-      <div className="truncate">{row.original?.applicant?.phone}</div>
+      <div className="truncate">
+        {row.original.applicant?.name} / 
+        <span className="font-bold">{row.original.applicant?.phone} <br /></span>
+        {row.original.applicant?.email}
+      </div>
     ),
   },
   {
@@ -136,6 +140,16 @@ export const submissionColumns: ColumnDef<any>[] = [
     cell: ({ row }) => (
       <div className="truncate">
         {row.original.applicant.businesses?.[0]?.addressLine?.split("-")[1] ??
+          "Not set"}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "village",
+    header: "Village",
+    cell: ({ row }) => (
+      <div className="truncate">
+        {row.original.applicant.businesses?.[0]?.addressLine?.split("-")[0] ??
           "Not set"}
       </div>
     ),
@@ -312,6 +326,16 @@ export const evaluationColumns: ColumnDef<any>[] = [
     cell: ({ row }) => (
       <div className="truncate">
         {row.original.applicant.businesses?.[0]?.addressLine?.split("-")[1] ??
+          "Not set"}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "village",
+    header: "Village",
+    cell: ({ row }) => (
+      <div className="truncate">
+        {row.original.applicant.businesses?.[0]?.addressLine?.split("-")[0] ??
           "Not set"}
       </div>
     ),
