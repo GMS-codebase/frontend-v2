@@ -824,8 +824,6 @@ function BasicGauges({
           percent={totalApplicants > 0 ? totalApplicants / 100 : 0}
           arcPadding={0.02}
           hideText={true}
-          needleColor="gray"
-          needleBaseColor="black"
         />
         <div
           style={{
