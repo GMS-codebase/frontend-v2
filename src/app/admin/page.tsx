@@ -28,10 +28,6 @@ const Dashboard = () => {
   const { calls, loading: callsLoading } = useSelector(
     (state: any) => state.calls,
   );
-  const { applications, loading: applicationsLoading } = useSelector(
-    (state: any) => state.applications,
-  );
-
   const [callStats, setCallStats] = useState<any>(null);
   const [applicantsData, setApplicantsData] = useState<any>({});
   const [applicationsData, setApplicationsData] = useState<any>({});
@@ -109,57 +105,76 @@ const Dashboard = () => {
   }, [callsLoading]);
 
   useEffect(() => {
-    if (
-      !callsLoading &&
-      !applicationsLoading &&
-      applications.length > 0 &&
-      activeCall
-    ) {
-      const stats = getCallStats(activeCall, applications);
-      setCallStats(stats);
-      console.log(stats);
-      setCallStatsLoading(false);
-    }
-  }, [callsLoading, applicationsLoading, activeCall]);
+    const fetchCallStats = async () => {
+      if (!callsLoading && activeCall) {
+        try {
+          setCallStatsLoading(true);
+          const stats = await getCallStats(activeCall);
+          console.log(stats);
+          setCallStats(stats);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setCallStatsLoading(false);
+        }
+      }
+    };
+    fetchCallStats();
+  }, [callsLoading, activeCall]);
 
   useEffect(() => {
-    if (
-      !callsLoading &&
-      !applicationsLoading &&
-      applications.length > 0 &&
-      applicantsStage
-    ) {
-      const data = getApplicantsData(applications, applicantsStage);
-      setApplicantsData(data);
-      setApplicantsDataLoading(false);
-    }
-  }, [callsLoading, applicationsLoading, applicantsStage]);
+    const fetchApplicantsData = async () => {
+      if (!callsLoading && applicantsStage) {
+        try {
+          setApplicantsDataLoading(true);
+          const data = await getApplicantsData(applicantsStage);
+          console.log(data);
+          setApplicantsData(data);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setApplicantsDataLoading(false);
+        }
+      }
+    };
+    fetchApplicantsData();
+  }, [callsLoading, applicantsStage]);
 
   useEffect(() => {
-    if (
-      !callsLoading &&
-      !applicationsLoading &&
-      applications.length > 0 &&
-      applicationsStage
-    ) {
-      const data = getApplicationsData(applications, applicationsStage);
-      setApplicationsData(data);
-      setApplicationsDataLoading(false);
-    }
-  }, [callsLoading, applicationsLoading, applicationsStage]);
+    const fetchApplicationsData = async () => {
+      if (!callsLoading && applicationsStage) {
+        try {
+          setApplicationsDataLoading(true);
+          const data = await getApplicationsData(applicationsStage);
+          console.log(data);
+          setApplicationsData(data);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setApplicationsDataLoading(false);
+        }
+      }
+    };
+    fetchApplicationsData();
+  }, [callsLoading, applicationsStage]);
 
   useEffect(() => {
-    if (
-      !callsLoading &&
-      !applicationsLoading &&
-      applications.length > 0 &&
-      submissionsStage
-    ) {
-      const data = getSubmissionsData(applications, submissionsStage);
-      setSubmissionsData(data);
-      setSubmissionsDataLoading(false);
-    }
-  }, [callsLoading, applicationsLoading, submissionsStage]);
+    const fetchSubmissionsData = async () => {
+      if (!callsLoading && submissionsStage) {
+        try {
+          setSubmissionsDataLoading(true);
+          const data = await getSubmissionsData(submissionsStage);
+          console.log(data);
+          setSubmissionsData(data);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setSubmissionsDataLoading(false);
+        }
+      }
+    };
+    fetchSubmissionsData();
+  }, [callsLoading, submissionsStage]);
 
   const sortedSectors = Object.entries(callStats?.applicantsPerSector || {})
     .sort((a: any, b: any) => b[1] - a[1])
@@ -402,7 +417,7 @@ const Dashboard = () => {
                 <div>
                   <AdminAction
                     call={null}
-                    setIsCall={() => {}}
+                    setIsCall={() => { }}
                     exportFunction={() =>
                       downloadDashboardExcelFile(
                         undefined,
@@ -502,7 +517,7 @@ const Dashboard = () => {
                 <div>
                   <AdminAction
                     call={null}
-                    setIsCall={() => {}}
+                    setIsCall={() => { }}
                     exportFunction={() =>
                       downloadDashboardExcelFile(
                         undefined,
@@ -592,7 +607,7 @@ const Dashboard = () => {
                 <div>
                   <AdminAction
                     call={null}
-                    setIsCall={() => {}}
+                    setIsCall={() => { }}
                     exportFunction={() =>
                       downloadDashboardExcelFile(
                         applicationsData,
@@ -667,7 +682,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div>
-                <AdminAction call={null} setIsCall={() => {}} />{" "}
+                <AdminAction call={null} setIsCall={() => { }} />{" "}
               </div>
             </div>
           </div>
@@ -701,7 +716,7 @@ const Dashboard = () => {
               </div>
               <div className="text-md gap-4 flex items-center justify-center">
                 <div>
-                  <AdminAction call={null} setIsCall={() => {}} />{" "}
+                  <AdminAction call={null} setIsCall={() => { }} />{" "}
                 </div>
               </div>
             </div>
@@ -740,7 +755,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div>
-                <AdminAction call={null} setIsCall={() => {}} />{" "}
+                <AdminAction call={null} setIsCall={() => { }} />{" "}
               </div>
             </div>
           </div>
@@ -760,7 +775,7 @@ function BasicGauges({
 }) {
   const totalApplicants = Object.values(applicationsByBusinessType).reduce(
     (sum, value) => sum + value,
-    0,
+    0
   );
 
   const colors = [
@@ -780,7 +795,7 @@ function BasicGauges({
       value,
       percentage: totalApplicants > 0 ? (value / totalApplicants) * 100 : 0,
       color: colors[index % colors.length],
-    }),
+    })
   );
 
   if (totalApplicants === 0) {
@@ -806,40 +821,35 @@ function BasicGauges({
           nrOfLevels={chartData.length}
           arcsLength={chartData.map((data) => data.percentage / 100)}
           colors={chartData.map((data) => data.color)}
-          percent={0.5}
+          percent={totalApplicants > 0 ? totalApplicants / 100 : 0}
           arcPadding={0.02}
           hideText={true}
-          needleColor="transparent"
-          needleBaseColor="transparent"
+          needleColor="gray"
+          needleBaseColor="black"
         />
-        <p
+        <div
           style={{
             position: "absolute",
             top: "60%",
             left: "50%",
             transform: "translate(-50%, -50%)",
           }}
+          className="flex flex-col justify-center items-center"
         >
-          <div className="flex flex-col justify-center items-center">
-            <p>{totalApplicants}</p>
-            <p className="text-sm">Applicants</p>
-          </div>
-        </p>
+          <p>{totalApplicants}</p>
+          <p className="text-sm">Applicants</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-10">
-        {chartData
-          .filter(({ key }) => key)
-          .map(({ key, color }, index) => (
-            <div key={index} className="flex items-center">
-              <div
-                className="w-4 h-4 mr-2"
-                style={{ backgroundColor: color }}
-              />
-              <p className="capitalize">{key}</p>
-            </div>
-          ))}
+      <div className="grid grid-cols-2 gap-x-10 mt-4">
+        {chartData.map(({ key, color, value }, index) => (
+          <div key={index} className="flex items-center">
+            <div className="w-4 h-4 mr-2" style={{ backgroundColor: color }} />
+            <p className="capitalize">{key}: {value}</p>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
+
