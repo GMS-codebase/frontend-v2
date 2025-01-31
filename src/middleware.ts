@@ -44,7 +44,10 @@ export const checkToken = (token: string) => {
 };
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("token");
+  console.log(request.nextUrl.pathname)
   if (whitelist.includes(request.nextUrl.pathname) && !token?.value) {
+  console.log(token);
+
     return NextResponse.next();
   }
   if (!token?.value) {
