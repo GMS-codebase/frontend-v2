@@ -12,15 +12,15 @@ import { getColumns } from "./columns";
 
 const AppealsPage = () => {
   const { appeals, loading } = useSelector((state: any) => state.appeals);
+  console.log(appeals)
   const [viewAppeal, setViewAppeal] = useState<any>({
     open: false,
     appeal: null,
   });
   const [searchQuery, setSearchQuery] = useState<string>("");
-
   const filteredAppeals = appeals?.filter((appeal: any) => {
-    const query = searchQuery.toLowerCase();
-    return appeal?.appeal_comment.toLowerCase().includes(query);
+    const query = searchQuery?.toLowerCase();
+    return appeal?.appeal_comment?.toLowerCase()?.includes(query);
   });
 
   return (

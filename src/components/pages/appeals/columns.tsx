@@ -1,3 +1,4 @@
+import { shortenString } from "@/services";
 import { Menu } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { FiEye } from "react-icons/fi";
@@ -15,7 +16,7 @@ export const getColumns = ({setViewAppeal}: IGetColumns):ColumnDef<any>[] =>{
         {
           accessorKey: "institution_name",
           header: "Institution Name",
-          cell: ({ row }) => <div>{row.original?.company_name}</div>,
+          cell: ({ row }) => <div>{row.original?.applicant?.businesses?.[0]?.businessName}</div>,
         },
         {
           accessorKey: "legal_status",
@@ -23,16 +24,46 @@ export const getColumns = ({setViewAppeal}: IGetColumns):ColumnDef<any>[] =>{
           cell: ({ row }) => <div>{row.original.legal_status}</div>,
         },
         {
+          accessorKey: "institution_name",
+          header: "Applicant Info",
+          cell: ({ row }) => <div className="truncate">{row.original?.applicant?.name} /<span className="font-bold">{row.original?.applicant?.phone}</span><br/>{row.original?.applicant?.email}</div>,
+        },
+        {
           accessorKey: "stage",
           header: "Application Stage",
-          cell: ({ row }) => <div>{row.original?.stage}</div>,
+          cell: ({ row }) => <div>{row.original?.stage.stage}</div>,
+        },
+        {
+          accessorKey: "window",
+          header: "Window",
+          cell: ({ row }) => <div className="truncate">{row.original?.application?.window?.title}</div>,
+        },
+        {
+          accessorKey: "stage",
+          header: "Sub-Window",
+          cell: ({ row }) => <div className="truncate">{shortenString(row.original?.application?.subWindow?.title, 40)}</div>,
+        },
+        {
+          accessorKey: "stage",
+          header: "Sector",
+          cell: ({ row }) => <div className="truncate">{row.original?.application?.sectors?.[0]?.name}</div>,
+        },
+        {
+          accessorKey: "trade",
+          header: "Trade",
+          cell: ({ row }) => <div className="truncate">{shortenString(row.original?.application?.trades?.[0]?.trade?.title)}</div>,
+        },
+        {
+          accessorKey: "stage",
+          header: "Application Stage",
+          cell: ({ row }) => <div>{row.original?.stage?.stage}</div>,
         },
         {
           accessorKey: "status",
           header: "Appeal Status",
           cell: ({ row }) => (
             <div
-              className={`${row.original?.status === "PENDING" ? "bg-lime-100 text-lime-900" : row.original?.status === "APPROVED" ? "bg-green-300 text-lime-900" : "bg-red-50 text-red-500"} text-center rounded-full py-1`}
+              className={`${row.original?.status === "PENDING" ? "bg-lime-100 text-lime-900" : row.original?.status === "APPROVED" ? "bg-green-300 text-lime-900" : "bg-red-50 text-red-500"} text-center rounded-full py-3`}
             >
               {row.original?.status}
             </div>
