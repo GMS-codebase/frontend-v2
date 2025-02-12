@@ -96,9 +96,9 @@ const DueDiligencyDetails = ({
                   </div>
                 </div>
               )}
-              <div className="w-full">
+              <div className="w-full mt-3">
                 <label
-                  className="block text-sm text-gray-600"
+                  className="block text-sm text-gray-600 font-bold"
                   htmlFor="textarea"
                 >
                   Finance Information:
@@ -109,12 +109,12 @@ const DueDiligencyDetails = ({
                   value={application?.duediligencyForm?.financeInfo}
                   readOnly
                   rows={4}
-                  className="w-full p-3 border rounded-2xl outline-none bg-gray-100"
+                  className="w-full p-3 rounded-2xl outline-none bg-gray-100 resize-none mt-2 border-[0.5px] border-[#005DE9]"
                 />
               </div>
               <div className="w-full">
                 <label
-                  className="block text-sm text-gray-600"
+                  className="block text-sm text-gray-600 font-bold"
                   htmlFor="textarea"
                 >
                   Equipment:
@@ -125,12 +125,12 @@ const DueDiligencyDetails = ({
                   value={application?.duediligencyForm?.equipmentInfo}
                   readOnly
                   rows={4}
-                  className="w-full p-3 border rounded-2xl outline-none bg-gray-100"
+                  className="w-full p-3 rounded-2xl outline-none bg-gray-100 resize-none mt-2 border-[0.5px] border-[#005DE9]"
                 />
               </div>
               <div className="w-full">
                 <label
-                  className="block text-sm text-gray-600"
+                  className="block text-sm text-gray-600 font-bold"
                   htmlFor="textarea"
                 >
                   Workplace:
@@ -141,12 +141,12 @@ const DueDiligencyDetails = ({
                   value={application?.duediligencyForm?.workPlaceInfo}
                   readOnly
                   rows={4}
-                  className="w-full p-3 border rounded-2xl outline-none bg-gray-100"
+                  className="w-full p-3 rounded-2xl outline-none bg-gray-100 resize-none mt-2 border-[0.5px] border-[#005DE9]"
                 />
               </div>
               <div className="w-full">
                 <label
-                  className="block text-sm text-gray-600"
+                  className="block text-sm text-gray-600 font-bold"
                   htmlFor="textarea"
                 >
                   OHS Information:
@@ -157,12 +157,12 @@ const DueDiligencyDetails = ({
                   value={application?.duediligencyForm?.ohsInfo}
                   readOnly
                   rows={4}
-                  className="w-full p-3 border rounded-2xl outline-none bg-gray-100"
+                  className="w-full p-3 rounded-2xl outline-none bg-gray-100 resize-none mt-2 border-[0.5px] border-[#005DE9]"
                 />
               </div>
               <div className="w-full">
                 <label
-                  className="block text-sm text-gray-600"
+                  className="block text-sm text-gray-600 font-bold"
                   htmlFor="textarea"
                 >
                   Comment:
@@ -174,7 +174,7 @@ const DueDiligencyDetails = ({
                   onChange={(e) => setText(e.target.value)}
                   readOnly={!isEditing}
                   rows={4}
-                  className={`w-full p-3 border rounded-2xl outline-none ${
+                  className={`w-full p-3 rounded-2xl outline-none resize-none mt-2 border-[0.5px] border-[#005DE9] ${
                     isEditing ? "bg-white" : "bg-gray-100"
                   }`}
                 />
