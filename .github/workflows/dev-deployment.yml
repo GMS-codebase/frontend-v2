@@ -54,7 +54,6 @@ jobs:
       - name: Install dependencies and build the application
         run: |
           cd dev
-          npm install -g pnpm
           pnpm install
           pnpm build
 
