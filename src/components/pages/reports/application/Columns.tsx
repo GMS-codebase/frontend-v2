@@ -1,5 +1,9 @@
 import { UPDATE_APPLICATION_SUCCESS } from "@/actions/ApplicationsActions";
-import { getApplications, getApplicationStatus, shortenString } from "@/services";
+import {
+  getApplications,
+  getApplicationStatus,
+  shortenString,
+} from "@/services";
 import { authorizedApi } from "@/utils/api";
 import {
   calculateTotalTrainees,
@@ -63,8 +67,10 @@ export const submissionColumns: ColumnDef<any>[] = [
     header: "Contacts",
     cell: ({ row }) => (
       <div className="truncate">
-        {row.original.applicant?.name} / 
-        <span className="font-bold">{row.original.applicant?.phone} <br /></span>
+        {row.original.applicant?.name} /
+        <span className="font-bold">
+          {row.original.applicant?.phone} <br />
+        </span>
         {row.original.applicant?.email}
       </div>
     ),
@@ -381,11 +387,9 @@ export const evaluationColumns: ColumnDef<any>[] = [
       <div className="truncate text-center">
         {row?.original?.numberOfTrainees == null ? (
           <AddTraineesModal
-          applicationId={
-            row.original?.uuid
-          }
-          stageId={"EVALUATION"}
-        />
+            applicationId={row.original?.uuid}
+            stageId={"EVALUATION"}
+          />
         ) : (
           row?.original?.numberOfTrainees
         )}
@@ -496,31 +500,31 @@ const AddTraineesModal = ({ applicationId, stageId }: IAddTraineesProps) => {
     setLoading(true);
     setError("");
     authorizedApi
-     .patch(
-        `/application/${applicationId}/${stageId}/add-trainee-number`,
-        {
-          numberOfApprovedTrainees: numberOfTrainees,
-        }
-      )
-     .then((res) => {
+      .patch(`/application/${applicationId}/${stageId}/add-trainee-number`, {
+        numberOfApprovedTrainees: numberOfTrainees,
+      })
+      .then((res) => {
         notifications.show({
           title: "Success",
           message: "Trainees added successfully",
-        })
-        dispatch({type: UPDATE_APPLICATION_SUCCESS, payload: {
-          id: applicationId,
-          data: res?.data?.data?.data
-        }})
+        });
+        dispatch({
+          type: UPDATE_APPLICATION_SUCCESS,
+          payload: {
+            id: applicationId,
+            data: res?.data?.data?.data,
+          },
+        });
         close();
         setNumberOfTrainees(0);
       })
-     .catch(() => {
+      .catch(() => {
         notifications.show({
           title: "Error",
-          message: "An Error occurred while adding trainees"
-        })
+          message: "An Error occurred while adding trainees",
+        });
       })
-     .finally(() => {
+      .finally(() => {
         setLoading(false);
       });
   };

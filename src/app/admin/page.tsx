@@ -417,7 +417,7 @@ const Dashboard = () => {
                 <div>
                   <AdminAction
                     call={null}
-                    setIsCall={() => { }}
+                    setIsCall={() => {}}
                     exportFunction={() =>
                       downloadDashboardExcelFile(
                         undefined,
@@ -517,7 +517,7 @@ const Dashboard = () => {
                 <div>
                   <AdminAction
                     call={null}
-                    setIsCall={() => { }}
+                    setIsCall={() => {}}
                     exportFunction={() =>
                       downloadDashboardExcelFile(
                         undefined,
@@ -607,7 +607,7 @@ const Dashboard = () => {
                 <div>
                   <AdminAction
                     call={null}
-                    setIsCall={() => { }}
+                    setIsCall={() => {}}
                     exportFunction={() =>
                       downloadDashboardExcelFile(
                         applicationsData,
@@ -682,7 +682,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div>
-                <AdminAction call={null} setIsCall={() => { }} />{" "}
+                <AdminAction call={null} setIsCall={() => {}} />{" "}
               </div>
             </div>
           </div>
@@ -716,7 +716,7 @@ const Dashboard = () => {
               </div>
               <div className="text-md gap-4 flex items-center justify-center">
                 <div>
-                  <AdminAction call={null} setIsCall={() => { }} />{" "}
+                  <AdminAction call={null} setIsCall={() => {}} />{" "}
                 </div>
               </div>
             </div>
@@ -755,7 +755,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div>
-                <AdminAction call={null} setIsCall={() => { }} />{" "}
+                <AdminAction call={null} setIsCall={() => {}} />{" "}
               </div>
             </div>
           </div>
@@ -775,7 +775,7 @@ function BasicGauges({
 }) {
   const totalApplicants = Object.values(applicationsByBusinessType).reduce(
     (sum, value) => sum + value,
-    0
+    0,
   );
 
   const colors = [
@@ -795,7 +795,7 @@ function BasicGauges({
       value,
       percentage: totalApplicants > 0 ? (value / totalApplicants) * 100 : 0,
       color: colors[index % colors.length],
-    })
+    }),
   );
 
   if (totalApplicants === 0) {
@@ -843,11 +843,12 @@ function BasicGauges({
         {chartData.map(({ key, color, value }, index) => (
           <div key={index} className="flex items-center">
             <div className="w-4 h-4 mr-2" style={{ backgroundColor: color }} />
-            <p className="capitalize">{key}: {value}</p>
+            <p className="capitalize">
+              {key}: {value}
+            </p>
           </div>
         ))}
       </div>
     </div>
   );
 }
-
