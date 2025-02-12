@@ -54,8 +54,8 @@ jobs:
       - name: Install dependencies and build the application
         run: |
           cd dev
-          pnpm install
-          pnpm build
+          npm install --force
+          npm build
 
       # Install dependencies and build the application
       - name: Mode .next, package.json, node_modules folder to builds folder
