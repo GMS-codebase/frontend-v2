@@ -68,7 +68,9 @@ export const getCallStats = async (callId: string) => {
 
 export const getSubmissionsData = async (stage: string) => {
   try {
-    const res = await authorizedApi.get(`/dashboard/submissions`, { params: { stage } });
+    const res = await authorizedApi.get(`/dashboard/submissions`, {
+      params: { stage },
+    });
     return res.data.data;
   } catch (err) {
     console.error(err);
@@ -78,7 +80,9 @@ export const getSubmissionsData = async (stage: string) => {
 
 export const getApplicantsData = async (stage: string) => {
   try {
-    const res = await authorizedApi.get(`/dashboard/applicants`, { params: { stage } });
+    const res = await authorizedApi.get(`/dashboard/applicants`, {
+      params: { stage },
+    });
     return res.data.data;
   } catch (err) {
     console.error(err);
@@ -88,7 +92,9 @@ export const getApplicantsData = async (stage: string) => {
 
 export const getApplicationsData = async (stage: string) => {
   try {
-    const res = await authorizedApi.get(`/dashboard/applications`, { params: { stage } });
+    const res = await authorizedApi.get(`/dashboard/applications`, {
+      params: { stage },
+    });
     return res.data.data;
   } catch (err) {
     console.error(err);
