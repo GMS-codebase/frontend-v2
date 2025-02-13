@@ -149,10 +149,14 @@ const ApplicationReports = () => {
       });
   }, [applications, searchTerm, selectedFilters]);
 
-  
   const formattedSubmissionData = filteredApplications.map(
     (row: any, index: any) => {
-      const contact = row.applicant.name + " " + row.applicant.phone + " " + row.applicant.email;
+      const contact =
+        row.applicant.name +
+        " " +
+        row.applicant.phone +
+        " " +
+        row.applicant.email;
       return {
         index: index,
         applicationNumber: row.applicationNumber,
@@ -183,7 +187,8 @@ const ApplicationReports = () => {
         businessSector:
           row.applicant.businesses?.[0]?.addressLine?.split("-")[2] ?? "",
         cell: row.applicant.businesses?.[0]?.addressLine?.split("-")[1] ?? "",
-        village: row.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "",
+        village:
+          row.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "",
         submissionDate: formatDate(row?.lastUpdatedAt, "yyyy-MM-dd"),
       };
     },

@@ -2,9 +2,7 @@
 import AppealsPage from "@/components/pages/appeals/page";
 
 const Page = () => {
-  return (
-    <AppealsPage/>
-  );
+  return <AppealsPage />;
 };
 
 export default Page;

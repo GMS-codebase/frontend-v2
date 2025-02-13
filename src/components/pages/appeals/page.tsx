@@ -12,7 +12,7 @@ import { getColumns } from "./columns";
 
 const AppealsPage = () => {
   const { appeals, loading } = useSelector((state: any) => state.appeals);
-  console.log(appeals)
+  console.log(appeals);
   const [viewAppeal, setViewAppeal] = useState<any>({
     open: false,
     appeal: null,
@@ -42,7 +42,7 @@ const AppealsPage = () => {
 
       <div className="w-full h-full">
         <DataTable
-          columns={getColumns({setViewAppeal})}
+          columns={getColumns({ setViewAppeal })}
           data={filteredAppeals}
           noDataMessage="No Appeals Created Yet"
           loading={loading}
