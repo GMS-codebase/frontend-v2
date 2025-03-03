@@ -54,7 +54,7 @@ const GenericSidebar = ({
                 className="lg:hidden flex items-center py-2 text-black rounded-md fixed top-2 left-2 z-50"
                 onClick={() => setSidebarOpen(!isSidebarOpen)}
             >
-                {isSidebarOpen ? <CloseSquare /> : <HamburgerMenu />}
+                {!isSidebarOpen && <HamburgerMenu />}
             </button>
 
             <div
