@@ -272,7 +272,7 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <div className="lg:flex gap-2 ">
+      <div className="lg:flex gap-2">
         <div
           className={`flex  rounded-2xl ${getApplicationStatus(application) === "ANSWERING" ? "w-full" : "lg:w-[70%] w-full"}   `}
         >
