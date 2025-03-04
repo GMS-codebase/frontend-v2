@@ -26,12 +26,8 @@ import AdminAction from "@/components/Actions/AdminAction";
 
 const Dashboard = () => {
   const { calls, loading: callsLoading } = useSelector(
-    (state: any) => state.calls
+    (state: any) => state.calls,
   );
-  const { applications, loading: applicationsLoading } = useSelector(
-    (state: any) => state.applications
-  );
-
   const [callStats, setCallStats] = useState<any>(null);
   const [applicantsData, setApplicantsData] = useState<any>({});
   const [applicationsData, setApplicationsData] = useState<any>({});
@@ -109,57 +105,76 @@ const Dashboard = () => {
   }, [callsLoading]);
 
   useEffect(() => {
-    if (
-      !callsLoading &&
-      !applicationsLoading &&
-      applications.length > 0 &&
-      activeCall
-    ) {
-      const stats = getCallStats(activeCall, applications);
-      setCallStats(stats);
-      console.log(stats);
-      setCallStatsLoading(false);
-    }
-  }, [callsLoading, applicationsLoading, activeCall]);
+    const fetchCallStats = async () => {
+      if (!callsLoading && activeCall) {
+        try {
+          setCallStatsLoading(true);
+          const stats = await getCallStats(activeCall);
+          console.log(stats);
+          setCallStats(stats);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setCallStatsLoading(false);
+        }
+      }
+    };
+    fetchCallStats();
+  }, [callsLoading, activeCall]);
 
   useEffect(() => {
-    if (
-      !callsLoading &&
-      !applicationsLoading &&
-      applications.length > 0 &&
-      applicantsStage
-    ) {
-      const data = getApplicantsData(applications, applicantsStage);
-      setApplicantsData(data);
-      setApplicantsDataLoading(false);
-    }
-  }, [callsLoading, applicationsLoading, applicantsStage]);
+    const fetchApplicantsData = async () => {
+      if (!callsLoading && applicantsStage) {
+        try {
+          setApplicantsDataLoading(true);
+          const data = await getApplicantsData(applicantsStage);
+          console.log(data);
+          setApplicantsData(data);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setApplicantsDataLoading(false);
+        }
+      }
+    };
+    fetchApplicantsData();
+  }, [callsLoading, applicantsStage]);
 
   useEffect(() => {
-    if (
-      !callsLoading &&
-      !applicationsLoading &&
-      applications.length > 0 &&
-      applicationsStage
-    ) {
-      const data = getApplicationsData(applications, applicationsStage);
-      setApplicationsData(data);
-      setApplicationsDataLoading(false);
-    }
-  }, [callsLoading, applicationsLoading, applicationsStage]);
+    const fetchApplicationsData = async () => {
+      if (!callsLoading && applicationsStage) {
+        try {
+          setApplicationsDataLoading(true);
+          const data = await getApplicationsData(applicationsStage);
+          console.log(data);
+          setApplicationsData(data);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setApplicationsDataLoading(false);
+        }
+      }
+    };
+    fetchApplicationsData();
+  }, [callsLoading, applicationsStage]);
 
   useEffect(() => {
-    if (
-      !callsLoading &&
-      !applicationsLoading &&
-      applications.length > 0 &&
-      submissionsStage
-    ) {
-      const data = getSubmissionsData(applications, submissionsStage);
-      setSubmissionsData(data);
-      setSubmissionsDataLoading(false);
-    }
-  }, [callsLoading, applicationsLoading, submissionsStage]);
+    const fetchSubmissionsData = async () => {
+      if (!callsLoading && submissionsStage) {
+        try {
+          setSubmissionsDataLoading(true);
+          const data = await getSubmissionsData(submissionsStage);
+          console.log(data);
+          setSubmissionsData(data);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setSubmissionsDataLoading(false);
+        }
+      }
+    };
+    fetchSubmissionsData();
+  }, [callsLoading, submissionsStage]);
 
   const sortedSectors = Object.entries(callStats?.applicantsPerSector || {})
     .sort((a: any, b: any) => b[1] - a[1])
@@ -218,7 +233,7 @@ const Dashboard = () => {
                 {
                   Object.values(callStats?.applicantsPerSector || {}).reduce(
                     (sum: any, value) => sum + value,
-                    0
+                    0,
                   ) as any
                 }
               </span>
@@ -332,7 +347,7 @@ const Dashboard = () => {
                     (acc: any, item: any) => {
                       if (gaugeStage === "ALL") {
                         acc[item] = Object.values(
-                          callStats?.businessTypeGroupings[item] || {}
+                          callStats?.businessTypeGroupings[item] || {},
                         ).reduce((sum: any, value: any) => sum + value, 0);
                       } else {
                         acc[item] =
@@ -341,7 +356,7 @@ const Dashboard = () => {
                       }
                       return acc;
                     },
-                    {} as { [key: string]: number }
+                    {} as { [key: string]: number },
                   ) || {}
                 }
               />
@@ -357,7 +372,7 @@ const Dashboard = () => {
             downloadDashboardExcelFile(
               applicationsData,
               applicantsData,
-              submissionsData
+              submissionsData,
             )
           }
         >
@@ -407,7 +422,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         undefined,
                         undefined,
-                        submissionsData
+                        submissionsData,
                       )
                     }
                   />{" "}
@@ -454,13 +469,13 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(submissionsData || {}).reduce(
                     (sum, key) => sum + submissionsData[key].applicants,
-                    0
+                    0,
                   )}
                 </span>
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(submissionsData || {}).reduce(
                     (sum, key) => sum + submissionsData[key].applications,
-                    0
+                    0,
                   )}
                 </span>
               </div>
@@ -507,7 +522,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         undefined,
                         applicantsData,
-                        undefined
+                        undefined,
                       )
                     }
                   />{" "}
@@ -550,7 +565,7 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(applicantsData || {}).reduce(
                     (sum, key) => sum + applicantsData[key],
-                    0
+                    0,
                   )}
                 </span>
               </div>
@@ -597,7 +612,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         applicationsData,
                         undefined,
-                        undefined
+                        undefined,
                       )
                     }
                   />{" "}
@@ -640,7 +655,7 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(applicationsData || {}).reduce(
                     (sum, key) => sum + applicationsData[key],
-                    0
+                    0,
                   )}
                 </span>
               </div>
@@ -760,7 +775,7 @@ function BasicGauges({
 }) {
   const totalApplicants = Object.values(applicationsByBusinessType).reduce(
     (sum, value) => sum + value,
-    0
+    0,
   );
 
   const colors = [
@@ -780,7 +795,7 @@ function BasicGauges({
       value,
       percentage: totalApplicants > 0 ? (value / totalApplicants) * 100 : 0,
       color: colors[index % colors.length],
-    })
+    }),
   );
 
   if (totalApplicants === 0) {
@@ -806,39 +821,33 @@ function BasicGauges({
           nrOfLevels={chartData.length}
           arcsLength={chartData.map((data) => data.percentage / 100)}
           colors={chartData.map((data) => data.color)}
-          percent={0.5}
+          percent={totalApplicants > 0 ? totalApplicants / 100 : 0}
           arcPadding={0.02}
           hideText={true}
-          needleColor="transparent"
-          needleBaseColor="transparent"
         />
-        <p
+        <div
           style={{
             position: "absolute",
             top: "60%",
             left: "50%",
             transform: "translate(-50%, -50%)",
           }}
+          className="flex flex-col justify-center items-center"
         >
-          <div className="flex flex-col justify-center items-center">
-            <p>{totalApplicants}</p>
-            <p className="text-sm">Applicants</p>
-          </div>
-        </p>
+          <p>{totalApplicants}</p>
+          <p className="text-sm">Applicants</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-10">
-        {chartData
-          .filter(({ key }) => key)
-          .map(({ key, color }, index) => (
-            <div key={index} className="flex items-center">
-              <div
-                className="w-4 h-4 mr-2"
-                style={{ backgroundColor: color }}
-              />
-              <p className="capitalize">{key}</p>
-            </div>
-          ))}
+      <div className="grid grid-cols-2 gap-x-10 mt-4">
+        {chartData.map(({ key, color, value }, index) => (
+          <div key={index} className="flex items-center">
+            <div className="w-4 h-4 mr-2" style={{ backgroundColor: color }} />
+            <p className="capitalize">
+              {key}: {value}
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -14,27 +14,36 @@ import { useDispatch } from "react-redux";
 import { UnknownAction } from "redux";
 
 const Page = () => {
-  const { applications: rawApplications, loading, total: totalApplications, page } = useSelector(
-    (state: any) => state.applications,
-  );
-  const dispatch = useDispatch()
+  const {
+    applications: rawApplications,
+    loading,
+    total: totalApplications,
+    page,
+  } = useSelector((state: any) => state.applications);
+  const dispatch = useDispatch();
   const [pageState, setPage] = useState(page ?? 1);
-  const [limit, setLimit] = useState(10); 
+  const [limit, setLimit] = useState(10);
   const totalPages = totalApplications / limit;
 
   useEffect(() => {
-      dispatch(getApplicationsPaginated(page, limit) as unknown as UnknownAction);
+    dispatch(getApplicationsPaginated(page, limit) as unknown as UnknownAction);
   }, [dispatch, page, limit]);
 
   const handleNextPage = (newPage: number, limit: number) => {
-      dispatch(getApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction);
+    dispatch(
+      getApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction,
+    );
   };
   const handlePreviousPage = (newPage: number, limit: number) => {
-    dispatch(getApplicationsPaginated(newPage -1, limit) as unknown as UnknownAction);
-};
-const handleChangePage = (newPage: number, limit: number) => {
-  dispatch(getApplicationsPaginated(newPage, limit) as unknown as UnknownAction);
-};
+    dispatch(
+      getApplicationsPaginated(newPage - 1, limit) as unknown as UnknownAction,
+    );
+  };
+  const handleChangePage = (newPage: number, limit: number) => {
+    dispatch(
+      getApplicationsPaginated(newPage, limit) as unknown as UnknownAction,
+    );
+  };
 
   const applications = useMemo(
     () =>
@@ -322,17 +331,17 @@ const handleChangePage = (newPage: number, limit: number) => {
         paginationFuncs={{
           onChangePage: handleChangePage,
           onNextPage: handleNextPage,
-          onPreviousPage: handlePreviousPage
+          onPreviousPage: handlePreviousPage,
         }}
         paginationProps={{
           isPaginated: true,
           paginateOpts: {
-              page: page - 1,
-              totalPages: totalPages,
-              limit: limit,
+            page: page - 1,
+            totalPages: totalPages,
+            limit: limit,
           },
-          setPaginateOpts: () => {}
-      }}
+          setPaginateOpts: () => {},
+        }}
       />
     </div>
   );

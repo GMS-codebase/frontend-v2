@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
@@ -9,48 +10,30 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
-import { getApplicationsPaginated, getApplicationStatus, getEmployeeApplicationsPaginated, shortenString } from "@/services";
+import {
+  getApplicationsPaginated,
+  getApplicationStatus,
+  getApplicationStatus2,
+  getEmployeeApplicationsPaginated,
+  shortenString,
+} from "@/services";
 import { UnknownAction } from "redux";
 import { useDispatch } from "react-redux";
-const filterByStep = (app: any, step: string ): boolean => {
-  if (step.toLowerCase() === "pending" && app.currentStage === "EVALUATION" && !app.evaluationFinalDecision!) {
-    return true
-  }
-  else if (step.toLowerCase() === "evaluated" && app.currentStage === "EVALUATION" && app.evaluationFinalDecision!) {
-    return true
-  }
-  else if (step.toLowerCase() === "pending" && app.currentStage === "DUE_DILIGENCE" && !app.dueFinalDecision!) {
-    return true
-  }
-  else if (step.toLowerCase() === "evaluated" && app.currentStage === "DUE_DILIGENCE" && app.dueFinalDecision!) {
-    return true
-  }
-  else {
-    return false;
-  }
-}
+import { filterByStep } from "@/utils/funcs";
+import EmployeeApplicationsPage from "@/components/pages/applications/employees";
 const Page = () => {
-  const { paginatedApplications: UrawApplications, applications: rawApplications , loading, total: totalApplications, page } = useSelector( //Todo: to update incase of an error
-    (state: any) => state.applications,
-  );
-  const [pageState, setPage] = useState(page ?? 1);
-  const [limit, setLimit] = useState(10); 
-  const totalPages = totalApplications / limit;
+  const {
+    applications: rawApplications,
+    loading,
+    page,
+  } = useSelector((state: any) => state.applications);
+  const [limit, setLimit] = useState(10);
   const dispatch = useDispatch();
-  console.log("all applications --> ", rawApplications);
   useEffect(() => {
-      dispatch(getEmployeeApplicationsPaginated(page, limit) as unknown as UnknownAction);
+    dispatch(
+      getEmployeeApplicationsPaginated(page, limit) as unknown as UnknownAction,
+    );
   }, [dispatch, page, limit]);
-
-  const handleNextPage = (newPage: number, limit: number) => {
-      dispatch(getEmployeeApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction);
-  };
-  const handlePreviousPage = (newPage: number, limit: number) => {
-    dispatch(getEmployeeApplicationsPaginated(newPage -1, limit) as unknown as UnknownAction);
-};
-const handleChangePage = (newPage: number, limit: number) => {
-  dispatch(getEmployeeApplicationsPaginated(newPage, limit) as unknown as UnknownAction);
-};
   const { stages } = useSelector((state: any) => state.empStages);
   console.log(stages);
 
@@ -66,13 +49,10 @@ const handleChangePage = (newPage: number, limit: number) => {
           const matchingStage = stages.find(
             (stage: any) => stage.sector == app.sector.name,
           );
-          console.log("Filtering app:", app, "Matching stage:", matchingStage);
           return matchingStage;
         }),
     [rawApplications, stages],
   );
-
-  const filtersContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
@@ -270,13 +250,22 @@ const handleChangePage = (newPage: number, limit: number) => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase() || app.applicant?.businesses?.[0].businessName.toLowerCase().includes(searchTerm.toLowerCase())),
+          app.applicant?.name
+            .toLowerCase()
+            .includes(
+              searchTerm.toLowerCase() ||
+                app.applicant?.businesses?.[0]?.businessName
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase()),
+            ),
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade, step } =
           selectedFilters;
         return (
-          (stage === "All" || (app?.currentStage === stage && filterByStep(app, step))) &&
+          (stage === "All" ||
+            (getApplicationStatus2(app) === stage &&
+              filterByStep(app, step))) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&
@@ -285,7 +274,6 @@ const handleChangePage = (newPage: number, limit: number) => {
         );
       });
   }, [applications, searchTerm, selectedFilters]);
-
   return (
       <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
           {/* <div className="w-full lg:flex justify-between items-center p-4 gap-5">
@@ -425,6 +413,18 @@ const handleChangePage = (newPage: number, limit: number) => {
               />
           </div>
       </div>
+    <EmployeeApplicationsPage
+      applications={filteredApplications.map((app: any) => ({
+        ...app,
+        currentStage: getApplicationStatus2(app),
+      }))}
+      type="employee"
+      loading={loading}
+      selectedFilters={selectedFilters}
+      setSelectedFilters={setSelectedFilters}
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm}
+    />
   );
 };
 
