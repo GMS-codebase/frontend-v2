@@ -59,7 +59,7 @@ const ExportForm: FC<Props> = ({
                 className="flex items-center"
                 color="blue"
                 onClick={() => {
-                  exportAllToExcel()
+                  exportAllToExcel();
                   // onClose();
                 }}
               >
@@ -98,7 +98,6 @@ const ExportForm: FC<Props> = ({
             </div>
           </div>
         </Tabs.Panel>
-
       </Tabs>
     </div>
   );

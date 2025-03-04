@@ -8,15 +8,15 @@ export default function BasicGauges({
 }) {
   const totalApplicants = Object.values(applicationsByBusinessType).reduce(
     (sum, value) => sum + value,
-    0
+    0,
   );
 
   const colors = [
-    "#005DE9", 
-    "#90EE90", 
-    "#EA4228", 
-    "#FFAA33", 
-    "#00C49A", 
+    "#005DE9",
+    "#90EE90",
+    "#EA4228",
+    "#FFAA33",
+    "#00C49A",
     "#FF69B4",
     "#FFD700",
     "#8A2BE2",
@@ -28,7 +28,7 @@ export default function BasicGauges({
       value,
       percentage: totalApplicants > 0 ? (value / totalApplicants) * 100 : 0,
       color: colors[index % colors.length],
-    })
+    }),
   );
 
   return (
@@ -62,7 +62,7 @@ export default function BasicGauges({
 
       <div className="grid grid-cols-2 gap-x-10">
         {chartData
-          .filter(({ key }) => key) 
+          .filter(({ key }) => key)
           .map(({ key, color }, index) => (
             <div key={index} className="flex items-center">
               <div

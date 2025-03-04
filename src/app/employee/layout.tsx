@@ -4,6 +4,7 @@ import GenericSidebar from "@/components/sidebar/GenericSidebar";
 import Announcement from "@/components/ui/Announcement";
 import applicantRoutes from "@/utils/routes/applicant";
 import employeeRoutes from "@/utils/routes/employee";
+import externalEmployeeRoutes from "@/utils/routes/externalUser";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
@@ -17,7 +18,8 @@ export default function AdminLayout({
   const { announcement, loading } = useSelector(
     (state: any) => state.announcement,
   );
-
+  const { profile } = useSelector((state: any) => state.profile);
+  const { userProfile } = useSelector((state: any) => state.auth);
   return (
     <div className="w-screen h-screen flex flex-col justify-between bg-background p-3 overflow-hidden">
       {announcement &&
@@ -36,7 +38,11 @@ export default function AdminLayout({
           } h-full bg-white rounded-2xl side-section`}
         >
           <GenericSidebar
-            routes={employeeRoutes}
+            routes={
+              profile?.institution !== "RTB"
+                ? externalEmployeeRoutes
+                : employeeRoutes
+            }
             isCompressed={isCompressed}
             toggle={() => setIsCompressed(!isCompressed)}
           />

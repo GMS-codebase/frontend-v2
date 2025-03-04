@@ -48,7 +48,7 @@ interface Props {
   totalApplications?: number;
   page: number;
   setPage: (page: number) => void;
-  paginationFuncs: PaginationFuncs
+  paginationFuncs: PaginationFuncs;
 }
 
 export function DataTable({
@@ -71,7 +71,7 @@ export function DataTable({
   totalApplications,
   page,
   setPage,
-  paginationFuncs
+  paginationFuncs,
 }: Props) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -270,22 +270,25 @@ export function DataTable({
           </div>
           <div className="flex w-full justify-between items-start flex-row-reverse px-10 mt-4">
             <Pagination
-            total={paginationProps?.paginateOpts?.totalPages ?? table?.getPageCount()}
-            value={(paginationProps?.paginateOpts?.page ?? 0) + 1}
-            onChange={(page) => {
-              setPage(page);
-              paginationFuncs.onChangePage(page, limit);
-            }}
+              total={
+                paginationProps?.paginateOpts?.totalPages ??
+                table?.getPageCount()
+              }
+              value={(paginationProps?.paginateOpts?.page ?? 0) + 1}
+              onChange={(page) => {
+                setPage(page);
+                paginationFuncs.onChangePage(page, limit);
+              }}
               onNextPage={() => {
-                  setPage(page + 1);
-                  paginationFuncs.onNextPage(page, limit);
-                }}
+                setPage(page + 1);
+                paginationFuncs.onNextPage(page, limit);
+              }}
               onPreviousPage={() => {
-                setPage(page -1);
+                setPage(page - 1);
                 paginationFuncs.onPreviousPage(page, limit);
               }}
             />
-            
+
             <div className="flex md:flex-row flex-col text-sm items-center gap-2 justify-center">
               <h1 className="text-lg font-medium text-[#B5B7C0]">
                 Showing data 1 to{" "}
