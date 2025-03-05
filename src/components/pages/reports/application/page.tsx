@@ -247,7 +247,7 @@ const ApplicationReports = () => {
               onChange={(value: any) => {
                 setReportType(value);
               }}
-              className={`w-[33%] px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
+              className={`flex-shrink-0 px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
             />
           </div>
 
@@ -282,10 +282,10 @@ const ApplicationReports = () => {
               getReportName(
                 selectedFilters.call,
                 selectedFilters.sector,
-                reportType,
+                reportType
               ),
               formattedSubmissionData,
-              columns,
+              columns
             )
           }
           data={formattedSubmissionData!}
