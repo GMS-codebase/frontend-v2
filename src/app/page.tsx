@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, Suspense, useRef } from "react";
 import Image from "next/image";
 import bg from "../assets/Images/landing.jpg";
 import logo from "../assets/Images/logo.png";
@@ -68,6 +68,21 @@ function Page() {
     }
   }, [token, openSetPassword]);
 
+   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -200, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 200, behavior: "smooth" });
+    }
+  };
+
+
   return (
     <div className="relative h-screen">
       <div className="absolute inset-0 bg-white opacity-60 z-10"></div>
@@ -81,11 +96,11 @@ function Page() {
           className="opacity-90"
         />
       </div>
-      <div className="absolute  w-full  py-6 flex items-center justify-between px-6 z-20">
+      <div className="absolute  w-full  py-6 md:flex items-center justify-between px-6 z-20">
         <div className="">
           <Image src={logo} alt="logo" width={360} height={360} />
         </div>
-        <div className="flex gap-4 ">
+        <div className="flex gap-4 justify-center ml-12">
           <button
             className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
             onClick={openLogin}
@@ -168,7 +183,7 @@ function Page() {
           className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full"
         >
           <IoDownloadOutline className="w-4 h-4 mx-2" />
-          Download User Manual
+         <span className="hidden lg:flex"> Download User Manual</span>
         </a>
       </div>
       <RegisterModal
