@@ -10,7 +10,10 @@ import LoginModal from "@/components/Modals/auth/Login";
 import CallModal from "@/components/Modals/techInnov";
 import SuccessModal from "@/components/Modals/success";
 import SetPasswordModal from "@/components/Modals/auth/SetPasswordModal";
-import { SolarFolder2Bold,SolarShieldWarningBold } from "@/components/core/icons";
+import {
+  SolarFolder2Bold,
+  SolarShieldWarningBold,
+} from "@/components/core/icons";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getCalls } from "@/services";
@@ -29,10 +32,7 @@ function Page() {
   );
   const sortedCalls = calls
     ? [...calls]
-        .filter(
-          (call: any) =>
-             call.status === "OPEN",
-        )
+        .filter((call: any) => call.status === "OPEN")
         .sort(
           (a: any, b: any) =>
             new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
@@ -126,12 +126,16 @@ function Page() {
         >
           <div className="flex flex-col space-x-4 items-start">
             <div className="w-full flex justify-center">
-            { (new Date("13 January 2025") > new Date()) && 
-              <div className="bg-white rounded-md p-4  w-fit flex items-center mb-3">
-              <SolarShieldWarningBold className="w-8 h-8 text-[#be1f1f]" />
-              <h3 className="text-[#be1f1f]">We would like to announce that we have extended the call from 10th January to 13th January 2025 at 12.00AM Sharp.Thank you</h3>
-            </div>
-            }
+              {new Date("13 January 2025") > new Date() && (
+                <div className="bg-white rounded-md p-4  w-fit flex items-center mb-3">
+                  <SolarShieldWarningBold className="w-8 h-8 text-[#be1f1f]" />
+                  <h3 className="text-[#be1f1f]">
+                    We would like to announce that we have extended the call
+                    from 10th January to 13th January 2025 at 12.00AM
+                    Sharp.Thank you
+                  </h3>
+                </div>
+              )}
             </div>
             {sortedCalls.length ? (
               sortedCalls.map((call: any) => (
@@ -173,7 +177,11 @@ function Page() {
         </h2>
       </div>
       <div className="absolute bottom-0 right-0 p-4 z-30">
-        <a href={"/files/user_guide.pdf"} download={true} className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
+        <a
+          href={"/files/user_guide.pdf"}
+          download={true}
+          className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full"
+        >
           <IoDownloadOutline className="w-4 h-4 mx-2" />
           Download User Manual
         </a>
@@ -220,7 +228,3 @@ export default function DefaultPage() {
     </Suspense>
   );
 }
-
-
-
-

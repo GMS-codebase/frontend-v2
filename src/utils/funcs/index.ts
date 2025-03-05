@@ -4,22 +4,119 @@ export interface ColumnDef<T = any> {
   header: string;
   accessorKey: keyof T;
 }
-type ReportType = "Submission Report" |  "Evaluation Report" | "Due Diligence Report" | "Grant Committee Report"
-export const capitalize = (str: string): string =>{
+type ReportType =
+  | "Submission Report"
+  | "Evaluation Report"
+  | "Due Diligence Report"
+  | "Grant Committee Report";
+export const capitalize = (str: string): string => {
   return str?.charAt(0)?.toUpperCase() + str?.slice(1);
-}
+};
+
+export const getFinalDecisionFromDecisionsArray = (decisions: any[]) => {
+  let numberOfApprovals = 0;
+  let numberOfRejections = 0;
+  if (!decisions) return null;
+  for (const decision of decisions) {
+    if (decision?.decision?.toLowerCase() === "approved") {
+      numberOfApprovals += 1;
+    } else if (decision.decision?.toLowerCase() === "rejected") {
+      numberOfRejections += 1;
+    }
+  }
+
+  if (numberOfApprovals > numberOfRejections) {
+    return "APPROVED";
+  } else {
+    return "REJECTED";
+  }
+};
+export const filterByStep = (app: any, step: string): boolean => {
+  if (
+    step.toLowerCase() === "pending" &&
+    app.currentStage === "EVALUATION" &&
+    app?.evaluationDecisions?.length < 3
+  ) {
+    return true;
+  } else if (
+    step.toLowerCase() === "evaluated" &&
+    app.currentStage === "EVALUATION" &&
+    app?.evaluationDecisions?.length == 3
+  ) {
+    return true;
+  } else if (
+    step.toLowerCase() === "rejected" &&
+    app.currentStage === "EVALUATION" &&
+    app?.evaluationDecisions?.length == 3 &&
+    getFinalDecisionFromDecisionsArray(app?.evaluationDecisions) === "REJECTED"
+  ) {
+    return true;
+  } else if (
+    step.toLowerCase() === "approved" &&
+    app.currentStage === "EVALUATION" &&
+    app?.evaluationDecisions?.length == 3 &&
+    getFinalDecisionFromDecisionsArray(app?.evaluationDecisions) === "APPROVED"
+  ) {
+    return true;
+  } else if (
+    step.toLowerCase() === "pending" &&
+    app.currentStage === "DUE_DILIGENCE" &&
+    !app.dueFinalDecision!
+  ) {
+    return true;
+  } else if (
+    step.toLowerCase() === "evaluated" &&
+    app.currentStage === "DUE_DILIGENCE" &&
+    app.dueFinalDecision!
+  ) {
+    return true;
+  } else if (
+    step.toLowerCase() === "rejected" &&
+    app.currentStage === "DUE_DILIGENCE" &&
+    getFinalDecisionFromDecisionsArray(app.duediligencyDecisions) === "REJECTED"
+  ) {
+    return true;
+  } else if (
+    step.toLowerCase() === "approved" &&
+    app.currentStage === "DUE_DILIGENCE" &&
+    getFinalDecisionFromDecisionsArray(app.duediligencyDecisions) === "APPROVED"
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
 export const getStage = (type: ReportType) => {
-  return type == "Submission Report" ? "SUBMITTED" : type == "Evaluation Report" ? "EVALUATION" : type == "Due Diligence Report" ? "DUE_DILIGENCE" : "GRANT_COMMITTEE"
-}
+  return type == "Submission Report"
+    ? "SUBMITTED"
+    : type == "Evaluation Report"
+      ? "EVALUATION"
+      : type == "Due Diligence Report"
+        ? "DUE_DILIGENCE"
+        : "GRANT_COMMITTEE";
+};
 export function calculateTotalTrainees(data: any) {
   let totalTrainees = 0;
   for (const key in data) {
     const value = data[key];
-    if (Array.isArray(value) && value.some(item => "Number of trainees" in item || "Number of Trainees" in item)) {
-      console.log(key,value);
+    if (
+      Array.isArray(value) &&
+      value.some(
+        (item) => "Number of trainees" in item || "Number of Trainees" in item,
+      )
+    ) {
       totalTrainees = value.reduce(
-        (total, item) => total + parseInt(item["Number of trainees"] ? item["Number of trainees"] : item["Number of Trainees"] ? item["Number of Trainees"] : 0, 10),
-        0
+        (total, item) =>
+          total +
+          parseInt(
+            item["Number of trainees"]
+              ? item["Number of trainees"]
+              : item["Number of Trainees"]
+                ? item["Number of Trainees"]
+                : 0,
+            10,
+          ),
+        0,
       );
       break;
     }
@@ -36,11 +133,13 @@ export const exportDataToExcel = async <T extends Record<string, any>>(
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Report");
 
-    worksheet.columns = columns.filter((column)=> column.accessorKey.toLowerCase() !== "actions").map((column) => ({
-      header: column.header,
-      key: column.accessorKey,
-      width: 20, // default column width
-    }));
+    worksheet.columns = columns
+      .filter((column) => column.accessorKey.toLowerCase() !== "actions")
+      .map((column) => ({
+        header: column.header,
+        key: column.accessorKey,
+        width: 20, // default column width
+      }));
 
     const headerRow = worksheet.getRow(1);
     headerRow.eachCell((cell) => {
@@ -53,13 +152,10 @@ export const exportDataToExcel = async <T extends Record<string, any>>(
       };
     });
 
-    console.log("excel data --> ", excelData);
-    console.log("excel columns --> ", columns);
-
     excelData.forEach((row) => {
       const formattedRow: Record<string, any> = {};
       columns.forEach((column) => {
-        if(column.accessorKey?.toLowerCase() !== "actions") {
+        if (column.accessorKey?.toLowerCase() !== "actions") {
           formattedRow[column.accessorKey] = row[column.accessorKey];
         }
       });

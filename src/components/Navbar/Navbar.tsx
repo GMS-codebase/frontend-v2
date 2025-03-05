@@ -82,12 +82,12 @@ const Navbar = () => {
       : active.startsWith("/applicant")
         ? "APPLICANT"
         : active.startsWith("/sdf")
-          ? "SDF_SECRETARIATE" :
-          active.startsWith("/employee")
-          ? "EMPLOYEE" :
-          active.startsWith("/grant_committee")
-          ? "GRANT_COMMITTEE"
-          : null;
+          ? "SDF_SECRETARIATE"
+          : active.startsWith("/employee")
+            ? "EMPLOYEE"
+            : active.startsWith("/grant_committee")
+              ? "GRANT_COMMITTEE"
+              : null;
 
     if (role === "ADMIN") {
       getApplicants(dispatch);
@@ -123,10 +123,8 @@ const Navbar = () => {
       getAppeals(dispatch, "sdf");
       getApplicationsForContractSigning(dispatch);
       getApplications(dispatch);
-
     } else if (role === "GRANT_COMMITTEE") {
       getApplications(dispatch);
-
     } else if (role === "APPLICANT") {
       getApplicantProfile(dispatch);
       getMyContacts(dispatch);

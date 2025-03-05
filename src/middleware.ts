@@ -44,7 +44,10 @@ export const checkToken = (token: string) => {
 };
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("token");
+  console.log(request.nextUrl.pathname);
   if (whitelist.includes(request.nextUrl.pathname) && !token?.value) {
+    console.log(token);
+
     return NextResponse.next();
   }
   if (!token?.value) {
@@ -54,7 +57,6 @@ export function middleware(request: NextRequest) {
     const decoded: any = jwtDecode(token.value);
     const isExpired = decoded.exp * 1000 < Date.now();
     if (isExpired && !whitelist.includes(request.nextUrl.pathname)) {
-      request.cookies.delete("token");
       return NextResponse.redirect(new URL("/", request.url));
     }
     const role = decoded?.role;

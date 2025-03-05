@@ -1,12 +1,38 @@
-import ApplicationReports from "@/components/pages/reports/application/page";
-const Page = () => {
-<<<<<<< HEAD
-  const [isShowExport, {open: showExport, close: closeExport}] = useDisclosure(false);
-  const [reportType, setReportType] = useState("Submission Report");
-  const { applications: rawApplications, paginatedApplications, loading } = useSelector(
+/* eslint-disable react-hooks/exhaustive-deps */
+"use client";
+import { DataTable } from "@/components/core/data-table";
+import { CiSearch } from "react-icons/ci";
+import { Select } from "@mantine/core";
+import { useRef, useState, useMemo, useEffect } from "react";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useSelector } from "react-redux";
+import { getApplications, getApplicationStatus } from "@/services";
+import ExportForm from "@/components/core/data-table/ExportForm";
+import MainModal from "./MainModal";
+import { useDisclosure } from "@mantine/hooks";
+import {
+  calculateTotalTrainees,
+  capitalize,
+  exportDataToExcel,
+  getFinalDecisionFromDecisionsArray,
+  getStage,
+} from "@/utils/funcs";
+import { evaluationColumns, submissionColumns } from "./Columns";
+import { formatDate } from "date-fns";
+import { useDispatch } from "react-redux";
+type IReportType =
+  | "Submission Report"
+  | "Evaluation Report"
+  | "Due Diligence Report"
+  | "Grant Committee Report";
+const ApplicationReports = () => {
+  const [isShowExport, { open: showExport, close: closeExport }] =
+    useDisclosure(false);
+  const [reportType, setReportType] =
+    useState<IReportType>("Submission Report");
+  const { applications: rawApplications, loading } = useSelector(
     (state: any) => state.applications,
   );
-  const dispatch = useDispatch();
   const applications = useMemo(
     () =>
       rawApplications.map((app: any) => ({
@@ -18,7 +44,6 @@ const Page = () => {
   );
 
   const filtersContainerRef = useRef<HTMLDivElement>(null);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
     stage: "All",
@@ -54,13 +79,12 @@ const Page = () => {
     [applications],
   );
 
-
   const FilterDropDown = ({
     placeholderText,
     data,
     filterKey,
     className,
-    defaultValue
+    defaultValue,
   }: {
     placeholderText: string;
     data: any[];
@@ -95,9 +119,13 @@ const Page = () => {
     }
   };
 
-  const getReportName = (call: string, sector: string, type: string): string =>{
+  const getReportName = (
+    call: string,
+    sector: string,
+    type: string,
+  ): string => {
     return `${call == "All" ? "All Calls" : call} - ${sector == "All" ? "All Sectors" : sector} - ${type}`;
-  }
+  };
   const filteredApplications = useMemo(() => {
     return applications
       .filter(
@@ -121,37 +149,56 @@ const Page = () => {
       });
   }, [applications, searchTerm, selectedFilters]);
 
-  const formattedSubmissionData = filteredApplications.map((row: any, index: any)=>{
-    return {
-      index: index,
-      applicationNumber: row.applicationNumber,
-      institutionName: row.applicant?.businesses?.[0]?.businessName ?? "Not set",
-      window: row.window?.title,
-      call: row.call?.title,
-      subWindow: row.subWindow?.title,
-      sector: row.sectors[0]?.name,
-      trade: row.trades[0]?.trade?.title,
-      stage: row.currentStage,
-      contacts: row.applicant?.phone,
-      institutionType: capitalize(row.applicant.businesses?.[0]?.businessType),
-      legalStatus: row.applicant.businesses?.[0]?.private ? "Private": "Public",
-      requestedBeneficiaries: calculateTotalTrainees(JSON.parse(row?.answers)) ?? "None",
-      district: row.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "",
-      businessSector: row.applicant.businesses?.[0]?.addressLine?.split("-")[1] ?? "",
-      cell:row.applicant.businesses?.[0]?.addressLine?.split("-")[2] ?? "",
-      submissionDate: formatDate(row?.lastUpdatedAt, "yyyy-MM-dd"),
-    }
-  })
-
+  const formattedSubmissionData = filteredApplications.map(
+    (row: any, index: any) => {
+      const contact =
+        row.applicant.name +
+        " " +
+        row.applicant.phone +
+        " " +
+        row.applicant.email;
+      return {
+        index: index,
+        applicationNumber: row.applicationNumber,
+        institutionName:
+          row.applicant?.businesses?.[0]?.businessName ?? "Not set",
+        window: row.window?.title,
+        call: row.call?.title,
+        subWindow: row.subWindow?.title,
+        sector: row.sectors[0]?.name,
+        trade: row.trades[0]?.trade?.title,
+        stage: row?.finishedAnswering! ? "SUBMITTED" : "ANSWERING",
+        contacts: contact,
+        institutionType: capitalize(
+          row.applicant.businesses?.[0]?.businessType,
+        ),
+        legalStatus: row.applicant.businesses?.[0]?.private
+          ? "Private"
+          : "Public",
+        requestedBeneficiaries:
+          calculateTotalTrainees(JSON.parse(row?.answers)) ?? "None",
+        approvedBeneficiaries:
+          row?.numberOfTrainees === null ? "0" : row?.numberOfTrainees,
+        generalComment: row?.evaluationFinalDecision ?? "-",
+        evaluationStatus:
+          getFinalDecisionFromDecisionsArray(row?.evaluationDecisions) || "-",
+        district:
+          row.applicant.businesses?.[0]?.addressLine?.split("-")[3] ?? "",
+        businessSector:
+          row.applicant.businesses?.[0]?.addressLine?.split("-")[2] ?? "",
+        cell: row.applicant.businesses?.[0]?.addressLine?.split("-")[1] ?? "",
+        village:
+          row.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "",
+        submissionDate: formatDate(row?.lastUpdatedAt, "yyyy-MM-dd"),
+      };
+    },
+  );
+  const columns =
+    reportType === "Submission Report" ? submissionColumns : evaluationColumns;
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-<<<<<<< HEAD
-      <div className="w-full lg:flex justify-between items-center p-4">
-        <div className="relative lg:w-[20rem] w-full mb-4">
-=======
       <div className="w-full flex justify-between items-center p-4 gap-5">
         <div className="relative w-[20rem]">
->>>>>>> origin/main
           <span className="absolute top-4 left-4">
             <CiSearch size={25} color="" />
           </span>
@@ -189,10 +236,17 @@ const Page = () => {
               className="flex-shrink-0"
             />
             <Select
-              data={["Submission Report", "Evaluation Report", "Due Diligence Report", "Grant Committee Report"]}
+              data={[
+                "Submission Report",
+                "Evaluation Report",
+                "Due Diligence Report",
+                "Grant Committee Report",
+              ]}
               placeholder={"Select Report Type"}
               value={reportType}
-              onChange={(value: any)=> {setReportType(value); setSelectedFilters({...selectedFilters, stage: getStage(value)})}}
+              onChange={(value: any) => {
+                setReportType(value);
+              }}
               className={`w-[33%] px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
             />
           </div>
@@ -205,25 +259,41 @@ const Page = () => {
           </button>
         </div>
         <button
-            className="w-[8rem] p-3 bg-blue-500 rounded-full text-white hover:bg-blue-600 m-4"
-            onClick={showExport}
-          >
-            Export Data
-          </button>
+          className="w-[8rem] p-3 bg-blue-500 rounded-full text-white hover:bg-blue-600 m-4"
+          onClick={showExport}
+        >
+          Export Data
+        </button>
       </div>
 
       <DataTable
         data={filteredApplications}
-        columns={submissionColumns}
+        columns={columns}
         loading={loading}
       />
-      <MainModal title={"Export " + reportType}isOpen={isShowExport} onClose={closeExport}>
-        <ExportForm exportAllToExcel={()=> exportDataToExcel(getReportName(selectedFilters.call, selectedFilters.sector, reportType),formattedSubmissionData, submissionColumns)} data={formattedSubmissionData!} onClose={closeExport} />
+      <MainModal
+        title={"Export " + reportType}
+        isOpen={isShowExport}
+        onClose={closeExport}
+      >
+        <ExportForm
+          exportAllToExcel={() =>
+            exportDataToExcel(
+              getReportName(
+                selectedFilters.call,
+                selectedFilters.sector,
+                reportType,
+              ),
+              formattedSubmissionData,
+              columns,
+            )
+          }
+          data={formattedSubmissionData!}
+          onClose={closeExport}
+        />
       </MainModal>
     </div>
   );
-=======
-  return <ApplicationReports />;
->>>>>>> 04618d16693b41a3d326d060318ec29e9bb806da
 };
-export default Page;
+
+export default ApplicationReports;
