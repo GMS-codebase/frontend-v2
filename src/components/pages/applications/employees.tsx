@@ -86,8 +86,8 @@ const EmployeeApplicationsPage = ({
   };
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4 gap-5">
-        <div className="relative w-[20rem]">
+      <div className="w-full lg:flex justify-between items-center p-4 gap-5">
+        <div className="relative lg:w-[20rem] mb-4 w-full">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} color="" />
           </span>
@@ -99,7 +99,7 @@ const EmployeeApplicationsPage = ({
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex items-center max-w-[70%]">
+        <div className="flex items-center lg:max-w-[70%]">
           <button
             onClick={() => handleScroll("left")}
             className="p-2 bg-white shadow-lg rounded-full mr-2"

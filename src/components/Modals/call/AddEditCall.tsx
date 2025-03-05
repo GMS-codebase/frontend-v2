@@ -281,7 +281,7 @@ const AddEditCall = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-full md:w-[70vw]  lg:w-[50vw] max-h-[90vh] overflow-y-auto  relative bg-white rounded-3xl pt-10 pb-10 flex flex-col items-center modal">
+      <div className="w-full md:w-[70vw] p-3 lg:w-[50vw] max-h-[90vh] overflow-y-auto  relative bg-white rounded-3xl pt-10 pb-10 flex flex-col items-center modal">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeAddEditCall}
@@ -429,7 +429,7 @@ const AddEditCall = ({
               className="text-xs"
             >
               <div className="mt-4 w-full overflow-y-auto flex flex-col gap-2 px-2">
-                <div className="w-full flex space-x-4 justify-center">
+                <div className="w-full lg:flex space-x-4 justify-center">
                   <div className="">
                     <label
                       htmlFor="startDate"
@@ -562,7 +562,7 @@ const AddEditCall = ({
                   </div>
                 </div>
 
-                <div className="flex flex-row gap-4 my-2 items-end">
+                <div className="flex flex-col lg:flex-row gap-4 my-2 items-end">
                   <div className="flex-grow">
                     <label
                       htmlFor="subWindow"

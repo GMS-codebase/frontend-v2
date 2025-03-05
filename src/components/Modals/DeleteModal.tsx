@@ -114,7 +114,7 @@ const DeleteModal = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[40vw] max-h-[90vh] overflow-y-auto overflow-x-hidden relative bg-white rounded-3xl p-10 flex flex-col items-center">
+      <div className="lg:w-[40vw] lg:max-h-[90vh] overflow-y-auto overflow-x-hidden relative bg-white rounded-3xl p-10 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeModal}
