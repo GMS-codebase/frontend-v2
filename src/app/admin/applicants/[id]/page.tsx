@@ -19,7 +19,7 @@ const Page = () => {
     <div className="">
       <div className="bg-white rounded-2xl p-10 mb-10 flex flex-col gap-6">
         <div className="flex flex-col gap-6  text-black">
-          <div className="flex justify-between">
+          <div className="md:flex md:justify-between">
             <div className="text-xl font-bold">Legal Status</div>
             <div
               className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
@@ -80,8 +80,8 @@ const Page = () => {
               )}
             </div>
           </div>
-          <div className="flex    font-semibold ">
-            <div className="flex w-1/2">
+          <div className="md:flex font-semibold space-y-2 ">
+            <div className="md:flex md:w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Institution Name</div>
               </div>
@@ -89,7 +89,7 @@ const Page = () => {
                 {applicant?.businesses[0]?.businessName || ""}
               </div>
             </div>
-            <div className="flex w-1/2">
+            <div className="md:flex md:w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Institution Type </div>
               </div>
@@ -98,22 +98,22 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <div className="flex    font-semibold ">
-            <div className="flex w-1/2">
+          <div className="md:flex font-semibold space-y-2 ">
+            <div className="md:flex md:w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Phone</div>
               </div>
               <div className="mt-2 ml-4">{applicant?.phone}</div>
             </div>
-            <div className="flex w-1/2">
+            <div className="md:flex md:w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Email</div>
               </div>
               <div className="mt-2 ml-4">{applicant?.email}</div>
             </div>
           </div>
-          <div className="flex    font-semibold ">
-            <div className="flex w-1/2">
+          <div className="md:flex font-semibold space-y-2 ">
+            <div className="md:flex md:w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>TIN</div>
               </div>
@@ -121,7 +121,7 @@ const Page = () => {
                 {applicant?.businesses[0]?.tinNumber}
               </div>
             </div>
-            <div className="flex w-1/2">
+            <div className="md:flex md:w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Bank</div>
               </div>
@@ -130,14 +130,14 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <div className="flex    font-semibold ">
-            <div className="flex w-1/2">
+          <div className="md:flex font-semibold space-y-2 ">
+            <div className="md:flex md:w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>PO Box</div>
               </div>
               <div className="mt-2 ml-4">{applicant?.po_box}</div>
             </div>
-            <div className="flex w-1/2">
+            <div className="md:flex md:w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Registration date</div>
               </div>
@@ -146,14 +146,14 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <div className="flex    font-semibold ">
-            <div className="flex w-1/2">
+          <div className="md:flex font-semibold space-y-2 ">
+            <div className="md:flex md:w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Bank Account</div>
               </div>
               <div className="mt-2 ml-4">{applicant?.businesses[0]?.bank}</div>
             </div>
-            <div className="flex w-1/2">
+            <div className="md:flex md:w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Year of estabrishment</div>
               </div>
@@ -162,8 +162,8 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <div className="flex    font-semibold items-start ">
-            <div className="flex w-1/2">
+          <div className="md:flex font-semibold space-y-2 items-start ">
+            <div className="md:flex md:w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Number of Employee</div>
               </div>
@@ -171,15 +171,15 @@ const Page = () => {
                 {applicant?.businesses[0]?.employeeNumber}
               </div>
             </div>
-            <div className="flex w-1/2 items-start">
+            <div className="md:flex md:w-1/2 items-start">
               <div className="w-fit  flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Address</div>
               </div>
               <div className="mt-2 ml-4">{applicant?.address} </div>
             </div>
           </div>
-          <div className="flex    font-semibold ">
-            <div className="flex w-1/2">
+          <div className="md:flex font-semibold space-y-2">
+            <div className="md:flex md:w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
                 <div>Institution Name</div>
               </div>

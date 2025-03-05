@@ -26,7 +26,7 @@ import AdminAction from "@/components/Actions/AdminAction";
 
 const Dashboard = () => {
   const { calls, loading: callsLoading } = useSelector(
-    (state: any) => state.calls,
+    (state: any) => state.calls
   );
   const [callStats, setCallStats] = useState<any>(null);
   const [applicantsData, setApplicantsData] = useState<any>({});
@@ -176,19 +176,10 @@ const Dashboard = () => {
     fetchSubmissionsData();
   }, [callsLoading, submissionsStage]);
 
-  const sortedSectors = Object.entries(callStats?.applicantsPerSector || {})
-    .sort((a: any, b: any) => b[1] - a[1])
-    .slice(0, 5);
-  const othersTotal = Object.entries(callStats?.applicantsPerSector || {})
-    .slice(5)
-    .reduce((sum, [, value]: any[]) => sum + value, 0);
-  const displayedSectors = [
-    ...sortedSectors,
-    othersTotal > 0 ? ["Others", othersTotal] : null,
-  ].filter(Boolean);
+  const sortedSectors = Object.entries(callStats?.applicantsPerSector || {});
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="md:flex items-center justify-between">
         <p>Evaluation</p>
         {!callsLoading && (
           <Select
@@ -198,7 +189,7 @@ const Dashboard = () => {
               label: call.title,
             }))}
             onChange={(value) => setActiveCall(value as any)}
-            className="bg-white p-2.5 rounded-2xl outline-none  w-[30vw]"
+            className="bg-white p-2.5 rounded-2xl outline-none  md:w-[30vw]"
           />
         )}
       </div>
@@ -213,14 +204,14 @@ const Dashboard = () => {
             </h2>
             {
               //@ts-ignore
-              displayedSectors.map(([sector, count], index) => (
+              sortedSectors.map(([sector, count], index) => (
                 <div
                   key={index}
                   className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2"
                 >
                   <span className="text-base">{sector}</span>
                   <span className="text-base bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
-                    {count}
+                    {count as any}
                   </span>
                 </div>
               ))
@@ -233,7 +224,7 @@ const Dashboard = () => {
                 {
                   Object.values(callStats?.applicantsPerSector || {}).reduce(
                     (sum: any, value) => sum + value,
-                    0,
+                    0
                   ) as any
                 }
               </span>
@@ -312,7 +303,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="bg-white rounded-2xl flex-grow p-4">
-            <div className="flex justify-between mb-8">
+            <div className="md:flex justify-between mb-8">
               <h2 className="text-lg font-semibold ">Total Applicants</h2>
               <div className="rounded-full bg-slate-400 bg-opacity-10">
                 <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
@@ -326,14 +317,14 @@ const Dashboard = () => {
                   >
                     <option value="ALL">All</option>
                     <option value="SUBMITTED">Submitted</option>
-                    <option value="EVALUATION IN PROGRESS">Evaluation</option>
-                    <option value="DUE DILIGENCY IN  PROGRESS">
+                    <option value="EVALUATION">Evaluation</option>
+                    <option value="DUE_DILIGENCY">
                       Due Diligency
                     </option>
-                    <option value="GRANT COMMITTEE IN PROGRESS">
+                    <option value="GRANT_COMMITTEE">
                       Grant Committee
                     </option>
-                    <option value="CONTRACT SIGNING IN PROGRESS">
+                    <option value="CONTRACT_SIGNING">
                       Contract Signing
                     </option>
                   </select>
@@ -347,7 +338,7 @@ const Dashboard = () => {
                     (acc: any, item: any) => {
                       if (gaugeStage === "ALL") {
                         acc[item] = Object.values(
-                          callStats?.businessTypeGroupings[item] || {},
+                          callStats?.businessTypeGroupings[item] || {}
                         ).reduce((sum: any, value: any) => sum + value, 0);
                       } else {
                         acc[item] =
@@ -356,7 +347,7 @@ const Dashboard = () => {
                       }
                       return acc;
                     },
-                    {} as { [key: string]: number },
+                    {} as { [key: string]: number }
                   ) || {}
                 }
               />
@@ -364,7 +355,7 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-      <div className=" flex justify-between items-center mt-10 mb-5">
+      <div className="md:flex justify-between items-center mt-10 mb-5">
         <div>Priority Sector Analysis</div>
         <div
           className="flex gap-2 bg-[#005de9] px-24 py-2 rounded-full text-white items-center justify-center p-4 mt-4"
@@ -372,7 +363,7 @@ const Dashboard = () => {
             downloadDashboardExcelFile(
               applicationsData,
               applicantsData,
-              submissionsData,
+              submissionsData
             )
           }
         >
@@ -382,12 +373,12 @@ const Dashboard = () => {
           Export as excel
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-10">
+      <div className="grid md:grid-cols-2 grid-cols-1 gap-10">
         {submissionsDataLoading ? (
           <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
         ) : (
           <div className="bg-white p-6 rounded-2xl">
-            <div className="flex justify-between mb-5">
+            <div className="md:flex justify-between mb-5">
               <p className="font-bold text-xl">Number of Submissions</p>
               <div className="text-md gap-4 flex items-center justify-center">
                 <div className="rounded-full bg-slate-400 bg-opacity-10">
@@ -401,14 +392,14 @@ const Dashboard = () => {
                     >
                       <option value="ALL">All</option>
                       <option value="SUBMITTED">Submitted</option>
-                      <option value="EVALUATION IN PROGRESS">Evaluation</option>
-                      <option value="DUE DILIGENCY IN  PROGRESS">
+                      <option value="EVALUATION">Evaluation</option>
+                      <option value="DUE_DILIGENCY">
                         Due Diligency
                       </option>
-                      <option value="GRANT COMMITTEE IN PROGRESS">
+                      <option value="GRANT_COMMITTEE">
                         Grant Committee
                       </option>
-                      <option value="CONTRACT SIGNING IN PROGRESS">
+                      <option value="CONTRACT_SIGNING">
                         Contract Signing
                       </option>
                     </select>
@@ -422,7 +413,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         undefined,
                         undefined,
-                        submissionsData,
+                        submissionsData
                       )
                     }
                   />{" "}
@@ -469,13 +460,13 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(submissionsData || {}).reduce(
                     (sum, key) => sum + submissionsData[key].applicants,
-                    0,
+                    0
                   )}
                 </span>
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(submissionsData || {}).reduce(
                     (sum, key) => sum + submissionsData[key].applications,
-                    0,
+                    0
                   )}
                 </span>
               </div>
@@ -487,7 +478,7 @@ const Dashboard = () => {
           <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
         ) : (
           <div className="bg-white p-6 rounded-2xl">
-            <div className="flex justify-between mb-5">
+            <div className="md:flex justify-between mb-5">
               <p className="font-bold text-xl">Applicants</p>
               <div className="text-md gap-4 flex items-center justify-center">
                 <div className="rounded-full bg-slate-400 bg-opacity-10">
@@ -501,14 +492,14 @@ const Dashboard = () => {
                     >
                       <option value="ALL">All</option>
                       <option value="SUBMITTED">Submitted</option>
-                      <option value="EVALUATION IN PROGRESS">Evaluation</option>
-                      <option value="DUE DILIGENCY IN  PROGRESS">
+                      <option value="EVALUATION">Evaluation</option>
+                      <option value="DUE_DILIGENCY">
                         Due Diligency
                       </option>
-                      <option value="GRANT COMMITTEE IN PROGRESS">
+                      <option value="GRANT_COMMITTEE">
                         Grant Committee
                       </option>
-                      <option value="CONTRACT SIGNING IN PROGRESS">
+                      <option value="CONTRACT_SIGNING">
                         Contract Signing
                       </option>
                     </select>
@@ -522,7 +513,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         undefined,
                         applicantsData,
-                        undefined,
+                        undefined
                       )
                     }
                   />{" "}
@@ -565,7 +556,7 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(applicantsData || {}).reduce(
                     (sum, key) => sum + applicantsData[key],
-                    0,
+                    0
                   )}
                 </span>
               </div>
@@ -577,7 +568,7 @@ const Dashboard = () => {
           <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
         ) : (
           <div className="bg-white p-6 rounded-2xl">
-            <div className="flex justify-between mb-5">
+            <div className="md:flex justify-between mb-5">
               <p className="font-bold text-lg">Applications</p>
               <div className="text-md gap-4 flex items-center justify-center">
                 <div className="rounded-full bg-slate-400 bg-opacity-10">
@@ -591,14 +582,14 @@ const Dashboard = () => {
                     >
                       <option value="ALL">All</option>
                       <option value="SUBMITTED">Submitted</option>
-                      <option value="EVALUATION IN PROGRESS">Evaluation</option>
-                      <option value="DUE DILIGENCY IN  PROGRESS">
+                      <option value="EVALUATION">Evaluation</option>
+                      <option value="DUE_DILIGENCY">
                         Due Diligency
                       </option>
-                      <option value="GRANT COMMITTEE IN PROGRESS">
+                      <option value="GRANT_COMMITTEE">
                         Grant Committee
                       </option>
-                      <option value="CONTRACT SIGNING IN PROGRESS">
+                      <option value="CONTRACT_SIGNING">
                         Contract Signing
                       </option>
                     </select>
@@ -612,7 +603,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         applicationsData,
                         undefined,
-                        undefined,
+                        undefined
                       )
                     }
                   />{" "}
@@ -655,7 +646,7 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(applicationsData || {}).reduce(
                     (sum, key) => sum + applicationsData[key],
-                    0,
+                    0
                   )}
                 </span>
               </div>
@@ -664,7 +655,7 @@ const Dashboard = () => {
         )}
 
         <div className="bg-white p-6 rounded-2sm">
-          <div className="flex justify-between">
+          <div className="md:flex justify-between">
             <p className="font-bold text-lg">Selected Trainees</p>
             <div className="text-md gap-4 flex items-center justify-center">
               <div className="rounded-full bg-slate-400 bg-opacity-10">
@@ -694,7 +685,7 @@ const Dashboard = () => {
               Number of graduates trainees before 2025
             </p>
             <div className="flex items-center justify-between w-full">
-              <div className="rounded-full bg-slate-400 bg-opacity-10 w-[40%] px-3">
+              <div className="rounded-full bg-slate-400 bg-opacity-10 md:w-[40%] px-3">
                 <label
                   htmlFor="call"
                   className="w-full flex items-center py-2 gap-2 rounded-full"
@@ -728,7 +719,7 @@ const Dashboard = () => {
             <p className="font-bold text-lg">
               Number of Trainees Starting from 2025
             </p>
-            <div className="text-md gap-2 flex my-2 ">
+            <div className="text-md gap-2 md:grid-cols-4 grid grid-cols-2 my-2 ">
               <div className="flex gap-2 rounded-full bg-slate-400 bg-opacity-10 items-center justify-center py-2 px-5">
                 <span className="text-gray-400">
                   <SolarCalendarBold />
@@ -775,7 +766,7 @@ function BasicGauges({
 }) {
   const totalApplicants = Object.values(applicationsByBusinessType).reduce(
     (sum, value) => sum + value,
-    0,
+    0
   );
 
   const colors = [
@@ -795,7 +786,7 @@ function BasicGauges({
       value,
       percentage: totalApplicants > 0 ? (value / totalApplicants) * 100 : 0,
       color: colors[index % colors.length],
-    }),
+    })
   );
 
   if (totalApplicants === 0) {

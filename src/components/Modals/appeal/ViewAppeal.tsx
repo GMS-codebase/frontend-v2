@@ -59,7 +59,7 @@ const ViewAppealModal = ({ isOpen, onClose, appeal }: ViewAppealModalProps) => {
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[550px] h-fit relative bg-white rounded-3xl p-4 pt-10 flex flex-col items-center">
+      <div className="lg:w-[550px] h-fit relative bg-white rounded-3xl p-4 pt-10 flex flex-col items-center">
         <button
           className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
           onClick={onClose}
@@ -97,7 +97,7 @@ const ViewAppealModal = ({ isOpen, onClose, appeal }: ViewAppealModalProps) => {
             required
           />
         </div>
-        <div className="w-full flex justify-center mt-1 space-x-4 p-6">
+        <div className="w-full md:flex justify-center mt-1 md:space-x-4 space-y-2 p-6">
           <button
             type="button"
             onClick={() => handleAppealDecision(false)}
