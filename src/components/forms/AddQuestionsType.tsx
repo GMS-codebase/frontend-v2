@@ -58,7 +58,7 @@ const AddQuestionType = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50">
-      <div className="w-[30vw] bg-white rounded-3xl p-6 flex flex-col items-center relative">
+      <div className="lg:w-[30vw] w-full m-2 bg-white rounded-3xl p-6 flex flex-col items-center relative">
         <button
           className="absolute top-3 right-3 bg-gray-100 p-1 rounded-full"
           onClick={closeModal}

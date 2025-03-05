@@ -179,7 +179,7 @@ const Dashboard = () => {
   const sortedSectors = Object.entries(callStats?.applicantsPerSector || {});
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="md:flex items-center justify-between">
         <p>Evaluation</p>
         {!callsLoading && (
           <Select
@@ -189,7 +189,7 @@ const Dashboard = () => {
               label: call.title,
             }))}
             onChange={(value) => setActiveCall(value as any)}
-            className="bg-white p-2.5 rounded-2xl outline-none  w-[30vw]"
+            className="bg-white p-2.5 rounded-2xl outline-none  md:w-[30vw]"
           />
         )}
       </div>
@@ -303,7 +303,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="bg-white rounded-2xl flex-grow p-4">
-            <div className="flex justify-between mb-8">
+            <div className="md:flex justify-between mb-8">
               <h2 className="text-lg font-semibold ">Total Applicants</h2>
               <div className="rounded-full bg-slate-400 bg-opacity-10">
                 <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
@@ -355,7 +355,7 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-      <div className=" flex justify-between items-center mt-10 mb-5">
+      <div className="md:flex justify-between items-center mt-10 mb-5">
         <div>Priority Sector Analysis</div>
         <div
           className="flex gap-2 bg-[#005de9] px-24 py-2 rounded-full text-white items-center justify-center p-4 mt-4"
@@ -373,12 +373,12 @@ const Dashboard = () => {
           Export as excel
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-10">
+      <div className="grid md:grid-cols-2 grid-cols-1 gap-10">
         {submissionsDataLoading ? (
           <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
         ) : (
           <div className="bg-white p-6 rounded-2xl">
-            <div className="flex justify-between mb-5">
+            <div className="md:flex justify-between mb-5">
               <p className="font-bold text-xl">Number of Submissions</p>
               <div className="text-md gap-4 flex items-center justify-center">
                 <div className="rounded-full bg-slate-400 bg-opacity-10">
@@ -478,7 +478,7 @@ const Dashboard = () => {
           <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
         ) : (
           <div className="bg-white p-6 rounded-2xl">
-            <div className="flex justify-between mb-5">
+            <div className="md:flex justify-between mb-5">
               <p className="font-bold text-xl">Applicants</p>
               <div className="text-md gap-4 flex items-center justify-center">
                 <div className="rounded-full bg-slate-400 bg-opacity-10">
@@ -568,7 +568,7 @@ const Dashboard = () => {
           <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
         ) : (
           <div className="bg-white p-6 rounded-2xl">
-            <div className="flex justify-between mb-5">
+            <div className="md:flex justify-between mb-5">
               <p className="font-bold text-lg">Applications</p>
               <div className="text-md gap-4 flex items-center justify-center">
                 <div className="rounded-full bg-slate-400 bg-opacity-10">
@@ -655,7 +655,7 @@ const Dashboard = () => {
         )}
 
         <div className="bg-white p-6 rounded-2sm">
-          <div className="flex justify-between">
+          <div className="md:flex justify-between">
             <p className="font-bold text-lg">Selected Trainees</p>
             <div className="text-md gap-4 flex items-center justify-center">
               <div className="rounded-full bg-slate-400 bg-opacity-10">
@@ -685,7 +685,7 @@ const Dashboard = () => {
               Number of graduates trainees before 2025
             </p>
             <div className="flex items-center justify-between w-full">
-              <div className="rounded-full bg-slate-400 bg-opacity-10 w-[40%] px-3">
+              <div className="rounded-full bg-slate-400 bg-opacity-10 md:w-[40%] px-3">
                 <label
                   htmlFor="call"
                   className="w-full flex items-center py-2 gap-2 rounded-full"
@@ -719,7 +719,7 @@ const Dashboard = () => {
             <p className="font-bold text-lg">
               Number of Trainees Starting from 2025
             </p>
-            <div className="text-md gap-2 flex my-2 ">
+            <div className="text-md gap-2 md:grid-cols-4 grid grid-cols-2 my-2 ">
               <div className="flex gap-2 rounded-full bg-slate-400 bg-opacity-10 items-center justify-center py-2 px-5">
                 <span className="text-gray-400">
                   <SolarCalendarBold />

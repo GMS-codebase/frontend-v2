@@ -33,7 +33,7 @@ export default function AdminLayout({
       <div className="flex">
         <div
           className={`${
-            isCompressed ? "w-[6%]" : "w-[23%]"
+            isCompressed ? "w-[6%]" : "lg:w-[23%]"
           } h-full bg-white rounded-2xl side-section`}
         >
           <GenericSidebar
