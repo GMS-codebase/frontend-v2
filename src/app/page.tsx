@@ -109,8 +109,8 @@ function Page() {
           className="w-[80%] overflow-x-auto no-scrollbar m-10"
           style={{ scrollbarWidth: "none" }}
         >
-          <div className="flex flex-col space-x-4 items-start">
-            <div className="w-full flex justify-center">
+          <div className="flex space-x-4 items-start mt-[4vh]">
+            {/* <div className="w-full flex justify-center">
               {new Date("13 January 2025") > new Date() && (
                 <div className="bg-white rounded-md p-4  w-fit flex items-center mb-3">
                   <SolarShieldWarningBold className="w-8 h-8 text-[#be1f1f]" />
@@ -121,7 +121,7 @@ function Page() {
                   </h3>
                 </div>
               )}
-            </div>
+            </div> */}
             {sortedCalls.length ? (
               sortedCalls.map((call: any) => (
                 <div
@@ -158,7 +158,7 @@ function Page() {
 
       <div className="absolute bottom-0 left-0 p-4 z-30">
         <h2 className="text-black font-extrabold">
-          © 2024 Rwanda TVET Board.
+          © {new Date().getFullYear()} Rwanda TVET Board.
         </h2>
       </div>
       <div className="absolute bottom-0 right-0 p-4 z-30">
