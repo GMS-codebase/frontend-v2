@@ -389,6 +389,7 @@ const Dashboard = () => {
                     <select
                       className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none"
                       onChange={(e) => setSubmissionsStage(e.target.value)}
+                      value={submissionsStage}
                     >
                       <option value="ALL">All</option>
                       <option value="SUBMITTED">Submitted</option>
@@ -489,6 +490,7 @@ const Dashboard = () => {
                     <select
                       className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none"
                       onChange={(e) => setApplicantsStage(e.target.value)}
+                      value={applicantsStage}
                     >
                       <option value="ALL">All</option>
                       <option value="SUBMITTED">Submitted</option>
@@ -579,6 +581,7 @@ const Dashboard = () => {
                     <select
                       className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none"
                       onChange={(e) => setApplicationsStage(e.target.value)}
+                      value={applicationsStage}
                     >
                       <option value="ALL">All</option>
                       <option value="SUBMITTED">Submitted</option>
