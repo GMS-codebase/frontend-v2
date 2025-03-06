@@ -1,6 +1,7 @@
 import ApplicationReports from "@/components/pages/reports/application/page";
 const Page = () => {
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [isShowExport, {open: showExport, close: closeExport}] = useDisclosure(false);
   const [reportType, setReportType] = useState("Submission Report");
   const { applications: rawApplications, paginatedApplications, loading } = useSelector(
@@ -225,5 +226,8 @@ const Page = () => {
 =======
   return <ApplicationReports />;
 >>>>>>> 04618d16693b41a3d326d060318ec29e9bb806da
+=======
+  return <ApplicationReports />;
+>>>>>>> f1b4359d6d66191276c82164fea3ea59169717aa
 };
 export default Page;

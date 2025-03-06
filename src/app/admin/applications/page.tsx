@@ -68,6 +68,7 @@ const Page = () => {
 
   return (
 <<<<<<< HEAD
+<<<<<<< HEAD
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full lg:flex justify-between items-center p-4 gap-5">
         <div className="relative lg:w-[20rem] w-full mb-4">
@@ -160,6 +161,8 @@ const Page = () => {
       />
     </div>
 =======
+=======
+>>>>>>> f1b4359d6d66191276c82164fea3ea59169717aa
     <EmployeeApplicationsPage
       applications={filteredApplications.map((app: any) => ({
         ...app,
@@ -172,7 +175,10 @@ const Page = () => {
       searchTerm={searchTerm}
       setSearchTerm={setSearchTerm}
     />
+<<<<<<< HEAD
 >>>>>>> 04618d16693b41a3d326d060318ec29e9bb806da
+=======
+>>>>>>> f1b4359d6d66191276c82164fea3ea59169717aa
   );
 };
 
