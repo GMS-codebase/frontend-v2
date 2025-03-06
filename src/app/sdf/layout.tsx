@@ -34,7 +34,7 @@ export default function AdminLayout({
       <div className="flex flex-1 justify-between">
         <div
           className={`${
-            isCompressed ? "w-[6%]" : "w-[23%]"
+            isCompressed ? "w-[6%]" : "lg:w-[23%]"
           } h-full bg-white rounded-2xl side-section`}
         >
           <GenericSidebar
@@ -45,7 +45,7 @@ export default function AdminLayout({
         </div>
         <div
           className={`${
-            isCompressed ? "w-[93%]" : "w-[75%]"
+            isCompressed ? "w-[93%]" : "lg:w-[75%] w-full"
           } h-screen flex flex-col bg-transparent side-section`}
         >
           <Navbar />

@@ -156,7 +156,7 @@ const Page = () => {
     <div className="bg-white rounded-2xl py-10">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-6  text-black">
-          <div className="flex justify-between px-10">
+          <div className=" flex justify-between px-10">
             <div className="text-xl font-bold">Window Info</div>
             <button
               onClick={openUpdate}
@@ -196,15 +196,15 @@ const Page = () => {
           </div>
           <div className="flex justify-between items-center w-3/5  font-semibold px-10"></div>
           <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-            <div className="w-full flex justify-between items-center py-4 px-10">
+            <div className="w-full md:flex justify-between items-center py-4 px-10">
               <div className="flex  gap-2  bg-gray-400 rounded-full bg-opacity-10 px-4  py-2 font-semibold items-center justify-center">
                 <span>
                   <SolarBookmarkBold />
                 </span>
                 <div>Sub Windows</div>
               </div>
-              <div className="flex gap-3 items-center">
-                <div className="relative w-[25rem]">
+              <div className="lg:flex gap-3 items-center">
+                <div className="relative lg:w-[25rem] w-full my-3">
                   <span className="absolute top-4 left-2">
                     <CiSearch size={25} />
                   </span>
