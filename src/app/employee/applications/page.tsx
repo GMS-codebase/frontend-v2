@@ -65,9 +65,6 @@ const Page = () => {
     trade: "All",
   });
 
-
-
-
   const filteredApplications = useMemo(() => {
     return applications
       .filter(

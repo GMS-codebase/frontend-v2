@@ -146,6 +146,22 @@ import { QuestionForm } from "@/types/questions-form";
 import { useRouter } from "next/navigation";
 import { ApplicationStage } from "@/types/application";
 
+export const exportAppealsReport = async (
+  dispatch: Dispatch<UnknownAction>,
+  user: string,
+) => {
+  dispatch({ type: GET_APPEALS_LOADING });
+  const api =
+    user === "applicant" ? "/appeals/all-appeals/mine/all" : "/appeals/all";
+  authorizedApi
+    .get(api)
+    .then((res) => {
+      dispatch({ type: GET_APPEALS_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({ type: GET_APPEALS_ERROR, payload: err.response.data.error });
+    });
+};
 export const getAppeals = async (
   dispatch: Dispatch<UnknownAction>,
   user: string,
