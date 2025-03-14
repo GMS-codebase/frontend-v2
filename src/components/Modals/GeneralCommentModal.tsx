@@ -85,6 +85,7 @@ const GeneralCommentModal = ({
     setLoading(false);
   };
 
+  console.log("decisions ---> ", application)
   return (
     <Modal
       size=""
@@ -105,7 +106,17 @@ const GeneralCommentModal = ({
             {isEditing ? "View general comment" : "Provide a general comment"}
           </h1>
         </div>
-        <div className="w-11/12 flex flex-col items-center mt-10 overflow-hidden">
+        <div className="w-11/12 flex flex-col items-center mt-10 overflow-hidden gap-3">
+          {type === "DUE_DILIGENCY" && 
+            <div className="w-full flex gap-6 justify-start items-center">
+            <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
+              Approved trainees
+            </p>
+            <p className="text-base font-bold">
+              {application?.duediligencyDecisions?.[0]?.numberOfTrainees}
+            </p>
+          </div>
+          }
           <form
             onSubmit={handleSubmit}
             className="w-full overflow-y-auto flex flex-col gap-4 px-2"
