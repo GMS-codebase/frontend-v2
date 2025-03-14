@@ -17,7 +17,7 @@ const DueDiligencyDetails = ({
   close,
   isEditing,
   onSaveComment,
-  viewer="other",
+  viewer = "other",
 }: {
   decisions: any;
   application: any;
@@ -57,7 +57,9 @@ const DueDiligencyDetails = ({
             </button>
           </div>
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
-            <h1 className="text-xl font-bold">Due Diligence decision details</h1>
+            <h1 className="text-xl font-bold">
+              Due Diligence decision details
+            </h1>
           </div>
           {viewer !== "applicant" && (
             <div className="flex gap-6 justify-start items-center">
@@ -65,8 +67,7 @@ const DueDiligencyDetails = ({
                 Approved trainees
               </p>
               <p className="text-base font-bold">
-                {decisions?.length &&
-                  [...decisions][0]?.numberOfTrainees}
+                {application?.numberOfTrainees}
               </p>
             </div>
           )}
@@ -160,25 +161,27 @@ const DueDiligencyDetails = ({
                   className="w-full p-3 rounded-2xl outline-none bg-gray-100 resize-none mt-2 border-[0.5px] border-[#005DE9]"
                 />
               </div>
-              {application?.dueFinalDecision && <div className="w-full">
-                <label
-                  className="block text-sm text-gray-600 font-bold"
-                  htmlFor="textarea"
-                >
-                  Comment:
-                </label>
-                <textarea
-                  id="textarea"
-                  name="textarea"
-                  value={application?.dueFinalDecision}
-                  onChange={(e) => setText(e.target.value)}
-                  readOnly={!isEditing}
-                  rows={4}
-                  className={`w-full p-3 rounded-2xl outline-none resize-none mt-2 border-[0.5px] border-[#005DE9] ${
-                    isEditing ? "bg-white" : "bg-gray-100"
-                  }`}
-                />
-              </div>}
+              {application?.dueFinalDecision && (
+                <div className="w-full">
+                  <label
+                    className="block text-sm text-gray-600 font-bold"
+                    htmlFor="textarea"
+                  >
+                    Comment:
+                  </label>
+                  <textarea
+                    id="textarea"
+                    name="textarea"
+                    value={application?.dueFinalDecision}
+                    onChange={(e) => setText(e.target.value)}
+                    readOnly={!isEditing}
+                    rows={4}
+                    className={`w-full p-3 rounded-2xl outline-none resize-none mt-2 border-[0.5px] border-[#005DE9] ${
+                      isEditing ? "bg-white" : "bg-gray-100"
+                    }`}
+                  />
+                </div>
+              )}
             </>
           )}
 

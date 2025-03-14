@@ -104,7 +104,9 @@ const AppealsPage = () => {
           app?.application_number
             ?.toLowerCase()
             ?.includes(searchTerm.toLowerCase()) ||
-          app?.application?.applicant?.name.toLowerCase()?.includes(searchTerm.toLowerCase()),
+          app?.application?.applicant?.name
+            .toLowerCase()
+            ?.includes(searchTerm.toLowerCase()),
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade } =
@@ -113,7 +115,8 @@ const AppealsPage = () => {
           (stage === "All" || app?.stage?.stage === stage) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app?.application?.window?.title === window) &&
-          (subWindow === "All" || app?.application?.subWindow?.title === subWindow) &&
+          (subWindow === "All" ||
+            app?.application?.subWindow?.title === subWindow) &&
           (sector === "All" || app?.application?.sector?.name === sector) &&
           (trade === "All" || app?.application?.trade?.trade.title === trade)
         );
