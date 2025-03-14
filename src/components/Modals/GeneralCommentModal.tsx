@@ -44,7 +44,9 @@ const GeneralCommentModal = ({
   }, [application, type]);
   const [loading, setLoading] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
-  const [numberOfTrainees, setNumberOfTrainees] = useState(application?.numberOfTrainees)
+  const [numberOfTrainees, setNumberOfTrainees] = useState(
+    application?.numberOfTrainees,
+  );
   const validate = () => {
     let valid = true;
     const newErrors = { comment: "" };
@@ -110,14 +112,14 @@ const GeneralCommentModal = ({
         message: err.response?.data?.message ?? "Failed to submit the form!",
         color: "red",
       });
-    }
-    finally{
+    } finally {
       setLoadingEdit(false);
-      closeEdit()
+      closeEdit();
     }
   };
 
-  const [isOpenEditTrainees, {open: openEdit, close: closeEdit}] = useDisclosure(false);
+  const [isOpenEditTrainees, { open: openEdit, close: closeEdit }] =
+    useDisclosure(false);
   return (
     <Modal
       size=""
@@ -155,43 +157,46 @@ const GeneralCommentModal = ({
               </button>
             </div>
           )}
-          {isOpenEditTrainees && 
-            <form className="w-full transition-opacity duration-700" onSubmit={handleSubmitTrainees}>
+          {isOpenEditTrainees && (
+            <form
+              className="w-full transition-opacity duration-700"
+              onSubmit={handleSubmitTrainees}
+            >
               <div className="w-full">
-              <label
-                htmlFor="comment"
-                className="block text-xs font-bold text-gray-700"
-              >
-                Number of trainees
-              </label>
-              <input
-                type="number"
-                name="numberOfTrainees"
-                value={numberOfTrainees}
-                onChange={(e) => setNumberOfTrainees(e.target.value)}
-                placeholder="Enter number of trainees"
-                className="mt-1 block w-full pb-28 pt-2 px-3  bg-[#000F230A] rounded-2xl outline-none"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-2  mt-4 gap-4">
-              <button
-                type="button"
-                onClick={closeEdit}
-                className="px-4 py-3 bg-black text-white rounded-full"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loadingEdit}
-                className="px-4 py-3 bg-blue-500 text-white rounded-full"
-              >
-                {loadingEdit ? "Submitting..." : "Submit"}
-              </button>
-            </div>
+                <label
+                  htmlFor="comment"
+                  className="block text-xs font-bold text-gray-700"
+                >
+                  Number of trainees
+                </label>
+                <input
+                  type="number"
+                  name="numberOfTrainees"
+                  value={numberOfTrainees}
+                  onChange={(e) => setNumberOfTrainees(e.target.value)}
+                  placeholder="Enter number of trainees"
+                  className="mt-1 block w-full pb-28 pt-2 px-3  bg-[#000F230A] rounded-2xl outline-none"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2  mt-4 gap-4">
+                <button
+                  type="button"
+                  onClick={closeEdit}
+                  className="px-4 py-3 bg-black text-white rounded-full"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loadingEdit}
+                  className="px-4 py-3 bg-blue-500 text-white rounded-full"
+                >
+                  {loadingEdit ? "Submitting..." : "Submit"}
+                </button>
+              </div>
             </form>
-          }
+          )}
           <form
             onSubmit={handleSubmit}
             className="w-full overflow-y-auto flex flex-col gap-4 px-2"
