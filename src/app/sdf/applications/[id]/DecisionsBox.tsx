@@ -151,16 +151,20 @@ const DecisionsBox = ({
                   </div>
                 )}
               {application?.duediligencyDecisions?.length == 3 && (
-                    <div
-                      onClick={() => {
-                        setGeneralCommentType("DUE_DILIGENCY");
-                        openGeneralCommentModal();
-                      }}
-                      className="flex items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
-                    >
-                      {application?.dueFinalDecision ? <p>View general comment</p> : <p>Provide a general comment</p>}
-                    </div>
-                )}
+                <div
+                  onClick={() => {
+                    setGeneralCommentType("DUE_DILIGENCY");
+                    openGeneralCommentModal();
+                  }}
+                  className="flex items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                >
+                  {application?.dueFinalDecision ? (
+                    <p>View general comment</p>
+                  ) : (
+                    <p>Provide a general comment</p>
+                  )}
+                </div>
+              )}
               {application?.duediligencyForm && (
                 <div className="flex flex-col gap-2">
                   <button
