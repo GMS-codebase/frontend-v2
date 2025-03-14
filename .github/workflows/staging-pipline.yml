@@ -53,8 +53,8 @@ jobs:
       - name: Install dependencies and build the application
         run: |
           cd staging
-          npm install --force
-          npm run build
+          pnpm install --force
+          pnpm run build
 
       - name: Mode .next, package.json, node_modules folder to builds folder
         run: |
