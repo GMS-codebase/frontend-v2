@@ -68,7 +68,7 @@ function Page() {
     }
   }, [token, openSetPassword]);
 
-   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -81,7 +81,6 @@ function Page() {
       scrollContainerRef.current.scrollBy({ left: 200, behavior: "smooth" });
     }
   };
-
 
   return (
     <div className="relative h-screen">
@@ -183,7 +182,7 @@ function Page() {
           className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full"
         >
           <IoDownloadOutline className="w-4 h-4 mx-2" />
-         <span className="hidden lg:flex"> Download User Manual</span>
+          <span className="hidden lg:flex"> Download User Manual</span>
         </a>
       </div>
       <RegisterModal
