@@ -17,14 +17,14 @@ const DueDiligencyDetails = ({
   close,
   isEditing,
   onSaveComment,
-  viewer,
+  viewer = "other",
 }: {
   decisions: any;
   application: any;
   opened: boolean;
   close: () => void;
   isEditing?: boolean;
-  viewer?: string;
+  viewer?: "applicant" | "other";
   onSaveComment?: (updatedText: string) => void;
 }) => {
   const [
@@ -34,7 +34,7 @@ const DueDiligencyDetails = ({
   const [selectedDecision, setSelectedDecision] = useState<any>();
   const profile = useSelector((state: any) => state.auth);
   const [text, setText] = useState(
-    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era."
+    "The focus of this application is to provide a Master in Business Administration (MBA) in ICT program for Leaders, Professional Managers for a meaningful impact in the disruptive new era.",
   );
 
   return (
@@ -57,16 +57,17 @@ const DueDiligencyDetails = ({
             </button>
           </div>
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
-            <h1 className="text-xl font-bold">DueDiligency decision details</h1>
+            <h1 className="text-xl font-bold">
+              Due Diligence decision details
+            </h1>
           </div>
           {viewer !== "applicant" && (
             <div className="flex gap-6 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
                 Approved trainees
               </p>
-              <p className="text-xl">
-                {decisions?.length &&
-                  [...decisions].reverse()[0]?.numberOfTrainees}
+              <p className="text-base font-bold">
+                {application?.numberOfTrainees}
               </p>
             </div>
           )}
@@ -85,7 +86,7 @@ const DueDiligencyDetails = ({
                     onClick={() =>
                       handleDownloadFile(
                         application?.duediligencyForm?.attachment,
-                        "applications"
+                        "applications",
                       )
                     }
                   >
@@ -160,25 +161,27 @@ const DueDiligencyDetails = ({
                   className="w-full p-3 rounded-2xl outline-none bg-gray-100 resize-none mt-2 border-[0.5px] border-[#005DE9]"
                 />
               </div>
-              <div className="w-full">
-                <label
-                  className="block text-sm text-gray-600 font-bold"
-                  htmlFor="textarea"
-                >
-                  Comment:
-                </label>
-                <textarea
-                  id="textarea"
-                  name="textarea"
-                  value={application?.duediligencyForm?.comment}
-                  onChange={(e) => setText(e.target.value)}
-                  readOnly={!isEditing}
-                  rows={4}
-                  className={`w-full p-3 rounded-2xl outline-none resize-none mt-2 border-[0.5px] border-[#005DE9] ${
-                    isEditing ? "bg-white" : "bg-gray-100"
-                  }`}
-                />
-              </div>
+              {application?.dueFinalDecision && (
+                <div className="w-full">
+                  <label
+                    className="block text-sm text-gray-600 font-bold"
+                    htmlFor="textarea"
+                  >
+                    Comment:
+                  </label>
+                  <textarea
+                    id="textarea"
+                    name="textarea"
+                    value={application?.dueFinalDecision}
+                    onChange={(e) => setText(e.target.value)}
+                    readOnly={!isEditing}
+                    rows={4}
+                    className={`w-full p-3 rounded-2xl outline-none resize-none mt-2 border-[0.5px] border-[#005DE9] ${
+                      isEditing ? "bg-white" : "bg-gray-100"
+                    }`}
+                  />
+                </div>
+              )}
             </>
           )}
 

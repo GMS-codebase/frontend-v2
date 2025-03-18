@@ -31,6 +31,7 @@ const DecisionsBox = ({
   openDueDiligencyDetails,
 }: IProps) => {
   const profile = useSelector((state: any) => state.auth);
+  console.log("applications --> ", application);
   return (
     <div className="flex flex-col bg-white w-[30%] h-fit rounded-2xl p-5 gap-4">
       <h2 className="font-bold">Decision</h2>
@@ -127,7 +128,7 @@ const DecisionsBox = ({
                 : "PENDING"}
             </div>
             <div className="flex flex-col gap-2 mt-4">
-              {application?.duediligencyDecisions?.length < 4 &&
+              {application?.duediligencyDecisions?.length < 3 &&
                 !application?.duediligencyDecisions.find(
                   (dec: any) =>
                     dec?.employee?.user_id === profile?.userProfile?.data.uuid,
@@ -149,20 +150,21 @@ const DecisionsBox = ({
                     <p>Make a decision</p>
                   </div>
                 )}
-              {application?.duediligencyDecisions?.length == 3 &&
-                !application?.dueFinalDecision && (
-                  <>
-                    <div
-                      onClick={() => {
-                        setGeneralCommentType("DUE_DILIGENCY");
-                        openGeneralCommentModal();
-                      }}
-                      className="flex items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
-                    >
-                      <p>Provide a general comment</p>
-                    </div>
-                  </>
-                )}
+              {application?.duediligencyDecisions?.length == 3 && (
+                <div
+                  onClick={() => {
+                    setGeneralCommentType("DUE_DILIGENCY");
+                    openGeneralCommentModal();
+                  }}
+                  className="flex items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
+                >
+                  {application?.dueFinalDecision ? (
+                    <p>View general comment</p>
+                  ) : (
+                    <p>Provide a general comment</p>
+                  )}
+                </div>
+              )}
               {application?.duediligencyForm && (
                 <div className="flex flex-col gap-2">
                   <button
