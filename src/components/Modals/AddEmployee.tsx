@@ -200,7 +200,10 @@ const RegisterModal = ({
           </h2>
         </div>
 
-        <div className="w-full lg:px-10 px-4  flex flex-col items-center mt-4 lg:overflow-hidden overflow-auto"   style={{ scrollbarWidth: "none" }}>
+        <div
+          className="w-full lg:px-10 px-4  flex flex-col items-center mt-4 lg:overflow-hidden overflow-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
           <Stepper active={active} onStepClick={setActive} className="w-full">
             <Stepper.Step
               label="Contact Person"

@@ -175,18 +175,18 @@ const Page = () => {
     );
   };
 
-    const filtersContainerRef = useRef<HTMLDivElement>(null);
-  
-   const handleScroll = (direction: "left" | "right") => {
-     if (filtersContainerRef.current) {
-       const scrollAmount = 100;
-       if (direction === "left") {
-         filtersContainerRef.current.scrollLeft -= scrollAmount;
-       } else {
-         filtersContainerRef.current.scrollLeft += scrollAmount;
-       }
-     }
-   };
+  const filtersContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = (direction: "left" | "right") => {
+    if (filtersContainerRef.current) {
+      const scrollAmount = 100;
+      if (direction === "left") {
+        filtersContainerRef.current.scrollLeft -= scrollAmount;
+      } else {
+        filtersContainerRef.current.scrollLeft += scrollAmount;
+      }
+    }
+  };
 
   return (
     <div className="w-full">

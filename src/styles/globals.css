@@ -114,3 +114,17 @@ canvas[role="img"] {
 .m_60c222c7 {
   align-items: center !important;
 }
+
+@keyframes scroll {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-scroll {
+  white-space: nowrap;
+  animation: scroll 30s linear infinite;
+}
