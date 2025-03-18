@@ -185,7 +185,7 @@ const DueDiligencyDetails = ({
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
             <p>All Employee Comments</p>
             {decisions?.length &&
-              [...decisions].map((evaluation: any, i: any) => {
+              [...decisions].reverse().map((evaluation: any, i: any) => {
                 if (viewer === "applicant" && i > 0) return null;
                 return (
                   <div key={i} className="w-full ">
