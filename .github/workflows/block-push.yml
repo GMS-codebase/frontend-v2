@@ -1,0 +1,26 @@
+name: Block Direct Pushes to main, staging
+
+on: push
+
+jobs:
+  block-protected-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Branch Protection
+        run: |
+          # Check for main branch
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            if [[ "${{ github.actor }}" != "cielo-b" && "${{ github.actor }}" != "davinyiringabo" && "${{ github.actor }}" != "mugisha189" && "${{ github.actor }}" != "u-leslie" && "${{ github.actor }}" != "louange-lidvine" ]]; then
+              echo "::error::🚨 Use a pull request instead. You are not allowed to push directly to main branch"
+              exit 1
+            fi
+          fi
+
+          # Check for staging branch
+          if [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
+            if [[ "${{ github.actor }}" != "cielo-b" && "${{ github.actor }}" != "davinyiringabo" && "${{ github.actor }}" != "mugisha189" && "${{ github.actor }}" != "u-leslie" && "${{ github.actor }}" != "louange-lidvine" ]]; then
+              echo "::error::🚨 Use a pull request instead. You are not allowed to push directly to staging branch"
+              exit 1
+            fi
+          fi
+
