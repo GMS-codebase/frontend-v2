@@ -67,11 +67,11 @@ const Page = () => {
       ])
     );
     const request = form
-      ? authorizedApi.put(`/forms/update/${id}`, {
+      ? authorizedApi.put(`/surveys/update/${id}`, {
           name: formData?.name,
           qns: JSON.stringify(updatedFormData),
         })
-      : authorizedApi.post("/forms/create", {
+      : authorizedApi.post("/surveys/create", {
           name: formData?.name,
           qns: JSON.stringify(updatedFormData),
         });
@@ -98,14 +98,14 @@ const Page = () => {
             notifications.show({
               message: `Failed to ${
                 form ? "update" : "create"
-              } form. It seems a form with similar details already exists.`,
+              } survey. It seems a survey with similar details already exists.`,
               color: "red",
             });
           } else {
             notifications.show({
               message:
                 errorMessage ??
-                `Failed to ${form ? "update" : "create"} form! Please try again.`,
+                `Failed to ${form ? "update" : "create"} survey! Please try again.`,
               color: "red",
             });
           }
@@ -124,7 +124,7 @@ const Page = () => {
   return (
     <div className="w-full !overflow-x-hidden">
       <div className="flex items-center justify-between my-4">
-        <p className="text-2xl font-bold">{form ? "Update" : "Create"} Form</p>
+        <p className="text-2xl font-bold">{form ? "Update" : "Create"} Survey</p>
         <div className="flex items-center space-x-4 mb-6">
           <button
             onClick={handleSaveForm}
