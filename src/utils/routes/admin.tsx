@@ -39,6 +39,11 @@ const adminRoutes: Route[] = [
     icon: <Icons.SolarSuitcaseBold />,
   },
   {
+    label: "Survey",
+    path: "/admin/survey",
+    icon: <Icons.SolarPaperclipRounded2Bold />,
+  },
+  {
     label: "Applicants",
     path: "/admin/applicants",
     icon: <Icons.SolarUsersGroupTwoRoundedBold />,
