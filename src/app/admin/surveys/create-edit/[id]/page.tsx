@@ -2,8 +2,8 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Form as IForm, QuestionForm } from "@/types/questions-form";
-import Form from "@/components/forms/Form";
+import { Form as IForm, SurveyForm} from "@/types/surveys-form";
+import SurveyForms from "@/components/forms/SurveyForms";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { authorizedApi } from "@/utils/api";
@@ -49,7 +49,7 @@ const Page = () => {
           ),
         };
         return acc;
-      }, {} as QuestionForm);
+      }, {} as SurveyForm); 
 
     const updatedFormData = Object.fromEntries(
       Object.entries(sanitizedQns).map(([key, module]) => [
@@ -58,9 +58,9 @@ const Page = () => {
           ...module,
           pages: module.pages.map((page, pageIndex) => ({
             ...page,
-            questions: page.questions.map((question, questionIndex) => ({
-              ...question,
-              id: `${key}-q-${pageIndex}-${questionIndex}`,
+            surveys: page.surveys.map((survey, surveyIndex) => ({
+              ...survey,
+              id: `${key}-q-${pageIndex}-${surveyIndex}`,
             })),
           })),
         },
@@ -80,8 +80,8 @@ const Page = () => {
       .then((res) => {
         notifications.show({
           message: form
-            ? "Question Form is updated successfully"
-            : "Question Form is created successfully",
+            ? "Survey Form is updated successfully"
+            : "Survey Form is created successfully",
           color: "blue",
         });
 
@@ -135,7 +135,7 @@ const Page = () => {
           </button>
         </div>
       </div>
-      <Form
+      <SurveyForms
         mode="creating"
         formData={formData as any}
         setFormData={setFormData as any}
