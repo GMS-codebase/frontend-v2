@@ -1,11 +1,13 @@
 import { Question } from "@/types/questions-form";
+import { Survey } from "@/types/surveys-form";
 import { authorizedApi } from "@/utils/api";
 import { handleDownloadFile, handleViewFile } from "@/services";
 import React, { useState } from "react";
 import { FaDownload } from "react-icons/fa";
 
 type FileInputProps = {
-  question: Question;
+  question?: Question;
+  survey?: Survey;
   value?: string;
   onChange: (url: string) => void;
   accept?: string;
@@ -15,17 +17,19 @@ type FileInputProps = {
 
 const FileInput: React.FC<FileInputProps> = ({
   question,
+  survey,
   value,
   onChange,
   accept = ".pdf",
   disabled = false,
   mode = "creating",
 }) => {
+  const data = question || survey;
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = async (files: FileList | null) => {
-    if (!files || disabled) return;
+    if (!files || disabled || !data?.id) return;
 
     const file = files[0];
     setSelectedFile(file);
@@ -36,7 +40,7 @@ const FileInput: React.FC<FileInputProps> = ({
       try {
         await authorizedApi.delete("/files/delete", {
           data: {
-            folder: question.id,
+            folder: data.id,
             filename: value,
           },
         });
@@ -48,7 +52,7 @@ const FileInput: React.FC<FileInputProps> = ({
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("folder", question.id);
+      formData.append("folder", data.id);
       const response = await authorizedApi.post("/files/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -62,17 +66,17 @@ const FileInput: React.FC<FileInputProps> = ({
     }
   };
 
-  if ((mode === "commenting" || mode === "viewing") && value) {
+  if ((mode === "commenting" || mode === "viewing") && value && data?.id) {
     return (
       <div className="grid grid-cols-2 gap-2 my-2">
         <button
-          onClick={() => handleViewFile(value as any, question.id)}
+          onClick={() => handleViewFile(value, data.id)}
           className={`bg-gray-200  text-black font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
         >
           View File
         </button>
         <button
-          onClick={() => handleDownloadFile(value, question.id)}
+          onClick={() => handleDownloadFile(value, data.id)}
           className={` bg-primary  text-white font-semibold rounded-full w-full py-2 flex gap-2 items-center justify-center`}
         >
           <FaDownload />
@@ -116,9 +120,9 @@ const FileInput: React.FC<FileInputProps> = ({
           </div>
         )}
       </label>
-      {(selectedFile || value) && (
+      {(selectedFile || value) && data?.id && (
         <button
-          onClick={() => handleViewFile(value as any, question.id)}
+          onClick={() => handleViewFile(value as string, data.id)}
           className={`bg-gray-200 px-5  text-black font-semibold rounded-full w-fit py-2 flex gap-2 items-center justify-center`}
         >
           View Current Selected File
