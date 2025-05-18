@@ -17,7 +17,7 @@ const applicantRoutes: Route[] = [
   {
     label: "Surveys",
     path: "/applicant/surveys",
-    icon: <Icons.SolarDocumentBold />,
+    icon: <Icons.SolarPaperclipRounded2Bold />,
   },
   {
     label: "Minutes",
