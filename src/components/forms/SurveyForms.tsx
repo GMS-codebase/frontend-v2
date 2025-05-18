@@ -8,7 +8,6 @@ import { useDisclosure } from "@mantine/hooks";
 import RemoveSurveyType from "./RemoveSurveyType";
 import { CiEdit } from "react-icons/ci";
 
-
 interface Props {
   mode: "creating" | "viewing" | "answering" | "commenting";
   formData: IForm;
@@ -29,9 +28,9 @@ const SurveyForms: React.FC<Props> = ({
   setComments,
 }) => {
   const [activeType, setActiveType] = useState<string | null>(null);
-  const [selectedSurveyType, setSelectedSurveyType] = useState<
-    string | null
-  >(null);
+  const [selectedSurveyType, setSelectedSurveyType] = useState<string | null>(
+    null
+  );
   const [
     isOpenDeleteSurveyType,
     { open: openDeleteSurveyType, close: closeDeleteSurveyType },
@@ -60,11 +59,11 @@ const SurveyForms: React.FC<Props> = ({
   };
   const updateSurveyType = (
     newType: { name: string; description: string },
-    recentName: string,
+    recentName: string
   ) => {
     setFormData &&
       setFormData((prevFormData) => {
-        if (!prevFormData) return undefined;            
+        if (!prevFormData) return undefined;
         const { qns } = prevFormData;
         if (!qns[recentName]) {
           console.warn(`Survey type with name "${recentName}" not found.`);
@@ -84,7 +83,7 @@ const SurveyForms: React.FC<Props> = ({
       });
   };
 
-  const deleteSurveyType = (name: string) => {        
+  const deleteSurveyType = (name: string) => {
     setFormData &&
       setFormData((prevFormData) => {
         if (!prevFormData) return undefined;
@@ -170,7 +169,7 @@ const SurveyForms: React.FC<Props> = ({
                 )}
               </div>
             </div>
-          ),
+          )
         )}
         {mode === "creating" && (
           <button
@@ -198,7 +197,7 @@ const SurveyForms: React.FC<Props> = ({
                   setActiveType(
                     Object.keys(formData.qns)[
                       Object.keys(formData.qns).indexOf(activeType) + 1
-                    ],
+                    ]
                   )
               : undefined
           }
@@ -210,7 +209,7 @@ const SurveyForms: React.FC<Props> = ({
                   setActiveType(
                     Object.keys(formData.qns)[
                       Object.keys(formData.qns).indexOf(activeType) - 1
-                    ],
+                    ]
                   )
               : undefined
           }
@@ -224,7 +223,7 @@ const SurveyForms: React.FC<Props> = ({
                       ...(prevFormData?.qns || {}),
                       [activeType]: data,
                     },
-                  }) as any,
+                  }) as any
               );
           }}
           formData={formData.qns}
