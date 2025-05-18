@@ -462,7 +462,7 @@ const SurveyPage = () => {
 
           {activeTab === "surveys" && (
             <Link
-              href="/admin/surveys/create"
+              href="/admin/surveys/create-edit/create"
               className="text-white py-2.5 px-6 rounded-full flex items-center gap-2 hover:opacity-90 transition-opacity"
               style={{
                 background: "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
