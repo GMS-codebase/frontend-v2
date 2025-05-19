@@ -65,10 +65,10 @@ const DeleteSurvey = ({
           <div className="w-full flex flex-col items-center">
             <Image src={deleteSvg} alt="vector" width={200} height={50} />
             <h1 className="text-2xl font-extrabold text-center">
-              Are you sure you want to remove this survey ?
+              Are you sure you want to remove this question ?
             </h1>
             <h2 className="text-[#000F2369] text-lg font-medium text-center">
-              All the data concerned with this survey might be deleted or harmed
+              All the data concerned with this question might be deleted or harmed
             </h2>
           </div>
           <div className="w-full flex justify-center mt-4 space-x-4 p-6">
@@ -85,7 +85,7 @@ const DeleteSurvey = ({
               disabled={loading}
               className="w-full px-4 py-3 bg-[#C50D0DF2] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Loading" : `Delete Survey`}
+              {loading ? "Loading" : `Delete Question`}
             </button>
           </div>
         </div>
