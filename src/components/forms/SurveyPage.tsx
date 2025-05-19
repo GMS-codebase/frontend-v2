@@ -31,8 +31,8 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
 }) => {
   const [newSurvey, setNewSurvey] = useState<ISurvey>({
     id: `${surveyType}-s-${pageIndex}-${pageSurveys?.length}`,
-    title: "Survey Title",
-    description: "Survey SubTitle",
+    title: "Question  Title",
+    description: "Question SubTitle",
     type: "text",
     required: false,
     commentable: false,
@@ -42,8 +42,8 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
     onChange([...pageSurveys, survey]);
     setNewSurvey({
       id: `${surveyType}-s-${pageIndex}-${pageSurveys?.length + 1}`,
-      title: "Survey Title",
-      description: "Survey SubTitle",
+      title: "Question Title",
+      description: "Question SubTitle",
       type: "text",
       required: false,
       commentable: false,
@@ -52,7 +52,7 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
 
   const handleSurveyChange = (updatedSurvey: ISurvey) => {
     const updatedSurveys = pageSurveys?.map((s) =>
-      s.id === updatedSurvey.id ? updatedSurvey : s,
+      s.id === updatedSurvey.id ? updatedSurvey : s
     );
     onChange(updatedSurveys);
   };
@@ -80,7 +80,7 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
             onClick={() => handleAddSurvey(newSurvey)}
             className="px-4 py-2 bg-primary text-white rounded-full"
           >
-            Add Survey
+            Add Question
           </button>
         </div>
       )}
