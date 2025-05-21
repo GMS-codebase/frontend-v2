@@ -2,7 +2,8 @@
 
 import { Modal } from "@mantine/core"
 import { useState } from "react"
-import type {EndSurveyModalProps} from "./../../app/admin/survey/types";
+import type { EndSurveyModalProps } from "./../../app/admin/survey/types"
+import { AlertTriangle } from "lucide-react"
 
 const EndSurveyModal = ({ isOpenModal, closeModal, survey }: EndSurveyModalProps) => {
   const [loading, setLoading] = useState(false)
@@ -29,7 +30,14 @@ const EndSurveyModal = ({ isOpenModal, closeModal, survey }: EndSurveyModalProps
     <Modal
       opened={isOpenModal}
       onClose={closeModal}
-      title={<h2 className="text-xl font-semibold text-gray-800">End Survey</h2>}
+      title={
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+            <AlertTriangle size={20} className="text-blue-600" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-800">End Survey</h2>
+        </div>
+      }
       centered
       size="md"
       overlayProps={{
@@ -44,29 +52,35 @@ const EndSurveyModal = ({ isOpenModal, closeModal, survey }: EndSurveyModalProps
         },
         header: {
           backgroundColor: "#fff",
-          padding: "1.5rem 1.5rem 0 1.5rem",
+          padding: "1.5rem 1.5rem 0.75rem 1.5rem",
+          marginBottom: 0,
         },
         content: {
           borderRadius: "1rem",
           boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
         },
+        title: {
+          width: "100%",
+        },
       }}
     >
-      <div className="flex flex-col gap-4 bg-white">
+      <div className="flex flex-col gap-5 bg-white">
         <p className="text-base text-gray-700">
-          Are you sure you want to end the survey <span className="font-semibold">&quot;{survey?.name}&quot;</span>? This action
-          cannot be undone.
+          Are you sure you want to end the survey <span className="font-semibold">&quot;{survey?.name}&quot;</span>?
+          This action cannot be undone.
         </p>
+
         <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
           <p className="text-sm text-blue-800">
             <span className="font-medium">Note:</span> Ending this survey will prevent any new responses from being
             submitted. Existing responses will still be available for review.
           </p>
         </div>
-        <div className="flex justify-end gap-4 mt-4">
+
+        <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:gap-4 mt-2">
           <button
             onClick={closeModal}
-            className="px-6 py-2.5 rounded-full border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-full border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors order-2 sm:order-1"
           >
             Cancel
           </button>
@@ -76,7 +90,7 @@ const EndSurveyModal = ({ isOpenModal, closeModal, survey }: EndSurveyModalProps
             style={{
               background: loading ? "#9CB3FD" : "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
             }}
-            className="px-6 py-2.5 rounded-full text-white font-medium hover:opacity-90 transition-opacity disabled:cursor-not-allowed"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-full text-white font-medium hover:opacity-90 transition-opacity disabled:cursor-not-allowed order-1 sm:order-2"
           >
             {loading ? "Processing..." : "End Survey"}
           </button>
