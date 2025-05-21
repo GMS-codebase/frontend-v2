@@ -4,7 +4,7 @@ import { useState, useCallback } from "react"
 import { BiSearch } from "react-icons/bi"
 import { SolarAddFolderBold } from "@/components/core/icons"
 import type { ColumnDef } from "@tanstack/react-table"
-import { CustomDataTable } from "@/components/core/data-table/custom-data-table";
+import { CustomDataTable } from "@/components/core/data-table/custom-data-table"
 import { HiDotsHorizontal } from "react-icons/hi"
 import { useDisclosure } from "@mantine/hooks"
 import { Menu } from "@mantine/core"
@@ -16,9 +16,10 @@ import DeleteModal from "@/components/Modals/DeleteModal"
 import EndSurveyModal from "@/components/survey/EndSurveyModal"
 import { format } from "date-fns"
 import type { Survey, SurveyResponse } from "./types"
+import { Play, Pause } from "lucide-react"
 
 const SurveyPage = () => {
-  const [activeTab, setActiveTab] = useState<"surveys" | "responses">("surveys")
+  const [activeTab, setActiveTab] = useState<"all" | "ongoing" | "ended" | "responses">("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null)
 
@@ -44,7 +45,7 @@ const SurveyPage = () => {
       uuid: "s3",
       name: "Product Evaluation Survey",
       applicants: 78,
-      status: "expired",
+      status: "ended",
       created_at: new Date("2023-02-10"),
       expiry_date: new Date("2023-04-10"),
     },
@@ -68,7 +69,7 @@ const SurveyPage = () => {
       uuid: "s6",
       name: "Post-Purchase Feedback",
       applicants: 67,
-      status: "expired",
+      status: "ended",
       created_at: new Date("2023-01-15"),
       expiry_date: new Date("2023-03-15"),
     },
@@ -76,7 +77,7 @@ const SurveyPage = () => {
       uuid: "s7",
       name: "Training Effectiveness Survey",
       applicants: 34,
-      status: "ongoing",
+      status: "draft",
       created_at: new Date("2023-04-25"),
       expiry_date: new Date("2023-06-25"),
     },
@@ -172,8 +173,53 @@ const SurveyPage = () => {
     }
   }, [])
 
+  // Handle starting a survey
+  const handleStartSurvey = useCallback(async (surveyId: string) => {
+    try {
+      setIsLoading(true)
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 800))
+
+      // Update the survey status
+      setSurveys((prevSurveys) =>
+        prevSurveys.map((survey) => (survey.uuid === surveyId ? { ...survey, status: "ongoing" } : survey)),
+      )
+    } catch (error) {
+      console.error("Error starting survey:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  // Handle ending a survey
+  const handleEndSurvey = useCallback(async (surveyId: string) => {
+    try {
+      setIsLoading(true)
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 800))
+
+      // Update the survey status
+      setSurveys((prevSurveys) =>
+        prevSurveys.map((survey) => (survey.uuid === surveyId ? { ...survey, status: "ended" } : survey)),
+      )
+    } catch (error) {
+      console.error("Error ending survey:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
   // Filter data based on search query
-  const filteredSurveys = surveys.filter((survey) => survey.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredSurveys = surveys.filter((survey) => {
+    // First filter by tab selection
+    if (activeTab === "ongoing" && survey.status !== "ongoing") return false
+    if (activeTab === "ended" && survey.status !== "ended") return false
+
+    // Then filter by search query
+    return survey.name.toLowerCase().includes(searchQuery.toLowerCase())
+  })
 
   const filteredResponses = responses.filter((response) => {
     if (selectedSurvey) {
@@ -208,10 +254,16 @@ const SurveyPage = () => {
       cell: ({ row }) => (
         <div
           className={`px-4 py-1.5 rounded-full text-center w-fit ${
-            row.original.status === "ongoing" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            row.original.status === "ongoing"
+              ? "bg-green-100 text-green-800"
+              : row.original.status === "ended"
+                ? "bg-red-100 text-red-800"
+                : "bg-amber-100 text-amber-800"
           }`}
         >
-          {row.original.status.charAt(0).toUpperCase() + row.original.status.slice(1)}
+          {row.original.status === "ended"
+            ? "Ended"
+            : row.original.status.charAt(0).toUpperCase() + row.original.status.slice(1)}
         </div>
       ),
     },
@@ -229,15 +281,26 @@ const SurveyPage = () => {
       accessorKey: "actions",
       header: () => <div className="text-right font-semibold">Actions</div>,
       cell: ({ row }) => (
-        <div className="flex items-center justify-end space-x-3">
+        <div className="flex flex-wrap items-center justify-end gap-3">
+          {row.original.status === "draft" && (
+            <button
+              onClick={() => handleStartSurvey(row.original.uuid)}
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium rounded-full flex items-center gap-1.5 bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
+            >
+              <Play size={14} />
+              Start Survey
+            </button>
+          )}
           {row.original.status === "ongoing" && (
             <button
               onClick={() => {
                 setSelectedSurvey(row.original)
                 openEndSurveyModal()
               }}
-              className="px-4 py-2 text-sm font-medium rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition-colors"
+              className="px-4 py-2 text-sm font-medium rounded-full flex items-center gap-1.5 bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
             >
+              <Pause size={14} />
               End Survey
             </button>
           )}
@@ -346,7 +409,7 @@ const SurveyPage = () => {
       accessorKey: "actions",
       header: () => <div className="text-right font-semibold">Actions</div>,
       cell: ({ row }) => (
-        <div className="flex items-center justify-end space-x-3">
+        <div className="flex flex-wrap items-center justify-end gap-3">
           {!row.original.reviewed && (
             <button
               onClick={() => handleMarkAsReviewed(row.original.uuid)}
@@ -401,24 +464,48 @@ const SurveyPage = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 shadow-sm">
-      <div className="w-full p-5 border-b">
-        <div className="flex space-x-8">
+      <div className="w-full p-5 border-b overflow-x-auto">
+        <div className="flex space-x-4 md:space-x-8 min-w-max">
           <button
-            className={`text-lg font-medium pb-2 ${
-              activeTab === "surveys"
-                ? "text-[#005DE9] border-b-2 border-[#005DE9]"
-                : "text-gray-500 hover:text-gray-700"
+            className={`text-base md:text-lg font-medium pb-2 ${
+              activeTab === "all" ? "text-[#005DE9] border-b-2 border-[#005DE9]" : "text-gray-500 hover:text-gray-700"
             }`}
             onClick={() => {
-              setActiveTab("surveys")
+              setActiveTab("all")
               setSelectedSurvey(null)
               setSearchQuery("")
             }}
           >
-            Surveys
+            All Surveys
           </button>
           <button
-            className={`text-lg font-medium pb-2 ${
+            className={`text-base md:text-lg font-medium pb-2 ${
+              activeTab === "ongoing"
+                ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+            onClick={() => {
+              setActiveTab("ongoing")
+              setSelectedSurvey(null)
+              setSearchQuery("")
+            }}
+          >
+            Ongoing
+          </button>
+          <button
+            className={`text-base md:text-lg font-medium pb-2 ${
+              activeTab === "ended" ? "text-[#005DE9] border-b-2 border-[#005DE9]" : "text-gray-500 hover:text-gray-700"
+            }`}
+            onClick={() => {
+              setActiveTab("ended")
+              setSelectedSurvey(null)
+              setSearchQuery("")
+            }}
+          >
+            Ended
+          </button>
+          <button
+            className={`text-base md:text-lg font-medium pb-2 ${
               activeTab === "responses"
                 ? "text-[#005DE9] border-b-2 border-[#005DE9]"
                 : "text-gray-500 hover:text-gray-700"
@@ -427,14 +514,14 @@ const SurveyPage = () => {
           >
             Responses
             {selectedSurvey && activeTab === "responses" && (
-              <span className="ml-2 text-sm font-normal">({selectedSurvey.name})</span>
+              <span className="ml-2 text-sm font-normal hidden sm:inline">({selectedSurvey.name})</span>
             )}
           </button>
         </div>
       </div>
 
-      <div className="w-full lg:flex justify-between items-center p-5">
-        <div className="relative lg:w-[25rem] w-full mb-4 lg:mb-0">
+      <div className="w-full flex flex-col lg:flex-row lg:justify-between lg:items-center p-4 sm:p-5 gap-4">
+        <div className="relative w-full lg:w-[25rem]">
           <span className="absolute top-4 left-3">
             <BiSearch size={22} className="text-gray-500" />
           </span>
@@ -443,27 +530,35 @@ const SurveyPage = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-gray-500 rounded-full bg-[#005DE908] border-none outline-none focus:ring-2 focus:ring-blue-100"
-            placeholder={`Search ${activeTab === "surveys" ? "surveys" : "responses"}...`}
+            placeholder={`Search ${
+              activeTab === "responses"
+                ? "responses"
+                : activeTab === "ongoing"
+                  ? "ongoing surveys"
+                  : activeTab === "ended"
+                    ? "ended surveys"
+                    : "surveys"
+            }...`}
           />
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center gap-3 self-end lg:self-auto">
           {activeTab === "responses" && selectedSurvey && (
             <button
               onClick={() => {
                 setSelectedSurvey(null)
                 setSearchQuery("")
               }}
-              className="text-[#005DE9] py-2.5 px-6 rounded-full border border-[#005DE9] hover:bg-blue-50 transition-colors"
+              className="text-[#005DE9] py-2.5 px-6 rounded-full border border-[#005DE9] hover:bg-blue-50 transition-colors whitespace-nowrap"
             >
               View All Responses
             </button>
           )}
 
-          {activeTab === "surveys" && (
+          {(activeTab === "all" || activeTab === "ongoing" || activeTab === "ended") && (
             <Link
               href="/admin/surveys/create-edit/create"
-              className="text-white py-2.5 px-6 rounded-full flex items-center gap-2 hover:opacity-90 transition-opacity"
+              className="text-white py-2.5 px-6 rounded-full flex items-center gap-2 hover:opacity-90 transition-opacity whitespace-nowrap"
               style={{
                 background: "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
               }}
@@ -477,19 +572,8 @@ const SurveyPage = () => {
         </div>
       </div>
 
-      <div className="w-full px-5">
-        {activeTab === "surveys" ? (
-          <CustomDataTable
-            columns={surveyColumns}
-            data={filteredSurveys}
-            loading={false}
-            noDataMessage={searchQuery ? `No surveys found related to "${searchQuery}"` : "No surveys added so far"}
-            loadingBackgroundColor="#f1f5f9"
-            loadingColor="#005DE9"
-            pageSize={6}
-            
-          />
-        ) : (
+      <div className="w-full px-4 sm:px-5 overflow-x-auto">
+        {activeTab === "responses" ? (
           <CustomDataTable
             columns={responseColumns}
             data={filteredResponses}
@@ -500,6 +584,24 @@ const SurveyPage = () => {
                 : searchQuery
                   ? `No responses found related to "${searchQuery}"`
                   : "No responses available"
+            }
+            loadingBackgroundColor="#f1f5f9"
+            loadingColor="#005DE9"
+            pageSize={6}
+          />
+        ) : (
+          <CustomDataTable
+            columns={surveyColumns}
+            data={filteredSurveys}
+            loading={false}
+            noDataMessage={
+              searchQuery
+                ? `No surveys found related to "${searchQuery}"`
+                : activeTab === "ongoing"
+                  ? "No ongoing surveys found"
+                  : activeTab === "ended"
+                    ? "No ended surveys found"
+                    : "No surveys added so far"
             }
             loadingBackgroundColor="#f1f5f9"
             loadingColor="#005DE9"

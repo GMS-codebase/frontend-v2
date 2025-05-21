@@ -43,6 +43,7 @@
     "file-saver": "^2.0.5",
     "husky": "^9.1.6",
     "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.511.0",
     "mammoth": "^1.8.0",
     "next": "14.2.5",
     "next13-progressbar": "^1.2.1",

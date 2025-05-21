@@ -4,7 +4,7 @@ export interface Survey {
   uuid: string
   name: string
   applicants: number
-  status: "ongoing" | "expired"
+  status: "ongoing" | "ended" | "draft"
   created_at: Date
   expiry_date: Date
 }
