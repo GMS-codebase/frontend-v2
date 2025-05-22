@@ -11,9 +11,9 @@ export interface SurveyForm {
 export interface Form {
   uuid?: string;
   name: string;
-  qns: any;
+  qns: SurveyForm;
   status?: "ongoing" | "expired";
-  created_at?: Date;
+  created_at: Date;
   expiry_date?: Date;
   description?: string;
 }
