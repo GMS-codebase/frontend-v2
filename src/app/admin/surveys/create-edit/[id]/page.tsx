@@ -23,9 +23,19 @@ const Page = () => {
   useEffect(() => {
     if (form) {
       setFormData({
-        ...formData,
+        ...form,
         name: form?.name || "",
         qns: JSON.parse(form?.qns || "{}"),
+        created_at: new Date(),
+        expiry_date: form.expiry_date ? new Date(form.expiry_date) : undefined,
+      });
+    } else {
+      // Initialize new form with default values
+      setFormData({
+        name: "",
+        qns: {},
+        created_at: new Date(),
+        expiry_date: undefined,
       });
     }
     setPageLoading(false);
@@ -117,13 +127,15 @@ const Page = () => {
         setLoading(false);
       });
     */
-    
+
     // For now, just redirect to the admin survey page
     notifications.show({
-      message: form ? "Survey updated successfully" : "Survey created successfully",
+      message: form
+        ? "Survey updated successfully"
+        : "Survey created successfully",
       color: "blue",
     });
-    
+
     router.push("/admin/survey");
   };
 
