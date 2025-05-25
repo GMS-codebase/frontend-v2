@@ -1,6 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { Form as IForm, SurveyForm } from "@/types/surveys-form";
 import SurveyForms from "@/components/forms/SurveyForms";
@@ -19,131 +19,167 @@ const Page = () => {
   const router = useRouter();
   const [pageLoading, setPageLoading] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+
+  // Fetch single survey when editing
+  const fetchSurvey = useCallback(
+    async (surveyId: string) => {
+      if (surveyId === "create") return;
+
+      try {
+        const response = await authorizedApi.get(
+          `/survey/single-survey/${surveyId}`
+        );
+        const surveyData = response.data;
+
+        // Transform API response to form structure
+        const transformedSurvey: IForm = {
+          uuid: surveyData.id.toString(),
+          id: surveyData.id,
+          name: surveyData.name,
+          qns:
+            typeof surveyData.qns === "string"
+              ? JSON.parse(surveyData.qns)
+              : surveyData.qns,
+          status:
+            surveyData.survey_status === "ONGOING" ? "ongoing" : "expired",
+          created_at: surveyData.created_at,
+          expiry_date: surveyData.expiry_date,
+          description: `Survey created on ${new Date(surveyData.created_at).toLocaleDateString()}`,
+          survey_status: surveyData.survey_status,
+          updated_at: surveyData.updated_at,
+          survey_type: surveyData.survey_TYPE,
+          hasSurvey_Started: surveyData.hasSurvey_Started,
+          surveyStartingTime: surveyData.surveyStartingTime,
+        };
+
+        setFormData(transformedSurvey);
+        dispatch({
+          type: UPDATE_FORM_SUCCESS,
+          payload: transformedSurvey,
+        });
+      } catch (error) {
+        console.error("Error fetching survey:", error);
+        notifications.show({
+          message: "Failed to load survey data",
+          color: "red",
+        });
+        router.push("/admin/survey");
+      }
+    },
+    [dispatch, router]
+  );
 
   useEffect(() => {
-    if (form) {
-      setFormData({
-        ...form,
-        name: form?.name || "",
-        qns: JSON.parse(form?.qns || "{}"),
-        created_at: new Date(),
-        expiry_date: form.expiry_date ? new Date(form.expiry_date) : undefined,
-      });
-    } else {
-      // Initialize new form with default values
+    if (id === "create") {
+      // Reset form for new survey creation
       setFormData({
         name: "",
         qns: {},
         created_at: new Date(),
-        expiry_date: undefined,
+        expiry_date: new Date(),
       });
+      setPageLoading(false);
+    } else {
+      // Fetch existing survey data
+      fetchSurvey(id);
+      setPageLoading(false);
     }
-    setPageLoading(false);
-  }, [form, id]);
+  }, [id, fetchSurvey]);
 
-  const handleSaveForm = () => {
-    // Commenting out API call for now
-    /*
-    setLoading(true);
-    const sanitizedQns = Object.entries(formData?.qns ?? {})
-      .filter(
-        ([_, type]: any) =>
-          type.pages &&
-          type.pages.some(
-            (page: any) => page.questions && page.questions.length > 0
-          )
-      )
-      .reduce((acc, [key, type]: any) => {
-        acc[key] = {
-          ...type,
-          pages: type.pages.filter(
-            (page: any) => page.questions && page.questions.length > 0
-          ),
-        };
-        return acc;
-      }, {} as SurveyForm);
+  const handleSaveForm = async () => {
+    if (!formData?.name?.trim()) {
+      notifications.show({
+        message: "Please enter a survey name",
+        color: "orange",
+      });
+      return;
+    }
 
-    const updatedFormData = Object.fromEntries(
-      Object.entries(sanitizedQns).map(([key, module]) => [
-        key,
-        {
-          ...module,
-          pages: module.pages.map((page, pageIndex) => ({
-            ...page,
-            surveys: page.surveys.map((survey, surveyIndex) => ({
-              ...survey,
-              id: `${key}-q-${pageIndex}-${surveyIndex}`,
-            })),
-          })),
-        },
-      ])
-    );
-    const request = form
-      ? authorizedApi.put(`/surveys/update/${id}`, {
-          name: formData?.name,
-          qns: JSON.stringify(updatedFormData),
-        })
-      : authorizedApi.post("/surveys/create", {
-          name: formData?.name,
-          qns: JSON.stringify(updatedFormData),
-        });
+    if (!formData?.expiry_date) {
+      notifications.show({
+        message: "Please select an expiry date",
+        color: "orange",
+      });
+      return;
+    }
 
-    request
-      .then((res) => {
-        notifications.show({
-          message: form
-            ? "Survey Form is updated successfully"
-            : "Survey Form is created successfully",
-          color: "blue",
-        });
+    try {
+      setSaveLoading(true);
+
+      // Prepare survey data for API
+      const surveyData = {
+        name: formData.name,
+        qns:
+          typeof formData.qns === "object"
+            ? JSON.stringify(formData.qns)
+            : formData.qns,
+        expiry_date:
+          formData.expiry_date instanceof Date
+            ? formData.expiry_date.toISOString().split("T")[0]
+            : formData.expiry_date,
+        survey_status: formData.survey_status || "DRAFT",
+        survey_type: formData.survey_type || "GENERALSURVEY",
+      };
+
+      if (id === "create") {
+        // Create new survey
+        const response = await authorizedApi.post(
+          "/survey/create-survey",
+          surveyData
+        );
 
         dispatch({
-          type: form ? UPDATE_FORM_SUCCESS : ADD_FORM_SUCCESS,
-          payload: res.data?.data.data,
+          type: ADD_FORM_SUCCESS,
+          payload: response.data,
         });
-        router.back();
-      })
-      .catch((err) => {
-        if (err.response) {
-          const errorMessage = err.response.data.message;
-          if (errorMessage && errorMessage.includes("duplicate key")) {
-            notifications.show({
-              message: `Failed to ${
-                form ? "update" : "create"
-              } survey. It seems a survey with similar details already exists.`,
-              color: "red",
-            });
-          } else {
-            notifications.show({
-              message:
-                errorMessage ??
-                `Failed to ${form ? "update" : "create"} survey! Please try again.`,
-              color: "red",
-            });
-          }
-        }
-      })
-      .finally(() => {
-        setLoading(false);
+
+        notifications.show({
+          message: "Survey created successfully!",
+          color: "green",
+        });
+
+        router.push("/admin/survey");
+      } else {
+        // Update existing survey
+        const response = await authorizedApi.put(
+          `/survey/update/${id}`,
+          surveyData
+        );
+
+        dispatch({
+          type: UPDATE_FORM_SUCCESS,
+          payload: response.data,
+        });
+
+        notifications.show({
+          message: "Survey updated successfully!",
+          color: "green",
+        });
+
+        router.push("/admin/survey");
+      }
+    } catch (error: any) {
+      console.error("Error saving survey:", error);
+      notifications.show({
+        message:
+          error.response?.data?.message ||
+          `Failed to ${id === "create" ? "create" : "update"} survey`,
+        color: "red",
       });
-    */
-
-    // For now, just redirect to the admin survey page
-    notifications.show({
-      message: form
-        ? "Survey updated successfully"
-        : "Survey created successfully",
-      color: "blue",
-    });
-
-    router.push("/admin/survey");
+    } finally {
+      setSaveLoading(false);
+    }
   };
 
   if (forms.loading || pageLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">Loading</div>
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
     );
   }
+
   return (
     <div className="w-full !overflow-x-hidden">
       <div className="flex items-center justify-between my-4">
@@ -152,19 +188,28 @@ const Page = () => {
         </p>
         <div className="flex items-center space-x-4 mb-6">
           <button
-            onClick={handleSaveForm}
-            disabled={loading}
-            className="px-4 py-2 bg-primary text-white rounded-full hover:bg-primary/80"
+            onClick={() => router.back()}
+            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50"
           >
-            {loading ? "Loading.." : "Save"}
+            Cancel
+          </button>
+          <button
+            onClick={handleSaveForm}
+            disabled={saveLoading || !formData?.name}
+            className="px-6 py-2 bg-primary text-white rounded-full hover:bg-primary/80 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {saveLoading ? "Saving..." : "Save Survey"}
           </button>
         </div>
       </div>
-      <SurveyForms
-        mode="creating"
-        formData={formData as any}
-        setFormData={setFormData as any}
-      />
+
+      {formData && (
+        <SurveyForms
+          mode="creating"
+          formData={formData as any}
+          setFormData={setFormData as any}
+        />
+      )}
     </div>
   );
 };

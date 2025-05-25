@@ -45,7 +45,7 @@ const routeMappings = {
   employees: "/employees",
   budgetLines: "/budgetlines/delete",
   forms: "/forms/delete",
-  surveys: "/surveys/delete", // Added surveys route mapping
+  surveys: "/survey/remove", // Updated to use correct survey delete endpoint
 };
 
 type DeleteType =
@@ -144,7 +144,12 @@ const DeleteModal = ({
         />
         <div className="w-4/5 flex flex-col items-center mt-4 overflow-hidden">
           <div className="w-full flex flex-col items-center">
-            <Image src={deleteSvg || "/placeholder.svg"} alt="vector" width={200} height={50} />
+            <Image
+              src={deleteSvg || "/placeholder.svg"}
+              alt="vector"
+              width={200}
+              height={50}
+            />
             <h1 className="text-2xl font-extrabold text-center">
               Are you sure you want to delete this{" "}
               {capitalize(type.slice(0, -1))}?
