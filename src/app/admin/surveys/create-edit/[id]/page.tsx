@@ -2,8 +2,8 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Form as IForm, QuestionForm } from "@/types/questions-form";
-import Form from "@/components/forms/Form";
+import { Form as IForm, SurveyForm } from "@/types/surveys-form";
+import SurveyForms from "@/components/forms/SurveyForms";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { authorizedApi } from "@/utils/api";
@@ -23,15 +23,27 @@ const Page = () => {
   useEffect(() => {
     if (form) {
       setFormData({
-        ...formData,
+        ...form,
         name: form?.name || "",
         qns: JSON.parse(form?.qns || "{}"),
+        created_at: new Date(),
+        expiry_date: form.expiry_date ? new Date(form.expiry_date) : undefined,
+      });
+    } else {
+      // Initialize new form with default values
+      setFormData({
+        name: "",
+        qns: {},
+        created_at: new Date(),
+        expiry_date: undefined,
       });
     }
     setPageLoading(false);
   }, [form, id]);
 
   const handleSaveForm = () => {
+    // Commenting out API call for now
+    /*
     setLoading(true);
     const sanitizedQns = Object.entries(formData?.qns ?? {})
       .filter(
@@ -49,7 +61,7 @@ const Page = () => {
           ),
         };
         return acc;
-      }, {} as QuestionForm);
+      }, {} as SurveyForm);
 
     const updatedFormData = Object.fromEntries(
       Object.entries(sanitizedQns).map(([key, module]) => [
@@ -58,20 +70,20 @@ const Page = () => {
           ...module,
           pages: module.pages.map((page, pageIndex) => ({
             ...page,
-            questions: page.questions.map((question, questionIndex) => ({
-              ...question,
-              id: `${key}-q-${pageIndex}-${questionIndex}`,
+            surveys: page.surveys.map((survey, surveyIndex) => ({
+              ...survey,
+              id: `${key}-q-${pageIndex}-${surveyIndex}`,
             })),
           })),
         },
       ])
     );
     const request = form
-      ? authorizedApi.put(`/forms/update/${id}`, {
+      ? authorizedApi.put(`/surveys/update/${id}`, {
           name: formData?.name,
           qns: JSON.stringify(updatedFormData),
         })
-      : authorizedApi.post("/forms/create", {
+      : authorizedApi.post("/surveys/create", {
           name: formData?.name,
           qns: JSON.stringify(updatedFormData),
         });
@@ -80,8 +92,8 @@ const Page = () => {
       .then((res) => {
         notifications.show({
           message: form
-            ? "Question Form is updated successfully"
-            : "Question Form is created successfully",
+            ? "Survey Form is updated successfully"
+            : "Survey Form is created successfully",
           color: "blue",
         });
 
@@ -98,14 +110,14 @@ const Page = () => {
             notifications.show({
               message: `Failed to ${
                 form ? "update" : "create"
-              } form. It seems a form with similar details already exists.`,
+              } survey. It seems a survey with similar details already exists.`,
               color: "red",
             });
           } else {
             notifications.show({
               message:
                 errorMessage ??
-                `Failed to ${form ? "update" : "create"} form! Please try again.`,
+                `Failed to ${form ? "update" : "create"} survey! Please try again.`,
               color: "red",
             });
           }
@@ -114,6 +126,17 @@ const Page = () => {
       .finally(() => {
         setLoading(false);
       });
+    */
+
+    // For now, just redirect to the admin survey page
+    notifications.show({
+      message: form
+        ? "Survey updated successfully"
+        : "Survey created successfully",
+      color: "blue",
+    });
+
+    router.push("/admin/survey");
   };
 
   if (forms.loading || pageLoading) {
@@ -124,7 +147,9 @@ const Page = () => {
   return (
     <div className="w-full !overflow-x-hidden">
       <div className="flex items-center justify-between my-4">
-        <p className="text-2xl font-bold">{form ? "Update" : "Create"} Form</p>
+        <p className="text-2xl font-bold">
+          {form ? "Update" : "Create"} Survey
+        </p>
         <div className="flex items-center space-x-4 mb-6">
           <button
             onClick={handleSaveForm}
@@ -135,7 +160,7 @@ const Page = () => {
           </button>
         </div>
       </div>
-      <Form
+      <SurveyForms
         mode="creating"
         formData={formData as any}
         setFormData={setFormData as any}

@@ -47,7 +47,7 @@ import { notifications } from "@mantine/notifications";
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  const [pageName, setPageName] = useState(getCookie("breadcrumb") || "");
+  const [pageName, setPageName] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useRouter();
@@ -64,6 +64,10 @@ const Navbar = () => {
       color: "blue",
     });
   };
+
+  useEffect(() => {
+    setPageName(getCookie("breadcrumb") || "");
+  }, []);
 
   useEffect(() => {
     const handleStorageChange = () => {

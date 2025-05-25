@@ -1,37 +1,42 @@
 import { Question } from "@/types/questions-form";
+import { Survey } from "@/types/surveys-form";
 import React, { useEffect, useState } from "react";
 
 interface CheckboxInputProps {
-  question: Question;
+  question?: Question;
+  survey? : Survey;
   value: string[];
   onChange: (value: string[]) => void;
-  onQuestionChange: (updatedQuestion: Question) => void;
+  onQuestionChange: (updatedQuestion: Question | Survey) => void;
   mode: "creating" | "viewing" | "answering" | "commenting";
   disabled?: boolean;
 }
 
 const CheckboxInput: React.FC<CheckboxInputProps> = ({
   question,
+  survey,
   value,
   onChange,
   onQuestionChange,
   mode,
   disabled,
 }) => {
-  const [choices, setChoices] = useState<string[]>(question.choices || []);
+  const data = question || survey;
+  const [choices, setChoices] = useState<string[]>(data?.choices || []);
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const handleAddChoice = () => {
-    const updatedChoices = [...choices, ""];
-    setChoices(updatedChoices);
-    onQuestionChange({ ...question, choices: updatedChoices });
+    if(!data) return;
+   setChoices([...choices, ""]);
+   onQuestionChange({...data, choices: [...choices]});
   };
 
   const handleChoiceChange = (index: number, newChoice: string) => {
-    const updatedChoices = [...choices];
-    updatedChoices[index] = newChoice;
-    setChoices(updatedChoices);
-    onQuestionChange({ ...question, choices: updatedChoices });
+   if(!data) return;
+   const updatedChoices = [...choices];
+   updatedChoices[index] = newChoice;
+   setChoices(updatedChoices);
+   onQuestionChange({...data, choices: updatedChoices});
   };
 
   const handleCheckboxToggle = (toggledValue: string) => {
