@@ -10,12 +10,19 @@ export interface SurveyForm {
 
 export interface Form {
   uuid?: string;
+  id?: number;
   name: string;
-  qns: SurveyForm;
+  qns: SurveyForm | string;
   status?: "ongoing" | "expired";
-  created_at: Date;
-  expiry_date?: Date;
+  created_at: Date | string;
+  expiry_date?: Date | string;
   description?: string;
+  questions?: SurveyForm | string;
+  survey_status?: "DRAFT" | "ONGOING" | "ENDED";
+  updated_at?: string;
+  survey_type?: string;
+  hasSurvey_Started?: boolean;
+  surveyStartingTime?: string | null;
 }
 
 export interface Survey {
