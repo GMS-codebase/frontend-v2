@@ -33,14 +33,57 @@ const Page = () => {
         const surveyData = response.data;
 
         // Transform API response to form structure
+        let parsedQns;
+        try {
+          if (typeof surveyData.qns === "string") {
+            const parsed = JSON.parse(surveyData.qns);
+
+            // Check if it's the expected SurveyForm structure
+            if (Array.isArray(parsed)) {
+              // If it's an array (old format), transform to expected structure
+              parsedQns = {
+                general: {
+                  name: "general",
+                  description: "General Questions",
+                  pages: [
+                    {
+                      surveys: parsed.map((item: any, index: number) => ({
+                        id: `general-q-0-${index}`,
+                        title:
+                          item.question ||
+                          item.title ||
+                          `Question ${index + 1}`,
+                        description: item.description || "",
+                        type: item.type || "text",
+                        required: item.required || false,
+                        commentable: item.commentable || false,
+                        choices: item.choices || [],
+                        columns: item.columns || [],
+                      })),
+                    },
+                  ],
+                },
+              };
+            } else if (typeof parsed === "object" && parsed !== null) {
+              // If it's already in the correct format
+              parsedQns = parsed;
+            } else {
+              // Fallback to empty structure
+              parsedQns = {};
+            }
+          } else {
+            parsedQns = surveyData.qns || {};
+          }
+        } catch (parseError) {
+          console.warn("Failed to parse survey questions:", parseError);
+          parsedQns = {};
+        }
+
         const transformedSurvey: IForm = {
           uuid: surveyData.id.toString(),
           id: surveyData.id,
           name: surveyData.name,
-          qns:
-            typeof surveyData.qns === "string"
-              ? JSON.parse(surveyData.qns)
-              : surveyData.qns,
+          qns: parsedQns,
           status:
             surveyData.survey_status === "ONGOING" ? "ongoing" : "expired",
           created_at: surveyData.created_at,

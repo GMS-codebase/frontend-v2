@@ -6,6 +6,7 @@ import type { EndSurveyModalProps } from "./../../app/admin/survey/types";
 import { AlertTriangle } from "lucide-react";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
+import { ESurveyStatus } from "@/types/surveys-form";
 
 const EndSurveyModal = ({
   isOpenModal,
@@ -28,7 +29,7 @@ const EndSurveyModal = ({
 
       // Make API call to end the survey using the correct endpoint
       await authorizedApi.put(`/survey/remove/${survey.id}`, {
-        survey_status: "ENDED",
+        survey_status: ESurveyStatus.EXPIRED
       });
 
       notifications.show({

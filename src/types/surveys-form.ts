@@ -1,3 +1,9 @@
+export enum ESurveyStatus {
+  ONGOING = 'ONGOING',
+  EXPIRED = 'EXPIRED', 
+  DRAFT = 'DRAFT'
+}
+
 export interface SurveyForm {
   [key: string]: {
     name: string;
@@ -18,7 +24,7 @@ export interface Form {
   expiry_date?: Date | string;
   description?: string;
   questions?: SurveyForm | string;
-  survey_status?: "DRAFT" | "ONGOING" | "ENDED";
+  survey_status?: ESurveyStatus;
   updated_at?: string;
   survey_type?: string;
   hasSurvey_Started?: boolean;
