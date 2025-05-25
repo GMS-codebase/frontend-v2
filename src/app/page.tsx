@@ -28,14 +28,14 @@ function Page() {
     getCalls(dispatch);
   }, []);
   const { calls, loading: loadingCalls } = useSelector(
-    (state: any) => state.calls,
+    (state: any) => state.calls
   );
   const sortedCalls = calls
     ? [...calls]
         .filter((call: any) => call.status === "OPEN")
         .sort(
           (a: any, b: any) =>
-            new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
+            new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
         )
     : [];
 
