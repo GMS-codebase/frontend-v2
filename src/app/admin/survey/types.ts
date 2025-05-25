@@ -1,3 +1,5 @@
+import { ESurveyStatus } from "@/types/surveys-form";
+
 // Define all TypeScript interfaces for the survey management system
 
 export interface Survey {
@@ -6,7 +8,7 @@ export interface Survey {
   name: string
   questions: string
   expiry_date: string
-  survey_status: "DRAFT" | "ONGOING" | "ENDED"
+  survey_status: ESurveyStatus
   created_at: string
   updated_at: string
   survey_type: string

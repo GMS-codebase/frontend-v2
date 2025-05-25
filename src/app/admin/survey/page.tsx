@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import type { Survey, SurveyResponse } from "./types";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
+import { ESurveyStatus } from "@/types/surveys-form";
 
 const SurveyPage = () => {
   const [activeTab, setActiveTab] = useState<
@@ -268,15 +269,15 @@ const SurveyPage = () => {
         let statusText = status;
         let statusColor = "bg-gray-100 text-gray-800";
 
-        if (status === "DRAFT") {
+        if (status === ESurveyStatus.DRAFT) {
           statusColor = "bg-yellow-100 text-yellow-800";
           statusText = "Draft";
-        } else if (status === "ONGOING") {
+        } else if (status === ESurveyStatus.ONGOING) {
           statusColor = "bg-green-100 text-green-800";
           statusText = hasSurveyStarted ? "Active" : "Published";
-        } else if (status === "ENDED") {
+        } else if (status === ESurveyStatus.EXPIRED) {
           statusColor = "bg-red-100 text-red-800";
-          statusText = "Ended";
+          statusText = "Expired";
         }
 
         return (
@@ -325,8 +326,8 @@ const SurveyPage = () => {
       header: "Actions",
       cell: ({ row }) => {
         const survey = row.original;
-        const canEnd = survey.survey_status === "ONGOING";
-        const canEdit = survey.survey_status === "DRAFT";
+        const canEnd = survey.survey_status === ESurveyStatus.ONGOING;
+        const canEdit = survey.survey_status === ESurveyStatus.DRAFT;
 
         return (
           <Menu shadow="md" width={200}>

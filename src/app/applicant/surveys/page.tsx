@@ -6,6 +6,7 @@ import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { FiClock, FiCalendar, FiFileText, FiCheckCircle } from "react-icons/fi";
 import { Button } from "@mantine/core";
+import { ESurveyStatus } from "@/types/surveys-form";
 
 const Page = () => {
   const [surveys, setSurveys] = useState<IForm[]>([]);
@@ -26,22 +27,66 @@ const Page = () => {
 
       // Filter surveys to show only ONGOING surveys
       const availableSurveys = response.data
-        .filter((survey: any) => survey.survey_status === "ONGOING")
-        .map((survey: any) => ({
-          uuid: survey.id.toString(),
-          id: survey.id,
-          name: survey.name,
-          description: `Survey created on ${new Date(survey.created_at).toLocaleDateString()}`,
-          questions:
-            typeof survey.qns === "string"
-              ? JSON.parse(survey.qns)
-              : survey.qns,
-          expiry_date: survey.expiry_date,
-          survey_status: survey.survey_status,
-          created_at: survey.created_at,
-          survey_type: survey.survey_TYPE,
-          hasSurvey_Started: survey.hasSurvey_Started,
-        }));
+        .filter((survey: any) => survey.survey_status === ESurveyStatus.ONGOING)
+        .map((survey: any) => {
+          // Transform questions to expected format
+          let transformedQuestions;
+          try {
+            if (typeof survey.qns === "string") {
+              const parsed = JSON.parse(survey.qns);
+
+              if (Array.isArray(parsed)) {
+                // Transform array format to expected structure
+                transformedQuestions = {
+                  general: {
+                    name: "general",
+                    description: "General Questions",
+                    pages: [
+                      {
+                        surveys: parsed.map((item: any, index: number) => ({
+                          id: `general-q-0-${index}`,
+                          title:
+                            item.question ||
+                            item.title ||
+                            `Question ${index + 1}`,
+                          description: item.description || "",
+                          type: item.type || "text",
+                          required: item.required || false,
+                          commentable: item.commentable || false,
+                          choices: item.choices || [],
+                          columns: item.columns || [],
+                        })),
+                      },
+                    ],
+                  },
+                };
+              } else if (typeof parsed === "object" && parsed !== null) {
+                transformedQuestions = parsed;
+              } else {
+                transformedQuestions = {};
+              }
+            } else {
+              transformedQuestions = survey.qns || {};
+            }
+          } catch (parseError) {
+            console.warn("Failed to parse survey questions:", parseError);
+            transformedQuestions = {};
+          }
+
+          return {
+            uuid: survey.id.toString(),
+            id: survey.id,
+            name: survey.name,
+            description: `Survey created on ${new Date(survey.created_at).toLocaleDateString()}`,
+            questions: transformedQuestions,
+            qns: transformedQuestions,
+            expiry_date: survey.expiry_date,
+            survey_status: survey.survey_status,
+            created_at: survey.created_at,
+            survey_type: survey.survey_TYPE,
+            hasSurvey_Started: survey.hasSurvey_Started,
+          };
+        });
 
       setSurveys(availableSurveys);
 
@@ -194,7 +239,7 @@ const Page = () => {
                 ) : (
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      survey.survey_status === "ONGOING"
+                      survey.survey_status === ESurveyStatus.ONGOING
                         ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"
                     }`}
@@ -239,19 +284,19 @@ const Page = () => {
                 className="w-full"
                 variant="filled"
                 color={
-                  survey.survey_status === "ENDED" ||
+                  survey.survey_status === ESurveyStatus.EXPIRED ||
                   completedSurveys.includes(survey.uuid || "")
                     ? "gray"
                     : "blue"
                 }
                 disabled={
-                  survey.survey_status === "ENDED" ||
+                  survey.survey_status === ESurveyStatus.EXPIRED ||
                   completedSurveys.includes(survey.uuid || "")
                 }
               >
                 {completedSurveys.includes(survey.uuid || "")
                   ? "Survey Completed"
-                  : survey.survey_status === "ENDED"
+                  : survey.survey_status === ESurveyStatus.EXPIRED
                     ? "Survey Expired"
                     : "Take Survey"}
               </Button>
