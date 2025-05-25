@@ -1,451 +1,116 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Form as IForm } from "@/types/surveys-form";
 import SurveyForms from "@/components/forms/SurveyForms";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { FiClock, FiCalendar, FiFileText, FiCheckCircle } from "react-icons/fi";
 import { Button } from "@mantine/core";
+import { ESurveyStatus } from "@/types/surveys-form";
 
 const Page = () => {
-  const [surveys, setSurveys] = useState<IForm[]>([
-    {
-      uuid: "s1",
-      name: "Customer Satisfaction Survey",
-      description: "Help us improve our services by sharing your feedback",
-      qns: {
-        "General Feedback": {
-          name: "General Feedback",
-          description: "Your overall experience with our service.",
-          pages: [
-            {
-              surveys: [
-                {
-                  id: "General Feedback-q-0-0",
-                  title: "How satisfied are you with our service?",
-                  description: "Please rate your overall satisfaction",
-                  type: "radio",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Very Satisfied",
-                    "Satisfied",
-                    "Neutral",
-                    "Dissatisfied",
-                    "Very Dissatisfied",
-                  ],
-                },
-                {
-                  id: "General Feedback-q-0-1",
-                  title: "How often do you use our service?",
-                  description: "Tell us about your usage frequency",
-                  type: "select",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Daily",
-                    "Weekly",
-                    "Monthly",
-                    "Rarely",
-                    "First Time",
-                  ],
-                },
-                {
-                  id: "General Feedback-q-0-2",
-                  title: "Which of our features do you use most often?",
-                  description: "Select all that apply",
-                  type: "checkbox",
-                  required: true,
-                  commentable: true,
-                  choices: ["Feature A", "Feature B", "Feature C", "Feature D"],
-                },
-              ],
-            },
-          ],
-        },
-        "Product Quality": {
-          name: "Product Quality",
-          description: "Your feedback on the quality of our products.",
-          pages: [
-            {
-              surveys: [
-                {
-                  id: "Product Quality-q-0-0",
-                  title: "How would you rate the quality of our product?",
-                  description: "Please rate the overall quality",
-                  type: "radio",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Excellent",
-                    "Good",
-                    "Average",
-                    "Below Average",
-                    "Poor",
-                  ],
-                },
-                {
-                  id: "Product Quality-q-0-1",
-                  title: "What aspects of our product could be improved?",
-                  description: "Select all that apply",
-                  type: "checkbox",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Durability",
-                    "Design",
-                    "Functionality",
-                    "Price",
-                    "Support",
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-        "Customer Support": {
-          name: "Customer Support",
-          description: "Your experience with our customer support team.",
-          pages: [
-            {
-              surveys: [
-                {
-                  id: "Customer Support-q-0-0",
-                  title: "How would you rate our customer support?",
-                  description:
-                    "Please rate your experience with our support team",
-                  type: "radio",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Excellent",
-                    "Good",
-                    "Average",
-                    "Below Average",
-                    "Poor",
-                  ],
-                },
-                {
-                  id: "Customer Support-q-0-1",
-                  title: "How quickly did we respond to your inquiry?",
-                  description: "Select the timeframe",
-                  type: "select",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Within 1 hour",
-                    "Same day",
-                    "1-2 days",
-                    "More than 2 days",
-                    "No response",
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      },
-      status: "ongoing",
-      created_at: new Date("2023-04-15"),
-      expiry_date: new Date("2023-06-15"),
-    },
-    {
-      uuid: "s2",
-      name: "Employee Feedback Form",
-      description: "Share your thoughts about the work environment and culture",
-      qns: {
-        "Workplace Experience": {
-          name: "Workplace Experience",
-          description: "Feedback on your work environment and culture.",
-          pages: [
-            {
-              surveys: [
-                {
-                  id: "Workplace Experience-q-0-0",
-                  title: "How would you rate the work-life balance?",
-                  description: "Please rate your overall work-life balance",
-                  type: "radio",
-                  required: true,
-                  commentable: true,
-                  choices: ["Excellent", "Good", "Fair", "Poor"],
-                },
-                {
-                  id: "Workplace Experience-q-0-1",
-                  title: "How often do you feel stressed at work?",
-                  description: "Select the frequency of work-related stress",
-                  type: "select",
-                  required: true,
-                  commentable: true,
-                  choices: ["Never", "Rarely", "Sometimes", "Often", "Always"],
-                },
-                {
-                  id: "Workplace Experience-q-0-2",
-                  title: "Which aspects of the workplace need improvement?",
-                  description: "Select all that apply",
-                  type: "checkbox",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Communication",
-                    "Resources",
-                    "Training",
-                    "Management",
-                    "Work Environment",
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-        "Professional Development": {
-          name: "Professional Development",
-          description: "Feedback on your growth and development opportunities.",
-          pages: [
-            {
-              surveys: [
-                {
-                  id: "Professional Development-q-0-0",
-                  title: "How satisfied are you with your professional growth?",
-                  description: "Please rate your career development",
-                  type: "radio",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Very Satisfied",
-                    "Satisfied",
-                    "Neutral",
-                    "Dissatisfied",
-                    "Very Dissatisfied",
-                  ],
-                },
-                {
-                  id: "Professional Development-q-0-1",
-                  title: "What training opportunities would you like to see?",
-                  description: "Select all that interest you",
-                  type: "checkbox",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Technical Skills",
-                    "Leadership",
-                    "Communication",
-                    "Industry Certifications",
-                    "Soft Skills",
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      },
-      status: "ongoing",
-      created_at: new Date("2023-05-01"),
-      expiry_date: new Date("2023-07-01"),
-    },
-    {
-      uuid: "s3",
-      name: "Product Evaluation Survey",
-      description: "Your feedback helps us make better products",
-      qns: {
-        "Product Feedback": {
-          name: "Product Feedback",
-          description: "Your opinion on our current products.",
-          pages: [
-            {
-              surveys: [
-                {
-                  id: "Product Feedback-q-0-0",
-                  title: "How would you rate the product quality?",
-                  description: "Please rate the overall quality",
-                  type: "radio",
-                  required: true,
-                  commentable: true,
-                  choices: ["Excellent", "Good", "Average", "Poor"],
-                },
-                {
-                  id: "Product Feedback-q-0-1",
-                  title: "How likely are you to recommend our product?",
-                  description: "Rate your likelihood to recommend",
-                  type: "select",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Very Likely",
-                    "Likely",
-                    "Neutral",
-                    "Unlikely",
-                    "Very Unlikely",
-                  ],
-                },
-                {
-                  id: "Product Feedback-q-0-2",
-                  title: "Which features do you find most valuable?",
-                  description: "Select all that apply",
-                  type: "checkbox",
-                  required: true,
-                  commentable: true,
-                  choices: ["Feature 1", "Feature 2", "Feature 3", "Feature 4"],
-                },
-              ],
-            },
-          ],
-        },
-        "Future Improvements": {
-          name: "Future Improvements",
-          description: "Your ideas for future product development.",
-          pages: [
-            {
-              surveys: [
-                {
-                  id: "Future Improvements-q-0-0",
-                  title: "What new features would you like to see?",
-                  description: "Select all that interest you",
-                  type: "checkbox",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Integration with other tools",
-                    "Mobile app",
-                    "Advanced reporting",
-                    "Customization options",
-                  ],
-                },
-                {
-                  id: "Future Improvements-q-0-1",
-                  title: "How important is regular product updates to you?",
-                  description: "Rate the importance",
-                  type: "radio",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Very Important",
-                    "Important",
-                    "Neutral",
-                    "Not Important",
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      },
-      status: "expired",
-      created_at: new Date("2023-02-10"),
-      expiry_date: new Date("2023-04-10"),
-    },
-    {
-      uuid: "s4",
-      name: "Website Usability Survey",
-      description: "Help us improve your online experience",
-      qns: {
-        "Website Experience": {
-          name: "Website Experience",
-          description: "Your feedback on our website usability.",
-          pages: [
-            {
-              surveys: [
-                {
-                  id: "Website Experience-q-0-0",
-                  title: "How easy was it to navigate our website?",
-                  description: "Rate the ease of navigation",
-                  type: "radio",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Very Easy",
-                    "Easy",
-                    "Neutral",
-                    "Difficult",
-                    "Very Difficult",
-                  ],
-                },
-                {
-                  id: "Website Experience-q-0-1",
-                  title: "How often do you visit our website?",
-                  description: "Select your visit frequency",
-                  type: "select",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Daily",
-                    "Weekly",
-                    "Monthly",
-                    "Rarely",
-                    "First Time",
-                  ],
-                },
-                {
-                  id: "Website Experience-q-0-2",
-                  title: "Which features do you find most useful?",
-                  description: "Select all that apply",
-                  type: "checkbox",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Search",
-                    "Navigation",
-                    "Content",
-                    "Design",
-                    "Mobile View",
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-        Performance: {
-          name: "Performance",
-          description: "Your feedback on website performance.",
-          pages: [
-            {
-              surveys: [
-                {
-                  id: "Performance-q-0-0",
-                  title: "How would you rate the website loading speed?",
-                  description: "Rate the performance",
-                  type: "radio",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Very Fast",
-                    "Fast",
-                    "Average",
-                    "Slow",
-                    "Very Slow",
-                  ],
-                },
-                {
-                  id: "Performance-q-0-1",
-                  title: "Have you experienced any technical issues?",
-                  description: "Select all that apply",
-                  type: "checkbox",
-                  required: true,
-                  commentable: true,
-                  choices: [
-                    "Broken links",
-                    "Error messages",
-                    "Payment issues",
-                    "Login problems",
-                    "None",
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      },
-      status: "ongoing",
-      created_at: new Date("2023-03-20"),
-      expiry_date: new Date("2023-05-20"),
-    },
-  ]);
-  const [loading, setLoading] = useState(false);
+  const [surveys, setSurveys] = useState<IForm[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedSurvey, setSelectedSurvey] = useState<IForm | null>(null);
   const [surveyResponses, setSurveyResponses] = useState<Record<string, any>>(
     {}
   );
   const [completedSurveys, setCompletedSurveys] = useState<string[]>([]);
   const [surveyAnswers, setSurveyAnswers] = useState<Record<string, any>>({});
+  const [submitLoading, setSubmitLoading] = useState(false);
+
+  // Fetch available surveys for applicants
+  const fetchSurveys = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await authorizedApi.get("/survey/get-all-survey");
+
+      // Filter surveys to show only ONGOING surveys
+      const availableSurveys = response.data
+        .filter((survey: any) => survey.survey_status === ESurveyStatus.ONGOING)
+        .map((survey: any) => {
+          // Transform questions to expected format
+          let transformedQuestions;
+          try {
+            if (typeof survey.qns === "string") {
+              const parsed = JSON.parse(survey.qns);
+
+              if (Array.isArray(parsed)) {
+                // Transform array format to expected structure
+                transformedQuestions = {
+                  general: {
+                    name: "general",
+                    description: "General Questions",
+                    pages: [
+                      {
+                        surveys: parsed.map((item: any, index: number) => ({
+                          id: `general-q-0-${index}`,
+                          title:
+                            item.question ||
+                            item.title ||
+                            `Question ${index + 1}`,
+                          description: item.description || "",
+                          type: item.type || "text",
+                          required: item.required || false,
+                          commentable: item.commentable || false,
+                          choices: item.choices || [],
+                          columns: item.columns || [],
+                        })),
+                      },
+                    ],
+                  },
+                };
+              } else if (typeof parsed === "object" && parsed !== null) {
+                transformedQuestions = parsed;
+              } else {
+                transformedQuestions = {};
+              }
+            } else {
+              transformedQuestions = survey.qns || {};
+            }
+          } catch (parseError) {
+            console.warn("Failed to parse survey questions:", parseError);
+            transformedQuestions = {};
+          }
+
+          return {
+            uuid: survey.id.toString(),
+            id: survey.id,
+            name: survey.name,
+            description: `Survey created on ${new Date(survey.created_at).toLocaleDateString()}`,
+            questions: transformedQuestions,
+            qns: transformedQuestions,
+            expiry_date: survey.expiry_date,
+            survey_status: survey.survey_status,
+            created_at: survey.created_at,
+            survey_type: survey.survey_TYPE,
+            hasSurvey_Started: survey.hasSurvey_Started,
+          };
+        });
+
+      setSurveys(availableSurveys);
+
+      if (availableSurveys.length === 0) {
+        notifications.show({
+          message: "No active surveys available at the moment",
+          color: "blue",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching surveys:", error);
+      notifications.show({
+        message: "Failed to load surveys",
+        color: "red",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Load surveys on component mount
+  useEffect(() => {
+    fetchSurveys();
+  }, [fetchSurveys]);
 
   const handleSetAnswers = (key: string, value: any) => {
     setSurveyAnswers((prev) => ({
@@ -454,17 +119,50 @@ const Page = () => {
     }));
   };
 
-  const handleSurveySubmit = (surveyId: string) => {
-    // Here you would normally send the answers to the server
-    console.log("Survey answers:", surveyAnswers);
+  const handleSurveySubmit = async (surveyId: string) => {
+    if (!surveyAnswers || Object.keys(surveyAnswers).length === 0) {
+      notifications.show({
+        title: "Warning",
+        message: "Please answer at least one question before submitting",
+        color: "orange",
+      });
+      return;
+    }
 
-    setCompletedSurveys((prev) => [...prev, surveyId]);
-    setSelectedSurvey(null);
-    notifications.show({
-      title: "Success",
-      message: "Thank you for completing the survey!",
-      color: "green",
-    });
+    try {
+      setSubmitLoading(true);
+
+      // Prepare the survey response data
+      const responseData = {
+        survey_id: surveyId,
+        answers: JSON.stringify(surveyAnswers),
+        // Add any other required fields based on your API
+      };
+
+      // Submit survey response to API
+      await authorizedApi.post("/survey/submit-response", responseData);
+
+      setCompletedSurveys((prev) => [...prev, surveyId]);
+      setSelectedSurvey(null);
+      setSurveyAnswers({}); // Clear answers
+
+      notifications.show({
+        title: "Success",
+        message: "Thank you for completing the survey!",
+        color: "green",
+      });
+    } catch (error: any) {
+      console.error("Error submitting survey:", error);
+      notifications.show({
+        title: "Error",
+        message:
+          error.response?.data?.message ||
+          "Failed to submit survey. Please try again.",
+        color: "red",
+      });
+    } finally {
+      setSubmitLoading(false);
+    }
   };
 
   if (loading) {
@@ -481,7 +179,10 @@ const Page = () => {
         <div className="flex items-center justify-between my-4">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => setSelectedSurvey(null)}
+              onClick={() => {
+                setSelectedSurvey(null);
+                setSurveyAnswers({}); // Clear answers when going back
+              }}
               className="text-gray-600 hover:text-gray-800"
             >
               ← Back to Surveys
@@ -490,18 +191,23 @@ const Page = () => {
           </div>
           <Button
             onClick={() => handleSurveySubmit(selectedSurvey.uuid || "")}
+            loading={submitLoading}
             className="px-6 py-2"
             variant="filled"
             color="blue"
+            disabled={submitLoading}
           >
-            Submit Survey
+            {submitLoading ? "Submitting..." : "Submit Survey"}
           </Button>
         </div>
         <div className="bg-white rounded-lg shadow p-8">
           <SurveyForms
             mode="answering"
-            formData={selectedSurvey}
-            answers={surveyAnswers}
+            formData={{
+              ...selectedSurvey,
+              qns: selectedSurvey.questions || selectedSurvey.qns,
+            }}
+            answers={surveyResponses}
             setAnswers={handleSetAnswers}
           />
         </div>
@@ -533,13 +239,15 @@ const Page = () => {
                 ) : (
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      survey.status === "ongoing"
+                      survey.survey_status === ESurveyStatus.ONGOING
                         ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"
                     }`}
                   >
-                    {(survey.status ?? "unknown").charAt(0).toUpperCase() +
-                      (survey.status ?? "unknown").slice(1)}
+                    {(survey.survey_status ?? "unknown")
+                      .charAt(0)
+                      .toUpperCase() +
+                      (survey.survey_status ?? "unknown").slice(1)}
                   </span>
                 )}
               </div>
@@ -553,18 +261,21 @@ const Page = () => {
                 <div className="flex items-center gap-2">
                   <FiCalendar className="text-gray-400" />
                   <span>
-                    Created: {survey.created_at?.toLocaleDateString()}
+                    Created: {new Date(survey.created_at).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FiClock className="text-gray-400" />
                   <span>
-                    Expires: {survey.expiry_date?.toLocaleDateString()}
+                    Expires:{" "}
+                    {new Date(survey.expiry_date || "").toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FiFileText className="text-gray-400" />
-                  <span>{Object.keys(survey.qns).length} Sections</span>
+                  <span>
+                    {Object.keys(survey.questions || {}).length} Sections
+                  </span>
                 </div>
               </div>
 
@@ -573,19 +284,19 @@ const Page = () => {
                 className="w-full"
                 variant="filled"
                 color={
-                  survey.status === "expired" ||
+                  survey.survey_status === ESurveyStatus.EXPIRED ||
                   completedSurveys.includes(survey.uuid || "")
                     ? "gray"
                     : "blue"
                 }
                 disabled={
-                  survey.status === "expired" ||
+                  survey.survey_status === ESurveyStatus.EXPIRED ||
                   completedSurveys.includes(survey.uuid || "")
                 }
               >
                 {completedSurveys.includes(survey.uuid || "")
                   ? "Survey Completed"
-                  : survey.status === "expired"
+                  : survey.survey_status === ESurveyStatus.EXPIRED
                     ? "Survey Expired"
                     : "Take Survey"}
               </Button>
