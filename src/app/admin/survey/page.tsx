@@ -1,225 +1,239 @@
-"use client"
+"use client";
 
-import { useState, useCallback } from "react"
-import { BiSearch } from "react-icons/bi"
-import { SolarAddFolderBold } from "@/components/core/icons"
-import type { ColumnDef } from "@tanstack/react-table"
-import { CustomDataTable } from "@/components/core/data-table/custom-data-table"
-import { HiDotsHorizontal } from "react-icons/hi"
-import { useDisclosure } from "@mantine/hooks"
-import { Menu } from "@mantine/core"
-import { FiEye } from "react-icons/fi"
-import { CiEdit } from "react-icons/ci"
-import { RiDeleteBinLine } from "react-icons/ri"
-import Link from "next/link"
-import DeleteModal from "@/components/Modals/DeleteModal"
-import EndSurveyModal from "@/components/survey/EndSurveyModal"
-import { format } from "date-fns"
-import type { Survey, SurveyResponse } from "./types"
-import { Play, Pause } from "lucide-react"
+import { useState, useCallback, useEffect } from "react";
+import { BiSearch } from "react-icons/bi";
+import { SolarAddFolderBold } from "@/components/core/icons";
+import type { ColumnDef } from "@tanstack/react-table";
+import { CustomDataTable } from "@/components/core/data-table/custom-data-table";
+import { HiDotsHorizontal } from "react-icons/hi";
+import { useDisclosure } from "@mantine/hooks";
+import { Menu } from "@mantine/core";
+import { FiEye, FiPlay } from "react-icons/fi";
+import { CiEdit } from "react-icons/ci";
+import { MdStop } from "react-icons/md";
+import { RiDeleteBinLine } from "react-icons/ri";
+import Link from "next/link";
+import DeleteModal from "@/components/Modals/DeleteModal";
+import EndSurveyModal from "@/components/survey/EndSurveyModal";
+import { format } from "date-fns";
+import type { Survey, SurveyResponse } from "./types";
+import { authorizedApi } from "@/utils/api";
+import { notifications } from "@mantine/notifications";
+import { ESurveyStatus } from "@/types/surveys-form";
 
 const SurveyPage = () => {
-  const [activeTab, setActiveTab] = useState<"all" | "ongoing" | "ended" | "responses">("all")
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null)
+  const [activeTab, setActiveTab] = useState<
+    "all" | "ongoing" | "ended" | "responses"
+  >("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
 
   // State for surveys and responses
-  const [surveys, setSurveys] = useState<Survey[]>([
-    {
-      uuid: "s1",
-      name: "Customer Satisfaction Survey",
-      applicants: 124,
-      status: "ongoing",
-      created_at: new Date("2023-04-15"),
-      expiry_date: new Date("2023-06-15"),
-    },
-    {
-      uuid: "s2",
-      name: "Employee Feedback Form",
-      applicants: 45,
-      status: "ongoing",
-      created_at: new Date("2023-05-01"),
-      expiry_date: new Date("2023-07-01"),
-    },
-    {
-      uuid: "s3",
-      name: "Product Evaluation Survey",
-      applicants: 78,
-      status: "ended",
-      created_at: new Date("2023-02-10"),
-      expiry_date: new Date("2023-04-10"),
-    },
-    {
-      uuid: "s4",
-      name: "Website Usability Survey",
-      applicants: 92,
-      status: "ongoing",
-      created_at: new Date("2023-03-20"),
-      expiry_date: new Date("2023-05-20"),
-    },
-    {
-      uuid: "s5",
-      name: "Market Research Survey",
-      applicants: 156,
-      status: "ongoing",
-      created_at: new Date("2023-04-05"),
-      expiry_date: new Date("2023-06-05"),
-    },
-    {
-      uuid: "s6",
-      name: "Post-Purchase Feedback",
-      applicants: 67,
-      status: "ended",
-      created_at: new Date("2023-01-15"),
-      expiry_date: new Date("2023-03-15"),
-    },
-    {
-      uuid: "s7",
-      name: "Training Effectiveness Survey",
-      applicants: 34,
-      status: "draft",
-      created_at: new Date("2023-04-25"),
-      expiry_date: new Date("2023-06-25"),
-    },
-  ])
-
-  const [responses, setResponses] = useState<SurveyResponse[]>([
-    {
-      uuid: "r1",
-      applicant: "John Doe",
-      survey: "Customer Satisfaction Survey",
-      survey_id: "s1",
-      timestamp: new Date("2023-05-10T14:30:00"),
-      response: "Very satisfied with the service. Would recommend to others.",
-      reviewed: true,
-    },
-    {
-      uuid: "r2",
-      applicant: "Jane Smith",
-      survey: "Customer Satisfaction Survey",
-      survey_id: "s1",
-      timestamp: new Date("2023-05-11T09:15:00"),
-      response: "Good experience overall, but could improve response time.",
-      reviewed: false,
-    },
-    {
-      uuid: "r3",
-      applicant: "Michael Johnson",
-      survey: "Employee Feedback Form",
-      survey_id: "s2",
-      timestamp: new Date("2023-05-05T16:45:00"),
-      response: "The work environment is great, but we need better equipment.",
-      reviewed: false,
-    },
-    {
-      uuid: "r4",
-      applicant: "Sarah Williams",
-      survey: "Product Evaluation Survey",
-      survey_id: "s3",
-      timestamp: new Date("2023-04-02T10:30:00"),
-      response: "The product meets most of my needs but has some usability issues.",
-      reviewed: true,
-    },
-    {
-      uuid: "r5",
-      applicant: "Robert Brown",
-      survey: "Website Usability Survey",
-      survey_id: "s4",
-      timestamp: new Date("2023-04-15T13:20:00"),
-      response: "Navigation is intuitive, but the checkout process is confusing.",
-      reviewed: false,
-    },
-    {
-      uuid: "r6",
-      applicant: "Emily Davis",
-      survey: "Market Research Survey",
-      survey_id: "s5",
-      timestamp: new Date("2023-04-20T11:45:00"),
-      response: "I prefer products with eco-friendly packaging and sustainable materials.",
-      reviewed: true,
-    },
-    {
-      uuid: "r7",
-      applicant: "David Wilson",
-      survey: "Post-Purchase Feedback",
-      survey_id: "s6",
-      timestamp: new Date("2023-02-28T09:10:00"),
-      response: "Delivery was prompt and the product quality exceeded my expectations.",
-      reviewed: false,
-    },
-  ])
+  const [surveys, setSurveys] = useState<Survey[]>([]);
+  const [responses, setResponses] = useState<SurveyResponse[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Modal controls
-  const [isOpenEndSurvey, { open: openEndSurveyModal, close: closeEndSurveyModal }] = useDisclosure(false)
-  const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] = useDisclosure(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [
+    isOpenEndSurvey,
+    { open: openEndSurveyModal, close: closeEndSurveyModal },
+  ] = useDisclosure(false);
+  const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
+    useDisclosure(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch surveys from API
+  const fetchSurveys = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await authorizedApi.get("/survey/get-all-survey");
+
+      // Map the API response to match our table structure
+      const mappedSurveys = response.data.map((survey: any) => ({
+        uuid: survey.id.toString(), // Use id as uuid for actions
+        id: survey.id,
+        name: survey.name,
+        questions: survey.qns,
+        expiry_date: survey.expiry_date,
+        survey_status: survey.survey_status,
+        created_at: survey.created_at,
+        updated_at: survey.updated_at,
+        survey_type: survey.survey_TYPE,
+        hasSurvey_Started: survey.hasSurvey_Started,
+        surveyStartingTime: survey.surveyStartingTime,
+      }));
+
+      setSurveys(mappedSurveys);
+      notifications.show({
+        message: "Surveys loaded successfully",
+        color: "green",
+      });
+    } catch (error) {
+      console.error("Error fetching surveys:", error);
+      notifications.show({
+        message: "Failed to load surveys",
+        color: "red",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Fetch survey responses from API
+  const fetchResponses = useCallback(async () => {
+    try {
+      // Add your API endpoint for responses here
+      // const response = await authorizedApi.get("/survey/get-responses")
+      // setResponses(response.data)
+      setResponses([]); // For now, until you provide the responses API
+    } catch (error) {
+      console.error("Error fetching responses:", error);
+    }
+  }, []);
+
+  // Load data on component mount
+  useEffect(() => {
+    fetchSurveys();
+    fetchResponses();
+  }, [fetchSurveys, fetchResponses]);
 
   // Handle marking a response as reviewed
   const handleMarkAsReviewed = useCallback(async (responseId: string) => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
+      // Add your API call for marking as reviewed
+      // await authorizedApi.put(`/survey/responses/${responseId}/mark-reviewed`)
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 800))
-
-      // Update the responses state
       setResponses((prevResponses) =>
-        prevResponses.map((response) => (response.uuid === responseId ? { ...response, reviewed: true } : response)),
-      )
+        prevResponses.map((response) =>
+          response.uuid === responseId
+            ? { ...response, reviewed: true }
+            : response
+        )
+      );
+
+      notifications.show({
+        message: "Response marked as reviewed",
+        color: "green",
+      });
     } catch (error) {
-      console.error("Error marking response as reviewed:", error)
+      console.error("Error marking response as reviewed:", error);
+      notifications.show({
+        message: "Failed to mark response as reviewed",
+        color: "red",
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [])
+  }, []);
+
+  // Handle deleting a survey
+  const handleDeleteSurvey = useCallback(
+    async (surveyId: string) => {
+      try {
+        setIsLoading(true);
+        await authorizedApi.delete(`/survey/remove/${surveyId}`);
+
+        setSurveys((prevSurveys) =>
+          prevSurveys.filter((survey) => survey.uuid !== surveyId)
+        );
+
+        notifications.show({
+          message: "Survey deleted successfully",
+          color: "green",
+        });
+
+        closeDeleteModal();
+        fetchSurveys(); // Refresh the list
+      } catch (error) {
+        console.error("Error deleting survey:", error);
+        notifications.show({
+          message: "Failed to delete survey",
+          color: "red",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [closeDeleteModal, fetchSurveys]
+  );
 
   // Handle starting a survey
-  const handleStartSurvey = useCallback(async (surveyId: string) => {
-    try {
-      setIsLoading(true)
+  const handleStartSurvey = useCallback(
+    async (surveyId: string) => {
+      try {
+        setIsLoading(true);
+        await authorizedApi.post(`/survey/${surveyId}/start-survey`);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 800))
+        // Update the survey status locally
+        setSurveys((prevSurveys) =>
+          prevSurveys.map((survey) =>
+            survey.uuid === surveyId
+              ? { ...survey, survey_status: ESurveyStatus.ONGOING }
+              : survey
+          )
+        );
 
-      // Update the survey status
-      setSurveys((prevSurveys) =>
-        prevSurveys.map((survey) => (survey.uuid === surveyId ? { ...survey, status: "ongoing" } : survey)),
-      )
-    } catch (error) {
-      console.error("Error starting survey:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
+        notifications.show({
+          message: "Survey started successfully",
+          color: "green",
+        });
+
+        fetchSurveys(); // Refresh the list to get updated data
+      } catch (error) {
+        console.error("Error starting survey:", error);
+        notifications.show({
+          message: "Failed to start survey",
+          color: "red",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fetchSurveys]
+  );
 
   // Handle ending a survey
-  const handleEndSurvey = useCallback(async (surveyId: string) => {
-    try {
-      setIsLoading(true)
+  const handleEndSurvey = useCallback(
+    async (surveyId: string) => {
+      try {
+        setIsLoading(true);
+        await authorizedApi.put(`/survey/end/${surveyId}`);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 800))
+        setSurveys((prevSurveys) =>
+          prevSurveys.map((survey) =>
+            survey.uuid === surveyId ? { ...survey, status: "ended" } : survey
+          )
+        );
 
-      // Update the survey status
-      setSurveys((prevSurveys) =>
-        prevSurveys.map((survey) => (survey.uuid === surveyId ? { ...survey, status: "ended" } : survey)),
-      )
-    } catch (error) {
-      console.error("Error ending survey:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
+        notifications.show({
+          message: "Survey ended successfully",
+          color: "green",
+        });
+
+        closeEndSurveyModal();
+      } catch (error) {
+        console.error("Error ending survey:", error);
+        notifications.show({
+          message: "Failed to end survey",
+          color: "red",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [closeEndSurveyModal]
+  );
 
   // Filter data based on search query
   const filteredSurveys = surveys.filter((survey) => {
     // First filter by tab selection
-    if (activeTab === "ongoing" && survey.status !== "ongoing") return false
-    if (activeTab === "ended" && survey.status !== "ended") return false
+    if (activeTab === "ongoing" && survey.status !== "ongoing") return false;
+    if (activeTab === "ended" && survey.status !== "ended") return false;
 
     // Then filter by search query
-    return survey.name.toLowerCase().includes(searchQuery.toLowerCase())
-  })
+    return survey.name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   const filteredResponses = responses.filter((response) => {
     if (selectedSurvey) {
@@ -227,151 +241,183 @@ const SurveyPage = () => {
         response.survey_id === selectedSurvey.uuid &&
         (response.applicant.toLowerCase().includes(searchQuery.toLowerCase()) ||
           response.response.toLowerCase().includes(searchQuery.toLowerCase()))
-      )
+      );
     }
     return (
       response.applicant.toLowerCase().includes(searchQuery.toLowerCase()) ||
       response.survey.toLowerCase().includes(searchQuery.toLowerCase()) ||
       response.response.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  })
+    );
+  });
 
-  // Column definitions for Surveys table
-  const surveyColumns: ColumnDef<Survey>[] = [
+  // Table columns definition
+  const columns: ColumnDef<Survey>[] = [
     {
       accessorKey: "name",
-      header: () => <div className="text-left font-semibold">Survey Name</div>,
-      cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
-    },
-    {
-      accessorKey: "applicants",
-      header: () => <div className="text-center font-semibold">Applicants</div>,
-      cell: ({ row }) => <div className="text-center">{row.original.applicants}</div>,
-    },
-    {
-      accessorKey: "status",
-      header: () => <div className="text-left font-semibold">Status</div>,
+      header: "Survey Name",
       cell: ({ row }) => (
-        <div
-          className={`px-4 py-1.5 rounded-full text-center w-fit ${
-            row.original.status === "ongoing"
-              ? "bg-green-100 text-green-800"
-              : row.original.status === "ended"
-                ? "bg-red-100 text-red-800"
-                : "bg-amber-100 text-amber-800"
-          }`}
-        >
-          {row.original.status === "ended"
-            ? "Ended"
-            : row.original.status.charAt(0).toUpperCase() + row.original.status.slice(1)}
+        <div className="font-medium text-gray-900">{row.getValue("name")}</div>
+      ),
+    },
+    {
+      accessorKey: "survey_type",
+      header: "Type",
+      cell: ({ row }) => (
+        <div className="text-sm text-gray-600">
+          {row.getValue("survey_type")}
         </div>
       ),
+    },
+    {
+      accessorKey: "survey_status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue("survey_status") as string;
+        const hasSurveyStarted = row.original.hasSurvey_Started;
+
+        let statusText = status;
+        let statusColor = "bg-gray-100 text-gray-800";
+
+        if (status === ESurveyStatus.DRAFT) {
+          statusColor = "bg-yellow-100 text-yellow-800";
+          statusText = "Draft";
+        } else if (status === ESurveyStatus.ONGOING) {
+          statusColor = "bg-green-100 text-green-800";
+          statusText = hasSurveyStarted ? "Active" : "Published";
+        } else if (status === ESurveyStatus.EXPIRED) {
+          statusColor = "bg-red-100 text-red-800";
+          statusText = "Expired";
+        }
+
+        return (
+          <span
+            className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}
+          >
+            {statusText}
+          </span>
+        );
+      },
     },
     {
       accessorKey: "created_at",
-      header: () => <div className="text-left font-semibold">Created At</div>,
-      cell: ({ row }) => <div>{format(row.original.created_at, "MMM dd, yyyy")}</div>,
+      header: "Created",
+      cell: ({ row }) => {
+        const date = new Date(row.getValue("created_at"));
+        return (
+          <div className="text-sm text-gray-600">
+            {date.toLocaleDateString()}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "expiry_date",
-      header: () => <div className="text-left font-semibold">Expiry Date</div>,
-      cell: ({ row }) => <div>{format(row.original.expiry_date, "MMM dd, yyyy")}</div>,
+      header: "Expires",
+      cell: ({ row }) => {
+        const expiryDate = row.getValue("expiry_date") as string;
+        const date = new Date(expiryDate);
+        const isExpired = date < new Date();
+
+        return (
+          <div
+            className={`text-sm ${isExpired ? "text-red-600" : "text-gray-600"}`}
+          >
+            {date.toLocaleDateString()}
+            {isExpired && (
+              <span className="ml-1 text-xs text-red-500">(Expired)</span>
+            )}
+          </div>
+        );
+      },
     },
     {
-      accessorKey: "actions",
-      header: () => <div className="text-right font-semibold">Actions</div>,
-      cell: ({ row }) => (
-        <div className="flex flex-wrap items-center justify-end gap-3">
-          {row.original.status === "draft" && (
-            <button
-              onClick={() => handleStartSurvey(row.original.uuid)}
-              disabled={isLoading}
-              className="px-4 py-2 text-sm font-medium rounded-full flex items-center gap-1.5 bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
-            >
-              <Play size={14} />
-              Start Survey
-            </button>
-          )}
-          {row.original.status === "ongoing" && (
-            <button
-              onClick={() => {
-                setSelectedSurvey(row.original)
-                openEndSurveyModal()
-              }}
-              className="px-4 py-2 text-sm font-medium rounded-full flex items-center gap-1.5 bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
-            >
-              <Pause size={14} />
-              End Survey
-            </button>
-          )}
-          <button
-            onClick={() => {
-              setSelectedSurvey(row.original)
-              setActiveTab("responses")
-            }}
-            className="px-4 py-2 text-sm font-medium rounded-full bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors"
-          >
-            View Responses
-          </button>
-          <Menu shadow="lg" width={300} position="bottom-end">
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const survey = row.original;
+        const canEnd = survey.survey_status === ESurveyStatus.ONGOING;
+        const canEdit = survey.survey_status === ESurveyStatus.DRAFT;
+        const canStart = survey.survey_status === ESurveyStatus.DRAFT;
+
+        return (
+          <Menu shadow="md" width={200}>
             <Menu.Target>
-              <button
-                style={{
-                  background: "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-                }}
-                className="p-2.5 rounded-full text-white hover:opacity-90 transition-opacity"
-              >
-                <HiDotsHorizontal size={20} color="white" />
+              <button className="p-1 hover:bg-gray-100 rounded">
+                <HiDotsHorizontal className="h-4 w-4" />
               </button>
             </Menu.Target>
+
             <Menu.Dropdown>
-              <Menu.Label>
-                <h1 className="text-lg font-medium">Actions</h1>
-              </Menu.Label>
-              <Menu.Divider />
-              <Menu.Item>
-                <Link
-                  href={`/admin/surveys/view/${row.original.uuid}`}
-                  className="w-full py-2 flex text-base items-center gap-3 text-[#576074]"
-                >
-                  <FiEye size={18} color="#576074" />
-                  View Details
-                </Link>
+              <Menu.Item
+                leftSection={<FiEye className="h-4 w-4" />}
+                onClick={() =>
+                  (window.location.href = `/admin/surveys/create-edit/${survey.id}`)
+                }
+              >
+                View Details
               </Menu.Item>
-              <Menu.Item>
-                <Link
-                  href={`/admin/surveys/edit/${row.original.uuid}`}
-                  className="w-full py-2 flex text-base items-center gap-3 text-[#576074]"
+
+              {canEdit && (
+                <Menu.Item
+                  leftSection={<CiEdit className="h-4 w-4" />}
+                  onClick={() =>
+                    (window.location.href = `/admin/surveys/create-edit/${survey.id}`)
+                  }
                 >
-                  <CiEdit size={18} color="#576074" />
                   Edit Survey
-                </Link>
-              </Menu.Item>
-              <Menu.Item>
-                <div
-                  className="w-full py-2 flex text-base items-center gap-3 text-[#576074] cursor-pointer"
+                </Menu.Item>
+              )}
+
+              {canStart && (
+                <Menu.Item
+                  leftSection={<FiPlay className="h-4 w-4" />}
                   onClick={() => {
-                    setSelectedSurvey(row.original)
-                    openDeleteModal()
+                    handleStartSurvey(survey.uuid);
                   }}
                 >
-                  <RiDeleteBinLine size={18} color="#576074" />
-                  Remove Survey
-                </div>
+                  Start Survey
+                </Menu.Item>
+              )}
+
+              {canEnd && (
+                <Menu.Item
+                  leftSection={<MdStop className="h-4 w-4" />}
+                  onClick={() => {
+                    setSelectedSurvey(survey);
+                    openEndSurveyModal();
+                  }}
+                >
+                  End Survey
+                </Menu.Item>
+              )}
+
+              <Menu.Divider />
+
+              <Menu.Item
+                color="red"
+                leftSection={<RiDeleteBinLine className="h-4 w-4" />}
+                onClick={() => {
+                  setSelectedSurvey(survey);
+                  openDeleteModal();
+                }}
+              >
+                Delete Survey
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>
-        </div>
-      ),
+        );
+      },
     },
-  ]
+  ];
 
   // Column definitions for Responses table
   const responseColumns: ColumnDef<SurveyResponse>[] = [
     {
       accessorKey: "applicant",
       header: () => <div className="text-left font-semibold">Applicant</div>,
-      cell: ({ row }) => <div className="font-medium">{row.original.applicant}</div>,
+      cell: ({ row }) => (
+        <div className="font-medium">{row.original.applicant}</div>
+      ),
     },
     {
       accessorKey: "survey",
@@ -381,7 +427,9 @@ const SurveyPage = () => {
     {
       accessorKey: "timestamp",
       header: () => <div className="text-left font-semibold">Timestamp</div>,
-      cell: ({ row }) => <div>{format(row.original.timestamp, "MMM dd, yyyy HH:mm")}</div>,
+      cell: ({ row }) => (
+        <div>{format(row.original.timestamp, "MMM dd, yyyy HH:mm")}</div>
+      ),
     },
     {
       accessorKey: "response",
@@ -397,11 +445,13 @@ const SurveyPage = () => {
       header: () => <div className="text-left font-semibold">Status</div>,
       cell: ({ row }) => (
         <div
-          className={`px-4 py-1.5 rounded-full text-center w-fit ${
-            row.original.reviewed ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+          className={`px-3 py-1 rounded-full text-sm w-fit ${
+            row.original.reviewed
+              ? "bg-green-100 text-green-800"
+              : "bg-amber-100 text-amber-800"
           }`}
         >
-          {row.original.reviewed ? "Reviewed" : "Not Reviewed"}
+          {row.original.reviewed ? "Reviewed" : "Pending"}
         </div>
       ),
     },
@@ -409,25 +459,17 @@ const SurveyPage = () => {
       accessorKey: "actions",
       header: () => <div className="text-right font-semibold">Actions</div>,
       cell: ({ row }) => (
-        <div className="flex flex-wrap items-center justify-end gap-3">
-          {!row.original.reviewed && (
-            <button
-              onClick={() => handleMarkAsReviewed(row.original.uuid)}
-              disabled={isLoading}
-              className="px-4 py-2 text-sm font-medium rounded-full bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {isLoading ? "Processing..." : "Mark as Reviewed"}
-            </button>
-          )}
-          <Menu shadow="lg" width={300} position="bottom-end">
+        <div className="flex justify-end">
+          <Menu shadow="lg" width={200} position="bottom-end">
             <Menu.Target>
               <button
                 style={{
-                  background: "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+                  background:
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
                 }}
                 className="p-2.5 rounded-full text-white hover:opacity-90 transition-opacity"
               >
-                <HiDotsHorizontal size={20} color="white" />
+                <HiDotsHorizontal size={18} color="white" />
               </button>
             </Menu.Target>
             <Menu.Dropdown>
@@ -460,7 +502,7 @@ const SurveyPage = () => {
         </div>
       ),
     },
-  ]
+  ];
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 shadow-sm">
@@ -468,12 +510,14 @@ const SurveyPage = () => {
         <div className="flex space-x-4 md:space-x-8 min-w-max">
           <button
             className={`text-base md:text-lg font-medium pb-2 ${
-              activeTab === "all" ? "text-[#005DE9] border-b-2 border-[#005DE9]" : "text-gray-500 hover:text-gray-700"
+              activeTab === "all"
+                ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                : "text-gray-500 hover:text-gray-700"
             }`}
             onClick={() => {
-              setActiveTab("all")
-              setSelectedSurvey(null)
-              setSearchQuery("")
+              setActiveTab("all");
+              setSelectedSurvey(null);
+              setSearchQuery("");
             }}
           >
             All Surveys
@@ -485,21 +529,23 @@ const SurveyPage = () => {
                 : "text-gray-500 hover:text-gray-700"
             }`}
             onClick={() => {
-              setActiveTab("ongoing")
-              setSelectedSurvey(null)
-              setSearchQuery("")
+              setActiveTab("ongoing");
+              setSelectedSurvey(null);
+              setSearchQuery("");
             }}
           >
             Ongoing
           </button>
           <button
             className={`text-base md:text-lg font-medium pb-2 ${
-              activeTab === "ended" ? "text-[#005DE9] border-b-2 border-[#005DE9]" : "text-gray-500 hover:text-gray-700"
+              activeTab === "ended"
+                ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                : "text-gray-500 hover:text-gray-700"
             }`}
             onClick={() => {
-              setActiveTab("ended")
-              setSelectedSurvey(null)
-              setSearchQuery("")
+              setActiveTab("ended");
+              setSelectedSurvey(null);
+              setSearchQuery("");
             }}
           >
             Ended
@@ -514,7 +560,9 @@ const SurveyPage = () => {
           >
             Responses
             {selectedSurvey && activeTab === "responses" && (
-              <span className="ml-2 text-sm font-normal hidden sm:inline">({selectedSurvey.name})</span>
+              <span className="ml-2 text-sm font-normal hidden sm:inline">
+                ({selectedSurvey.name})
+              </span>
             )}
           </button>
         </div>
@@ -546,8 +594,8 @@ const SurveyPage = () => {
           {activeTab === "responses" && selectedSurvey && (
             <button
               onClick={() => {
-                setSelectedSurvey(null)
-                setSearchQuery("")
+                setSelectedSurvey(null);
+                setSearchQuery("");
               }}
               className="text-[#005DE9] py-2.5 px-6 rounded-full border border-[#005DE9] hover:bg-blue-50 transition-colors whitespace-nowrap"
             >
@@ -555,12 +603,15 @@ const SurveyPage = () => {
             </button>
           )}
 
-          {(activeTab === "all" || activeTab === "ongoing" || activeTab === "ended") && (
+          {(activeTab === "all" ||
+            activeTab === "ongoing" ||
+            activeTab === "ended") && (
             <Link
               href="/admin/surveys/create-edit/create"
               className="text-white py-2.5 px-6 rounded-full flex items-center gap-2 hover:opacity-90 transition-opacity whitespace-nowrap"
               style={{
-                background: "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+                background:
+                  "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
               }}
             >
               <span className="text-xl">
@@ -577,7 +628,7 @@ const SurveyPage = () => {
           <CustomDataTable
             columns={responseColumns}
             data={filteredResponses}
-            loading={false}
+            loading={loading}
             noDataMessage={
               selectedSurvey
                 ? `No responses found for "${selectedSurvey.name}"`
@@ -591,9 +642,9 @@ const SurveyPage = () => {
           />
         ) : (
           <CustomDataTable
-            columns={surveyColumns}
+            columns={columns}
             data={filteredSurveys}
-            loading={false}
+            loading={loading}
             noDataMessage={
               searchQuery
                 ? `No surveys found related to "${searchQuery}"`
@@ -614,24 +665,25 @@ const SurveyPage = () => {
       <EndSurveyModal
         isOpenModal={isOpenEndSurvey}
         closeModal={() => {
-          closeEndSurveyModal()
-          setSelectedSurvey(null)
+          closeEndSurveyModal();
+          setSelectedSurvey(null);
+          fetchSurveys();
         }}
         survey={selectedSurvey}
       />
 
-      {/* Now using "surveys" as the type */}
       <DeleteModal
         isOpenModal={isOpenDelete}
         closeModal={() => {
-          closeDeleteModal()
-          setSelectedSurvey(null)
+          closeDeleteModal();
+          setSelectedSurvey(null);
+          fetchSurveys();
         }}
         type="surveys"
-        id={selectedSurvey?.uuid ?? ""}
+        id={selectedSurvey?.id?.toString() ?? ""}
       />
     </div>
-  )
-}
+  );
+};
 
-export default SurveyPage
+export default SurveyPage;
