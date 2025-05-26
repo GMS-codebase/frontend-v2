@@ -1,12 +1,22 @@
+import { ESurveyStatus } from "@/types/surveys-form";
+
 // Define all TypeScript interfaces for the survey management system
 
 export interface Survey {
   uuid: string
+  id: number
   name: string
-  applicants: number
-  status: "ongoing" | "ended" | "draft"
-  created_at: Date
-  expiry_date: Date
+  questions: string
+  expiry_date: string
+  survey_status: ESurveyStatus
+  created_at: string
+  updated_at: string
+  survey_type: string
+  hasSurvey_Started: boolean
+  surveyStartingTime: string | null
+  // Legacy fields for backward compatibility
+  applicants?: number
+  status?: "ongoing" | "ended" | "draft"
 }
 
 export interface SurveyResponse {
