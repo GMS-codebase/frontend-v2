@@ -4,6 +4,12 @@ export enum ESurveyStatus {
   DRAFT = 'DRAFT'
 }
 
+export enum ESurveyType {
+  TRAINEESURVEY = 'TRAINEESURVEY',
+  COMPANYSURVEY = 'COMPANYSURVEY',
+  GENERALSURVEY = 'GENERALSURVEY'
+}
+
 export interface SurveyForm {
   [key: string]: {
     name: string;
@@ -26,7 +32,7 @@ export interface Form {
   questions?: SurveyForm | string;
   survey_status?: ESurveyStatus;
   updated_at?: string;
-  survey_type?: string;
+  survey_type?: ESurveyType;
   hasSurvey_Started?: boolean;
   surveyStartingTime?: string | null;
 }

@@ -2,7 +2,7 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { Form as IForm, SurveyForm } from "@/types/surveys-form";
+import { Form as IForm, SurveyForm, ESurveyType } from "@/types/surveys-form";
 import SurveyForms from "@/components/forms/SurveyForms";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -91,7 +91,7 @@ const Page = () => {
           description: `Survey created on ${new Date(surveyData.created_at).toLocaleDateString()}`,
           survey_status: surveyData.survey_status,
           updated_at: surveyData.updated_at,
-          survey_type: surveyData.survey_TYPE,
+          survey_type: surveyData.survey_TYPE || surveyData.survey_type,
           hasSurvey_Started: surveyData.hasSurvey_Started,
           surveyStartingTime: surveyData.surveyStartingTime,
         };
@@ -121,6 +121,7 @@ const Page = () => {
         qns: {},
         created_at: new Date(),
         expiry_date: new Date(),
+        survey_type: ESurveyType.GENERALSURVEY, // Default to General Survey
       });
       setPageLoading(false);
     } else {
@@ -147,6 +148,14 @@ const Page = () => {
       return;
     }
 
+    if (!formData?.survey_type) {
+      notifications.show({
+        message: "Please select a survey dedication type",
+        color: "orange",
+      });
+      return;
+    }
+
     try {
       setSaveLoading(true);
 
@@ -162,7 +171,7 @@ const Page = () => {
             ? formData.expiry_date.toISOString().split("T")[0]
             : formData.expiry_date,
         survey_status: formData.survey_status || "DRAFT",
-        survey_type: formData.survey_type || "GENERALSURVEY",
+        survey_TYPE: formData.survey_type,
       };
 
       if (id === "create") {
