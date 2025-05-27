@@ -8,8 +8,9 @@ import { CustomDataTable } from "@/components/core/data-table/custom-data-table"
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useDisclosure } from "@mantine/hooks";
 import { Menu } from "@mantine/core";
-import { FiEye } from "react-icons/fi";
+import { FiEye, FiPlay } from "react-icons/fi";
 import { CiEdit } from "react-icons/ci";
+import { MdStop } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
 import Link from "next/link";
 import DeleteModal from "@/components/Modals/DeleteModal";
@@ -126,32 +127,71 @@ const SurveyPage = () => {
     }
   }, []);
 
+  // Handle deleting a survey
+  const handleDeleteSurvey = useCallback(
+    async (surveyId: string) => {
+      try {
+        setIsLoading(true);
+        await authorizedApi.delete(`/survey/remove/${surveyId}`);
+
+        setSurveys((prevSurveys) =>
+          prevSurveys.filter((survey) => survey.uuid !== surveyId)
+        );
+
+        notifications.show({
+          message: "Survey deleted successfully",
+          color: "green",
+        });
+
+        closeDeleteModal();
+        fetchSurveys(); // Refresh the list
+      } catch (error) {
+        console.error("Error deleting survey:", error);
+        notifications.show({
+          message: "Failed to delete survey",
+          color: "red",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [closeDeleteModal, fetchSurveys]
+  );
+
   // Handle starting a survey
-  const handleStartSurvey = useCallback(async (surveyId: string) => {
-    try {
-      setIsLoading(true);
-      await authorizedApi.put(`/survey/start/${surveyId}`);
+  const handleStartSurvey = useCallback(
+    async (surveyId: string) => {
+      try {
+        setIsLoading(true);
+        await authorizedApi.post(`/survey/${surveyId}/start-survey`);
 
-      setSurveys((prevSurveys) =>
-        prevSurveys.map((survey) =>
-          survey.uuid === surveyId ? { ...survey, status: "ongoing" } : survey
-        )
-      );
+        // Update the survey status locally
+        setSurveys((prevSurveys) =>
+          prevSurveys.map((survey) =>
+            survey.uuid === surveyId
+              ? { ...survey, survey_status: ESurveyStatus.ONGOING }
+              : survey
+          )
+        );
 
-      notifications.show({
-        message: "Survey started successfully",
-        color: "green",
-      });
-    } catch (error) {
-      console.error("Error starting survey:", error);
-      notifications.show({
-        message: "Failed to start survey",
-        color: "red",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+        notifications.show({
+          message: "Survey started successfully",
+          color: "green",
+        });
+
+        fetchSurveys(); // Refresh the list to get updated data
+      } catch (error) {
+        console.error("Error starting survey:", error);
+        notifications.show({
+          message: "Failed to start survey",
+          color: "red",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fetchSurveys]
+  );
 
   // Handle ending a survey
   const handleEndSurvey = useCallback(
@@ -183,37 +223,6 @@ const SurveyPage = () => {
       }
     },
     [closeEndSurveyModal]
-  );
-
-  // Handle deleting a survey
-  const handleDeleteSurvey = useCallback(
-    async (surveyId: string) => {
-      try {
-        setIsLoading(true);
-        await authorizedApi.delete(`/survey/remove/${surveyId}`);
-
-        setSurveys((prevSurveys) =>
-          prevSurveys.filter((survey) => survey.uuid !== surveyId)
-        );
-
-        notifications.show({
-          message: "Survey deleted successfully",
-          color: "green",
-        });
-
-        closeDeleteModal();
-        fetchSurveys(); // Refresh the list
-      } catch (error) {
-        console.error("Error deleting survey:", error);
-        notifications.show({
-          message: "Failed to delete survey",
-          color: "red",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [closeDeleteModal, fetchSurveys]
   );
 
   // Filter data based on search query
@@ -328,6 +337,7 @@ const SurveyPage = () => {
         const survey = row.original;
         const canEnd = survey.survey_status === ESurveyStatus.ONGOING;
         const canEdit = survey.survey_status === ESurveyStatus.DRAFT;
+        const canStart = survey.survey_status === ESurveyStatus.DRAFT;
 
         return (
           <Menu shadow="md" width={200}>
@@ -358,9 +368,20 @@ const SurveyPage = () => {
                 </Menu.Item>
               )}
 
+              {canStart && (
+                <Menu.Item
+                  leftSection={<FiPlay className="h-4 w-4" />}
+                  onClick={() => {
+                    handleStartSurvey(survey.uuid);
+                  }}
+                >
+                  Start Survey
+                </Menu.Item>
+              )}
+
               {canEnd && (
                 <Menu.Item
-                  leftSection={<BiSearch className="h-4 w-4" />}
+                  leftSection={<MdStop className="h-4 w-4" />}
                   onClick={() => {
                     setSelectedSurvey(survey);
                     openEndSurveyModal();
