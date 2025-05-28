@@ -113,10 +113,22 @@ const Page = () => {
   }, [fetchSurveys]);
 
   const handleSetAnswers = (key: string, value: any) => {
-    setSurveyAnswers((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    setSurveyAnswers((prev) => {
+      const newAnswers = {
+        ...prev,
+        [key]: value,
+      };
+      
+      // Remove empty answers
+      Object.keys(newAnswers).forEach(k => {
+        if (newAnswers[k] === "" || newAnswers[k] === null || newAnswers[k] === undefined || 
+            (Array.isArray(newAnswers[k]) && newAnswers[k].length === 0)) {
+          delete newAnswers[k];
+        }
+      });
+      
+      return newAnswers;
+    });
   };
 
   const handleSurveySubmit = async (surveyId: string) => {
@@ -132,15 +144,37 @@ const Page = () => {
     try {
       setSubmitLoading(true);
 
-      // Prepare the survey response data
-      const responseData = {
-        survey_id: surveyId,
-        answers: JSON.stringify(surveyAnswers),
-        // Add any other required fields based on your API
-      };
+      // Get the current survey
+      const survey = surveys.find(s => s.uuid === surveyId);
+      if (!survey) {
+        throw new Error("Survey not found");
+      }
+
+      // Validate required fields
+      const questions = survey.questions || survey.qns;
+      if (typeof questions === 'string') {
+        const parsedQuestions = JSON.parse(questions);
+        const requiredQuestions = Object.values(parsedQuestions)
+          .flatMap((section: any) => section.pages)
+          .flatMap((page: any) => page.surveys)
+          .filter((q: any) => q.required);
+
+        const missingRequired = requiredQuestions.some((q: any) => !surveyAnswers[q.id]);
+        if (missingRequired) {
+          notifications.show({
+            title: "Warning",
+            message: "Please answer all required questions before submitting",
+            color: "orange",
+          });
+          return;
+        }
+      }
 
       // Submit survey response to API
-      await authorizedApi.post("/survey/submit-response", responseData);
+      await authorizedApi.post("/survey/submit-survey", {
+        surveyId: Number(surveyId),
+        answers: JSON.stringify(surveyAnswers),
+      });
 
       setCompletedSurveys((prev) => [...prev, surveyId]);
       setSelectedSurvey(null);
@@ -151,6 +185,9 @@ const Page = () => {
         message: "Thank you for completing the survey!",
         color: "green",
       });
+
+      // Refresh surveys list
+      fetchSurveys();
     } catch (error: any) {
       console.error("Error submitting survey:", error);
       notifications.show({
@@ -207,7 +244,7 @@ const Page = () => {
               ...selectedSurvey,
               qns: selectedSurvey.questions || selectedSurvey.qns,
             }}
-            answers={surveyResponses}
+            answers={surveyAnswers}
             setAnswers={handleSetAnswers}
           />
         </div>
