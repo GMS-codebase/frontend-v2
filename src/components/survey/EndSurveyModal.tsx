@@ -28,9 +28,7 @@ const EndSurveyModal = ({
       setLoading(true);
 
       // Make API call to end the survey using the correct endpoint
-      await authorizedApi.put(`/survey/remove/${survey.id}`, {
-        survey_status: ESurveyStatus.EXPIRED
-      });
+      await authorizedApi.put(`/survey/${survey.id}/end-survey`);
 
       notifications.show({
         message: "Survey ended successfully",

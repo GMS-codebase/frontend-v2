@@ -140,7 +140,7 @@ const Page = () => {
       };
 
       // Submit survey response to API
-      await authorizedApi.post("/survey/submit-response", responseData);
+      await authorizedApi.post("/survey/submit-survey", responseData);
 
       setCompletedSurveys((prev) => [...prev, surveyId]);
       setSelectedSurvey(null);
@@ -207,7 +207,7 @@ const Page = () => {
               ...selectedSurvey,
               qns: selectedSurvey.questions || selectedSurvey.qns,
             }}
-            answers={surveyResponses}
+            answers={surveyAnswers}
             setAnswers={handleSetAnswers}
           />
         </div>
