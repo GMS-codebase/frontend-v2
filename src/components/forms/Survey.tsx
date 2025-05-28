@@ -14,6 +14,9 @@ import { authorizedApi } from "@/utils/api";
 import { FaDownload } from "react-icons/fa";
 import { handleDownloadFile } from "@/services";
 import DeleteSurvey from "./RemoveSurvey";
+import { submitSurvey, checkSurveyStatus } from "@/services/api/survey";
+import { notifications } from "@mantine/notifications";
+import { useSelector } from "react-redux";
 
 interface CreateSurveyProps {
   survey: Survey;
@@ -286,38 +289,44 @@ const renderSurveyType = (
 ) => (
   <>
     {survey.type === "text" && (
-      <input
-        type="text"
-        className="w-full p-3 border rounded-2xl outline-none"
-        value={options?.answers?.[survey.id] || ""}
-        onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
-        disabled={!options?.setAnswers}
-      />
+      <div className="w-full">
+        <input
+          type="text"
+          className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+          value={options?.answers?.[survey.id] || ""}
+          onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
+          disabled={!options?.setAnswers}
+          placeholder={survey.description || "Enter your answer"}
+        />
+      </div>
     )}
     {survey.type === "paragraph" && (
-      <textarea
-        className="w-full p-3 border rounded-2xl outline-none"
-        value={options?.answers?.[survey.id] || ""}
-        onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
-        disabled={!options?.setAnswers}
-      />
+      <div className="w-full">
+        <textarea
+          className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all min-h-[100px] resize-y"
+          value={options?.answers?.[survey.id] || ""}
+          onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
+          disabled={!options?.setAnswers}
+          placeholder={survey.description || "Enter your answer"}
+        />
+      </div>
     )}
     {survey.type === "radio" && (
       <RadioInput
-        survey={survey}
-        mode={mode}
-        value={options?.answers?.[survey.id]}
-        onChange={(data) => options?.setAnswers?.(survey.id, data)}
-        onQuestionChange={options?.onSurveyChange as any}
+        options={survey.choices || []}
+        value={options?.answers?.[survey.id] || ""}
+        onChange={(value) => options?.setAnswers?.(survey.id, value)}
+        required={survey.required}
+        label={survey.description || "Select an option"}
       />
     )}
     {survey.type === "checkbox" && (
       <CheckboxInput
-        survey={survey}
-        mode={mode}
+        options={survey.choices || []}
         value={options?.answers?.[survey.id] || []}
-        onChange={(data) => options?.setAnswers?.(survey.id, data)}
-        onQuestionChange={options?.onSurveyChange as any}
+        onChange={(value) => options?.setAnswers?.(survey.id, value)}
+        required={survey.required}
+        label={survey.description || "Select options"}
       />
     )}
     {survey.type === "file" && (
@@ -346,7 +355,7 @@ const renderSurveyType = (
         <div className="my-2">
           <p>Comment</p>
           <textarea
-            className="w-full p-3 border rounded-2xl outline-none"
+            className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             value={options?.comments?.[survey.id] || ""}
             onChange={(e) => options?.setComments?.(survey.id, e.target.value)}
             disabled={!options?.setComments}
@@ -377,52 +386,137 @@ const ViewSurvey: React.FC<ViewSurveyProps> = ({
   setComments,
   deleteSurvey,
 }) => {
-  const [
-    isOpenDeleteSurvey,
-    { open: openDeleteSurvey, close: closeDeleteSurvey },
-  ] = useDisclosure(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAnswered, setIsAnswered] = useState(false);
+  const user = useSelector((state: any) => state.auth.user);
+
+  useEffect(() => {
+    const checkAnswered = async () => {
+      if (survey.id && user?.id) {
+        try {
+          const status = await checkSurveyStatus(Number(survey.id), user.id);
+          setIsAnswered(status.answered);
+        } catch (error) {
+          console.error("Error checking survey status:", error);
+        }
+      }
+    };
+    checkAnswered();
+  }, [survey.id, user?.id]);
+
+  const handleSubmit = async () => {
+    if (!user) {
+      notifications.show({
+        title: "Authentication Required",
+        message: "Please log in to submit the survey",
+        color: "red",
+      });
+      return;
+    }
+
+    if (!answers || Object.keys(answers).length === 0) {
+      notifications.show({
+        title: "Validation Error",
+        message: "Please answer at least one question",
+        color: "red",
+      });
+      return;
+    }
+
+    // Check required fields
+    const requiredFields = Object.entries(survey).filter(([_, value]) => value.required);
+    const missingRequired = requiredFields.some(([key]) => !answers[key]);
+    if (missingRequired) {
+      notifications.show({
+        title: "Validation Error",
+        message: "Please fill in all required fields",
+        color: "red",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await submitSurvey({
+        surveyId: Number(survey.id),
+        userId: user.id,
+        userName: `${user.firstname} ${user.lastname}`,
+        answers: JSON.stringify(answers),
+      });
+      notifications.show({
+        title: "Success",
+        message: "Survey submitted successfully",
+        color: "green",
+      });
+      setIsAnswered(true);
+    } catch (error) {
+      console.error("Error submitting survey:", error);
+      notifications.show({
+        title: "Error",
+        message: "Failed to submit survey. Please try again.",
+        color: "red",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between gap-10">
-        <div>
-          <p className="text-gray-900 text-2xl font-semibold">{survey.title}</p>
-          <p className="text-gray-600">{survey.description}</p>
-        </div>
-        {survey.type === "file" && survey.template && (
-          <button
-            onClick={() => handleDownloadFile(survey.template, survey.id)}
-            className={` bg-primary  text-white font-semibold rounded-full  px-5 py-2 flex gap-2 items-center justify-center`}
-          >
-            <FaDownload />
-            <p className="text-sm truncate">Download Template</p>
-          </button>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold text-gray-800">{survey.title}</h2>
+        {mode === "viewing" && (
+          <div className="flex gap-2">
+            <button
+              onClick={edit}
+              className="p-2 text-gray-600 hover:text-primary transition-colors"
+            >
+              <FiEdit3 size={20} />
+            </button>
+            <button
+              onClick={() => deleteSurvey(survey.id)}
+              className="p-2 text-gray-600 hover:text-red-500 transition-colors"
+            >
+              <MdOutlineDelete size={20} />
+            </button>
+          </div>
         )}
       </div>
-      <div className="w-full overflow-x-auto">
-        {renderSurveyType(mode === "creating" ? "viewing" : mode, survey, {
+
+      {survey.description && (
+        <p className="text-gray-600 text-sm">{survey.description}</p>
+      )}
+
+      <div className="space-y-6">
+        {renderSurveyType(mode, survey, {
           answers,
           setAnswers,
           comments,
           setComments,
-          isEditing: false,
         })}
       </div>
-      {mode === "creating" && (
-        <div className="border-t-2 pt-3 flex justify-end gap-3">
-          <button onClick={edit} className="">
-            <FiEdit3 className="w-6 h-6 font-bold text-xl" />
-          </button>
-          <button onClick={openDeleteSurvey}>
-            <MdOutlineDelete className="w-6 h-6 font-bold text-xl" />
+
+      {mode === "answering" && (
+        <div className="flex justify-end mt-6">
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting || isAnswered}
+            className={`px-6 py-2 rounded-lg text-white font-medium transition-colors ${
+              isAnswered
+                ? "bg-gray-400 cursor-not-allowed"
+                : isSubmitting
+                ? "bg-primary/70"
+                : "bg-primary hover:bg-primary/90"
+            }`}
+          >
+            {isAnswered
+              ? "Survey Submitted"
+              : isSubmitting
+              ? "Submitting..."
+              : "Submit Survey"}
           </button>
         </div>
       )}
-      <DeleteSurvey
-        closeModal={closeDeleteSurvey}
-        isOpenModal={isOpenDeleteSurvey}
-        survey={survey}
-        removeSurvey={() => deleteSurvey(survey.id)}
-      />
     </div>
   );
 };
