@@ -535,7 +535,7 @@ const SurveyPage = () => {
           statusText = hasSurveyStarted ? "Active" : "Published";
         } else if (status === ESurveyStatus.EXPIRED) {
           statusColor = "bg-red-100 text-red-800";
-          statusText = "Expired";
+          statusText = "Ended";
         }
 
         return (
