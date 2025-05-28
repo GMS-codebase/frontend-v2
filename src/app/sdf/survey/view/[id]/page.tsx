@@ -1,7 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
-import { Form as IForm } from "@/types/surveys-form";
 import { IoArrowBack } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { Tabs, Badge, Card, Text, Divider } from "@mantine/core";
