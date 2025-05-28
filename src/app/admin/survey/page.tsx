@@ -105,7 +105,48 @@ const SurveyPage = () => {
         });
       }
 
-      setResponses(responsesData);
+      // Process and format the responses data
+      const mappedResponses = responsesData.map((item: any) => {
+        let formattedResponse = "No answers provided";
+        try {
+          if (item.answers) {
+            const answers = JSON.parse(item.answers);
+            formattedResponse = Object.values(answers)
+              .map((answer) => {
+                // Ensure answer is treated as a string
+                if (answer !== undefined && answer !== null) {
+                  return answer.toString();
+                } else {
+                  return "N/A"; // Handle cases with no answer
+                }
+              })
+              .join(", "); // Join answers with a comma and space
+
+            // Truncate the response if it's too long
+            const maxLength = 100; // Define maximum length for the displayed response
+            if (formattedResponse.length > maxLength) {
+              formattedResponse =
+                formattedResponse.substring(0, maxLength) + "...";
+            }
+          }
+        } catch (error) {
+          console.error(
+            "Error parsing answers for response:",
+            item.answers,
+            error
+          );
+          formattedResponse = "Error parsing response data";
+        }
+
+        return {
+          ...item,
+          response: formattedResponse, // Assign the formatted string to the response property
+          applicant: item.applicant, // Ensure applicant object is included
+          survey: item.survey, // Ensure survey object is included
+        };
+      });
+
+      setResponses(mappedResponses);
     } catch (error: any) {
       console.error("Error fetching responses:", error);
     }
