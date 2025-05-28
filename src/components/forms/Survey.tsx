@@ -291,7 +291,7 @@ const renderSurveyType = (
         className="w-full p-3 border rounded-2xl outline-none"
         value={options?.answers?.[survey.id] || ""}
         onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
-        disabled={!options?.setAnswers}
+        disabled={mode !== "answering"}
       />
     )}
     {survey.type === "paragraph" && (
@@ -299,7 +299,7 @@ const renderSurveyType = (
         className="w-full p-3 border rounded-2xl outline-none"
         value={options?.answers?.[survey.id] || ""}
         onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
-        disabled={!options?.setAnswers}
+        disabled={mode !== "answering"}
       />
     )}
     {survey.type === "radio" && (
@@ -327,7 +327,7 @@ const renderSurveyType = (
         onChange={(answer) => options?.setAnswers?.(survey.id, answer)}
         value={options?.answers?.[survey.id]}
         accept=".pdf"
-        disabled={!options?.setAnswers}
+        disabled={mode !== "answering"}
       />
     )}
     {survey.type === "table" && (
@@ -337,7 +337,7 @@ const renderSurveyType = (
         value={options?.answers?.[survey.id]}
         onChange={(data) => options?.setAnswers?.(survey.id, data)}
         onQuestionChange={options?.onSurveyChange as any}
-        isEditing={options?.isEditing}
+        isEditing={mode !== "answering"}
       />
     )}
     {survey.commentable &&
@@ -349,7 +349,7 @@ const renderSurveyType = (
             className="w-full p-3 border rounded-2xl outline-none"
             value={options?.comments?.[survey.id] || ""}
             onChange={(e) => options?.setComments?.(survey.id, e.target.value)}
-            disabled={!options?.setComments}
+            disabled={mode !== "commenting"}
           />
         </div>
       )}

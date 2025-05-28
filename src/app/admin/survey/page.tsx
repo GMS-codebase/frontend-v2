@@ -8,7 +8,7 @@ import { CustomDataTable } from "@/components/core/data-table/custom-data-table"
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useDisclosure } from "@mantine/hooks";
 import { Menu } from "@mantine/core";
-import { FiEye, FiPlay } from "react-icons/fi";
+import { FiEye, FiPlay, FiDownload } from "react-icons/fi";
 import { CiEdit } from "react-icons/ci";
 import { MdStop } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
@@ -20,6 +20,7 @@ import type { Survey, SurveyResponse } from "./types";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { ESurveyStatus } from "@/types/surveys-form";
+import ExportExcel from "@/components/core/reports/export_excel";
 
 const SurveyPage = () => {
   const [activeTab, setActiveTab] = useState<
@@ -83,19 +84,43 @@ const SurveyPage = () => {
   const fetchResponses = useCallback(async () => {
     try {
       // Add your API endpoint for responses here
-      // const response = await authorizedApi.get("/survey/get-responses")
-      // setResponses(response.data)
-      setResponses([]); // For now, until you provide the responses API
-    } catch (error) {
+      const response = await authorizedApi.get("/survey/getAllSurveyResponses"); // Use the specified responses API
+
+      let responsesData = [];
+
+      // Check if the data is an array directly or nested within a 'data' property
+      if (Array.isArray(response.data)) {
+        responsesData = response.data;
+      } else if (response.data && Array.isArray(response.data.data)) {
+        responsesData = response.data.data;
+      } else {
+        console.error(
+          "API returned data structure is not an array:",
+          response.data
+        );
+        notifications.show({
+          title: "Error",
+          message: "Received unexpected data format for responses.",
+          color: "red",
+        });
+      }
+
+      setResponses(responsesData);
+    } catch (error: any) {
       console.error("Error fetching responses:", error);
     }
   }, []);
 
-  // Load data on component mount
+  // Load data on component mount and when Responses tab is activated
   useEffect(() => {
     fetchSurveys();
-    fetchResponses();
-  }, [fetchSurveys, fetchResponses]);
+  }, [fetchSurveys]);
+
+  useEffect(() => {
+    if (activeTab === "responses") {
+      fetchResponses();
+    }
+  }, [activeTab, fetchResponses]);
 
   // Handle marking a response as reviewed
   const handleMarkAsReviewed = useCallback(async (responseId: string) => {
@@ -163,7 +188,7 @@ const SurveyPage = () => {
     async (surveyId: string) => {
       try {
         setIsLoading(true);
-        await authorizedApi.post(`/survey/${surveyId}/start-survey`);
+        await authorizedApi.put(`/survey/${surveyId}/start-survey`);
 
         // Update the survey status locally
         setSurveys((prevSurveys) =>
@@ -225,28 +250,211 @@ const SurveyPage = () => {
     [closeEndSurveyModal]
   );
 
+  // Handle downloading responses
+  const handleDownloadResponses = async () => {
+    if (!selectedSurvey?.id) {
+      notifications.show({
+        title: "Error",
+        message: "No survey selected for download.",
+        color: "red",
+      });
+      return;
+    }
+
+    try {
+      // Assuming the API returns a file stream/blob
+      const response = await authorizedApi.get(
+        `/survey/download-responses/${selectedSurvey.id}`,
+        {
+          responseType: "blob", // Important for downloading files
+        }
+      );
+
+      // Create a blob from the response data
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+
+      // Create a link element and trigger the download
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      // Suggest a filename (you might need to get this from the API response headers if available)
+      const contentDisposition = response.headers["content-disposition"];
+      let filename = "survey_responses.xlsx"; // Default filename
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1];
+        }
+      }
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      notifications.show({
+        message: "Download started successfully",
+        color: "green",
+      });
+    } catch (error: any) {
+      console.error("Error downloading responses:", error);
+      notifications.show({
+        title: "Error",
+        message:
+          error.response?.data?.message || "Failed to download responses",
+        color: "red",
+      });
+    }
+  };
+
+  const formatResponsesForExport = (responses: SurveyResponse[]) => {
+    if (responses.length === 0) return [];
+
+    // Assuming all responses have the same survey structure, use the first response's survey to get questions
+    const sampleResponse = responses[0];
+    let surveyQuestions: any = {};
+    try {
+      if (
+        sampleResponse.survey?.qns &&
+        typeof sampleResponse.survey.qns === "string"
+      ) {
+        surveyQuestions = JSON.parse(sampleResponse.survey.qns);
+      }
+    } catch (error) {
+      console.error("Error parsing survey questions for export:", error);
+      notifications.show({
+        title: "Warning",
+        message: "Could not parse survey question structure for export.",
+        color: "yellow",
+      });
+      return []; // Return empty if questions can't be parsed
+    }
+
+    // Extract question titles and IDs to create dynamic headers
+    const questionHeaders: { id: string; title: string }[] = [];
+    // Assuming surveyQuestions structure has pages and surveys (questions) within them
+    if (surveyQuestions && typeof surveyQuestions === "object") {
+      Object.values(surveyQuestions).forEach((page: any) => {
+        if (page && page.pages && Array.isArray(page.pages)) {
+          page.pages.forEach((pageContent: any) => {
+            if (
+              pageContent &&
+              pageContent.surveys &&
+              Array.isArray(pageContent.surveys)
+            ) {
+              pageContent.surveys.forEach((question: any) => {
+                if (question.id && question.title) {
+                  questionHeaders.push({
+                    id: question.id,
+                    title: question.title,
+                  });
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+
+    const headers = [
+      "Applicant Name",
+      "Survey Name",
+      "Timestamp",
+      "Status",
+      ...questionHeaders.map((q) => q.title), // Add question titles as headers
+    ];
+
+    const data = [headers];
+
+    responses.forEach((response) => {
+      let parsedAnswers: { [key: string]: any } = {};
+      try {
+        if (response.answers && typeof response.answers === "string") {
+          parsedAnswers = JSON.parse(response.answers);
+        }
+      } catch (error) {
+        console.error(
+          "Error parsing answers for export:",
+          response.answers,
+          error
+        );
+        notifications.show({
+          title: "Warning",
+          message: "Could not parse answer data for a response during export.",
+          color: "yellow",
+        });
+      }
+
+      const row = [
+        response.applicant?.name || "N/A",
+        response.survey?.name || "N/A",
+        response.submitted_at
+          ? format(new Date(response.submitted_at), "MMM dd, yyyy HH:mm")
+          : "N/A",
+        response.reviewed ? "Reviewed" : "Pending",
+        ...questionHeaders.map((q) => {
+          const answer = parsedAnswers?.[q.id];
+          if (Array.isArray(answer)) {
+            return answer.join(", ");
+          } else if (answer !== undefined && answer !== null) {
+            return answer.toString();
+          } else {
+            return "N/A";
+          }
+        }),
+      ];
+      data.push(row);
+    });
+
+    return data;
+  };
+
   // Filter data based on search query
   const filteredSurveys = surveys.filter((survey) => {
     // First filter by tab selection
-    if (activeTab === "ongoing" && survey.status !== "ongoing") return false;
-    if (activeTab === "ended" && survey.status !== "ended") return false;
+    if (
+      activeTab === "ongoing" &&
+      survey.survey_status !== ESurveyStatus.ONGOING
+    )
+      return false;
+    if (activeTab === "ended" && survey.survey_status !== ESurveyStatus.EXPIRED)
+      return false;
 
     // Then filter by search query
     return survey.name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   const filteredResponses = responses.filter((response) => {
-    if (selectedSurvey) {
-      return (
-        response.survey_id === selectedSurvey.uuid &&
-        (response.applicant.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          response.response.toLowerCase().includes(searchQuery.toLowerCase()))
+    const lowerSearchQuery = searchQuery.toLowerCase();
+
+    const applicantName = response.applicant?.name?.toLowerCase() || "";
+    const surveyName = response.survey?.name?.toLowerCase() || "";
+
+    let answersString = "";
+    try {
+      if (typeof response.answers === "string") {
+        const parsedAnswers = JSON.parse(response.answers);
+        if (typeof parsedAnswers === "object" && parsedAnswers !== null) {
+          answersString = Object.values(parsedAnswers).join(" ").toLowerCase();
+        }
+      }
+    } catch (error) {
+      console.error(
+        "Error parsing answers for filtering:",
+        response.answers,
+        error
       );
+      answersString = "";
     }
+
     return (
-      response.applicant.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      response.survey.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      response.response.toLowerCase().includes(searchQuery.toLowerCase())
+      applicantName.includes(lowerSearchQuery) ||
+      surveyName.includes(lowerSearchQuery) ||
+      answersString.includes(lowerSearchQuery)
     );
   });
 
@@ -416,19 +624,21 @@ const SurveyPage = () => {
       accessorKey: "applicant",
       header: () => <div className="text-left font-semibold">Applicant</div>,
       cell: ({ row }) => (
-        <div className="font-medium">{row.original.applicant}</div>
+        <div className="font-medium">{row.original.applicant.name}</div>
       ),
     },
     {
       accessorKey: "survey",
       header: () => <div className="text-left font-semibold">Survey</div>,
-      cell: ({ row }) => <div>{row.original.survey}</div>,
+      cell: ({ row }) => <div>{row.original.survey.name}</div>,
     },
     {
-      accessorKey: "timestamp",
+      accessorKey: "submitted_at",
       header: () => <div className="text-left font-semibold">Timestamp</div>,
       cell: ({ row }) => (
-        <div>{format(row.original.timestamp, "MMM dd, yyyy HH:mm")}</div>
+        <div>
+          {format(new Date(row.original.submitted_at), "MMM dd, yyyy HH:mm")}
+        </div>
       ),
     },
     {
@@ -445,11 +655,7 @@ const SurveyPage = () => {
       header: () => <div className="text-left font-semibold">Status</div>,
       cell: ({ row }) => (
         <div
-          className={`px-3 py-1 rounded-full text-sm w-fit ${
-            row.original.reviewed
-              ? "bg-green-100 text-green-800"
-              : "bg-amber-100 text-amber-800"
-          }`}
+          className={`px-3 py-1 rounded-full text-sm w-fit ${row.original.reviewed ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"}`}
         >
           {row.original.reviewed ? "Reviewed" : "Pending"}
         </div>
@@ -465,7 +671,7 @@ const SurveyPage = () => {
               <button
                 style={{
                   background:
-                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #005DE9 114.53%)",
                 }}
                 className="p-2.5 rounded-full text-white hover:opacity-90 transition-opacity"
               >
@@ -477,14 +683,14 @@ const SurveyPage = () => {
                 <h1 className="text-lg font-medium">Actions</h1>
               </Menu.Label>
               <Menu.Divider />
-              <Menu.Item>
-                <Link
-                  href={`/admin/surveys/responses/${row.original.uuid}`}
-                  className="w-full py-2 flex text-base items-center gap-3 text-[#576074]"
-                >
-                  <FiEye size={18} color="#576074" />
-                  View Details
-                </Link>
+              <Menu.Item
+                leftSection={<FiEye className="h-4 w-4" />}
+                onClick={() => {
+                  // Navigate to the details page
+                  window.location.href = `/admin/surveys/responses/${row.original.survey.id}/${row.original.applicant.uuid}`;
+                }}
+              >
+                View Details
               </Menu.Item>
               {!row.original.reviewed && (
                 <Menu.Item>
@@ -601,6 +807,13 @@ const SurveyPage = () => {
             >
               View All Responses
             </button>
+          )}
+
+          {activeTab === "responses" && !selectedSurvey && (
+            <ExportExcel
+              excelData={formatResponsesForExport(filteredResponses)}
+              fileName="survey_responses"
+            />
           )}
 
           {(activeTab === "all" ||
