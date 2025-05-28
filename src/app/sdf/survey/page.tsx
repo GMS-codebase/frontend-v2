@@ -12,7 +12,6 @@ import {
   FileText,
 } from "lucide-react";
 import { format } from "date-fns";
-import * as XLSX from "xlsx";
 
 import { Survey, SurveyResponse } from "@/types/survey/survey";
 import { authorizedApi } from "@/utils/api";
@@ -21,7 +20,7 @@ import { exportResponsesToExcel } from "@/utils/survey/excelExport";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Badge from "@/components/ui/Badge";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/Card";
+import { Card, CardContent } from "@/components/ui/Card";
 import {
   Table,
   TableHeader,
@@ -34,12 +33,12 @@ import { Dropdown, DropdownItem } from "@/components/ui/Dropdown";
 import { Select, SelectItem } from "@/components/ui/Select";
 import { useToast } from "@/components/ui/Toast";
 import ResponseDetailsModal from "@/components/survey/ResponseDetailsModal";
+import Link from "next/link";
 
 const SurveyPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSurvey, setSelectedSurvey] = useState<string>("all");
-  const [selectedResponse, setSelectedResponse] =
-    useState<SurveyResponse | null>(null);
+  const [selectedResponse, setSelectedResponse] = useState<SurveyResponse | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   // State for surveys and responses
@@ -101,20 +100,53 @@ const SurveyPage = () => {
       );
 
       const mappedResponses: SurveyResponse[] = response.data.data.map(
-        (item: any) => ({
-          uuid: item.uuid,
-          applicant: item.applicant.name,
-          survey: item.survey.name,
-          survey_id: item.survey.id.toString(),
-          response: item.answers ? JSON.stringify(item.answers) : "No answers provided",
-          timestamp: new Date(item.submitted_at),
-          reviewed: false, // API doesn't provide reviewed status, assuming false
-          details: {
-            email: item.applicant.email,
-            phone: item.applicant.phone,
-            address: item.applicant.address,
-          },
-        })
+        (item: any) => {
+          // Parse answers JSON
+          let answers: { [key: string]: string } = {};
+          try {
+            answers = item.answers ? JSON.parse(item.answers) : {};
+          } catch (error) {
+            console.warn("Failed to parse answers JSON:", error);
+          }
+
+          // Parse survey questions (qns) to map question IDs to titles
+          let questionMap: { [key: string]: string } = {};
+          try {
+            const qns = JSON.parse(item.survey.qns);
+            Object.values(qns).forEach((section: any) => {
+              section.pages?.forEach((page: any) => {
+                page.surveys?.forEach((survey: any) => {
+                  questionMap[survey.id] = survey.title;
+                });
+              });
+            });
+          } catch (error) {
+            console.warn("Failed to parse qns JSON:", error);
+          }
+
+          // Map answers to question-answer pairs
+          const parsedResponses = Object.entries(answers).map(([questionId, answer]) => ({
+            question: questionMap[questionId] || questionId,
+            answer: String(answer),
+          }));
+
+          return {
+            uuid: item.uuid,
+            id: item.id,
+            survey_id: item.survey.id.toString(),
+            applicant: item.applicant.name,
+            survey: item.survey.name,
+            response: item.answers ? JSON.stringify(item.answers) : "No answers provided",
+            timestamp: new Date(item.submitted_at),
+            reviewed: false,
+            details: {
+              email: item.applicant.email,
+              phone: item.applicant.phone,
+              address: item.applicant.address,
+              responses: parsedResponses.length > 0 ? parsedResponses : undefined,
+            },
+          };
+        }
       );
 
       setResponses(mappedResponses);
@@ -158,16 +190,12 @@ const SurveyPage = () => {
 
   // Filter responses based on search query, survey selection, and status
   const filteredResponses = responses.filter((response) => {
-    // Filter by survey
     if (selectedSurvey !== "all" && response.survey_id !== selectedSurvey) {
       return false;
     }
-
-    // Filter by status
     if (statusFilter === "reviewed" && !response.reviewed) return false;
     if (statusFilter === "pending" && response.reviewed) return false;
 
-    // Filter by search query
     return (
       response.applicant.toLowerCase().includes(searchQuery.toLowerCase()) ||
       response.survey.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -175,7 +203,10 @@ const SurveyPage = () => {
       (response.details.email
         ?.toLowerCase()
         .includes(searchQuery.toLowerCase()) ??
-        false)
+        false) ||
+      (response.details.responses?.some((r) =>
+        r.answer.toLowerCase().includes(searchQuery.toLowerCase())
+      ) ?? false)
     );
   });
 
@@ -257,9 +288,17 @@ const SurveyPage = () => {
         <div className="max-w-md">
           <p
             className="text-sm text-gray-900 line-clamp-2"
-            title={response.response}
+            title={
+              response.details.responses
+                ? response.details.responses
+                    .map((r) => `${r.question}: ${r.answer}`)
+                    .join("; ")
+                : response.response
+            }
           >
-            {response.response}
+            {response.details.responses && response.details.responses.length > 0
+              ? response.details.responses[0].answer
+              : response.response}
           </p>
         </div>
       </TableCell>
@@ -277,13 +316,15 @@ const SurveyPage = () => {
           }
         >
           <DropdownItem
-            onClick={() => {
-              setSelectedResponse(response);
-              setIsOpenResponseDetails(true);
-            }}
+            // onClick={() => {
+            //   setSelectedResponse(response);
+            //   setIsOpenResponseDetails(true);
+            // }}
           >
-            <Eye className="w-4 h-4 mr-2" />
-            View Details
+            <Link href={`/sdf/survey/view/${response.uuid}`} className="flex gap-2 items-center">
+              <Eye className="w-4 h-4 mr-2" />
+              View Details
+            </Link>
           </DropdownItem>
           {!response.reviewed && (
             <DropdownItem
@@ -310,16 +351,14 @@ const SurveyPage = () => {
         <div className="space-y-8">
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-            <div className="mb-4 lg:mb-0 flex justify-between">
-              <div>
-                  <h1 className="text-3xl font-bold text-gray-900">
-                    Survey Responses
-                  </h1>
-                  <p className="mt-1 text-gray-600">
-                    Manage and analyze all survey responses with comprehensive
-                    insights
-                  </p>
-              </div>
+            <div className="mb-4 lg:mb-0">
+              <h1 className="text-3xl font-bold text-blue-500">
+                Survey Responses
+              </h1>
+              <p className="mt-1 text-gray-600">
+                Manage and analyze all survey responses with comprehensive
+                insights
+              </p>
             </div>
             <div className="flex space-x-3">
               <Button
@@ -479,7 +518,7 @@ const SurveyPage = () => {
                     <TableRow>
                       <td colSpan={6} className="text-center py-12">
                         <div className="flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                           <span className="ml-3 text-gray-600">
                             Loading responses...
                           </span>

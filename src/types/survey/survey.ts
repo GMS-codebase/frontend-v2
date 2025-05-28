@@ -34,6 +34,6 @@ export interface SurveyResponse {
     responses?: Array<{
       question: string;
       answer: string;
-    }>; // Optional, for parsed question-answer pairs
+    }>; // Parsed question-answer pairs
   };
 }
