@@ -34,11 +34,13 @@ import { Select, SelectItem } from "@/components/ui/Select";
 import { useToast } from "@/components/ui/Toast";
 import ResponseDetailsModal from "@/components/survey/ResponseDetailsModal";
 import Link from "next/link";
+import { notifications } from "@mantine/notifications";
 
 const SurveyPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSurvey, setSelectedSurvey] = useState<string>("all");
-  const [selectedResponse, setSelectedResponse] = useState<SurveyResponse | null>(null);
+  const [selectedResponse, setSelectedResponse] =
+    useState<SurveyResponse | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   // State for surveys and responses
@@ -49,23 +51,6 @@ const SurveyPage = () => {
   // Modal controls
   const [isOpenResponseDetails, setIsOpenResponseDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const { addToast } = useToast();
-
-  // Convenience toast functions
-  const toast = React.useMemo(
-    () => ({
-      success: (title: string, message?: string) =>
-        addToast({ type: "success", title, message }),
-      error: (title: string, message?: string) =>
-        addToast({ type: "error", title, message }),
-      warning: (title: string, message?: string) =>
-        addToast({ type: "warning", title, message }),
-      info: (title: string, message?: string) =>
-        addToast({ type: "info", title, message }),
-    }),
-    [addToast]
-  );
 
   // Fetch surveys from API
   const fetchSurveys = useCallback(async () => {
@@ -87,9 +72,12 @@ const SurveyPage = () => {
       setSurveys(mappedSurveys);
     } catch (error) {
       console.error("Error fetching surveys:", error);
-      toast.error("Failed to load surveys");
+      notifications.show({
+        message: "Failed to load surveys",
+        color: "red",
+      });
     }
-  }, [toast]);
+  }, []);
 
   // Fetch survey responses from API
   const fetchResponses = useCallback(async () => {
@@ -125,10 +113,12 @@ const SurveyPage = () => {
           }
 
           // Map answers to question-answer pairs
-          const parsedResponses = Object.entries(answers).map(([questionId, answer]) => ({
-            question: questionMap[questionId] || questionId,
-            answer: String(answer),
-          }));
+          const parsedResponses = Object.entries(answers).map(
+            ([questionId, answer]) => ({
+              question: questionMap[questionId] || questionId,
+              answer: String(answer),
+            })
+          );
 
           return {
             uuid: item.uuid,
@@ -136,28 +126,37 @@ const SurveyPage = () => {
             survey_id: item.survey.id.toString(),
             applicant: item.applicant.name,
             survey: item.survey.name,
-            response: item.answers ? JSON.stringify(item.answers) : "No answers provided",
+            response: item.answers
+              ? JSON.stringify(item.answers)
+              : "No answers provided",
             timestamp: new Date(item.submitted_at),
             reviewed: false,
             details: {
               email: item.applicant.email,
               phone: item.applicant.phone,
               address: item.applicant.address,
-              responses: parsedResponses.length > 0 ? parsedResponses : undefined,
+              responses:
+                parsedResponses.length > 0 ? parsedResponses : undefined,
             },
           };
         }
       );
 
       setResponses(mappedResponses);
-      toast.success("Responses loaded successfully");
+      notifications.show({
+        message: "Responses loaded successfully",
+        color: "green",
+      });
     } catch (error) {
       console.error("Error fetching responses:", error);
-      toast.error("Failed to load responses");
+      notifications.show({
+        message: "Failed to load responses",
+        color: "red",
+      });
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, []);
 
   // Load data on component mount
   useEffect(() => {
@@ -179,14 +178,20 @@ const SurveyPage = () => {
         )
       );
 
-      toast.success("Response marked as reviewed");
+      notifications.show({
+        message: "Response marked as reviewed",
+        color: "green",
+      });
     } catch (error) {
       console.error("Error marking response as reviewed:", error);
-      toast.error("Failed to mark response as reviewed");
+      notifications.show({
+        message: "Failed to mark response as reviewed",
+        color: "red",
+      });
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, []);
 
   // Filter responses based on search query, survey selection, and status
   const filteredResponses = responses.filter((response) => {
@@ -206,7 +211,8 @@ const SurveyPage = () => {
         false) ||
       (response.details.responses?.some((r) =>
         r.answer.toLowerCase().includes(searchQuery.toLowerCase())
-      ) ?? false)
+      ) ??
+        false)
     );
   });
 
@@ -230,25 +236,37 @@ const SurveyPage = () => {
         )
       );
 
-      toast.success(`${unreviewed.length} responses marked as reviewed`);
+      notifications.show({
+        message: `${unreviewed.length} responses marked as reviewed`,
+        color: "green",
+      });
     } catch (error) {
       console.error("Error marking responses as reviewed:", error);
-      toast.error("Failed to mark responses as reviewed");
+      notifications.show({
+        message: "Failed to mark responses as reviewed",
+        color: "red",
+      });
     } finally {
       setIsLoading(false);
     }
-  }, [filteredResponses, toast]);
+  }, [filteredResponses]);
 
   // Handle Excel export
   const handleExportToExcel = useCallback(() => {
     try {
       exportResponsesToExcel(filteredResponses);
-      toast.success("Excel file exported successfully");
+      notifications.show({
+        message: "Excel file exported successfully",
+        color: "green",
+      });
     } catch (error) {
       console.error("Error exporting to Excel:", error);
-      toast.error("Failed to export Excel file");
+      notifications.show({
+        message: "Failed to export Excel file",
+        color: "red",
+      });
     }
-  }, [filteredResponses, toast]);
+  }, [filteredResponses]);
 
   const renderResponseRow = (response: SurveyResponse) => (
     <TableRow key={response.uuid}>
@@ -316,12 +334,15 @@ const SurveyPage = () => {
           }
         >
           <DropdownItem
-            // onClick={() => {
-            //   setSelectedResponse(response);
-            //   setIsOpenResponseDetails(true);
-            // }}
+          // onClick={() => {
+          //   setSelectedResponse(response);
+          //   setIsOpenResponseDetails(true);
+          // }}
           >
-            <Link href={`/sdf/survey/view/${response.uuid}`} className="flex gap-2 items-center">
+            <Link
+              href={`/sdf/survey/view/${response.uuid}`}
+              className="flex gap-2 items-center"
+            >
               <Eye className="w-4 h-4 mr-2" />
               View Details
             </Link>
