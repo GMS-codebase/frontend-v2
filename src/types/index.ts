@@ -1,5 +1,3 @@
-import { QuestionForm } from "./questions-form";
-
 export type Route = {
   label: string;
   path: string;
