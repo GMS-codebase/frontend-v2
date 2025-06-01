@@ -19,20 +19,34 @@ import { format } from "date-fns";
 import type { Survey, SurveyResponse } from "./types";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import { ESurveyStatus } from "@/types/surveys-form";
+import { ESurveyStatus, ESurveyType } from "@/types/surveys-form";
 import ExportExcel from "@/components/core/reports/export_excel";
+import { Card, CardContent } from "@/components/ui/Card";
+import { FileText, CheckCheck, Clock, User } from "lucide-react";
+
+interface SurveyWithResponseCount extends Survey {
+  responseCount: number;
+}
 
 const SurveyPage = () => {
   const [activeTab, setActiveTab] = useState<
-    "all" | "ongoing" | "ended" | "responses"
+    "all" | "ongoing" | "ended" | "responses" | "responsesPerType"
   >("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
 
   // State for surveys and responses
-  const [surveys, setSurveys] = useState<Survey[]>([]);
-  const [responses, setResponses] = useState<SurveyResponse[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [surveys, setSurveys] = useState<SurveyWithResponseCount[]>([]);
+  const [allResponses, setAllResponses] = useState<SurveyResponse[]>([]); // State for all responses
+  const [loading, setLoading] = useState(true); // Loading for initial fetch of surveys and all responses
+
+  // State for survey statistics
+  const [totalSurveys, setTotalSurveys] = useState(0);
+  const [ongoingSurveys, setOngoingSurveys] = useState(0);
+  const [endedSurveys, setEndedSurveys] = useState(0);
+  const [totalResponses, setTotalResponses] = useState(0);
+  const [surveysWithResponses, setSurveysWithResponses] = useState(0);
+  const [surveysPendingResponse, setSurveysPendingResponse] = useState(0);
 
   // Modal controls
   const [
@@ -81,10 +95,14 @@ const SurveyPage = () => {
   }, []);
 
   // Fetch survey responses from API
-  const fetchResponses = useCallback(async () => {
+  const fetchResponses = useCallback(async (surveyId: string | null = null) => {
     try {
       // Add your API endpoint for responses here
-      const response = await authorizedApi.get("/survey/getAllSurveyResponses"); // Use the specified responses API
+      const url = surveyId
+        ? `/api/v2/survey/getSurveyResponses/${surveyId}`
+        : "/survey/getAllSurveyResponses";
+
+      const response = await authorizedApi.get(url);
 
       let responsesData = [];
 
@@ -103,24 +121,41 @@ const SurveyPage = () => {
           message: "Received unexpected data format for responses.",
           color: "red",
         });
+        return []; // Return empty array on error
       }
 
       // Process and format the responses data
       const mappedResponses = responsesData.map((item: any) => {
         let formattedResponse = "No answers provided";
         try {
-          if (item.answers) {
+          if (item.answers && typeof item.answers === "string") {
             const answers = JSON.parse(item.answers);
-            formattedResponse = Object.values(answers)
-              .map((answer) => {
-                // Ensure answer is treated as a string
-                if (answer !== undefined && answer !== null) {
-                  return answer.toString();
-                } else {
-                  return "N/A"; // Handle cases with no answer
-                }
-              })
-              .join(", "); // Join answers with a comma and space
+            // Format answers to display without keys
+            const answerValues = Object.values(answers);
+            if (answerValues.length > 0) {
+              formattedResponse = answerValues
+                .map((answer) => {
+                  if (answer !== undefined && answer !== null) {
+                    // Attempt to stringify complex types, otherwise use toString()
+                    if (typeof answer === "object") {
+                      return JSON.stringify(answer);
+                    } else {
+                      return answer.toString();
+                    }
+                  } else {
+                    return "N/A";
+                  }
+                })
+                .join(", ");
+            } else {
+              formattedResponse = "No answers provided";
+            }
+
+            // Clean up the formatted response string based on observed patterns
+            // Remove leading/trailing quotes and curly braces if present
+            formattedResponse = formattedResponse.replace(/^"?{|}"?$/g, "");
+            // Remove escaped quotes within the string
+            formattedResponse = formattedResponse.replace(/\\"/g, '"');
 
             // Truncate the response if it's too long
             const maxLength = 100; // Define maximum length for the displayed response
@@ -143,25 +178,106 @@ const SurveyPage = () => {
           response: formattedResponse, // Assign the formatted string to the response property
           applicant: item.applicant, // Ensure applicant object is included
           survey: item.survey, // Ensure survey object is included
+          // Include survey_TYPE in the mapped response for easier access
+          survey_TYPE: item.survey?.survey_TYPE,
         };
       });
 
-      setResponses(mappedResponses);
+      return mappedResponses; // Return mapped responses
     } catch (error: any) {
       console.error("Error fetching responses:", error);
+      notifications.show({
+        message: "Failed to load responses",
+        color: "red",
+      });
+      return []; // Return empty array on error
     }
   }, []);
 
-  // Load data on component mount and when Responses tab is activated
+  // Load initial data on component mount
   useEffect(() => {
-    fetchSurveys();
-  }, [fetchSurveys]);
+    const loadInitialData = async () => {
+      setLoading(true);
+      try {
+        // Fetch surveys
+        const surveysResponse = await authorizedApi.get(
+          "/survey/get-all-survey"
+        );
+        const mappedSurveys: SurveyWithResponseCount[] =
+          surveysResponse.data.map((survey: any) => ({
+            uuid: survey.id.toString(),
+            id: survey.id,
+            name: survey.name,
+            questions: survey.qns,
+            expiry_date: survey.expiry_date,
+            survey_status: survey.survey_status,
+            created_at: survey.created_at,
+            updated_at: survey.updated_at,
+            survey_type: survey.survey_TYPE,
+            hasSurvey_Started: survey.hasSurvey_Started,
+            surveyStartingTime: survey.surveyStartingTime,
+            responseCount: 0, // Initialize responseCount
+          }));
 
+        // Fetch all responses
+        const allResponsesData = await fetchResponses(null); // fetchResponses now returns the mapped data
+        setAllResponses(allResponsesData);
+
+        // Calculate response count for each survey from the fetched allResponsesData
+        const responseCounts: { [surveyId: number]: number } = {};
+        allResponsesData.forEach((response: SurveyResponse) => {
+          if (response.survey?.id) {
+            responseCounts[response.survey.id] =
+              (responseCounts[response.survey.id] || 0) + 1;
+          }
+        });
+
+        // Update surveys with calculated response counts
+        const surveysWithCounts = mappedSurveys.map((survey) => ({
+          ...survey,
+          responseCount: responseCounts[survey.id] || 0,
+        }));
+        setSurveys(surveysWithCounts);
+
+        notifications.show({
+          message: "Data loaded successfully",
+          color: "green",
+        });
+      } catch (error) {
+        console.error("Error loading initial data:", error);
+        notifications.show({
+          message: "Failed to load initial data",
+          color: "red",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadInitialData();
+  }, [fetchResponses]); // Dependency on fetchResponses because it's used inside
+
+  // Calculate overall survey statistics whenever surveys or allResponses change
   useEffect(() => {
-    if (activeTab === "responses") {
-      fetchResponses();
-    }
-  }, [activeTab, fetchResponses]);
+    setTotalSurveys(surveys.length);
+    setOngoingSurveys(
+      surveys.filter((s) => s.survey_status === ESurveyStatus.ONGOING).length
+    );
+    setEndedSurveys(
+      surveys.filter((s) => s.survey_status === ESurveyStatus.EXPIRED).length
+    );
+    setTotalResponses(allResponses.length);
+
+    // Determine surveys with and without responses
+    const surveysWithAnyResponses = new Set(
+      allResponses.map((r) => r.survey?.id)
+    );
+    setSurveysWithResponses(surveysWithAnyResponses.size);
+    // A survey is pending response if it's not in the set of surveys with any responses
+    setSurveysPendingResponse(
+      surveys.filter((s) => !surveysWithAnyResponses.has(s.id)).length
+    );
+  }, [surveys, allResponses]); // Keep this effect to update statistics based on surveys and allResponses
 
   // Handle marking a response as reviewed
   const handleMarkAsReviewed = useCallback(async (responseId: string) => {
@@ -170,7 +286,8 @@ const SurveyPage = () => {
       // Add your API call for marking as reviewed
       // await authorizedApi.put(`/survey/responses/${responseId}/mark-reviewed`)
 
-      setResponses((prevResponses) =>
+      // Also update all responses state if the reviewed response is present there
+      setAllResponses((prevResponses) =>
         prevResponses.map((response) =>
           response.uuid === responseId
             ? { ...response, reviewed: true }
@@ -469,7 +586,7 @@ const SurveyPage = () => {
     return survey.name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
-  const filteredResponses = responses.filter((response) => {
+  const filteredResponses = allResponses.filter((response) => {
     const lowerSearchQuery = searchQuery.toLowerCase();
 
     const applicantName = response.applicant?.name?.toLowerCase() || "";
@@ -589,71 +706,77 @@ const SurveyPage = () => {
         const canStart = survey.survey_status === ESurveyStatus.DRAFT;
 
         return (
-          <Menu shadow="md" width={200}>
-            <Menu.Target>
-              <button className="p-1 hover:bg-gray-100 rounded">
-                <HiDotsHorizontal className="h-4 w-4" />
-              </button>
-            </Menu.Target>
+          <div className="flex justify-end">
+            <Menu shadow="md" width={200}>
+              <Menu.Target>
+                <button className="p-1 hover:bg-gray-100 rounded">
+                  <HiDotsHorizontal className="h-4 w-4" />
+                </button>
+              </Menu.Target>
 
-            <Menu.Dropdown>
-              <Menu.Item
-                leftSection={<FiEye className="h-4 w-4" />}
-                onClick={() =>
-                  (window.location.href = `/admin/surveys/create-edit/${survey.id}`)
-                }
-              >
-                View Details
-              </Menu.Item>
-
-              {canEdit && (
+              <Menu.Dropdown>
+                <Menu.Label>
+                  <h1 className="text-lg font-medium">Actions</h1>
+                </Menu.Label>
+                <Menu.Divider />
                 <Menu.Item
-                  leftSection={<CiEdit className="h-4 w-4" />}
-                  onClick={() =>
-                    (window.location.href = `/admin/surveys/create-edit/${survey.id}`)
-                  }
-                >
-                  Edit Survey
-                </Menu.Item>
-              )}
-
-              {canStart && (
-                <Menu.Item
-                  leftSection={<FiPlay className="h-4 w-4" />}
+                  leftSection={<FiEye className="h-4 w-4" />}
                   onClick={() => {
-                    handleStartSurvey(survey.uuid);
+                    window.location.href = `/admin/surveys/view/${survey.id}`;
                   }}
                 >
-                  Start Survey
+                  View Details
                 </Menu.Item>
-              )}
 
-              {canEnd && (
+                {canEdit && (
+                  <Menu.Item
+                    leftSection={<CiEdit className="h-4 w-4" />}
+                    onClick={() =>
+                      (window.location.href = `/admin/surveys/create-edit/${survey.id}`)
+                    }
+                  >
+                    Edit Survey
+                  </Menu.Item>
+                )}
+
+                {canStart && (
+                  <Menu.Item
+                    leftSection={<FiPlay className="h-4 w-4" />}
+                    onClick={() => {
+                      handleStartSurvey(survey.uuid);
+                    }}
+                  >
+                    Start Survey
+                  </Menu.Item>
+                )}
+
+                {canEnd && (
+                  <Menu.Item
+                    leftSection={<MdStop className="h-4 w-4" />}
+                    onClick={() => {
+                      setSelectedSurvey(survey);
+                      openEndSurveyModal();
+                    }}
+                  >
+                    End Survey
+                  </Menu.Item>
+                )}
+
+                <Menu.Divider />
+
                 <Menu.Item
-                  leftSection={<MdStop className="h-4 w-4" />}
+                  color="red"
+                  leftSection={<RiDeleteBinLine className="h-4 w-4" />}
                   onClick={() => {
                     setSelectedSurvey(survey);
-                    openEndSurveyModal();
+                    openDeleteModal();
                   }}
                 >
-                  End Survey
+                  Delete Survey
                 </Menu.Item>
-              )}
-
-              <Menu.Divider />
-
-              <Menu.Item
-                color="red"
-                leftSection={<RiDeleteBinLine className="h-4 w-4" />}
-                onClick={() => {
-                  setSelectedSurvey(survey);
-                  openDeleteModal();
-                }}
-              >
-                Delete Survey
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+              </Menu.Dropdown>
+            </Menu>
+          </div>
         );
       },
     },
@@ -751,168 +874,441 @@ const SurveyPage = () => {
     },
   ];
 
-  return (
-    <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 shadow-sm">
-      <div className="w-full p-5 border-b overflow-x-auto">
-        <div className="flex space-x-4 md:space-x-8 min-w-max">
-          <button
-            className={`text-base md:text-lg font-medium pb-2 ${
-              activeTab === "all"
-                ? "text-[#005DE9] border-b-2 border-[#005DE9]"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
-            onClick={() => {
-              setActiveTab("all");
-              setSelectedSurvey(null);
-              setSearchQuery("");
-            }}
-          >
-            All Surveys
-          </button>
-          <button
-            className={`text-base md:text-lg font-medium pb-2 ${
-              activeTab === "ongoing"
-                ? "text-[#005DE9] border-b-2 border-[#005DE9]"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
-            onClick={() => {
-              setActiveTab("ongoing");
-              setSelectedSurvey(null);
-              setSearchQuery("");
-            }}
-          >
-            Ongoing
-          </button>
-          <button
-            className={`text-base md:text-lg font-medium pb-2 ${
-              activeTab === "ended"
-                ? "text-[#005DE9] border-b-2 border-[#005DE9]"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
-            onClick={() => {
-              setActiveTab("ended");
-              setSelectedSurvey(null);
-              setSearchQuery("");
-            }}
-          >
-            Ended
-          </button>
-          <button
-            className={`text-base md:text-lg font-medium pb-2 ${
-              activeTab === "responses"
-                ? "text-[#005DE9] border-b-2 border-[#005DE9]"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
-            onClick={() => setActiveTab("responses")}
-          >
-            Responses
-            {selectedSurvey && activeTab === "responses" && (
-              <span className="ml-2 text-sm font-normal hidden sm:inline">
-                ({selectedSurvey.name})
-              </span>
-            )}
-          </button>
+  // New columns for Responses per Survey Type
+  const responsesPerTypeColumns: ColumnDef<SurveyWithResponseCount>[] = [
+    {
+      accessorKey: "name",
+      header: "Survey Name",
+      cell: ({ row }) => (
+        <div className="font-medium text-gray-900">{row.getValue("name")}</div>
+      ),
+    },
+    {
+      accessorKey: "survey_type",
+      header: "Type",
+      cell: ({ row }) => (
+        <div className="text-sm text-gray-600">
+          {row.getValue("survey_type")}
         </div>
+      ),
+    },
+    {
+      accessorKey: "survey_status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue("survey_status") as string;
+        const hasSurveyStarted = row.original.hasSurvey_Started;
+
+        let statusText = status;
+        let statusColor = "bg-gray-100 text-gray-800";
+
+        if (status === ESurveyStatus.DRAFT) {
+          statusColor = "bg-yellow-100 text-yellow-800";
+          statusText = "Draft";
+        } else if (status === ESurveyStatus.ONGOING) {
+          statusColor = "bg-green-100 text-green-800";
+          statusText = hasSurveyStarted ? "Active" : "Published";
+        } else if (status === ESurveyStatus.EXPIRED) {
+          statusColor = "bg-red-100 text-red-800";
+          statusText = "Ended";
+        }
+
+        return (
+          <span
+            className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}
+          >
+            {statusText}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "created_at",
+      header: "Created",
+      cell: ({ row }) => {
+        const date = new Date(row.getValue("created_at"));
+        return (
+          <div className="text-sm text-gray-600">
+            {date.toLocaleDateString()}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "expiry_date",
+      header: "Expires",
+      cell: ({ row }) => {
+        const expiryDate = row.getValue("expiry_date") as string;
+        const date = new Date(expiryDate);
+        const isExpired = date < new Date();
+
+        return (
+          <div
+            className={`text-sm ${isExpired ? "text-red-600" : "text-gray-600"}`}
+          >
+            {date.toLocaleDateString()}
+            {isExpired && (
+              <span className="ml-1 text-xs text-red-500">(Expired)</span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "responseCount",
+      header: "Response Count",
+      cell: ({ row }) => (
+        <div className="text-sm text-gray-600">
+          {row.original.responseCount}
+        </div>
+      ),
+    },
+    {
+      id: "actions",
+      header: () => <div className="text-right font-semibold">Actions</div>,
+      cell: ({ row }) => (
+        <div className="flex justify-end">
+          <Menu shadow="lg" width={200} position="bottom-end">
+            <Menu.Target>
+              <button
+                style={{
+                  background:
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #005DE9 114.53%)",
+                }}
+                className="p-2.5 rounded-full text-white hover:opacity-90 transition-opacity"
+              >
+                <HiDotsHorizontal size={18} color="white" />
+              </button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>
+                <h1 className="text-lg font-medium">Actions</h1>
+              </Menu.Label>
+              <Menu.Divider />
+              <Menu.Item
+                leftSection={<FiEye className="h-4 w-4" />}
+                onClick={() => {
+                  // Navigate to the responses for this survey
+                  window.location.href = `/admin/surveys/responses?surveyId=${row.original.uuid}`;
+                }}
+              >
+                View Responses
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div className="container mx-auto py-10 px-4">
+      {/* New Survey Button */}
+      <div className="flex justify-end mb-6">
+        <Link
+          href="/admin/surveys/create-edit/create"
+          className="text-white py-2.5 px-6 rounded-full flex items-center gap-2 hover:opacity-90 transition-opacity whitespace-nowrap"
+          style={{
+            background:
+              "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+          }}
+        >
+          <span className="text-xl">
+            <SolarAddFolderBold />
+          </span>
+          <span className="text-base font-medium">New Survey</span>
+        </Link>
       </div>
 
-      <div className="w-full flex flex-col lg:flex-row lg:justify-between lg:items-center p-4 sm:p-5 gap-4">
-        <div className="relative w-full lg:w-[25rem]">
-          <span className="absolute top-4 left-3">
-            <BiSearch size={22} className="text-gray-500" />
-          </span>
-          <input
-            name="search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-gray-500 rounded-full bg-[#005DE908] border-none outline-none focus:ring-2 focus:ring-blue-100"
-            placeholder={`Search ${
-              activeTab === "responses"
-                ? "responses"
-                : activeTab === "ongoing"
-                  ? "ongoing surveys"
-                  : activeTab === "ended"
-                    ? "ended surveys"
-                    : "surveys"
-            }...`}
-          />
-        </div>
+      {/* Survey Statistics Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        {/* Total Surveys Card */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
+                <FileText className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">
+                  Total Surveys
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {totalSurveys}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <div className="flex items-center gap-3 self-end lg:self-auto">
-          {activeTab === "responses" && selectedSurvey && (
+        {/* Ongoing Surveys Card */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
+                <Clock className="w-6 h-6 text-green-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">
+                  Ongoing Surveys
+                </p>
+                <p className="text-2xl font-bold text-green-600">
+                  {ongoingSurveys}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Ended Surveys Card */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-lg">
+                <CheckCheck className="w-6 h-6 text-red-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">
+                  Ended Surveys
+                </p>
+                <p className="text-2xl font-bold text-red-600">
+                  {endedSurveys}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Total Responses Card */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg">
+                <User className="w-6 h-6 text-purple-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">
+                  Total Responses
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {totalResponses}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Surveys with Responses Card */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="flex items-center justify-center w-12 h-12 bg-teal-100 rounded-lg">
+                <FileText className="w-6 h-6 text-teal-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">
+                  Surveys with Responses
+                </p>
+                <p className="text-2xl font-bold text-teal-600">
+                  {surveysWithResponses}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Surveys Pending Response Card */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
+                <Clock className="w-6 h-6 text-orange-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">
+                  Surveys Pending Response
+                </p>
+                <p className="text-2xl font-bold text-orange-600">
+                  {surveysPendingResponse}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 shadow-sm">
+        <div className="w-full p-5 border-b overflow-x-auto">
+          <div className="flex space-x-4 md:space-x-8 min-w-max">
             <button
+              className={`text-base md:text-lg font-medium pb-2 ${
+                activeTab === "all"
+                  ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
               onClick={() => {
+                setActiveTab("all");
                 setSelectedSurvey(null);
                 setSearchQuery("");
               }}
-              className="text-[#005DE9] py-2.5 px-6 rounded-full border border-[#005DE9] hover:bg-blue-50 transition-colors whitespace-nowrap"
             >
-              View All Responses
+              All Surveys
             </button>
-          )}
-
-          {activeTab === "responses" && !selectedSurvey && (
-            <ExportExcel
-              excelData={formatResponsesForExport(filteredResponses)}
-              fileName="survey_responses"
-            />
-          )}
-
-          {(activeTab === "all" ||
-            activeTab === "ongoing" ||
-            activeTab === "ended") && (
-            <Link
-              href="/admin/surveys/create-edit/create"
-              className="text-white py-2.5 px-6 rounded-full flex items-center gap-2 hover:opacity-90 transition-opacity whitespace-nowrap"
-              style={{
-                background:
-                  "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+            <button
+              className={`text-base md:text-lg font-medium pb-2 ${
+                activeTab === "ongoing"
+                  ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              onClick={() => {
+                setActiveTab("ongoing");
+                setSelectedSurvey(null);
+                setSearchQuery("");
               }}
             >
-              <span className="text-xl">
-                <SolarAddFolderBold />
-              </span>
-              <span className="text-base font-medium">New Survey</span>
-            </Link>
+              Ongoing
+            </button>
+            <button
+              className={`text-base md:text-lg font-medium pb-2 ${
+                activeTab === "ended"
+                  ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              onClick={() => {
+                setActiveTab("ended");
+                setSelectedSurvey(null);
+                setSearchQuery("");
+              }}
+            >
+              Ended
+            </button>
+            <button
+              className={`text-base md:text-lg font-medium pb-2 ${
+                activeTab === "responses"
+                  ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              onClick={() => {
+                setActiveTab("responses");
+                setSelectedSurvey(null);
+                setSearchQuery("");
+              }}
+            >
+              Responses
+            </button>
+            {/* New tab for Responses per Survey Type */}
+            <button
+              className={`text-base md:text-lg font-medium pb-2 ${
+                activeTab === "responsesPerType"
+                  ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              onClick={() => {
+                setActiveTab("responsesPerType");
+                setSelectedSurvey(null);
+                setSearchQuery("");
+              }}
+            >
+              Responses per Survey Type
+            </button>
+          </div>
+        </div>
+
+        <div className="w-full flex flex-col lg:flex-row lg:justify-between lg:items-center p-4 sm:p-5 gap-4">
+          <div className="relative w-full lg:w-[25rem]">
+            <span className="absolute top-4 left-3">
+              <BiSearch size={22} className="text-gray-500" />
+            </span>
+            <input
+              name="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-gray-500 rounded-full bg-[#005DE908] border-none outline-none focus:ring-2 focus:ring-blue-100"
+              placeholder={`Search ${
+                activeTab === "responses"
+                  ? "responses"
+                  : activeTab === "ongoing"
+                    ? "ongoing surveys"
+                    : activeTab === "ended"
+                      ? "ended surveys"
+                      : "surveys"
+              }...`}
+            />
+          </div>
+
+          <div className="flex items-center gap-3 self-end lg:self-auto">
+            {activeTab === "responses" && selectedSurvey && (
+              <button
+                onClick={() => {
+                  setSelectedSurvey(null);
+                  setSearchQuery("");
+                }}
+                className="text-[#005DE9] py-2.5 px-6 rounded-full border border-[#005DE9] hover:bg-blue-50 transition-colors whitespace-nowrap"
+              >
+                View All Responses
+              </button>
+            )}
+
+            {activeTab === "responses" && !selectedSurvey && (
+              <ExportExcel
+                excelData={formatResponsesForExport(filteredResponses)}
+                fileName="survey_responses"
+              />
+            )}
+          </div>
+        </div>
+
+        <div className="w-full px-4 sm:px-5 overflow-x-auto">
+          {activeTab === "responsesPerType" ? (
+            <CustomDataTable
+              columns={responsesPerTypeColumns}
+              data={filteredSurveys}
+              loading={loading}
+              noDataMessage={
+                searchQuery
+                  ? `No surveys found related to "${searchQuery}"`
+                  : "No surveys available"
+              }
+              loadingBackgroundColor="#f1f5f9"
+              loadingColor="#005DE9"
+              pageSize={6}
+            />
+          ) : activeTab === "responses" ? (
+            <CustomDataTable
+              columns={responseColumns}
+              data={filteredResponses}
+              loading={loading}
+              noDataMessage={
+                selectedSurvey
+                  ? `No responses found for "${selectedSurvey.name}"`
+                  : searchQuery
+                    ? `No responses found related to "${searchQuery}"`
+                    : "No responses available"
+              }
+              loadingBackgroundColor="#f1f5f9"
+              loadingColor="#005DE9"
+              pageSize={6}
+            />
+          ) : (
+            <CustomDataTable
+              columns={columns}
+              data={filteredSurveys}
+              loading={loading}
+              noDataMessage={
+                searchQuery
+                  ? `No surveys found related to "${searchQuery}"`
+                  : activeTab === "ongoing"
+                    ? "No ongoing surveys found"
+                    : activeTab === "ended"
+                      ? "No ended surveys found"
+                      : "No surveys added so far"
+              }
+              loadingBackgroundColor="#f1f5f9"
+              loadingColor="#005DE9"
+              pageSize={6}
+            />
           )}
         </div>
-      </div>
-
-      <div className="w-full px-4 sm:px-5 overflow-x-auto">
-        {activeTab === "responses" ? (
-          <CustomDataTable
-            columns={responseColumns}
-            data={filteredResponses}
-            loading={loading}
-            noDataMessage={
-              selectedSurvey
-                ? `No responses found for "${selectedSurvey.name}"`
-                : searchQuery
-                  ? `No responses found related to "${searchQuery}"`
-                  : "No responses available"
-            }
-            loadingBackgroundColor="#f1f5f9"
-            loadingColor="#005DE9"
-            pageSize={6}
-          />
-        ) : (
-          <CustomDataTable
-            columns={columns}
-            data={filteredSurveys}
-            loading={loading}
-            noDataMessage={
-              searchQuery
-                ? `No surveys found related to "${searchQuery}"`
-                : activeTab === "ongoing"
-                  ? "No ongoing surveys found"
-                  : activeTab === "ended"
-                    ? "No ended surveys found"
-                    : "No surveys added so far"
-            }
-            loadingBackgroundColor="#f1f5f9"
-            loadingColor="#005DE9"
-            pageSize={6}
-          />
-        )}
       </div>
 
       {/* Modals */}
