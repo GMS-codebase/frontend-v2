@@ -27,9 +27,8 @@ const ResponseDetailsPage = () => {
   const [responseData, setResponseData] = useState<SurveyResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [parsedAnswers, setParsedAnswers] = useState<{ [key: string]: any }>(
-    {}
-  );
+  const [rawAnswersString, setRawAnswersString] = useState<string | null>(null);
+  const [parsedAnswers, setParsedAnswers] = useState<any>(null);
 
   const fetchResponseDetails = useCallback(async () => {
     try {
@@ -43,20 +42,21 @@ const ResponseDetailsPage = () => {
 
       // Parse the answers string if it exists and is a string
       if (response.data?.answers && typeof response.data.answers === "string") {
+        setRawAnswersString(response.data.answers);
         try {
-          const answers = JSON.parse(response.data.answers);
-          setParsedAnswers(answers);
+          setParsedAnswers(JSON.parse(response.data.answers));
         } catch (parseError) {
           console.error("Error parsing answers JSON:", parseError);
-          setParsedAnswers({}); // Set to empty object on parse error
+          setParsedAnswers(null); // Set to null if parsing fails
           notifications.show({
             title: "Warning",
-            message: "Could not parse answer data.",
+            message: "Could not parse response answers data.",
             color: "yellow",
           });
         }
       } else {
-        setParsedAnswers({}); // Set to empty object if no answers or not a string
+        setRawAnswersString(null);
+        setParsedAnswers(null);
       }
     } catch (err: any) {
       console.error("Error fetching response details:", err);
@@ -105,15 +105,14 @@ const ResponseDetailsPage = () => {
   //   return null; // Or implement actual search if comments are included
   // };
 
-  // Helper function to render answer based on question type - Needs adjustment based on how answers are structured in API response after parsing
+  // Helper function to render answer based on question type
   const renderAnswer = (
     questionId: string,
     type: string,
-    questionText: string
+    questionText: string,
+    answer: any // Accept any type for the answer
   ) => {
-    const answer = parsedAnswers?.[questionId];
-
-    if (answer === undefined) {
+    if (answer === null || answer === undefined || answer === "") {
       return (
         <div className="mt-2">
           <div className="text-sm text-gray-600 font-medium mb-2">Answer:</div>
@@ -143,7 +142,10 @@ const ResponseDetailsPage = () => {
       <div className="mt-2">
         <div className="text-sm text-primary font-medium mb-2">Answer:</div>
         <p className="text-gray-700 font-medium bg-blue-50 p-3 rounded-lg border-l-2 border-primary">
-          {answer?.toString() || ""} {/* Ensure answer is treated as string */}
+          {typeof answer === "object"
+            ? JSON.stringify(answer)
+            : answer?.toString() || ""}{" "}
+          {/* Handle objects and ensure string */}
         </p>
       </div>
     );
@@ -288,7 +290,16 @@ const ResponseDetailsPage = () => {
             <div className="flex items-center">
               <span className="text-gray-600 w-24">Description:</span>
               <span className="font-medium text-gray-800 flex-1 text-right">
-                {survey?.description || "N/A"}
+                {/* Display the description of the first section, or fallback to survey description or N/A */}
+                {surveyQuestions && Object.keys(surveyQuestions).length > 0
+                  ? (
+                      Object.values(surveyQuestions)[0] as {
+                        description?: string;
+                      }
+                    )?.description ||
+                    survey?.description ||
+                    "N/A"
+                  : survey?.description || "N/A"}
               </span>
             </div>
             <div className="flex items-center">
@@ -325,7 +336,7 @@ const ResponseDetailsPage = () => {
           </div>
           <h2 className="text-xl font-medium text-gray-800">Survey Answers</h2>
         </div>
-        {/* Render questions and answers based on parsed survey structure and parsed answers */}
+        {/* Render questions based on parsed survey structure */}
         {surveyQuestions &&
           Object.keys(surveyQuestions).map((pageKey) => {
             const page = surveyQuestions[pageKey];
@@ -351,7 +362,12 @@ const ResponseDetailsPage = () => {
                     </p>
 
                     {/* Render the answer for this question */}
-                    {renderAnswer(question.id, question.type, question.title)}
+                    {renderAnswer(
+                      question.id,
+                      question.type,
+                      question.title,
+                      parsedAnswers ? parsedAnswers[question.id] : null // Pass the specific answer from parsedAnswers
+                    )}
 
                     {/* Comment Section - Assuming comments are not part of this API payload */}
                     {/* You would need to fetch or handle comments separately if needed */}
@@ -360,11 +376,14 @@ const ResponseDetailsPage = () => {
               );
             });
           })}
-        {Object.keys(parsedAnswers).length === 0 && !loading && !error && (
-          <div className="text-center text-gray-500">
-            No answers recorded for this response.
-          </div>
-        )}
+        {/* Display a message if no answers are recorded */}
+        {(!rawAnswersString || rawAnswersString === "") &&
+          !loading &&
+          !error && (
+            <div className="text-center text-gray-500">
+              No answers recorded for this response.
+            </div>
+          )}
       </div>
 
       {/* Reviewed Information */}
