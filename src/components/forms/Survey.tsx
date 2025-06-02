@@ -289,27 +289,21 @@ const renderSurveyType = (
 ) => (
   <>
     {survey.type === "text" && (
-      <div className="w-full">
-        <input
-          type="text"
-          className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-          value={options?.answers?.[survey.id] || ""}
-          onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
-          disabled={!options?.setAnswers}
-          placeholder={survey.description || "Enter your answer"}
-        />
-      </div>
+      <input
+        type="text"
+        className="w-full p-3 border rounded-2xl outline-none"
+        value={options?.answers?.[survey.id] || ""}
+        onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
+        disabled={mode !== "answering"}
+      />
     )}
     {survey.type === "paragraph" && (
-      <div className="w-full">
-        <textarea
-          className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all min-h-[100px] resize-y"
-          value={options?.answers?.[survey.id] || ""}
-          onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
-          disabled={!options?.setAnswers}
-          placeholder={survey.description || "Enter your answer"}
-        />
-      </div>
+      <textarea
+        className="w-full p-3 border rounded-2xl outline-none"
+        value={options?.answers?.[survey.id] || ""}
+        onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
+        disabled={mode !== "answering"}
+      />
     )}
     {survey.type === "radio" && (
       <RadioInput
@@ -336,7 +330,7 @@ const renderSurveyType = (
         onChange={(answer) => options?.setAnswers?.(survey.id, answer)}
         value={options?.answers?.[survey.id]}
         accept=".pdf"
-        disabled={!options?.setAnswers}
+        disabled={mode !== "answering"}
       />
     )}
     {survey.type === "table" && (
@@ -346,7 +340,7 @@ const renderSurveyType = (
         value={options?.answers?.[survey.id]}
         onChange={(data) => options?.setAnswers?.(survey.id, data)}
         onQuestionChange={options?.onSurveyChange as any}
-        isEditing={options?.isEditing}
+        isEditing={mode !== "answering"}
       />
     )}
     {survey.commentable &&
@@ -358,7 +352,7 @@ const renderSurveyType = (
             className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             value={options?.comments?.[survey.id] || ""}
             onChange={(e) => options?.setComments?.(survey.id, e.target.value)}
-            disabled={!options?.setComments}
+            disabled={mode !== "commenting"}
           />
         </div>
       )}
