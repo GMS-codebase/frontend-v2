@@ -1,13 +1,36 @@
 export enum ESurveyStatus {
-  ONGOING = 'ONGOING',
-  EXPIRED = 'EXPIRED', 
-  DRAFT = 'DRAFT'
+  ONGOING = "ONGOING",
+  EXPIRED = "EXPIRED",
+  DRAFT = "DRAFT",
 }
 
 export enum ESurveyType {
-  TRAINEESURVEY = 'TRAINEESURVEY',
-  COMPANYSURVEY = 'COMPANYSURVEY',
-  GENERALSURVEY = 'GENERALSURVEY'
+  TRAINEESURVEY = "TRAINEESURVEY",
+  COMPANYSURVEY = "COMPANYSURVEY",
+  GENERALSURVEY = "GENERALSURVEY",
+}
+
+export interface SurveyResponse {
+  uuid: string;
+  id?: number;
+  applicant: {
+    // Assuming applicant is an object with a name
+    uuid: string;
+    name: string;
+    [key: string]: any; // Allow other properties
+  };
+  survey: {
+    // Assuming survey is an object with id and name
+    id: number;
+    name: string;
+    qns?: string; // Include qns as it's used in fetchResponses
+    survey_TYPE?: string; // Include survey_TYPE
+    [key: string]: any; // Allow other properties
+  };
+  answers: string; // JSON string of answers
+  submitted_at: string; // Timestamp string
+  reviewed: boolean; // Status of the response
+  [key: string]: any; // Allow other properties for the top level
 }
 
 export interface SurveyForm {
@@ -18,6 +41,12 @@ export interface SurveyForm {
       surveys: Survey[];
     }[];
   };
+}
+
+export interface Section {
+  name: string;
+  description: string;
+  questions: Survey[];
 }
 
 export interface Form {
@@ -35,6 +64,7 @@ export interface Form {
   survey_type?: ESurveyType;
   hasSurvey_Started?: boolean;
   surveyStartingTime?: string | null;
+  sections?: Section[];
 }
 
 export interface Survey {

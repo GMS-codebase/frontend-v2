@@ -451,11 +451,11 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
     .catch((err) => {
       dispatch({
         type: GET_APPLICANTS_ERROR,
-        payload: err.response.data.error,
+        payload: err.response?.data?.error,
       });
       dispatch({
         type: GET_APPLICANTS_ERROR,
-        payload: err.response.data.error,
+        payload: err.response?.data?.error,
       });
     });
 };

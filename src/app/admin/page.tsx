@@ -26,7 +26,7 @@ import AdminAction from "@/components/Actions/AdminAction";
 
 const Dashboard = () => {
   const { calls, loading: callsLoading } = useSelector(
-    (state: any) => state.calls,
+    (state: any) => state.calls
   );
   const [callStats, setCallStats] = useState<any>(null);
   const [applicantsData, setApplicantsData] = useState<any>({});
@@ -185,8 +185,8 @@ const Dashboard = () => {
           <Select
             value={activeCall}
             data={calls.map((call: any) => ({
-              value: call.uuid,
-              label: call.title,
+              value: call?.uuid,
+              label: call?.title,
             }))}
             onChange={(value) => setActiveCall(value as any)}
             className="bg-white p-2.5 rounded-2xl outline-none  md:w-[30vw]"
@@ -224,7 +224,7 @@ const Dashboard = () => {
                 {
                   Object.values(callStats?.applicantsPerSector || {}).reduce(
                     (sum: any, value) => sum + value,
-                    0,
+                    0
                   ) as any
                 }
               </span>
@@ -332,7 +332,7 @@ const Dashboard = () => {
                     (acc: any, item: any) => {
                       if (gaugeStage === "ALL") {
                         acc[item] = Object.values(
-                          callStats?.businessTypeGroupings[item] || {},
+                          callStats?.businessTypeGroupings[item] || {}
                         ).reduce((sum: any, value: any) => sum + value, 0);
                       } else {
                         acc[item] =
@@ -341,7 +341,7 @@ const Dashboard = () => {
                       }
                       return acc;
                     },
-                    {} as { [key: string]: number },
+                    {} as { [key: string]: number }
                   ) || {}
                 }
               />
@@ -357,7 +357,7 @@ const Dashboard = () => {
             downloadDashboardExcelFile(
               applicationsData,
               applicantsData,
-              submissionsData,
+              submissionsData
             )
           }
         >
@@ -402,7 +402,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         undefined,
                         undefined,
-                        submissionsData,
+                        submissionsData
                       )
                     }
                   />{" "}
@@ -449,13 +449,13 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(submissionsData || {}).reduce(
                     (sum, key) => sum + submissionsData[key].applicants,
-                    0,
+                    0
                   )}
                 </span>
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(submissionsData || {}).reduce(
                     (sum, key) => sum + submissionsData[key].applications,
-                    0,
+                    0
                   )}
                 </span>
               </div>
@@ -497,7 +497,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         undefined,
                         applicantsData,
-                        undefined,
+                        undefined
                       )
                     }
                   />{" "}
@@ -540,7 +540,7 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(applicantsData || {}).reduce(
                     (sum, key) => sum + applicantsData[key],
-                    0,
+                    0
                   )}
                 </span>
               </div>
@@ -582,7 +582,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         applicationsData,
                         undefined,
-                        undefined,
+                        undefined
                       )
                     }
                   />{" "}
@@ -625,7 +625,7 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(applicationsData || {}).reduce(
                     (sum, key) => sum + applicationsData[key],
-                    0,
+                    0
                   )}
                 </span>
               </div>
@@ -677,8 +677,8 @@ const Dashboard = () => {
                     className="w-full px-0 rounded-full text-md bg-transparent outline-none border-none appearance-none"
                   >
                     {calls.map((call: any) => (
-                      <option value={call.uuid} key={call.uuid}>
-                        {call.title}
+                      <option value={call?.uuid} key={call?.uuid}>
+                        {call?.title}
                       </option>
                     ))}
                   </select>
@@ -745,7 +745,7 @@ function BasicGauges({
 }) {
   const totalApplicants = Object.values(applicationsByBusinessType).reduce(
     (sum, value) => sum + value,
-    0,
+    0
   );
 
   const colors = [
@@ -765,7 +765,7 @@ function BasicGauges({
       value,
       percentage: totalApplicants > 0 ? (value / totalApplicants) * 100 : 0,
       color: colors[index % colors.length],
-    }),
+    })
   );
 
   if (totalApplicants === 0) {

@@ -171,10 +171,7 @@ const Page = () => {
       }
 
       // Submit survey response to API
-      await authorizedApi.post("/survey/submit-survey", {
-        surveyId: Number(surveyId),
-        answers: JSON.stringify(surveyAnswers),
-      });
+      await authorizedApi.post("/survey/submit-survey", responseData);
 
       setCompletedSurveys((prev) => [...prev, surveyId]);
       setSelectedSurvey(null);
