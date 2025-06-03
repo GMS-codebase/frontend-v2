@@ -393,19 +393,19 @@ const Page = () => {
                 className="w-full"
                 variant="filled"
                 color={
-                  survey.survey_status === ESurveyStatus.EXPIRED ||
+                  survey.survey_status === ESurveyStatus.ENDED ||
                   completedSurveys.includes(survey.uuid || "")
                     ? "gray"
                     : "blue"
                 }
                 disabled={
-                  survey.survey_status === ESurveyStatus.EXPIRED ||
+                  survey.survey_status === ESurveyStatus.ENDED ||
                   completedSurveys.includes(survey.uuid || "")
                 }
               >
                 {completedSurveys.includes(survey.uuid || "")
                   ? "Survey Completed"
-                  : survey.survey_status === ESurveyStatus.EXPIRED
+                  : survey.survey_status === ESurveyStatus.ENDED
                     ? "Survey Expired"
                     : "Take Survey"}
               </Button>
