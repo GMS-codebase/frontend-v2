@@ -764,16 +764,19 @@ const SurveyPage = () => {
 
                 <Menu.Divider />
 
-                <Menu.Item
-                  color="red"
-                  leftSection={<RiDeleteBinLine className="h-4 w-4" />}
-                  onClick={() => {
-                    setSelectedSurvey(survey);
-                    openDeleteModal();
-                  }}
-                >
-                  Delete Survey
-                </Menu.Item>
+                {/* Only show Delete for DRAFT surveys to prevent data loss */}
+                {survey.survey_status === ESurveyStatus.DRAFT && (
+                  <Menu.Item
+                    color="red"
+                    leftSection={<RiDeleteBinLine className="h-4 w-4" />}
+                    onClick={() => {
+                      setSelectedSurvey(survey);
+                      openDeleteModal();
+                    }}
+                  >
+                    Delete Survey
+                  </Menu.Item>
+                )}
               </Menu.Dropdown>
             </Menu>
           </div>
