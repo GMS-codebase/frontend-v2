@@ -10,6 +10,7 @@ const roles = [
   "SDF_SECRETARIATE",
   "GRANT_COMMITTEE",
   "DYNAMIC",
+  "TRAINEE",
 ];
 const whitelist = ["/", "/redirect", "/public"];
 function getRolePath(role: Role): string {
@@ -28,6 +29,8 @@ function getRolePath(role: Role): string {
       return "/applicant/contacts";
     case "admin":
       return "/admin";
+    case "trainee":
+      return "/trainee";
     default:
       return "/";
   }

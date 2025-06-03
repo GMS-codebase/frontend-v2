@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
@@ -10,10 +10,35 @@ import { useSelector } from "react-redux";
 import { SolarAddFolderBold } from "@/components/core/icons";
 import { useDisclosure } from "@mantine/hooks";
 import AddTrainee from "@/components/Modals/AddTrainee";
+import { authorizedApi } from "@/utils/api";
 
 const Page = () => {
   const [isOpenAddTrainee, { open: openAddTrainee, close: closeAddTrainee }] =
     useDisclosure(false);
+  const [trainees, setTrainees] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [lastPage, setLastPage] = useState(1);
+
+  const fetchTrainees = async (page: number) => {
+    setLoading(true);
+    try {
+      const response = await authorizedApi.get(
+        `/applicant/trainees?page=${page}&limit=10`
+      );
+      setTrainees(response.data.data);
+      setTotal(response.data.total);
+      setLastPage(response.data.lastPage);
+    } catch (error) {
+      console.error("Error fetching trainees:", error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchTrainees(page);
+  }, [page]);
 
   const columns: ColumnDef<any>[] = [
     {
@@ -22,9 +47,11 @@ const Page = () => {
       cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
     },
     {
-      accessorKey: "id",
+      accessorKey: "nationalId",
       header: "ID Number",
-      cell: ({ row }) => <div className="w-full">{row.original?.id}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.nationalId}</div>
+      ),
     },
     {
       accessorKey: "email",
@@ -37,9 +64,11 @@ const Page = () => {
       cell: ({ row }) => <div className="w-full">{row.original?.phone}</div>,
     },
     {
-      accessorKey: "status",
+      accessorKey: "approvalStatus",
       header: "Status",
-      cell: ({ row }) => <div className="w-full">{row.original?.status}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.approvalStatus}</div>
+      ),
     },
     {
       accessorKey: "actions",
@@ -94,7 +123,21 @@ const Page = () => {
         </button>
       </div>
       <div className="w-full h-full px-4">
-        <DataTable columns={columns} data={[]} />
+        <DataTable
+          columns={columns}
+          data={trainees}
+          loading={loading}
+          paginationProps={{
+            isPaginated: true,
+            paginateOpts: {
+              page: page - 1,
+              limit: 10,
+              totalPages: lastPage,
+            },
+            setPaginateOpts: () => setPage(page + 1),
+          }}
+          totalApplications={total}
+        />
       </div>
 
       <AddTrainee
