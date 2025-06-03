@@ -142,15 +142,15 @@ const Page = () => {
       // Submit survey response to API
       await authorizedApi.post("/survey/submit-survey", responseData);
 
-      setCompletedSurveys((prev) => [...prev, surveyId]);
-      setSelectedSurvey(null);
+    setCompletedSurveys((prev) => [...prev, surveyId]);
+    setSelectedSurvey(null);
       setSurveyAnswers({}); // Clear answers
 
-      notifications.show({
-        title: "Success",
-        message: "Thank you for completing the survey!",
-        color: "green",
-      });
+    notifications.show({
+      title: "Success",
+      message: "Thank you for completing the survey!",
+      color: "green",
+    });
     } catch (error: any) {
       console.error("Error submitting survey:", error);
       notifications.show({
