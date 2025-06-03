@@ -1,6 +1,6 @@
 export enum ESurveyStatus {
   ONGOING = "ONGOING",
-  EXPIRED = "EXPIRED",
+  ENDED = "ENDED",
   DRAFT = "DRAFT",
 }
 
