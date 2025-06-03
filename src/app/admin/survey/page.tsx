@@ -59,13 +59,22 @@ const SurveyPage = () => {
 
   // Fetch surveys from API
   const fetchSurveys = useCallback(async () => {
+    const loadingNotificationId = notifications.show({
+      id: 'surveys-loading',
+      loading: true,
+      title: 'Loading Surveys',
+      message: 'Please wait while we fetch the surveys...',
+      autoClose: false,
+      withCloseButton: false,
+    });
+
     try {
       setLoading(true);
       const response = await authorizedApi.get("/survey/get-all-survey");
 
       // Map the API response to match our table structure
       const mappedSurveys = response.data.map((survey: any) => ({
-        uuid: survey.id.toString(), // Use id as uuid for actions
+        uuid: survey.id.toString(),
         id: survey.id,
         name: survey.name,
         questions: survey.qns,
@@ -79,15 +88,16 @@ const SurveyPage = () => {
       }));
 
       setSurveys(mappedSurveys);
-      notifications.show({
-        message: "Surveys loaded successfully",
-        color: "green",
-      });
-    } catch (error) {
+      notifications.hide(loadingNotificationId);
+      
+    } catch (error: any) {
       console.error("Error fetching surveys:", error);
+      notifications.hide(loadingNotificationId);
       notifications.show({
-        message: "Failed to load surveys",
+        title: 'Error Loading Surveys',
+        message: error.response?.data?.message || "Failed to load surveys. Please try again.",
         color: "red",
+        icon: '❌',
       });
     } finally {
       setLoading(false);
@@ -281,12 +291,21 @@ const SurveyPage = () => {
 
   // Handle marking a response as reviewed
   const handleMarkAsReviewed = useCallback(async (responseId: string) => {
+    const reviewNotificationId = notifications.show({
+      id: 'response-reviewing',
+      loading: true,
+      title: 'Updating Response',
+      message: 'Marking response as reviewed...',
+      autoClose: false,
+      withCloseButton: false,
+    });
+
     try {
       setIsLoading(true);
       // Add your API call for marking as reviewed
       // await authorizedApi.put(`/survey/responses/${responseId}/mark-reviewed`)
 
-      // Also update all responses state if the reviewed response is present there
+      // Update all responses state if the reviewed response is present there
       setAllResponses((prevResponses) =>
         prevResponses.map((response) =>
           response.uuid === responseId
@@ -295,15 +314,22 @@ const SurveyPage = () => {
         )
       );
 
+      notifications.hide(reviewNotificationId);
       notifications.show({
-        message: "Response marked as reviewed",
+        title: 'Response Updated',
+        message: "Response has been marked as reviewed",
         color: "green",
+        icon: '✅',
+        autoClose: 3000,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error marking response as reviewed:", error);
+      notifications.hide(reviewNotificationId);
       notifications.show({
-        message: "Failed to mark response as reviewed",
+        title: 'Error Updating Response',
+        message: error.response?.data?.message || "Failed to mark response as reviewed. Please try again.",
         color: "red",
+        icon: '❌',
       });
     } finally {
       setIsLoading(false);
@@ -313,6 +339,15 @@ const SurveyPage = () => {
   // Handle deleting a survey
   const handleDeleteSurvey = useCallback(
     async (surveyId: string) => {
+      const deleteNotificationId = notifications.show({
+        id: 'survey-deleting',
+        loading: true,
+        title: 'Deleting Survey',
+        message: 'Please wait while we delete the survey...',
+        autoClose: false,
+        withCloseButton: false,
+      });
+
       try {
         setIsLoading(true);
         await authorizedApi.delete(`/survey/remove/${surveyId}`);
@@ -321,18 +356,25 @@ const SurveyPage = () => {
           prevSurveys.filter((survey) => survey.uuid !== surveyId)
         );
 
+        notifications.hide(deleteNotificationId);
         notifications.show({
-          message: "Survey deleted successfully",
+          title: 'Survey Deleted',
+          message: "Survey has been successfully deleted",
           color: "green",
+          icon: '✅',
+          autoClose: 3000,
         });
 
         closeDeleteModal();
-        fetchSurveys(); // Refresh the list
-      } catch (error) {
+        fetchSurveys();
+      } catch (error: any) {
         console.error("Error deleting survey:", error);
+        notifications.hide(deleteNotificationId);
         notifications.show({
-          message: "Failed to delete survey",
+          title: 'Error Deleting Survey',
+          message: error.response?.data?.message || "Failed to delete survey. Please try again.",
           color: "red",
+          icon: '❌',
         });
       } finally {
         setIsLoading(false);
@@ -344,6 +386,15 @@ const SurveyPage = () => {
   // Handle starting a survey
   const handleStartSurvey = useCallback(
     async (surveyId: string) => {
+      const startNotificationId = notifications.show({
+        id: 'survey-starting',
+        loading: true,
+        title: 'Starting Survey',
+        message: 'Please wait while we start the survey...',
+        autoClose: false,
+        withCloseButton: false,
+      });
+
       try {
         setIsLoading(true);
         await authorizedApi.put(`/survey/${surveyId}/start-survey`);
@@ -357,17 +408,24 @@ const SurveyPage = () => {
           )
         );
 
+        notifications.hide(startNotificationId);
         notifications.show({
-          message: "Survey started successfully",
+          title: 'Survey Started',
+          message: "Survey has been successfully started",
           color: "green",
+          icon: '✅',
+          autoClose: 3000,
         });
 
         fetchSurveys(); // Refresh the list to get updated data
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error starting survey:", error);
+        notifications.hide(startNotificationId);
         notifications.show({
-          message: "Failed to start survey",
+          title: 'Error Starting Survey',
+          message: error.response?.data?.message || "Failed to start survey. Please try again.",
           color: "red",
+          icon: '❌',
         });
       } finally {
         setIsLoading(false);
@@ -379,6 +437,15 @@ const SurveyPage = () => {
   // Handle ending a survey
   const handleEndSurvey = useCallback(
     async (surveyId: string) => {
+      const endNotificationId = notifications.show({
+        id: 'survey-ending',
+        loading: true,
+        title: 'Ending Survey',
+        message: 'Please wait while we end the survey...',
+        autoClose: false,
+        withCloseButton: false,
+      });
+
       try {
         setIsLoading(true);
         await authorizedApi.put(`/survey/end/${surveyId}`);
@@ -389,17 +456,24 @@ const SurveyPage = () => {
           )
         );
 
+        notifications.hide(endNotificationId);
         notifications.show({
-          message: "Survey ended successfully",
+          title: 'Survey Ended',
+          message: "Survey has been successfully ended",
           color: "green",
+          icon: '✅',
+          autoClose: 3000,
         });
 
         closeEndSurveyModal();
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error ending survey:", error);
+        notifications.hide(endNotificationId);
         notifications.show({
-          message: "Failed to end survey",
+          title: 'Error Ending Survey',
+          message: error.response?.data?.message || "Failed to end survey. Please try again.",
           color: "red",
+          icon: '❌',
         });
       } finally {
         setIsLoading(false);
@@ -704,6 +778,7 @@ const SurveyPage = () => {
         const canEnd = survey.survey_status === ESurveyStatus.ONGOING;
         const canEdit = survey.survey_status === ESurveyStatus.DRAFT;
         const canStart = survey.survey_status === ESurveyStatus.DRAFT;
+        const canDelete = survey.survey_status === ESurveyStatus.DRAFT;
 
         return (
           <div className="flex justify-end">
@@ -762,18 +837,21 @@ const SurveyPage = () => {
                   </Menu.Item>
                 )}
 
-                <Menu.Divider />
-
-                <Menu.Item
-                  color="red"
-                  leftSection={<RiDeleteBinLine className="h-4 w-4" />}
-                  onClick={() => {
-                    setSelectedSurvey(survey);
-                    openDeleteModal();
-                  }}
-                >
-                  Delete Survey
-                </Menu.Item>
+                {canDelete && (
+                  <>
+                    <Menu.Divider />
+                    <Menu.Item
+                      color="red"
+                      leftSection={<RiDeleteBinLine className="h-4 w-4" />}
+                      onClick={() => {
+                        setSelectedSurvey(survey);
+                        openDeleteModal();
+                      }}
+                    >
+                      Delete Survey
+                    </Menu.Item>
+                  </>
+                )}
               </Menu.Dropdown>
             </Menu>
           </div>
@@ -1249,12 +1327,12 @@ const SurveyPage = () => {
               </button>
             )}
 
-            {activeTab === "responses" && !selectedSurvey && (
+            {(activeTab === "responses" && !selectedSurvey) || activeTab === "responsesPerType" ? (
               <ExportExcel
                 excelData={formatResponsesForExport(filteredResponses)}
-                fileName="survey_responses"
+                fileName={activeTab === "responsesPerType" ? "survey_responses_by_type" : "survey_responses"}
               />
-            )}
+            ) : null}
           </div>
         </div>
 
