@@ -430,6 +430,19 @@ const SurveyPage = () => {
     // Add logging to check the received surveyId
     console.log("handleDownloadResponses called with surveyId:", surveyId);
 
+    // Check if a valid surveyId is provided
+    if (surveyId === undefined || surveyId === null || surveyId === "") {
+      console.error("Download Error: Invalid survey ID provided.", {
+        surveyId,
+      }); // Log for debugging
+      notifications.show({
+        title: "Error",
+        message: "Could not download responses. Invalid survey selected.", // Clearer error message
+        color: "red",
+      });
+      return;
+    }
+
     try {
       // Use the specific survey download endpoint provided by the user
       const response = await authorizedApi.get(
@@ -1041,7 +1054,11 @@ const SurveyPage = () => {
     },
     {
       id: "download", // Unique ID for the column
-      header: () => <div className="text-center font-semibold">Download</div>,
+      header: () => (
+        <div className="text-center font-semibold">
+          Download responses per survey
+        </div>
+      ),
       cell: ({ row }) => (
         <div className="flex justify-center">
           <button
@@ -1051,7 +1068,7 @@ const SurveyPage = () => {
               handleDownloadResponses(row.original.id);
             }}
             // Add a title for accessibility
-            title={`Download responses for ${row.original.name}`}
+            title={`Download  responses for ${row.original.name}`}
           >
             {/* Use the download icon */}
             <FiDownload className="h-4 w-4 text-blue-600" />
