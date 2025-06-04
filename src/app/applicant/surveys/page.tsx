@@ -20,6 +20,12 @@ const Page = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [userLoading, setUserLoading] = useState(true); // Track user data loading
+  const [viewMode, setViewMode] = useState<"list" | "survey" | "responses">(
+    "list"
+  );
+  const [submittedResponses, setSubmittedResponses] = useState<
+    Record<string, any>
+  >({});
 
   // Fetch logged-in user data
   const fetchUserData = useCallback(async () => {
@@ -159,6 +165,30 @@ const Page = () => {
     [userId]
   );
 
+  // Fetch submitted responses for a survey
+  const fetchSubmittedResponses = useCallback(
+    async (surveyId: string) => {
+      if (!userId) return;
+      try {
+        const response = await authorizedApi.get(
+          `/survey/survey-response/${surveyId}/${userId}`
+        );
+        if (response.data?.answers) {
+          const answers = JSON.parse(response.data.answers);
+          setSubmittedResponses(answers);
+          setViewMode("responses");
+        }
+      } catch (error) {
+        console.error("Error fetching submitted responses:", error);
+        notifications.show({
+          message: "Failed to load submitted responses",
+          color: "red",
+        });
+      }
+    },
+    [userId]
+  );
+
   // Handle setting survey answers
   const handleSetAnswers = (key: string, value: any) => {
     setSurveyAnswers((prev) => ({
@@ -247,9 +277,25 @@ const Page = () => {
   // Handle survey selection and check for draft
   const handleSelectSurvey = (survey: IForm) => {
     setSelectedSurvey(survey);
+    setViewMode("survey");
     if (survey.uuid && userId) {
       fetchDraftResponses(survey.uuid);
     }
+  };
+
+  // Handle viewing submitted responses
+  const handleViewResponses = (survey: IForm) => {
+    setSelectedSurvey(survey);
+    if (survey.uuid) {
+      fetchSubmittedResponses(survey.uuid);
+    }
+  };
+
+  // Handle going back to survey list
+  const handleBackToList = () => {
+    setSelectedSurvey(null);
+    setViewMode("list");
+    setSubmittedResponses({});
   };
 
   if (loading || userLoading) {
@@ -276,49 +322,60 @@ const Page = () => {
         <div className="flex items-center justify-between my-4">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => {
-                setSelectedSurvey(null);
-                setSurveyAnswers({});
-              }}
+              onClick={handleBackToList}
               className="text-gray-600 hover:text-gray-800"
             >
               ← Back to Surveys
             </button>
             <h1 className="text-2xl font-bold">{selectedSurvey.name}</h1>
           </div>
-          <div className="flex gap-4">
-            <Button
-              onClick={() => handleSaveDraft(selectedSurvey.uuid || "")}
-              loading={submitLoading}
-              className="px-6 py-2"
-              variant="outline"
-              color="blue"
-              disabled={submitLoading}
-            >
-              {submitLoading ? "Saving..." : "Save as Draft"}
-            </Button>
-            <Button
-              onClick={() => handleSurveySubmit(selectedSurvey.uuid || "")}
-              loading={submitLoading}
-              className="px-6 py-2"
-              variant="filled"
-              color="blue"
-              disabled={submitLoading}
-            >
-              {submitLoading ? "Submitting..." : "Submit Survey"}
-            </Button>
-          </div>
+          {viewMode === "survey" && (
+            <div className="flex gap-4">
+              <Button
+                onClick={() => handleSaveDraft(selectedSurvey.uuid || "")}
+                loading={submitLoading}
+                className="px-6 py-2"
+                variant="outline"
+                color="blue"
+                disabled={submitLoading}
+              >
+                {submitLoading ? "Saving..." : "Save as Draft"}
+              </Button>
+              <Button
+                onClick={() => handleSurveySubmit(selectedSurvey.uuid || "")}
+                loading={submitLoading}
+                className="px-6 py-2"
+                variant="filled"
+                color="blue"
+                disabled={submitLoading}
+              >
+                {submitLoading ? "Submitting..." : "Submit Survey"}
+              </Button>
+            </div>
+          )}
         </div>
         <div className="bg-white rounded-lg shadow p-8">
-          <SurveyForms
-            mode="answering"
-            formData={{
-              ...selectedSurvey,
-              qns: selectedSurvey.questions || selectedSurvey.qns,
-            }}
-            answers={surveyAnswers}
-            setAnswers={handleSetAnswers}
-          />
+          {viewMode === "survey" ? (
+            <SurveyForms
+              mode="answering"
+              formData={{
+                ...selectedSurvey,
+                qns: selectedSurvey.questions || selectedSurvey.qns,
+              }}
+              answers={surveyAnswers}
+              setAnswers={handleSetAnswers}
+            />
+          ) : viewMode === "responses" ? (
+            <SurveyForms
+              mode="viewing"
+              formData={{
+                ...selectedSurvey,
+                qns: selectedSurvey.questions || selectedSurvey.qns,
+              }}
+              answers={submittedResponses}
+              setAnswers={() => {}} // No-op since we're in view mode
+            />
+          ) : null}
         </div>
       </div>
     );
@@ -388,27 +445,35 @@ const Page = () => {
                 </div>
               </div>
 
-              <Button
-                onClick={() => handleSelectSurvey(survey)}
-                className="w-full"
-                variant="filled"
-                color={
-                  survey.survey_status === ESurveyStatus.ENDED ||
-                  completedSurveys.includes(survey.uuid || "")
-                    ? "gray"
-                    : "blue"
-                }
-                disabled={
-                  survey.survey_status === ESurveyStatus.ENDED ||
-                  completedSurveys.includes(survey.uuid || "")
-                }
-              >
-                {completedSurveys.includes(survey.uuid || "")
-                  ? "Survey Completed"
-                  : survey.survey_status === ESurveyStatus.ENDED
+              {completedSurveys.includes(survey.uuid || "") ? (
+                <Button
+                  onClick={() => handleViewResponses(survey)}
+                  className="w-full"
+                  variant="filled"
+                  color="blue"
+                >
+                  View Responses
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => {
+                    setSelectedSurvey(survey);
+                    setViewMode("survey");
+                  }}
+                  className="w-full"
+                  variant="filled"
+                  color={
+                    survey.survey_status === ESurveyStatus.ENDED
+                      ? "gray"
+                      : "blue"
+                  }
+                  disabled={survey.survey_status === ESurveyStatus.ENDED}
+                >
+                  {survey.survey_status === ESurveyStatus.ENDED
                     ? "Survey Expired"
                     : "Take Survey"}
-              </Button>
+                </Button>
+              )}
             </div>
           ))}
         </div>
