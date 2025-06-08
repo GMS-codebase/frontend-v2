@@ -53,10 +53,31 @@ const Navbar = () => {
   const navigate = useRouter();
   const active = usePathname();
   const auth = useSelector((state: any) => state.auth);
+  const [traineeData, setTraineeData] = useState<any>(null);
+
+  useEffect(() => {
+    // Get trainee data from localStorage
+    const storedData = localStorage.getItem("traineeData");
+    if (storedData) {
+      try {
+        const parsedData = JSON.parse(storedData);
+        if (parsedData.role === "TRAINEE") {
+          setTraineeData(parsedData);
+        }
+      } catch (error) {
+        console.error("Error parsing trainee data:", error);
+      }
+    }
+  }, []);
 
   const handleLogout = () => {
-    dispatch({ type: LOGOUT });
-    dispatch({ type: GET_PROFILE_ERROR });
+    if (traineeData) {
+      // Clear trainee data from localStorage
+      localStorage.removeItem("traineeData");
+    } else {
+      dispatch({ type: LOGOUT });
+      dispatch({ type: GET_PROFILE_ERROR });
+    }
     setLoading(true);
     navigate.push("/");
     notifications.show({
@@ -91,7 +112,9 @@ const Navbar = () => {
             ? "EMPLOYEE"
             : active.startsWith("/grant_committee")
               ? "GRANT_COMMITTEE"
-              : null;
+              : active.startsWith("/trainee")
+                ? "TRAINEE"
+                : null;
 
     if (role === "ADMIN") {
       getApplicants(dispatch);
@@ -143,22 +166,17 @@ const Navbar = () => {
       getAppeals(dispatch, "applicant");
       getApplications(dispatch);
     }
-    getApplicants(dispatch);
-    getAnnouncement(dispatch);
-    getEmpStages(dispatch);
-    getWindows(dispatch);
-    getSectors(dispatch);
-    getSubWindows(dispatch);
-    getTrades(dispatch);
-    getCalls(dispatch);
-    getMyProfile(dispatch);
-    getMEReports(dispatch);
-    getProfile(dispatch);
-    getSectorTrades(dispatch);
-    getForms(dispatch);
   }, []);
 
   const { profile } = useSelector((state: any) => state.profile);
+
+  // Get display name based on user type
+  const getDisplayName = () => {
+    if (traineeData) {
+      return traineeData.firstname || "Trainee";
+    }
+    return profile?.firstname ?? "----";
+  };
 
   return (
     <div className="w-full flex items-center justify-between py-3 bg-white rounded-2xl px-5">
@@ -171,7 +189,7 @@ const Navbar = () => {
                 <Icons.SolarUserBold />
               </button>
               <h1 className="text-lg font-medium capitalize">
-                {profile?.firstname ?? "----"}
+                {getDisplayName()}
               </h1>
             </div>
           </Menu.Target>

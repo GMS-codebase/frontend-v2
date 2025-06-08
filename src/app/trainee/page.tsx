@@ -69,7 +69,14 @@ export default function TraineeDashboard() {
 
       <Grid>
         <Grid.Col span={{ base: 12, md: 4 }}>
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
+          <Card
+            shadow="sm"
+            padding="lg"
+            radius="md"
+            withBorder
+            className="cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => router.push("/trainee/surveys")}
+          >
             <Group>
               <SolarPaperclipRounded2Bold className="w-8 h-8" />
               <Stack gap={0}>
