@@ -39,12 +39,24 @@ const TraineeLoginModal = ({
         console.log("TraineeLogin: Login successful, preparing to store data");
 
         try {
+          // Get trainee name from the response
+          const traineeName =
+            data.data?.name ||
+            data.data?.firstname ||
+            data.name ||
+            data.firstname ||
+            "Trainee";
+          console.log("TraineeLogin: Trainee name:", traineeName);
+
           // Store trainee data in localStorage
           const traineeData = {
             email: values.email,
             nationalId: values.nationalId,
             isAuthenticated: true,
             role: "TRAINEE",
+            firstname: traineeName,
+            lastname: data.data?.lastname || data.lastname || "",
+            profile: data.data || data, // Store the full profile data
           };
 
           console.log("TraineeLogin: Storing data:", traineeData);
