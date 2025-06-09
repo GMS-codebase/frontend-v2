@@ -10,7 +10,7 @@ const traineeRoutes: Route[] = [
   },
   {
     label: "Survey",
-    path: "/trainee/survey",
+    path: "/trainee/surveys",
     icon: <Icons.SolarPaperclipRounded2Bold />,
   },
 ];

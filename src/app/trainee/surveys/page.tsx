@@ -2,12 +2,20 @@
 import React, { useEffect, useState } from "react";
 import { Card, Text, Stack, Group, Button } from "@mantine/core";
 import { useRouter } from "next13-progressbar";
+import { unauthorizedApi } from "@/utils/api";
+import { setCookie } from "cookies-next";
 
 type Survey = {
   id: number;
-  title: string;
-  description: string;
-  status: string;
+  name: string;
+  qns: string;
+  expiry_date: string;
+  survey_status: string;
+  created_at: string;
+  updated_at: string;
+  survey_TYPE: string;
+  hasSurvey_Started: boolean;
+  surveyStartingTime: string | null;
 };
 
 export default function TraineeSurveys() {
@@ -16,6 +24,8 @@ export default function TraineeSurveys() {
   const [surveys, setSurveys] = useState<Survey[]>([]);
 
   useEffect(() => {
+    let isMounted = true;
+
     const initializeSurveys = async () => {
       const traineeData = localStorage.getItem("traineeData");
 
@@ -32,26 +42,68 @@ export default function TraineeSurveys() {
           return;
         }
 
-        // TODO: Fetch surveys from API
-        // For now, using dummy data
-        setSurveys([
-          {
-            id: 1,
-            title: "Training Feedback Survey",
-            description: "Share your thoughts about the training program",
-            status: "pending",
-          },
-        ]);
+        // Set the token in cookies for the API
+        if (parsedData.token) {
+          setCookie("token", parsedData.token);
+        }
 
-        setIsLoading(false);
+        // Fetch surveys from API with trainee email
+        const response = await unauthorizedApi.get("/survey/get-all-survey", {
+          params: {
+            email: parsedData.email,
+          },
+        });
+
+        // Filter surveys to only show TRAINEESURVEY type
+        const traineeSurveys = response.data.filter(
+          (survey: Survey) =>
+            survey.survey_TYPE.toUpperCase() === "TRAINEESURVEY"
+        );
+
+        if (isMounted) {
+          setSurveys(traineeSurveys);
+          setIsLoading(false);
+        }
       } catch (error) {
-        console.error("Error initializing surveys:", error);
-        router.replace("/");
+        console.error("Error fetching surveys:", error);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     initializeSurveys();
-  }, [router]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Empty dependency array since we only want to fetch once on mount
+
+  const getSurveyStatusColor = (status: string) => {
+    switch (status) {
+      case "ONGOING":
+        return "blue";
+      case "ENDED":
+        return "gray";
+      case "DRAFT":
+        return "yellow";
+      default:
+        return "blue";
+    }
+  };
+
+  const getSurveyStatusText = (status: string) => {
+    switch (status) {
+      case "ONGOING":
+        return "Take Survey";
+      case "ENDED":
+        return "View Results";
+      case "DRAFT":
+        return "Coming Soon";
+      default:
+        return "Take Survey";
+    }
+  };
 
   if (isLoading) {
     return (
@@ -80,17 +132,21 @@ export default function TraineeSurveys() {
             <Group justify="space-between" align="flex-start">
               <Stack gap={4}>
                 <Text size="lg" fw={500}>
-                  {survey.title}
+                  {survey.name}
                 </Text>
                 <Text size="sm" c="dimmed">
-                  {survey.description}
+                  Expires: {new Date(survey.expiry_date).toLocaleDateString()}
+                </Text>
+                <Text size="sm" c="dimmed">
+                  Status: {survey.survey_status}
                 </Text>
               </Stack>
               <Button
                 variant="filled"
-                color={survey.status === "pending" ? "blue" : "green"}
+                color={getSurveyStatusColor(survey.survey_status)}
+                disabled={survey.survey_status === "DRAFT"}
               >
-                {survey.status === "pending" ? "Take Survey" : "View Results"}
+                {getSurveyStatusText(survey.survey_status)}
               </Button>
             </Group>
           </Card>
