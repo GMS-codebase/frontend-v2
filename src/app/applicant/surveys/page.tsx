@@ -19,6 +19,7 @@ const Page = () => {
   const [surveyAnswers, setSurveyAnswers] = useState<Record<string, any>>({});
   const [submitLoading, setSubmitLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
   const [userLoading, setUserLoading] = useState(true); // Track user data loading
   const [viewMode, setViewMode] = useState<"list" | "survey" | "responses">(
     "list"
@@ -37,6 +38,16 @@ const Page = () => {
         throw new Error("User UUID not found in response");
       }
       setUserId(userData.uuid);
+      // Try to get userName from name, or firstname + lastname
+      if (userData.name) {
+        setUserName(userData.name);
+      } else if (userData.firstname && userData.lastname) {
+        setUserName(`${userData.firstname} ${userData.lastname}`);
+      } else if (userData.firstname) {
+        setUserName(userData.firstname);
+      } else {
+        setUserName("");
+      }
     } catch (error: any) {
       console.error("Error fetching user data:", error);
       notifications.show({
@@ -231,7 +242,7 @@ const Page = () => {
   };
 
   // Handle survey submission
-  const handleSurveySubmit = async (surveyId: string) => {
+  const handleSurveySubmit = async (surveyId: string | number) => {
     if (!surveyAnswers || Object.keys(surveyAnswers).length === 0) {
       notifications.show({
         title: "Warning",
@@ -240,21 +251,27 @@ const Page = () => {
       });
       return;
     }
-
+    if (!userId || !userName) {
+      notifications.show({
+        title: "Error",
+        message: "User information missing. Please log in again.",
+        color: "red",
+      });
+      return;
+    }
     try {
       setSubmitLoading(true);
-
       const responseData = {
-        survey_id: surveyId,
+        surveyId:
+          typeof surveyId === "string" ? parseInt(surveyId, 10) : surveyId,
+        userId: userId,
+        userName: userName,
         answers: JSON.stringify(surveyAnswers),
       };
-
       await authorizedApi.post("/survey/submit-survey", responseData);
-
-      setCompletedSurveys((prev) => [...prev, surveyId]);
+      setCompletedSurveys((prev) => [...prev, String(surveyId)]);
       setSelectedSurvey(null);
       setSurveyAnswers({});
-
       notifications.show({
         title: "Success",
         message: "Thank you for completing the survey!",
