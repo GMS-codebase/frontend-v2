@@ -188,6 +188,11 @@ const Page = () => {
           const answers = JSON.parse(response.data.answers);
           setSubmittedResponses(answers);
           setViewMode("responses");
+        } else {
+          notifications.show({
+            message: "No submitted responses found.",
+            color: "blue",
+          });
         }
       } catch (error) {
         console.error("Error fetching submitted responses:", error);
