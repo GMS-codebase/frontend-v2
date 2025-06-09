@@ -395,11 +395,11 @@ const SurveyPage = () => {
     async (surveyId: string) => {
       try {
         setIsLoading(true);
-        await authorizedApi.put(`/survey/end/${surveyId}`);
+        await authorizedApi.put(`/survey/${surveyId}/end-survey`);
 
         setSurveys((prevSurveys) =>
           prevSurveys.map((survey) =>
-            survey.uuid === surveyId ? { ...survey, status: "ended" } : survey
+            survey.uuid === surveyId ? { ...survey, survey_status: ESurveyStatus.ENDED } : survey
           )
         );
 
