@@ -169,11 +169,15 @@ const Navbar = () => {
   }, []);
 
   const { profile } = useSelector((state: any) => state.profile);
+  const { applicantProfile } = useSelector((state: any) => state.profile);
 
   // Get display name based on user type
   const getDisplayName = () => {
     if (traineeData) {
       return traineeData.firstname || "Trainee";
+    }
+    if (applicantProfile?.applicant?.name) {
+      return applicantProfile.applicant.name;
     }
     return profile?.firstname ?? "----";
   };
