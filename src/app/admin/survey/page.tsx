@@ -95,10 +95,6 @@ const SurveyPage = () => {
       }));
 
       setSurveys(mappedSurveys);
-      notifications.show({
-        message: "Surveys loaded successfully",
-        color: "green",
-      });
     } catch (error) {
       console.error("Error fetching surveys:", error);
       notifications.show({
@@ -132,12 +128,7 @@ const SurveyPage = () => {
           "API returned data structure is not an array:",
           response.data
         );
-        notifications.show({
-          title: "Error",
-          message: "Received unexpected data format for responses.",
-          color: "red",
-        });
-        return []; // Return empty array on error
+        return []; // Return empty array if data structure is unexpected
       }
 
       // Process and format the responses data
@@ -202,10 +193,13 @@ const SurveyPage = () => {
       return mappedResponses; // Return mapped responses
     } catch (error: any) {
       console.error("Error fetching responses:", error);
-      notifications.show({
-        message: "Failed to load responses",
-        color: "red",
-      });
+      // Only show error notification if it's not a 404 (no responses yet)
+      if (error.response?.status !== 404) {
+        notifications.show({
+          message: "Failed to load responses",
+          color: "red",
+        });
+      }
       return []; // Return empty array on error
     }
   }, []);
@@ -255,10 +249,6 @@ const SurveyPage = () => {
         }));
         setSurveys(surveysWithCounts);
 
-        notifications.show({
-          message: "Data loaded successfully",
-          color: "green",
-        });
       } catch (error) {
         console.error("Error loading initial data:", error);
         notifications.show({
