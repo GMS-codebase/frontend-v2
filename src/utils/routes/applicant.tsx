@@ -24,7 +24,11 @@ const applicantRoutes: Route[] = [
     path: "/applicant/minutes",
     icon: <Icons.SolarDocumentBold />,
   },
-
+  {
+    label: "Trainees",
+    path: "/applicant/trainees",
+    icon: <Icons.SolarUsersGroupRoundedBold />,
+  },
   {
     label: "Contacts",
     path: "/applicant/contacts",
