@@ -36,6 +36,70 @@ interface SurveyWithResponseCount extends Survey {
   responseCount: number;
 }
 
+// Helper to build a map from question ID to question text
+function getQuestionMap(qns: string | any): Record<string, string> {
+  let questionMap: Record<string, string> = {};
+  try {
+    const parsed = typeof qns === "string" ? JSON.parse(qns) : qns;
+    if (Array.isArray(parsed)) {
+      parsed.forEach((q, idx) => {
+        const id = q.id || `general-q-0-${idx}`;
+        questionMap[id] = q.question || q.title || `Question ${idx + 1}`;
+      });
+    } else if (typeof parsed === "object" && parsed !== null) {
+      Object.values(parsed).forEach((section: any) => {
+        if (section.pages) {
+          section.pages.forEach((page: any) => {
+            if (page.surveys) {
+              page.surveys.forEach((q: any) => {
+                if (q.id) {
+                  questionMap[q.id] = q.title || q.question || q.id;
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  } catch (e) {
+    // fallback: return empty map
+  }
+  return questionMap;
+}
+
+// Helper to render answers as readable list
+function renderAnswers(answers: any, questionMap: Record<string, string>) {
+  // Try to parse answers if it's a string
+  let parsed = answers;
+  if (typeof answers === "string") {
+    try {
+      parsed = JSON.parse(answers);
+    } catch {
+      try {
+        parsed = JSON.parse(JSON.parse(answers));
+      } catch {
+        // If it's just a plain string, show as is
+        if (answers.trim().length > 0 && answers.trim()[0] !== '{') {
+          return <span>{answers}</span>;
+        }
+        return <span style={{ color: "red" }}>Unreadable answer format</span>;
+      }
+    }
+  }
+  if (typeof parsed !== "object" || parsed === null) {
+    return <span>No answers</span>;
+  }
+  return (
+    <ul className="list-disc pl-4">
+      {Object.entries(parsed).map(([id, value]) => (
+        <li key={id}>
+          <strong>{questionMap[id] || id}:</strong> {String(value)}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 const SurveyPage = () => {
   const [activeTab, setActiveTab] = useState<
     "all" | "ongoing" | "ended" | "responsesPerType"
@@ -385,11 +449,13 @@ const SurveyPage = () => {
     async (surveyId: string) => {
       try {
         setIsLoading(true);
-        await authorizedApi.put(`/survey/end/${surveyId}`);
+        await authorizedApi.put(`/survey/${surveyId}/end-survey`);
 
         setSurveys((prevSurveys) =>
           prevSurveys.map((survey) =>
-            survey.uuid === surveyId ? { ...survey, status: "ended" } : survey
+            survey.uuid === surveyId
+              ? { ...survey, survey_status: ESurveyStatus.ENDED }
+              : survey
           )
         );
 
@@ -419,6 +485,19 @@ const SurveyPage = () => {
   ) => {
     // Add logging to check the received surveyId
     console.log("handleDownloadResponses called with surveyId:", surveyId);
+
+    // Check if a valid surveyId is provided
+    if (surveyId === undefined || surveyId === null || surveyId === "") {
+      console.error("Download Error: Invalid survey ID provided.", {
+        surveyId,
+      }); // Log for debugging
+      notifications.show({
+        title: "Error",
+        message: "Could not download responses. Invalid survey selected.", // Clearer error message
+        color: "red",
+      });
+      return;
+    }
 
     try {
       // Use the specific survey download endpoint provided by the user
@@ -535,9 +614,30 @@ const SurveyPage = () => {
       let parsedAnswers: { [key: string]: any } = {};
       try {
         if (response.answers && typeof response.answers === "string") {
-          parsedAnswers = JSON.parse(response.answers);
+          try {
+            parsedAnswers = JSON.parse(response.answers);
+          } catch (error) {
+            // Try parsing again if double-stringified
+            try {
+              parsedAnswers = JSON.parse(JSON.parse(response.answers));
+            } catch (error2) {
+              parsedAnswers = {};
+              console.error(
+                "Error parsing answers for export (double attempt):",
+                response.answers,
+                error2
+              );
+              notifications.show({
+                title: "Warning",
+                message:
+                  "Could not parse answer data for a response during export.",
+                color: "yellow",
+              });
+            }
+          }
         }
       } catch (error) {
+        parsedAnswers = {};
         console.error(
           "Error parsing answers for export:",
           response.answers,
@@ -550,6 +650,8 @@ const SurveyPage = () => {
         });
       }
 
+      // Build question map for this response
+      const questionMap = getQuestionMap(response.survey?.qns);
       const row = [
         response.applicant?.name || "N/A",
         response.survey?.name || "N/A",
@@ -874,11 +976,14 @@ const SurveyPage = () => {
     {
       accessorKey: "response",
       header: () => <div className="text-left font-semibold">Response</div>,
-      cell: ({ row }) => (
-        <div className="max-w-md truncate" title={row.original.response}>
-          {row.original.response}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const questionMap = getQuestionMap(row.original.survey?.qns);
+        return (
+          <div className="max-w-md truncate" title={row.original.response}>
+            {renderAnswers(row.original.answers, questionMap)}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "status",
@@ -1031,7 +1136,11 @@ const SurveyPage = () => {
     },
     {
       id: "download", // Unique ID for the column
-      header: () => <div className="text-center font-semibold">Download</div>,
+      header: () => (
+        <div className="text-center font-semibold">
+          Download responses per survey
+        </div>
+      ),
       cell: ({ row }) => (
         <div className="flex justify-center">
           <button
@@ -1041,7 +1150,7 @@ const SurveyPage = () => {
               handleDownloadResponses(row.original.id);
             }}
             // Add a title for accessibility
-            title={`Download responses for ${row.original.name}`}
+            title={`Download  responses for ${row.original.name}`}
           >
             {/* Use the download icon */}
             <FiDownload className="h-4 w-4 text-blue-600" />
