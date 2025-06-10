@@ -1,27 +1,35 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Card, Text, Stack, Group, Button } from "@mantine/core";
 import { useRouter } from "next13-progressbar";
-import { unauthorizedApi } from "@/utils/api";
+import { unauthorizedApi, authorizedApi } from "@/utils/api";
 import { setCookie } from "cookies-next";
+import { notifications } from "@mantine/notifications";
+import SurveyForms from "@/components/forms/SurveyForms";
+import { ESurveyStatus } from "@/types/surveys-form";
 
 type Survey = {
   id: number;
   name: string;
   qns: string;
   expiry_date: string;
-  survey_status: string;
+  survey_status: ESurveyStatus;
   created_at: string;
   updated_at: string;
   survey_TYPE: string;
   hasSurvey_Started: boolean;
   surveyStartingTime: string | null;
+  questions?: any;
 };
 
 export default function TraineeSurveys() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [surveys, setSurveys] = useState<Survey[]>([]);
+  const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
+  const [surveyAnswers, setSurveyAnswers] = useState<Record<string, any>>({});
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [completedSurveys, setCompletedSurveys] = useState<string[]>([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -55,10 +63,61 @@ export default function TraineeSurveys() {
         });
 
         // Filter surveys to only show TRAINEESURVEY type
-        const traineeSurveys = response.data.filter(
-          (survey: Survey) =>
-            survey.survey_TYPE.toUpperCase() === "TRAINEESURVEY"
-        );
+        const traineeSurveys = response.data
+          .filter(
+            (survey: Survey) =>
+              survey.survey_TYPE.toUpperCase() === "TRAINEESURVEY"
+          )
+          .map((survey: Survey) => {
+            // Transform questions to expected format
+            let transformedQuestions;
+            try {
+              if (typeof survey.qns === "string") {
+                const parsed = JSON.parse(survey.qns);
+                if (Array.isArray(parsed)) {
+                  transformedQuestions = {
+                    general: {
+                      name: "general",
+                      description: "General Questions",
+                      pages: [
+                        {
+                          surveys: parsed.map((item: any, index: number) => ({
+                            id: `general-q-0-${index}`,
+                            title:
+                              item.question ||
+                              item.title ||
+                              `Question ${index + 1}`,
+                            description: item.description || "",
+                            type: item.type || "text",
+                            required: item.required || false,
+                            commentable: item.commentable || false,
+                            choices: item.choices || [],
+                            columns: item.columns || [],
+                          })),
+                        },
+                      ],
+                    },
+                  };
+                } else if (typeof parsed === "object" && parsed !== null) {
+                  transformedQuestions = parsed;
+                } else {
+                  transformedQuestions = {};
+                }
+              } else {
+                transformedQuestions = survey.qns || {};
+              }
+            } catch (parseError) {
+              console.warn("Failed to parse survey questions:", parseError);
+              transformedQuestions = {};
+            }
+
+            return {
+              ...survey,
+              questions: transformedQuestions,
+              qns: transformedQuestions,
+              survey_status: survey.survey_status as ESurveyStatus,
+            };
+          });
 
         if (isMounted) {
           setSurveys(traineeSurveys);
@@ -77,7 +136,69 @@ export default function TraineeSurveys() {
     return () => {
       isMounted = false;
     };
-  }, []); // Empty dependency array since we only want to fetch once on mount
+  }, []);
+
+  const handleSetAnswers = (key: string, value: any) => {
+    setSurveyAnswers((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleSurveySubmit = async (surveyId: string) => {
+    if (!surveyAnswers || Object.keys(surveyAnswers).length === 0) {
+      notifications.show({
+        title: "Warning",
+        message: "Please answer at least one question before submitting",
+        color: "orange",
+      });
+      return;
+    }
+
+    try {
+      setSubmitLoading(true);
+
+      const traineeData = localStorage.getItem("traineeData");
+      if (!traineeData) {
+        throw new Error("Trainee data not found");
+      }
+
+      const { uuid, email } = JSON.parse(traineeData);
+
+      const responseData = {
+        surveyId: parseInt(surveyId),
+        traineeUuid: uuid,
+        answers: JSON.stringify(surveyAnswers),
+      };
+
+      await authorizedApi.post("/survey/submit-survey/trainee", responseData, {
+        headers: {
+          email: email,
+        },
+      });
+
+      setCompletedSurveys((prev) => [...prev, surveyId]);
+      setSelectedSurvey(null);
+      setSurveyAnswers({});
+
+      notifications.show({
+        title: "Success",
+        message: "Thank you for completing the survey!",
+        color: "green",
+      });
+    } catch (error: any) {
+      console.error("Error submitting survey:", error);
+      notifications.show({
+        title: "Error",
+        message:
+          error.response?.data?.message ||
+          "Failed to submit survey. Please try again.",
+        color: "red",
+      });
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
 
   const getSurveyStatusColor = (status: string) => {
     switch (status) {
@@ -120,6 +241,50 @@ export default function TraineeSurveys() {
     );
   }
 
+  if (selectedSurvey) {
+    return (
+      <div className="w-full !overflow-x-hidden p-6">
+        <div className="flex items-center justify-between my-4">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => {
+                setSelectedSurvey(null);
+                setSurveyAnswers({});
+              }}
+              className="text-gray-600 hover:text-gray-800"
+            >
+              ← Back to Surveys
+            </button>
+            <Text size="xl" fw={700}>
+              {selectedSurvey.name}
+            </Text>
+          </div>
+          <Button
+            onClick={() => handleSurveySubmit(selectedSurvey.id.toString())}
+            loading={submitLoading}
+            className="px-6 py-2"
+            variant="filled"
+            color="blue"
+            disabled={submitLoading}
+          >
+            {submitLoading ? "Submitting..." : "Submit Survey"}
+          </Button>
+        </div>
+        <div className="bg-white rounded-lg shadow p-8">
+          <SurveyForms
+            mode="answering"
+            formData={{
+              ...selectedSurvey,
+              qns: selectedSurvey.questions || selectedSurvey.qns,
+            }}
+            answers={surveyAnswers}
+            setAnswers={handleSetAnswers}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
       <Text size="xl" fw={700} mb={24}>
@@ -144,9 +309,18 @@ export default function TraineeSurveys() {
               <Button
                 variant="filled"
                 color={getSurveyStatusColor(survey.survey_status)}
-                disabled={survey.survey_status === "DRAFT"}
+                disabled={
+                  survey.survey_status === "DRAFT" ||
+                  completedSurveys.includes(survey.id.toString())
+                }
+                onClick={() =>
+                  survey.survey_status === "ONGOING" &&
+                  setSelectedSurvey(survey)
+                }
               >
-                {getSurveyStatusText(survey.survey_status)}
+                {completedSurveys.includes(survey.id.toString())
+                  ? "Survey Completed"
+                  : getSurveyStatusText(survey.survey_status)}
               </Button>
             </Group>
           </Card>
