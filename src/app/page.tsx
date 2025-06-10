@@ -21,6 +21,7 @@ import { unauthorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import ForgotPasswordModal from "@/components/Modals/auth/ForgotPassword";
 import Link from "next/link";
+import TraineeLoginModal from "@/components/Modals/auth/TraineeLogin";
 
 function Page() {
   const dispatch = useDispatch();
@@ -57,6 +58,10 @@ function Page() {
   const [
     isOpenSetPassword,
     { open: openSetPassword, close: closeSetPassword },
+  ] = useDisclosure(false);
+  const [
+    isOpenTraineeLogin,
+    { open: openTraineeLogin, close: closeTraineeLogin },
   ] = useDisclosure(false);
 
   const searchParams = useSearchParams();
@@ -105,6 +110,12 @@ function Page() {
             onClick={openLogin}
           >
             Login
+          </button>
+          <button
+            className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
+            onClick={openTraineeLogin}
+          >
+            Login as Trainee
           </button>
           <button
             className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
@@ -216,6 +227,10 @@ function Page() {
         close={closeSetPassword}
         token={token as string}
         openLogin={openLogin}
+      />
+      <TraineeLoginModal
+        opened={isOpenTraineeLogin}
+        close={closeTraineeLogin}
       />
     </div>
   );
