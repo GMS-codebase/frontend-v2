@@ -19,18 +19,90 @@ import { format } from "date-fns";
 import type { Survey, SurveyResponse } from "./types";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import { ESurveyStatus, ESurveyType } from "@/types/surveys-form";
+import { ESurveyStatus } from "@/types/surveys-form";
 import ExportExcel from "@/components/core/reports/export_excel";
 import { Card, CardContent } from "@/components/ui/Card";
-import { FileText, CheckCheck, Clock, User } from "lucide-react";
+import {
+  FileText,
+  CheckCheck,
+  Clock,
+  User,
+  Filter,
+  Calendar,
+} from "lucide-react";
+import { Select, SelectItem } from "@/components/ui/Select";
 
 interface SurveyWithResponseCount extends Survey {
   responseCount: number;
 }
 
+// Helper to build a map from question ID to question text
+function getQuestionMap(qns: string | any): Record<string, string> {
+  let questionMap: Record<string, string> = {};
+  try {
+    const parsed = typeof qns === "string" ? JSON.parse(qns) : qns;
+    if (Array.isArray(parsed)) {
+      parsed.forEach((q, idx) => {
+        const id = q.id || `general-q-0-${idx}`;
+        questionMap[id] = q.question || q.title || `Question ${idx + 1}`;
+      });
+    } else if (typeof parsed === "object" && parsed !== null) {
+      Object.values(parsed).forEach((section: any) => {
+        if (section.pages) {
+          section.pages.forEach((page: any) => {
+            if (page.surveys) {
+              page.surveys.forEach((q: any) => {
+                if (q.id) {
+                  questionMap[q.id] = q.title || q.question || q.id;
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  } catch (e) {
+    // fallback: return empty map
+  }
+  return questionMap;
+}
+
+// Helper to render answers as readable list
+function renderAnswers(answers: any, questionMap: Record<string, string>) {
+  // Try to parse answers if it's a string
+  let parsed = answers;
+  if (typeof answers === "string") {
+    try {
+      parsed = JSON.parse(answers);
+    } catch {
+      try {
+        parsed = JSON.parse(JSON.parse(answers));
+      } catch {
+        // If it's just a plain string, show as is
+        if (answers.trim().length > 0 && answers.trim()[0] !== '{') {
+          return <span>{answers}</span>;
+        }
+        return <span style={{ color: "red" }}>Unreadable answer format</span>;
+      }
+    }
+  }
+  if (typeof parsed !== "object" || parsed === null) {
+    return <span>No answers</span>;
+  }
+  return (
+    <ul className="list-disc pl-4">
+      {Object.entries(parsed).map(([id, value]) => (
+        <li key={id}>
+          <strong>{questionMap[id] || id}:</strong> {String(value)}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 const SurveyPage = () => {
   const [activeTab, setActiveTab] = useState<
-    "all" | "ongoing" | "ended" | "responses" | "responsesPerType"
+    "all" | "ongoing" | "ended" | "responsesPerType"
   >("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
@@ -57,17 +129,16 @@ const SurveyPage = () => {
     useDisclosure(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Filter states
+  const [filterType, setFilterType] = useState<string>("");
+  const [filterStatus, setFilterStatus] = useState<string>("");
+  const [filterCreatedFrom, setFilterCreatedFrom] = useState<string>("");
+  const [filterCreatedTo, setFilterCreatedTo] = useState<string>("");
+  const [filterExpiryFrom, setFilterExpiryFrom] = useState<string>("");
+  const [filterExpiryTo, setFilterExpiryTo] = useState<string>("");
+
   // Fetch surveys from API
   const fetchSurveys = useCallback(async () => {
-    const loadingNotificationId = notifications.show({
-      id: 'surveys-loading',
-      loading: true,
-      title: 'Loading Surveys',
-      message: 'Please wait while we fetch the surveys...',
-      autoClose: false,
-      withCloseButton: false,
-    });
-
     try {
       setLoading(true);
       const response = await authorizedApi.get("/survey/get-all-survey");
@@ -88,14 +159,11 @@ const SurveyPage = () => {
       }));
 
       setSurveys(mappedSurveys);
-      notifications.hide(loadingNotificationId);
-      
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error fetching surveys:", error);
-      notifications.hide(loadingNotificationId);
       notifications.show({
         title: 'Error Loading Surveys',
-        message: error.response?.data?.message || "Failed to load surveys. Please try again.",
+        message: error instanceof Error ? error.message : "Failed to load surveys. Please try again.",
         color: "red",
         icon: '❌',
       });
@@ -109,7 +177,7 @@ const SurveyPage = () => {
     try {
       // Add your API endpoint for responses here
       const url = surveyId
-        ? `/api/v2/survey/getSurveyResponses/${surveyId}`
+        ? `/survey/getSurveyResponses/${surveyId}`
         : "/survey/getAllSurveyResponses";
 
       const response = await authorizedApi.get(url);
@@ -126,12 +194,7 @@ const SurveyPage = () => {
           "API returned data structure is not an array:",
           response.data
         );
-        notifications.show({
-          title: "Error",
-          message: "Received unexpected data format for responses.",
-          color: "red",
-        });
-        return []; // Return empty array on error
+        return []; // Return empty array if data structure is unexpected
       }
 
       // Process and format the responses data
@@ -196,10 +259,13 @@ const SurveyPage = () => {
       return mappedResponses; // Return mapped responses
     } catch (error: any) {
       console.error("Error fetching responses:", error);
-      notifications.show({
-        message: "Failed to load responses",
-        color: "red",
-      });
+      // Only show error notification if it's not a 404 (no responses yet)
+      if (error.response?.status !== 404) {
+        notifications.show({
+          message: "Failed to load responses",
+          color: "red",
+        });
+      }
       return []; // Return empty array on error
     }
   }, []);
@@ -249,10 +315,6 @@ const SurveyPage = () => {
         }));
         setSurveys(surveysWithCounts);
 
-        notifications.show({
-          message: "Data loaded successfully",
-          color: "green",
-        });
       } catch (error) {
         console.error("Error loading initial data:", error);
         notifications.show({
@@ -273,9 +335,7 @@ const SurveyPage = () => {
     setOngoingSurveys(
       surveys.filter((s) => s.survey_status === ESurveyStatus.ONGOING).length
     );
-    setEndedSurveys(
-      surveys.filter((s) => s.survey_status === ESurveyStatus.EXPIRED).length
-    );
+    setEndedSurveys(surveys.filter((s) => s.survey_status === "ENDED").length);
     setTotalResponses(allResponses.length);
 
     // Determine surveys with and without responses
@@ -291,15 +351,6 @@ const SurveyPage = () => {
 
   // Handle marking a response as reviewed
   const handleMarkAsReviewed = useCallback(async (responseId: string) => {
-    const reviewNotificationId = notifications.show({
-      id: 'response-reviewing',
-      loading: true,
-      title: 'Updating Response',
-      message: 'Marking response as reviewed...',
-      autoClose: false,
-      withCloseButton: false,
-    });
-
     try {
       setIsLoading(true);
       // Add your API call for marking as reviewed
@@ -314,7 +365,6 @@ const SurveyPage = () => {
         )
       );
 
-      notifications.hide(reviewNotificationId);
       notifications.show({
         title: 'Response Updated',
         message: "Response has been marked as reviewed",
@@ -324,7 +374,6 @@ const SurveyPage = () => {
       });
     } catch (error: any) {
       console.error("Error marking response as reviewed:", error);
-      notifications.hide(reviewNotificationId);
       notifications.show({
         title: 'Error Updating Response',
         message: error.response?.data?.message || "Failed to mark response as reviewed. Please try again.",
@@ -339,15 +388,6 @@ const SurveyPage = () => {
   // Handle deleting a survey
   const handleDeleteSurvey = useCallback(
     async (surveyId: string) => {
-      const deleteNotificationId = notifications.show({
-        id: 'survey-deleting',
-        loading: true,
-        title: 'Deleting Survey',
-        message: 'Please wait while we delete the survey...',
-        autoClose: false,
-        withCloseButton: false,
-      });
-
       try {
         setIsLoading(true);
         await authorizedApi.delete(`/survey/remove/${surveyId}`);
@@ -356,7 +396,6 @@ const SurveyPage = () => {
           prevSurveys.filter((survey) => survey.uuid !== surveyId)
         );
 
-        notifications.hide(deleteNotificationId);
         notifications.show({
           title: 'Survey Deleted',
           message: "Survey has been successfully deleted",
@@ -369,7 +408,6 @@ const SurveyPage = () => {
         fetchSurveys();
       } catch (error: any) {
         console.error("Error deleting survey:", error);
-        notifications.hide(deleteNotificationId);
         notifications.show({
           title: 'Error Deleting Survey',
           message: error.response?.data?.message || "Failed to delete survey. Please try again.",
@@ -386,15 +424,6 @@ const SurveyPage = () => {
   // Handle starting a survey
   const handleStartSurvey = useCallback(
     async (surveyId: string) => {
-      const startNotificationId = notifications.show({
-        id: 'survey-starting',
-        loading: true,
-        title: 'Starting Survey',
-        message: 'Please wait while we start the survey...',
-        autoClose: false,
-        withCloseButton: false,
-      });
-
       try {
         setIsLoading(true);
         await authorizedApi.put(`/survey/${surveyId}/start-survey`);
@@ -408,7 +437,6 @@ const SurveyPage = () => {
           )
         );
 
-        notifications.hide(startNotificationId);
         notifications.show({
           title: 'Survey Started',
           message: "Survey has been successfully started",
@@ -420,7 +448,6 @@ const SurveyPage = () => {
         fetchSurveys(); // Refresh the list to get updated data
       } catch (error: any) {
         console.error("Error starting survey:", error);
-        notifications.hide(startNotificationId);
         notifications.show({
           title: 'Error Starting Survey',
           message: error.response?.data?.message || "Failed to start survey. Please try again.",
@@ -437,26 +464,18 @@ const SurveyPage = () => {
   // Handle ending a survey
   const handleEndSurvey = useCallback(
     async (surveyId: string) => {
-      const endNotificationId = notifications.show({
-        id: 'survey-ending',
-        loading: true,
-        title: 'Ending Survey',
-        message: 'Please wait while we end the survey...',
-        autoClose: false,
-        withCloseButton: false,
-      });
-
       try {
         setIsLoading(true);
-        await authorizedApi.put(`/survey/end/${surveyId}`);
+        await authorizedApi.put(`/survey/${surveyId}/end-survey`);
 
         setSurveys((prevSurveys) =>
           prevSurveys.map((survey) =>
-            survey.uuid === surveyId ? { ...survey, status: "ended" } : survey
+            survey.uuid === surveyId
+              ? { ...survey, survey_status: ESurveyStatus.ENDED }
+              : survey
           )
         );
 
-        notifications.hide(endNotificationId);
         notifications.show({
           title: 'Survey Ended',
           message: "Survey has been successfully ended",
@@ -468,7 +487,6 @@ const SurveyPage = () => {
         closeEndSurveyModal();
       } catch (error: any) {
         console.error("Error ending survey:", error);
-        notifications.hide(endNotificationId);
         notifications.show({
           title: 'Error Ending Survey',
           message: error.response?.data?.message || "Failed to end survey. Please try again.",
@@ -482,21 +500,31 @@ const SurveyPage = () => {
     [closeEndSurveyModal]
   );
 
-  // Handle downloading responses
-  const handleDownloadResponses = async () => {
-    if (!selectedSurvey?.id) {
+  // Handle downloading responses for a specific survey
+  // This function is now intended to be called with a specific surveyId
+  const handleDownloadResponses = async (
+    surveyId: string | number | undefined | null
+  ) => {
+    // Add logging to check the received surveyId
+    console.log("handleDownloadResponses called with surveyId:", surveyId);
+
+    // Check if a valid surveyId is provided
+    if (surveyId === undefined || surveyId === null || surveyId === "") {
+      console.error("Download Error: Invalid survey ID provided.", {
+        surveyId,
+      }); // Log for debugging
       notifications.show({
         title: "Error",
-        message: "No survey selected for download.",
+        message: "Could not download responses. Invalid survey selected.", // Clearer error message
         color: "red",
       });
       return;
     }
 
     try {
-      // Assuming the API returns a file stream/blob
+      // Use the specific survey download endpoint provided by the user
       const response = await authorizedApi.get(
-        `/survey/download-responses/${selectedSurvey.id}`,
+        `/survey/dowload-responses/${surveyId}`,
         {
           responseType: "blob", // Important for downloading files
         }
@@ -513,7 +541,8 @@ const SurveyPage = () => {
       link.href = url;
       // Suggest a filename (you might need to get this from the API response headers if available)
       const contentDisposition = response.headers["content-disposition"];
-      let filename = "survey_responses.xlsx"; // Default filename
+      // Use a more specific filename based on the survey ID
+      let filename = `survey_${surveyId}_responses.xlsx`;
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(/filename="(.+)"/);
         if (filenameMatch && filenameMatch[1]) {
@@ -543,6 +572,7 @@ const SurveyPage = () => {
     }
   };
 
+  // formatResponsesForExport is used for the overall Export Excel button
   const formatResponsesForExport = (responses: SurveyResponse[]) => {
     if (responses.length === 0) return [];
 
@@ -606,9 +636,30 @@ const SurveyPage = () => {
       let parsedAnswers: { [key: string]: any } = {};
       try {
         if (response.answers && typeof response.answers === "string") {
-          parsedAnswers = JSON.parse(response.answers);
+          try {
+            parsedAnswers = JSON.parse(response.answers);
+          } catch (error) {
+            // Try parsing again if double-stringified
+            try {
+              parsedAnswers = JSON.parse(JSON.parse(response.answers));
+            } catch (error2) {
+              parsedAnswers = {};
+              console.error(
+                "Error parsing answers for export (double attempt):",
+                response.answers,
+                error2
+              );
+              notifications.show({
+                title: "Warning",
+                message:
+                  "Could not parse answer data for a response during export.",
+                color: "yellow",
+              });
+            }
+          }
         }
       } catch (error) {
+        parsedAnswers = {};
         console.error(
           "Error parsing answers for export:",
           response.answers,
@@ -621,6 +672,8 @@ const SurveyPage = () => {
         });
       }
 
+      // Build question map for this response
+      const questionMap = getQuestionMap(response.survey?.qns);
       const row = [
         response.applicant?.name || "N/A",
         response.survey?.name || "N/A",
@@ -645,27 +698,56 @@ const SurveyPage = () => {
     return data;
   };
 
-  // Filter data based on search query
+  // Enhanced filter logic for surveys
   const filteredSurveys = surveys.filter((survey) => {
-    // First filter by tab selection
+    // Tab filter
     if (
       activeTab === "ongoing" &&
       survey.survey_status !== ESurveyStatus.ONGOING
     )
       return false;
-    if (activeTab === "ended" && survey.survey_status !== ESurveyStatus.EXPIRED)
+    if (activeTab === "ended" && survey.survey_status !== "ENDED") return false;
+    // Type filter
+    if (filterType && filterType !== "all" && survey.survey_type !== filterType)
       return false;
-
-    // Then filter by search query
+    // Status filter
+    if (
+      filterStatus &&
+      filterStatus !== "all" &&
+      survey.survey_status !== filterStatus
+    )
+      return false;
+    // Created date filter
+    if (
+      filterCreatedFrom &&
+      new Date(survey.created_at) < new Date(filterCreatedFrom)
+    )
+      return false;
+    if (
+      filterCreatedTo &&
+      new Date(survey.created_at) > new Date(filterCreatedTo)
+    )
+      return false;
+    // Expiry date filter
+    if (
+      filterExpiryFrom &&
+      new Date(survey.expiry_date) < new Date(filterExpiryFrom)
+    )
+      return false;
+    if (
+      filterExpiryTo &&
+      new Date(survey.expiry_date) > new Date(filterExpiryTo)
+    )
+      return false;
+    // Search filter
     return survey.name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
+  // Enhanced filter logic for responses
   const filteredResponses = allResponses.filter((response) => {
     const lowerSearchQuery = searchQuery.toLowerCase();
-
     const applicantName = response.applicant?.name?.toLowerCase() || "";
     const surveyName = response.survey?.name?.toLowerCase() || "";
-
     let answersString = "";
     try {
       if (typeof response.answers === "string") {
@@ -675,14 +757,45 @@ const SurveyPage = () => {
         }
       }
     } catch (error) {
-      console.error(
-        "Error parsing answers for filtering:",
-        response.answers,
-        error
-      );
       answersString = "";
     }
-
+    // Type filter
+    if (
+      filterType &&
+      filterType !== "all" &&
+      response.survey?.survey_TYPE !== filterType
+    )
+      return false;
+    // Status filter
+    if (
+      filterStatus &&
+      filterStatus !== "all" &&
+      response.survey?.survey_status !== filterStatus
+    )
+      return false;
+    // Created date filter
+    if (
+      filterCreatedFrom &&
+      new Date(response.survey?.created_at) < new Date(filterCreatedFrom)
+    )
+      return false;
+    if (
+      filterCreatedTo &&
+      new Date(response.survey?.created_at) > new Date(filterCreatedTo)
+    )
+      return false;
+    // Expiry date filter
+    if (
+      filterExpiryFrom &&
+      new Date(response.survey?.expiry_date) < new Date(filterExpiryFrom)
+    )
+      return false;
+    if (
+      filterExpiryTo &&
+      new Date(response.survey?.expiry_date) > new Date(filterExpiryTo)
+    )
+      return false;
+    // Search filter
     return (
       applicantName.includes(lowerSearchQuery) ||
       surveyName.includes(lowerSearchQuery) ||
@@ -724,7 +837,7 @@ const SurveyPage = () => {
         } else if (status === ESurveyStatus.ONGOING) {
           statusColor = "bg-green-100 text-green-800";
           statusText = hasSurveyStarted ? "Active" : "Published";
-        } else if (status === ESurveyStatus.EXPIRED) {
+        } else if (status === "ENDED") {
           statusColor = "bg-red-100 text-red-800";
           statusText = "Ended";
         }
@@ -837,20 +950,20 @@ const SurveyPage = () => {
                   </Menu.Item>
                 )}
 
-                {canDelete && (
-                  <>
-                    <Menu.Divider />
-                    <Menu.Item
-                      color="red"
-                      leftSection={<RiDeleteBinLine className="h-4 w-4" />}
-                      onClick={() => {
-                        setSelectedSurvey(survey);
-                        openDeleteModal();
-                      }}
-                    >
-                      Delete Survey
-                    </Menu.Item>
-                  </>
+                <Menu.Divider />
+
+                {/* Only show Delete for DRAFT surveys to prevent data loss */}
+                {survey.survey_status === ESurveyStatus.DRAFT && (
+                  <Menu.Item
+                    color="red"
+                    leftSection={<RiDeleteBinLine className="h-4 w-4" />}
+                    onClick={() => {
+                      setSelectedSurvey(survey);
+                      openDeleteModal();
+                    }}
+                  >
+                    Delete Survey
+                  </Menu.Item>
                 )}
               </Menu.Dropdown>
             </Menu>
@@ -886,11 +999,14 @@ const SurveyPage = () => {
     {
       accessorKey: "response",
       header: () => <div className="text-left font-semibold">Response</div>,
-      cell: ({ row }) => (
-        <div className="max-w-md truncate" title={row.original.response}>
-          {row.original.response}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const questionMap = getQuestionMap(row.original.survey?.qns);
+        return (
+          <div className="max-w-md truncate" title={row.original.response}>
+            {renderAnswers(row.original.answers, questionMap)}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "status",
@@ -986,7 +1102,7 @@ const SurveyPage = () => {
         } else if (status === ESurveyStatus.ONGOING) {
           statusColor = "bg-green-100 text-green-800";
           statusText = hasSurveyStarted ? "Active" : "Published";
-        } else if (status === ESurveyStatus.EXPIRED) {
+        } else if (status === "ENDED") {
           statusColor = "bg-red-100 text-red-800";
           statusText = "Ended";
         }
@@ -1042,6 +1158,30 @@ const SurveyPage = () => {
       ),
     },
     {
+      id: "download", // Unique ID for the column
+      header: () => (
+        <div className="text-center font-semibold">
+          Download responses per survey
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="flex justify-center">
+          <button
+            className="p-1 hover:bg-gray-100 rounded"
+            onClick={() => {
+              // Explicitly pass the survey ID from the row data
+              handleDownloadResponses(row.original.id);
+            }}
+            // Add a title for accessibility
+            title={`Download  responses for ${row.original.name}`}
+          >
+            {/* Use the download icon */}
+            <FiDownload className="h-4 w-4 text-blue-600" />
+          </button>
+        </div>
+      ),
+    },
+    {
       id: "actions",
       header: () => <div className="text-right font-semibold">Actions</div>,
       cell: ({ row }) => (
@@ -1081,6 +1221,10 @@ const SurveyPage = () => {
 
   return (
     <div className="container mx-auto py-10 px-4">
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">
+        Surveys Overview
+      </h1>
+
       {/* New Survey Button */}
       <div className="flex justify-end mb-6">
         <Link
@@ -1262,21 +1406,6 @@ const SurveyPage = () => {
             </button>
             <button
               className={`text-base md:text-lg font-medium pb-2 ${
-                activeTab === "responses"
-                  ? "text-[#005DE9] border-b-2 border-[#005DE9]"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-              onClick={() => {
-                setActiveTab("responses");
-                setSelectedSurvey(null);
-                setSearchQuery("");
-              }}
-            >
-              Responses
-            </button>
-            {/* New tab for Responses per Survey Type */}
-            <button
-              className={`text-base md:text-lg font-medium pb-2 ${
                 activeTab === "responsesPerType"
                   ? "text-[#005DE9] border-b-2 border-[#005DE9]"
                   : "text-gray-500 hover:text-gray-700"
@@ -1292,7 +1421,126 @@ const SurveyPage = () => {
           </div>
         </div>
 
+        {/* Enhanced Filter Section */}
+        <div className="w-full p-4 sm:p-5 border-b bg-gray-50/50">
+          <div className="flex flex-col space-y-4">
+            {/* Filter Header */}
+            <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <Filter className="w-4 h-4" />
+              <span>Filters</span>
+            </div>
+
+            {/* Filter Controls - Using Flexbox for better control */}
+            <div className="flex flex-wrap gap-4">
+              {/* Type Filter */}
+              <div className="flex flex-col space-y-1 min-w-[160px] flex-1 max-w-[200px]">
+                <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                  Survey Type
+                </label>
+                <Select
+                  value={filterType}
+                  onValueChange={setFilterType}
+                  placeholder="All Types"
+                  className="w-full"
+                >
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="TRAINEESURVEY">Trainee Survey</SelectItem>
+                  <SelectItem value="COMPANYSURVEY">Company Survey</SelectItem>
+                  <SelectItem value="GENERALSURVEY">General Survey</SelectItem>
+                </Select>
+              </div>
+
+              {/* Status Filter */}
+              <div className="flex flex-col space-y-1 min-w-[160px] flex-1 max-w-[350px]">
+                <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                  Status
+                </label>
+                <Select
+                  value={filterStatus}
+                  onValueChange={setFilterStatus}
+                  placeholder="All statuses"
+                  className="w-full"
+                >
+                  <SelectItem value="all">All statuses</SelectItem>
+                  <SelectItem value="DRAFT">Draft</SelectItem>
+                  <SelectItem value="ONGOING">Ongoing</SelectItem>
+                  <SelectItem value="ENDED">Ended</SelectItem>
+                </Select>
+              </div>
+
+              {/* Created Date Range */}
+              <div className="flex flex-col space-y-1 min-w-[200px] flex-1 max-w-[280px]">
+                <label className="text-xs font-medium text-gray-600 uppercase tracking-wide flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  Created Date
+                </label>
+                <div className="flex items-center gap-2 w-full">
+                  <input
+                    type="date"
+                    value={filterCreatedFrom}
+                    onChange={(e) => setFilterCreatedFrom(e.target.value)}
+                    className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="From"
+                  />
+                  <span className="text-xs text-gray-400 px-1">to</span>
+                  <input
+                    type="date"
+                    value={filterCreatedTo}
+                    onChange={(e) => setFilterCreatedTo(e.target.value)}
+                    className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="To"
+                  />
+                </div>
+              </div>
+
+              {/* Expiry Date Range */}
+              <div className="flex flex-col space-y-1 min-w-[200px] flex-1 max-w-[280px]">
+                <label className="text-xs font-medium text-gray-600 uppercase tracking-wide flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  Expiry Date
+                </label>
+                <div className="flex items-center gap-2 w-full">
+                  <input
+                    type="date"
+                    value={filterExpiryFrom}
+                    onChange={(e) => setFilterExpiryFrom(e.target.value)}
+                    className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="From"
+                  />
+                  <span className="text-xs text-gray-400 px-1">to</span>
+                  <input
+                    type="date"
+                    value={filterExpiryTo}
+                    onChange={(e) => setFilterExpiryTo(e.target.value)}
+                    className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="To"
+                  />
+                </div>
+              </div>
+
+              {/* Clear Filters Button */}
+              <div className="flex flex-col justify-end min-w-[120px]">
+                <button
+                  onClick={() => {
+                    setFilterType("");
+                    setFilterStatus("");
+                    setFilterCreatedFrom("");
+                    setFilterCreatedTo("");
+                    setFilterExpiryFrom("");
+                    setFilterExpiryTo("");
+                  }}
+                  className="px-4 py-2 text-sm text-white bg-blue-500 border border-gray-300 rounded-md hover:bg-blue-600  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors whitespace-nowrap"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Search and Actions Section */}
         <div className="w-full flex flex-col lg:flex-row lg:justify-between lg:items-center p-4 sm:p-5 gap-4">
+          {/* Search Input */}
           <div className="relative w-full lg:w-[25rem]">
             <span className="absolute top-4 left-3">
               <BiSearch size={22} className="text-gray-500" />
@@ -1303,8 +1551,8 @@ const SurveyPage = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-gray-500 rounded-full bg-[#005DE908] border-none outline-none focus:ring-2 focus:ring-blue-100"
               placeholder={`Search ${
-                activeTab === "responses"
-                  ? "responses"
+                activeTab === "responsesPerType"
+                  ? "surveys"
                   : activeTab === "ongoing"
                     ? "ongoing surveys"
                     : activeTab === "ended"
@@ -1314,8 +1562,9 @@ const SurveyPage = () => {
             />
           </div>
 
+          {/* Action Buttons */}
           <div className="flex items-center gap-3 self-end lg:self-auto">
-            {activeTab === "responses" && selectedSurvey && (
+            {activeTab === "responsesPerType" && selectedSurvey && (
               <button
                 onClick={() => {
                   setSelectedSurvey(null);
@@ -1327,12 +1576,12 @@ const SurveyPage = () => {
               </button>
             )}
 
-            {(activeTab === "responses" && !selectedSurvey) || activeTab === "responsesPerType" ? (
+            {activeTab === "responsesPerType" && !selectedSurvey && (
               <ExportExcel
                 excelData={formatResponsesForExport(filteredResponses)}
                 fileName={activeTab === "responsesPerType" ? "survey_responses_by_type" : "survey_responses"}
               />
-            ) : null}
+            )}
           </div>
         </div>
 
@@ -1346,22 +1595,6 @@ const SurveyPage = () => {
                 searchQuery
                   ? `No surveys found related to "${searchQuery}"`
                   : "No surveys available"
-              }
-              loadingBackgroundColor="#f1f5f9"
-              loadingColor="#005DE9"
-              pageSize={6}
-            />
-          ) : activeTab === "responses" ? (
-            <CustomDataTable
-              columns={responseColumns}
-              data={filteredResponses}
-              loading={loading}
-              noDataMessage={
-                selectedSurvey
-                  ? `No responses found for "${selectedSurvey.name}"`
-                  : searchQuery
-                    ? `No responses found related to "${searchQuery}"`
-                    : "No responses available"
               }
               loadingBackgroundColor="#f1f5f9"
               loadingColor="#005DE9"
