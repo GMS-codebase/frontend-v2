@@ -39,7 +39,7 @@ const ExportExcel: React.FC<ExportExcelProps> = ({ excelData, fileName }) => {
       <span className="text-xl">
         <FiDownload />
       </span>
-      <span className="text-base font-medium">Download Responses</span>
+      <span className="text-base font-medium">Download All Responses</span>
     </button>
   );
 };
