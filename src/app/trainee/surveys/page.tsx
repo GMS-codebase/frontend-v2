@@ -30,6 +30,7 @@ export default function TraineeSurveys() {
   const [surveyAnswers, setSurveyAnswers] = useState<Record<string, any>>({});
   const [submitLoading, setSubmitLoading] = useState(false);
   const [completedSurveys, setCompletedSurveys] = useState<string[]>([]);
+  const [tabIndex, setTabIndex] = useState(0); // 0: Ongoing, 1: Ended
 
   useEffect(() => {
     let isMounted = true;
@@ -62,11 +63,11 @@ export default function TraineeSurveys() {
           },
         });
 
-        // Filter surveys to only show TRAINEESURVEY type
+        // Filter surveys to show both TRAINEESURVEY and GENERALSURVEY types
         const traineeSurveys = response.data
           .filter(
             (survey: Survey) =>
-              survey.survey_TYPE.toUpperCase() === "TRAINEESURVEY"
+              ["TRAINEESURVEY", "GENERALSURVEY"].includes(survey.survey_TYPE.toUpperCase())
           )
           .map((survey: Survey) => {
             // Transform questions to expected format
@@ -226,6 +227,13 @@ export default function TraineeSurveys() {
     }
   };
 
+  // Tab filtering logic
+  const filteredSurveys = surveys.filter((survey) =>
+    tabIndex === 0
+      ? survey.survey_status === "ONGOING"
+      : survey.survey_status === "ENDED"
+  );
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -287,51 +295,79 @@ export default function TraineeSurveys() {
 
   return (
     <div className="p-6">
-      <Text size="xl" fw={700} mb={24}>
+      <Text size="xl" fw={700} mb={6}>
         Available Surveys
       </Text>
-
+      {/* Tabs */}
+      <div className="flex border-b border-gray-200 mb-8">
+        <button
+          className={`relative px-6 py-2 text-base font-medium focus:outline-none transition-colors duration-150 ${
+            tabIndex === 0 ? "text-blue-600" : "text-gray-500 hover:text-blue-600"
+          }`}
+          onClick={() => setTabIndex(0)}
+          aria-selected={tabIndex === 0}
+          tabIndex={0}
+        >
+          Ongoing Surveys
+          {tabIndex === 0 && (
+            <span className="absolute left-0 right-0 -bottom-1 h-1 bg-blue-600 rounded-t"></span>
+          )}
+        </button>
+        <button
+          className={`relative px-6 py-2 text-base font-medium focus:outline-none transition-colors duration-150 ${
+            tabIndex === 1 ? "text-blue-600" : "text-gray-500 hover:text-blue-600"
+          }`}
+          onClick={() => setTabIndex(1)}
+          aria-selected={tabIndex === 1}
+          tabIndex={0}
+        >
+          Ended Surveys
+          {tabIndex === 1 && (
+            <span className="absolute left-0 right-0 -bottom-1 h-1 bg-blue-600 rounded-t"></span>
+          )}
+        </button>
+      </div>
       <Stack gap="md">
-        {surveys.map((survey) => (
-          <Card key={survey.id} shadow="sm" padding="lg" radius="md" withBorder>
-            <Group justify="space-between" align="flex-start">
-              <Stack gap={4}>
-                <Text size="lg" fw={500}>
-                  {survey.name}
-                </Text>
-                <Text size="sm" c="dimmed">
-                  Expires: {new Date(survey.expiry_date).toLocaleDateString()}
-                </Text>
-                <Text size="sm" c="dimmed">
-                  Status: {survey.survey_status}
-                </Text>
-              </Stack>
-              <Button
-                variant="filled"
-                color={getSurveyStatusColor(survey.survey_status)}
-                disabled={
-                  survey.survey_status === "DRAFT" ||
-                  completedSurveys.includes(survey.id.toString())
-                }
-                onClick={() =>
-                  survey.survey_status === "ONGOING" &&
-                  setSelectedSurvey(survey)
-                }
-              >
-                {completedSurveys.includes(survey.id.toString())
-                  ? "Survey Completed"
-                  : getSurveyStatusText(survey.survey_status)}
-              </Button>
-            </Group>
-          </Card>
-        ))}
-
-        {surveys.length === 0 && (
+        {filteredSurveys.length === 0 ? (
           <Card shadow="sm" padding="lg" radius="md" withBorder>
             <Text c="dimmed" ta="center">
               No surveys available at the moment
             </Text>
           </Card>
+        ) : (
+          filteredSurveys.map((survey) => (
+            <Card key={survey.id} shadow="sm" padding="lg" radius="md" withBorder>
+              <Group justify="space-between" align="flex-start">
+                <Stack gap={4}>
+                  <Text size="lg" fw={500}>
+                    {survey.name}
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    Expires: {new Date(survey.expiry_date).toLocaleDateString()}
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    Status: {survey.survey_status}
+                  </Text>
+                </Stack>
+                <Button
+                  variant="filled"
+                  color={getSurveyStatusColor(survey.survey_status)}
+                  disabled={
+                    survey.survey_status === "DRAFT" ||
+                    completedSurveys.includes(survey.id.toString())
+                  }
+                  onClick={() =>
+                    survey.survey_status === "ONGOING" &&
+                    setSelectedSurvey(survey)
+                  }
+                >
+                  {completedSurveys.includes(survey.id.toString())
+                    ? "Survey Completed"
+                    : getSurveyStatusText(survey.survey_status)}
+                </Button>
+              </Group>
+            </Card>
+          ))
         )}
       </Stack>
     </div>
