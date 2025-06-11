@@ -278,36 +278,6 @@ const Page = () => {
     }
     try {
       setSubmitLoading(true);
-<<<<<<< HEAD
-
-      // Get the current survey
-      const survey = surveys.find(s => s.uuid === surveyId);
-      if (!survey) {
-        throw new Error("Survey not found");
-      }
-
-      // Validate required fields
-      const questions = survey.questions || survey.qns;
-      if (typeof questions === 'string') {
-        const parsedQuestions = JSON.parse(questions);
-        const requiredQuestions = Object.values(parsedQuestions)
-          .flatMap((section: any) => section.pages)
-          .flatMap((page: any) => page.surveys)
-          .filter((q: any) => q.required);
-
-        const missingRequired = requiredQuestions.some((q: any) => !surveyAnswers[q.id]);
-        if (missingRequired) {
-          notifications.show({
-            title: "Warning",
-            message: "Please answer all required questions before submitting",
-            color: "orange",
-          });
-          return;
-        }
-      }
-
-      // Submit survey response to API
-=======
       const responseData = {
         surveyId:
           typeof surveyId === "string" ? parseInt(surveyId, 10) : surveyId,
@@ -315,7 +285,6 @@ const Page = () => {
         userName: userName,
         answers: JSON.stringify(surveyAnswers),
       };
->>>>>>> test
       await authorizedApi.post("/survey/submit-survey", responseData);
       setCompletedSurveys((prev) => [...prev, String(surveyId)]);
       setSelectedSurvey(null);
