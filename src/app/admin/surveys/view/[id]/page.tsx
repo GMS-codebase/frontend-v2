@@ -428,25 +428,30 @@ const Page = () => {
     [survey]
   );
 
+  // Fetch survey when id changes
   useEffect(() => {
     if (id) {
-      const loadData = async () => {
+      const loadSurvey = async () => {
         setLoading(true);
         try {
           await fetchSurvey(id);
-          // Only fetch responses after we have the survey data
-          if (survey) {
-            await fetchSurveyResponses(id);
-          }
         } catch (error) {
-          console.error("Error in initial data load effect:", error);
+          console.error("Error loading survey:", error);
         } finally {
           setLoading(false);
         }
       };
-      loadData();
+      loadSurvey();
     }
-  }, [id, fetchSurvey, fetchSurveyResponses, survey]);
+  }, [id, fetchSurvey]);
+
+  // Fetch responses when survey is loaded
+  useEffect(() => {
+    if (survey && id) {
+      fetchSurveyResponses(id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [survey, id]);
 
   useEffect(() => {
     if (survey) {

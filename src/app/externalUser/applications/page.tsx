@@ -250,7 +250,7 @@ const Page = () => {
           (trade === "All" || app.trade?.trade.title === trade)
         );
       });
-  }, [applications, searchTerm, selectedFilters, getUniqueValues]);
+  }, [applications, searchTerm, selectedFilters]);
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">

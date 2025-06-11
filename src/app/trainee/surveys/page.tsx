@@ -144,7 +144,7 @@ export default function TraineeSurveys() {
     return () => {
       isMounted = false;
     };
-  }, [router]);
+  }, []);
 
   // Get traineeUuid from localStorage
   useEffect(() => {
