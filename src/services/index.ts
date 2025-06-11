@@ -159,7 +159,14 @@ import {
         dispatch({ type: GET_APPEALS_SUCCESS, payload: res.data.data.data });
       })
       .catch((err) => {
-        dispatch({ type: GET_APPEALS_ERROR, payload: err.response.data.error });
+        dispatch({
+          type: GET_APPEALS_ERROR,
+          payload:
+            err?.response?.data?.error ||
+            err?.response?.data?.message ||
+            err?.message ||
+            "Unknown error",
+        });
       });
   };
   export const getAppeals = async (
@@ -175,7 +182,14 @@ import {
         dispatch({ type: GET_APPEALS_SUCCESS, payload: res.data.data.data });
       })
       .catch((err) => {
-        dispatch({ type: GET_APPEALS_ERROR, payload: err.response.data.error });
+        dispatch({
+          type: GET_APPEALS_ERROR,
+          payload:
+            err?.response?.data?.error ||
+            err?.response?.data?.message ||
+            err?.message ||
+            "Unknown error",
+        });
       });
   };
   export const shortenString = (str: string, maxLength: number = 30) => {

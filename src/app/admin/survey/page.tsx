@@ -337,7 +337,7 @@ const SurveyPage = () => {
 
       // Map the API response to match our table structure
       const mappedSurveys = response.data.map((survey: any) => ({
-        uuid: survey.id.toString(), // Use id as uuid for actions
+        uuid: survey.id.toString(),
         id: survey.id,
         name: survey.name,
         questions: survey.qns,
@@ -354,8 +354,13 @@ const SurveyPage = () => {
     } catch (error) {
       console.error("Error fetching surveys:", error);
       notifications.show({
-        message: "Failed to load surveys",
+        title: "Error Loading Surveys",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to load surveys. Please try again.",
         color: "red",
+        icon: "❌",
       });
     } finally {
       setLoading(false);
@@ -545,7 +550,7 @@ const SurveyPage = () => {
       // Add your API call for marking as reviewed
       // await authorizedApi.put(`/survey/responses/${responseId}/mark-reviewed`)
 
-      // Also update all responses state if the reviewed response is present there
+      // Update all responses state if the reviewed response is present there
       setAllResponses((prevResponses) =>
         prevResponses.map((response) =>
           response.uuid === responseId
@@ -555,14 +560,21 @@ const SurveyPage = () => {
       );
 
       notifications.show({
-        message: "Response marked as reviewed",
+        title: "Response Updated",
+        message: "Response has been marked as reviewed",
         color: "green",
+        icon: "✅",
+        autoClose: 3000,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error marking response as reviewed:", error);
       notifications.show({
-        message: "Failed to mark response as reviewed",
+        title: "Error Updating Response",
+        message:
+          error.response?.data?.message ||
+          "Failed to mark response as reviewed. Please try again.",
         color: "red",
+        icon: "❌",
       });
     } finally {
       setIsLoading(false);
@@ -581,17 +593,24 @@ const SurveyPage = () => {
         );
 
         notifications.show({
-          message: "Survey deleted successfully",
+          title: "Survey Deleted",
+          message: "Survey has been successfully deleted",
           color: "green",
+          icon: "✅",
+          autoClose: 3000,
         });
 
         closeDeleteModal();
-        fetchSurveys(); // Refresh the list
-      } catch (error) {
+        fetchSurveys();
+      } catch (error: any) {
         console.error("Error deleting survey:", error);
         notifications.show({
-          message: "Failed to delete survey",
+          title: "Error Deleting Survey",
+          message:
+            error.response?.data?.message ||
+            "Failed to delete survey. Please try again.",
           color: "red",
+          icon: "❌",
         });
       } finally {
         setIsLoading(false);
@@ -617,16 +636,23 @@ const SurveyPage = () => {
         );
 
         notifications.show({
-          message: "Survey started successfully",
+          title: "Survey Started",
+          message: "Survey has been successfully started",
           color: "green",
+          icon: "✅",
+          autoClose: 3000,
         });
 
         fetchSurveys(); // Refresh the list to get updated data
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error starting survey:", error);
         notifications.show({
-          message: "Failed to start survey",
+          title: "Error Starting Survey",
+          message:
+            error.response?.data?.message ||
+            "Failed to start survey. Please try again.",
           color: "red",
+          icon: "❌",
         });
       } finally {
         setIsLoading(false);
@@ -651,16 +677,23 @@ const SurveyPage = () => {
         );
 
         notifications.show({
-          message: "Survey ended successfully",
+          title: "Survey Ended",
+          message: "Survey has been successfully ended",
           color: "green",
+          icon: "✅",
+          autoClose: 3000,
         });
 
         closeEndSurveyModal();
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error ending survey:", error);
         notifications.show({
-          message: "Failed to end survey",
+          title: "Error Ending Survey",
+          message:
+            error.response?.data?.message ||
+            "Failed to end survey. Please try again.",
           color: "red",
+          icon: "❌",
         });
       } finally {
         setIsLoading(false);
@@ -1060,6 +1093,7 @@ const SurveyPage = () => {
         const canEnd = survey.survey_status === ESurveyStatus.ONGOING;
         const canEdit = survey.survey_status === ESurveyStatus.DRAFT;
         const canStart = survey.survey_status === ESurveyStatus.DRAFT;
+        const canDelete = survey.survey_status === ESurveyStatus.DRAFT;
 
         return (
           <div className="flex justify-end">
@@ -1747,7 +1781,11 @@ const SurveyPage = () => {
             {activeTab === "responsesPerType" && !selectedSurvey && (
               <ExportExcel
                 excelData={formatResponsesForExport(filteredResponses)}
-                fileName="survey_responses"
+                fileName={
+                  activeTab === "responsesPerType"
+                    ? "survey_responses_by_type"
+                    : "survey_responses"
+                }
               />
             )}
           </div>
