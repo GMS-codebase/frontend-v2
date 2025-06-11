@@ -2,7 +2,7 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { Form as IForm, SurveyForm, ESurveyType } from "@/types/surveys-form";
+import { IForm, SurveyForm, ESurveyType } from "@/types/surveys-form";
 import SurveyForms from "@/components/forms/SurveyForms";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -84,8 +84,7 @@ const Page = () => {
           id: surveyData.id,
           name: surveyData.name,
           qns: parsedQns,
-          status:
-            surveyData.survey_status === "ONGOING" ? "ongoing" : "expired",
+          status: surveyData.survey_status === "ONGOING" ? "ongoing" : "ended",
           created_at: surveyData.created_at,
           expiry_date: surveyData.expiry_date,
           description: `Survey created on ${new Date(surveyData.created_at).toLocaleDateString()}`,

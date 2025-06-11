@@ -222,7 +222,7 @@ const Page = () => {
                 : "bg-red-100 text-red-800"
             }`}
           >
-            {survey.status === "ongoing" ? "ONGOING" : "EXPIRED"}
+            {survey.status === "ongoing" ? "ONGOING" : "ENDED"}
           </span>
         </div>
 
@@ -243,7 +243,7 @@ const Page = () => {
                       : "bg-red-100 text-red-800"
                   }`}
                 >
-                  {survey.status === "ongoing" ? "ONGOING" : "EXPIRED"}
+                  {survey.status === "ongoing" ? "ONGOING" : "ENDED"}
                 </span>
               </div>
               <div className="flex justify-between items-center">
