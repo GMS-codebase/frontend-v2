@@ -248,7 +248,7 @@ const SurveyResponsesPage = () => {
     try {
       setIsLoading(true)
       // Update the API endpoint as needed for your backend
-      await authorizedApi.put(`/api/v2/survey/survey-response/${responseUuid}/status`, {
+      await authorizedApi.put(`/survey/survey-response/${responseUuid}/status`, {
         status: "REVIEWED",
       })
 
@@ -452,7 +452,7 @@ const SurveyResponsesPage = () => {
           >
             <DropdownItem>
               <Link
-                href={`/sdf/survey/response/${response.survey.id}/${respondent?.uuid}`}
+                href={`/sdf/survey/response/${response.survey.id}/${respondent?.user_id}`}
                 className="flex gap-2 items-center"
               >
                 <Eye className="w-4 h-4 mr-2" />
