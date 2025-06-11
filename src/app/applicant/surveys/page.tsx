@@ -5,7 +5,7 @@ import SurveyForms from "@/components/forms/SurveyForms";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { FiClock, FiCalendar, FiFileText, FiCheckCircle } from "react-icons/fi";
-import { Button } from "@mantine/core";
+import { Button, Tabs } from "@mantine/core";
 import { ESurveyStatus } from "@/types/surveys-form";
 
 const Page = () => {
@@ -27,6 +27,7 @@ const Page = () => {
   const [submittedResponses, setSubmittedResponses] = useState<
     Record<string, any>
   >({});
+  const [activeTab, setActiveTab] = useState<string | null>("general");
 
   // Fetch logged-in user data
   const fetchUserData = useCallback(async () => {
@@ -66,7 +67,12 @@ const Page = () => {
       const response = await authorizedApi.get("/survey/get-all-survey");
 
       const availableSurveys = response.data
-        .filter((survey: any) => survey.survey_status === ESurveyStatus.ONGOING)
+        .filter(
+          (survey: any) =>
+            survey.survey_status === ESurveyStatus.ONGOING &&
+            (survey.survey_TYPE === "GENERALSURVEY" ||
+             survey.survey_TYPE === "COMPANYSURVEY")
+        )
         .map((survey: any) => {
           let transformedQuestions;
           try {
@@ -320,6 +326,16 @@ const Page = () => {
     setSubmittedResponses({});
   };
 
+  // Filter surveys by type
+  const filteredSurveys = surveys.filter((survey) => {
+    if (activeTab === "general") {
+      return survey.survey_type === "GENERALSURVEY";
+    } else if (activeTab === "company") {
+      return survey.survey_type === "COMPANYSURVEY";
+    }
+    return true;
+  });
+
   if (loading || userLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -408,98 +424,215 @@ const Page = () => {
       <div className="flex items-center justify-between my-4">
         <p className="text-2xl font-bold">Available Surveys</p>
       </div>
-      {surveys.length === 0 ? (
-        <div className="text-center py-10">
-          <p className="text-gray-500">No surveys available at the moment.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {surveys.map((survey) => (
-            <div
-              key={survey.uuid}
-              className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 p-6 relative"
-            >
-              <div className="absolute top-4 right-4">
-                {completedSurveys.includes(survey.uuid || "") ? (
-                  <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 flex items-center gap-1">
-                    <FiCheckCircle /> Completed
-                  </span>
-                ) : (
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      survey.survey_status === ESurveyStatus.ONGOING
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {(survey.survey_status ?? "unknown")
-                      .charAt(0)
-                      .toUpperCase() +
-                      (survey.survey_status ?? "unknown").slice(1)}
-                  </span>
-                )}
-              </div>
 
-              <div className="mb-4">
-                <h3 className="text-xl font-semibold mb-2">{survey.name}</h3>
-                <p className="text-gray-600 text-sm">{survey.description}</p>
-              </div>
+      <Tabs value={activeTab} onChange={setActiveTab} className="mb-6">
+        <Tabs.List>
+          <Tabs.Tab value="general">General Surveys</Tabs.Tab>
+          <Tabs.Tab value="company">Company Surveys</Tabs.Tab>
+        </Tabs.List>
 
-              <div className="space-y-3 text-sm text-gray-600 mb-6">
-                <div className="flex items-center gap-2">
-                  <FiCalendar className="text-gray-400" />
-                  <span>
-                    Created: {new Date(survey.created_at).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <FiClock className="text-gray-400" />
-                  <span>
-                    Expires:{" "}
-                    {new Date(survey.expiry_date || "").toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <FiFileText className="text-gray-400" />
-                  <span>
-                    {Object.keys(survey.questions || {}).length} Sections
-                  </span>
-                </div>
-              </div>
-
-              {completedSurveys.includes(survey.uuid || "") ? (
-                <Button
-                  onClick={() => handleViewResponses(survey)}
-                  className="w-full"
-                  variant="filled"
-                  color="blue"
-                >
-                  View Responses
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => {
-                    setSelectedSurvey(survey);
-                    setViewMode("survey");
-                  }}
-                  className="w-full"
-                  variant="filled"
-                  color={
-                    survey.survey_status === ESurveyStatus.ENDED
-                      ? "gray"
-                      : "blue"
-                  }
-                  disabled={survey.survey_status === ESurveyStatus.ENDED}
-                >
-                  {survey.survey_status === ESurveyStatus.ENDED
-                    ? "Survey Expired"
-                    : "Take Survey"}
-                </Button>
-              )}
+        <Tabs.Panel value="general">
+          {filteredSurveys.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-gray-500">
+                No general surveys available at the moment.
+              </p>
             </div>
-          ))}
-        </div>
-      )}
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredSurveys.map((survey) => (
+                <div
+                  key={survey.uuid}
+                  className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 p-6 relative"
+                >
+                  <div className="absolute top-4 right-4">
+                    {completedSurveys.includes(survey.uuid || "") ? (
+                      <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 flex items-center gap-1">
+                        <FiCheckCircle /> Completed
+                      </span>
+                    ) : (
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          survey.survey_status === ESurveyStatus.ONGOING
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {(survey.survey_status ?? "unknown")
+                          .charAt(0)
+                          .toUpperCase() +
+                          (survey.survey_status ?? "unknown").slice(1)}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mb-4">
+                    <h3 className="text-xl font-semibold mb-2">
+                      {survey.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      {survey.description}
+                    </p>
+                  </div>
+
+                  <div className="space-y-3 text-sm text-gray-600 mb-6">
+                    <div className="flex items-center gap-2">
+                      <FiCalendar className="text-gray-400" />
+                      <span>
+                        Created:{" "}
+                        {new Date(survey.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FiClock className="text-gray-400" />
+                      <span>
+                        Expires:{" "}
+                        {new Date(
+                          survey.expiry_date || ""
+                        ).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FiFileText className="text-gray-400" />
+                      <span>
+                        {Object.keys(survey.questions || {}).length} Sections
+                      </span>
+                    </div>
+                  </div>
+
+                  {completedSurveys.includes(survey.uuid || "") ? (
+                    <Button
+                      onClick={() => handleViewResponses(survey)}
+                      className="w-full"
+                      variant="filled"
+                      color="blue"
+                    >
+                      View Responses
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => handleSelectSurvey(survey)}
+                      className="w-full"
+                      variant="filled"
+                      color={
+                        survey.survey_status === ESurveyStatus.ENDED
+                          ? "gray"
+                          : "blue"
+                      }
+                      disabled={survey.survey_status === ESurveyStatus.ENDED}
+                    >
+                      {survey.survey_status === ESurveyStatus.ENDED
+                        ? "Survey Expired"
+                        : "Take Survey"}
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </Tabs.Panel>
+
+        <Tabs.Panel value="company">
+          {filteredSurveys.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-gray-500">
+                No company surveys available at the moment.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredSurveys.map((survey) => (
+                <div
+                  key={survey.uuid}
+                  className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 p-6 relative"
+                >
+                  <div className="absolute top-4 right-4">
+                    {completedSurveys.includes(survey.uuid || "") ? (
+                      <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 flex items-center gap-1">
+                        <FiCheckCircle /> Completed
+                      </span>
+                    ) : (
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          survey.survey_status === ESurveyStatus.ONGOING
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {(survey.survey_status ?? "unknown")
+                          .charAt(0)
+                          .toUpperCase() +
+                          (survey.survey_status ?? "unknown").slice(1)}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mb-4">
+                    <h3 className="text-xl font-semibold mb-2">
+                      {survey.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      {survey.description}
+                    </p>
+                  </div>
+
+                  <div className="space-y-3 text-sm text-gray-600 mb-6">
+                    <div className="flex items-center gap-2">
+                      <FiCalendar className="text-gray-400" />
+                      <span>
+                        Created:{" "}
+                        {new Date(survey.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FiClock className="text-gray-400" />
+                      <span>
+                        Expires:{" "}
+                        {new Date(
+                          survey.expiry_date || ""
+                        ).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FiFileText className="text-gray-400" />
+                      <span>
+                        {Object.keys(survey.questions || {}).length} Sections
+                      </span>
+                    </div>
+                  </div>
+
+                  {completedSurveys.includes(survey.uuid || "") ? (
+                    <Button
+                      onClick={() => handleViewResponses(survey)}
+                      className="w-full"
+                      variant="filled"
+                      color="blue"
+                    >
+                      View Responses
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => handleSelectSurvey(survey)}
+                      className="w-full"
+                      variant="filled"
+                      color={
+                        survey.survey_status === ESurveyStatus.ENDED
+                          ? "gray"
+                          : "blue"
+                      }
+                      disabled={survey.survey_status === ESurveyStatus.ENDED}
+                    >
+                      {survey.survey_status === ESurveyStatus.ENDED
+                        ? "Survey Expired"
+                        : "Take Survey"}
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </Tabs.Panel>
+      </Tabs>
     </div>
   );
 };
