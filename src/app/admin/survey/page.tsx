@@ -36,24 +36,38 @@ interface SurveyWithResponseCount extends Survey {
   responseCount: number;
 }
 
-// Helper to build a map from question ID to question text
-function getQuestionMap(qns: string | any): Record<string, string> {
-  let questionMap: Record<string, string> = {};
+interface ParsedAnswer {
+  question: string;
+  answer: string;
+}
+
+// Parse survey questions to create question map
+const parseQuestions = (qns: string): { [key: string]: string } => {
   try {
-    const parsed = typeof qns === "string" ? JSON.parse(qns) : qns;
+    const parsed = JSON.parse(qns);
+    const questionMap: { [key: string]: string } = {};
+
     if (Array.isArray(parsed)) {
-      parsed.forEach((q, idx) => {
-        const id = q.id || `general-q-0-${idx}`;
-        questionMap[id] = q.question || q.title || `Question ${idx + 1}`;
+      parsed.forEach((item: any, index: number) => {
+        if (item.question) {
+          questionMap[`q${index + 1}`] = item.question;
+          questionMap[item.question] = item.question;
+          questionMap[index.toString()] = item.question;
+        }
       });
-    } else if (typeof parsed === "object" && parsed !== null) {
+    } else if (typeof parsed === "object") {
       Object.values(parsed).forEach((section: any) => {
-        if (section.pages) {
-          section.pages.forEach((page: any) => {
-            if (page.surveys) {
-              page.surveys.forEach((q: any) => {
-                if (q.id) {
-                  questionMap[q.id] = q.title || q.question || q.id;
+        if (section && section.pages && Array.isArray(section.pages)) {
+          section.pages.forEach((pageContent: any) => {
+            if (
+              pageContent &&
+              pageContent.surveys &&
+              Array.isArray(pageContent.surveys)
+            ) {
+              pageContent.surveys.forEach((question: any) => {
+                if (question.id && question.title) {
+                  questionMap[question.id] = question.title;
+                  questionMap[question.title] = question.title;
                 }
               });
             }
@@ -61,42 +75,220 @@ function getQuestionMap(qns: string | any): Record<string, string> {
         }
       });
     }
-  } catch (e) {
-    // fallback: return empty map
+
+    return questionMap;
+  } catch (error) {
+    console.warn(
+      "Failed to parse survey questions:",
+      error,
+      "Problematic qns:",
+      qns
+    );
+    notifications.show({
+      message: "Failed to parse survey questions data.",
+      color: "red",
+    });
+    return {};
   }
-  return questionMap;
-}
+};
+
+// Enhanced parse answers function to handle all possible formats
+const parseAnswers = (
+  answers: string,
+  questionMap: { [key: string]: string }
+): ParsedAnswer[] => {
+  try {
+    let cleanedAnswers = answers;
+    // Remove outer parentheses and quotes if present (e.g., "({...})")
+    if (cleanedAnswers.startsWith('("') && cleanedAnswers.endsWith('")')) {
+      cleanedAnswers = cleanedAnswers.substring(2, cleanedAnswers.length - 2);
+    }
+
+    // Unescape inner quotes that might have been escaped during stringification
+    cleanedAnswers = cleanedAnswers.replace(/\\"/g, '"');
+
+    // Regex to find unquoted keys and wrap them in double quotes
+    // This handles cases like {key:"value"} -> {"key":"value"}
+    cleanedAnswers = cleanedAnswers.replace(
+      /([{,])\s*([a-zA-Z0-9_\-]+):/g,
+      '$1"$2":'
+    );
+
+    const parsed = JSON.parse(cleanedAnswers);
+    const results: ParsedAnswer[] = [];
+
+    if (typeof parsed === "object" && parsed !== null) {
+      Object.entries(parsed).forEach(([key, value]) => {
+        if (!key.includes("{") && !key.includes('"question"')) {
+          results.push({
+            question: questionMap[key] || key,
+            answer: String(value),
+          });
+          return;
+        }
+
+        if (key.includes("{") && key.includes('"question"')) {
+          try {
+            let cleanKey = key;
+            if (cleanKey.startsWith('"{') && cleanKey.endsWith('}"')) {
+              cleanKey = cleanKey.slice(1, -1);
+            }
+
+            const innerJson = JSON.parse(cleanKey);
+
+            if (innerJson.question && innerJson.answer) {
+              results.push({
+                question: innerJson.question,
+                answer: innerJson.answer,
+              });
+            } else if (innerJson.question) {
+              results.push({
+                question: innerJson.question,
+                answer: String(value) || "No answer provided",
+              });
+            }
+          } catch (innerError) {
+            const questionMatch = key.match(/"question":\s*"([^"]*)"/);
+            const answerMatch = key.match(/"answer":\s*"([^"]*)"/);
+
+            if (questionMatch) {
+              results.push({
+                question: questionMatch[1],
+                answer: answerMatch
+                  ? answerMatch[1]
+                  : String(value) || "No answer provided",
+              });
+            } else {
+              results.push({
+                question: "Survey Question",
+                answer: String(value) || "No answer provided",
+              });
+            }
+          }
+          return;
+        }
+
+        results.push({
+          question: questionMap[key] || key,
+          answer: String(value),
+        });
+      });
+    }
+
+    if (Array.isArray(parsed)) {
+      parsed.forEach((item, index) => {
+        if (typeof item === "object" && item !== null) {
+          results.push({
+            question:
+              item.question ||
+              questionMap[index.toString()] ||
+              `Question ${index + 1}`,
+            answer: item.answer || "No answer provided",
+          });
+        } else {
+          results.push({
+            question: questionMap[index.toString()] || `Question ${index + 1}`,
+            answer: String(item),
+          });
+        }
+      });
+    }
+
+    if (results.length === 0) {
+      const patterns = [
+        /"question":\s*"([^"]*)"\s*,\s*"answer":\s*"([^"]*)"/g,
+        /"question":"([^"]*)","answer":"([^"]*)"/g,
+        /question:\s*"([^"]*)"\s*,\s*answer:\s*"([^"]*)"/g,
+      ];
+
+      for (const pattern of patterns) {
+        const matches = [...answers.matchAll(pattern)];
+        if (matches.length > 0) {
+          return matches.map((match) => ({
+            question: match[1],
+            answer: match[2],
+          }));
+        }
+      }
+
+      if (answers.includes('"question"') && answers.includes('"answer"')) {
+        const questionRegex = /"question":\s*"([^"]*)"/g;
+        const answerRegex = /"answer":\s*"([^"]*)"/g;
+
+        const questions = [...answers.matchAll(questionRegex)];
+        const answersMatches = [...answers.matchAll(answerRegex)];
+
+        if (questions.length > 0 && answersMatches.length > 0) {
+          const minLength = Math.min(questions.length, answersMatches.length);
+          for (let i = 0; i < minLength; i++) {
+            results.push({
+              question: questions[i][1],
+              answer: answersMatches[i][1],
+            });
+          }
+        }
+      }
+
+      if (results.length > 0) {
+        return results;
+      }
+
+      return [
+        {
+          question: "Survey Response",
+          answer: JSON.stringify(parsed, null, 2),
+        },
+      ];
+    }
+
+    return results;
+  } catch (error) {
+    const patterns = [
+      /"question":\s*"([^"]*)"\s*,\s*"answer":\s*"([^"]*)"/g,
+      /"question":"([^"]*)","answer":"([^"]*)"/g,
+      /question:\s*"([^"]*)"\s*,\s*answer:\s*"([^"]*)"/g,
+    ];
+
+    for (const pattern of patterns) {
+      const matches = [...answers.matchAll(pattern)];
+      if (matches.length > 0) {
+        return matches.map((match) => ({
+          question: match[1],
+          answer: match[2],
+        }));
+      }
+    }
+
+    return [
+      {
+        question: "Raw Survey Response",
+        answer: answers,
+      },
+    ];
+  }
+};
 
 // Helper to render answers as readable list
 function renderAnswers(answers: any, questionMap: Record<string, string>) {
-  // Try to parse answers if it's a string
-  let parsed = answers;
-  if (typeof answers === "string") {
-    try {
-      parsed = JSON.parse(answers);
-    } catch {
-      try {
-        parsed = JSON.parse(JSON.parse(answers));
-      } catch {
-        // If it's just a plain string, show as is
-        if (answers.trim().length > 0 && answers.trim()[0] !== '{') {
-          return <span>{answers}</span>;
-        }
-        return <span style={{ color: "red" }}>Unreadable answer format</span>;
-      }
-    }
-  }
-  if (typeof parsed !== "object" || parsed === null) {
+  const parsedAnswers = parseAnswers(answers, questionMap);
+
+  if (parsedAnswers.length === 0) {
     return <span>No answers</span>;
   }
+
+  // Display only the first answer for brevity in the table, similar to "+X more answers"
+  const firstAnswer = parsedAnswers[0];
+  const remainingCount = parsedAnswers.length - 1;
+
   return (
-    <ul className="list-disc pl-4">
-      {Object.entries(parsed).map(([id, value]) => (
-        <li key={id}>
-          <strong>{questionMap[id] || id}:</strong> {String(value)}
-        </li>
-      ))}
-    </ul>
+    <div className="flex flex-col">
+      <span>{`${firstAnswer.answer}`}</span>
+      {remainingCount > 0 && (
+        <span className="text-sm text-gray-500">
+          +{remainingCount} more answers
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -312,7 +504,6 @@ const SurveyPage = () => {
           responseCount: responseCounts[survey.id] || 0,
         }));
         setSurveys(surveysWithCounts);
-
       } catch (error) {
         console.error("Error loading initial data:", error);
         notifications.show({
@@ -417,7 +608,7 @@ const SurveyPage = () => {
         await authorizedApi.put(`/survey/${surveyId}/start-survey`);
 
         // Update the survey status locally
-      setSurveys((prevSurveys) =>
+        setSurveys((prevSurveys) =>
           prevSurveys.map((survey) =>
             survey.uuid === surveyId
               ? { ...survey, survey_status: ESurveyStatus.ONGOING }
@@ -431,15 +622,15 @@ const SurveyPage = () => {
         });
 
         fetchSurveys(); // Refresh the list to get updated data
-    } catch (error) {
+      } catch (error) {
         console.error("Error starting survey:", error);
         notifications.show({
           message: "Failed to start survey",
           color: "red",
         });
-    } finally {
+      } finally {
         setIsLoading(false);
-    }
+      }
     },
     [fetchSurveys]
   );
@@ -447,11 +638,11 @@ const SurveyPage = () => {
   // Handle ending a survey
   const handleEndSurvey = useCallback(
     async (surveyId: string) => {
-    try {
+      try {
         setIsLoading(true);
         await authorizedApi.put(`/survey/${surveyId}/end-survey`);
 
-      setSurveys((prevSurveys) =>
+        setSurveys((prevSurveys) =>
           prevSurveys.map((survey) =>
             survey.uuid === surveyId
               ? { ...survey, survey_status: ESurveyStatus.ENDED }
@@ -465,13 +656,13 @@ const SurveyPage = () => {
         });
 
         closeEndSurveyModal();
-    } catch (error) {
+      } catch (error) {
         console.error("Error ending survey:", error);
         notifications.show({
           message: "Failed to end survey",
           color: "red",
         });
-    } finally {
+      } finally {
         setIsLoading(false);
       }
     },
@@ -651,7 +842,7 @@ const SurveyPage = () => {
       }
 
       // Build question map for this response
-      const questionMap = getQuestionMap(response.survey?.qns);
+      const questionMap = parseQuestions(response.survey?.qns);
       const row = [
         response.applicant?.name || "N/A",
         response.survey?.name || "N/A",
@@ -873,17 +1064,17 @@ const SurveyPage = () => {
         return (
           <div className="flex justify-end">
             <Menu shadow="md" width={200}>
-            <Menu.Target>
+              <Menu.Target>
                 <button className="p-1 hover:bg-gray-100 rounded">
                   <HiDotsHorizontal className="h-4 w-4" />
-              </button>
-            </Menu.Target>
+                </button>
+              </Menu.Target>
 
-            <Menu.Dropdown>
-              <Menu.Label>
-                <h1 className="text-lg font-medium">Actions</h1>
-              </Menu.Label>
-              <Menu.Divider />
+              <Menu.Dropdown>
+                <Menu.Label>
+                  <h1 className="text-lg font-medium">Actions</h1>
+                </Menu.Label>
+                <Menu.Divider />
                 <Menu.Item
                   leftSection={<FiEye className="h-4 w-4" />}
                   onClick={() => {
@@ -891,7 +1082,7 @@ const SurveyPage = () => {
                   }}
                 >
                   View Details
-              </Menu.Item>
+                </Menu.Item>
 
                 {canEdit && (
                   <Menu.Item
@@ -900,14 +1091,14 @@ const SurveyPage = () => {
                       (window.location.href = `/admin/surveys/create-edit/${survey.id}`)
                     }
                   >
-                  Edit Survey
-              </Menu.Item>
+                    Edit Survey
+                  </Menu.Item>
                 )}
 
                 {canStart && (
                   <Menu.Item
                     leftSection={<FiPlay className="h-4 w-4" />}
-                  onClick={() => {
+                    onClick={() => {
                       handleStartSurvey(survey.uuid);
                     }}
                   >
@@ -946,7 +1137,7 @@ const SurveyPage = () => {
             </Menu>
           </div>
         );
-    },
+      },
     },
   ];
 
@@ -977,7 +1168,7 @@ const SurveyPage = () => {
       accessorKey: "response",
       header: () => <div className="text-left font-semibold">Response</div>,
       cell: ({ row }) => {
-        const questionMap = getQuestionMap(row.original.survey?.qns);
+        const questionMap = parseQuestions(row.original.survey?.qns);
         return (
           <div className="max-w-md truncate" title={row.original.response}>
             {renderAnswers(row.original.answers, questionMap)}
@@ -1025,7 +1216,7 @@ const SurveyPage = () => {
                   window.location.href = `/admin/surveys/responses/${row.original.survey.id}/${row.original.applicant.uuid}`;
                 }}
               >
-                  View Details
+                View Details
               </Menu.Item>
               {!row.original.reviewed && (
                 <Menu.Item>
@@ -1084,7 +1275,7 @@ const SurveyPage = () => {
           statusText = "Ended";
         }
 
-  return (
+        return (
           <span
             className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}
           >
@@ -1336,44 +1527,44 @@ const SurveyPage = () => {
         </Card>
       </div>
 
-    <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 shadow-sm">
-      <div className="w-full p-5 border-b overflow-x-auto">
-        <div className="flex space-x-4 md:space-x-8 min-w-max">
-          <button
-            className={`text-base md:text-lg font-medium pb-2 ${
+      <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 shadow-sm">
+        <div className="w-full p-5 border-b overflow-x-auto">
+          <div className="flex space-x-4 md:space-x-8 min-w-max">
+            <button
+              className={`text-base md:text-lg font-medium pb-2 ${
                 activeTab === "all"
                   ? "text-[#005DE9] border-b-2 border-[#005DE9]"
                   : "text-gray-500 hover:text-gray-700"
-            }`}
-            onClick={() => {
+              }`}
+              onClick={() => {
                 setActiveTab("all");
                 setSelectedSurvey(null);
                 setSearchQuery("");
-            }}
-          >
-            All Surveys
-          </button>
-          <button
-            className={`text-base md:text-lg font-medium pb-2 ${
-              activeTab === "ongoing"
-                ? "text-[#005DE9] border-b-2 border-[#005DE9]"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
-            onClick={() => {
+              }}
+            >
+              All Surveys
+            </button>
+            <button
+              className={`text-base md:text-lg font-medium pb-2 ${
+                activeTab === "ongoing"
+                  ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              onClick={() => {
                 setActiveTab("ongoing");
                 setSelectedSurvey(null);
                 setSearchQuery("");
-            }}
-          >
-            Ongoing
-          </button>
-          <button
-            className={`text-base md:text-lg font-medium pb-2 ${
+              }}
+            >
+              Ongoing
+            </button>
+            <button
+              className={`text-base md:text-lg font-medium pb-2 ${
                 activeTab === "ended"
                   ? "text-[#005DE9] border-b-2 border-[#005DE9]"
                   : "text-gray-500 hover:text-gray-700"
-            }`}
-            onClick={() => {
+              }`}
+              onClick={() => {
                 setActiveTab("ended");
                 setSelectedSurvey(null);
                 setSearchQuery("");
@@ -1546,23 +1737,23 @@ const SurveyPage = () => {
                 onClick={() => {
                   setSelectedSurvey(null);
                   setSearchQuery("");
-              }}
-              className="text-[#005DE9] py-2.5 px-6 rounded-full border border-[#005DE9] hover:bg-blue-50 transition-colors whitespace-nowrap"
-            >
-              View All Responses
-            </button>
-          )}
+                }}
+                className="text-[#005DE9] py-2.5 px-6 rounded-full border border-[#005DE9] hover:bg-blue-50 transition-colors whitespace-nowrap"
+              >
+                View All Responses
+              </button>
+            )}
 
             {activeTab === "responsesPerType" && !selectedSurvey && (
               <ExportExcel
                 excelData={formatResponsesForExport(filteredResponses)}
                 fileName="survey_responses"
               />
-          )}
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="w-full px-4 sm:px-5 overflow-x-auto">
+        <div className="w-full px-4 sm:px-5 overflow-x-auto">
           {activeTab === "responsesPerType" ? (
             <CustomDataTable
               columns={responsesPerTypeColumns}
@@ -1580,22 +1771,22 @@ const SurveyPage = () => {
           ) : (
             <CustomDataTable
               columns={columns}
-            data={filteredSurveys}
+              data={filteredSurveys}
               loading={loading}
-            noDataMessage={
-              searchQuery
-                ? `No surveys found related to "${searchQuery}"`
-                : activeTab === "ongoing"
-                  ? "No ongoing surveys found"
-                  : activeTab === "ended"
-                    ? "No ended surveys found"
-                    : "No surveys added so far"
-            }
-            loadingBackgroundColor="#f1f5f9"
-            loadingColor="#005DE9"
-            pageSize={6}
-          />
-        )}
+              noDataMessage={
+                searchQuery
+                  ? `No surveys found related to "${searchQuery}"`
+                  : activeTab === "ongoing"
+                    ? "No ongoing surveys found"
+                    : activeTab === "ended"
+                      ? "No ended surveys found"
+                      : "No surveys added so far"
+              }
+              loadingBackgroundColor="#f1f5f9"
+              loadingColor="#005DE9"
+              pageSize={6}
+            />
+          )}
         </div>
       </div>
 
