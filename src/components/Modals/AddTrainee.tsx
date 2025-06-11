@@ -155,7 +155,6 @@ const AddTrainee = ({ isOpenEditTrainee, closeEditTrainee }: Props) => {
                   : "text-gray-500 hover:text-blue-600"
               }`}
               onClick={() => setTabIndex(idx)}
-              aria-selected={tabIndex === idx}
               tabIndex={0}
             >
               {tab.label}
@@ -355,7 +354,7 @@ const AddTrainee = ({ isOpenEditTrainee, closeEditTrainee }: Props) => {
                 </div>
               </div>
               <div className="flex flex-col items-center mt-2">
-                <span className="text-gray-500 text-sm mb-1">Don't have the template?</span>
+                <span className="text-gray-500 text-sm mb-1">Don&apos;t have the template?</span>
                 <button
                   onClick={handleDownloadTemplate}
                   className="px-4 py-2 bg-white border border-blue-400 text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition"

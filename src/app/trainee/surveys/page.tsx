@@ -143,7 +143,7 @@ export default function TraineeSurveys() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [router]);
 
   // Get traineeUuid from localStorage
   useEffect(() => {
@@ -434,7 +434,6 @@ export default function TraineeSurveys() {
             tabIndex === 0 ? "text-blue-600" : "text-gray-500 hover:text-blue-600"
           }`}
           onClick={() => setTabIndex(0)}
-          aria-selected={tabIndex === 0}
           tabIndex={0}
         >
           Ongoing Surveys
@@ -447,7 +446,6 @@ export default function TraineeSurveys() {
             tabIndex === 1 ? "text-blue-600" : "text-gray-500 hover:text-blue-600"
           }`}
           onClick={() => setTabIndex(1)}
-          aria-selected={tabIndex === 1}
           tabIndex={0}
         >
           Ended Surveys
