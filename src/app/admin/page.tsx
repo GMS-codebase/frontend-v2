@@ -114,7 +114,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       if (!callsLoading && activeCall) {
-        setCallStatsLoading(true);
+          setCallStatsLoading(true);
         setApplicantsDataLoading(true);
         setApplicationsDataLoading(true);
         setSubmissionsDataLoading(true);
@@ -145,7 +145,7 @@ const Dashboard = () => {
           setApplicantsData({});
           setApplicantsDataError('Failed to load applicants data');
         }
-        setApplicantsDataLoading(false);
+          setApplicantsDataLoading(false);
         // Applications Data
         if (results[2].status === 'fulfilled') {
           setApplicationsData(results[2].value);
@@ -154,7 +154,7 @@ const Dashboard = () => {
           setApplicationsData({});
           setApplicationsDataError('Failed to load applications data');
         }
-        setApplicationsDataLoading(false);
+          setApplicationsDataLoading(false);
         // Submissions Data
         if (results[3].status === 'fulfilled') {
           setSubmissionsData(results[3].value);
@@ -163,7 +163,7 @@ const Dashboard = () => {
           setSubmissionsData({});
           setSubmissionsDataError('Failed to load submissions data');
         }
-        setSubmissionsDataLoading(false);
+          setSubmissionsDataLoading(false);
       }
     };
     fetchDashboardData();
