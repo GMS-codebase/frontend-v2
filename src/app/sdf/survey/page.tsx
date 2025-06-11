@@ -1,19 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
-import {
-  Search,
-  Download,
-  Eye,
-  MoreHorizontal,
-  CheckCheck,
-  User,
-  Clock,
-  FileText,
-  ChevronLeft,
-  ChevronRight,
-  Filter,
-} from "lucide-react"
+import { Search, Download, Eye, MoreHorizontal, User, Clock, FileText, ChevronLeft, ChevronRight, Filter, CheckCheck } from 'lucide-react'
 import { format } from "date-fns"
 import Link from "next/link"
 import { notifications } from "@mantine/notifications"
@@ -68,10 +56,12 @@ interface Trainee {
   dateOfBirth?: string
   maritalStatus?: string
   approvalStatus?: string
+  user_id: string
 }
 
 interface SurveyResponse {
   uuid: string
+  user_id: string
   id: number
   traineeUuid?: string | null
   answers: string
@@ -242,36 +232,6 @@ const SurveyResponsesPage = () => {
     fetchSurveys()
     fetchResponses(1)
   }, [fetchSurveys, fetchResponses])
-
-  // Handle marking a response as reviewed
-  const handleMarkAsReviewed = useCallback(async (responseUuid: string) => {
-    try {
-      setIsLoading(true)
-      // Update the API endpoint as needed for your backend
-      await authorizedApi.put(`/survey/survey-response/${responseUuid}/status`, {
-        status: "REVIEWED",
-      })
-
-      setResponses((prevResponses) =>
-        prevResponses.map((response) =>
-          response.uuid === responseUuid ? { ...response, status: "REVIEWED" } : response,
-        ),
-      )
-
-      notifications.show({
-        message: "Response marked as reviewed",
-        color: "green",
-      })
-    } catch (error) {
-      console.error("Error marking response as reviewed:", error)
-      notifications.show({
-        message: "Failed to mark response as reviewed",
-        color: "red",
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
 
   // Filter responses based on all filters
   const filteredResponses = responses.filter((response) => {
@@ -450,21 +410,15 @@ const SurveyResponsesPage = () => {
               </Button>
             }
           >
-            <DropdownItem>
+            <DropdownItem>              
               <Link
-                href={`/sdf/survey/response/${response.survey.id}/${respondent?.user_id}`}
+                href={`/sdf/survey/response/${response.survey.id}/${response.trainee ? respondent?.uuid : respondent?.user_id}`}
                 className="flex gap-2 items-center"
               >
                 <Eye className="w-4 h-4 mr-2" />
                 View Details
               </Link>
             </DropdownItem>
-            {response.status !== "REVIEWED" && (
-              <DropdownItem onClick={() => handleMarkAsReviewed(response.uuid)} disabled={isLoading}>
-                <CheckCheck className="w-4 h-4 mr-2" />
-                Mark as Reviewed
-              </DropdownItem>
-            )}
           </Dropdown>
         </TableCell>
       </TableRow>
