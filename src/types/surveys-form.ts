@@ -12,25 +12,18 @@ export enum ESurveyType {
 
 export interface SurveyResponse {
   uuid: string;
-  id?: number;
+  lastUpdatedAt?: string;
+  answers: string;
+  status: string;
+  submitted_at: string;
   applicant: {
-    // Assuming applicant is an object with a name
     uuid: string;
-    name: string;
-    [key: string]: any; // Allow other properties
+    user_id: string;
+    [key: string]: any;
   };
-  survey: {
-    // Assuming survey is an object with id and name
-    id: number;
-    name: string;
-    qns?: string; // Include qns as it's used in fetchResponses
-    survey_TYPE?: string; // Include survey_TYPE
-    [key: string]: any; // Allow other properties
-  };
-  answers: string; // JSON string of answers
-  submitted_at: string; // Timestamp string
-  reviewed: boolean; // Status of the response
-  [key: string]: any; // Allow other properties for the top level
+  trainee: any;
+  reviewed: boolean;
+  [key: string]: any;
 }
 
 export interface SurveyForm {
@@ -49,21 +42,20 @@ export interface Section {
   questions: Survey[];
 }
 
-export interface Form {
+export interface IForm {
   uuid?: string;
   id?: number;
   name: string;
-  qns: SurveyForm | string;
-  status?: "ongoing" | "expired";
-  created_at: Date | string;
-  expiry_date?: Date | string;
+  qns: any;
+  status?: "ongoing" | "ended" | undefined;
+  created_at: Date;
+  expiry_date: Date;
   description?: string;
-  questions?: SurveyForm | string;
-  survey_status?: ESurveyStatus;
-  updated_at?: string;
+  survey_status?: string;
+  updated_at?: Date;
   survey_type?: ESurveyType;
   hasSurvey_Started?: boolean;
-  surveyStartingTime?: string | null;
+  surveyStartingTime?: Date;
   sections?: Section[];
 }
 
