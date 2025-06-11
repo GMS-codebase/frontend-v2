@@ -27,7 +27,7 @@ function Page() {
   const dispatch = useDispatch();
   useEffect(() => {
     getCalls(dispatch);
-  }, []);
+  }, [dispatch]);
   const { calls, loading: loadingCalls } = useSelector(
     (state: any) => state.calls
   );
