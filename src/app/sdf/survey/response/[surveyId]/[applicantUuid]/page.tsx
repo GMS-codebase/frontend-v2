@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { IoArrowBack } from "react-icons/io5"
 import { format } from "date-fns"
@@ -269,34 +269,28 @@ const IndividualResponsePage = () => {
   }
 
   // Fetch individual response
-  const fetchResponse = async () => {
+  const fetchResponse = useCallback(async () => {
     try {
       setLoading(true)
-      
       // First, try the trainee-specific endpoint
       try {
         const traineeResponse = await authorizedApi.get(`/survey/survey-responseByTrainee/${surveyId}/${applicantUuid}`)
-        
         if (traineeResponse.data) {
           setIsTraineeResponse(true)
           const responseData = traineeResponse.data
           setResponse(responseData)
-
           // Parse the answers
           if (responseData.answers) {
             let questionMap: { [key: string]: string } = {}
-
             // Parse questions if available
             if (responseData.survey?.qns) {
               questionMap = parseQuestions(responseData.survey.qns)
             }
-
             const parsed = parseAnswers(responseData.answers, questionMap)
             setParsedAnswers(parsed)
           } else {
             setParsedAnswers([])
           }
-
           notifications.show({
             message: "Trainee response loaded successfully",
             color: "green",
@@ -306,30 +300,24 @@ const IndividualResponsePage = () => {
       } catch (traineeError) {
         console.log("Not a trainee response, trying applicant endpoint...")
       }
-
       // If trainee endpoint fails, try the general endpoint for applicants
       try {
         const applicantResponse = await authorizedApi.get(`/survey/survey-response/${surveyId}/${applicantUuid}`)
-        
         setIsTraineeResponse(false)
         const responseData = applicantResponse.data
         setResponse(responseData)
-
         // Parse the answers
         if (responseData.answers) {
           let questionMap: { [key: string]: string } = {}
-
           // Parse questions if available
           if (responseData.survey?.qns) {
             questionMap = parseQuestions(responseData.survey.qns)
           }
-
           const parsed = parseAnswers(responseData.answers, questionMap)
           setParsedAnswers(parsed)
         } else {
           setParsedAnswers([])
         }
-
         notifications.show({
           message: "Applicant response loaded successfully",
           color: "green",
@@ -337,7 +325,6 @@ const IndividualResponsePage = () => {
       } catch (applicantError) {
         throw new Error("Failed to load response from both endpoints")
       }
-
     } catch (error) {
       console.error("Error fetching response:", error)
       notifications.show({
@@ -347,7 +334,7 @@ const IndividualResponsePage = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [surveyId, applicantUuid])
 
   // Handle status change
   const handleStatusChange = async (newStatus: "REVIEWED") => {
@@ -428,7 +415,7 @@ const IndividualResponsePage = () => {
     if (surveyId && applicantUuid) {
       fetchResponse()
     }
-  }, [surveyId, applicantUuid])
+  }, [fetchResponse])
 
   if (loading) {
     return (
