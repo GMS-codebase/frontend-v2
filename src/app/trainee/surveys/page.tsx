@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
-import { Card, Text, Stack, Group, Button } from "@mantine/core";
+import { Card, Text, Stack, Group, Button, Modal } from "@mantine/core";
 import { useRouter } from "next13-progressbar";
 import { unauthorizedApi, authorizedApi } from "@/utils/api";
-import { setCookie } from "cookies-next";
+import { setCookie, getCookie } from "cookies-next";
 import { notifications } from "@mantine/notifications";
 import SurveyForms from "@/components/forms/SurveyForms";
 import { ESurveyStatus } from "@/types/surveys-form";
@@ -31,6 +31,12 @@ export default function TraineeSurveys() {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [completedSurveys, setCompletedSurveys] = useState<string[]>([]);
   const [tabIndex, setTabIndex] = useState(0); // 0: Ongoing, 1: Ended
+  const [traineeUuid, setTraineeUuid] = useState<string | null>(null);
+  const [resultModalOpen, setResultModalOpen] = useState(false);
+  const [resultLoading, setResultLoading] = useState(false);
+  const [resultError, setResultError] = useState<string | null>(null);
+  const [resultData, setResultData] = useState<any>(null);
+  const [resultParsedAnswers, setResultParsedAnswers] = useState<any[]>([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -139,6 +145,21 @@ export default function TraineeSurveys() {
     };
   }, []);
 
+  // Get traineeUuid from localStorage
+  useEffect(() => {
+    const traineeData = localStorage.getItem("traineeData");
+    if (traineeData) {
+      try {
+        const parsed = JSON.parse(traineeData);
+        setTraineeUuid(parsed.uuid || parsed.profile?.uuid || null);
+      } catch {
+        setTraineeUuid(null);
+      }
+    } else {
+      setTraineeUuid(null);
+    }
+  }, []);
+
   const handleSetAnswers = (key: string, value: any) => {
     setSurveyAnswers((prev) => ({
       ...prev,
@@ -233,6 +254,114 @@ export default function TraineeSurveys() {
       ? survey.survey_status === "ONGOING"
       : survey.survey_status === "ENDED"
   );
+
+  // Parse questions helper (from SDF)
+  const parseQuestions = (qns: string): { [key: string]: string } => {
+    try {
+      const parsed = JSON.parse(qns);
+      const questionMap: { [key: string]: string } = {};
+      if (Array.isArray(parsed)) {
+        parsed.forEach((item: any, index: number) => {
+          if (item.question) {
+            questionMap[`q${index + 1}`] = item.question;
+            questionMap[item.question] = item.question;
+            questionMap[index.toString()] = item.question;
+          }
+        });
+      } else if (typeof parsed === "object") {
+        Object.values(parsed).forEach((section: any) => {
+          if (section && section.pages && Array.isArray(section.pages)) {
+            section.pages.forEach((pageContent: any) => {
+              if (pageContent && pageContent.surveys && Array.isArray(pageContent.surveys)) {
+                pageContent.surveys.forEach((question: any) => {
+                  if (question.id && question.title) {
+                    questionMap[question.id] = question.title;
+                    questionMap[question.title] = question.title;
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+      return questionMap;
+    } catch {
+      return {};
+    }
+  };
+
+  // Parse answers helper (from SDF)
+  const parseAnswers = (answers: string, questionMap: { [key: string]: string }) => {
+    try {
+      const parsed = JSON.parse(answers);
+      const results: any[] = [];
+      if (typeof parsed === "object" && parsed !== null) {
+        Object.entries(parsed).forEach(([key, value]) => {
+          results.push({
+            question: questionMap[key] || key,
+            answer: String(value),
+          });
+        });
+      }
+      if (Array.isArray(parsed)) {
+        parsed.forEach((item, index) => {
+          if (typeof item === "object" && item !== null) {
+            results.push({
+              question: item.question || questionMap[index.toString()] || `Question ${index + 1}`,
+              answer: item.answer || "No answer provided",
+            });
+          } else {
+            results.push({
+              question: questionMap[index.toString()] || `Question ${index + 1}`,
+              answer: String(item),
+            });
+          }
+        });
+      }
+      return results;
+    } catch {
+      return [];
+    }
+  };
+
+  // Handle View Results
+  const handleViewResults = async (surveyId: number) => {
+    // Always get the latest traineeUuid from localStorage
+    let uuid = traineeUuid;
+    const traineeData = localStorage.getItem("traineeData");
+    if (traineeData) {
+      try {
+        const parsed = JSON.parse(traineeData);
+        uuid = parsed.uuid || parsed.profile?.uuid || null;
+      } catch {
+        uuid = null;
+      }
+    }
+    if (!uuid) {
+      notifications.show({ title: "Error", message: "Trainee not found", color: "red" });
+      return;
+    }
+    setResultModalOpen(true);
+    setResultLoading(true);
+    setResultError(null);
+    setResultData(null);
+    setResultParsedAnswers([]);
+    try {
+      const token = getCookie("token");
+      const res = await authorizedApi.get(`/survey/survey-responseByTrainee/${surveyId}/${uuid}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setResultData(res.data);
+      // Parse answers
+      let questionMap = {};
+      if (res.data.survey?.qns) questionMap = parseQuestions(res.data.survey.qns);
+      setResultParsedAnswers(parseAnswers(res.data.answers, questionMap));
+    } catch (err: any) {
+      setResultError(err?.response?.data?.message || "Failed to fetch survey result");
+    } finally {
+      setResultLoading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -357,8 +486,9 @@ export default function TraineeSurveys() {
                     completedSurveys.includes(survey.id.toString())
                   }
                   onClick={() =>
-                    survey.survey_status === "ONGOING" &&
-                    setSelectedSurvey(survey)
+                    survey.survey_status === "ONGOING"
+                      ? setSelectedSurvey(survey)
+                      : handleViewResults(survey.id)
                   }
                 >
                   {completedSurveys.includes(survey.id.toString())
@@ -370,6 +500,48 @@ export default function TraineeSurveys() {
           ))
         )}
       </Stack>
+      {/* Result Modal */}
+      <Modal opened={resultModalOpen} onClose={() => setResultModalOpen(false)} size="lg" centered>
+        <div className="p-6">
+          {resultLoading ? (
+            <div className="flex items-center justify-center min-h-[200px]">
+              <span className="text-gray-600">Loading result...</span>
+            </div>
+          ) : resultError ? (
+            <div className="text-red-500 text-center min-h-[200px]">{resultError}</div>
+          ) : resultData ? (
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Survey Result</h2>
+              <div className="mb-4">
+                <div className="font-semibold">Survey: <span className="font-normal">{resultData.survey?.name}</span></div>
+                <div className="font-semibold">Status: <span className="font-normal">{resultData.status}</span></div>
+                <div className="font-semibold">Submitted: <span className="font-normal">{resultData.submitted_at ? new Date(resultData.submitted_at).toLocaleString() : "N/A"}</span></div>
+              </div>
+              <div className="mb-4">
+                <div className="font-semibold">Trainee Name: <span className="font-normal">{resultData.trainee?.name}</span></div>
+                <div className="font-semibold">Email: <span className="font-normal">{resultData.trainee?.email}</span></div>
+                <div className="font-semibold">Phone: <span className="font-normal">{resultData.trainee?.phone}</span></div>
+                <div className="font-semibold">National ID: <span className="font-normal">{resultData.trainee?.nationalId}</span></div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Responses</h3>
+                {resultParsedAnswers.length === 0 ? (
+                  <div className="text-gray-500">No responses found.</div>
+                ) : (
+                  <ul className="space-y-4">
+                    {resultParsedAnswers.map((ans, idx) => (
+                      <li key={idx} className="border-b pb-2">
+                        <div className="font-medium">Q{idx + 1}: {ans.question}</div>
+                        <div className="ml-4 text-gray-700">{ans.answer}</div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </Modal>
     </div>
   );
 }
