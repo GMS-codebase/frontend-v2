@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import React, { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react"
 import {
   Search,
   Download,
@@ -10,397 +10,486 @@ import {
   User,
   Clock,
   FileText,
-} from "lucide-react";
-import { format } from "date-fns";
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+} from "lucide-react"
+import { format } from "date-fns"
+import Link from "next/link"
+import { notifications } from "@mantine/notifications"
 
-import { Survey, SurveyResponse } from "@/types/survey/survey";
-import { authorizedApi } from "@/utils/api";
-import { exportResponsesToExcel } from "@/utils/survey/excelExport";
+import { authorizedApi } from "@/utils/api"
+import Button from "@/components/ui/Button"
+import Input from "@/components/ui/Input"
+import Badge from "@/components/ui/Badge"
+import { Card, CardContent } from "@/components/ui/Card"
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/Table"
+import { Dropdown, DropdownItem } from "@/components/ui/Dropdown"
+import { Select, SelectItem } from "@/components/ui/Select"
 
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
-import Badge from "@/components/ui/Badge";
-import { Card, CardContent } from "@/components/ui/Card";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "@/components/ui/Table";
-import { Dropdown, DropdownItem } from "@/components/ui/Dropdown";
-import { Select, SelectItem } from "@/components/ui/Select";
-import { useToast } from "@/components/ui/Toast";
-import ResponseDetailsModal from "@/components/survey/ResponseDetailsModal";
-import Link from "next/link";
-import { notifications } from "@mantine/notifications";
+// Types based on the API response
+interface Survey {
+  id: number
+  name: string
+  qns: string
+  expiry_date: string
+  survey_status: string
+  created_at: string
+  updated_at: string
+  survey_TYPE: string
+  hasSurvey_Started: boolean
+  surveyStartingTime: string
+}
 
-const SurveyPage = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSurvey, setSelectedSurvey] = useState<string>("all");
-  const [selectedResponse, setSelectedResponse] =
-    useState<SurveyResponse | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+interface Applicant {
+  uuid: string
+  name: string
+  email: string
+  phone: string
+  address: string
+  gender: string
+  nationalId?: string
+  user_id?: string
+  age?: number
+  description?: string
+  po_box?: string
+  has_completed_profile?: boolean
+  contact_count?: number
+}
 
-  // State for surveys and responses
-  const [surveys, setSurveys] = useState<Survey[]>([]);
-  const [responses, setResponses] = useState<SurveyResponse[]>([]);
-  const [loading, setLoading] = useState(true);
+interface Trainee {
+  uuid: string
+  name: string
+  email: string
+  phone: string
+  gender: string
+  nationalId: string
+  applicationNumber: string
+  dateOfBirth?: string
+  maritalStatus?: string
+  approvalStatus?: string
+}
 
-  // Modal controls
-  const [isOpenResponseDetails, setIsOpenResponseDetails] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+interface SurveyResponse {
+  uuid: string
+  id: number
+  traineeUuid?: string | null
+  answers: string
+  status: "SUBMITTED" | "REVIEWED"
+  submitted_at: string
+  survey: Survey
+  applicant: Applicant | null
+  trainee: Trainee | null
+  deletedStatus: boolean
+  doneAt: string
+  lastUpdatedAt: string
+}
 
-  // Fetch surveys from API
+interface ApiResponse {
+  data: SurveyResponse[]
+  total: number
+  page: string
+  lastPage: number
+}
+
+interface ParsedAnswer {
+  question: string
+  answer: string
+}
+
+const SurveyResponsesPage = () => {
+  // State management
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedSurvey, setSelectedSurvey] = useState<string>("all")
+  const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [surveyTypeFilter, setSurveyTypeFilter] = useState<string>("all")
+  const [dateFromFilter, setDateFromFilter] = useState<string>("")
+  const [dateToFilter, setDateToFilter] = useState<string>("")
+
+  // Data state
+  const [surveys, setSurveys] = useState<Survey[]>([])
+  const [responses, setResponses] = useState<SurveyResponse[]>([])
+  const [loading, setLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalResponses, setTotalResponses] = useState(0)
+  const [pageSize] = useState(10)
+
+  // Fetch surveys for filter dropdown
   const fetchSurveys = useCallback(async () => {
     try {
-      const response = await authorizedApi.get("/survey/get-all-survey");
+      const response = await authorizedApi.get("/survey/get-all-survey")
       const mappedSurveys = response.data.map((survey: any) => ({
-        uuid: survey.id.toString(),
         id: survey.id,
         name: survey.name,
-        questions: survey.qns,
+        qns: survey.qns,
         expiry_date: survey.expiry_date,
         survey_status: survey.survey_status,
         created_at: survey.created_at,
         updated_at: survey.updated_at,
-        survey_type: survey.survey_TYPE,
+        survey_TYPE: survey.survey_TYPE,
         hasSurvey_Started: survey.hasSurvey_Started,
         surveyStartingTime: survey.surveyStartingTime,
-      }));
-      setSurveys(mappedSurveys);
+      }))
+      setSurveys(mappedSurveys)
     } catch (error) {
-      console.error("Error fetching surveys:", error);
+      console.error("Error fetching surveys:", error)
       notifications.show({
         message: "Failed to load surveys",
         color: "red",
-      });
+      })
     }
-  }, []);
+  }, [])
 
-  // Fetch survey responses from API
-  const fetchResponses = useCallback(async () => {
+  // Parse survey questions to create question map
+  const parseQuestions = (qns: string): { [key: string]: string } => {
     try {
-      setLoading(true);
-      const response = await authorizedApi.get(
-        "/survey/getAllSurveyResponses?page=1&limit=100"
-      );
+      const parsed = JSON.parse(qns)
+      const questionMap: { [key: string]: string } = {}
 
-      const mappedResponses: SurveyResponse[] = response.data.data.map(
-        (item: any) => {
-          // Parse answers JSON
-          let answers: { [key: string]: string } = {};
-          try {
-            answers = item.answers ? JSON.parse(item.answers) : {};
-          } catch (error) {
-            console.warn("Failed to parse answers JSON:", error);
+      if (Array.isArray(parsed)) {
+        // Simple array format: [{"question": "How do you rate our service?"}]
+        parsed.forEach((item: any, index: number) => {
+          if (item.question) {
+            questionMap[`q${index + 1}`] = item.question
           }
-
-          // Parse survey questions (qns) to map question IDs to titles
-          let questionMap: { [key: string]: string } = {};
-          try {
-            const qns = JSON.parse(item.survey.qns);
-            Object.values(qns).forEach((section: any) => {
-              section.pages?.forEach((page: any) => {
-                page.surveys?.forEach((survey: any) => {
-                  questionMap[survey.id] = survey.title;
-                });
-              });
-            });
-          } catch (error) {
-            console.warn("Failed to parse qns JSON:", error);
-          }
-
-          // Map answers to question-answer pairs
-          const parsedResponses = Object.entries(answers).map(
-            ([questionId, answer]) => ({
-              question: questionMap[questionId] || questionId,
-              answer: String(answer),
+        })
+      } else if (typeof parsed === "object") {
+        // Complex nested format with sections and pages
+        Object.values(parsed).forEach((section: any) => {
+          if (section && section.pages && Array.isArray(section.pages)) {
+            section.pages.forEach((page: any) => {
+              if (page && page.surveys && Array.isArray(page.surveys)) {
+                page.surveys.forEach((survey: any) => {
+                  if (survey.id && survey.title) {
+                    questionMap[survey.id] = survey.title
+                  }
+                })
+              }
             })
-          );
+          }
+        })
+      }
+
+      return questionMap
+    } catch (error) {
+      console.warn("Failed to parse questions:", error)
+      return {}
+    }
+  }
+
+  // Parse response answers
+  const parseAnswers = (answers: string, questionMap: { [key: string]: string }): ParsedAnswer[] => {
+    try {
+      const parsed = JSON.parse(answers)
+      return Object.entries(parsed).map(([questionId, answer]) => ({
+        question: questionMap[questionId] || questionId,
+        answer: String(answer),
+      }))
+    } catch (error) {
+      console.warn("Failed to parse answers:", error)
+      return []
+    }
+  }
+
+  // Fetch survey responses with pagination
+  const fetchResponses = useCallback(
+    async (page = 1) => {
+      try {
+        setLoading(page === 1)
+        const response = await authorizedApi.get(`/survey/getAllSurveyResponses?page=${page}&limit=${pageSize}`)
+
+        const apiResponse: ApiResponse = response.data
+
+        // Process responses and add parsed answers
+        const processedResponses = apiResponse.data.map((item) => {
+          const questionMap = parseQuestions(item.survey.qns)
+          const parsedAnswers = parseAnswers(item.answers, questionMap)
 
           return {
-            uuid: item.uuid,
-            id: item.id,
-            survey_id: item.survey.id.toString(),
-            applicant: item.applicant.name,
-            survey: item.survey.name,
-            response: item.answers
-              ? JSON.stringify(item.answers)
-              : "No answers provided",
-            timestamp: new Date(item.submitted_at),
-            reviewed: false,
-            details: {
-              email: item.applicant.email,
-              phone: item.applicant.phone,
-              address: item.applicant.address,
-              responses:
-                parsedResponses.length > 0 ? parsedResponses : undefined,
-            },
-          };
-        }
-      );
+            ...item,
+            parsedAnswers,
+          }
+        })
 
-      setResponses(mappedResponses);
-      notifications.show({
-        message: "Responses loaded successfully",
-        color: "green",
-      });
-    } catch (error) {
-      console.error("Error fetching responses:", error);
-      notifications.show({
-        message: "Failed to load responses",
-        color: "red",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        setResponses(processedResponses)
+        setTotalResponses(apiResponse.total)
+        setTotalPages(apiResponse.lastPage)
+        setCurrentPage(Number.parseInt(apiResponse.page))
+
+        notifications.show({
+          message: "Responses loaded successfully",
+          color: "green",
+        })
+      } catch (error) {
+        console.error("Error fetching responses:", error)
+        notifications.show({
+          message: "Failed to load responses",
+          color: "red",
+        })
+      } finally {
+        setLoading(false)
+      }
+    },
+    [pageSize],
+  )
 
   // Load data on component mount
   useEffect(() => {
-    fetchSurveys();
-    fetchResponses();
-  }, [fetchSurveys, fetchResponses]);
+    fetchSurveys()
+    fetchResponses(1)
+  }, [fetchSurveys, fetchResponses])
 
   // Handle marking a response as reviewed
-  const handleMarkAsReviewed = useCallback(async (responseId: string) => {
+  const handleMarkAsReviewed = useCallback(async (responseUuid: string) => {
     try {
-      setIsLoading(true);
-      await authorizedApi.put(`/survey/responses/${responseId}/mark-reviewed`);
+      setIsLoading(true)
+      // Update the API endpoint as needed for your backend
+      await authorizedApi.put(`/api/v2/survey/survey-response/${responseUuid}/status`, {
+        status: "REVIEWED",
+      })
 
       setResponses((prevResponses) =>
         prevResponses.map((response) =>
-          response.uuid === responseId
-            ? { ...response, reviewed: true }
-            : response
-        )
-      );
+          response.uuid === responseUuid ? { ...response, status: "REVIEWED" } : response,
+        ),
+      )
 
       notifications.show({
         message: "Response marked as reviewed",
         color: "green",
-      });
+      })
     } catch (error) {
-      console.error("Error marking response as reviewed:", error);
+      console.error("Error marking response as reviewed:", error)
       notifications.show({
         message: "Failed to mark response as reviewed",
         color: "red",
-      });
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, []);
+  }, [])
 
-  // Filter responses based on search query, survey selection, and status
+  // Filter responses based on all filters
   const filteredResponses = responses.filter((response) => {
-    if (selectedSurvey !== "all" && response.survey_id !== selectedSurvey) {
-      return false;
+    // Survey filter
+    if (selectedSurvey !== "all" && response.survey.id.toString() !== selectedSurvey) {
+      return false
     }
-    if (statusFilter === "reviewed" && !response.reviewed) return false;
-    if (statusFilter === "pending" && response.reviewed) return false;
+
+    // Status filter
+    if (statusFilter === "reviewed" && response.status !== "REVIEWED") return false
+    if (statusFilter === "pending" && response.status !== "SUBMITTED") return false
+
+    // Survey type filter
+    if (surveyTypeFilter !== "all" && response.survey.survey_TYPE !== surveyTypeFilter) {
+      return false
+    }
+
+    // Date filter
+    const submittedDate = new Date(response.submitted_at)
+    if (dateFromFilter && submittedDate < new Date(dateFromFilter)) return false
+    if (dateToFilter && submittedDate > new Date(dateToFilter)) return false
+
+    // Search filter
+    const searchLower = searchQuery.toLowerCase()
+    const applicantName = response.applicant?.name?.toLowerCase() || ""
+    const traineeName = response.trainee?.name?.toLowerCase() || ""
+    const surveyName = response.survey.name.toLowerCase()
+    const email = response.applicant?.email?.toLowerCase() || response.trainee?.email?.toLowerCase() || ""
 
     return (
-      response.applicant.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      response.survey.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      response.response.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (response.details.email
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase()) ??
-        false) ||
-      (response.details.responses?.some((r) =>
-        r.answer.toLowerCase().includes(searchQuery.toLowerCase())
-      ) ??
-        false)
-    );
-  });
+      applicantName.includes(searchLower) ||
+      traineeName.includes(searchLower) ||
+      surveyName.includes(searchLower) ||
+      email.includes(searchLower)
+    )
+  })
 
-  // Handle marking multiple responses as reviewed
-  const handleMarkAllAsReviewed = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const unreviewed = filteredResponses.filter((r) => !r.reviewed);
-
-      for (const response of unreviewed) {
-        await authorizedApi.put(
-          `/survey/responses/${response.uuid}/mark-reviewed`
-        );
-      }
-
-      setResponses((prevResponses) =>
-        prevResponses.map((response) =>
-          unreviewed.some((ur) => ur.uuid === response.uuid)
-            ? { ...response, reviewed: true }
-            : response
-        )
-      );
-
-      notifications.show({
-        message: `${unreviewed.length} responses marked as reviewed`,
-        color: "green",
-      });
-    } catch (error) {
-      console.error("Error marking responses as reviewed:", error);
-      notifications.show({
-        message: "Failed to mark responses as reviewed",
-        color: "red",
-      });
-    } finally {
-      setIsLoading(false);
+  // Handle pagination
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      fetchResponses(page)
     }
-  }, [filteredResponses]);
+  }
 
   // Handle Excel export
   const handleExportToExcel = useCallback(() => {
     try {
-      exportResponsesToExcel(filteredResponses);
+      // Create CSV content
+      const headers = ["Respondent", "Type", "Email", "Survey", "Submitted", "Status", "Responses"]
+      const csvContent = [
+        headers.join(","),
+        ...filteredResponses.map((response) => {
+          const respondent = response.applicant?.name || response.trainee?.name || "N/A"
+          const respondentType = response.applicant ? "Applicant" : "Trainee"
+          const email = response.applicant?.email || response.trainee?.email || "N/A"
+          const survey = response.survey.name
+          const submitted = format(new Date(response.submitted_at), "yyyy-MM-dd HH:mm")
+          const status = response.status
+
+          // Parse answers for export
+          let answersText = "No answers"
+          try {
+            const questionMap = parseQuestions(response.survey.qns)
+            const parsedAnswers = parseAnswers(response.answers, questionMap)
+            answersText = parsedAnswers.map((r) => `${r.question}: ${r.answer}`).join("; ")
+          } catch (error) {
+            console.warn("Failed to parse answers for export:", error)
+          }
+
+          return [respondent, respondentType, email, survey, submitted, status, `"${answersText}"`].join(",")
+        }),
+      ].join("\n")
+
+      // Download CSV
+      const blob = new Blob([csvContent], { type: "text/csv" })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = `survey-responses-${format(new Date(), "yyyy-MM-dd")}.csv`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+
       notifications.show({
         message: "Excel file exported successfully",
         color: "green",
-      });
+      })
     } catch (error) {
-      console.error("Error exporting to Excel:", error);
+      console.error("Error exporting to Excel:", error)
       notifications.show({
         message: "Failed to export Excel file",
         color: "red",
-      });
+      })
     }
-  }, [filteredResponses]);
+  }, [filteredResponses])
 
-  const renderResponseRow = (response: SurveyResponse) => (
-    <TableRow key={response.uuid}>
-      <TableCell>
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center justify-center w-8 h-8 bg-primary-100 rounded-full">
-            <User className="w-4 h-4 text-primary-600" />
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchQuery("")
+    setSelectedSurvey("all")
+    setStatusFilter("all")
+    setSurveyTypeFilter("all")
+    setDateFromFilter("")
+    setDateToFilter("")
+  }
+
+  // Render response row
+  const renderResponseRow = (response: SurveyResponse) => {
+    const respondent = response.applicant || response.trainee
+    const respondentType = response.applicant ? "Applicant" : "Trainee"
+
+    // Parse answers for display
+    let displayAnswer = "No answers provided"
+    let answerCount = 0
+    try {
+      const questionMap = parseQuestions(response.survey.qns)
+      const parsedAnswers = parseAnswers(response.answers, questionMap)
+      if (parsedAnswers.length > 0) {
+        displayAnswer = parsedAnswers[0].answer
+        answerCount = parsedAnswers.length
+      }
+    } catch (error) {
+      console.warn("Failed to parse answers for display:", error)
+    }
+
+    return (
+      <TableRow key={response.uuid}>
+        <TableCell>
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+              <User className="w-4 h-4 text-blue-600" />
+            </div>
+            <div>
+              <p className="font-medium text-gray-900">{respondent?.name || "N/A"}</p>
+              <p className="text-sm text-gray-500">{respondent?.email || "N/A"}</p>
+              <p className="text-xs text-blue-600">{respondentType}</p>
+            </div>
           </div>
+        </TableCell>
+        <TableCell>
           <div>
-            <p className="font-medium text-gray-900">{response.applicant}</p>
-            {response.details.email && (
-              <p className="text-sm text-gray-500">{response.details.email}</p>
-            )}
+            <p className="font-medium text-gray-900">{response.survey.name}</p>
+            <p className="text-sm text-gray-500">{response.survey.survey_TYPE}</p>
           </div>
-        </div>
-      </TableCell>
-      <TableCell>
-        <div>
-          <p className="font-medium text-gray-900">{response.survey}</p>
-          <p className="text-sm text-gray-500">Survey Response</p>
-        </div>
-      </TableCell>
-      <TableCell>
-        <div className="flex items-center space-x-2">
-          <Clock className="w-4 h-4 text-gray-400" />
-          <div>
-            <p className="text-sm font-medium text-gray-900">
-              {format(response.timestamp, "MMM dd, yyyy")}
-            </p>
-            <p className="text-xs text-gray-500">
-              {format(response.timestamp, "HH:mm")}
-            </p>
+        </TableCell>
+        <TableCell>
+          <div className="flex items-center space-x-2">
+            <Clock className="w-4 h-4 text-gray-400" />
+            <div>
+              <p className="text-sm font-medium text-gray-900">
+                {format(new Date(response.submitted_at), "MMM dd, yyyy")}
+              </p>
+              <p className="text-xs text-gray-500">{format(new Date(response.submitted_at), "HH:mm")}</p>
+            </div>
           </div>
-        </div>
-      </TableCell>
-      <TableCell>
-        <div className="max-w-md">
-          <p
-            className="text-sm text-gray-900 line-clamp-2"
-            title={
-              response.details.responses
-                ? response.details.responses
-                    .map((r) => `${r.question}: ${r.answer}`)
-                    .join("; ")
-                : response.response
+        </TableCell>
+        <TableCell>
+          <div className="max-w-md">
+            <p className="text-sm text-gray-900 line-clamp-2" title={displayAnswer}>
+              {displayAnswer}
+            </p>
+            {answerCount > 1 && <p className="text-xs text-gray-500">+{answerCount - 1} more answers</p>}
+          </div>
+        </TableCell>
+        <TableCell>
+          <Badge variant={response.status === "REVIEWED" ? "success" : "warning"}>
+            {response.status === "REVIEWED" ? "Reviewed" : "Pending"}
+          </Badge>
+        </TableCell>
+        <TableCell>
+          <Dropdown
+            trigger={
+              <Button variant="ghost" size="sm">
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
             }
           >
-            {response.details.responses && response.details.responses.length > 0
-              ? response.details.responses[0].answer
-              : response.response}
-          </p>
-        </div>
-      </TableCell>
-      <TableCell>
-        <Badge variant={response.reviewed ? "success" : "warning"}>
-          {response.reviewed ? "Reviewed" : "Pending"}
-        </Badge>
-      </TableCell>
-      <TableCell>
-        <Dropdown
-          trigger={
-            <Button variant="ghost" size="sm">
-              <MoreHorizontal className="w-4 h-4" />
-            </Button>
-          }
-        >
-          <DropdownItem
-          // onClick={() => {
-          //   setSelectedResponse(response);
-          //   setIsOpenResponseDetails(true);
-          // }}
-          >
-            <Link
-              href={`/sdf/survey/view/${response.uuid}`}
-              className="flex gap-2 items-center"
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              View Details
-            </Link>
-          </DropdownItem>
-          {!response.reviewed && (
-            <DropdownItem
-              onClick={() => handleMarkAsReviewed(response.uuid)}
-              disabled={isLoading}
-            >
-              <CheckCheck className="w-4 h-4 mr-2" />
-              Mark as Reviewed
+            <DropdownItem>
+              <Link
+                href={`/sdf/survey/response/${response.survey.id}/${respondent?.uuid}`}
+                className="flex gap-2 items-center"
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                View Details
+              </Link>
             </DropdownItem>
-          )}
-        </Dropdown>
-      </TableCell>
-    </TableRow>
-  );
+            {response.status !== "REVIEWED" && (
+              <DropdownItem onClick={() => handleMarkAsReviewed(response.uuid)} disabled={isLoading}>
+                <CheckCheck className="w-4 h-4 mr-2" />
+                Mark as Reviewed
+              </DropdownItem>
+            )}
+          </Dropdown>
+        </TableCell>
+      </TableRow>
+    )
+  }
 
   // Calculate statistics
-  const totalResponses = filteredResponses.length;
-  const reviewedCount = filteredResponses.filter((r) => r.reviewed).length;
-  const pendingCount = totalResponses - reviewedCount;
+  const reviewedCount = filteredResponses.filter((r) => r.status === "REVIEWED").length
+  const pendingCount = filteredResponses.filter((r) => r.status === "SUBMITTED").length
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <div className="mb-4 lg:mb-0">
-              <h1 className="text-3xl font-bold text-blue-500">
-                Survey Responses
-              </h1>
-              <p className="mt-1 text-gray-600">
-                Manage and analyze all survey responses with comprehensive
-                insights
-              </p>
+              <h1 className="text-3xl font-bold text-blue-600">Survey Responses</h1>
+              <p className="mt-1 text-gray-600">Manage and analyze all survey responses with comprehensive insights</p>
             </div>
             <div className="flex space-x-3">
-              <Button
-                onClick={handleExportToExcel}
-                variant="secondary"
-                disabled={filteredResponses.length === 0}
-              >
+              <Button onClick={handleExportToExcel} variant="secondary" disabled={filteredResponses.length === 0}>
                 <Download className="w-4 h-4 mr-2" />
-                Export Excel
+                Export CSV
               </Button>
-              {pendingCount > 0 && (
-                <Button
-                  onClick={handleMarkAllAsReviewed}
-                  variant="primary"
-                  disabled={isLoading}
-                  loading={isLoading}
-                >
-                  <CheckCheck className="w-4 h-4 mr-2" />
-                  Mark All as Reviewed ({pendingCount})
-                </Button>
-              )}
             </div>
           </div>
 
@@ -413,12 +502,8 @@ const SurveyPage = () => {
                     <FileText className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      Total Responses
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {totalResponses}
-                    </p>
+                    <p className="text-sm font-medium text-gray-600">Total Responses</p>
+                    <p className="text-2xl font-bold text-gray-900">{totalResponses}</p>
                   </div>
                 </div>
               </CardContent>
@@ -431,12 +516,8 @@ const SurveyPage = () => {
                     <CheckCheck className="w-6 h-6 text-green-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      Reviewed
-                    </p>
-                    <p className="text-2xl font-bold text-green-600">
-                      {reviewedCount}
-                    </p>
+                    <p className="text-sm font-medium text-gray-600">Reviewed</p>
+                    <p className="text-2xl font-bold text-green-600">{reviewedCount}</p>
                   </div>
                 </div>
               </CardContent>
@@ -449,12 +530,8 @@ const SurveyPage = () => {
                     <Clock className="w-6 h-6 text-amber-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      Pending Review
-                    </p>
-                    <p className="text-2xl font-bold text-amber-600">
-                      {pendingCount}
-                    </p>
+                    <p className="text-sm font-medium text-gray-600">Pending Review</p>
+                    <p className="text-2xl font-bold text-amber-600">{pendingCount}</p>
                   </div>
                 </div>
               </CardContent>
@@ -463,18 +540,13 @@ const SurveyPage = () => {
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-primary-100 rounded-lg">
-                    <FileText className="w-6 h-6 text-primary-600" />
+                  <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg">
+                    <FileText className="w-6 h-6 text-purple-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      Review Rate
-                    </p>
-                    <p className="text-2xl font-bold text-primary-600">
-                      {totalResponses > 0
-                        ? Math.round((reviewedCount / totalResponses) * 100)
-                        : 0}
-                      %
+                    <p className="text-sm font-medium text-gray-600">Review Rate</p>
+                    <p className="text-2xl font-bold text-purple-600">
+                      {totalResponses > 0 ? Math.round((reviewedCount / totalResponses) * 100) : 0}%
                     </p>
                   </div>
                 </div>
@@ -485,36 +557,80 @@ const SurveyPage = () => {
           {/* Filters */}
           <Card>
             <CardContent className="p-6">
-              <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-4 space-y-4 lg:space-y-0">
-                <div className="flex-1">
+              <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4">
+                <Filter className="w-4 h-4" />
+                <span>Filters</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                {/* Search */}
+                <div className="xl:col-span-2">
                   <Input
-                    placeholder="Search responses, applicants, emails..."
+                    placeholder="Search responses, names, emails..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     icon={<Search className="w-4 h-4 text-gray-400" />}
                   />
                 </div>
 
-                <div className="w-full lg:w-64">
-                  <Select
-                    value={selectedSurvey}
-                    onValueChange={setSelectedSurvey}
-                  >
+                {/* Survey Filter */}
+                <div>
+                  <Select value={selectedSurvey} onValueChange={setSelectedSurvey}>
                     <SelectItem value="all">All Surveys</SelectItem>
                     {surveys.map((survey) => (
-                      <SelectItem key={survey.uuid} value={survey.uuid}>
+                      <SelectItem key={survey.id} value={survey.id.toString()}>
                         {survey.name}
                       </SelectItem>
                     ))}
                   </Select>
                 </div>
 
-                <div className="w-full lg:w-48">
+                {/* Status Filter */}
+                <div>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
                     <SelectItem value="all">All Status</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="reviewed">Reviewed</SelectItem>
                   </Select>
+                </div>
+
+                {/* Survey Type Filter */}
+                <div>
+                  <Select value={surveyTypeFilter} onValueChange={setSurveyTypeFilter}>
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="TRAINEESURVEY">Trainee Survey</SelectItem>
+                    <SelectItem value="COMPANYSURVEY">Company Survey</SelectItem>
+                    <SelectItem value="GENERALSURVEY">General Survey</SelectItem>
+                  </Select>
+                </div>
+
+                {/* Clear Filters */}
+                <div>
+                  <Button onClick={clearFilters} variant="outline" className="w-full">
+                    Clear Filters
+                  </Button>
+                </div>
+              </div>
+
+              {/* Date Range Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                  <input
+                    type="date"
+                    value={dateFromFilter}
+                    onChange={(e) => setDateFromFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                  <input
+                    type="date"
+                    value={dateToFilter}
+                    onChange={(e) => setDateToFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
                 </div>
               </div>
             </CardContent>
@@ -526,7 +642,7 @@ const SurveyPage = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Applicant</TableHead>
+                    <TableHead>Respondent</TableHead>
                     <TableHead>Survey</TableHead>
                     <TableHead>Submitted</TableHead>
                     <TableHead>Response</TableHead>
@@ -540,9 +656,7 @@ const SurveyPage = () => {
                       <td colSpan={6} className="text-center py-12">
                         <div className="flex items-center justify-center">
                           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                          <span className="ml-3 text-gray-600">
-                            Loading responses...
-                          </span>
+                          <span className="ml-3 text-gray-600">Loading responses...</span>
                         </div>
                       </td>
                     </TableRow>
@@ -551,9 +665,7 @@ const SurveyPage = () => {
                       <td colSpan={6} className="text-center py-12">
                         <div className="flex flex-col items-center">
                           <FileText className="w-12 h-12 text-gray-400 mb-4" />
-                          <h3 className="text-lg font-medium text-gray-900 mb-2">
-                            No responses found
-                          </h3>
+                          <h3 className="text-lg font-medium text-gray-900 mb-2">No responses found</h3>
                           <p className="text-gray-600">
                             {responses.length === 0
                               ? "No survey responses have been submitted yet."
@@ -568,21 +680,58 @@ const SurveyPage = () => {
                 </TableBody>
               </Table>
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
+                <div className="text-sm text-gray-700">
+                  Showing page {currentPage} of {totalPages} ({totalResponses} total responses)
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Previous
+                  </Button>
+
+                  {/* Page numbers */}
+                  <div className="flex items-center space-x-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={pageNum === currentPage ? "primary" : "outline"}
+                          size="sm"
+                          onClick={() => handlePageChange(pageNum)}
+                        >
+                          {pageNum}
+                        </Button>
+                      )
+                    })}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </Card>
         </div>
       </div>
-
-      {/* Response Details Modal */}
-      <ResponseDetailsModal
-        isOpen={isOpenResponseDetails}
-        onClose={() => {
-          setIsOpenResponseDetails(false);
-          setSelectedResponse(null);
-        }}
-        response={selectedResponse}
-      />
     </div>
-  );
-};
+  )
+}
 
-export default SurveyPage;
+export default SurveyResponsesPage
