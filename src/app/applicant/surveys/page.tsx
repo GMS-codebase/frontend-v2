@@ -213,10 +213,22 @@ const Page = () => {
 
   // Handle setting survey answers
   const handleSetAnswers = (key: string, value: any) => {
-    setSurveyAnswers((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    setSurveyAnswers((prev) => {
+      const newAnswers = {
+        ...prev,
+        [key]: value,
+      };
+      
+      // Remove empty answers
+      Object.keys(newAnswers).forEach(k => {
+        if (newAnswers[k] === "" || newAnswers[k] === null || newAnswers[k] === undefined || 
+            (Array.isArray(newAnswers[k]) && newAnswers[k].length === 0)) {
+          delete newAnswers[k];
+        }
+      });
+      
+      return newAnswers;
+    });
   };
 
   // Save survey as draft
@@ -288,6 +300,9 @@ const Page = () => {
         message: "Thank you for completing the survey!",
         color: "green",
       });
+
+      // Refresh surveys list
+      fetchSurveys();
     } catch (error: any) {
       console.error("Error submitting survey:", error);
       notifications.show({
