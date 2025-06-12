@@ -7,7 +7,7 @@ import { format } from "date-fns"
 import { authorizedApi } from "@/utils/api"
 import { notifications } from "@mantine/notifications"
 import { Card, CardContent } from "@/components/ui/Card"
-import { Clock, User, FileText, Download } from "lucide-react"
+import { Clock, User, FileText, Download } from 'lucide-react'
 
 interface SurveyResponse {
   uuid: string
@@ -56,6 +56,7 @@ const IndividualResponsePage = () => {
   const [parsedAnswers, setParsedAnswers] = useState<ParsedAnswer[]>([])
   const [loading, setLoading] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [isTraineeResponse, setIsTraineeResponse] = useState<boolean | null>(null)
 
   // Parse survey questions to create question map
   const parseQuestions = (qns: string): { [key: string]: string } => {
@@ -271,31 +272,72 @@ const IndividualResponsePage = () => {
   const fetchResponse = async () => {
     try {
       setLoading(true)
-      // Use the correct API endpoint
-      const apiResponse = await authorizedApi.get(`/survey/survey-response/${surveyId}/${applicantUuid}`)
+      
+      // First, try the trainee-specific endpoint
+      try {
+        const traineeResponse = await authorizedApi.get(`/survey/survey-responseByTrainee/${surveyId}/${applicantUuid}`)
+        
+        if (traineeResponse.data) {
+          setIsTraineeResponse(true)
+          const responseData = traineeResponse.data
+          setResponse(responseData)
 
-      const responseData = apiResponse.data
-      setResponse(responseData)
+          // Parse the answers
+          if (responseData.answers) {
+            let questionMap: { [key: string]: string } = {}
 
-      // Parse the answers
-      if (responseData.answers) {
-        let questionMap: { [key: string]: string } = {}
+            // Parse questions if available
+            if (responseData.survey?.qns) {
+              questionMap = parseQuestions(responseData.survey.qns)
+            }
 
-        // Parse questions if available
-        if (responseData.survey?.qns) {
-          questionMap = parseQuestions(responseData.survey.qns)
+            const parsed = parseAnswers(responseData.answers, questionMap)
+            setParsedAnswers(parsed)
+          } else {
+            setParsedAnswers([])
+          }
+
+          notifications.show({
+            message: "Trainee response loaded successfully",
+            color: "green",
+          })
+          return
         }
-
-        const parsed = parseAnswers(responseData.answers, questionMap)
-        setParsedAnswers(parsed)
-      } else {
-        setParsedAnswers([])
+      } catch (traineeError) {
+        console.log("Not a trainee response, trying applicant endpoint...")
       }
 
-      notifications.show({
-        message: "Response loaded successfully",
-        color: "green",
-      })
+      // If trainee endpoint fails, try the general endpoint for applicants
+      try {
+        const applicantResponse = await authorizedApi.get(`/survey/survey-response/${surveyId}/${applicantUuid}`)
+        
+        setIsTraineeResponse(false)
+        const responseData = applicantResponse.data
+        setResponse(responseData)
+
+        // Parse the answers
+        if (responseData.answers) {
+          let questionMap: { [key: string]: string } = {}
+
+          // Parse questions if available
+          if (responseData.survey?.qns) {
+            questionMap = parseQuestions(responseData.survey.qns)
+          }
+
+          const parsed = parseAnswers(responseData.answers, questionMap)
+          setParsedAnswers(parsed)
+        } else {
+          setParsedAnswers([])
+        }
+
+        notifications.show({
+          message: "Applicant response loaded successfully",
+          color: "green",
+        })
+      } catch (applicantError) {
+        throw new Error("Failed to load response from both endpoints")
+      }
+
     } catch (error) {
       console.error("Error fetching response:", error)
       notifications.show({
@@ -308,14 +350,19 @@ const IndividualResponsePage = () => {
   }
 
   // Handle status change
-  const handleStatusChange = async (newStatus: "SUBMITTED" | "REVIEWED") => {
+  const handleStatusChange = async (newStatus: "REVIEWED") => {
     if (!response) return
 
     try {
       setIsUpdating(true)
 
+      // Use the appropriate endpoint based on response type
+      const endpoint = isTraineeResponse 
+        ? `/survey/survey-responseByTrainee/${surveyId}/${applicantUuid}/status`
+        : `/survey/survey-response/${surveyId}/${applicantUuid}/status`
+
       // Update status via API
-      await authorizedApi.put(`/survey/survey-response/${surveyId}/${applicantUuid}/status`, {
+      await authorizedApi.put(endpoint, {
         status: newStatus,
       })
 
@@ -437,17 +484,6 @@ const IndividualResponsePage = () => {
                 </button>
               )}
               <button
-                onClick={() => handleStatusChange("SUBMITTED")}
-                disabled={isUpdating || response.status === "SUBMITTED"}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  response.status === "SUBMITTED"
-                    ? "bg-amber-100 text-amber-800 cursor-not-allowed"
-                    : "bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200"
-                } ${isUpdating ? "opacity-50 cursor-not-allowed" : ""}`}
-              >
-                {isUpdating ? "Updating..." : "Mark as Pending"}
-              </button>
-              <button
                 onClick={() => handleStatusChange("REVIEWED")}
                 disabled={isUpdating || response.status === "REVIEWED"}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -466,12 +502,19 @@ const IndividualResponsePage = () => {
             <CardContent className="p-8">
               <div className="flex items-center justify-between mb-6">
                 <h1 className="text-3xl font-bold text-gray-900">Survey Response Details</h1>
-                <div
-                  className={`px-4 py-2 rounded-full text-sm font-medium ${
-                    response.status === "REVIEWED" ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"
-                  }`}
-                >
-                  {response.status === "REVIEWED" ? "Reviewed" : "Pending Review"}
+                <div className="flex items-center space-x-3">
+                  <div
+                    className={`px-4 py-2 rounded-full text-sm font-medium ${
+                      response.status === "REVIEWED" ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"
+                    }`}
+                  >
+                    {response.status === "REVIEWED" ? "Reviewed" : "Pending Review"}
+                  </div>
+                  {isTraineeResponse !== null && (
+                    <div className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+                      {isTraineeResponse ? "Trainee Response" : "Applicant Response"}
+                    </div>
+                  )}
                 </div>
               </div>
 
