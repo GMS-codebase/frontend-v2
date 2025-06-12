@@ -67,7 +67,7 @@ const Page = () => {
       getSectors(dispatch);
       fetchTrades();
     }
-  }, [id]);
+  }, [dispatch, fetchTrades]);
 
   const filteredTrades = useMemo(() => {
     return trades?.filter(
