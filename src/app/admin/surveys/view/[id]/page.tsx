@@ -1,12 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  Form as IForm,
-  Section,
-  Survey,
-  SurveyResponse,
-} from "@/types/surveys-form";
+import { IForm, Section, Survey, SurveyResponse } from "@/types/surveys-form";
 import { IoArrowBack } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { Tabs, Badge, Card, Text, Divider, Menu } from "@mantine/core";
@@ -17,6 +12,282 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CustomDataTable } from "@/components/core/data-table/custom-data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { FiEye } from "react-icons/fi";
+
+interface ParsedAnswer {
+  question: string;
+  answer: string;
+}
+
+// Parse survey questions to create question map
+const parseQuestions = (qns: string): { [key: string]: string } => {
+  if (!qns) {
+    return {};
+  }
+  try {
+    let cleanedQns = qns.trim();
+    // Remove outer parentheses and quotes if present (e.g., "({...})")
+    if (cleanedQns.startsWith('("') && cleanedQns.endsWith('")')) {
+      cleanedQns = cleanedQns.substring(2, cleanedQns.length - 2);
+    }
+    // Remove outer quotes if still present
+    if (cleanedQns.startsWith('"') && cleanedQns.endsWith('"')) {
+      cleanedQns = cleanedQns.substring(1, cleanedQns.length - 1);
+    }
+
+    // Unescape inner quotes that might have been escaped during stringification
+    cleanedQns = cleanedQns.replace(/\\"/g, '"');
+
+    // Regex to find unquoted keys and wrap them in double quotes
+    // This handles cases like {key:"value"} -> {"key":"value"}
+    cleanedQns = cleanedQns.replace(/([{,])\s*([a-zA-Z0-9_\-]+):/g, '$1"$2":');
+
+    const parsed = JSON.parse(cleanedQns);
+    const questionMap: { [key: string]: string } = {};
+
+    if (Array.isArray(parsed)) {
+      parsed.forEach((item: any, index: number) => {
+        if (item.question) {
+          questionMap[`q${index + 1}`] = item.question;
+          questionMap[item.question] = item.question;
+          questionMap[index.toString()] = item.question;
+        }
+      });
+    } else if (typeof parsed === "object") {
+      Object.values(parsed).forEach((section: any) => {
+        if (section && section.pages && Array.isArray(section.pages)) {
+          section.pages.forEach((pageContent: any) => {
+            if (
+              pageContent &&
+              pageContent.surveys &&
+              Array.isArray(pageContent.surveys)
+            ) {
+              pageContent.surveys.forEach((question: any) => {
+                if (question.id && question.title) {
+                  questionMap[question.id] = question.title;
+                  questionMap[question.title] = question.title;
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+
+    return questionMap;
+  } catch (error) {
+    console.warn(
+      "Failed to parse survey questions in view page:",
+      error,
+      "Problematic qns:",
+      qns
+    );
+    notifications.show({
+      message: "Failed to parse survey questions data for display.",
+      color: "red",
+    });
+    return {};
+  }
+};
+
+// Enhanced parse answers function to handle all possible formats
+const parseAnswers = (
+  answers: string,
+  questionMap: { [key: string]: string }
+): ParsedAnswer[] => {
+  try {
+    let cleanedAnswers = answers;
+    // Remove outer parentheses and quotes if present (e.g., "({...})")
+    if (cleanedAnswers.startsWith('("') && cleanedAnswers.endsWith('")')) {
+      cleanedAnswers = cleanedAnswers.substring(2, cleanedAnswers.length - 2);
+    }
+
+    // Unescape inner quotes that might have been escaped during stringification
+    cleanedAnswers = cleanedAnswers.replace(/\\"/g, '"');
+
+    // Regex to find unquoted keys and wrap them in double quotes
+    // This handles cases like {key:"value"} -> {"key":"value"}
+    cleanedAnswers = cleanedAnswers.replace(
+      /([{,])\s*([a-zA-Z0-9_\-]+):/g,
+      '$1"$2":'
+    );
+
+    const parsed = JSON.parse(cleanedAnswers);
+    const results: ParsedAnswer[] = [];
+
+    if (typeof parsed === "object" && parsed !== null) {
+      Object.entries(parsed).forEach(([key, value]) => {
+        if (!key.includes("{") && !key.includes('"question"')) {
+          results.push({
+            question: questionMap[key] || key,
+            answer: String(value),
+          });
+          return;
+        }
+
+        if (key.includes("{") && key.includes('"question"')) {
+          try {
+            let cleanKey = key;
+            if (cleanKey.startsWith('"{') && cleanKey.endsWith('}"')) {
+              cleanKey = cleanKey.slice(1, -1);
+            }
+
+            const innerJson = JSON.parse(cleanKey);
+
+            if (innerJson.question && innerJson.answer) {
+              results.push({
+                question: innerJson.question,
+                answer: innerJson.answer,
+              });
+            } else if (innerJson.question) {
+              results.push({
+                question: innerJson.question,
+                answer: String(value) || "No answer provided",
+              });
+            }
+          } catch (innerError) {
+            const questionMatch = key.match(/"question":\s*"([^"]*)"/);
+            const answerMatch = key.match(/"answer":\s*"([^"]*)"/);
+
+            if (questionMatch) {
+              results.push({
+                question: questionMatch[1],
+                answer: answerMatch
+                  ? answerMatch[1]
+                  : String(value) || "No answer provided",
+              });
+            } else {
+              results.push({
+                question: "Survey Question",
+                answer: String(value) || "No answer provided",
+              });
+            }
+          }
+          return;
+        }
+
+        results.push({
+          question: questionMap[key] || key,
+          answer: String(value),
+        });
+      });
+    }
+
+    if (Array.isArray(parsed)) {
+      parsed.forEach((item, index) => {
+        if (typeof item === "object" && item !== null) {
+          results.push({
+            question:
+              item.question ||
+              questionMap[index.toString()] ||
+              `Question ${index + 1}`,
+            answer: item.answer || "No answer provided",
+          });
+        } else {
+          results.push({
+            question: questionMap[index.toString()] || `Question ${index + 1}`,
+            answer: String(item),
+          });
+        }
+      });
+    }
+
+    if (results.length === 0) {
+      const patterns = [
+        /"question":\s*"([^"]*)"\s*,\s*"answer":\s*"([^"]*)"/g,
+        /"question":"([^"]*)","answer":"([^"]*)"/g,
+        /question:\s*"([^"]*)"\s*,\s*answer:\s*"([^"]*)"/g,
+      ];
+
+      for (const pattern of patterns) {
+        const matches = [...answers.matchAll(pattern)];
+        if (matches.length > 0) {
+          return matches.map((match) => ({
+            question: match[1],
+            answer: match[2],
+          }));
+        }
+      }
+
+      if (answers.includes('"question"') && answers.includes('"answer"')) {
+        const questionRegex = /"question":\s*"([^"]*)"/g;
+        const answerRegex = /"answer":\s*"([^"]*)"/g;
+
+        const questions = [...answers.matchAll(questionRegex)];
+        const answersMatches = [...answers.matchAll(answerRegex)];
+
+        if (questions.length > 0 && answersMatches.length > 0) {
+          const minLength = Math.min(questions.length, answersMatches.length);
+          for (let i = 0; i < minLength; i++) {
+            results.push({
+              question: questions[i][1],
+              answer: answersMatches[i][1],
+            });
+          }
+        }
+      }
+
+      if (results.length > 0) {
+        return results;
+      }
+
+      return [
+        {
+          question: "Survey Response",
+          answer: JSON.stringify(parsed, null, 2),
+        },
+      ];
+    }
+
+    return results;
+  } catch (error) {
+    const patterns = [
+      /"question":\s*"([^"]*)"\s*,\s*"answer":\s*"([^"]*)"/g,
+      /"question":"([^"]*)","answer":"([^"]*)"/g,
+      /question:\s*"([^"]*)"\s*,\s*answer:\s*"([^"]*)"/g,
+    ];
+
+    for (const pattern of patterns) {
+      const matches = [...answers.matchAll(pattern)];
+      if (matches.length > 0) {
+        return matches.map((match) => ({
+          question: match[1],
+          answer: match[2],
+        }));
+      }
+    }
+
+    return [
+      {
+        question: "Raw Survey Response",
+        answer: answers,
+      },
+    ];
+  }
+};
+
+// Helper to render answers as readable list
+function renderAnswers(answers: any, questionMap: Record<string, string>) {
+  const parsedAnswers = parseAnswers(answers, questionMap);
+
+  if (parsedAnswers.length === 0) {
+    return <span>No answers</span>;
+  }
+
+  // Display only the first answer for brevity in the table, similar to "+X more answers"
+  const firstAnswer = parsedAnswers[0];
+  const remainingCount = parsedAnswers.length - 1;
+
+  return (
+    <div className="flex flex-col">
+      <span>{`${firstAnswer.answer}`}</span>
+      {remainingCount > 0 && (
+        <span className="text-sm text-gray-500">
+          +{remainingCount} more answers
+        </span>
+      )}
+    </div>
+  );
+}
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
@@ -90,84 +361,72 @@ const Page = () => {
     }
   }, []);
 
-  const fetchSurveyResponses = useCallback(async (surveyId: string) => {
-    try {
-      setResponsesLoading(true);
-      const response = await authorizedApi.get(
-        `/survey/getSurveyResponses/${surveyId}`
-      );
-
-      let responsesData = [];
-      if (Array.isArray(response.data)) {
-        responsesData = response.data;
-      } else if (response.data && Array.isArray(response.data.data)) {
-        responsesData = response.data.data;
-      } else {
-        console.error(
-          "API returned data structure is not an array for responses:",
-          response.data
-        );
-        notifications.show({
-          title: "Error",
-          message: "Received unexpected data format for responses.",
-          color: "red",
-        });
+  const fetchSurveyResponses = useCallback(
+    async (surveyId: string) => {
+      if (!survey) {
+        console.warn("Survey data not available yet, waiting...");
         return;
       }
 
-      const mappedResponses: SurveyResponse[] = responsesData.map(
-        (item: any) => {
-          let formattedResponse = "No answers provided";
-          if (item.answers && typeof item.answers === "string") {
-            formattedResponse = item.answers;
-            // Truncate long responses
-            const maxLength = 100; // Define maximum length for the displayed response
-            if (formattedResponse.length > maxLength) {
-              formattedResponse =
-                formattedResponse.substring(0, maxLength) + "...";
-            }
-          } else if (item.answers !== undefined && item.answers !== null) {
-            // Handle cases where answers might be something other than a string, convert to string
-            formattedResponse = String(item.answers);
-            // Truncate long responses
-            const maxLength = 100; // Define maximum length for the displayed response
-            if (formattedResponse.length > maxLength) {
-              formattedResponse =
-                formattedResponse.substring(0, maxLength) + "...";
-            }
-          }
+      try {
+        setResponsesLoading(true);
+        const response = await authorizedApi.get(
+          `/survey/getSurveyResponses/${surveyId}`
+        );
 
-          return {
-            ...item,
-            response: formattedResponse,
-            applicant: item.applicant,
-            survey: item.survey,
-            uuid: item.uuid,
-            reviewed: item.reviewed,
-          };
+        let responsesData = [];
+        if (Array.isArray(response.data)) {
+          responsesData = response.data;
+        } else if (response.data && Array.isArray(response.data.data)) {
+          responsesData = response.data.data;
+        } else {
+          console.error(
+            "API returned data structure is not an array for responses:",
+            response.data
+          );
+          notifications.show({
+            title: "Error",
+            message: "Received unexpected data format for responses.",
+            color: "red",
+          });
+          return;
         }
-      );
 
-      setSurveyResponses(mappedResponses);
-      if (!initialResponsesLoadedRef.current) {
+        const mappedResponses: SurveyResponse[] = responsesData.map(
+          (item: any) => ({
+            uuid: item.uuid,
+            lastUpdatedAt: item.lastUpdatedAt,
+            answers: item.answers,
+            status: item.status,
+            submitted_at: item.submitted_at,
+            applicant: item.applicant,
+            trainee: item.trainee,
+            reviewed: item.status === "REVIEWED",
+          })
+        );
+
+        setSurveyResponses(mappedResponses);
+        if (!initialResponsesLoadedRef.current) {
+          notifications.show({
+            message: "Survey responses loaded successfully",
+            color: "green",
+          });
+          initialResponsesLoadedRef.current = true;
+        }
+      } catch (err: any) {
+        console.error("Error fetching survey responses:", err);
         notifications.show({
-          message: "Survey responses loaded successfully",
-          color: "green",
+          message:
+            err.response?.data?.message || "Failed to load survey responses",
+          color: "red",
         });
-        initialResponsesLoadedRef.current = true;
+        setSurveyResponses([]);
+      } finally {
+        setResponsesLoading(false);
       }
-    } catch (err: any) {
-      console.error("Error fetching survey responses:", err);
-      notifications.show({
-        message:
-          err.response?.data?.message || "Failed to load survey responses",
-        color: "red",
-      });
-      setSurveyResponses([]);
-    } finally {
-      setResponsesLoading(false);
-    }
-  }, []);
+    },
+    [survey]
+  );
 
   useEffect(() => {
     if (id) {
@@ -175,7 +434,10 @@ const Page = () => {
         setLoading(true);
         try {
           await fetchSurvey(id);
-          fetchSurveyResponses(id);
+          // Only fetch responses after we have the survey data
+          if (survey) {
+            await fetchSurveyResponses(id);
+          }
         } catch (error) {
           console.error("Error in initial data load effect:", error);
         } finally {
@@ -184,7 +446,7 @@ const Page = () => {
       };
       loadData();
     }
-  }, [id, fetchSurvey, fetchSurveyResponses]);
+  }, [id, fetchSurvey, fetchSurveyResponses, survey]);
 
   useEffect(() => {
     if (survey) {
@@ -238,7 +500,6 @@ const Page = () => {
       </div>
     );
   }
-
   const responseColumns: ColumnDef<SurveyResponse>[] = [
     {
       accessorKey: "applicant",
@@ -263,11 +524,14 @@ const Page = () => {
     {
       accessorKey: "response",
       header: () => <div className="text-left font-semibold">Response</div>,
-      cell: ({ row }) => (
-        <div className="max-w-md truncate" title={row.original.response}>
-          {row.original.response}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const questionMap = parseQuestions(survey?.qns || "");
+        return (
+          <div className="max-w-md truncate" title={row.original.response}>
+            {renderAnswers(row.original.answers, questionMap)}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "status",
@@ -306,7 +570,7 @@ const Page = () => {
                 leftSection={<FiEye className="h-4 w-4" />}
                 onClick={() => {
                   router.push(
-                    `/admin/surveys/responses/${row.original.survey?.id || id}/${row.original.applicant?.uuid}`
+                    `/admin/surveys/responses/${id}/${row.original.applicant?.uuid}`
                   );
                 }}
               >
@@ -340,7 +604,7 @@ const Page = () => {
                 : "bg-red-100 text-red-800"
             }`}
           >
-            {survey.survey_status === "ONGOING" ? "ONGOING" : "EXPIRED"}
+            {survey.survey_status === "ONGOING" ? "ONGOING" : "ENDED"}
           </Badge>
         </div>
 
@@ -361,7 +625,7 @@ const Page = () => {
                       : "bg-red-100 text-red-800"
                   }`}
                 >
-                  {survey.survey_status === "ONGOING" ? "ONGOING" : "EXPIRED"}
+                  {survey.survey_status === "ONGOING" ? "ONGOING" : "ENDED"}
                 </Badge>
               </div>
               <div className="flex justify-between items-center">

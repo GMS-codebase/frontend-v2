@@ -1,7 +1,7 @@
 export enum ESurveyStatus {
-  DRAFT = "draft",
   ONGOING = "ongoing",
-  EXPIRED = "expired",
+  ENDED = "ended",
+  DRAFT = "draft",
 }
 
 export interface Survey {
