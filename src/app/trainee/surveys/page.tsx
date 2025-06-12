@@ -71,9 +71,10 @@ export default function TraineeSurveys() {
 
         // Filter surveys to show both TRAINEESURVEY and GENERALSURVEY types
         const traineeSurveys = response.data
-          .filter(
-            (survey: Survey) =>
-              ["TRAINEESURVEY", "GENERALSURVEY"].includes(survey.survey_TYPE.toUpperCase())
+          .filter((survey: Survey) =>
+            ["TRAINEESURVEY", "GENERALSURVEY"].includes(
+              survey.survey_TYPE.toUpperCase()
+            )
           )
           .map((survey: Survey) => {
             // Transform questions to expected format
@@ -151,7 +152,7 @@ export default function TraineeSurveys() {
     if (traineeData) {
       try {
         const parsed = JSON.parse(traineeData);
-        setTraineeUuid(parsed.uuid || parsed.profile?.uuid || null);
+        setTraineeUuid(parsed.profile?.uuid || null);
       } catch {
         setTraineeUuid(null);
       }
@@ -185,13 +186,30 @@ export default function TraineeSurveys() {
         throw new Error("Trainee data not found");
       }
 
-      const { uuid, email } = JSON.parse(traineeData);
+      const parsedData = JSON.parse(traineeData);
+      console.log("Full trainee data:", parsedData);
+      console.log("Profile data:", parsedData.profile);
+
+      const { email, firstname } = parsedData;
+      const traineeUuid = parsedData.profile?.uuid;
+
+      console.log("Trainee UUID:", traineeUuid);
+      console.log("Trainee Name:", firstname);
+
+      if (!traineeUuid) {
+        throw new Error("Trainee UUID not found");
+      }
+
+      console.log("Submitting survey with email:", email);
 
       const responseData = {
-        surveyId: parseInt(surveyId),
-        traineeUuid: uuid,
+        surveyId: surveyId,
+        traineeUuid: traineeUuid,
+        traineeName: firstname,
         answers: JSON.stringify(surveyAnswers),
       };
+
+      console.log("Sending response data:", responseData);
 
       await authorizedApi.post("/survey/submit-survey/trainee", responseData, {
         headers: {
@@ -214,6 +232,7 @@ export default function TraineeSurveys() {
         title: "Error",
         message:
           error.response?.data?.message ||
+          error.message ||
           "Failed to submit survey. Please try again.",
         color: "red",
       });
@@ -272,7 +291,11 @@ export default function TraineeSurveys() {
         Object.values(parsed).forEach((section: any) => {
           if (section && section.pages && Array.isArray(section.pages)) {
             section.pages.forEach((pageContent: any) => {
-              if (pageContent && pageContent.surveys && Array.isArray(pageContent.surveys)) {
+              if (
+                pageContent &&
+                pageContent.surveys &&
+                Array.isArray(pageContent.surveys)
+              ) {
                 pageContent.surveys.forEach((question: any) => {
                   if (question.id && question.title) {
                     questionMap[question.id] = question.title;
@@ -291,7 +314,10 @@ export default function TraineeSurveys() {
   };
 
   // Parse answers helper (from SDF)
-  const parseAnswers = (answers: string, questionMap: { [key: string]: string }) => {
+  const parseAnswers = (
+    answers: string,
+    questionMap: { [key: string]: string }
+  ) => {
     try {
       const parsed = JSON.parse(answers);
       const results: any[] = [];
@@ -307,12 +333,16 @@ export default function TraineeSurveys() {
         parsed.forEach((item, index) => {
           if (typeof item === "object" && item !== null) {
             results.push({
-              question: item.question || questionMap[index.toString()] || `Question ${index + 1}`,
+              question:
+                item.question ||
+                questionMap[index.toString()] ||
+                `Question ${index + 1}`,
               answer: item.answer || "No answer provided",
             });
           } else {
             results.push({
-              question: questionMap[index.toString()] || `Question ${index + 1}`,
+              question:
+                questionMap[index.toString()] || `Question ${index + 1}`,
               answer: String(item),
             });
           }
@@ -332,13 +362,17 @@ export default function TraineeSurveys() {
     if (traineeData) {
       try {
         const parsed = JSON.parse(traineeData);
-        uuid = parsed.uuid || parsed.profile?.uuid || null;
+        uuid = parsed.profile?.uuid || null;
       } catch {
         uuid = null;
       }
     }
     if (!uuid) {
-      notifications.show({ title: "Error", message: "Trainee not found", color: "red" });
+      notifications.show({
+        title: "Error",
+        message: "Trainee not found",
+        color: "red",
+      });
       return;
     }
     setResultModalOpen(true);
@@ -348,16 +382,20 @@ export default function TraineeSurveys() {
     setResultParsedAnswers([]);
     try {
       const token = getCookie("token");
-      const res = await authorizedApi.get(`/survey/survey-responseByTrainee/${surveyId}/${uuid}`,
+      const res = await authorizedApi.get(
+        `/survey/survey-responseByTrainee/${surveyId}/${uuid}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setResultData(res.data);
       // Parse answers
       let questionMap = {};
-      if (res.data.survey?.qns) questionMap = parseQuestions(res.data.survey.qns);
+      if (res.data.survey?.qns)
+        questionMap = parseQuestions(res.data.survey.qns);
       setResultParsedAnswers(parseAnswers(res.data.answers, questionMap));
     } catch (err: any) {
-      setResultError(err?.response?.data?.message || "Failed to fetch survey result");
+      setResultError(
+        err?.response?.data?.message || "Failed to fetch survey result"
+      );
     } finally {
       setResultLoading(false);
     }
@@ -431,7 +469,9 @@ export default function TraineeSurveys() {
       <div className="flex border-b border-gray-200 mb-8">
         <button
           className={`relative px-6 py-2 text-base font-medium focus:outline-none transition-colors duration-150 ${
-            tabIndex === 0 ? "text-blue-600" : "text-gray-500 hover:text-blue-600"
+            tabIndex === 0
+              ? "text-blue-600"
+              : "text-gray-500 hover:text-blue-600"
           }`}
           onClick={() => setTabIndex(0)}
           aria-selected={tabIndex === 0}
@@ -444,7 +484,9 @@ export default function TraineeSurveys() {
         </button>
         <button
           className={`relative px-6 py-2 text-base font-medium focus:outline-none transition-colors duration-150 ${
-            tabIndex === 1 ? "text-blue-600" : "text-gray-500 hover:text-blue-600"
+            tabIndex === 1
+              ? "text-blue-600"
+              : "text-gray-500 hover:text-blue-600"
           }`}
           onClick={() => setTabIndex(1)}
           aria-selected={tabIndex === 1}
@@ -465,7 +507,13 @@ export default function TraineeSurveys() {
           </Card>
         ) : (
           filteredSurveys.map((survey) => (
-            <Card key={survey.id} shadow="sm" padding="lg" radius="md" withBorder>
+            <Card
+              key={survey.id}
+              shadow="sm"
+              padding="lg"
+              radius="md"
+              withBorder
+            >
               <Group justify="space-between" align="flex-start">
                 <Stack gap={4}>
                   <Text size="lg" fw={500}>
@@ -501,27 +549,67 @@ export default function TraineeSurveys() {
         )}
       </Stack>
       {/* Result Modal */}
-      <Modal opened={resultModalOpen} onClose={() => setResultModalOpen(false)} size="lg" centered>
+      <Modal
+        opened={resultModalOpen}
+        onClose={() => setResultModalOpen(false)}
+        size="lg"
+        centered
+      >
         <div className="p-6">
           {resultLoading ? (
             <div className="flex items-center justify-center min-h-[200px]">
               <span className="text-gray-600">Loading result...</span>
             </div>
           ) : resultError ? (
-            <div className="text-red-500 text-center min-h-[200px]">{resultError}</div>
+            <div className="text-red-500 text-center min-h-[200px]">
+              {resultError}
+            </div>
           ) : resultData ? (
             <div>
               <h2 className="text-2xl font-bold mb-2">Survey Result</h2>
               <div className="mb-4">
-                <div className="font-semibold">Survey: <span className="font-normal">{resultData.survey?.name}</span></div>
-                <div className="font-semibold">Status: <span className="font-normal">{resultData.status}</span></div>
-                <div className="font-semibold">Submitted: <span className="font-normal">{resultData.submitted_at ? new Date(resultData.submitted_at).toLocaleString() : "N/A"}</span></div>
+                <div className="font-semibold">
+                  Survey:{" "}
+                  <span className="font-normal">{resultData.survey?.name}</span>
+                </div>
+                <div className="font-semibold">
+                  Status:{" "}
+                  <span className="font-normal">{resultData.status}</span>
+                </div>
+                <div className="font-semibold">
+                  Submitted:{" "}
+                  <span className="font-normal">
+                    {resultData.submitted_at
+                      ? new Date(resultData.submitted_at).toLocaleString()
+                      : "N/A"}
+                  </span>
+                </div>
               </div>
               <div className="mb-4">
-                <div className="font-semibold">Trainee Name: <span className="font-normal">{resultData.trainee?.name}</span></div>
-                <div className="font-semibold">Email: <span className="font-normal">{resultData.trainee?.email}</span></div>
-                <div className="font-semibold">Phone: <span className="font-normal">{resultData.trainee?.phone}</span></div>
-                <div className="font-semibold">National ID: <span className="font-normal">{resultData.trainee?.nationalId}</span></div>
+                <div className="font-semibold">
+                  Trainee Name:{" "}
+                  <span className="font-normal">
+                    {resultData.trainee?.name}
+                  </span>
+                </div>
+                <div className="font-semibold">
+                  Email:{" "}
+                  <span className="font-normal">
+                    {resultData.trainee?.email}
+                  </span>
+                </div>
+                <div className="font-semibold">
+                  Phone:{" "}
+                  <span className="font-normal">
+                    {resultData.trainee?.phone}
+                  </span>
+                </div>
+                <div className="font-semibold">
+                  National ID:{" "}
+                  <span className="font-normal">
+                    {resultData.trainee?.nationalId}
+                  </span>
+                </div>
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Responses</h3>
@@ -531,7 +619,9 @@ export default function TraineeSurveys() {
                   <ul className="space-y-4">
                     {resultParsedAnswers.map((ans, idx) => (
                       <li key={idx} className="border-b pb-2">
-                        <div className="font-medium">Q{idx + 1}: {ans.question}</div>
+                        <div className="font-medium">
+                          Q{idx + 1}: {ans.question}
+                        </div>
                         <div className="ml-4 text-gray-700">{ans.answer}</div>
                       </li>
                     ))}
