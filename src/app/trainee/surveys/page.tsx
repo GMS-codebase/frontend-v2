@@ -451,6 +451,12 @@ export default function TraineeSurveys() {
             formData={{
               ...selectedSurvey,
               qns: selectedSurvey.questions || selectedSurvey.qns,
+              created_at: new Date(selectedSurvey.created_at),
+              expiry_date: new Date(selectedSurvey.expiry_date),
+              updated_at: new Date(selectedSurvey.updated_at),
+              surveyStartingTime: selectedSurvey.surveyStartingTime
+                ? new Date(selectedSurvey.surveyStartingTime)
+                : undefined,
             }}
             answers={surveyAnswers}
             setAnswers={handleSetAnswers}

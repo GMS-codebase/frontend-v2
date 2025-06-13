@@ -34,6 +34,7 @@ import { Select, SelectItem } from "@/components/ui/Select";
 
 interface SurveyWithResponseCount extends Survey {
   responseCount: number;
+  survey: string;
 }
 
 interface ParsedAnswer {
@@ -778,126 +779,130 @@ const SurveyPage = () => {
   const formatResponsesForExport = (responses: SurveyResponse[]) => {
     if (responses.length === 0) return [];
 
-    // Assuming all responses have the same survey structure, use the first response's survey to get questions
-    const sampleResponse = responses[0];
-    let surveyQuestions: any = {};
-    try {
-      if (
-        sampleResponse.survey?.qns &&
-        typeof sampleResponse.survey.qns === "string"
-      ) {
-        surveyQuestions = JSON.parse(sampleResponse.survey.qns);
-      }
-    } catch (error) {
-      console.error("Error parsing survey questions for export:", error);
-      notifications.show({
-        title: "Warning",
-        message: "Could not parse survey question structure for export.",
-        color: "yellow",
-      });
-      return []; // Return empty if questions can't be parsed
-    }
-
-    // Extract question titles and IDs to create dynamic headers
-    const questionHeaders: { id: string; title: string }[] = [];
-    // Assuming surveyQuestions structure has pages and surveys (questions) within them
-    if (surveyQuestions && typeof surveyQuestions === "object") {
-      Object.values(surveyQuestions).forEach((page: any) => {
-        if (page && page.pages && Array.isArray(page.pages)) {
-          page.pages.forEach((pageContent: any) => {
-            if (
-              pageContent &&
-              pageContent.surveys &&
-              Array.isArray(pageContent.surveys)
-            ) {
-              pageContent.surveys.forEach((question: any) => {
-                if (question.id && question.title) {
-                  questionHeaders.push({
-                    id: question.id,
-                    title: question.title,
-                  });
-                }
-              });
-            }
-          });
-        }
-      });
-    }
-
+    // Create headers
     const headers = [
       "Applicant Name",
       "Survey Name",
-      "Timestamp",
+      "Survey Type",
+      "Email",
+      "Submitted At",
       "Status",
-      ...questionHeaders.map((q) => q.title), // Add question titles as headers
+      "Responses",
     ];
 
     const data = [headers];
 
     responses.forEach((response) => {
-      let parsedAnswers: { [key: string]: any } = {};
+      const respondent =
+        response.applicant?.name || response.trainee?.name || "N/A";
+      const email =
+        response.applicant?.email || response.trainee?.email || "N/A";
+      const surveyName = response.survey?.name || "N/A";
+      const surveyType = response.survey?.survey_TYPE || "N/A";
+      const submittedAt = response.submitted_at
+        ? format(new Date(response.submitted_at), "yyyy-MM-dd HH:mm")
+        : "N/A";
+      const status = response.status || "N/A";
+
+      // Parse answers for export
+      let answersText = "No answers";
       try {
-        if (response.answers && typeof response.answers === "string") {
-          try {
-            parsedAnswers = JSON.parse(response.answers);
-          } catch (error) {
-            // Try parsing again if double-stringified
-            try {
-              parsedAnswers = JSON.parse(JSON.parse(response.answers));
-            } catch (error2) {
-              parsedAnswers = {};
-              console.error(
-                "Error parsing answers for export (double attempt):",
-                response.answers,
-                error2
-              );
-              notifications.show({
-                title: "Warning",
-                message:
-                  "Could not parse answer data for a response during export.",
-                color: "yellow",
-              });
-            }
-          }
-        }
+        const questionMap = parseQuestions(response.survey?.qns ?? "");
+        const parsedAnswers = parseAnswers(response.answers ?? "", questionMap);
+        answersText = parsedAnswers
+          .map((r) => `${r.question}: ${r.answer}`)
+          .join("; ");
       } catch (error) {
-        parsedAnswers = {};
-        console.error(
-          "Error parsing answers for export:",
-          response.answers,
-          error
-        );
-        notifications.show({
-          title: "Warning",
-          message: "Could not parse answer data for a response during export.",
-          color: "yellow",
-        });
+        console.warn("Failed to parse answers for export:", error);
       }
 
-      // Build question map for this response
-      const questionMap = parseQuestions(response.survey?.qns);
-      const row = [
-        response.applicant?.name || "N/A",
-        response.survey?.name || "N/A",
-        response.submitted_at
-          ? format(new Date(response.submitted_at), "MMM dd, yyyy HH:mm")
-          : "N/A",
-        response.reviewed ? "Reviewed" : "Pending",
-        ...questionHeaders.map((q) => {
-          const answer = parsedAnswers?.[q.id];
-          if (Array.isArray(answer)) {
-            return answer.join(", ");
-          } else if (answer !== undefined && answer !== null) {
-            return answer.toString();
-          } else {
-            return "N/A";
-          }
-        }),
-      ];
-      data.push(row);
+      data.push([
+        respondent,
+        surveyName,
+        surveyType,
+        email,
+        submittedAt,
+        status,
+        answersText,
+      ]);
     });
 
     return data;
+  };
+
+  // formatResponsesBySurveyType is used for downloading responses per survey type
+  const formatResponsesBySurveyType = (responses: SurveyResponse[]) => {
+    if (responses.length === 0) return [];
+
+    // Group responses by survey type
+    const responsesByType = responses.reduce(
+      (acc, response) => {
+        const type = response.survey?.survey_TYPE || "Unknown";
+        if (!acc[type]) {
+          acc[type] = [];
+        }
+        acc[type].push(response);
+        return acc;
+      },
+      {} as Record<string, SurveyResponse[]>
+    );
+
+    // Create headers
+    const headers = [
+      "Applicant Name",
+      "Survey Name",
+      "Email",
+      "Submitted At",
+      "Status",
+      "Responses",
+    ];
+
+    // Create data for each survey type
+    const dataByType: Record<string, string[][]> = {};
+
+    Object.entries(responsesByType).forEach(([type, typeResponses]) => {
+      const data = [headers];
+
+      typeResponses.forEach((response) => {
+        const respondent =
+          response.applicant?.name || response.trainee?.name || "N/A";
+        const email =
+          response.applicant?.email || response.trainee?.email || "N/A";
+        const surveyName = response.survey?.name || "N/A";
+        const submittedAt = response.submitted_at
+          ? format(new Date(response.submitted_at), "yyyy-MM-dd HH:mm")
+          : "N/A";
+        const status = response.status || "N/A";
+
+        // Parse answers for export
+        let answersText = "No answers";
+        try {
+          const questionMap = parseQuestions(response.survey?.qns ?? "");
+          const parsedAnswers = parseAnswers(
+            response.answers ?? "",
+            questionMap
+          );
+          answersText = parsedAnswers
+            .map((r) => `${r.question}: ${r.answer}`)
+            .join("; ");
+        } catch (error) {
+          console.warn("Failed to parse answers for export:", error);
+        }
+
+        data.push([
+          respondent,
+          surveyName,
+          email,
+          submittedAt,
+          status,
+          answersText,
+        ]);
+      });
+
+      dataByType[type] = data;
+    });
+
+    return dataByType;
   };
 
   // Enhanced filter logic for surveys
@@ -1231,7 +1236,7 @@ const SurveyPage = () => {
               <button
                 style={{
                   background:
-                    "linear-gradient(84.73deg, #005DE9 10.01%, #005DE9 114.53%)",
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
                 }}
                 className="p-2.5 rounded-full text-white hover:opacity-90 transition-opacity"
               >
@@ -1360,30 +1365,6 @@ const SurveyPage = () => {
       ),
     },
     {
-      id: "download", // Unique ID for the column
-      header: () => (
-        <div className="text-center font-semibold">
-          Download responses per survey
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="flex justify-center">
-          <button
-            className="p-1 hover:bg-gray-100 rounded"
-            onClick={() => {
-              // Explicitly pass the survey ID from the row data
-              handleDownloadResponses(row.original.id);
-            }}
-            // Add a title for accessibility
-            title={`Download  responses for ${row.original.name}`}
-          >
-            {/* Use the download icon */}
-            <FiDownload className="h-4 w-4 text-blue-600" />
-          </button>
-        </div>
-      ),
-    },
-    {
       id: "actions",
       header: () => <div className="text-right font-semibold">Actions</div>,
       cell: ({ row }) => (
@@ -1393,7 +1374,7 @@ const SurveyPage = () => {
               <button
                 style={{
                   background:
-                    "linear-gradient(84.73deg, #005DE9 10.01%, #005DE9 114.53%)",
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
                 }}
                 className="p-2.5 rounded-full text-white hover:opacity-90 transition-opacity"
               >
@@ -1409,7 +1390,7 @@ const SurveyPage = () => {
                 leftSection={<FiEye className="h-4 w-4" />}
                 onClick={() => {
                   // Navigate to the responses for this survey
-                  window.location.href = `/admin/surveys/responses?surveyId=${row.original.uuid}`;
+                  window.location.href = `/admin/surveys/view/${row.original.id}`;
                 }}
               >
                 View Responses
@@ -1781,11 +1762,7 @@ const SurveyPage = () => {
             {activeTab === "responsesPerType" && !selectedSurvey && (
               <ExportExcel
                 excelData={formatResponsesForExport(filteredResponses)}
-                fileName={
-                  activeTab === "responsesPerType"
-                    ? "survey_responses_by_type"
-                    : "survey_responses"
-                }
+                fileName="all_survey_responses"
               />
             )}
           </div>
