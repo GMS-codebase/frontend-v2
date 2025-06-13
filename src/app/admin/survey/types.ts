@@ -21,6 +21,9 @@ export interface Survey {
 
 export interface SurveyResponse {
   uuid: string;
+  user_id?: string;
+  id?: number;
+  traineeUuid?: string | null;
   applicant: {
     uuid: string;
     user_id: string;
@@ -41,6 +44,19 @@ export interface SurveyResponse {
     has_completed_profile: boolean;
     contact_count: number;
   };
+  trainee?: {
+    uuid: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+    gender?: string;
+    nationalId?: string;
+    applicationNumber?: string;
+    dateOfBirth?: string;
+    maritalStatus?: string;
+    approvalStatus?: string;
+    user_id?: string;
+  } | null;
   survey: {
     id: number;
     name: string;
@@ -59,6 +75,7 @@ export interface SurveyResponse {
   response: string;
   reviewed: boolean;
   answers: string;
+  status?: "SUBMITTED" | "REVIEWED";
 }
 
 export interface EndSurveyModalProps {

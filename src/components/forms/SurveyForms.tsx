@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import AddSurveyType from "./AddSurveyType";
 import SurveyType from "./SurveyType";
-import { Form, SurveyForm, ESurveyType } from "@/types/surveys-form";
+import { IForm, SurveyForm, ESurveyType, Survey } from "@/types/surveys-form";
 import { IoIosCloseCircle } from "react-icons/io";
 import { useDisclosure } from "@mantine/hooks";
 import RemoveSurveyType from "./RemoveSurveyType";
@@ -12,12 +12,12 @@ import { CalendarMinimalistic } from "solar-icon-set";
 
 interface Props {
   mode: "creating" | "viewing" | "answering" | "commenting";
-  formData: Form;
+  formData: IForm;
   answers?: { [key: string]: any };
   setAnswers?: (key: string, value: any) => void;
   comments?: { [key: string]: any };
   setComments?: (key: string, value: any) => void;
-  setFormData?: React.Dispatch<React.SetStateAction<Form | undefined>>;
+  setFormData?: React.Dispatch<React.SetStateAction<IForm | undefined>>;
 }
 
 const SurveyForms: React.FC<Props> = ({
@@ -64,7 +64,7 @@ const SurveyForms: React.FC<Props> = ({
         if (!prev) return undefined;
         return {
           ...prev,
-          expiry_date: newDate ? new Date(newDate) : undefined,
+          expiry_date: newDate ? new Date(newDate) : new Date(), // Provide default Date if no date selected
         };
       });
     }
@@ -80,10 +80,11 @@ const SurveyForms: React.FC<Props> = ({
     setFormData &&
       setFormData((prevFormData) => {
         if (!prevFormData) return undefined;
-        
+
         // Ensure qns is an object (SurveyForm)
-        const currentQns = typeof prevFormData.qns === 'object' ? prevFormData.qns : {};
-        
+        const currentQns =
+          typeof prevFormData.qns === "object" ? prevFormData.qns : {};
+
         return {
           ...prevFormData,
           qns: {
@@ -106,10 +107,11 @@ const SurveyForms: React.FC<Props> = ({
     setFormData &&
       setFormData((prevFormData) => {
         if (!prevFormData) return undefined;
-        
+
         // Ensure qns is an object (SurveyForm)
-        const qns = typeof prevFormData.qns === 'object' ? prevFormData.qns : {};
-        
+        const qns =
+          typeof prevFormData.qns === "object" ? prevFormData.qns : {};
+
         if (!qns[recentName]) {
           console.warn(`Survey type with name "${recentName}" not found.`);
           return prevFormData;
@@ -133,12 +135,13 @@ const SurveyForms: React.FC<Props> = ({
     setFormData &&
       setFormData((prevFormData) => {
         if (!prevFormData) return undefined;
-        
+
         // Ensure qns is an object (SurveyForm)
-        const currentQns = typeof prevFormData.qns === 'object' ? prevFormData.qns : {};
+        const currentQns =
+          typeof prevFormData.qns === "object" ? prevFormData.qns : {};
         const updatedQns = { ...currentQns };
         delete updatedQns[name];
-        
+
         return {
           ...prevFormData,
           qns: updatedQns,
@@ -148,7 +151,7 @@ const SurveyForms: React.FC<Props> = ({
 
   // Set the first survey type as active if none is selected
   useEffect(() => {
-    if (!activeType && formData?.qns && typeof formData.qns === 'object') {
+    if (!activeType && formData?.qns && typeof formData.qns === "object") {
       const surveyTypes = Object.keys(formData.qns);
       setActiveType(surveyTypes[0] ?? null);
     }
@@ -201,9 +204,9 @@ const SurveyForms: React.FC<Props> = ({
                   value={formData?.survey_type || ""}
                   onChange={(e) =>
                     setFormData &&
-                    setFormData({ 
-                      ...formData, 
-                      survey_type: e.target.value as ESurveyType 
+                    setFormData({
+                      ...formData,
+                      survey_type: e.target.value as ESurveyType,
                     })
                   }
                   className="w-full px-3 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 hover:border-primary/50 transition-colors duration-200 bg-white"
@@ -228,8 +231,17 @@ const SurveyForms: React.FC<Props> = ({
       )}
 
       <div className="flex overflow-x-auto py-4 space-x-4 mb-4">
-        {formData?.qns && typeof formData.qns === 'object' &&
-          Object.entries(formData.qns).map(([typeName, type]) => (
+        {formData?.qns &&
+          typeof formData.qns === "object" &&
+          Object.entries(
+            formData.qns as {
+              [key: string]: {
+                name: string;
+                description: string;
+                pages: { surveys: Survey[] }[];
+              };
+            }
+          ).map(([typeName, type]) => (
             <div
               key={typeName}
               onClick={() => setActiveType(typeName)}
@@ -280,60 +292,74 @@ const SurveyForms: React.FC<Props> = ({
         )}
       </div>
 
-      {activeType && formData?.qns && typeof formData.qns === 'object' && formData.qns[activeType] && (
-        <SurveyType
-          mode={mode}
-          surveyType={activeType}
-          answers={answers}
-          setAnswers={setAnswers}
-          comments={comments}
-          setComments={setComments}
-          goToNext={
-            formData.qns && typeof formData.qns === 'object' && Object.keys(formData.qns).length > 1
-              ? Object.keys(formData.qns)[
-                  Object.keys(formData.qns).indexOf(activeType) + 1
-                ]
-                ? () =>
-                    setActiveType(
-                      Object.keys(formData.qns as SurveyForm)[
-                        Object.keys(formData.qns as SurveyForm).indexOf(activeType) + 1
-                      ]
-                    )
+      {activeType &&
+        formData?.qns &&
+        typeof formData.qns === "object" &&
+        formData.qns[activeType] && (
+          <SurveyType
+            mode={mode}
+            surveyType={activeType}
+            answers={answers}
+            setAnswers={setAnswers}
+            comments={comments}
+            setComments={setComments}
+            goToNext={
+              formData.qns &&
+              typeof formData.qns === "object" &&
+              Object.keys(formData.qns).length > 1
+                ? Object.keys(formData.qns)[
+                    Object.keys(formData.qns).indexOf(activeType) + 1
+                  ]
+                  ? () =>
+                      setActiveType(
+                        Object.keys(formData.qns as SurveyForm)[
+                          Object.keys(formData.qns as SurveyForm).indexOf(
+                            activeType
+                          ) + 1
+                        ]
+                      )
+                  : undefined
                 : undefined
-              : undefined
-          }
-          goToPrev={
-            formData.qns && typeof formData.qns === 'object' && Object.keys(formData.qns).length > 1
-              ? Object.keys(formData.qns)[
-                  Object.keys(formData.qns).indexOf(activeType) - 1
-                ]
-                ? () =>
-                    setActiveType(
-                      Object.keys(formData.qns as SurveyForm)[
-                        Object.keys(formData.qns as SurveyForm).indexOf(activeType) - 1
-                      ]
-                    )
+            }
+            goToPrev={
+              formData.qns &&
+              typeof formData.qns === "object" &&
+              Object.keys(formData.qns).length > 1
+                ? Object.keys(formData.qns)[
+                    Object.keys(formData.qns).indexOf(activeType) - 1
+                  ]
+                  ? () =>
+                      setActiveType(
+                        Object.keys(formData.qns as SurveyForm)[
+                          Object.keys(formData.qns as SurveyForm).indexOf(
+                            activeType
+                          ) - 1
+                        ]
+                      )
+                  : undefined
                 : undefined
-              : undefined
-          }
-          onChange={(data: SurveyForm[string]) => {
-            setFormData &&
-              setFormData((prevFormData) => {
-                if (!prevFormData) return undefined;
-                // Ensure qns is an object (SurveyForm)
-                const currentQns = typeof prevFormData.qns === 'object' ? prevFormData.qns : {};
-                return {
-                  ...prevFormData,
-                  qns: {
-                    ...currentQns,
-                    [activeType]: data,
-                  },
-                };
-              });
-          }}
-          formData={formData.qns as SurveyForm}
-        />
-      )}
+            }
+            onChange={(data: SurveyForm[string]) => {
+              setFormData &&
+                setFormData((prevFormData) => {
+                  if (!prevFormData) return undefined;
+                  // Ensure qns is an object (SurveyForm)
+                  const currentQns =
+                    typeof prevFormData.qns === "object"
+                      ? prevFormData.qns
+                      : {};
+                  return {
+                    ...prevFormData,
+                    qns: {
+                      ...currentQns,
+                      [activeType]: data,
+                    },
+                  };
+                });
+            }}
+            formData={formData.qns as SurveyForm}
+          />
+        )}
 
       <AddSurveyType
         isOpen={isOpenAddSurveyType}
@@ -344,8 +370,10 @@ const SurveyForms: React.FC<Props> = ({
         onAddType={addSurveyType}
         onUpdateType={updateSurveyType}
         surveyType={
-          selectedSurveyType && formData?.qns && typeof formData.qns === 'object' 
-            ? formData.qns[selectedSurveyType] 
+          selectedSurveyType &&
+          formData?.qns &&
+          typeof formData.qns === "object"
+            ? formData.qns[selectedSurveyType]
             : undefined
         }
       />

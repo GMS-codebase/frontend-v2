@@ -1,44 +1,117 @@
 "use client";
-import { useParams } from "next/navigation";
+
+import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect, useCallback } from "react";
-import { IForm, Section, Survey, SurveyResponse } from "@/types/surveys-form";
-import { IoArrowBack } from "react-icons/io5";
-import { useRouter } from "next/navigation";
-import { Tabs, Badge, Card, Text, Divider, Menu } from "@mantine/core";
-import { authorizedApi } from "@/utils/api";
-import { notifications } from "@mantine/notifications";
+import {
+  Search,
+  Download,
+  Eye,
+  MoreHorizontal,
+  User,
+  Clock,
+  FileText,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  CheckCheck,
+} from "lucide-react";
 import { format } from "date-fns";
-import { ColumnDef } from "@tanstack/react-table";
-import { CustomDataTable } from "@/components/core/data-table/custom-data-table";
-import { HiDotsHorizontal } from "react-icons/hi";
-import { FiEye } from "react-icons/fi";
+import { notifications } from "@mantine/notifications";
+import { authorizedApi } from "@/utils/api";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import Badge from "@/components/ui/Badge";
+import { Card, CardContent } from "@/components/ui/Card";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/Table";
+import { Dropdown, DropdownItem } from "@/components/ui/Dropdown";
+import { Select, SelectItem } from "@/components/ui/Select";
+import { IoArrowBack } from "react-icons/io5";
+
+// Types
+interface Survey {
+  id: number;
+  name: string;
+  qns: string;
+  expiry_date: string;
+  survey_status: string;
+  created_at: string;
+  updated_at: string;
+  survey_TYPE: string;
+  hasSurvey_Started: boolean;
+  surveyStartingTime: string;
+}
+
+interface Applicant {
+  uuid: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  gender?: string;
+  nationalId?: string;
+  user_id?: string;
+  age?: number;
+  description?: string;
+  po_box?: string;
+  has_completed_profile?: boolean;
+  contact_count?: number;
+}
+
+interface Trainee {
+  uuid: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  gender?: string;
+  nationalId?: string;
+  applicationNumber?: string;
+  dateOfBirth?: string;
+  maritalStatus?: string;
+  approvalStatus?: string;
+  user_id?: string;
+}
+
+interface SurveyResponse {
+  uuid: string;
+  user_id?: string;
+  id?: number;
+  traineeUuid?: string | null;
+  answers?: string;
+  status?: "SUBMITTED" | "REVIEWED";
+  submitted_at?: string;
+  survey?: Survey;
+  applicant?: Applicant | null;
+  trainee?: Trainee | null;
+  deletedStatus?: boolean;
+  doneAt?: string;
+  lastUpdatedAt?: string;
+  parsedAnswers?: ParsedAnswer[];
+}
 
 interface ParsedAnswer {
   question: string;
   answer: string;
 }
 
-// Parse survey questions to create question map
+// Parse survey questions
 const parseQuestions = (qns: string): { [key: string]: string } => {
-  if (!qns) {
-    return {};
-  }
+  if (!qns) return {};
   try {
     let cleanedQns = qns.trim();
-    // Remove outer parentheses and quotes if present (e.g., "({...})")
     if (cleanedQns.startsWith('("') && cleanedQns.endsWith('")')) {
       cleanedQns = cleanedQns.substring(2, cleanedQns.length - 2);
     }
-    // Remove outer quotes if still present
     if (cleanedQns.startsWith('"') && cleanedQns.endsWith('"')) {
       cleanedQns = cleanedQns.substring(1, cleanedQns.length - 1);
     }
-
-    // Unescape inner quotes that might have been escaped during stringification
     cleanedQns = cleanedQns.replace(/\\"/g, '"');
-
-    // Regex to find unquoted keys and wrap them in double quotes
-    // This handles cases like {key:"value"} -> {"key":"value"}
     cleanedQns = cleanedQns.replace(/([{,])\s*([a-zA-Z0-9_\-]+):/g, '$1"$2":');
 
     const parsed = JSON.parse(cleanedQns);
@@ -72,40 +145,33 @@ const parseQuestions = (qns: string): { [key: string]: string } => {
         }
       });
     }
-
     return questionMap;
   } catch (error) {
     console.warn(
-      "Failed to parse survey questions in view page:",
+      "Failed to parse survey questions:",
       error,
       "Problematic qns:",
       qns
     );
     notifications.show({
-      message: "Failed to parse survey questions data for display.",
+      message: "Failed to parse survey questions data.",
       color: "red",
     });
     return {};
   }
 };
 
-// Enhanced parse answers function to handle all possible formats
+// Parse answers
 const parseAnswers = (
   answers: string,
   questionMap: { [key: string]: string }
 ): ParsedAnswer[] => {
   try {
     let cleanedAnswers = answers;
-    // Remove outer parentheses and quotes if present (e.g., "({...})")
     if (cleanedAnswers.startsWith('("') && cleanedAnswers.endsWith('")')) {
       cleanedAnswers = cleanedAnswers.substring(2, cleanedAnswers.length - 2);
     }
-
-    // Unescape inner quotes that might have been escaped during stringification
     cleanedAnswers = cleanedAnswers.replace(/\\"/g, '"');
-
-    // Regex to find unquoted keys and wrap them in double quotes
-    // This handles cases like {key:"value"} -> {"key":"value"}
     cleanedAnswers = cleanedAnswers.replace(
       /([{,])\s*([a-zA-Z0-9_\-]+):/g,
       '$1"$2":'
@@ -123,16 +189,12 @@ const parseAnswers = (
           });
           return;
         }
-
         if (key.includes("{") && key.includes('"question"')) {
           try {
             let cleanKey = key;
-            if (cleanKey.startsWith('"{') && cleanKey.endsWith('}"')) {
+            if (cleanKey.startsWith('"{') && cleanKey.endsWith('}"'))
               cleanKey = cleanKey.slice(1, -1);
-            }
-
             const innerJson = JSON.parse(cleanKey);
-
             if (innerJson.question && innerJson.answer) {
               results.push({
                 question: innerJson.question,
@@ -147,7 +209,6 @@ const parseAnswers = (
           } catch (innerError) {
             const questionMatch = key.match(/"question":\s*"([^"]*)"/);
             const answerMatch = key.match(/"answer":\s*"([^"]*)"/);
-
             if (questionMatch) {
               results.push({
                 question: questionMatch[1],
@@ -164,7 +225,6 @@ const parseAnswers = (
           }
           return;
         }
-
         results.push({
           question: questionMap[key] || key,
           answer: String(value),
@@ -192,158 +252,55 @@ const parseAnswers = (
     }
 
     if (results.length === 0) {
-      const patterns = [
-        /"question":\s*"([^"]*)"\s*,\s*"answer":\s*"([^"]*)"/g,
-        /"question":"([^"]*)","answer":"([^"]*)"/g,
-        /question:\s*"([^"]*)"\s*,\s*answer:\s*"([^"]*)"/g,
-      ];
-
+      const patterns = [/("question":\s*"[^"]*"\s*,\s*"answer":\s*"[^"]*")/g];
       for (const pattern of patterns) {
         const matches = [...answers.matchAll(pattern)];
         if (matches.length > 0) {
-          return matches.map((match) => ({
-            question: match[1],
-            answer: match[2],
-          }));
+          return matches.map((match) => {
+            const [fullMatch] = match;
+            const questionMatch = fullMatch.match(/"question":\s*"([^"]*)"/);
+            const answerMatch = fullMatch.match(/"answer":\s*"([^"]*)"/);
+            return {
+              question: questionMatch ? questionMatch[1] : "Unknown Question",
+              answer: answerMatch ? answerMatch[1] : "No answer",
+            };
+          });
         }
       }
-
-      if (answers.includes('"question"') && answers.includes('"answer"')) {
-        const questionRegex = /"question":\s*"([^"]*)"/g;
-        const answerRegex = /"answer":\s*"([^"]*)"/g;
-
-        const questions = [...answers.matchAll(questionRegex)];
-        const answersMatches = [...answers.matchAll(answerRegex)];
-
-        if (questions.length > 0 && answersMatches.length > 0) {
-          const minLength = Math.min(questions.length, answersMatches.length);
-          for (let i = 0; i < minLength; i++) {
-            results.push({
-              question: questions[i][1],
-              answer: answersMatches[i][1],
-            });
-          }
-        }
-      }
-
-      if (results.length > 0) {
-        return results;
-      }
-
-      return [
-        {
-          question: "Survey Response",
-          answer: JSON.stringify(parsed, null, 2),
-        },
-      ];
+      return [{ question: "Raw Survey Response", answer: answers }];
     }
 
     return results;
   } catch (error) {
-    const patterns = [
-      /"question":\s*"([^"]*)"\s*,\s*"answer":\s*"([^"]*)"/g,
-      /"question":"([^"]*)","answer":"([^"]*)"/g,
-      /question:\s*"([^"]*)"\s*,\s*answer:\s*"([^"]*)"/g,
-    ];
-
-    for (const pattern of patterns) {
-      const matches = [...answers.matchAll(pattern)];
-      if (matches.length > 0) {
-        return matches.map((match) => ({
-          question: match[1],
-          answer: match[2],
-        }));
-      }
-    }
-
-    return [
-      {
-        question: "Raw Survey Response",
-        answer: answers,
-      },
-    ];
+    return [{ question: "Raw Survey Response", answer: answers }];
   }
 };
 
-// Helper to render answers as readable list
-function renderAnswers(answers: any, questionMap: Record<string, string>) {
-  const parsedAnswers = parseAnswers(answers, questionMap);
-
-  if (parsedAnswers.length === 0) {
-    return <span>No answers</span>;
-  }
-
-  // Display only the first answer for brevity in the table, similar to "+X more answers"
-  const firstAnswer = parsedAnswers[0];
-  const remainingCount = parsedAnswers.length - 1;
-
-  return (
-    <div className="flex flex-col">
-      <span>{`${firstAnswer.answer}`}</span>
-      {remainingCount > 0 && (
-        <span className="text-sm text-gray-500">
-          +{remainingCount} more answers
-        </span>
-      )}
-    </div>
-  );
-}
-
-const Page = () => {
+const SurveyViewPage = () => {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
-  const [survey, setSurvey] = useState<IForm | null>(null);
+  const [survey, setSurvey] = useState<Survey | null>(null);
+  const [responses, setResponses] = useState<SurveyResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [surveyTypeFilter, setSurveyTypeFilter] = useState<string>("all");
+  const [dateFromFilter, setDateFromFilter] = useState<string>("");
+  const [dateToFilter, setDateToFilter] = useState<string>("");
 
-  const [surveyResponses, setSurveyResponses] = useState<SurveyResponse[]>([]);
-  const [responsesLoading, setResponsesLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("details");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalResponses, setTotalResponses] = useState(0);
+  const [pageSize] = useState(10);
 
-  const initialResponsesLoadedRef = React.useRef(false);
-
-  const fetchSurvey = useCallback(async (surveyId: string) => {
+  const fetchSurvey = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await authorizedApi.get(
-        `/survey/single-survey/${surveyId}`
-      );
-
-      const rawSurveyData = response.data;
-
-      let sections: Section[] = [];
-      let parsedQns: any = {};
-      try {
-        parsedQns = JSON.parse(rawSurveyData.qns);
-
-        sections = Object.entries(parsedQns).map(
-          ([sectionName, sectionContent]: [string, any]) => ({
-            name: sectionContent.name || sectionName,
-            description: sectionContent.description || "",
-            questions:
-              sectionContent.pages?.flatMap(
-                (page: any) => page.surveys || []
-              ) || [],
-          })
-        );
-      } catch (parseError) {
-        console.error("Error parsing qns JSON:", parseError);
-        notifications.show({
-          message: "Failed to parse survey questions data.",
-          color: "red",
-        });
-      }
-
-      const structuredSurvey: IForm = {
-        ...rawSurveyData,
-        sections: sections,
-        created_at: rawSurveyData.created_at,
-        expiry_date: rawSurveyData.expiry_date,
-      };
-
-      setSurvey(structuredSurvey);
+      const response = await authorizedApi.get(`/survey/single-survey/${id}`);
+      setSurvey(response.data);
       notifications.show({
         message: "Survey data loaded successfully",
         color: "green",
@@ -359,29 +316,22 @@ const Page = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [id]);
 
-  const fetchSurveyResponses = useCallback(
-    async (surveyId: string) => {
-      if (!survey) {
-        console.warn("Survey data not available yet, waiting...");
-        return;
-      }
-
+  const fetchResponses = useCallback(
+    async (page = 1) => {
       try {
-        setResponsesLoading(true);
+        setLoading(page === 1);
         const response = await authorizedApi.get(
-          `/survey/getSurveyResponses/${surveyId}`
+          `/survey/getSurveyResponses/${id}`
         );
 
         let responsesData = [];
         if (Array.isArray(response.data)) {
           responsesData = response.data;
-        } else if (response.data && Array.isArray(response.data.data)) {
-          responsesData = response.data.data;
         } else {
           console.error(
-            "API returned data structure is not an array for responses:",
+            "API returned unexpected data structure:",
             response.data
           );
           notifications.show({
@@ -389,87 +339,340 @@ const Page = () => {
             message: "Received unexpected data format for responses.",
             color: "red",
           });
+          setResponses([]);
+          setTotalResponses(0);
+          setTotalPages(1);
+          setCurrentPage(1);
+          setLoading(false);
           return;
         }
 
-        const mappedResponses: SurveyResponse[] = responsesData.map(
-          (item: any) => ({
-            uuid: item.uuid,
-            lastUpdatedAt: item.lastUpdatedAt,
-            answers: item.answers,
-            status: item.status,
-            submitted_at: item.submitted_at,
-            applicant: item.applicant,
-            trainee: item.trainee,
-            reviewed: item.status === "REVIEWED",
+        // Fetch applicant and trainee names
+        const enrichedResponses = await Promise.all(
+          responsesData.map(async (item) => {
+            let enrichedItem = { ...item };
+
+            // Fetch applicant name if available
+            if (item.applicant && item.applicant.uuid && !item.applicant.name) {
+              try {
+                const applicantResponse = await authorizedApi.get(
+                  `/applicant/${item.applicant.uuid}/by-id`
+                );
+                enrichedItem = {
+                  ...enrichedItem,
+                  applicant: {
+                    ...item.applicant,
+                    name: applicantResponse.data.name || "N/A",
+                  },
+                };
+              } catch (err) {
+                console.warn(
+                  `Failed to fetch applicant name for uuid ${item.applicant.uuid}:`,
+                  err
+                );
+              }
+            }
+
+            // Fetch trainee name if available
+            if (item.trainee && item.trainee.uuid && !item.trainee.name) {
+              try {
+                const traineeResponse = await authorizedApi.get(
+                  `/applicant/trainees/${item.trainee.uuid}`
+                );
+                enrichedItem = {
+                  ...enrichedItem,
+                  trainee: {
+                    ...item.trainee,
+                    name: traineeResponse.data.name || "N/A",
+                  },
+                };
+              } catch (err) {
+                console.warn(
+                  `Failed to fetch trainee name for uuid ${item.trainee.uuid}:`,
+                  err
+                );
+              }
+            }
+
+            const questionMap = parseQuestions(item.survey?.qns ?? "");
+            const parsedAnswers = parseAnswers(item.answers ?? "", questionMap);
+
+            return {
+              ...enrichedItem,
+              parsedAnswers,
+            };
           })
         );
 
-        setSurveyResponses(mappedResponses);
-        if (!initialResponsesLoadedRef.current) {
-          notifications.show({
-            message: "Survey responses loaded successfully",
-            color: "green",
-          });
-          initialResponsesLoadedRef.current = true;
-        }
+        const startIndex = (page - 1) * pageSize;
+        const paginatedResponses = enrichedResponses.slice(
+          startIndex,
+          startIndex + pageSize
+        );
+        const total = enrichedResponses.length;
+        const totalPagesCalc = Math.ceil(total / pageSize);
+
+        setResponses(paginatedResponses);
+        setTotalResponses(total);
+        setTotalPages(totalPagesCalc);
+        setCurrentPage(page);
+
+        notifications.show({
+          message: "Responses loaded successfully",
+          color: "green",
+        });
       } catch (err: any) {
-        console.error("Error fetching survey responses:", err);
+        console.error("Error fetching responses:", err);
         notifications.show({
           message:
             err.response?.data?.message || "Failed to load survey responses",
           color: "red",
         });
-        setSurveyResponses([]);
+        setResponses([]);
+        setTotalResponses(0);
+        setTotalPages(1);
+        setCurrentPage(1);
       } finally {
-        setResponsesLoading(false);
+        setLoading(false);
       }
     },
-    [survey]
+    [id, pageSize]
   );
 
-  // Fetch survey when id changes
   useEffect(() => {
     if (id) {
-      const loadSurvey = async () => {
-        setLoading(true);
-        try {
-          await fetchSurvey(id);
-        } catch (error) {
-          console.error("Error loading survey:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      loadSurvey();
+      fetchSurvey();
+      fetchResponses(1);
     }
-  }, [id, fetchSurvey]);
+  }, [id, fetchSurvey, fetchResponses]);
 
-  // Fetch responses when survey is loaded
-  useEffect(() => {
-    if (survey && id) {
-      fetchSurveyResponses(id);
+  const filteredResponses = responses.filter((response) => {
+    if (statusFilter === "reviewed" && response.status !== "REVIEWED")
+      return false;
+    if (statusFilter === "pending" && response.status !== "SUBMITTED")
+      return false;
+    if (
+      surveyTypeFilter !== "all" &&
+      response.survey?.survey_TYPE !== surveyTypeFilter
+    )
+      return false;
+    const submittedDate = response.submitted_at
+      ? new Date(response.submitted_at)
+      : new Date();
+    if (dateFromFilter && submittedDate < new Date(dateFromFilter))
+      return false;
+    if (dateToFilter && submittedDate > new Date(dateToFilter)) return false;
+    const searchLower = searchQuery.toLowerCase();
+    const applicantName = response.applicant?.name?.toLowerCase() || "";
+    const traineeName = response.trainee?.name?.toLowerCase() || "";
+    const email =
+      response.applicant?.email?.toLowerCase() ||
+      response.trainee?.email?.toLowerCase() ||
+      "";
+    return (
+      applicantName.includes(searchLower) ||
+      traineeName.includes(searchLower) ||
+      email.includes(searchLower)
+    );
+  });
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      fetchResponses(page);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [survey, id]);
+  };
 
-  useEffect(() => {
-    if (survey) {
-      if (survey.sections && survey.sections.length > 0) {
-        setActiveTab(survey.sections[0].name);
-      } else {
-        setActiveTab("details");
+  const handleExportToExcel = useCallback(() => {
+    try {
+      const headers = [
+        "Respondent",
+        "Type",
+        "Email",
+        "Submitted",
+        "Status",
+        "Responses",
+      ];
+      const csvContent = [
+        headers.join(","),
+        ...filteredResponses.map((response) => {
+          const respondent =
+            response.applicant?.name || response.trainee?.name || "N/A";
+          const respondentType = response.applicant
+            ? "Applicant"
+            : response.trainee
+              ? "Trainee"
+              : "N/A";
+          const email =
+            response.applicant?.email || response.trainee?.email || "N/A";
+          const submitted = response.submitted_at
+            ? format(new Date(response.submitted_at), "yyyy-MM-dd HH:mm")
+            : "N/A";
+          const status = response.status || "N/A";
+          let answersText = "No answers";
+          try {
+            const questionMap = parseQuestions(response.survey?.qns ?? "");
+            const parsedAnswers = parseAnswers(
+              response.answers ?? "",
+              questionMap
+            );
+            answersText = parsedAnswers
+              .map((r) => `${r.question}: ${r.answer}`)
+              .join("; ");
+          } catch (error) {
+            console.warn("Failed to parse answers for export:", error);
+          }
+          return [
+            respondent,
+            respondentType,
+            email,
+            submitted,
+            status,
+            `"${answersText}"`,
+          ].join(",");
+        }),
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `survey-${survey?.name || id}-responses-${format(new Date(), "yyyy-MM-dd")}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      notifications.show({
+        message: "CSV file exported successfully",
+        color: "green",
+      });
+    } catch (error) {
+      console.error("Error exporting to CSV:", error);
+      notifications.show({
+        message: "Failed to export CSV file",
+        color: "red",
+      });
+    }
+  }, [filteredResponses, survey, id]);
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("all");
+    setSurveyTypeFilter("all");
+    setDateFromFilter("");
+    setDateToFilter("");
+  };
+
+  const renderResponseRow = (response: SurveyResponse) => {
+    const respondent = response.applicant || response.trainee;
+    const respondentType = response.applicant
+      ? "Applicant"
+      : response.trainee
+        ? "Trainee"
+        : "N/A";
+
+    let displayAnswer = "No answers provided";
+    let answerCount = 0;
+    try {
+      const questionMap = parseQuestions(response.survey?.qns ?? "");
+      const parsedAnswers = parseAnswers(response.answers ?? "", questionMap);
+      if (parsedAnswers.length > 0) {
+        displayAnswer = parsedAnswers[0].answer;
+        answerCount = parsedAnswers.length;
       }
+    } catch (error) {
+      console.warn("Failed to parse answers for display:", error);
     }
-  }, [survey]);
 
-  const currentSection = survey?.sections?.find(
-    (section: Section) => section.name === activeTab
-  );
+    return (
+      <TableRow key={response.uuid || ""}>
+        <TableCell>
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+              <User className="w-4 h-4 text-blue-600" />
+            </div>
+            <div>
+              <p className="font-medium text-gray-900">
+                {respondent?.name || "N/A"}
+              </p>
+              <p className="text-sm text-gray-500">
+                {respondent?.email || "N/A"}
+              </p>
+              <p className="text-xs text-blue-600">{respondentType}</p>
+            </div>
+          </div>
+        </TableCell>
+        <TableCell>
+          <div className="flex items-center space-x-2">
+            <Clock className="w-4 h-4 text-gray-400" />
+            <div>
+              <p className="text-sm font-medium text-gray-900">
+                {response.submitted_at
+                  ? format(new Date(response.submitted_at), "MMM dd, yyyy")
+                  : "N/A"}
+              </p>
+              <p className="text-xs text-gray-500">
+                {response.submitted_at
+                  ? format(new Date(response.submitted_at), "HH:mm")
+                  : "N/A"}
+              </p>
+            </div>
+          </div>
+        </TableCell>
+        <TableCell>
+          <div className="max-w-md">
+            <p
+              className="text-sm text-gray-900 line-clamp-2"
+              title={displayAnswer}
+            >
+              {displayAnswer}
+            </p>
+            {answerCount > 1 && (
+              <p className="text-xs text-gray-500">
+                +{answerCount - 1} more answers
+              </p>
+            )}
+          </div>
+        </TableCell>
+        <TableCell>
+          <Badge
+            variant={response.status === "REVIEWED" ? "success" : "warning"}
+          >
+            {response.status === "REVIEWED" ? "Reviewed" : "Pending"}
+          </Badge>
+        </TableCell>
+        <TableCell>
+          <Dropdown
+            trigger={
+              <Button variant="ghost" size="sm">
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            }
+          >
+            <DropdownItem>
+              <a
+                href={`/admin/surveys/responses/${id}/${response.applicant?.uuid || response.trainee?.uuid}`}
+                className="flex gap-2 items-center"
+              >
+                <Eye className="w-4 h-4 mr-2" /> View Details
+              </a>
+            </DropdownItem>
+          </Dropdown>
+        </TableCell>
+      </TableRow>
+    );
+  };
+
+  const reviewedCount = filteredResponses.filter(
+    (r) => r.status === "REVIEWED"
+  ).length;
+  const pendingCount = filteredResponses.filter(
+    (r) => r.status === "SUBMITTED"
+  ).length;
 
   if (loading) {
     return (
-      <div className="w-full !overflow-x-hidden p-6 max-w-7xl mx-auto text-center">
+      <div className="w-full p-6 max-w-7xl mx-auto text-center">
         <div className="flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
           <span className="ml-3 text-gray-600">Loading survey data...</span>
@@ -480,7 +683,7 @@ const Page = () => {
 
   if (error) {
     return (
-      <div className="w-full !overflow-x-hidden p-6 max-w-7xl mx-auto">
+      <div className="w-full p-6 max-w-7xl mx-auto">
         <button
           onClick={() => router.back()}
           className="flex items-center gap-2 text-blue-500 mb-6 hover:underline font-medium"
@@ -494,7 +697,7 @@ const Page = () => {
 
   if (!survey) {
     return (
-      <div className="w-full !overflow-x-hidden p-6 max-w-7xl mx-auto">
+      <div className="w-full p-6 max-w-7xl mx-auto">
         <button
           onClick={() => router.back()}
           className="flex items-center gap-2 text-blue-500 mb-6 hover:underline font-medium"
@@ -505,275 +708,284 @@ const Page = () => {
       </div>
     );
   }
-  const responseColumns: ColumnDef<SurveyResponse>[] = [
-    {
-      accessorKey: "applicant",
-      header: () => <div className="text-left font-semibold">Applicant</div>,
-      cell: ({ row }) => (
-        <div className="font-medium">
-          {row.original.applicant?.name || "N/A"}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "submitted_at",
-      header: () => <div className="text-left font-semibold">Timestamp</div>,
-      cell: ({ row }) => (
-        <div>
-          {row.original.submitted_at
-            ? format(new Date(row.original.submitted_at), "MMM dd, yyyy HH:mm")
-            : "N/A"}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "response",
-      header: () => <div className="text-left font-semibold">Response</div>,
-      cell: ({ row }) => {
-        const questionMap = parseQuestions(survey?.qns || "");
-        return (
-          <div className="max-w-md truncate" title={row.original.response}>
-            {renderAnswers(row.original.answers, questionMap)}
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "status",
-      header: () => <div className="text-left font-semibold">Status</div>,
-      cell: ({ row }) => (
-        <div
-          className={`px-3 py-1 rounded-full text-sm w-fit ${row.original.reviewed ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"}`}
-        >
-          {row.original.reviewed ? "Reviewed" : "Pending"}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "actions",
-      header: () => <div className="text-right font-semibold">Actions</div>,
-      cell: ({ row }) => (
-        <div className="flex justify-end">
-          <Menu shadow="lg" width={200} position="bottom-end">
-            <Menu.Target>
-              <button
-                style={{
-                  background:
-                    "linear-gradient(84.73deg, #005DE9 10.01%, #005DE9 114.53%)",
-                }}
-                className="p-2.5 rounded-full text-white hover:opacity-90 transition-opacity"
-              >
-                <HiDotsHorizontal size={18} color="white" />
-              </button>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Label>
-                <h1 className="text-lg font-medium">Actions</h1>
-              </Menu.Label>
-              <Menu.Divider />
-              <Menu.Item
-                leftSection={<FiEye className="h-4 w-4" />}
-                onClick={() => {
-                  router.push(
-                    `/admin/surveys/responses/${id}/${row.original.applicant?.uuid}`
-                  );
-                }}
-              >
-                View Details
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </div>
-      ),
-    },
-  ];
 
   return (
-    <div className="w-full !overflow-x-hidden p-6 max-w-7xl mx-auto">
-      <button
-        onClick={() => router.back()}
-        className="flex items-center gap-2 text-blue-500 mb-6 hover:underline font-medium"
-      >
-        <IoArrowBack size={18} /> Back to Surveys
-      </button>
-
-      <div className="bg-white rounded-lg shadow p-8 mb-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-semibold text-gray-800">
-            {survey.name}
-          </h1>
-          <Badge
-            className={`px-3 py-1 rounded-sm text-xs font-medium uppercase tracking-wider ${
-              survey.survey_status === "ONGOING"
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
-          >
-            {survey.survey_status === "ONGOING" ? "ONGOING" : "ENDED"}
-          </Badge>
-        </div>
-
-        <p className="text-gray-600 mb-8">{survey.description}</p>
-
-        <div className="mb-10">
-          <div className="border rounded-lg p-6">
-            <h2 className="text-lg font-medium text-gray-500 mb-4">
-              Survey Details
-            </h2>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-700">Status:</span>
-                <Badge
-                  className={`px-3 py-1 rounded-sm text-xs font-medium uppercase ${
-                    survey.survey_status === "ONGOING"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {survey.survey_status === "ONGOING" ? "ONGOING" : "ENDED"}
-                </Badge>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-700">Created:</span>
-                <span className="text-gray-900">
-                  {survey.created_at
-                    ? new Date(survey.created_at).toLocaleDateString()
-                    : "N/A"}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-700">Expires:</span>
-                <span className="text-gray-900">
-                  {survey.expiry_date
-                    ? new Date(survey.expiry_date).toLocaleDateString()
-                    : "N/A"}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-700">Sections:</span>
-                <span className="text-gray-900">
-                  {survey.sections?.length || 0}
-                </span>
-              </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+            <div className="mb-4 lg:mb-0">
+              <button
+                onClick={() => router.back()}
+                className="flex items-center gap-2 text-blue-500 mb-4 hover:underline font-medium"
+              >
+                <IoArrowBack size={18} /> Back to Surveys
+              </button>
+              <h1 className="text-3xl font-bold text-blue-600">
+                Survey Responses for &quot;{survey.name}&quot;
+              </h1>
+              <p className="mt-1 text-gray-600">
+                Manage and analyze responses for {survey.name}
+              </p>
+            </div>
+            <div className="flex space-x-3">
+              <Button
+                onClick={handleExportToExcel}
+                variant="secondary"
+                disabled={filteredResponses.length === 0}
+              >
+                <Download className="w-4 h-4 mr-2" /> Export CSV
+              </Button>
             </div>
           </div>
-        </div>
 
-        <Divider className="my-8" />
-
-        <div>
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-            Sections & Questions
-          </h2>
-          <Tabs
-            value={activeTab}
-            onChange={(value) => setActiveTab(value as string)}
-          >
-            <Tabs.List>
-              {survey.sections?.map((section: Section) => (
-                <Tabs.Tab key={section.name} value={section.name}>
-                  {section.name}
-                </Tabs.Tab>
-              ))}
-            </Tabs.List>
-
-            {survey.sections?.map((section: Section) => (
-              <Tabs.Panel key={section.name} value={section.name} pt="xs">
-                {currentSection?.questions &&
-                currentSection.questions.length > 0 ? (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Question Name
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Question
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Type
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Required
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {currentSection.questions.map((question: Survey) => (
-                          <tr key={question.id}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {question.id.includes("-s-")
-                                ? question.id.substring(
-                                    0,
-                                    question.id.lastIndexOf("-s-")
-                                  )
-                                : question.id}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {question.title}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              <Badge>{question.type}</Badge>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {question.required ? "Yes" : "No"}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
+                    <FileText className="w-6 h-6 text-blue-600" />
                   </div>
-                ) : (
-                  <p className="text-gray-600">
-                    No questions available for this section.
-                  </p>
-                )}
-              </Tabs.Panel>
-            ))}
-          </Tabs>
-        </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">
+                      Total Responses
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {totalResponses}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
+                    <CheckCheck className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">
+                      Reviewed
+                    </p>
+                    <p className="text-2xl font-bold text-green-600">
+                      {reviewedCount}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-amber-100 rounded-lg">
+                    <Clock className="w-6 h-6 text-amber-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">
+                      Pending Review
+                    </p>
+                    <p className="text-2xl font-bold text-amber-600">
+                      {pendingCount}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg">
+                    <FileText className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">
+                      Review Rate
+                    </p>
+                    <p className="text-2xl font-bold text-purple-600">
+                      {totalResponses > 0
+                        ? Math.round((reviewedCount / totalResponses) * 100)
+                        : 0}
+                      %
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-        <div className="bg-white rounded-lg shadow p-8 mt-6">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-            Responses
-          </h2>
-          {responsesLoading ? (
-            <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-              <span className="ml-3 text-gray-600">Loading responses...</span>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4">
+                <Filter className="w-4 h-4" />
+                <span>Filters</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                <div className="xl:col-span-2">
+                  <Input
+                    placeholder="Search responses, names, emails..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    icon={<Search className="w-4 h-4 text-gray-400" />}
+                  />
+                </div>
+                <div>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="reviewed">Reviewed</SelectItem>
+                  </Select>
+                </div>
+                <div>
+                  <Select
+                    value={surveyTypeFilter}
+                    onValueChange={setSurveyTypeFilter}
+                  >
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="TRAINEESURVEY">
+                      Trainee Survey
+                    </SelectItem>
+                    <SelectItem value="COMPANYSURVEY">
+                      Company Survey
+                    </SelectItem>
+                    <SelectItem value="GENERALSURVEY">
+                      General Survey
+                    </SelectItem>
+                  </Select>
+                </div>
+                <div>
+                  <Button
+                    onClick={clearFilters}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    From Date
+                  </label>
+                  <input
+                    type="date"
+                    value={dateFromFilter}
+                    onChange={(e) => setDateFromFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    To Date
+                  </label>
+                  <input
+                    type="date"
+                    value={dateToFilter}
+                    onChange={(e) => setDateToFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card padding="none">
+            <div className="overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Respondent</TableHead>
+                    <TableHead>Submitted</TableHead>
+                    <TableHead>Response</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {loading ? (
+                    <TableRow>
+                      <td colSpan={5} className="text-center py-12">
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                          <span className="ml-3 text-gray-600">
+                            Loading responses...
+                          </span>
+                        </div>
+                      </td>
+                    </TableRow>
+                  ) : filteredResponses.length === 0 ? (
+                    <TableRow>
+                      <td colSpan={5} className="text-center py-12">
+                        <div className="flex flex-col items-center">
+                          <FileText className="w-12 h-12 text-gray-400 mb-4" />
+                          <h3 className="text-lg font-medium text-gray-900 mb-2">
+                            No responses found
+                          </h3>
+                          <p className="text-gray-600">
+                            {responses.length === 0
+                              ? "No survey responses have been submitted yet."
+                              : "No responses match your current filters."}
+                          </p>
+                        </div>
+                      </td>
+                    </TableRow>
+                  ) : (
+                    filteredResponses.map(renderResponseRow)
+                  )}
+                </TableBody>
+              </Table>
             </div>
-          ) : (
-            <CustomDataTable
-              columns={responseColumns}
-              data={surveyResponses}
-              loading={responsesLoading}
-              noDataMessage={
-                surveyResponses.length === 0
-                  ? "No responses available for this survey."
-                  : ""
-              }
-              loadingBackgroundColor="#f1f5f9"
-              loadingColor="#005DE9"
-              pageSize={10}
-            />
-          )}
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
+                <div className="text-sm text-gray-700">
+                  Showing page {currentPage} of {totalPages} ({totalResponses}{" "}
+                  total responses)
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="w-4 h-4" /> Previous
+                  </Button>
+                  <div className="flex items-center space-x-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      const pageNum =
+                        Math.max(1, Math.min(totalPages - 4, currentPage - 2)) +
+                        i;
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={
+                            pageNum === currentPage ? "primary" : "outline"
+                          }
+                          size="sm"
+                          onClick={() => handlePageChange(pageNum)}
+                        >
+                          {pageNum}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </Card>
         </div>
       </div>
     </div>
   );
 };
 
-export default Page;
+export default SurveyViewPage;

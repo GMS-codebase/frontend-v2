@@ -22,11 +22,11 @@ const Page = () => {
 
   useEffect(() => {
     if (form) {
-      setFormData({
-        ...formData,
+      setFormData((prevData) => ({
+        ...prevData,
         name: form?.name || "",
         qns: JSON.parse(form?.qns || "{}"),
-      });
+      }));
     }
     setPageLoading(false);
   }, [form, id]);

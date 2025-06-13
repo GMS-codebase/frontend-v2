@@ -17,6 +17,8 @@ import DeleteSurvey from "./RemoveSurvey";
 import { submitSurvey, checkSurveyStatus } from "@/services/api/survey";
 import { notifications } from "@mantine/notifications";
 import { useSelector } from "react-redux";
+import { CiEdit } from "react-icons/ci";
+import { IoIosCloseCircle } from "react-icons/io";
 
 interface CreateSurveyProps {
   survey: Survey;
@@ -49,15 +51,43 @@ const SurveyComponent: React.FC<SurveyProps> = ({
   setComments,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleDelete = () => {
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = () => {
+    deleteSurvey(survey.id);
+    setShowDeleteConfirm(false);
+  };
 
   return (
     <div
       ref={containerRef}
-      className={` flex-grow w-full overflow-hidden p-4 bg-white border rounded-lg mb-6 ${
+      className={`flex-grow w-full overflow-hidden p-4 bg-white border rounded-lg mb-6 relative ${
         isEditing ? "border-l-4 border-l-primary" : ""
       }`}
     >
+      {editable && (
+        <div className="absolute top-4 right-4 flex items-center gap-2">
+          <button
+            onClick={() => setIsEditing(true)}
+            className="p-2 text-gray-500 hover:text-primary transition-colors duration-200"
+            title="Edit Question"
+          >
+            <CiEdit className="w-5 h-5" />
+          </button>
+          <button
+            onClick={handleDelete}
+            className="p-2 text-gray-500 hover:text-red-500 transition-colors duration-200"
+            title="Delete Question"
+          >
+            <IoIosCloseCircle className="w-5 h-5" />
+          </button>
+        </div>
+      )}
       {isEditing ? (
         <CreateSurvey
           survey={survey}
@@ -77,6 +107,35 @@ const SurveyComponent: React.FC<SurveyProps> = ({
           deleteSurvey={deleteSurvey}
           setComments={setComments}
         />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Delete Question
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this question? This action cannot
+              be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors duration-200"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -418,7 +477,9 @@ const ViewSurvey: React.FC<ViewSurveyProps> = ({
     }
 
     // Check required fields
-    const requiredFields = Object.entries(survey).filter(([_, value]) => value.required);
+    const requiredFields = Object.entries(survey).filter(
+      ([_, value]) => value.required
+    );
     const missingRequired = requiredFields.some(([key]) => !answers[key]);
     if (missingRequired) {
       notifications.show({
@@ -499,15 +560,15 @@ const ViewSurvey: React.FC<ViewSurveyProps> = ({
               isAnswered
                 ? "bg-gray-400 cursor-not-allowed"
                 : isSubmitting
-                ? "bg-primary/70"
-                : "bg-primary hover:bg-primary/90"
+                  ? "bg-primary/70"
+                  : "bg-primary hover:bg-primary/90"
             }`}
           >
             {isAnswered
               ? "Survey Submitted"
               : isSubmitting
-              ? "Submitting..."
-              : "Submit Survey"}
+                ? "Submitting..."
+                : "Submit Survey"}
           </button>
         </div>
       )}

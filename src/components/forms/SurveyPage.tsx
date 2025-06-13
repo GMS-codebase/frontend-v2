@@ -31,11 +31,13 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
 }) => {
   const [newSurvey, setNewSurvey] = useState<ISurvey>({
     id: `${surveyType}-s-${pageIndex}-${pageSurveys?.length}`,
-    title: "Question  Title",
+    title: "Question Title",
     description: "Question SubTitle",
     type: "text",
     required: false,
     commentable: false,
+    name: "Question Title",
+    survey_TYPE: surveyType,
   });
 
   const handleAddSurvey = (survey: ISurvey) => {
@@ -47,6 +49,8 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
       type: "text",
       required: false,
       commentable: false,
+      name: "Question Title",
+      survey_TYPE: surveyType,
     });
   };
 
@@ -73,15 +77,35 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
   };
 
   return (
-    <div>
+    <div className="space-y-6">
       {mode === "creating" && (
-        <div className="flex items-center justify-end mb-4">
-          <button
-            onClick={() => handleAddSurvey(newSurvey)}
-            className="px-4 py-2 bg-primary text-white rounded-full"
-          >
-            Add Question
-          </button>
+        <div className="flex items-center justify-between mb-6 p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-4">
+            <h3 className="text-lg font-medium text-gray-900">Questions</h3>
+            <span className="text-sm text-gray-500">
+              {pageSurveys?.length || 0} questions added
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => handleAddSurvey(newSurvey)}
+              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors duration-200 flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Add Question
+            </button>
+          </div>
         </div>
       )}
       <DragDropContext onDragEnd={handleDragEnd}>
@@ -90,7 +114,7 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="space-y-4 relative "
+              className="space-y-4 relative"
             >
               {pageSurveys?.map((survey, index) => (
                 <Draggable

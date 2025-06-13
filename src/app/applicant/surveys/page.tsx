@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
-import { Form as IForm } from "@/types/surveys-form";
+import { IForm } from "@/types/surveys-form";
 import SurveyForms from "@/components/forms/SurveyForms";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
@@ -71,7 +71,7 @@ const Page = () => {
           (survey: any) =>
             survey.survey_status === ESurveyStatus.ONGOING &&
             (survey.survey_TYPE === "GENERALSURVEY" ||
-             survey.survey_TYPE === "COMPANYSURVEY")
+              survey.survey_TYPE === "COMPANYSURVEY")
         )
         .map((survey: any) => {
           let transformedQuestions;
@@ -218,15 +218,19 @@ const Page = () => {
         ...prev,
         [key]: value,
       };
-      
+
       // Remove empty answers
-      Object.keys(newAnswers).forEach(k => {
-        if (newAnswers[k] === "" || newAnswers[k] === null || newAnswers[k] === undefined || 
-            (Array.isArray(newAnswers[k]) && newAnswers[k].length === 0)) {
+      Object.keys(newAnswers).forEach((k) => {
+        if (
+          newAnswers[k] === "" ||
+          newAnswers[k] === null ||
+          newAnswers[k] === undefined ||
+          (Array.isArray(newAnswers[k]) && newAnswers[k].length === 0)
+        ) {
           delete newAnswers[k];
         }
       });
-      
+
       return newAnswers;
     });
   };
