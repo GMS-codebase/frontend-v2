@@ -26,24 +26,31 @@ import AdminAction from "@/components/Actions/AdminAction";
 
 const Dashboard = () => {
   const { calls, loading: callsLoading } = useSelector(
-    (state: any) => state.calls,
+    (state: any) => state.calls
   );
   const [callStats, setCallStats] = useState<any>(null);
+  const [callStatsError, setCallStatsError] = useState<string | null>(null);
+  const [callStatsLoading, setCallStatsLoading] = useState<boolean>(true);
+
   const [applicantsData, setApplicantsData] = useState<any>({});
+  const [applicantsDataError, setApplicantsDataError] = useState<string | null>(null);
+  const [applicantsDataLoading, setApplicantsDataLoading] = useState<boolean>(true);
+
   const [applicationsData, setApplicationsData] = useState<any>({});
+  const [applicationsDataError, setApplicationsDataError] = useState<string | null>(null);
+  const [applicationsDataLoading, setApplicationsDataLoading] = useState<boolean>(true);
+
   const [submissionsData, setSubmissionsData] = useState<any>({});
+  const [submissionsDataError, setSubmissionsDataError] = useState<string | null>(null);
+  const [submissionsDataLoading, setSubmissionsDataLoading] = useState<boolean>(true);
+
   const [activeCall, setActiveCall] = useState<string>("");
   const [applicantsStage, setApplicantsStage] = useState<string>("ALL");
   const [applicationsStage, setApplicationsStage] = useState<string>("ALL");
   const [submissionsStage, setSubmissionsStage] = useState<string>("ALL");
   const [gaugeStage, setGaugeStage] = useState<string>("ALL");
-  const [callStatsLoading, setCallStatsLoading] = useState<boolean>(true);
-  const [applicantsDataLoading, setApplicantsDataLoading] =
-    useState<boolean>(true);
-  const [applicationsDataLoading, setApplicationsDataLoading] =
-    useState<boolean>(true);
-  const [submissionsDataLoading, setSubmissionsDataLoading] =
-    useState<boolean>(true);
+  const [dashboardLoading, setDashboardLoading] = useState<boolean>(true);
+  const [dashboardError, setDashboardError] = useState<string | null>(null);
 
   const dashTablesData = [
     {
@@ -99,82 +106,68 @@ const Dashboard = () => {
   ];
 
   useEffect(() => {
-    if (!callsLoading) {
+    if (!callsLoading && calls.length > 0) {
       setActiveCall(calls[0].uuid);
     }
   }, [callsLoading]);
 
   useEffect(() => {
-    const fetchCallStats = async () => {
+    const fetchDashboardData = async () => {
       if (!callsLoading && activeCall) {
-        try {
           setCallStatsLoading(true);
-          const stats = await getCallStats(activeCall);
-          console.log(stats);
-          setCallStats(stats);
-        } catch (error) {
-          console.error(error);
-        } finally {
-          setCallStatsLoading(false);
+        setApplicantsDataLoading(true);
+        setApplicationsDataLoading(true);
+        setSubmissionsDataLoading(true);
+        setCallStatsError(null);
+        setApplicantsDataError(null);
+        setApplicationsDataError(null);
+        setSubmissionsDataError(null);
+        const results = await Promise.allSettled([
+          getCallStats(activeCall),
+          getApplicantsData(applicantsStage),
+          getApplicationsData(applicationsStage),
+          getSubmissionsData(submissionsStage),
+        ]);
+        // Call Stats
+        if (results[0].status === 'fulfilled') {
+          setCallStats(results[0].value);
+          setCallStatsError(null);
+        } else {
+          setCallStats(null);
+          setCallStatsError('Failed to load call stats');
         }
-      }
-    };
-    fetchCallStats();
-  }, [callsLoading, activeCall]);
-
-  useEffect(() => {
-    const fetchApplicantsData = async () => {
-      if (!callsLoading && applicantsStage) {
-        try {
-          setApplicantsDataLoading(true);
-          const data = await getApplicantsData(applicantsStage);
-          console.log(data);
-          setApplicantsData(data);
-        } catch (error) {
-          console.error(error);
-        } finally {
+        setCallStatsLoading(false);
+        // Applicants Data
+        if (results[1].status === 'fulfilled') {
+          setApplicantsData(results[1].value);
+          setApplicantsDataError(null);
+        } else {
+          setApplicantsData({});
+          setApplicantsDataError('Failed to load applicants data');
+        }
           setApplicantsDataLoading(false);
+        // Applications Data
+        if (results[2].status === 'fulfilled') {
+          setApplicationsData(results[2].value);
+          setApplicationsDataError(null);
+        } else {
+          setApplicationsData({});
+          setApplicationsDataError('Failed to load applications data');
         }
-      }
-    };
-    fetchApplicantsData();
-  }, [callsLoading, applicantsStage]);
-
-  useEffect(() => {
-    const fetchApplicationsData = async () => {
-      if (!callsLoading && applicationsStage) {
-        try {
-          setApplicationsDataLoading(true);
-          const data = await getApplicationsData(applicationsStage);
-          console.log(data);
-          setApplicationsData(data);
-        } catch (error) {
-          console.error(error);
-        } finally {
           setApplicationsDataLoading(false);
+        // Submissions Data
+        if (results[3].status === 'fulfilled') {
+          setSubmissionsData(results[3].value);
+          setSubmissionsDataError(null);
+        } else {
+          setSubmissionsData({});
+          setSubmissionsDataError('Failed to load submissions data');
         }
-      }
-    };
-    fetchApplicationsData();
-  }, [callsLoading, applicationsStage]);
-
-  useEffect(() => {
-    const fetchSubmissionsData = async () => {
-      if (!callsLoading && submissionsStage) {
-        try {
-          setSubmissionsDataLoading(true);
-          const data = await getSubmissionsData(submissionsStage);
-          console.log(data);
-          setSubmissionsData(data);
-        } catch (error) {
-          console.error(error);
-        } finally {
           setSubmissionsDataLoading(false);
-        }
       }
     };
-    fetchSubmissionsData();
-  }, [callsLoading, submissionsStage]);
+    fetchDashboardData();
+  }, [callsLoading, activeCall, applicantsStage, applicationsStage, submissionsStage]);
 
   const sortedSectors = Object.entries(callStats?.applicantsPerSector || {});
   return (
@@ -185,8 +178,8 @@ const Dashboard = () => {
           <Select
             value={activeCall}
             data={calls.map((call: any) => ({
-              value: call.uuid,
-              label: call.title,
+              value: call?.uuid,
+              label: call?.title,
             }))}
             onChange={(value) => setActiveCall(value as any)}
             className="bg-white p-2.5 rounded-2xl outline-none  md:w-[30vw]"
@@ -194,8 +187,13 @@ const Dashboard = () => {
         )}
       </div>
 
+      {/* Applicants per Priority Sector */}
       {callStatsLoading ? (
         <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full mt-8"></div>
+      ) : callStatsError ? (
+        <div className="bg-red-100 text-red-700 rounded-2xl h-64 w-full mt-8 flex items-center justify-center font-semibold">
+          {callStatsError}
+        </div>
       ) : (
         <div className="mt-8 flex flex-wrap gap-6">
           <div className="bg-white p-6 rounded-2xl flex-grow">
@@ -224,7 +222,7 @@ const Dashboard = () => {
                 {
                   Object.values(callStats?.applicantsPerSector || {}).reduce(
                     (sum: any, value) => sum + value,
-                    0,
+                    0
                   ) as any
                 }
               </span>
@@ -332,7 +330,7 @@ const Dashboard = () => {
                     (acc: any, item: any) => {
                       if (gaugeStage === "ALL") {
                         acc[item] = Object.values(
-                          callStats?.businessTypeGroupings[item] || {},
+                          callStats?.businessTypeGroupings[item] || {}
                         ).reduce((sum: any, value: any) => sum + value, 0);
                       } else {
                         acc[item] =
@@ -341,7 +339,7 @@ const Dashboard = () => {
                       }
                       return acc;
                     },
-                    {} as { [key: string]: number },
+                    {} as { [key: string]: number }
                   ) || {}
                 }
               />
@@ -357,7 +355,7 @@ const Dashboard = () => {
             downloadDashboardExcelFile(
               applicationsData,
               applicantsData,
-              submissionsData,
+              submissionsData
             )
           }
         >
@@ -368,8 +366,13 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="grid md:grid-cols-2 grid-cols-1 gap-10">
+        {/* Submissions Data */}
         {submissionsDataLoading ? (
           <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
+        ) : submissionsDataError ? (
+          <div className="bg-red-100 text-red-700 rounded-2xl h-64 w-full flex items-center justify-center font-semibold">
+            {submissionsDataError}
+          </div>
         ) : (
           <div className="bg-white p-6 rounded-2xl">
             <div className="md:flex justify-between mb-5">
@@ -402,7 +405,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         undefined,
                         undefined,
-                        submissionsData,
+                        submissionsData
                       )
                     }
                   />{" "}
@@ -449,13 +452,13 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(submissionsData || {}).reduce(
                     (sum, key) => sum + submissionsData[key].applicants,
-                    0,
+                    0
                   )}
                 </span>
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(submissionsData || {}).reduce(
                     (sum, key) => sum + submissionsData[key].applications,
-                    0,
+                    0
                   )}
                 </span>
               </div>
@@ -463,8 +466,13 @@ const Dashboard = () => {
           </div>
         )}
 
+        {/* Applicants Data */}
         {applicantsDataLoading ? (
           <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
+        ) : applicantsDataError ? (
+          <div className="bg-red-100 text-red-700 rounded-2xl h-64 w-full flex items-center justify-center font-semibold">
+            {applicantsDataError}
+          </div>
         ) : (
           <div className="bg-white p-6 rounded-2xl">
             <div className="md:flex justify-between mb-5">
@@ -497,7 +505,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         undefined,
                         applicantsData,
-                        undefined,
+                        undefined
                       )
                     }
                   />{" "}
@@ -540,7 +548,7 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(applicantsData || {}).reduce(
                     (sum, key) => sum + applicantsData[key],
-                    0,
+                    0
                   )}
                 </span>
               </div>
@@ -548,8 +556,13 @@ const Dashboard = () => {
           </div>
         )}
 
+        {/* Applications Data */}
         {applicationsDataLoading ? (
           <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
+        ) : applicationsDataError ? (
+          <div className="bg-red-100 text-red-700 rounded-2xl h-64 w-full flex items-center justify-center font-semibold">
+            {applicationsDataError}
+          </div>
         ) : (
           <div className="bg-white p-6 rounded-2xl">
             <div className="md:flex justify-between mb-5">
@@ -582,7 +595,7 @@ const Dashboard = () => {
                       downloadDashboardExcelFile(
                         applicationsData,
                         undefined,
-                        undefined,
+                        undefined
                       )
                     }
                   />{" "}
@@ -625,7 +638,7 @@ const Dashboard = () => {
                 <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(applicationsData || {}).reduce(
                     (sum, key) => sum + applicationsData[key],
-                    0,
+                    0
                   )}
                 </span>
               </div>
@@ -677,8 +690,8 @@ const Dashboard = () => {
                     className="w-full px-0 rounded-full text-md bg-transparent outline-none border-none appearance-none"
                   >
                     {calls.map((call: any) => (
-                      <option value={call.uuid} key={call.uuid}>
-                        {call.title}
+                      <option value={call?.uuid} key={call?.uuid}>
+                        {call?.title}
                       </option>
                     ))}
                   </select>
@@ -745,7 +758,7 @@ function BasicGauges({
 }) {
   const totalApplicants = Object.values(applicationsByBusinessType).reduce(
     (sum, value) => sum + value,
-    0,
+    0
   );
 
   const colors = [
@@ -765,7 +778,7 @@ function BasicGauges({
       value,
       percentage: totalApplicants > 0 ? (value / totalApplicants) * 100 : 0,
       color: colors[index % colors.length],
-    }),
+    })
   );
 
   if (totalApplicants === 0) {

@@ -62,7 +62,8 @@ export type Role =
   | "NORMAL_EMPLOYEE"
   | "SDF_SECRETARIATE"
   | "GRANT_COMMITTEE"
-  | "DYNAMIC";
+  | "DYNAMIC"
+  | "TRAINEE";
 
 export interface PageProps {
   params?: { [key: string]: string };
