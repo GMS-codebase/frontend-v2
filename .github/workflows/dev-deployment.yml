@@ -45,7 +45,7 @@ jobs:
       - name: Install dependencies and build the application
         run: |
           cd dev
-          pnpm install --force
+          pnpm install --force --no-frozen-lockfile
           pnpm run build
 
       # Install dependencies and build the application
