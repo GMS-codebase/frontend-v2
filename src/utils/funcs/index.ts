@@ -102,7 +102,7 @@ export function calculateTotalTrainees(data: any) {
     if (
       Array.isArray(value) &&
       value.some(
-        (item) => "Number of trainees" in item || "Number of Trainees" in item,
+        (item) => "Number of trainees" in item || "Number of Trainees" in item
       )
     ) {
       totalTrainees = value.reduce(
@@ -114,9 +114,9 @@ export function calculateTotalTrainees(data: any) {
               : item["Number of Trainees"]
                 ? item["Number of Trainees"]
                 : 0,
-            10,
+            10
           ),
-        0,
+        0
       );
       break;
     }
@@ -127,7 +127,7 @@ export function calculateTotalTrainees(data: any) {
 export const exportDataToExcel = async <T extends Record<string, any>>(
   fileName: string,
   excelData: T[],
-  columns: T[],
+  columns: T[]
 ): Promise<void> => {
   try {
     const workbook = new ExcelJS.Workbook();
