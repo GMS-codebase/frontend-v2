@@ -71,17 +71,17 @@ const SurveyComponent: React.FC<SurveyProps> = ({
       }`}
     >
       {editable && (
-        <div className="absolute top-4 right-4 flex items-center gap-2">
+        <div className="flex justify-end items-center gap-2 mb-2">
           <button
             onClick={() => setIsEditing(true)}
-            className="p-2 text-gray-500 hover:text-primary transition-colors duration-200"
+            className="p-2 text-gray-500 hover:text-primary transition-colors duration-200 bg-white rounded-full shadow"
             title="Edit Question"
           >
             <CiEdit className="w-5 h-5" />
           </button>
           <button
             onClick={handleDelete}
-            className="p-2 text-gray-500 hover:text-red-500 transition-colors duration-200"
+            className="p-2 text-gray-500 hover:text-red-500 transition-colors duration-200 bg-white rounded-full shadow"
             title="Delete Question"
           >
             <IoIosCloseCircle className="w-5 h-5" />
