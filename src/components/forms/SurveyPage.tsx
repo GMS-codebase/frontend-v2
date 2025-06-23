@@ -127,7 +127,7 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...(mode === "creating" && provided.dragHandleProps)}
-                      className="flex justify-center gap-5"
+                      className="w-full mb-4"
                     >
                       <Survey
                         mode={mode}
