@@ -111,31 +111,12 @@ const SurveyComponent: React.FC<SurveyProps> = ({
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Delete Question
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete this question? This action cannot
-              be undone.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors duration-200"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteSurvey
+          isOpenModal={showDeleteConfirm}
+          closeModal={() => setShowDeleteConfirm(false)}
+          removeSurvey={() => confirmDelete()}
+          survey={survey}
+        />
       )}
     </div>
   );
@@ -222,6 +203,61 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ survey, onSave }) => {
           className="w-full p-2 border rounded-2xl outline-none"
           placeholder="Add a description (optional)"
         />
+        {/* Choices input for radio/checkbox */}
+        {(editingSurvey.type === "radio" ||
+          editingSurvey.type === "checkbox") && (
+          <div className="mb-4">
+            <label className="block font-medium mb-2">Choices</label>
+            {Array.isArray(editingSurvey.choices) &&
+              editingSurvey.choices.length > 0 && (
+                <ul className="mb-2">
+                  {editingSurvey.choices.map((choice, idx) => (
+                    <li key={idx} className="flex items-center gap-2 mb-1">
+                      <input
+                        type="text"
+                        value={choice}
+                        onChange={(e) => {
+                          const newChoices = [...(editingSurvey.choices || [])];
+                          newChoices[idx] = e.target.value;
+                          setEditingSurvey({
+                            ...editingSurvey,
+                            choices: newChoices,
+                          });
+                        }}
+                        className="p-2 border rounded"
+                      />
+                      <button
+                        type="button"
+                        className="text-red-500 px-2"
+                        onClick={() => {
+                          const newChoices = [...(editingSurvey.choices || [])];
+                          newChoices.splice(idx, 1);
+                          setEditingSurvey({
+                            ...editingSurvey,
+                            choices: newChoices,
+                          });
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            <button
+              type="button"
+              className="bg-primary text-white px-3 py-1 rounded"
+              onClick={() => {
+                setEditingSurvey({
+                  ...editingSurvey,
+                  choices: [...(editingSurvey.choices || []), ""],
+                });
+              }}
+            >
+              + Add Choice
+            </button>
+          </div>
+        )}
       </div>
       <div className="border-t-2 py-3 w-full overflow-x-auto">
         {renderSurveyType("creating", editingSurvey, {
@@ -236,8 +272,9 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ survey, onSave }) => {
             className={`flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl `}
           >
             <label
-              htmlFor="template-upload"
-              className={`flex flex-col items-center justify-center space-y-2 cursor-pointer `}
+              htmlFor={`template-upload-${editingSurvey.id}`}
+              className="flex flex-col items-center justify-center space-y-2 cursor-pointer w-full h-full"
+              style={{ width: "100%", height: "100%" }}
             >
               <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
                 <span className="text-2xl font-bold">+</span>
@@ -261,7 +298,7 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ survey, onSave }) => {
               )}
             </label>
             <input
-              id="template-upload"
+              id={`template-upload-${editingSurvey.id}`}
               type="file"
               style={{ display: "none" }}
               onChange={(e) => handleFileChange(e.target.files)}
@@ -520,7 +557,7 @@ const ViewSurvey: React.FC<ViewSurveyProps> = ({
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-800">{survey.title}</h2>
-        {mode === "viewing" && (
+        {mode === "creating" && (
           <div className="flex gap-2">
             <button
               onClick={edit}
@@ -550,28 +587,6 @@ const ViewSurvey: React.FC<ViewSurveyProps> = ({
           setComments,
         })}
       </div>
-
-      {mode === "answering" && (
-        <div className="flex justify-end mt-6">
-          <button
-            onClick={handleSubmit}
-            disabled={isSubmitting || isAnswered}
-            className={`px-6 py-2 rounded-lg text-white font-medium transition-colors ${
-              isAnswered
-                ? "bg-gray-400 cursor-not-allowed"
-                : isSubmitting
-                  ? "bg-primary/70"
-                  : "bg-primary hover:bg-primary/90"
-            }`}
-          >
-            {isAnswered
-              ? "Survey Submitted"
-              : isSubmitting
-                ? "Submitting..."
-                : "Submit Survey"}
-          </button>
-        </div>
-      )}
     </div>
   );
 };

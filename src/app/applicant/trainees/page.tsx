@@ -1,3 +1,5 @@
+// TRAINEE FEATURE COMMENTED OUT
+/*
 "use client";
 import React, { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
@@ -149,3 +151,6 @@ const Page = () => {
 };
 
 export default Page;
+*/
+
+export default function Placeholder() { return null; }

@@ -1,12 +1,29 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
-import { IForm } from "@/types/surveys-form";
+import { useEffect, useState, useCallback } from "react";
+import type { IForm } from "@/types/surveys-form";
 import SurveyForms from "@/components/forms/SurveyForms";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import { FiClock, FiCalendar, FiFileText, FiCheckCircle } from "react-icons/fi";
-import { Button, Tabs } from "@mantine/core";
+import {
+  FiClock,
+  FiCalendar,
+  FiFileText,
+  FiCheckCircle,
+  FiPlay,
+  FiEye,
+} from "react-icons/fi";
+import {
+  Button,
+  Tabs,
+  Badge,
+  Card,
+  Group,
+  Text,
+  Stack,
+  Menu,
+} from "@mantine/core";
 import { ESurveyStatus } from "@/types/surveys-form";
+import { HiDotsHorizontal } from "react-icons/hi";
 
 const Page = () => {
   const [surveys, setSurveys] = useState<IForm[]>([]);
@@ -20,7 +37,7 @@ const Page = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
-  const [userLoading, setUserLoading] = useState(true); // Track user data loading
+  const [userLoading, setUserLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"list" | "survey" | "responses">(
     "list"
   );
@@ -39,7 +56,6 @@ const Page = () => {
         throw new Error("User UUID not found in response");
       }
       setUserId(userData.uuid);
-      // Try to get userName from name, or firstname + lastname
       if (userData.name) {
         setUserName(userData.name);
       } else if (userData.firstname && userData.lastname) {
@@ -290,7 +306,9 @@ const Page = () => {
       setSubmitLoading(true);
       const responseData = {
         surveyId:
-          typeof surveyId === "string" ? parseInt(surveyId, 10) : surveyId,
+          typeof surveyId === "string"
+            ? Number.parseInt(surveyId, 10)
+            : surveyId,
         userId: userId,
         userName: userName,
         answers: JSON.stringify(surveyAnswers),
@@ -375,283 +393,401 @@ const Page = () => {
 
   if (selectedSurvey) {
     return (
-      <div className="w-full !overflow-x-hidden">
-        <div className="flex items-center justify-between my-4">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleBackToList}
-              className="text-gray-600 hover:text-gray-800"
-            >
-              ← Back to Surveys
-            </button>
-            <h1 className="text-2xl font-bold">{selectedSurvey.name}</h1>
-          </div>
-          {viewMode === "survey" && (
-            <div className="flex gap-4">
-              <Button
-                onClick={() => handleSaveDraft(selectedSurvey.uuid || "")}
-                loading={submitLoading}
-                className="px-6 py-2"
-                variant="outline"
-                color="blue"
-                disabled={submitLoading}
+      <div className="font-[Urbanist] text-[1.125rem] font-medium bg-white min-h-screen">
+        <div className="w-full !overflow-x-hidden">
+          <div className="flex items-center justify-between my-4">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={handleBackToList}
+                className="text-gray-600 hover:text-gray-800"
               >
-                {submitLoading ? "Saving..." : "Save as Draft"}
-              </Button>
-              <Button
-                onClick={() => handleSurveySubmit(selectedSurvey.uuid || "")}
-                loading={submitLoading}
-                className="px-6 py-2"
-                variant="filled"
-                color="blue"
-                disabled={submitLoading}
-              >
-                {submitLoading ? "Submitting..." : "Submit Survey"}
-              </Button>
+                ← Back to Surveys
+              </button>
+              <h1 className="text-2xl font-bold">{selectedSurvey.name}</h1>
             </div>
-          )}
-        </div>
-        <div className="bg-white rounded-lg shadow p-8">
-          {viewMode === "survey" ? (
-            <SurveyForms
-              mode="answering"
-              formData={{
-                ...selectedSurvey,
-                qns: selectedSurvey.questions || selectedSurvey.qns,
-              }}
-              answers={surveyAnswers}
-              setAnswers={handleSetAnswers}
-            />
-          ) : viewMode === "responses" ? (
-            <SurveyForms
-              mode="viewing"
-              formData={{
-                ...selectedSurvey,
-                qns: selectedSurvey.questions || selectedSurvey.qns,
-              }}
-              answers={submittedResponses}
-              setAnswers={() => {}} // No-op since we're in view mode
-            />
-          ) : null}
+            {viewMode === "survey" && (
+              <div className="flex gap-4">
+                <Button
+                  onClick={() => handleSaveDraft(selectedSurvey.uuid || "")}
+                  loading={submitLoading}
+                  className="px-6 py-2"
+                  variant="outline"
+                  color="blue"
+                  disabled={submitLoading}
+                >
+                  {submitLoading ? "Saving..." : "Save as Draft"}
+                </Button>
+                <Button
+                  onClick={() => handleSurveySubmit(selectedSurvey.uuid || "")}
+                  loading={submitLoading}
+                  className="px-6 py-2"
+                  variant="filled"
+                  color="blue"
+                  disabled={submitLoading}
+                >
+                  {submitLoading ? "Submitting..." : "Submit Survey"}
+                </Button>
+              </div>
+            )}
+          </div>
+          <div className="bg-white rounded-lg shadow p-8">
+            {viewMode === "survey" ? (
+              <SurveyForms
+                mode="answering"
+                formData={{
+                  ...selectedSurvey,
+                  qns: selectedSurvey.questions || selectedSurvey.qns,
+                }}
+                answers={surveyAnswers}
+                setAnswers={handleSetAnswers}
+              />
+            ) : viewMode === "responses" ? (
+              <SurveyForms
+                mode="viewing"
+                formData={{
+                  ...selectedSurvey,
+                  qns: selectedSurvey.questions || selectedSurvey.qns,
+                }}
+                answers={submittedResponses}
+                setAnswers={() => {}} // No-op since we're in view mode
+              />
+            ) : null}
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full !overflow-x-hidden">
-      <div className="flex items-center justify-between my-4">
-        <p className="text-2xl font-bold">Available Surveys</p>
+    <div className="font-[Urbanist] text-[1.125rem] font-medium bg-white min-h-screen">
+      <div className="w-full !overflow-x-hidden px-6 py-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">
+              Available Surveys
+            </h1>
+          </div>
+
+          <Tabs value={activeTab} onChange={setActiveTab} className="mb-8">
+            <Tabs.List className="mb-6">
+              <Tabs.Tab value="general" className="text-lg px-6 py-3">
+                General Surveys
+              </Tabs.Tab>
+              <Tabs.Tab value="company" className="text-lg px-6 py-3">
+                Company Surveys
+              </Tabs.Tab>
+            </Tabs.List>
+
+            <Tabs.Panel value="general">
+              {filteredSurveys.length === 0 ? (
+                <div className="text-center py-16">
+                  <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <FiFileText className="w-12 h-12 text-gray-400" />
+                  </div>
+                  <p className="text-xl text-gray-500 mb-2">
+                    No surveys available
+                  </p>
+                  <p className="text-gray-400">
+                    Check back later for new general surveys.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredSurveys.map((survey) => {
+                    const isCompleted = completedSurveys.includes(
+                      survey.uuid || ""
+                    );
+                    const isExpired =
+                      survey.survey_status === ESurveyStatus.ENDED;
+
+                    return (
+                      <Card
+                        key={survey.uuid}
+                        className="relative overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg"
+                        style={{
+                          background: isCompleted
+                            ? "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)"
+                            : "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+                        }}
+                      >
+                        {/* Status Badge */}
+                        {isCompleted ? (
+                          <div className="absolute top-3 right-3 z-10">
+                            <span className="bg-green-500 text-white font-bold text-xs px-4 py-1 rounded-full shadow uppercase tracking-wide">
+                              COMPLETED
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="absolute top-4 right-4 z-10">
+                            <Badge
+                              color={isExpired ? "red" : "green"}
+                              variant="filled"
+                              className="px-3 py-1"
+                            >
+                              {isExpired ? "Expired" : "Ongoing"}
+                            </Badge>
+                          </div>
+                        )}
+
+                        <Card.Section className="p-6 pb-4">
+                          <Group
+                            justify="space-between"
+                            align="flex-start"
+                            className="mb-4"
+                          >
+                            <div className="flex-1 pr-16">
+                              <Text
+                                size="xl"
+                                fw={600}
+                                className="text-gray-900 mb-2 leading-tight"
+                              >
+                                {survey.name}
+                              </Text>
+                              <Text
+                                size="sm"
+                                c="dimmed"
+                                className="line-clamp-2"
+                              >
+                                {survey.description}
+                              </Text>
+                            </div>
+                          </Group>
+
+                          {/* Survey Details */}
+                          <Stack gap="xs" className="mb-6">
+                            <Group gap="xs" className="text-sm text-gray-600">
+                              <FiCalendar
+                                className="text-blue-500 flex-shrink-0"
+                                size={16}
+                              />
+                              <Text size="sm">
+                                {new Date(survey.created_at).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  }
+                                )}
+                              </Text>
+                            </Group>
+
+                            <Group gap="xs" className="text-sm text-gray-600">
+                              <FiClock
+                                className="text-orange-500 flex-shrink-0"
+                                size={16}
+                              />
+                              <Text size="sm">
+                                Expires{" "}
+                                {new Date(
+                                  survey.expiry_date || ""
+                                ).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                })}
+                              </Text>
+                            </Group>
+
+                            <Group gap="xs" className="text-sm text-gray-600">
+                              <FiFileText
+                                className="text-purple-500 flex-shrink-0"
+                                size={16}
+                              />
+                              <Text size="sm">
+                                {Object.keys(survey.questions || {}).length}{" "}
+                                Section
+                                {Object.keys(survey.questions || {}).length !==
+                                1
+                                  ? "s"
+                                  : ""}
+                              </Text>
+                            </Group>
+                          </Stack>
+
+                          {/* Action Button */}
+                          {isCompleted ? (
+                            <Button
+                              variant="primary"
+                              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
+                              onClick={() => handleViewResponses(survey)}
+                            >
+                              View Responses
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="primary"
+                              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
+                              onClick={() => handleSelectSurvey(survey)}
+                              disabled={isExpired}
+                            >
+                              {isExpired ? "Survey Expired" : "Take Survey"}
+                            </Button>
+                          )}
+                        </Card.Section>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+            </Tabs.Panel>
+
+            <Tabs.Panel value="company">
+              {filteredSurveys.length === 0 ? (
+                <div className="text-center py-16">
+                  <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <FiFileText className="w-12 h-12 text-gray-400" />
+                  </div>
+                  <p className="text-xl text-gray-500 mb-2">
+                    No surveys available
+                  </p>
+                  <p className="text-gray-400">
+                    Check back later for new company surveys.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredSurveys.map((survey) => {
+                    const isCompleted = completedSurveys.includes(
+                      survey.uuid || ""
+                    );
+                    const isExpired =
+                      survey.survey_status === ESurveyStatus.ENDED;
+
+                    return (
+                      <Card
+                        key={survey.uuid}
+                        className="relative overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg"
+                        style={{
+                          background: isCompleted
+                            ? "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)"
+                            : "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+                        }}
+                      >
+                        {/* Status Badge */}
+                        {isCompleted ? (
+                          <div className="absolute top-3 right-3 z-10">
+                            <span className="bg-green-500 text-white font-bold text-xs px-4 py-1 rounded-full shadow uppercase tracking-wide">
+                              COMPLETED
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="absolute top-4 right-4 z-10">
+                            <Badge
+                              color={isExpired ? "red" : "green"}
+                              variant="filled"
+                              className="px-3 py-1"
+                            >
+                              {isExpired ? "Expired" : "Ongoing"}
+                            </Badge>
+                          </div>
+                        )}
+
+                        <Card.Section className="p-6 pb-4">
+                          <Group
+                            justify="space-between"
+                            align="flex-start"
+                            className="mb-4"
+                          >
+                            <div className="flex-1 pr-16">
+                              <Text
+                                size="xl"
+                                fw={600}
+                                className="text-gray-900 mb-2 leading-tight"
+                              >
+                                {survey.name}
+                              </Text>
+                              <Text
+                                size="sm"
+                                c="dimmed"
+                                className="line-clamp-2"
+                              >
+                                {survey.description}
+                              </Text>
+                            </div>
+                          </Group>
+
+                          {/* Survey Details */}
+                          <Stack gap="xs" className="mb-6">
+                            <Group gap="xs" className="text-sm text-gray-600">
+                              <FiCalendar
+                                className="text-blue-500 flex-shrink-0"
+                                size={16}
+                              />
+                              <Text size="sm">
+                                {new Date(survey.created_at).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  }
+                                )}
+                              </Text>
+                            </Group>
+
+                            <Group gap="xs" className="text-sm text-gray-600">
+                              <FiClock
+                                className="text-orange-500 flex-shrink-0"
+                                size={16}
+                              />
+                              <Text size="sm">
+                                Expires{" "}
+                                {new Date(
+                                  survey.expiry_date || ""
+                                ).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                })}
+                              </Text>
+                            </Group>
+
+                            <Group gap="xs" className="text-sm text-gray-600">
+                              <FiFileText
+                                className="text-purple-500 flex-shrink-0"
+                                size={16}
+                              />
+                              <Text size="sm">
+                                {Object.keys(survey.questions || {}).length}{" "}
+                                Section
+                                {Object.keys(survey.questions || {}).length !==
+                                1
+                                  ? "s"
+                                  : ""}
+                              </Text>
+                            </Group>
+                          </Stack>
+
+                          {/* Action Button */}
+                          {isCompleted ? (
+                            <Button
+                              variant="primary"
+                              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
+                              onClick={() => handleViewResponses(survey)}
+                            >
+                              View Responses
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="primary"
+                              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
+                              onClick={() => handleSelectSurvey(survey)}
+                              disabled={isExpired}
+                            >
+                              {isExpired ? "Survey Expired" : "Take Survey"}
+                            </Button>
+                          )}
+                        </Card.Section>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+            </Tabs.Panel>
+          </Tabs>
+        </div>
       </div>
-
-      <Tabs value={activeTab} onChange={setActiveTab} className="mb-6">
-        <Tabs.List>
-          <Tabs.Tab value="general">General Surveys</Tabs.Tab>
-          <Tabs.Tab value="company">Company Surveys</Tabs.Tab>
-        </Tabs.List>
-
-        <Tabs.Panel value="general">
-          {filteredSurveys.length === 0 ? (
-            <div className="text-center py-10">
-              <p className="text-gray-500">
-                No general surveys available at the moment.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {filteredSurveys.map((survey) => (
-                <div
-                  key={survey.uuid}
-                  className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 p-6 relative"
-                >
-                  <div className="absolute top-4 right-4">
-                    {completedSurveys.includes(survey.uuid || "") ? (
-                      <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 flex items-center gap-1">
-                        <FiCheckCircle /> Completed
-                      </span>
-                    ) : (
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          survey.survey_status === ESurveyStatus.ONGOING
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {(survey.survey_status ?? "unknown")
-                          .charAt(0)
-                          .toUpperCase() +
-                          (survey.survey_status ?? "unknown").slice(1)}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="mb-4">
-                    <h3 className="text-xl font-semibold mb-2">
-                      {survey.name}
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      {survey.description}
-                    </p>
-                  </div>
-
-                  <div className="space-y-3 text-sm text-gray-600 mb-6">
-                    <div className="flex items-center gap-2">
-                      <FiCalendar className="text-gray-400" />
-                      <span>
-                        Created:{" "}
-                        {new Date(survey.created_at).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <FiClock className="text-gray-400" />
-                      <span>
-                        Expires:{" "}
-                        {new Date(
-                          survey.expiry_date || ""
-                        ).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <FiFileText className="text-gray-400" />
-                      <span>
-                        {Object.keys(survey.questions || {}).length} Sections
-                      </span>
-                    </div>
-                  </div>
-
-                  {completedSurveys.includes(survey.uuid || "") ? (
-                    <Button
-                      onClick={() => handleViewResponses(survey)}
-                      className="w-full"
-                      variant="filled"
-                      color="blue"
-                    >
-                      View Responses
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() => handleSelectSurvey(survey)}
-                      className="w-full"
-                      variant="filled"
-                      color={
-                        survey.survey_status === ESurveyStatus.ENDED
-                          ? "gray"
-                          : "blue"
-                      }
-                      disabled={survey.survey_status === ESurveyStatus.ENDED}
-                    >
-                      {survey.survey_status === ESurveyStatus.ENDED
-                        ? "Survey Expired"
-                        : "Take Survey"}
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </Tabs.Panel>
-
-        <Tabs.Panel value="company">
-          {filteredSurveys.length === 0 ? (
-            <div className="text-center py-10">
-              <p className="text-gray-500">
-                No company surveys available at the moment.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {filteredSurveys.map((survey) => (
-                <div
-                  key={survey.uuid}
-                  className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 p-6 relative"
-                >
-                  <div className="absolute top-4 right-4">
-                    {completedSurveys.includes(survey.uuid || "") ? (
-                      <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 flex items-center gap-1">
-                        <FiCheckCircle /> Completed
-                      </span>
-                    ) : (
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          survey.survey_status === ESurveyStatus.ONGOING
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {(survey.survey_status ?? "unknown")
-                          .charAt(0)
-                          .toUpperCase() +
-                          (survey.survey_status ?? "unknown").slice(1)}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="mb-4">
-                    <h3 className="text-xl font-semibold mb-2">
-                      {survey.name}
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      {survey.description}
-                    </p>
-                  </div>
-
-                  <div className="space-y-3 text-sm text-gray-600 mb-6">
-                    <div className="flex items-center gap-2">
-                      <FiCalendar className="text-gray-400" />
-                      <span>
-                        Created:{" "}
-                        {new Date(survey.created_at).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <FiClock className="text-gray-400" />
-                      <span>
-                        Expires:{" "}
-                        {new Date(
-                          survey.expiry_date || ""
-                        ).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <FiFileText className="text-gray-400" />
-                      <span>
-                        {Object.keys(survey.questions || {}).length} Sections
-                      </span>
-                    </div>
-                  </div>
-
-                  {completedSurveys.includes(survey.uuid || "") ? (
-                    <Button
-                      onClick={() => handleViewResponses(survey)}
-                      className="w-full"
-                      variant="filled"
-                      color="blue"
-                    >
-                      View Responses
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() => handleSelectSurvey(survey)}
-                      className="w-full"
-                      variant="filled"
-                      color={
-                        survey.survey_status === ESurveyStatus.ENDED
-                          ? "gray"
-                          : "blue"
-                      }
-                      disabled={survey.survey_status === ESurveyStatus.ENDED}
-                    >
-                      {survey.survey_status === ESurveyStatus.ENDED
-                        ? "Survey Expired"
-                        : "Take Survey"}
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </Tabs.Panel>
-      </Tabs>
     </div>
   );
 };
