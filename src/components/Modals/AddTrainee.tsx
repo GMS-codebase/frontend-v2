@@ -1,3 +1,5 @@
+// TRAINEE FEATURE COMMENTED OUT
+/*
 "use client";
 import React, { useState } from "react";
 import { Modal } from "@mantine/core";
@@ -373,3 +375,4 @@ const AddTrainee = ({ isOpenEditTrainee, closeEditTrainee }: Props) => {
 };
 
 export default AddTrainee;
+*/

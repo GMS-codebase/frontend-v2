@@ -1,3 +1,5 @@
+// TRAINEE FEATURE COMMENTED OUT
+/*
 "use client";
 import React, { useEffect, useState } from "react";
 import { Card, Grid, Text, Group, Stack } from "@mantine/core";
@@ -93,4 +95,9 @@ export default function TraineeDashboard() {
       </Grid>
     </div>
   );
+}
+*/
+
+export default function Placeholder() {
+  return null;
 }
