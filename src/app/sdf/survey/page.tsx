@@ -133,18 +133,23 @@ const SurveyResponsesPage = () => {
   const fetchSurveys = useCallback(async () => {
     try {
       const response = await authorizedApi.get("/survey/get-all-survey");
-      const mappedSurveys = response.data.map((survey: any) => ({
-        id: survey.id,
-        name: survey.name,
-        qns: survey.qns,
-        expiry_date: survey.expiry_date,
-        survey_status: survey.survey_status,
-        created_at: survey.created_at,
-        updated_at: survey.updated_at,
-        survey_TYPE: survey.survey_TYPE,
-        hasSurvey_Started: survey.hasSurvey_Started,
-        surveyStartingTime: survey.surveyStartingTime,
-      }));
+      const mappedSurveys = response.data.map((survey: any) => {
+        const isExpired =
+          survey.survey_status === "ended" ||
+          new Date(survey.expiry_date) < new Date();
+        return {
+          id: survey.id,
+          name: survey.name,
+          qns: survey.qns,
+          expiry_date: survey.expiry_date,
+          survey_status: isExpired ? "ENDED" : survey.survey_status,
+          created_at: survey.created_at,
+          updated_at: survey.updated_at,
+          survey_TYPE: survey.survey_TYPE,
+          hasSurvey_Started: survey.hasSurvey_Started,
+          surveyStartingTime: survey.surveyStartingTime,
+        };
+      });
       setSurveys(mappedSurveys);
     } catch (error) {
       console.error("Error fetching surveys:", error);

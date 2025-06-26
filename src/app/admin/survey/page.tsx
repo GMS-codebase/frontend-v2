@@ -339,19 +339,24 @@ const SurveyPage = () => {
       const response = await authorizedApi.get("/survey/get-all-survey");
 
       // Map the API response to match our table structure
-      const mappedSurveys = response.data.map((survey: any) => ({
-        uuid: survey.id.toString(),
-        id: survey.id,
-        name: survey.name,
-        questions: survey.qns,
-        expiry_date: survey.expiry_date,
-        survey_status: survey.survey_status,
-        created_at: survey.created_at,
-        updated_at: survey.updated_at,
-        survey_type: survey.survey_TYPE,
-        hasSurvey_Started: survey.hasSurvey_Started,
-        surveyStartingTime: survey.surveyStartingTime,
-      }));
+      const mappedSurveys = response.data.map((survey: any) => {
+        const isExpired =
+          survey.survey_status === "expired" ||
+          new Date(survey.expiry_date) < new Date();
+        return {
+          uuid: survey.id.toString(),
+          id: survey.id,
+          name: survey.name,
+          questions: survey.qns,
+          expiry_date: survey.expiry_date,
+          survey_status: isExpired ? ESurveyStatus.ENDED : survey.survey_status,
+          created_at: survey.created_at,
+          updated_at: survey.updated_at,
+          survey_type: survey.survey_TYPE,
+          hasSurvey_Started: survey.hasSurvey_Started,
+          surveyStartingTime: survey.surveyStartingTime,
+        };
+      });
 
       setSurveys(mappedSurveys);
     } catch (error) {
@@ -532,7 +537,9 @@ const SurveyPage = () => {
     setOngoingSurveys(
       surveys.filter((s) => s.survey_status === ESurveyStatus.ONGOING).length
     );
-    setEndedSurveys(surveys.filter((s) => s.survey_status === "ENDED").length);
+    setEndedSurveys(
+      surveys.filter((s) => s.survey_status === ESurveyStatus.ENDED).length
+    );
     setTotalResponses(allResponses.length);
   }, [surveys, allResponses]); // Keep this effect to update statistics based on surveys and allResponses
 
@@ -905,7 +912,8 @@ const SurveyPage = () => {
       survey.survey_status !== ESurveyStatus.ONGOING
     )
       return false;
-    if (activeTab === "ended" && survey.survey_status !== "ENDED") return false;
+    if (activeTab === "ended" && survey.survey_status !== ESurveyStatus.ENDED)
+      return false;
     if (activeTab === "draft" && survey.survey_status !== ESurveyStatus.DRAFT)
       return false;
     // Type filter
@@ -1024,7 +1032,7 @@ const SurveyPage = () => {
         } else if (status === ESurveyStatus.ONGOING) {
           statusColor = "bg-green-100 text-green-800";
           statusText = hasSurveyStarted ? "Active" : "Published";
-        } else if (status === "ENDED") {
+        } else if (status === ESurveyStatus.ENDED) {
           statusColor = "bg-red-100 text-red-800";
           statusText = "Ended";
         }
@@ -1052,7 +1060,7 @@ const SurveyPage = () => {
     },
     {
       accessorKey: "expiry_date",
-      header: "Expires",
+      header: "Ending Date",
       cell: ({ row }) => {
         const expiryDate = row.getValue("expiry_date") as string;
         const date = new Date(expiryDate);
@@ -1064,7 +1072,7 @@ const SurveyPage = () => {
           >
             {date.toLocaleDateString()}
             {isExpired && (
-              <span className="ml-1 text-xs text-red-500">(Expired)</span>
+              <span className="ml-1 text-xs text-red-500">(Ended)</span>
             )}
           </div>
         );
@@ -1295,7 +1303,7 @@ const SurveyPage = () => {
         } else if (status === ESurveyStatus.ONGOING) {
           statusColor = "bg-green-100 text-green-800";
           statusText = hasSurveyStarted ? "Active" : "Published";
-        } else if (status === "ENDED") {
+        } else if (status === ESurveyStatus.ENDED) {
           statusColor = "bg-red-100 text-red-800";
           statusText = "Ended";
         }
@@ -1323,7 +1331,7 @@ const SurveyPage = () => {
     },
     {
       accessorKey: "expiry_date",
-      header: "Expires",
+      header: "Ending Date",
       cell: ({ row }) => {
         const expiryDate = row.getValue("expiry_date") as string;
         const date = new Date(expiryDate);
@@ -1335,7 +1343,7 @@ const SurveyPage = () => {
           >
             {date.toLocaleDateString()}
             {isExpired && (
-              <span className="ml-1 text-xs text-red-500">(Expired)</span>
+              <span className="ml-1 text-xs text-red-500">(Ended)</span>
             )}
           </div>
         );
@@ -1595,7 +1603,7 @@ const SurveyPage = () => {
             <div className="flex flex-col space-y-1">
               <label className="text-xs font-medium text-gray-600 uppercase tracking-wide flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
-                Expiry Date
+                Ending Date
               </label>
               <div className="flex items-center gap-2 w-full">
                 <input

@@ -85,7 +85,9 @@ const Page = () => {
       const availableSurveys = response.data
         .filter(
           (survey: any) =>
-            survey.survey_status === ESurveyStatus.ONGOING &&
+            (survey.survey_status === ESurveyStatus.ONGOING ||
+              survey.survey_status === "expired" ||
+              new Date(survey.expiry_date) < new Date()) &&
             (survey.survey_TYPE === "GENERALSURVEY" ||
               survey.survey_TYPE === "COMPANYSURVEY")
         )
@@ -94,7 +96,6 @@ const Page = () => {
           try {
             if (typeof survey.qns === "string") {
               const parsed = JSON.parse(survey.qns);
-
               if (Array.isArray(parsed)) {
                 transformedQuestions = {
                   general: {
@@ -132,6 +133,14 @@ const Page = () => {
             transformedQuestions = {};
           }
 
+          // Normalize status
+          const isExpired =
+            survey.survey_status === "expired" ||
+            new Date(survey.expiry_date) < new Date();
+          const normalizedStatus = isExpired
+            ? ESurveyStatus.ENDED
+            : survey.survey_status;
+
           return {
             uuid: survey.id.toString(),
             id: survey.id,
@@ -140,7 +149,7 @@ const Page = () => {
             questions: transformedQuestions,
             qns: transformedQuestions,
             expiry_date: survey.expiry_date,
-            survey_status: survey.survey_status,
+            survey_status: normalizedStatus,
             created_at: survey.created_at,
             survey_type: survey.survey_TYPE,
             hasSurvey_Started: survey.hasSurvey_Started,
@@ -497,7 +506,7 @@ const Page = () => {
                     const isCompleted = completedSurveys.includes(
                       survey.uuid || ""
                     );
-                    const isExpired =
+                    const isEnded =
                       survey.survey_status === ESurveyStatus.ENDED;
 
                     return (
@@ -520,11 +529,11 @@ const Page = () => {
                         ) : (
                           <div className="absolute top-4 right-4 z-10">
                             <Badge
-                              color={isExpired ? "red" : "green"}
+                              color={isEnded ? "red" : "green"}
                               variant="filled"
                               className="px-3 py-1"
                             >
-                              {isExpired ? "Expired" : "Ongoing"}
+                              {isEnded ? "Ended" : "Ongoing"}
                             </Badge>
                           </div>
                         )}
@@ -578,7 +587,7 @@ const Page = () => {
                                 size={16}
                               />
                               <Text size="sm">
-                                Expires{" "}
+                                Ending Date{" "}
                                 {new Date(
                                   survey.expiry_date || ""
                                 ).toLocaleDateString("en-US", {
@@ -619,9 +628,9 @@ const Page = () => {
                               variant="primary"
                               className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
                               onClick={() => handleSelectSurvey(survey)}
-                              disabled={isExpired}
+                              disabled={isEnded}
                             >
-                              {isExpired ? "Survey Expired" : "Take Survey"}
+                              {isEnded ? "Survey Ended" : "Take Survey"}
                             </Button>
                           )}
                         </Card.Section>
@@ -651,7 +660,7 @@ const Page = () => {
                     const isCompleted = completedSurveys.includes(
                       survey.uuid || ""
                     );
-                    const isExpired =
+                    const isEnded =
                       survey.survey_status === ESurveyStatus.ENDED;
 
                     return (
@@ -674,11 +683,11 @@ const Page = () => {
                         ) : (
                           <div className="absolute top-4 right-4 z-10">
                             <Badge
-                              color={isExpired ? "red" : "green"}
+                              color={isEnded ? "red" : "green"}
                               variant="filled"
                               className="px-3 py-1"
                             >
-                              {isExpired ? "Expired" : "Ongoing"}
+                              {isEnded ? "Ended" : "Ongoing"}
                             </Badge>
                           </div>
                         )}
@@ -732,7 +741,7 @@ const Page = () => {
                                 size={16}
                               />
                               <Text size="sm">
-                                Expires{" "}
+                                Ending Date{" "}
                                 {new Date(
                                   survey.expiry_date || ""
                                 ).toLocaleDateString("en-US", {
@@ -773,9 +782,9 @@ const Page = () => {
                               variant="primary"
                               className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
                               onClick={() => handleSelectSurvey(survey)}
-                              disabled={isExpired}
+                              disabled={isEnded}
                             >
-                              {isExpired ? "Survey Expired" : "Take Survey"}
+                              {isEnded ? "Survey Ended" : "Take Survey"}
                             </Button>
                           )}
                         </Card.Section>
