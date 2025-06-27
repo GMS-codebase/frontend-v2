@@ -80,11 +80,10 @@ const SurveyForms: React.FC<Props> = ({
     setFormData &&
       setFormData((prevFormData) => {
         if (!prevFormData) return undefined;
-
-        // Ensure qns is an object (SurveyForm)
         const currentQns =
           typeof prevFormData.qns === "object" ? prevFormData.qns : {};
-
+        // Set the new type as active
+        setActiveType(newType.name);
         return {
           ...prevFormData,
           qns: {

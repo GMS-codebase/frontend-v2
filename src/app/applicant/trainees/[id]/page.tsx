@@ -1,3 +1,5 @@
+// TRAINEE FEATURE COMMENTED OUT
+/*
 "use client";
 import React, { useEffect, useState } from "react";
 import { Card, Grid, Group, Stack, Text, Badge } from "@mantine/core";
@@ -155,3 +157,6 @@ const TraineeDetailsPage = () => {
 };
 
 export default TraineeDetailsPage;
+*/
+
+export default function Placeholder() { return null; }

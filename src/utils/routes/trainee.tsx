@@ -1,3 +1,5 @@
+// TRAINEE FEATURE COMMENTED OUT
+/*
 "use client";
 import * as Icons from "@/components/core/icons";
 import { Route } from "@/types";
@@ -16,3 +18,4 @@ const traineeRoutes: Route[] = [
 ];
 
 export default traineeRoutes;
+*/
