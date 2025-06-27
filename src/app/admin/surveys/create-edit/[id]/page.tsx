@@ -84,11 +84,21 @@ const Page = () => {
           id: surveyData.id,
           name: surveyData.name,
           qns: parsedQns,
-          status: surveyData.survey_status === "ONGOING" ? "ongoing" : "ended",
+          status:
+            surveyData.survey_status === "ONGOING"
+              ? "ongoing"
+              : surveyData.survey_status === "expired" ||
+                  new Date(surveyData.expiry_date) < new Date()
+                ? "ended"
+                : "ended",
           created_at: surveyData.created_at,
           expiry_date: surveyData.expiry_date,
           description: `Survey created on ${new Date(surveyData.created_at).toLocaleDateString()}`,
-          survey_status: surveyData.survey_status,
+          survey_status:
+            surveyData.survey_status === "expired" ||
+            new Date(surveyData.expiry_date) < new Date()
+              ? "ENDED"
+              : surveyData.survey_status,
           updated_at: surveyData.updated_at,
           survey_type: surveyData.survey_TYPE || surveyData.survey_type,
           hasSurvey_Started: surveyData.hasSurvey_Started,
@@ -141,7 +151,7 @@ const Page = () => {
 
     if (!formData?.expiry_date) {
       notifications.show({
-        message: "Please select an expiry date",
+        message: "Please select an ending date",
         color: "orange",
       });
       return;

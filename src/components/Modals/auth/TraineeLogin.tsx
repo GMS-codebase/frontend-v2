@@ -1,3 +1,5 @@
+// TRAINEE FEATURE COMMENTED OUT
+/*
 import React, { useState } from "react";
 import { Modal } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -228,3 +230,9 @@ const TraineeLoginModal = ({
 };
 
 export default TraineeLoginModal;
+*/
+
+// TRAINEE FEATURE COMMENTED OUT
+export default function Placeholder() {
+  return null;
+}

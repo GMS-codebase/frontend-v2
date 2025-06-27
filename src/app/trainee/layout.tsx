@@ -1,3 +1,5 @@
+// TRAINEE FEATURE COMMENTED OUT
+/*
 "use client";
 import Navbar from "@/components/Navbar/Navbar";
 import GenericSidebar from "@/components/sidebar/GenericSidebar";
@@ -54,3 +56,6 @@ export default function TraineeLayout({
     </div>
   );
 }
+*/
+
+export default function Placeholder() { return null; }

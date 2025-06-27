@@ -31,6 +31,8 @@ import {
   Calendar,
 } from "lucide-react";
 import { Select, SelectItem } from "@/components/ui/Select";
+import { Tabs } from "@mantine/core";
+import Button from "@/components/ui/Button";
 
 interface SurveyWithResponseCount extends Survey {
   responseCount: number;
@@ -44,6 +46,9 @@ interface ParsedAnswer {
 
 // Parse survey questions to create question map
 const parseQuestions = (qns: string): { [key: string]: string } => {
+  if (!qns || typeof qns !== "string" || qns.trim() === "") {
+    return {};
+  }
   try {
     const parsed = JSON.parse(qns);
     const questionMap: { [key: string]: string } = {};
@@ -56,7 +61,7 @@ const parseQuestions = (qns: string): { [key: string]: string } => {
           questionMap[index.toString()] = item.question;
         }
       });
-    } else if (typeof parsed === "object") {
+    } else if (typeof parsed === "object" && parsed !== null) {
       Object.values(parsed).forEach((section: any) => {
         if (section && section.pages && Array.isArray(section.pages)) {
           section.pages.forEach((pageContent: any) => {
@@ -295,7 +300,7 @@ function renderAnswers(answers: any, questionMap: Record<string, string>) {
 
 const SurveyPage = () => {
   const [activeTab, setActiveTab] = useState<
-    "all" | "ongoing" | "ended" | "responsesPerType"
+    "all" | "draft" | "ongoing" | "ended" | "responsesPerType"
   >("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
@@ -310,8 +315,6 @@ const SurveyPage = () => {
   const [ongoingSurveys, setOngoingSurveys] = useState(0);
   const [endedSurveys, setEndedSurveys] = useState(0);
   const [totalResponses, setTotalResponses] = useState(0);
-  const [surveysWithResponses, setSurveysWithResponses] = useState(0);
-  const [surveysPendingResponse, setSurveysPendingResponse] = useState(0);
 
   // Modal controls
   const [
@@ -324,7 +327,6 @@ const SurveyPage = () => {
 
   // Filter states
   const [filterType, setFilterType] = useState<string>("");
-  const [filterStatus, setFilterStatus] = useState<string>("");
   const [filterCreatedFrom, setFilterCreatedFrom] = useState<string>("");
   const [filterCreatedTo, setFilterCreatedTo] = useState<string>("");
   const [filterExpiryFrom, setFilterExpiryFrom] = useState<string>("");
@@ -337,19 +339,24 @@ const SurveyPage = () => {
       const response = await authorizedApi.get("/survey/get-all-survey");
 
       // Map the API response to match our table structure
-      const mappedSurveys = response.data.map((survey: any) => ({
-        uuid: survey.id.toString(),
-        id: survey.id,
-        name: survey.name,
-        questions: survey.qns,
-        expiry_date: survey.expiry_date,
-        survey_status: survey.survey_status,
-        created_at: survey.created_at,
-        updated_at: survey.updated_at,
-        survey_type: survey.survey_TYPE,
-        hasSurvey_Started: survey.hasSurvey_Started,
-        surveyStartingTime: survey.surveyStartingTime,
-      }));
+      const mappedSurveys = response.data.map((survey: any) => {
+        const isExpired =
+          survey.survey_status === "expired" ||
+          new Date(survey.expiry_date) < new Date();
+        return {
+          uuid: survey.id.toString(),
+          id: survey.id,
+          name: survey.name,
+          questions: survey.qns,
+          expiry_date: survey.expiry_date,
+          survey_status: isExpired ? ESurveyStatus.ENDED : survey.survey_status,
+          created_at: survey.created_at,
+          updated_at: survey.updated_at,
+          survey_type: survey.survey_TYPE,
+          hasSurvey_Started: survey.hasSurvey_Started,
+          surveyStartingTime: survey.surveyStartingTime,
+        };
+      });
 
       setSurveys(mappedSurveys);
     } catch (error) {
@@ -530,18 +537,10 @@ const SurveyPage = () => {
     setOngoingSurveys(
       surveys.filter((s) => s.survey_status === ESurveyStatus.ONGOING).length
     );
-    setEndedSurveys(surveys.filter((s) => s.survey_status === "ENDED").length);
+    setEndedSurveys(
+      surveys.filter((s) => s.survey_status === ESurveyStatus.ENDED).length
+    );
     setTotalResponses(allResponses.length);
-
-    // Determine surveys with and without responses
-    const surveysWithAnyResponses = new Set(
-      allResponses.map((r) => r.survey?.id)
-    );
-    setSurveysWithResponses(surveysWithAnyResponses.size);
-    // A survey is pending response if it's not in the set of surveys with any responses
-    setSurveysPendingResponse(
-      surveys.filter((s) => !surveysWithAnyResponses.has(s.id)).length
-    );
   }, [surveys, allResponses]); // Keep this effect to update statistics based on surveys and allResponses
 
   // Handle marking a response as reviewed
@@ -913,16 +912,12 @@ const SurveyPage = () => {
       survey.survey_status !== ESurveyStatus.ONGOING
     )
       return false;
-    if (activeTab === "ended" && survey.survey_status !== "ENDED") return false;
+    if (activeTab === "ended" && survey.survey_status !== ESurveyStatus.ENDED)
+      return false;
+    if (activeTab === "draft" && survey.survey_status !== ESurveyStatus.DRAFT)
+      return false;
     // Type filter
     if (filterType && filterType !== "all" && survey.survey_type !== filterType)
-      return false;
-    // Status filter
-    if (
-      filterStatus &&
-      filterStatus !== "all" &&
-      survey.survey_status !== filterStatus
-    )
       return false;
     // Created date filter
     if (
@@ -971,13 +966,6 @@ const SurveyPage = () => {
       filterType &&
       filterType !== "all" &&
       response.survey?.survey_TYPE !== filterType
-    )
-      return false;
-    // Status filter
-    if (
-      filterStatus &&
-      filterStatus !== "all" &&
-      response.survey?.survey_status !== filterStatus
     )
       return false;
     // Created date filter
@@ -1044,7 +1032,7 @@ const SurveyPage = () => {
         } else if (status === ESurveyStatus.ONGOING) {
           statusColor = "bg-green-100 text-green-800";
           statusText = hasSurveyStarted ? "Active" : "Published";
-        } else if (status === "ENDED") {
+        } else if (status === ESurveyStatus.ENDED) {
           statusColor = "bg-red-100 text-red-800";
           statusText = "Ended";
         }
@@ -1072,7 +1060,7 @@ const SurveyPage = () => {
     },
     {
       accessorKey: "expiry_date",
-      header: "Expires",
+      header: "Ending Date",
       cell: ({ row }) => {
         const expiryDate = row.getValue("expiry_date") as string;
         const date = new Date(expiryDate);
@@ -1084,7 +1072,7 @@ const SurveyPage = () => {
           >
             {date.toLocaleDateString()}
             {isExpired && (
-              <span className="ml-1 text-xs text-red-500">(Expired)</span>
+              <span className="ml-1 text-xs text-red-500">(Ended)</span>
             )}
           </div>
         );
@@ -1104,8 +1092,14 @@ const SurveyPage = () => {
           <div className="flex justify-end">
             <Menu shadow="md" width={200}>
               <Menu.Target>
-                <button className="p-1 hover:bg-gray-100 rounded">
-                  <HiDotsHorizontal className="h-4 w-4" />
+                <button
+                  style={{
+                    background:
+                      "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+                  }}
+                  className="p-3 rounded-full border text-white hover:bg-red-100"
+                >
+                  <HiDotsHorizontal size={25} color="white" />
                 </button>
               </Menu.Target>
 
@@ -1309,7 +1303,7 @@ const SurveyPage = () => {
         } else if (status === ESurveyStatus.ONGOING) {
           statusColor = "bg-green-100 text-green-800";
           statusText = hasSurveyStarted ? "Active" : "Published";
-        } else if (status === "ENDED") {
+        } else if (status === ESurveyStatus.ENDED) {
           statusColor = "bg-red-100 text-red-800";
           statusText = "Ended";
         }
@@ -1337,7 +1331,7 @@ const SurveyPage = () => {
     },
     {
       accessorKey: "expiry_date",
-      header: "Expires",
+      header: "Ending Date",
       cell: ({ row }) => {
         const expiryDate = row.getValue("expiry_date") as string;
         const date = new Date(expiryDate);
@@ -1349,7 +1343,7 @@ const SurveyPage = () => {
           >
             {date.toLocaleDateString()}
             {isExpired && (
-              <span className="ml-1 text-xs text-red-500">(Expired)</span>
+              <span className="ml-1 text-xs text-red-500">(Ended)</span>
             )}
           </div>
         );
@@ -1403,429 +1397,351 @@ const SurveyPage = () => {
   ];
 
   return (
-    <div className="container mx-auto py-10 px-4">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">
-        Surveys Overview
-      </h1>
+    <div className="font-[Urbanist] text-[1.125rem] font-medium bg-white min-h-screen">
+      <div className="container mx-auto py-10 px-4">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+          Surveys Overview
+        </h1>
 
-      {/* New Survey Button */}
-      <div className="flex justify-end mb-6">
-        <Link
-          href="/admin/surveys/create-edit/create"
-          className="text-white py-2.5 px-6 rounded-full flex items-center gap-2 hover:opacity-90 transition-opacity whitespace-nowrap"
-          style={{
-            background:
-              "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-          }}
-        >
-          <span className="text-xl">
-            <SolarAddFolderBold />
-          </span>
-          <span className="text-base font-medium">New Survey</span>
-        </Link>
-      </div>
-
-      {/* Survey Statistics Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-        {/* Total Surveys Card */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
-                <FileText className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Total Surveys
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {totalSurveys}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Ongoing Surveys Card */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
-                <Clock className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Ongoing Surveys
-                </p>
-                <p className="text-2xl font-bold text-green-600">
-                  {ongoingSurveys}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Ended Surveys Card */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-lg">
-                <CheckCheck className="w-6 h-6 text-red-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Ended Surveys
-                </p>
-                <p className="text-2xl font-bold text-red-600">
-                  {endedSurveys}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Total Responses Card */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg">
-                <User className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Total Responses
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {totalResponses}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Surveys with Responses Card */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-teal-100 rounded-lg">
-                <FileText className="w-6 h-6 text-teal-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Surveys with Responses
-                </p>
-                <p className="text-2xl font-bold text-teal-600">
-                  {surveysWithResponses}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Surveys Pending Response Card */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
-                <Clock className="w-6 h-6 text-orange-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Surveys Pending Response
-                </p>
-                <p className="text-2xl font-bold text-orange-600">
-                  {surveysPendingResponse}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 shadow-sm">
-        <div className="w-full p-5 border-b overflow-x-auto">
-          <div className="flex space-x-4 md:space-x-8 min-w-max">
-            <button
-              className={`text-base md:text-lg font-medium pb-2 ${
-                activeTab === "all"
-                  ? "text-[#005DE9] border-b-2 border-[#005DE9]"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-              onClick={() => {
-                setActiveTab("all");
-                setSelectedSurvey(null);
-                setSearchQuery("");
-              }}
-            >
-              All Surveys
-            </button>
-            <button
-              className={`text-base md:text-lg font-medium pb-2 ${
-                activeTab === "ongoing"
-                  ? "text-[#005DE9] border-b-2 border-[#005DE9]"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-              onClick={() => {
-                setActiveTab("ongoing");
-                setSelectedSurvey(null);
-                setSearchQuery("");
-              }}
-            >
-              Ongoing
-            </button>
-            <button
-              className={`text-base md:text-lg font-medium pb-2 ${
-                activeTab === "ended"
-                  ? "text-[#005DE9] border-b-2 border-[#005DE9]"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-              onClick={() => {
-                setActiveTab("ended");
-                setSelectedSurvey(null);
-                setSearchQuery("");
-              }}
-            >
-              Ended
-            </button>
-            <button
-              className={`text-base md:text-lg font-medium pb-2 ${
-                activeTab === "responsesPerType"
-                  ? "text-[#005DE9] border-b-2 border-[#005DE9]"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-              onClick={() => {
-                setActiveTab("responsesPerType");
-                setSelectedSurvey(null);
-                setSearchQuery("");
-              }}
-            >
-              Responses per Survey Type
-            </button>
-          </div>
-        </div>
-
-        {/* Enhanced Filter Section */}
-        <div className="w-full p-4 sm:p-5 border-b bg-gray-50/50">
-          <div className="flex flex-col space-y-4">
-            {/* Filter Header */}
-            <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-              <Filter className="w-4 h-4" />
-              <span>Filters</span>
-            </div>
-
-            {/* Filter Controls - Using Flexbox for better control */}
-            <div className="flex flex-wrap gap-4">
-              {/* Type Filter */}
-              <div className="flex flex-col space-y-1 min-w-[160px] flex-1 max-w-[200px]">
-                <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                  Survey Type
-                </label>
-                <Select
-                  value={filterType}
-                  onValueChange={setFilterType}
-                  placeholder="All Types"
-                  className="w-full"
-                >
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="TRAINEESURVEY">Trainee Survey</SelectItem>
-                  <SelectItem value="COMPANYSURVEY">Company Survey</SelectItem>
-                  <SelectItem value="GENERALSURVEY">General Survey</SelectItem>
-                </Select>
-              </div>
-
-              {/* Status Filter */}
-              <div className="flex flex-col space-y-1 min-w-[160px] flex-1 max-w-[350px]">
-                <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                  Status
-                </label>
-                <Select
-                  value={filterStatus}
-                  onValueChange={setFilterStatus}
-                  placeholder="All statuses"
-                  className="w-full"
-                >
-                  <SelectItem value="all">All statuses</SelectItem>
-                  <SelectItem value="DRAFT">Draft</SelectItem>
-                  <SelectItem value="ONGOING">Ongoing</SelectItem>
-                  <SelectItem value="ENDED">Ended</SelectItem>
-                </Select>
-              </div>
-
-              {/* Created Date Range */}
-              <div className="flex flex-col space-y-1 min-w-[200px] flex-1 max-w-[280px]">
-                <label className="text-xs font-medium text-gray-600 uppercase tracking-wide flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
-                  Created Date
-                </label>
-                <div className="flex items-center gap-2 w-full">
-                  <input
-                    type="date"
-                    value={filterCreatedFrom}
-                    onChange={(e) => setFilterCreatedFrom(e.target.value)}
-                    className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="From"
-                  />
-                  <span className="text-xs text-gray-400 px-1">to</span>
-                  <input
-                    type="date"
-                    value={filterCreatedTo}
-                    onChange={(e) => setFilterCreatedTo(e.target.value)}
-                    className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="To"
-                  />
-                </div>
-              </div>
-
-              {/* Expiry Date Range */}
-              <div className="flex flex-col space-y-1 min-w-[200px] flex-1 max-w-[280px]">
-                <label className="text-xs font-medium text-gray-600 uppercase tracking-wide flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
-                  Expiry Date
-                </label>
-                <div className="flex items-center gap-2 w-full">
-                  <input
-                    type="date"
-                    value={filterExpiryFrom}
-                    onChange={(e) => setFilterExpiryFrom(e.target.value)}
-                    className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="From"
-                  />
-                  <span className="text-xs text-gray-400 px-1">to</span>
-                  <input
-                    type="date"
-                    value={filterExpiryTo}
-                    onChange={(e) => setFilterExpiryTo(e.target.value)}
-                    className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="To"
-                  />
-                </div>
-              </div>
-
-              {/* Clear Filters Button */}
-              <div className="flex flex-col justify-end min-w-[120px]">
-                <button
-                  onClick={() => {
-                    setFilterType("");
-                    setFilterStatus("");
-                    setFilterCreatedFrom("");
-                    setFilterCreatedTo("");
-                    setFilterExpiryFrom("");
-                    setFilterExpiryTo("");
-                  }}
-                  className="px-4 py-2 text-sm text-white bg-blue-500 border border-gray-300 rounded-md hover:bg-blue-600  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors whitespace-nowrap"
-                >
-                  Clear Filters
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Search and Actions Section */}
-        <div className="w-full flex flex-col lg:flex-row lg:justify-between lg:items-center p-4 sm:p-5 gap-4">
-          {/* Search Input */}
-          <div className="relative w-full lg:w-[25rem]">
-            <span className="absolute top-4 left-3">
-              <BiSearch size={22} className="text-gray-500" />
+        {/* New Survey Button */}
+        <div className="flex justify-end mb-6">
+          <Link
+            href="/admin/surveys/create-edit/create"
+            className="text-white py-2.5 px-6 rounded-full flex items-center gap-2 hover:opacity-90 transition-opacity whitespace-nowrap"
+            style={{
+              background:
+                "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+            }}
+          >
+            <span className="text-xl">
+              <SolarAddFolderBold />
             </span>
-            <input
-              name="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-gray-500 rounded-full bg-[#005DE908] border-none outline-none focus:ring-2 focus:ring-blue-100"
-              placeholder={`Search ${
-                activeTab === "responsesPerType"
-                  ? "surveys"
-                  : activeTab === "ongoing"
-                    ? "ongoing surveys"
-                    : activeTab === "ended"
-                      ? "ended surveys"
-                      : "surveys"
-              }...`}
-            />
-          </div>
+            <span className="text-base font-medium">New Survey</span>
+          </Link>
+        </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-3 self-end lg:self-auto">
-            {activeTab === "responsesPerType" && selectedSurvey && (
+        {/* Survey Statistics Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
+          {/* Total Surveys Card */}
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
+                  <FileText className="w-6 h-6 text-blue-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Surveys
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {totalSurveys}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          {/* Ongoing Surveys Card */}
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
+                  <Clock className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">
+                    Ongoing Surveys
+                  </p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {ongoingSurveys}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          {/* Ended Surveys Card */}
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-lg">
+                  <CheckCheck className="w-6 h-6 text-red-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">
+                    Ended Surveys
+                  </p>
+                  <p className="text-2xl font-bold text-red-600">
+                    {endedSurveys}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          {/* Total Responses Card */}
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg">
+                  <User className="w-6 h-6 text-purple-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Responses
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {totalResponses}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10 shadow-sm">
+          {/* Tabs */}
+          <div className="w-full p-5 border-b overflow-x-auto">
+            <div className="flex space-x-4 md:space-x-8 min-w-max">
               <button
+                className={`text-base md:text-lg font-medium pb-2 ${
+                  activeTab === "all"
+                    ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
                 onClick={() => {
+                  setActiveTab("all");
                   setSelectedSurvey(null);
                   setSearchQuery("");
                 }}
-                className="text-[#005DE9] py-2.5 px-6 rounded-full border border-[#005DE9] hover:bg-blue-50 transition-colors whitespace-nowrap"
               >
-                View All Responses
+                All Surveys
               </button>
-            )}
+              <button
+                className={`text-base md:text-lg font-medium pb-2 ${
+                  activeTab === "draft"
+                    ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+                onClick={() => {
+                  setActiveTab("draft");
+                  setSelectedSurvey(null);
+                  setSearchQuery("");
+                }}
+              >
+                Draft
+              </button>
+              <button
+                className={`text-base md:text-lg font-medium pb-2 ${
+                  activeTab === "ongoing"
+                    ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+                onClick={() => {
+                  setActiveTab("ongoing");
+                  setSelectedSurvey(null);
+                  setSearchQuery("");
+                }}
+              >
+                Ongoing
+              </button>
+              <button
+                className={`text-base md:text-lg font-medium pb-2 ${
+                  activeTab === "ended"
+                    ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+                onClick={() => {
+                  setActiveTab("ended");
+                  setSelectedSurvey(null);
+                  setSearchQuery("");
+                }}
+              >
+                Ended
+              </button>
+              <button
+                className={`text-base md:text-lg font-medium pb-2 ${
+                  activeTab === "responsesPerType"
+                    ? "text-[#005DE9] border-b-2 border-[#005DE9]"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+                onClick={() => {
+                  setActiveTab("responsesPerType");
+                  setSelectedSurvey(null);
+                  setSearchQuery("");
+                }}
+              >
+                Responses per Survey Type
+              </button>
+            </div>
+          </div>
 
-            {activeTab === "responsesPerType" && !selectedSurvey && (
-              <ExportExcel
-                excelData={formatResponsesForExport(filteredResponses)}
-                fileName="all_survey_responses"
+          {/* Date Filters Row - moved here */}
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 p-4 sm:p-5 border-b bg-gray-50/50">
+            {/* Created Date Range */}
+            <div className="flex flex-col space-y-1">
+              <label className="text-xs font-medium text-gray-600 uppercase tracking-wide flex items-center gap-1">
+                <Calendar className="w-3 h-3" />
+                Created Date
+              </label>
+              <div className="flex items-center gap-2 w-full">
+                <input
+                  type="date"
+                  value={filterCreatedFrom}
+                  onChange={(e) => setFilterCreatedFrom(e.target.value)}
+                  className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="From"
+                />
+                <span className="text-xs text-gray-400 px-1">to</span>
+                <input
+                  type="date"
+                  value={filterCreatedTo}
+                  onChange={(e) => setFilterCreatedTo(e.target.value)}
+                  className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="To"
+                />
+              </div>
+            </div>
+            {/* Expiry Date Range */}
+            <div className="flex flex-col space-y-1">
+              <label className="text-xs font-medium text-gray-600 uppercase tracking-wide flex items-center gap-1">
+                <Calendar className="w-3 h-3" />
+                Ending Date
+              </label>
+              <div className="flex items-center gap-2 w-full">
+                <input
+                  type="date"
+                  value={filterExpiryFrom}
+                  onChange={(e) => setFilterExpiryFrom(e.target.value)}
+                  className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="From"
+                />
+                <span className="text-xs text-gray-400 px-1">to</span>
+                <input
+                  type="date"
+                  value={filterExpiryTo}
+                  onChange={(e) => setFilterExpiryTo(e.target.value)}
+                  className="flex-1 min-w-0 px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="To"
+                />
+              </div>
+            </div>
+            {/* Clear Filters Button */}
+            <div className="flex flex-col justify-end min-w-[120px] mt-4 md:mt-0">
+              <Button
+                variant="primary"
+                className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
+                onClick={() => {
+                  setFilterType("");
+                  setFilterCreatedFrom("");
+                  setFilterCreatedTo("");
+                  setFilterExpiryFrom("");
+                  setFilterExpiryTo("");
+                }}
+              >
+                Clear Filters
+              </Button>
+            </div>
+          </div>
+
+          {/* Search and Survey Type Filter Row - now below date filters */}
+          <div className="w-full flex flex-col md:flex-row md:items-center md:gap-6 p-4 sm:p-5 gap-4 border-b bg-gray-50/50">
+            {/* Search Input */}
+            <div className="relative w-full md:w-[25rem]">
+              <span className="absolute top-4 left-3">
+                <BiSearch size={22} className="text-gray-500" />
+              </span>
+              <input
+                name="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-gray-500 rounded-full bg-[#005DE908] border-none outline-none focus:ring-2 focus:ring-blue-100"
+                placeholder={`Search ${
+                  activeTab === "responsesPerType"
+                    ? "surveys"
+                    : activeTab === "ongoing"
+                      ? "ongoing surveys"
+                      : activeTab === "ended"
+                        ? "ended surveys"
+                        : "surveys"
+                }...`}
+              />
+            </div>
+            {/* Survey Type Filter */}
+            <div className="flex flex-col min-w-[160px] max-w-[200px]">
+              <label className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
+                Survey Type
+              </label>
+              <Select
+                value={filterType}
+                onValueChange={setFilterType}
+                placeholder="All Types"
+                className="w-full"
+              >
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="TRAINEESURVEY">Trainee Survey</SelectItem>
+                <SelectItem value="COMPANYSURVEY">Company Survey</SelectItem>
+                <SelectItem value="GENERALSURVEY">General Survey</SelectItem>
+              </Select>
+            </div>
+          </div>
+
+          <div className="w-full px-4 sm:px-5 overflow-x-auto">
+            {activeTab === "responsesPerType" ? (
+              <CustomDataTable
+                columns={responsesPerTypeColumns}
+                data={filteredSurveys}
+                loading={loading}
+                noDataMessage={
+                  searchQuery
+                    ? `No surveys found related to "${searchQuery}"`
+                    : "No surveys available"
+                }
+                loadingBackgroundColor="#f1f5f9"
+                loadingColor="#005DE9"
+                pageSize={6}
+              />
+            ) : (
+              <CustomDataTable
+                columns={columns}
+                data={filteredSurveys}
+                loading={loading}
+                noDataMessage={
+                  searchQuery
+                    ? `No surveys found related to "${searchQuery}"`
+                    : activeTab === "ongoing"
+                      ? "No ongoing surveys found"
+                      : activeTab === "ended"
+                        ? "No ended surveys found"
+                        : "No surveys added so far"
+                }
+                loadingBackgroundColor="#f1f5f9"
+                loadingColor="#005DE9"
+                pageSize={6}
               />
             )}
           </div>
         </div>
 
-        <div className="w-full px-4 sm:px-5 overflow-x-auto">
-          {activeTab === "responsesPerType" ? (
-            <CustomDataTable
-              columns={responsesPerTypeColumns}
-              data={filteredSurveys}
-              loading={loading}
-              noDataMessage={
-                searchQuery
-                  ? `No surveys found related to "${searchQuery}"`
-                  : "No surveys available"
-              }
-              loadingBackgroundColor="#f1f5f9"
-              loadingColor="#005DE9"
-              pageSize={6}
-            />
-          ) : (
-            <CustomDataTable
-              columns={columns}
-              data={filteredSurveys}
-              loading={loading}
-              noDataMessage={
-                searchQuery
-                  ? `No surveys found related to "${searchQuery}"`
-                  : activeTab === "ongoing"
-                    ? "No ongoing surveys found"
-                    : activeTab === "ended"
-                      ? "No ended surveys found"
-                      : "No surveys added so far"
-              }
-              loadingBackgroundColor="#f1f5f9"
-              loadingColor="#005DE9"
-              pageSize={6}
-            />
-          )}
-        </div>
+        {/* Modals */}
+        <EndSurveyModal
+          isOpenModal={isOpenEndSurvey}
+          closeModal={() => {
+            closeEndSurveyModal();
+            setSelectedSurvey(null);
+            fetchSurveys();
+          }}
+          survey={selectedSurvey}
+        />
+
+        <DeleteModal
+          isOpenModal={isOpenDelete}
+          closeModal={() => {
+            closeDeleteModal();
+            setSelectedSurvey(null);
+            fetchSurveys();
+          }}
+          type="surveys"
+          id={selectedSurvey?.id?.toString() ?? ""}
+        />
       </div>
-
-      {/* Modals */}
-      <EndSurveyModal
-        isOpenModal={isOpenEndSurvey}
-        closeModal={() => {
-          closeEndSurveyModal();
-          setSelectedSurvey(null);
-          fetchSurveys();
-        }}
-        survey={selectedSurvey}
-      />
-
-      <DeleteModal
-        isOpenModal={isOpenDelete}
-        closeModal={() => {
-          closeDeleteModal();
-          setSelectedSurvey(null);
-          fetchSurveys();
-        }}
-        type="surveys"
-        id={selectedSurvey?.id?.toString() ?? ""}
-      />
     </div>
   );
 };

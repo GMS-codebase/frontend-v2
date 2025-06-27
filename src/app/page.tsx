@@ -228,10 +228,10 @@ function Page() {
         token={token as string}
         openLogin={openLogin}
       />
-      <TraineeLoginModal
+      {/* <TraineeLoginModal
         opened={isOpenTraineeLogin}
         close={closeTraineeLogin}
-      />
+      /> */}
     </div>
   );
 }
