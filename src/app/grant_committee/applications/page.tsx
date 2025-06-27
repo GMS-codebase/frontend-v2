@@ -31,17 +31,17 @@ const Page = () => {
 
   const handleNextPage = (newPage: number, limit: number) => {
     dispatch(
-      getApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction,
+      getApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction
     );
   };
   const handlePreviousPage = (newPage: number, limit: number) => {
     dispatch(
-      getApplicationsPaginated(newPage - 1, limit) as unknown as UnknownAction,
+      getApplicationsPaginated(newPage - 1, limit) as unknown as UnknownAction
     );
   };
   const handleChangePage = (newPage: number, limit: number) => {
     dispatch(
-      getApplicationsPaginated(newPage, limit) as unknown as UnknownAction,
+      getApplicationsPaginated(newPage, limit) as unknown as UnknownAction
     );
   };
 
@@ -52,7 +52,7 @@ const Page = () => {
         sector: app.sectors[0] || null,
         trade: app.trades[0] || null,
       })),
-    [rawApplications],
+    [rawApplications]
   );
 
   const filtersContainerRef = useRef<HTMLDivElement>(null);
@@ -73,9 +73,9 @@ const Page = () => {
       ...new Set(
         applications
           .map((app: any) =>
-            key.split(".").reduce((obj, property) => obj?.[property], app),
+            key.split(".").reduce((obj, property) => obj?.[property], app)
           )
-          .filter(Boolean),
+          .filter(Boolean)
       ),
     ];
   };
@@ -89,7 +89,7 @@ const Page = () => {
       trades: getUniqueValues("trade.trade.title"),
       call: getUniqueValues("call.title"),
     }),
-    [applications],
+    [applications]
   );
 
   const columns: ColumnDef<any>[] = [
@@ -236,7 +236,7 @@ const Page = () => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade } =

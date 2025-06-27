@@ -32,7 +32,7 @@ const Page = () => {
   };
   useEffect(() => {
     fetchApplication();
-  }, [applicationId]);
+  }, [fetchApplication]);
 
   useEffect(() => {
     if (application) {

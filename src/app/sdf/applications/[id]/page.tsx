@@ -85,7 +85,7 @@ const Page = () => {
   }, [id]);
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}"),
+      JSON.parse(application?.call.subwindowForms || "{}")
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
@@ -115,7 +115,7 @@ const Page = () => {
       return false;
     } catch (error: any) {
       throw new Error(
-        `An error occurred while checking commentable questions: ${error.message}`,
+        `An error occurred while checking commentable questions: ${error.message}`
       );
     }
   };
@@ -145,7 +145,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  },
+                  }
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -289,7 +289,7 @@ const Page = () => {
                 onClick={() =>
                   handleViewFile(
                     application?.applicant?.businesses[0]?.businessCertificate,
-                    "business_certificates",
+                    "business_certificates"
                   )
                 }
               >
@@ -303,7 +303,7 @@ const Page = () => {
                 onClick={() =>
                   handleDownloadFile(
                     application?.applicant?.businesses[0]?.businessCertificate,
-                    "business_certificates",
+                    "business_certificates"
                   )
                 }
               >
@@ -365,7 +365,7 @@ const Page = () => {
                         comments,
                         form,
                         application,
-                        () => fetchApplication(),
+                        () => fetchApplication()
                       );
                       setLoading(null);
                     }}
@@ -383,7 +383,7 @@ const Page = () => {
                         comments,
                         form,
                         application,
-                        () => fetchApplication(),
+                        () => fetchApplication()
                       );
                       setLoading(null);
                     }}
