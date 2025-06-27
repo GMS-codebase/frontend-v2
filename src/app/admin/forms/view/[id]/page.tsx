@@ -31,6 +31,10 @@ const Page = () => {
     setPageLoading(false);
   }, [form, id]);
 
+  useEffect(() => {
+    // ... existing code ...
+  }, [formData]);
+
   if (forms.loading || pageLoading) {
     return (
       <div className="flex items-center justify-center h-screen">Loading</div>
