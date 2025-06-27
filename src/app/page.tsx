@@ -111,12 +111,12 @@ function Page() {
           >
             Login
           </button>
-          <button
+          {/* <button
             className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
             onClick={openTraineeLogin}
           >
             Login as Trainee
-          </button>
+          </button> */}
           <button
             className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
             onClick={openRegister}
