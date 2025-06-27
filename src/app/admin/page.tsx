@@ -33,16 +33,25 @@ const Dashboard = () => {
   const [callStatsLoading, setCallStatsLoading] = useState<boolean>(true);
 
   const [applicantsData, setApplicantsData] = useState<any>({});
-  const [applicantsDataError, setApplicantsDataError] = useState<string | null>(null);
-  const [applicantsDataLoading, setApplicantsDataLoading] = useState<boolean>(true);
+  const [applicantsDataError, setApplicantsDataError] = useState<string | null>(
+    null
+  );
+  const [applicantsDataLoading, setApplicantsDataLoading] =
+    useState<boolean>(true);
 
   const [applicationsData, setApplicationsData] = useState<any>({});
-  const [applicationsDataError, setApplicationsDataError] = useState<string | null>(null);
-  const [applicationsDataLoading, setApplicationsDataLoading] = useState<boolean>(true);
+  const [applicationsDataError, setApplicationsDataError] = useState<
+    string | null
+  >(null);
+  const [applicationsDataLoading, setApplicationsDataLoading] =
+    useState<boolean>(true);
 
   const [submissionsData, setSubmissionsData] = useState<any>({});
-  const [submissionsDataError, setSubmissionsDataError] = useState<string | null>(null);
-  const [submissionsDataLoading, setSubmissionsDataLoading] = useState<boolean>(true);
+  const [submissionsDataError, setSubmissionsDataError] = useState<
+    string | null
+  >(null);
+  const [submissionsDataLoading, setSubmissionsDataLoading] =
+    useState<boolean>(true);
 
   const [activeCall, setActiveCall] = useState<string>("");
   const [applicantsStage, setApplicantsStage] = useState<string>("ALL");
@@ -114,7 +123,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       if (!callsLoading && activeCall) {
-          setCallStatsLoading(true);
+        setCallStatsLoading(true);
         setApplicantsDataLoading(true);
         setApplicationsDataLoading(true);
         setSubmissionsDataLoading(true);
@@ -129,45 +138,51 @@ const Dashboard = () => {
           getSubmissionsData(submissionsStage),
         ]);
         // Call Stats
-        if (results[0].status === 'fulfilled') {
+        if (results[0].status === "fulfilled") {
           setCallStats(results[0].value);
           setCallStatsError(null);
         } else {
           setCallStats(null);
-          setCallStatsError('Failed to load call stats');
+          setCallStatsError("Failed to load call stats");
         }
         setCallStatsLoading(false);
         // Applicants Data
-        if (results[1].status === 'fulfilled') {
+        if (results[1].status === "fulfilled") {
           setApplicantsData(results[1].value);
           setApplicantsDataError(null);
         } else {
           setApplicantsData({});
-          setApplicantsDataError('Failed to load applicants data');
+          setApplicantsDataError("Failed to load applicants data");
         }
-          setApplicantsDataLoading(false);
+        setApplicantsDataLoading(false);
         // Applications Data
-        if (results[2].status === 'fulfilled') {
+        if (results[2].status === "fulfilled") {
           setApplicationsData(results[2].value);
           setApplicationsDataError(null);
         } else {
           setApplicationsData({});
-          setApplicationsDataError('Failed to load applications data');
+          setApplicationsDataError("Failed to load applications data");
         }
-          setApplicationsDataLoading(false);
+        setApplicationsDataLoading(false);
         // Submissions Data
-        if (results[3].status === 'fulfilled') {
+        if (results[3].status === "fulfilled") {
           setSubmissionsData(results[3].value);
           setSubmissionsDataError(null);
         } else {
           setSubmissionsData({});
-          setSubmissionsDataError('Failed to load submissions data');
+          setSubmissionsDataError("Failed to load submissions data");
         }
-          setSubmissionsDataLoading(false);
+        setSubmissionsDataLoading(false);
       }
     };
     fetchDashboardData();
-  }, [callsLoading, activeCall, applicantsStage, applicationsStage, submissionsStage]);
+  }, [
+    callsLoading,
+    activeCall,
+    applicantsStage,
+    applicationsStage,
+    submissionsStage,
+  ]);
 
   const sortedSectors = Object.entries(callStats?.applicantsPerSector || {});
   return (

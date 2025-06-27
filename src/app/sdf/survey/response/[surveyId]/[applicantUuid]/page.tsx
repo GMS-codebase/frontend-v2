@@ -415,7 +415,7 @@ const IndividualResponsePage = () => {
     if (surveyId && applicantUuid) {
       fetchResponse()
     }
-  }, [fetchResponse])
+  }, [fetchResponse, applicantUuid, surveyId])
 
   if (loading) {
     return (

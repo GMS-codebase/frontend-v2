@@ -83,7 +83,7 @@ const Page = () => {
   };
   useEffect(() => {
     fetchApplication();
-  }, [id]);
+  }, [fetchApplication]);
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
       JSON.parse(application?.call.subwindowForms || "{}"),
