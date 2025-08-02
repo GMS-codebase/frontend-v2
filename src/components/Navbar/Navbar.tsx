@@ -50,7 +50,7 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
-  const [userProfile, setUserProfile] = useState<any>(null); // Add local state for profile
+  const [userProfile, setUserProfile] = useState<any>(null);
   const navigate = useRouter();
   const active = usePathname();
   const auth = useSelector((state: any) => state.auth);
@@ -175,6 +175,7 @@ const Navbar = () => {
 
     const fetchOtherData = async () => {
       try {
+
         if (currentRole === "ADMIN") {
           await Promise.all([
             getApplicants(dispatch),
@@ -183,6 +184,15 @@ const Navbar = () => {
             getBudgetLines(dispatch),
             getAppeals(dispatch, "admin"),
             getApplications(dispatch),
+            getWindows(dispatch),
+            getSectors(dispatch),
+            getSubWindows(dispatch),
+            getTrades(dispatch),
+            getCalls(dispatch),
+            getSectorTrades(dispatch),
+            getForms(dispatch),
+            getProfile(dispatch),
+            getMEReports(dispatch),
           ]);
         } else if (currentRole === "EMPLOYEE") {
           await Promise.all([
@@ -196,8 +206,8 @@ const Navbar = () => {
             getCalls(dispatch),
             getApplicationsByEmployee(dispatch),
             getMEReports(dispatch),
-            getProfile(dispatch),
             getSectorTrades(dispatch),
+            getProfile(dispatch),
             getForms(dispatch),
           ]);
         } else if (currentRole === "SDF_SECRETARIATE") {
@@ -212,10 +222,11 @@ const Navbar = () => {
             getNegotiatedMinutes(dispatch, "sdf"),
             getAppeals(dispatch, "sdf"),
             getApplicationsForContractSigning(dispatch),
+            getProfile(dispatch),
             getApplications(dispatch),
           ]);
         } else if (currentRole === "GRANT_COMMITTEE") {
-          await Promise.all([getApplications(dispatch)]);
+          await Promise.all([getApplications(dispatch), getProfile(dispatch)]);
         } else if (currentRole === "APPLICANT") {
           await Promise.all([
             getApplicantProfile(dispatch),
@@ -230,6 +241,8 @@ const Navbar = () => {
             getBudgetLines(dispatch),
             getAppeals(dispatch, "applicant"),
             getApplications(dispatch),
+            getCalls(dispatch)
+        
           ]);
         }
       } catch (error) {

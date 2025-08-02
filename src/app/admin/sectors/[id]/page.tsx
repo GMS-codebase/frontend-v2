@@ -21,7 +21,7 @@ import RemoveTradeFromSectorModal from "@/components/Modals/sectors/RemoveTradeF
 import AddEditSector from "@/components/Modals/sectors/AddEditSector";
 import { Trade, Sector, Window, TradeSector } from "@/types";
 import { authorizedApi } from "@/utils/api";
-import { getSectors } from "@/services";
+// import { getSectors } from "@/services";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
@@ -64,10 +64,10 @@ const Page = () => {
   };
   useEffect(() => {
     if (id) {
-      getSectors(dispatch);
+      // getSectors(dispatch);
       fetchTrades();
     }
-  }, [dispatch, fetchTrades]);
+  }, []);
 
   const filteredTrades = useMemo(() => {
     return trades?.filter(
@@ -75,8 +75,7 @@ const Page = () => {
         tradeSector.trade?.title
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
-        tradeSector.trade.shortname
-          .toLowerCase()
+        tradeSector.trade?.shortname?.toLowerCase()
           .includes(searchQuery.toLowerCase())
     );
   }, [trades, searchQuery]);
