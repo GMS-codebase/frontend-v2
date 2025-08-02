@@ -4,6 +4,7 @@ import { Question as IQuestion } from "@/types/questions-form";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { HiOutlineDocumentAdd } from "react-icons/hi";
+import { v4 as uuid } from 'uuid';
 
 interface QuestionsPageProps {
   mode: "creating" | "viewing" | "answering" | "commenting";
@@ -30,7 +31,7 @@ const QuestionsPage: React.FC<QuestionsPageProps> = ({
   setComments,
 }) => {
   const [newQuestion, setNewQuestion] = useState<IQuestion>({
-    id: `${questionType}-q-${pageIndex}-${pageQuestions?.length}`,
+    id: uuid(),
     title: "Question Title",
     description: "Question SubTitle",
     type: "text",
@@ -41,7 +42,7 @@ const QuestionsPage: React.FC<QuestionsPageProps> = ({
   const handleAddQuestion = (question: IQuestion) => {
     onChange([...pageQuestions, question]);
     setNewQuestion({
-      id: `${questionType}-q-${pageIndex}-${pageQuestions?.length + 1}`,
+      id: uuid(),
       title: "Question Title",
       description: "Question SubTitle",
       type: "text",

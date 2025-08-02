@@ -99,8 +99,8 @@ const Page = () => {
 
   const hasCommentableQuestion = (): boolean => {
     try {
-      if (!form.qns) {
-        throw new Error("The form structure is invalid or missing questions.");
+      if (!form?.qns || !form) {
+        return false;
       }
       const questionForm: QuestionForm = JSON.parse(form.qns);
       for (const [sectionKey, section] of Object.entries(questionForm)) {
@@ -109,7 +109,7 @@ const Page = () => {
             if (question.commentable) {
               return true;
             }
-          }
+          } 
         }
       }
       return false;
