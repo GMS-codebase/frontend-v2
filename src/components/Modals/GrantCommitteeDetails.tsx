@@ -8,7 +8,7 @@ import { CiEdit } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
 import MakeDecision from "./MakeDecision";
 import { SolarFileBold } from "../core/icons";
-import { handleDownloadFile } from "@/utils/funcs";
+import { handleDownloadFile } from "@/services";
 
 const GrantCommitteeDetails = ({
   application,
@@ -51,7 +51,9 @@ const GrantCommitteeDetails = ({
             </button>
           </div>
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
-            <h1 className="text-xl font-bold">DueDiligency decision details</h1>
+            <h1 className="text-xl font-bold">
+              Grant Committee decision details
+            </h1>
           </div>
           {viewer !== "applicant" && (
             <div className="flex gap-6 justify-start items-center">

@@ -6,6 +6,7 @@ import { SolarAltArrowRightOutline } from "@/components/core/icons/index";
 import Link from "next/link";
 import { Call } from "@/types";
 import ProgressCircle from "./ProgressBar";
+import ContentCollapse from "../ui/ContentCollapse";
 
 const CallsList = () => {
   const calls = useSelector((state: any) => state.calls);
@@ -15,17 +16,16 @@ const CallsList = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
+    const node = scrollRef.current;
     const checkScrollable = () => {
-      if (scrollRef.current) {
-        setIsScrollable(
-          scrollRef.current.scrollWidth > scrollRef.current.clientWidth,
-        );
+      if (node) {
+        setIsScrollable(node.scrollWidth > node.clientWidth);
       }
     };
 
     const handleScroll = () => {
-      if (scrollRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      if (node) {
+        const { scrollLeft, scrollWidth, clientWidth } = node;
         const scrolledPercentage =
           (scrollLeft / (scrollWidth - clientWidth)) * 100;
         setScrollProgress(scrolledPercentage);
@@ -35,14 +35,14 @@ const CallsList = () => {
     checkScrollable();
     window.addEventListener("resize", checkScrollable);
 
-    if (scrollRef.current) {
-      scrollRef.current.addEventListener("scroll", handleScroll);
+    if (node) {
+      node.addEventListener("scroll", handleScroll);
     }
 
     return () => {
       window.removeEventListener("resize", checkScrollable);
-      if (scrollRef.current) {
-        scrollRef.current.removeEventListener("scroll", handleScroll);
+      if (node) {
+        node.removeEventListener("scroll", handleScroll);
       }
     };
   }, []);
@@ -52,7 +52,8 @@ const CallsList = () => {
       <div className="flex flex-shrink-0 gap-2 w-[600px] bg-[#005DE9] bg-opacity-10 rounded-3xl p-5">
         <div className="flex flex-col gap-4 flex-grow">
           <h2 className="font-semibold text-[#005DE9]">{call.title}</h2>
-          <div className="font-medium ">{call.description}</div>
+          <ContentCollapse str={call?.description} visibleLength={90} />
+          {/* <div className="font-medium ">{call.description}</div> */}
           <div className="flex flex-col  items-start gap-2">
             <Link href={`/applicant/applications/call/${call.uuid}`}>
               <div className="flex gap-2 p-2 bg-[#005DE9] font-normal rounded-full text-white px-4 py-2 items-center justify-start w-fit">

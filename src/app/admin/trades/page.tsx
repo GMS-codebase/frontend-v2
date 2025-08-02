@@ -139,8 +139,8 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[25rem]">
+      <div className="w-full lg:flex justify-between items-center p-4">
+        <div className="relative lg:w-[25rem] w-full mb-4">
           <span className="absolute top-4 left-2">
             <BiSearch size={25} />
           </span>
@@ -177,7 +177,10 @@ const Page = () => {
       </div>
       <AddTrade
         isOpenAddEditTrade={isOpenCreateEdit}
-        closeAddEditTrade={closeCreateEditModal}
+        closeAddEditTrade={() => {
+          closeCreateEditModal();
+          setSelectedTrade(null);
+        }}
         defaultData={selectedTrade}
       />
       <DeleteModal
@@ -192,8 +195,8 @@ const Page = () => {
       <ActivateDeactivateModal
         type="trades"
         closeModal={() => {
-          closeActivateDeactivateTradeModal();
           setSelectedTrade(null);
+          closeActivateDeactivateTradeModal();
         }}
         id={selectedTrade?.uuid}
         isActive={selectedTrade?.status === "ACTIVE"}

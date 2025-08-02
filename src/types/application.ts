@@ -85,3 +85,9 @@ export enum AvailableOrHired {
   AVAILABLE = "AVAILABLE",
   HIRED = "To be hired",
 }
+
+export enum ApplicationStage {
+  EVALUATION = "EVALUATION",
+  DUE_DILIGENCY = "DUE_DILIGENCY",
+  GRANT_COMMITTEE = "GRANT_COMMITTEE",
+}

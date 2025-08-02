@@ -23,6 +23,7 @@ import { notifications } from "@mantine/notifications";
 import CloseStageModal from "@/components/Modals/call/CloseStage";
 import { Center } from "@mantine/core";
 import OpenCloseAppealModal from "@/components/Modals/call/OpenCloseAppeal";
+import { ApplicationStage } from "@/types/application";
 const Page = () => {
   const { id: callId } = useParams();
   const calls = useSelector((state: any) => state.calls);
@@ -78,6 +79,7 @@ const Page = () => {
       </div>
     );
   }
+  console.log(call);
   return (
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">
@@ -147,7 +149,7 @@ const Page = () => {
                 </span>
                 <div>Timeline</div>
               </div>
-              <div className="flex  gap-5">
+              <div className="lg:flex  gap-5">
                 <div className="flex  ">
                   <ProgressCircle
                     activeColor="#005DE9"
@@ -207,7 +209,10 @@ const Page = () => {
                 <button
                   disabled={call?.closedEvaluation}
                   onClick={() =>
-                    SetCloseStage({ opened: true, stage: "EVALUATION" })
+                    SetCloseStage({
+                      opened: true,
+                      stage: ApplicationStage.EVALUATION,
+                    })
                   }
                   className={`${call?.closedEvaluation ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full`}
                 >
@@ -220,7 +225,10 @@ const Page = () => {
                 <button
                   disabled={!call?.closedEvaluation}
                   onClick={() =>
-                    SetCloseStage({ opened: true, stage: "DUE_DILIGENCY" })
+                    SetCloseStage({
+                      opened: true,
+                      stage: ApplicationStage.DUE_DILIGENCY,
+                    })
                   }
                   className={`${call?.closedDueDiligency ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
@@ -236,9 +244,9 @@ const Page = () => {
                   onClick={() =>
                     SetCloseStage({ opened: true, stage: "GRANT_COMMITTEE" })
                   }
-                  className={`${call?.closedGrantCommittee ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed`}
+                  className={`${call?.closedGrant ? "bg-green1 text-white " : ""} bg-danger text-white px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  {call?.closedGrantCommittee ? "Open" : "Close"}
+                  {call?.closedGrant ? "Open" : "Close"}
                 </button>
               </div>
             </div>
@@ -252,7 +260,7 @@ const Page = () => {
                   onClick={() =>
                     setOpenCloseAppeal({
                       opened: true,
-                      stage: "EVALUATION",
+                      stage: ApplicationStage.EVALUATION,
                       type: call?.evaluationAppealOpened ? "CLOSE" : "OPEN",
                     })
                   }
@@ -269,7 +277,7 @@ const Page = () => {
                   onClick={() =>
                     setOpenCloseAppeal({
                       opened: true,
-                      stage: "DUE_DILIGENCY",
+                      stage: ApplicationStage.DUE_DILIGENCY,
                       type: call?.dueAppealOpened ? "CLOSE" : "OPEN",
                     })
                   }
@@ -299,7 +307,11 @@ const Page = () => {
         closeModal={() =>
           setOpenCloseAppeal({ opened: false, stage: "", type: "" })
         }
-        stage={openCloseAppeal.stage as "EVALUATION" | "DUE_DILIGENCY"}
+        stage={
+          openCloseAppeal.stage as
+            | ApplicationStage.EVALUATION
+            | ApplicationStage.DUE_DILIGENCY
+        }
         type={openCloseAppeal.type as "OPEN" | "CLOSE"}
         opened={openCloseAppeal.opened}
       />

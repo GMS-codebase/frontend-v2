@@ -11,6 +11,8 @@ interface QuestionTypeProps {
   setAnswers?: (key: string, value: any) => void;
   comments?: { [key: string]: any };
   setComments?: (key: string, value: any) => void;
+  goToNext?: () => void;
+  goToPrev?: () => void;
 }
 
 const QuestionType: React.FC<QuestionTypeProps> = ({
@@ -22,6 +24,8 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
   setAnswers,
   comments,
   setComments,
+  goToNext,
+  goToPrev,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -30,18 +34,20 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
   }, [questionType]);
 
   const pages = formData[questionType].pages;
-  console.log(formData);
-  console.log(answers)
 
   const handleNextPage = () => {
     if (currentPage < pages.length - 1) {
       setCurrentPage((prev) => prev + 1);
+    } else {
+      goToNext && goToNext();
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 0) {
       setCurrentPage((prev) => prev - 1);
+    } else {
+      goToPrev && goToPrev();
     }
   };
 
@@ -59,8 +65,6 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
     setCurrentPage(formData[questionType].pages.length - 1);
   };
 
-  console.log(pages);
-
   return (
     <div>
       <QuestionsPage
@@ -76,8 +80,6 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
         onChange={(updatedQuestions) => {
           const updatedPages = [...pages];
           updatedPages[currentPage].questions = updatedQuestions;
-          console.log("Pages updated")
-          console.log(updatedPages);
           onChange({
             ...formData[questionType],
             pages: updatedPages,
@@ -87,9 +89,9 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
       <div className="flex items-center gap-2 justify-end mb-4">
         <button
           onClick={handlePrevPage}
-          disabled={currentPage === 0}
+          disabled={currentPage === 0 && !goToPrev}
           className={`px-4 py-2 rounded-full ${
-            currentPage === 0
+            currentPage === 0 && !goToPrev
               ? "bg-gray-300 cursor-not-allowed"
               : "bg-primary text-white"
           }`}
@@ -101,7 +103,7 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
           Page {currentPage + 1} of {pages.length}
         </span>
 
-        {currentPage === pages.length - 1 ? (
+        {currentPage === pages.length - 1 && !goToNext ? (
           <>
             {mode === "creating" && (
               <button
@@ -115,9 +117,9 @@ const QuestionType: React.FC<QuestionTypeProps> = ({
         ) : (
           <button
             onClick={handleNextPage}
-            disabled={currentPage === pages.length - 1}
+            disabled={currentPage === pages.length - 1 && !goToNext}
             className={`px-4 py-2 rounded-full ${
-              currentPage === pages.length - 1
+              currentPage === pages.length - 1 && !goToNext
                 ? "bg-gray-300 cursor-not-allowed"
                 : "bg-primary text-white"
             }`}

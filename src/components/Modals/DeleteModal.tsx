@@ -19,6 +19,7 @@ import { DELETE_CONTACT_SUCCESS } from "@/actions/ContactsActions";
 import { DELETE_EMPLOYEE_SUCCESS } from "@/actions/EmployeesActions";
 import { DELETE_BUDGET_LINE_SUCCESS } from "@/actions/BudgetLinesActions";
 import { DELETE_FORM_SUCCESS } from "@/actions/FormsActions";
+import { DELETE_SURVEY_SUCCESS } from "@/actions/SurveyActions";
 
 // Redux action mappings
 const actionMappings = {
@@ -31,6 +32,7 @@ const actionMappings = {
   employees: DELETE_EMPLOYEE_SUCCESS,
   budgetLines: DELETE_BUDGET_LINE_SUCCESS,
   forms: DELETE_FORM_SUCCESS,
+  surveys: DELETE_SURVEY_SUCCESS, // Added surveys action mapping
 };
 
 const routeMappings = {
@@ -43,7 +45,21 @@ const routeMappings = {
   employees: "/employees",
   budgetLines: "/budgetlines/delete",
   forms: "/forms/delete",
+  surveys: "/survey/remove", // Updated to use correct survey delete endpoint
 };
+
+type DeleteType =
+  | "windows"
+  | "sectors"
+  | "trades"
+  | "subwindows"
+  | "calls"
+  | "contacts"
+  | "employees"
+  | "budgetLines"
+  | "forms"
+  | "surveys"; // Added surveys to the type
+
 const DeleteModal = ({
   isOpenModal,
   closeModal,
@@ -55,16 +71,7 @@ const DeleteModal = ({
   closeModal: () => void;
   id: string;
   windowId?: string;
-  type:
-    | "windows"
-    | "sectors"
-    | "trades"
-    | "subwindows"
-    | "calls"
-    | "contacts"
-    | "employees"
-    | "budgetLines"
-    | "forms";
+  type: DeleteType;
 }) => {
   const dispatch = useDispatch();
   const [deleteId, setDeleteId] = useState(id);
@@ -114,7 +121,7 @@ const DeleteModal = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[40vw] max-h-[90vh] overflow-y-auto overflow-x-hidden relative bg-white rounded-3xl p-10 flex flex-col items-center">
+      <div className="lg:w-[40vw] lg:max-h-[90vh] overflow-y-auto overflow-x-hidden relative bg-white rounded-3xl p-10 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeModal}
@@ -122,14 +129,14 @@ const DeleteModal = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <Image
-          src={SideVector1}
+          src={SideVector1 || "/placeholder.svg"}
           alt="vector"
           className="absolute bottom-[3rem] right-[-2rem] h-32"
           width={100}
           height={50}
         />
         <Image
-          src={SideVector2}
+          src={SideVector2 || "/placeholder.svg"}
           alt="vector"
           className="absolute top-[3rem] left-[-2rem] h-32"
           width={100}
@@ -137,7 +144,12 @@ const DeleteModal = ({
         />
         <div className="w-4/5 flex flex-col items-center mt-4 overflow-hidden">
           <div className="w-full flex flex-col items-center">
-            <Image src={deleteSvg} alt="vector" width={200} height={50} />
+            <Image
+              src={deleteSvg || "/placeholder.svg"}
+              alt="vector"
+              width={200}
+              height={50}
+            />
             <h1 className="text-2xl font-extrabold text-center">
               Are you sure you want to delete this{" "}
               {capitalize(type.slice(0, -1))}?

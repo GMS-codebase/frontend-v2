@@ -145,7 +145,7 @@ const RegisterModal = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[550px] max-h-[90vh] py-10  relative bg-white rounded-3xl p-4 flex flex-col items-center">
+      <div className="lg:w-[550px] max-h-[90vh] py-10 relative bg-white rounded-3xl p-4 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeRegister}
@@ -168,12 +168,15 @@ const RegisterModal = ({
         />
         <div className="w-full flex flex-col items-center">
           <h1 className="text-3xl font-extrabold text-primaryText">Register</h1>
-          <h2 className="text-primaryText opacity-40 font-medium text-xl">
+          <h2 className="text-primaryText opacity-40 font-medium lg:text-xl">
             Provide your details to register your account.
           </h2>
         </div>
 
-        <div className="w-full px-10  flex flex-col items-center mt-4 overflow-hidden ">
+        <div
+          className="w-full px-10  flex flex-col items-center mt-4 lg:overflow-hidden overflow-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
           <Stepper active={active} onStepClick={setActive} className="w-full">
             <Stepper.Step
               label="Applicant Info"
@@ -258,7 +261,7 @@ const RegisterModal = ({
                 className="w-full  overflow-y-auto flex flex-col gap-2 px-2"
               >
                 <div className="space-y-1">
-                  <div className="w-full flex justify-between gap-3">
+                  <div className="w-full lg:flex justify-between gap-3">
                     <div className="w-full">
                       <label
                         htmlFor="firstname"

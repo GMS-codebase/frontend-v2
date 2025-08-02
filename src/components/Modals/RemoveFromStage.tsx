@@ -7,7 +7,7 @@ import deleteSvg from "@/assets/Vectors/delete.svg";
 import { useState } from "react";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
-import { getEmployees } from "@/utils/funcs";
+import { getEmployees } from "@/services";
 import { useDispatch } from "react-redux";
 type FormData = {
   firstName: string;

@@ -1,6 +1,6 @@
 "use client";
 import { authorizedApi } from "@/utils/api";
-import { getAnnouncement } from "@/utils/funcs";
+import { getAnnouncement } from "@/services";
 import { MultiSelect, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useState, useEffect } from "react";
@@ -138,7 +138,7 @@ const Page = () => {
         <h2 className="text-2xl font-bold mb-4">Current Announcement</h2>
         {announcement ? (
           <div className="border rounded-lg p-4 shadow-sm">
-            <div className="flex justify-between items-center mb-2">
+            <div className="lg:flex justify-between items-center mb-2">
               <h3 className="text-xl font-semibold">
                 {getFormattedRoles(announcement?.roles).join(", ")}
               </h3>

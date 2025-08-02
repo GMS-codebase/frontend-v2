@@ -21,7 +21,7 @@ const ForgotPasswordModal = ({
 }) => {
   const handleSubmit = async (values: { email: string }) => {
     setLoading(true);
-    await AuthService.requestReset(values.email);
+    await AuthService.requestReset(values.email, close);
     setLoading(false);
   };
   const [loading, setLoading] = useState(false);

@@ -13,7 +13,7 @@ import { authorizedApi } from "@/utils/api";
 import { Call } from "@/types";
 import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
-import { getCalls } from "@/utils/funcs";
+import { getCalls } from "@/services";
 import { ADD_CALL_SUCCESS, UPDATE_CALL_SUCCESS } from "@/actions/CallsActions";
 import {
   SECTOR_STATUS,
@@ -23,7 +23,8 @@ import {
 } from "@/utils/enums";
 import { tradesData } from "@/utils/constants/dummy";
 import { MdPlusOne } from "react-icons/md";
-import { FaPlus } from "react-icons/fa";
+import { FaEdit, FaPlus } from "react-icons/fa";
+import { IoTrash } from "react-icons/io5";
 
 const AddEditCall = ({
   isOpenAddEditCall,
@@ -41,8 +42,9 @@ const AddEditCall = ({
   const [selectedSub, setSelectedSub] = useState<any>();
   const [selectedForm, setSelectedForm] = useState<any>();
   const [selectedSubWindowsForms, setSelectedSubWindowsForms] = useState<any>(
-    {}
+    {},
   );
+  const [attachment, setAttachment] = useState<File | string | null>(null);
   const [selectedSubWindows, setSelectedSubWindows] = useState<any>([]);
   const [selectedSectors, setSelectedSectors] = useState<any>([]);
   const dispatch = useDispatch();
@@ -64,8 +66,8 @@ const AddEditCall = ({
       .filter(
         (window: any) =>
           window.subWindows.filter(
-            (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE
-          ).length !== 0 && window.status === WINDOW_STATUS.ACTIVE
+            (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE,
+          ).length !== 0 && window.status === WINDOW_STATUS.ACTIVE,
       )
       ?.map((window: any) => ({
         value: window.uuid,
@@ -83,8 +85,8 @@ const AddEditCall = ({
                 (sub: any) =>
                   sub.status === SUBWINDOW_STATUS.ACTIVE &&
                   sub.sectors.filter(
-                    (sec: any) => sec.status === SECTOR_STATUS.ACTIVE
-                  )
+                    (sec: any) => sec.status === SECTOR_STATUS.ACTIVE,
+                  ),
               )
               .map((subWindow: any) => ({
                 value: subWindow.uuid,
@@ -102,45 +104,60 @@ const AddEditCall = ({
   }));
 
   const getSectorData = () => {
-    const sectorData = windows?.windows?.flatMap(
-      (window: any) =>
-        window.subWindows
-          ?.filter((subWindow: any) =>
-            Object.keys(selectedSubWindowsForms).includes(subWindow.uuid)
-          )
-          .flatMap(
-            (subWindow: any) =>
-              subWindow.sectors
-                ?.map((sector: any) => {
-                  const matchingSector = sectors.find(
-                    (s: any) =>
-                      s.uuid === sector.uuid &&
-                      s.trades.filter(
-                        (trad: any) => trad.trade.status === TRADE_STATUS.ACTIVE
-                      ).length > 0 &&
-                      sector.status === SECTOR_STATUS.ACTIVE
-                  );
-                  return matchingSector
-                    ? {
-                        value: matchingSector.uuid,
-                        label: matchingSector.name,
-                      }
-                    : null;
-                })
-                .filter(Boolean) || []
-          ) || []
+    const sectorDataMap = new Map();
+
+    windows?.windows?.forEach((window: any) =>
+      window.subWindows
+        ?.filter((subWindow: any) =>
+          Object.keys(selectedSubWindowsForms).includes(subWindow.uuid),
+        )
+        .forEach((subWindow: any) =>
+          subWindow.sectors?.forEach((sector: any) => {
+            const matchingSector = sectors.find(
+              (s: any) =>
+                s.uuid === sector.uuid &&
+                s.trades.some(
+                  (trad: any) => trad.trade.status === TRADE_STATUS.ACTIVE,
+                ) &&
+                sector.status === SECTOR_STATUS.ACTIVE,
+            );
+            if (matchingSector && !sectorDataMap.has(matchingSector.uuid)) {
+              sectorDataMap.set(matchingSector.uuid, {
+                value: matchingSector.uuid,
+                label: matchingSector.name,
+              });
+            }
+          }),
+        ),
     );
-    return sectorData;
+
+    return Array.from(sectorDataMap.values());
   };
 
   const MultiSubWindowData = getSubWindowsData();
   const MultiSectorData = getSectorData();
   useEffect(() => {
     if (defaultData) {
-      setFormData(defaultData);
+      console.log({
+        title: defaultData.title,
+        description: defaultData.description,
+        startDate: defaultData.startDate,
+        endDate: defaultData.endDate,
+        appealDays: defaultData.appealDays,
+        attachment: defaultData.attachment,
+      });
+      setAttachment(defaultData.attachment);
+      setFormData({
+        title: defaultData.title,
+        description: defaultData.description,
+        startDate: defaultData.startDate.toString(),
+        endDate: defaultData.endDate.toString(),
+        appealDays: defaultData.appealDays,
+        attachment: defaultData.attachment,
+      });
       setSelectedWindows(defaultData.windows.map((item: any) => item.uuid));
       setSelectedSubWindowsForms(
-        JSON.parse(defaultData.subwindowForms || "{}")
+        JSON.parse(defaultData.subwindowForms || "{}"),
       );
       setSelectedSectors(defaultData.sectors.map((item: any) => item.uuid));
     }
@@ -170,10 +187,10 @@ const AddEditCall = ({
     submitData.append("sector", JSON.stringify(selectedSectors));
     submitData.append(
       "subWindowForms",
-      JSON.stringify(selectedSubWindowsForms)
+      JSON.stringify(selectedSubWindowsForms),
     );
-    if (formData?.attachment) {
-      submitData?.append("attachment", formData?.attachment);
+    if (attachment) {
+      submitData?.append("attachment", attachment);
     }
 
     const apiUrl = defaultData
@@ -207,6 +224,7 @@ const AddEditCall = ({
               sectors: [],
               attachment: null,
             });
+            getCalls(dispatch);
             closeAddEditCall();
           })
           .catch((err) => {
@@ -263,7 +281,7 @@ const AddEditCall = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-full md:w-[70vw]  lg:w-[50vw] max-h-[90vh] overflow-y-auto  relative bg-white rounded-3xl pt-10 pb-10 flex flex-col items-center modal">
+      <div className="w-full md:w-[70vw] p-3 lg:w-[50vw] max-h-[90vh] overflow-y-auto  relative bg-white rounded-3xl pt-10 pb-10 flex flex-col items-center modal">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeAddEditCall}
@@ -271,9 +289,12 @@ const AddEditCall = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <div className="w-full flex flex-col items-center ">
-          <h1 className="text-2xl font-extrabold">Create Call</h1>
+          <h1 className="text-2xl font-extrabold">
+            {defaultData ? "Update Call" : "Create Call"}
+          </h1>
           <h2 className="text-[#000F2369] text-lg font-medium">
-            Provide your call details to create a new call.
+            Provide your call details to{" "}
+            {defaultData ? "update " : "create a new "} call.
           </h2>
         </div>
         <div className="w-full flex flex-col items-center mt-4  px-[5%]">
@@ -340,7 +361,7 @@ const AddEditCall = ({
                       htmlFor="attachment"
                       className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
                     >
-                      {!formData.attachment ? (
+                      {!attachment ? (
                         <>
                           <SolarUploadBold className="text-blue-500 text-3xl" />
                           <div className="text-center">
@@ -360,9 +381,9 @@ const AddEditCall = ({
                               File Uploaded
                             </p>
                             <p className="text-xs text-gray-400">
-                              {formData?.attachment instanceof File
-                                ? formData.attachment.name
-                                : formData?.attachment}
+                              {attachment instanceof File
+                                ? attachment.name
+                                : attachment}
                             </p>
                           </div>
                         </>
@@ -373,10 +394,12 @@ const AddEditCall = ({
                       type="file"
                       name="attachment"
                       accept=".pdf, .doc, .docx"
-                      onChange={handleChange}
+                      onChange={(e) =>
+                        setAttachment(e.target.files?.[0] || null)
+                      }
                       style={{ display: "none" }}
                       className="content-none"
-                      required
+                      required={!defaultData}
                     />
                   </div>
                 </div>
@@ -406,7 +429,7 @@ const AddEditCall = ({
               className="text-xs"
             >
               <div className="mt-4 w-full overflow-y-auto flex flex-col gap-2 px-2">
-                <div className="w-full flex space-x-4 justify-center">
+                <div className="w-full lg:flex space-x-4 justify-center">
                   <div className="">
                     <label
                       htmlFor="startDate"
@@ -539,7 +562,7 @@ const AddEditCall = ({
                   </div>
                 </div>
 
-                <div className="flex flex-row gap-4 my-2 items-end">
+                <div className="flex flex-col lg:flex-row gap-4 my-2 items-end">
                   <div className="flex-grow">
                     <label
                       htmlFor="subWindow"
@@ -560,8 +583,8 @@ const AddEditCall = ({
                           MultiSubWindowData.filter(
                             (sub: any) =>
                               Object.keys(selectedSubWindowsForms).find(
-                                (k) => k == sub.value
-                              ) == null
+                                (k) => k == sub.value,
+                              ) == null,
                           ) || []
                         }
                         value={selectedSub}
@@ -620,6 +643,7 @@ const AddEditCall = ({
                         <tr className="bg-gray-100">
                           <th className="px-4 py-2 text-left">Sub-Window</th>
                           <th className="px-4 py-2 text-left">Form</th>
+                          <th className="px-4 py-2 text-left">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -629,7 +653,7 @@ const AddEditCall = ({
                               <td className="px-4 py-2">
                                 {
                                   MultiSubWindowData.find(
-                                    (sub: any) => sub.value == subWindow
+                                    (sub: any) => sub.value == subWindow,
                                   )?.label
                                 }
                               </td>
@@ -639,8 +663,40 @@ const AddEditCall = ({
                                     ?.label
                                 }
                               </td>
+                              <td className="flex items-center gap-2 px-4 py-2">
+                                <div
+                                  className="text-primary"
+                                  onClick={() => {
+                                    setSelectedForm(form);
+                                    setSelectedSub(subWindow);
+                                    setSelectedSubWindowsForms(
+                                      (prev: { [key: string]: string }) => {
+                                        const updated = { ...prev };
+                                        delete updated[subWindow];
+                                        return updated;
+                                      },
+                                    );
+                                  }}
+                                >
+                                  <FaEdit className="w-5 h-5" />
+                                </div>
+                                <div
+                                  className="text-red-500"
+                                  onClick={() =>
+                                    setSelectedSubWindowsForms(
+                                      (prev: { [key: string]: string }) => {
+                                        const updated = { ...prev };
+                                        delete updated[subWindow];
+                                        return updated;
+                                      },
+                                    )
+                                  }
+                                >
+                                  <IoTrash className="w-5 h-5" />
+                                </div>
+                              </td>
                             </tr>
-                          )
+                          ),
                         )}
                       </tbody>
                     </table>
@@ -660,7 +716,9 @@ const AddEditCall = ({
                     </span>
                     <MultiSelect
                       name="sectors"
-                      onChange={setSelectedSectors}
+                      onChange={(value) => {
+                        setSelectedSectors(value);
+                      }}
                       data={MultiSectorData || []}
                       value={selectedSectors}
                       placeholder="Select or type in a sector"

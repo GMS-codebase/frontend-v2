@@ -8,6 +8,11 @@ import TableInput from "../core/TableInput";
 import { Question } from "@/types/questions-form";
 import RadioInput from "../core/RadioInput";
 import CheckboxInput from "../core/CheckBoxInput";
+import DeleteQuestion from "./RemoveQuestion";
+import { useDisclosure } from "@mantine/hooks";
+import { authorizedApi } from "@/utils/api";
+import { FaDownload } from "react-icons/fa";
+import { handleDownloadFile } from "@/services";
 
 interface CreateQuestionProps {
   question: Question;
@@ -79,9 +84,44 @@ const CreateQuestion: React.FC<CreateQuestionProps> = ({
 }) => {
   const [editingQuestion, setEditingQuestion] = useState(question);
   const [showingDescription, setShowingDescription] = useState(true);
+  const [showingTemplateExample, setShowingTemplateExample] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleFileChange = async (files: FileList | null) => {
+    if (!files) return;
+    const file = files[0];
+    setSelectedFile(file);
+    setIsUploading(true);
+    try {
+      if (question.template) {
+        await authorizedApi.post("/api/v2/files/delete", {
+          folder: question.id,
+          filename: question.template,
+        });
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", question.id);
+      const response = await authorizedApi.post("/files/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setEditingQuestion({
+        ...editingQuestion,
+        template: response.data.data.data,
+      });
+    } catch (error) {
+      console.error("File upload failed", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    key: keyof Question
+    key: keyof Question,
   ) => {
     const updatedQuestion = { ...editingQuestion, [key]: e.target.value };
     if (key === "type" && e.target.value === "table")
@@ -129,9 +169,70 @@ const CreateQuestion: React.FC<CreateQuestionProps> = ({
           isEditing: true,
         })}
       </div>
+      {showingTemplateExample && (
+        <div className="border-t-2 py-3 w-full overflow-x-auto">
+          <p className="text-sm text-gray-900">Template</p>
+          <div
+            className={`flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl `}
+          >
+            <label
+              htmlFor="template-upload"
+              className={`flex flex-col items-center justify-center space-y-2 cursor-pointer `}
+            >
+              <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+                <span className="text-2xl font-bold">+</span>
+              </div>
+              {selectedFile || editingQuestion.template ? (
+                <div className="text-center">
+                  <p className="text-xl font-medium text-gray-700">
+                    {editingQuestion.template
+                      ? editingQuestion.template
+                      : selectedFile?.name}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {isUploading ? "Uploading..." : "File selected"}
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <p className="text-md text-gray-500">Upload file</p>
+                  <p className="text-md text-gray-400">or drag and drop</p>
+                </div>
+              )}
+            </label>
+            <input
+              id="template-upload"
+              type="file"
+              style={{ display: "none" }}
+              onChange={(e) => handleFileChange(e.target.files)}
+            />
+            {(selectedFile || editingQuestion.template) && (
+              <button
+                onClick={() => setSelectedFile(null)}
+                className="mt-4 bg-gray-200 text-black font-semibold rounded-full px-4 py-2"
+              >
+                Select Another File
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="border-t-2 pt-3 flex justify-end gap-3">
         <div className="flex items-center gap-2">
+          {editingQuestion.type === "file" && (
+            <div className="flex items-center gap-2">
+              <label className="block">Show Template Example:</label>
+              <Toggle
+                value={showingTemplateExample}
+                onChange={(value) => {
+                  setShowingTemplateExample(value);
+                  if (!value)
+                    setEditingQuestion({ ...editingQuestion, description: "" });
+                }}
+              />
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <label className="block">Show Description:</label>
             <Toggle
@@ -183,7 +284,7 @@ const renderQuestionType = (
     setComments?: (key: string, value: any) => void;
     onQuestionChange?: (question: Question) => void;
     isEditing?: boolean;
-  }
+  },
 ) => (
   <>
     {question.type === "text" && (
@@ -205,24 +306,25 @@ const renderQuestionType = (
     )}
     {question.type === "radio" && (
       <RadioInput
-        question={question}
-        mode={mode}
-        value={options?.answers?.[question.id]}
+        options={question.choices || []}
+        value={options?.answers?.[question.id] || ""}
         onChange={(data) => options?.setAnswers?.(question.id, data)}
-        onQuestionChange={options?.onQuestionChange as any}
+        required={question.required}
+        label={question.description || question.title}
       />
     )}
     {question.type === "checkbox" && (
       <CheckboxInput
-        question={question}
-        mode={mode}
+        options={question.choices || []}
         value={options?.answers?.[question.id] || []}
         onChange={(data) => options?.setAnswers?.(question.id, data)}
-        onQuestionChange={options?.onQuestionChange as any}
+        required={question.required}
+        label={question.description || question.title}
       />
     )}
     {question.type === "file" && (
       <FileInput
+        mode={mode}
         question={question}
         onChange={(answer) => options?.setAnswers?.(question.id, answer)}
         value={options?.answers?.[question.id]}
@@ -279,10 +381,29 @@ const ViewQuestion: React.FC<ViewQuestionProps> = ({
   setComments,
   deleteQuestion,
 }) => {
+  const [
+    isOpenDeleteQuestion,
+    { open: openDeleteQuestion, close: closeDeleteQuestion },
+  ] = useDisclosure(false);
   return (
     <div className="space-y-2">
-      <p className="text-gray-900 text-2xl ">{question.title}</p>
-      <p className="text-gray-600">{question.description}</p>
+      <div className="flex items-center justify-between gap-10">
+        <div>
+          <p className="text-gray-900 text-2xl font-semibold">
+            {question.title}
+          </p>
+          <p className="text-gray-600">{question.description}</p>
+        </div>
+        {question.type === "file" && question.template && (
+          <button
+            onClick={() => handleDownloadFile(question.template, question.id)}
+            className={` bg-primary  text-white font-semibold rounded-full  px-5 py-2 flex gap-2 items-center justify-center`}
+          >
+            <FaDownload />
+            <p className="text-sm truncate">Download Template</p>
+          </button>
+        )}
+      </div>
       <div className="w-full overflow-x-auto">
         {renderQuestionType(mode === "creating" ? "viewing" : mode, question, {
           answers,
@@ -297,11 +418,17 @@ const ViewQuestion: React.FC<ViewQuestionProps> = ({
           <button onClick={edit} className="">
             <FiEdit3 className="w-6 h-6 font-bold text-xl" />
           </button>
-          <button onClick={() => deleteQuestion(question.id)}>
+          <button onClick={openDeleteQuestion}>
             <MdOutlineDelete className="w-6 h-6 font-bold text-xl" />
           </button>
         </div>
       )}
+      <DeleteQuestion
+        closeModal={closeDeleteQuestion}
+        isOpenModal={isOpenDeleteQuestion}
+        question={question}
+        removeQuestion={() => deleteQuestion(question.id)}
+      />
     </div>
   );
 };

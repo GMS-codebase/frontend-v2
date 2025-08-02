@@ -1,7 +1,7 @@
 "use client";
 import * as Icons from "@/components/core/icons";
 import { Route } from "@/types";
-
+import * as SolarIconSet from "solar-icon-set";
 const adminRoutes: Route[] = [
   {
     label: "Dashboard",
@@ -37,6 +37,11 @@ const adminRoutes: Route[] = [
     label: "Question Forms",
     path: "/admin/forms",
     icon: <Icons.SolarSuitcaseBold />,
+  },
+  {
+    label: "Survey",
+    path: "/admin/survey",
+    icon: <Icons.SolarPaperclipRounded2Bold />,
   },
   {
     label: "Applicants",
@@ -81,7 +86,7 @@ const adminRoutes: Route[] = [
   {
     label: "Roles",
     path: "/admin/roles",
-    icon: <Icons.SolarUsersGroupTwoRoundedBold />,
+    icon: <SolarIconSet.ShieldUser iconStyle="Bold" size={30} />,
   },
   {
     label: "Announcements",

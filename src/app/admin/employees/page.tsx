@@ -11,7 +11,7 @@ import DeleteEmployee from "@/components/Modals/DeleteEmployee";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
-import { getEmployees } from "@/utils/funcs";
+import { getEmployees } from "@/services";
 
 const Page = () => {
   const [
@@ -71,8 +71,8 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[25rem]">
+      <div className="w-full lg:flex justify-between items-center p-4">
+        <div className="relative lg:w-[25rem] w-full mb-4">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} />
           </span>

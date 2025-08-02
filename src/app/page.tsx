@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, Suspense, useRef } from "react";
 import Image from "next/image";
 import bg from "../assets/Images/landing.jpg";
 import logo from "../assets/Images/logo.png";
@@ -10,13 +10,18 @@ import LoginModal from "@/components/Modals/auth/Login";
 import CallModal from "@/components/Modals/techInnov";
 import SuccessModal from "@/components/Modals/success";
 import SetPasswordModal from "@/components/Modals/auth/SetPasswordModal";
-import { SolarFolder2Bold } from "@/components/core/icons";
+import {
+  SolarFolder2Bold,
+  SolarShieldWarningBold,
+} from "@/components/core/icons";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { getCalls } from "@/utils/funcs";
+import { getCalls } from "@/services";
 import { unauthorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import ForgotPasswordModal from "@/components/Modals/auth/ForgotPassword";
+import Link from "next/link";
+import TraineeLoginModal from "@/components/Modals/auth/TraineeLogin";
 
 function Page() {
   const dispatch = useDispatch();
@@ -28,16 +33,14 @@ function Page() {
   );
   const sortedCalls = calls
     ? [...calls]
-        .filter(
-          (call: any) =>
-            new Date(call.endDate) > new Date() && call.status === "OPEN"
-        )
+        .filter((call: any) => call.status === "OPEN")
         .sort(
           (a: any, b: any) =>
             new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
         )
     : [];
 
+  console.log(new Date("13 January 2025"), new Date());
   const [isOpenRegister, { open: openRegister, close: closeRegister }] =
     useDisclosure(false);
   const [
@@ -56,6 +59,10 @@ function Page() {
     isOpenSetPassword,
     { open: openSetPassword, close: closeSetPassword },
   ] = useDisclosure(false);
+  const [
+    isOpenTraineeLogin,
+    { open: openTraineeLogin, close: closeTraineeLogin },
+  ] = useDisclosure(false);
 
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -65,6 +72,20 @@ function Page() {
       openSetPassword();
     }
   }, [token, openSetPassword]);
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -200, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 200, behavior: "smooth" });
+    }
+  };
 
   return (
     <div className="relative h-screen">
@@ -79,17 +100,23 @@ function Page() {
           className="opacity-90"
         />
       </div>
-      <div className="absolute  w-full  py-6 flex items-center justify-between px-6 z-20">
+      <div className="absolute  w-full  py-6 md:flex items-center justify-between px-6 z-20">
         <div className="">
           <Image src={logo} alt="logo" width={360} height={360} />
         </div>
-        <div className="flex gap-4 ">
+        <div className="flex gap-4 justify-center ml-12">
           <button
             className="py-2 px-4 lg:px-8 bg-white font-bold text-primary rounded-full"
             onClick={openLogin}
           >
             Login
           </button>
+          {/* <button
+            className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
+            onClick={openTraineeLogin}
+          >
+            Login as Trainee
+          </button> */}
           <button
             className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
             onClick={openRegister}
@@ -107,7 +134,19 @@ function Page() {
           className="w-[80%] overflow-x-auto no-scrollbar m-10"
           style={{ scrollbarWidth: "none" }}
         >
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 items-start mt-[4vh]">
+            {/* <div className="w-full flex justify-center">
+              {new Date("13 January 2025") > new Date() && (
+                <div className="bg-white rounded-md p-4  w-fit flex items-center mb-3">
+                  <SolarShieldWarningBold className="w-8 h-8 text-[#be1f1f]" />
+                  <h3 className="text-[#be1f1f]">
+                    We would like to announce that we have extended the call
+                    from 10th January to 13th January 2025 at 12.00AM
+                    Sharp.Thank you
+                  </h3>
+                </div>
+              )}
+            </div> */}
             {sortedCalls.length ? (
               sortedCalls.map((call: any) => (
                 <div
@@ -144,14 +183,18 @@ function Page() {
 
       <div className="absolute bottom-0 left-0 p-4 z-30">
         <h2 className="text-black font-extrabold">
-          © 2024 Rwanda TVET Board.
+          © {new Date().getFullYear()} Rwanda TVET Board.
         </h2>
       </div>
       <div className="absolute bottom-0 right-0 p-4 z-30">
-        <button className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full">
+        <a
+          href={"/files/user_guide.pdf"}
+          download={true}
+          className="py-2 px-4 lg:px-8 bg-white font-bold text-primary flex items-center rounded-full"
+        >
           <IoDownloadOutline className="w-4 h-4 mx-2" />
-          Download User Manual
-        </button>
+          <span className="hidden lg:flex"> Download User Manual</span>
+        </a>
       </div>
       <RegisterModal
         openSuccess={openSuccess}
@@ -185,6 +228,10 @@ function Page() {
         token={token as string}
         openLogin={openLogin}
       />
+      {/* <TraineeLoginModal
+        opened={isOpenTraineeLogin}
+        close={closeTraineeLogin}
+      /> */}
     </div>
   );
 }

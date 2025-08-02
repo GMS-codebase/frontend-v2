@@ -157,7 +157,7 @@ const AddEditWindowSubwindow = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[600px] max-h-[90vh] overflow-y-auto modal  relative bg-white rounded-3xl pt-10 pb-10 flex flex-col items-center">
+      <div className="lg:w-[600px] lg:max-h-[90vh] w-full h-full overflow-y-auto modal  relative bg-white rounded-3xl pt-10 pb-10 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={handleCancel}

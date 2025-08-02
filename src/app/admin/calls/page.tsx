@@ -37,7 +37,13 @@ const Page = () => {
     {
       accessorKey: "title",
       header: "Title",
-      cell: ({ row }) => <div>{row.original?.title}</div>,
+      cell: ({ row }) => (
+        <div>
+          {row.original?.title?.length > 30
+            ? row.original?.title?.slice(0, 30) + "..."
+            : row.original?.title}
+        </div>
+      ),
     },
     {
       accessorKey: "startDate",
@@ -147,8 +153,8 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[25rem]">
+      <div className="w-full md:flex justify-between items-center p-4">
+        <div className="relative lg:w-[25rem] w-full">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} />
           </span>
@@ -163,7 +169,7 @@ const Page = () => {
 
         <button
           onClick={openAddEditModal}
-          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+          className="bg-primary text-white py-3 px-7 lg:mt-0 mt-4 rounded-full flex flex-row items-center gap-3"
         >
           <span className="text-2xl">
             <SolarAddFolderBold />

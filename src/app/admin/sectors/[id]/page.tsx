@@ -21,7 +21,7 @@ import RemoveTradeFromSectorModal from "@/components/Modals/sectors/RemoveTradeF
 import AddEditSector from "@/components/Modals/sectors/AddEditSector";
 import { Trade, Sector, Window, TradeSector } from "@/types";
 import { authorizedApi } from "@/utils/api";
-import { getSectors } from "@/utils/funcs";
+import { getSectors } from "@/services";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
@@ -67,7 +67,7 @@ const Page = () => {
       getSectors(dispatch);
       fetchTrades();
     }
-  }, [id]);
+  }, [dispatch, fetchTrades]);
 
   const filteredTrades = useMemo(() => {
     return trades?.filter(
@@ -197,14 +197,14 @@ const Page = () => {
 
         {/* Trades Section */}
         <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-          <div className="w-full flex justify-between items-center py-4 px-10">
+          <div className="w-full lg:flex lg:space-y-0 space-y-2 justify-between items-center py-4 px-10">
             <div className="flex gap-2 bg-gray-400 rounded-full bg-opacity-10 px-4 py-2 font-semibold items-center justify-center">
               <SolarBookmarkBold />
               <span>Trades</span>
             </div>
-            <div className="flex gap-3 items-center">
+            <div className="lg:flex lg:space-y-0 space-y-2 gap-3 items-center">
               {/* Search Bar */}
-              <div className="relative w-[25rem]">
+              <div className="relative lg:w-[25rem] w-full lg:mt-0">
                 <CiSearch className="absolute top-4 left-2" size={25} />
                 <input
                   type="text"

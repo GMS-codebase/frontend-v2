@@ -16,7 +16,7 @@ export default function AdminLayout({
     <div className="w-screen h-screen flex justify-between bg-background p-3 overflow-hidden">
       <div
         className={`${
-          isCompresed ? "w-[6%]" : "w-[23%]"
+          isCompresed ? "w-[6%]" : "lg:w-[23%]"
         } h-[99%] bg-white rounded-2xl side-section`}
       >
         <GenericSidebar

@@ -10,9 +10,11 @@ import { SolarFileBold } from "../core/icons";
 const AdminAction = ({
   call,
   setIsCall,
+  exportFunction,
 }: {
   setIsCall: (employee: any) => void;
   call: any;
+  exportFunction?: any;
 }) => {
   return (
     <div className="">
@@ -36,13 +38,23 @@ const AdminAction = ({
           </Menu.Label>
           <Menu.Divider />
           <Menu.Item className="bg-[#F0F0F0]">
-            <Link
-              href={`/admin/calls/${call?.uuid}`}
-              className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-            >
-              <SolarFileBold />
-              Export as excel
-            </Link>
+            {exportFunction ? (
+              <div
+                onClick={exportFunction}
+                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+              >
+                <SolarFileBold />
+                Export as excel
+              </div>
+            ) : (
+              <Link
+                href={`/admin/calls/${call?.uuid}`}
+                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+              >
+                <SolarFileBold />
+                Export as excel
+              </Link>
+            )}
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>

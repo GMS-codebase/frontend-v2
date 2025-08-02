@@ -21,18 +21,20 @@ import BudgetQuestions from "@/components/Application/BudgetQuestions";
 import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
 import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
-import { getApplications } from "@/utils/funcs";
+import { getApplications } from "@/services";
 import NullifyModal from "@/components/Modals/Nullify";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 import Form from "@/components/forms/Form";
+import { ApplicationStage } from "@/types/application";
+import { UnknownAction } from "redux";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const applications = useSelector((state: any) => state.applications);
   const forms = useSelector((state: any) => state.forms);
   const application = applications?.applications?.filter(
-    (application: any) => application.uuid === id
+    (application: any) => application.uuid === id,
   )[0];
   const [
     isOpenDueDiligencyDetails,
@@ -76,7 +78,7 @@ const Page = () => {
 
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}")
+      JSON.parse(application?.call.subwindowForms || "{}"),
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
@@ -124,7 +126,7 @@ const Page = () => {
                   `/admin/applicant-details/${id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -253,10 +255,18 @@ const Page = () => {
           <h2 className="font-bold">Decision</h2>
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold">Evaluation Stage</h3>
-            <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-              {application?.currentStage === "EVALUATION"
-                ? "PENDING"
-                : "APPROVED"}
+            <div
+              className={`font-medium  ${
+                application?.stages?.find(
+                  (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+                )?.status == "APPROVED"
+                  ? "bg-[#4BC500] text-[#4BC500]"
+                  : "bg-red-600 text-red-600"
+              } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+            >
+              {application?.stages?.find(
+                (stage: any) => stage.stage === ApplicationStage.EVALUATION,
+              )?.status ?? "PENDING"}
             </div>
             {application?.evaluationDecisions && (
               <div className="flex flex-col gap-2 mt-4">
@@ -271,8 +281,9 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage?.stage === "EVALUATION"
-                        )
+                          (stage: any) =>
+                            stage?.stage === ApplicationStage.EVALUATION,
+                        ),
                       );
                       openNullifyModal();
                     }}
@@ -288,20 +299,19 @@ const Page = () => {
             <h3 className="font-bold">Due Diligence Stage</h3>
             <div
               className={`font-medium  ${
-                application?.status === "APPROVED" ||
-                application?.currentStage !== "EVALUATION"
+                application?.stages?.find(
+                  (stage: any) =>
+                    stage.stage === ApplicationStage.DUE_DILIGENCY,
+                )?.status == "APPROVED"
                   ? "bg-[#4BC500] text-[#4BC500]"
-                  : application?.status === "PENDING"
-                    ? "bg-red-600 text-red-600"
-                    : ""
+                  : "bg-red-600 text-red-600"
               } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
             >
-              {application?.currentStage !== "EVALUATION" &&
-              application?.currentStage !== "DUE_DILIGENCY"
-                ? "APPROVED"
-                : application?.status}
+              {application?.stages?.find(
+                (stage: any) => stage.stage === ApplicationStage.DUE_DILIGENCY,
+              )?.status ?? "PENDING"}
             </div>
-            {application?.currentStage !== "DUE_DILIGENCY" && (
+            {application?.currentStage !== ApplicationStage.DUE_DILIGENCY && (
               <div className="flex flex-col gap-2 mt-4">
                 <button
                   onClick={openDueDiligencyDetails}
@@ -314,8 +324,9 @@ const Page = () => {
                     onClick={() => {
                       setSelectedStage(
                         application.stages.find(
-                          (stage: any) => stage?.stage === "DUE_DILIGENCY"
-                        )
+                          (stage: any) =>
+                            stage?.stage === ApplicationStage.DUE_DILIGENCY,
+                        ),
                       );
                       openNullifyModal();
                     }}
@@ -328,7 +339,7 @@ const Page = () => {
             )}
           </div>
           {application?.stages?.find(
-            (stage: any) => stage?.stage === "GRANT_COMMITTEE"
+            (stage: any) => stage?.stage === "GRANT_COMMITTEE",
           ) && (
             <div className="flex flex-col gap-2">
               <h3 className="font-semibold">Grant Committee</h3>

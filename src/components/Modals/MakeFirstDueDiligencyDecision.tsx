@@ -225,7 +225,6 @@ const MakeFirstDueDiligencyDecision = ({
                   accept=".pdf"
                   onChange={handleChange}
                   style={{ display: "none" }}
-                  required
                 />
               </div>
             </div>

@@ -16,7 +16,8 @@ const ViewAppealResultsModal = ({
 }: ViewAppealResultsProps) => {
   const { appeals } = useSelector((state: any) => state?.appeals);
   const appeal = appeals.find(
-    (appeal: any) => appeal.application_number === application?.applicationNumber,
+    (appeal: any) =>
+      appeal.application_number === application?.applicationNumber,
   );
   return (
     <Modal
@@ -40,20 +41,25 @@ const ViewAppealResultsModal = ({
               appeal?.decision === "APPROVE"
                 ? "text-green-500"
                 : appeal?.decision === "REJECT"
-                ? "text-red-500"
-                : "text-blue-500"
+                  ? "text-red-500"
+                  : "text-blue-500"
             } mb-4`}
           />
-          <h1 className="text-2xl font-extrabold text-center">Appeal Details</h1>
+          <h1 className="text-2xl font-extrabold text-center">
+            Appeal Details
+          </h1>
           <div className="mt-6 w-full space-y-4">
             <div>
               <h2 className="text-start block text-xs font-bold text-gray-700">
                 Status
               </h2>
-              <div className={`mt-1 inline-block px-3 py-1 rounded-full text-sm ${
-                appeal?.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
-                appeal?.status === 'REJECTED' ? 'bg-red-100 text-red-800' :
-                'bg-yellow-100 text-yellow-800'
+              <div
+                className={`mt-1 inline-block px-3 py-1 rounded-full text-sm ${
+                  appeal?.status === "APPROVED"
+                    ? "bg-green-100 text-green-800"
+                    : appeal?.status === "REJECTED"
+                      ? "bg-red-100 text-red-800"
+                      : "bg-yellow-100 text-yellow-800"
                 }`}
               >
                 {appeal?.status || "PENDING"}
@@ -75,7 +81,7 @@ const ViewAppealResultsModal = ({
                   Response Comment
                 </h2>
                 <div className="mt-1 block w-full text-sm p-3 bg-[#000F230A] rounded-2xl min-h-[60px]">
-                  {appeal?.appeal_answer || 'No response provided.'}
+                  {appeal?.appeal_answer || "No response provided."}
                 </div>
               </div>
             )}

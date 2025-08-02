@@ -2,7 +2,7 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Form as IForm } from "@/types/questions-form";
+import { Form as IForm, QuestionForm } from "@/types/questions-form";
 import Form from "@/components/forms/Form";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -22,33 +22,66 @@ const Page = () => {
 
   useEffect(() => {
     if (form) {
-      setFormData({
-        ...formData,
+      setFormData((prevData) => ({
+        ...prevData,
         name: form?.name || "",
         qns: JSON.parse(form?.qns || "{}"),
-      });
+      }));
     }
     setPageLoading(false);
   }, [form, id]);
 
   const handleSaveForm = () => {
     setLoading(true);
+    const sanitizedQns = Object.entries(formData?.qns ?? {})
+      .filter(
+        ([_, type]: any) =>
+          type.pages &&
+          type.pages.some(
+            (page: any) => page.questions && page.questions.length > 0
+          )
+      )
+      .reduce((acc, [key, type]: any) => {
+        acc[key] = {
+          ...type,
+          pages: type.pages.filter(
+            (page: any) => page.questions && page.questions.length > 0
+          ),
+        };
+        return acc;
+      }, {} as QuestionForm);
+
+    const updatedFormData = Object.fromEntries(
+      Object.entries(sanitizedQns).map(([key, module]) => [
+        key,
+        {
+          ...module,
+          pages: module.pages.map((page, pageIndex) => ({
+            ...page,
+            questions: page.questions.map((question, questionIndex) => ({
+              ...question,
+              id: `${key}-q-${pageIndex}-${questionIndex}`,
+            })),
+          })),
+        },
+      ])
+    );
     const request = form
       ? authorizedApi.put(`/forms/update/${id}`, {
           name: formData?.name,
-          qns: JSON.stringify(formData?.qns),
+          qns: JSON.stringify(updatedFormData),
         })
       : authorizedApi.post("/forms/create", {
           name: formData?.name,
-          qns: JSON.stringify(formData?.qns),
+          qns: JSON.stringify(updatedFormData),
         });
 
     request
       .then((res) => {
         notifications.show({
           message: form
-            ? "Question Form  is updated successfully"
-            : "Question Form  is created successfully",
+            ? "Question Form is updated successfully"
+            : "Question Form is created successfully",
           color: "blue",
         });
 

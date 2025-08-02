@@ -1,6 +1,22 @@
 import React from "react";
 import type { SVGProps } from "react";
 
+export const SolarEyeIcon = (props: SVGProps<SVGSVGElement>) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={48}
+      height={48}
+      viewBox="0 0 48 48"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        d="M41.56 26.13a1.25 1.25 0 0 0 1.57.81c.65-.21 1.02-.91.81-1.57l-.001-.003C43.85 25.1 38.841 10 23.999 10C9.16 10 4.15 25.1 4.062 25.368l-.001.002c-.21.66.15 1.36.81 1.57s1.36-.15 1.57-.81C6.62 25.57 10.95 12.5 24 12.5s17.38 13.07 17.56 13.63M17.5 27a6.5 6.5 0 1 1 13 0a6.5 6.5 0 0 1-13 0m6.5-9a9 9 0 1 0 0 18a9 9 0 0 0 0-18"
+      ></path>
+    </svg>
+  );
+};
 export function SolarDocumentTextBroken(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -73,6 +89,28 @@ export function SolarCheckCircleBold(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function SolarChecklistMinimalisticOutline(
+  props: SVGProps<SVGSVGElement>,
+) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2s10 4.477 10 10m-5.97-3.03a.75.75 0 0 1 0 1.06l-5 5a.75.75 0 0 1-1.06 0l-2-2a.75.75 0 1 1 1.06-1.06l1.47 1.47l2.235-2.235L14.97 8.97a.75.75 0 0 1 1.06 0"
+        clipRule="evenodd"
+      ></path>
+    </svg>
+  );
+}
+
 export function SolarWindowFrameBold(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
