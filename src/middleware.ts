@@ -11,8 +11,11 @@ const roles = [
   "SDF_SECRETARIATE",
   "GRANT_COMMITTEE",
   "DYNAMIC",
+  "TRAINEE",
 ];
-const whitelist = ["/","/redirect", "/public"];
+
+const whitelist = ["/", "/redirect", "/public", "/trainee"];
+
 function getRolePath(role: Role): string {
   switch (role.toLowerCase()) {
     case "dynamic":
@@ -29,6 +32,8 @@ function getRolePath(role: Role): string {
       return "/applicant/contacts";
     case "admin":
       return "/admin";
+    case "trainee":
+      return "/trainee";
     default:
       return "/";
   }
@@ -47,27 +52,44 @@ export const checkToken = (token: string) => {
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("token");
-  if (whitelist.includes(request.nextUrl.pathname) && !token?.value) {
+  console.log("Middleware: Checking path:", request.nextUrl.pathname);
+
+  if (request.nextUrl.pathname.startsWith('/trainee')) {
+    console.log("Middleware: Allowing trainee access");
     return NextResponse.next();
   }
+
+  if (whitelist.includes(request.nextUrl.pathname) && !token?.value) {
+    console.log("Middleware: Whitelisted path without token");
+    return NextResponse.next();
+  }
+
   if (!token?.value) {
+    console.log("Middleware: No token, redirecting to home");
     return NextResponse.redirect(new URL("/", request.url));
   }
+
   try {
     const decoded: any = jwtDecode(token.value);
     const isExpired = decoded.exp * 1000 < Date.now();
     if (isExpired && !whitelist.includes(request.nextUrl.pathname)) {
-      request.cookies.delete("token");
+      console.log("Middleware: Token expired");
       return NextResponse.redirect(new URL("/", request.url));
     }
+
     const role = decoded?.role;
     const nextUrl = getRolePath(role ?? "");
-    if (whitelist.includes(request.nextUrl.pathname)) {
+    
+    if (whitelist.includes(request.nextUrl.pathname) && request.nextUrl.pathname !== "/") {
+      console.log("Middleware: Whitelisted path with token");
       return NextResponse.next();
     }
+
     if (request.nextUrl.pathname === "/") {
+      console.log("Middleware: Redirecting to role path:", nextUrl);
       return NextResponse.redirect(new URL(nextUrl, request.url));
     }
+
     const roleInRoute = request.nextUrl.pathname.split("/")[1].toUpperCase();
     if (
       (role === "NORMAL_EMPLOYEE" && roleInRoute === "EMPLOYEE") ||
@@ -77,10 +99,13 @@ export function middleware(request: NextRequest) {
     }
 
     if (roles.includes(roleInRoute as Role) && role !== roleInRoute) {
+      console.log("Middleware: Role mismatch, redirecting to:", nextUrl);
       return NextResponse.redirect(new URL(nextUrl, request.url));
     }
+
     return NextResponse.next();
   } catch (error) {
+    console.error("Middleware: Error processing token:", error);
     request.cookies.delete("token");
     return NextResponse.redirect(new URL("/", request.url));
   }
@@ -88,6 +113,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|public|_next/image|favicon.ico|images|logo.svg|logo.png|favicon.svg|favicon.png).*)",
+    "/((?!api|_next/static|public|files|_next/image|favicon.ico|images|logo.svg|logo.png|favicon.svg|favicon.png).*)",
   ],
 };

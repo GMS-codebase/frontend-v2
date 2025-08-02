@@ -42,6 +42,7 @@ const Page = () => {
       ),
     );
   }, [applications]);
+
   const FilterDropDown = ({
     placeholderText,
     data,
@@ -172,59 +173,10 @@ const Page = () => {
     },
   ];
 
-  const applicationColumns: ColumnDef<any>[] = [
-    {
-      accessorKey: "applicationNumber",
-      header: "Application Number",
-      cell: ({ row }) => (
-        <div className="w-full">
-          {row.original?.application?.applicationNumber}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "applicationTitle",
-      header: "Application Title",
-      cell: ({ row }) => (
-        <div className="w-full">
-          {row.original?.application?.projectFunding?.title}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "name",
-      header: "Name",
-      cell: ({ row }) => (
-        <div className="w-full">
-          {row.original?.application?.applicant?.name}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "phone",
-      header: "Applicant Phone",
-      cell: ({ row }) => (
-        <div className="w-full">
-          {row.original?.application?.applicant?.phone}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <ContractsActions
-          data={row.original}
-          setIsContract={setContractState}
-          isNew={true}
-        />
-      ),
-    },
-  ];
   return (
     <div className="w-full flex flex-col mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[20rem]">
+      <div className="w-full flex flex-col md:flex-row md:justify-between items-center p-4 gap-4">
+        <div className="relative w-full md:w-[20rem]">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} />
           </span>
@@ -236,7 +188,7 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-        <div className="flex items-center gap-3 right-2">
+        <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
           <FilterDropDown placeholderText="Filter By Call" data={["call 1"]} />
           <FilterDropDown
             placeholderText="Filter By Sector"
@@ -248,28 +200,35 @@ const Page = () => {
           />
         </div>
       </div>
-      <Tabs defaultValue="applications">
-        <Tabs.List className="w-auto float-end my-6 mr-5">
-          <Tabs.Tab value="applications" className=" p4-4">
-            Applications Ready For Contract Signing
-          </Tabs.Tab>
-          <Tabs.Tab value="contracts" className="px-4">
-            Contracts Signed
-          </Tabs.Tab>
-        </Tabs.List>
-        <Tabs.Panel value="applications" className="bg-white rounded-2xl mt-4">
+      <Tabs defaultValue="applications" className="mt-6">
+        {/* Wrapper for Heading and Tabs */}
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          {/* Heading */}
           <h1 className="text-xl font-bold p-4">
             Applications Ready For Contract Signing
           </h1>
+
+          {/* Tabs List */}
+          <Tabs.List className="flex gap-4 justify-center lg:justify-end">
+            <Tabs.Tab value="applications">
+              Applications Ready For Contract Signing
+            </Tabs.Tab>
+            <Tabs.Tab value="contracts">Contracts Signed</Tabs.Tab>
+          </Tabs.List>
+        </div>
+
+        {/* Panels */}
+        <Tabs.Panel value="applications" className="flex flex-col mt-4">
           <DataTable
-            columns={applicationColumns}
+            columns={contractColumns}
             data={applicationsForContractSigning}
             loading={loading}
             noDataMessage="No Approved Applications"
           />
         </Tabs.Panel>
-        <Tabs.Panel value="contracts" className="bg-white rounded-2xl mt-4">
-          <h1 className="text-xl font-bold  p-4">Contracts Signed</h1>
+
+        <Tabs.Panel value="contracts" className="flex flex-col mt-4">
+          <h1 className="text-xl font-bold p-4">Contracts Signed</h1>
           <DataTable
             columns={contractColumns}
             data={contractsSignedApplications}
@@ -278,14 +237,6 @@ const Page = () => {
           />
         </Tabs.Panel>
       </Tabs>
-      <AddContract
-        data={contractState.application}
-        trades={contractState.application?.trades || []}
-        isOpenAddContract={contractState.isOpen}
-        closeAddContract={() =>
-          setContractState({ isOpen: false, application: null })
-        }
-      />
     </div>
   );
 };

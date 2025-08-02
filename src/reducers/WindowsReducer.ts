@@ -19,8 +19,8 @@ const initialState = {
   subWindows: [],
   error: null,
   isError: false,
-  loading: false,
-  subWindowLoading: false,
+  loading: true,
+  subWindowLoading: true,
   subWindowError: null,
   subWindowIsError: false,
 };

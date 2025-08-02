@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  SolarPen2Bold,
-} from "@/components/core/icons";
+import { SolarPen2Bold } from "@/components/core/icons";
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
@@ -12,46 +10,49 @@ import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import { useDisclosure } from "@mantine/hooks";
 import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
 import DueDiligenceModal from "@/components/Modals/DueDiigence";
-import { handleDownloadFile } from "@/utils/funcs";
+import {
+  getApplicationStatus,
+  handleDownloadFile,
+  handleViewFile,
+} from "@/services";
 import Form from "@/components/forms/Form";
+import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
+import { ApplicationStage } from "@/types/application";
+import DecisionsBox from "./DecisionsBox";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const forms = useSelector((state: any) => state.forms);
-
-  const [isOpenAddDue, setIsOpenAddDue] = useState(false);
-  const openAddDue = () => setIsOpenAddDue(true);
-  const closeAddDue = () => setIsOpenAddDue(false);
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
   ] = useDisclosure(false);
   const [
-    isOpenGrantCommitteeDetails,
-    { open: openGrantCommitteeDetails, close: closeGrantCommitteeDetails },
+    isOpenDueDiligencyDetails,
+    { open: openDueDiligencyDetails, close: closeDueDiligencyDetails },
   ] = useDisclosure(false);
   const [
-    isOpenGrantCommitteeMakeDecision,
-    {
-      open: openGrantCommitteeMakeDecision,
-      close: closeGrantCommitteeMakeDecision,
-    },
+    isOpenGrantCommitteeDetails,
+    { open: openGrantCommitteeDetails, close: closeGrantCommitteeDetails },
   ] = useDisclosure(false);
 
   const [downloading, setDownloading] = useState(false);
   const [applicationLoading, setApplicationLoading] = useState(true);
   const [application, setApplication] = useState<any>();
+  const { stages } = useSelector((state: any) => state.empStages);
+  const stagesArr = stages?.map((stage: any) => stage?.stage);
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}")
+      JSON.parse(application?.call.subwindowForms || "{}"),
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
       form.uuid ===
-      JSON.parse(application?.call.subwindowForms || "{}")[foundSubWindow as any]
+      JSON.parse(application?.call.subwindowForms || "{}")[
+        foundSubWindow as any
+      ]
     );
   });
-
 
   const fetchApplication = async () => {
     setApplicationLoading(true);
@@ -91,7 +92,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -114,7 +115,7 @@ const Page = () => {
                 notifications.show({
                   title: "Download Successful",
                   message: "The file has been downloaded successfully.",
-                  type: "success",
+                  color: "green",
                 });
               } catch (error) {
                 console.error("Download error:", error);
@@ -122,7 +123,7 @@ const Page = () => {
                   title: "Download Failed",
                   message:
                     "There was an issue downloading the file. Please try again.",
-                  type: "error",
+                  color: "red",
                 });
               } finally {
                 setDownloading(false);
@@ -142,8 +143,8 @@ const Page = () => {
           </div>
         </div>
 
-        <div className="flex justify-between items-start mt-5">
-          <div className="flex flex-col justify-start items-start gap-6 font-semibold w-1/2">
+        <div className="lg:flex justify-between items-start mt-5">
+          <div className="flex flex-col justify-start items-start gap-6 font-semibold lg:w-1/2">
             <h1 className="text-2xl font-bold">Application Information</h1>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
@@ -181,14 +182,8 @@ const Page = () => {
               </p>
               <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
             </div>
-            <div className="flex flex-col gap-4 font-semibold">
-              <h2 className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start w-fit">
-                Description
-              </h2>
-              <div>{application?.description}</div>
-            </div>
           </div>
-          <div className="flex flex-col justify-start items-start gap-6 font-semibold w-1/2">
+          <div className="flex flex-col justify-start items-start gap-6 font-semibold lg:w-1/2">
             <h1 className="text-2xl font-bold">Applicant Information</h1>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
@@ -204,6 +199,24 @@ const Page = () => {
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Sector
+              </p>
+              <p>{application?.sectors?.[0]?.name}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Sub Window
+              </p>
+              <p>{application?.subWindow?.title}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Trade
+              </p>
+              <p>{application?.trades?.[0]?.trade?.title}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Institution name
               </p>
               <p>
@@ -211,25 +224,41 @@ const Page = () => {
                   application?.applicant?.businesses[0]?.businessName}
               </p>
             </div>
-            <div
-              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
-              onClick={() =>
-                handleDownloadFile(
-                  application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates"
-                )
-              }
-            >
-              {downloading ? (
-                <p>Loading ....</p>
-              ) : (
-                <>
-                  <span>
-                    <SolarPen2Bold />
-                  </span>
-                  <div>Download Certificate</div>
-                </>
-              )}
+            <div className="flex items-center gap-2">
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleViewFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates",
+                  )
+                }
+              >
+                <span>
+                  <SolarPen2Bold />
+                </span>
+                <div>View Certificate</div>
+              </div>
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleDownloadFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates",
+                  )
+                }
+              >
+                {downloading ? (
+                  <p>Loading ....</p>
+                ) : (
+                  <>
+                    <span>
+                      <SolarPen2Bold />
+                    </span>
+                    <div>Download Certificate</div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -243,114 +272,51 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <div className="flex gap-2 p-5">
+      <div className="lg:flex gap-2">
         <div
-          className={`flex bg-white rounded-2xl ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"}  gap-4 p-5`}
+          className={`flex  rounded-2xl ${getApplicationStatus(application) === "ANSWERING" ? "w-full" : "lg:w-[70%] w-full"}   `}
         >
-          {form && <Form
-            mode={"viewing"}
-            answers={JSON.parse(application.answers)}
-            comments={JSON.parse(application.comments)}
-            formData={{name:form?.name,qns:JSON.parse(form?.qns || "{}")}}
-          />}
+          {form && (
+            <Form
+              mode={"viewing"}
+              answers={JSON.parse(application.answers)}
+              comments={JSON.parse(application.comments)}
+              formData={{
+                name: form?.name,
+                qns: JSON.parse(form?.qns || "{}"),
+              }}
+            />
+          )}
         </div>
 
-        {application?.currentStage === "SUBMITTED" ? (
+        {getApplicationStatus(application) === "ANSWERING" ? (
           <div></div>
         ) : (
-          <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
-            <h2 className="font-bold">Decision</h2>
-            <div className="flex flex-col gap-2">
-              <h3 className="font-semibold">Evaluation Stage</h3>
-              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                {application?.currentStage === "EVALUATION"
-                  ? "Pending"
-                  : "APPROVED"}
-              </div>
-              {application?.evaluationDecisions && (
-                <div className="flex flex-col gap-2 mt-4">
-                  <button
-                    onClick={openEvaluationDetails}
-                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                  >
-                    View details
-                  </button>
-                </div>
-              )}
-            </div>
-            <div className="flex flex-col gap-2">
-              <h3 className="font-bold">Due Diligence Stage</h3>
-              <div
-                className={`font-medium  ${
-                  application?.status === "APPROVED" ||
-                  application?.currentStage !== "EVALUATION"
-                    ? "bg-[#4BC500] text-[#4BC500]"
-                    : application?.status === "PENDING"
-                      ? "bg-red-600 text-red-600"
-                      : ""
-                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-              >
-                {application?.currentStage !== "EVALUATION" &&
-                application?.currentStage !== "DUE_DILIGENCY"
-                  ? "APPROVED"
-                  : application?.status}
-              </div>
-              {application?.currentStage !== "DUE_DILIGENCY" && (
-                <div className="flex flex-col gap-2 mt-4">
-                  <button
-                    onClick={openAddDue}
-                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                  >
-                    View details
-                  </button>
-                </div>
-              )}
-            </div>
-            <div className="flex flex-col gap-2">
-              <h3 className="font-semibold">Grant Committee</h3>
-              <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                {!application?.grantCommitteeDecision ? "Pending" : "APPROVED"}
-              </div>
-
-              {application?.grantCommitteeDecision && (
-                <div className="flex flex-col gap-2 mt-4">
-                  <button
-                    onClick={openGrantCommitteeDetails}
-                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                  >
-                    View details
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+          <DecisionsBox
+            application={application}
+            openDueDiligencyDetails={openDueDiligencyDetails}
+            openEvaluationDetails={openEvaluationDetails}
+            stagesArr={stagesArr}
+            openGrantCommitteeDetails={openGrantCommitteeDetails}
+          />
         )}
       </div>
-      <DueDiligenceModal
+      <DueDiligencyDetails
         application={application}
-        opened={isOpenAddDue}
-        close={closeAddDue}
+        opened={isOpenDueDiligencyDetails}
+        close={closeDueDiligencyDetails}
+        decisions={application?.duediligencyDecisions}
       />
       <MakeGrantCommitteeDecision
         application={application}
-        closeModal={closeGrantCommitteeMakeDecision}
-        isOpen={isOpenGrantCommitteeMakeDecision}
+        closeModal={closeGrantCommitteeDetails}
+        isOpen={isOpenGrantCommitteeDetails}
         onMakeDecision={() => {}}
       />
       <EvaluationDetails
         opened={isOpenEvaluationDetails}
         close={closeEvaluationDetails}
-        evaluations={
-          application?.evaluationDecisions?.length &&
-          application?.evaluators?.length
-            ? application?.evaluationDecisions?.map(
-                (decision: any, index: any) => ({
-                  evaluator: application?.evaluators[index],
-                  evaluationDecision: decision,
-                })
-              )
-            : []
-        }
+        evaluations={application?.evaluationDecisions}
         application={application}
       />
     </div>

@@ -31,10 +31,11 @@ export interface Question {
   commentable: boolean;
   columns?: TableColumn[];
   choices?: string[];
+  template?: string;
 }
 
 export interface TableColumn {
   title: string;
-  type: "text" | "number" | "select";
+  type: "text" | "number" | "select" | "date";
   options?: string[];
 }

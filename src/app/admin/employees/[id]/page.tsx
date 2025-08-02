@@ -151,9 +151,9 @@ const EmployeeDetails = () => {
   // };
 
   return (
-    <div className="w-full h-full flex items-start justify-between">
+    <div className="w-full h-full lg:flex items-start justify-between">
       {/* Employee Info Section */}
-      <div className="w-[60%] flex flex-col gap-6 text-black bg-white p-3 py-5 rounded-2xl">
+      <div className="lg:w-[60%] lg:flex flex-col gap-6 text-black bg-white p-3 py-5 rounded-2xl">
         <div className="flex justify-between">
           <div className="text-xl font-bold">Employee Info</div>
           <button
@@ -166,7 +166,7 @@ const EmployeeDetails = () => {
             <div>Edit</div>
           </button>
         </div>
-        <div className="grid grid-cols-2 gap-y-6 justify-between Apw-11/12 font-semibold">
+        <div className="grid md:grid-cols-2 gap-y-6 justify-between Apw-11/12 font-semibold">
           <div className="flex items-center gap-3">
             <div className="flex gap-2 bg-gray-400 bg-opacity-10 px-4 w-fit py-2 rounded-full items-center justify-center">
               <div>Name</div>
@@ -213,7 +213,7 @@ const EmployeeDetails = () => {
       </div>
 
       {/* Assigned Stages Section */}
-      <div className="w-[38%] bg-white p-3 rounded-2xl">
+      <div className="lg:w-[38%] bg-white p-3 rounded-2xl">
         <div className="flex justify-between">
           <div className="text-xl font-bold">Assigned Stages</div>
           <button

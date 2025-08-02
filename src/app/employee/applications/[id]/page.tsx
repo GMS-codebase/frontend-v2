@@ -12,19 +12,24 @@ import MakeFirstDueDiligencyDecision from "@/components/Modals/MakeFirstDueDilig
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
 import {
   getApplications,
+  getApplicationStatus,
   handleAddComments,
   handleDownloadFile,
-} from "@/utils/funcs";
+  handleViewFile,
+} from "@/services";
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
 import Form from "@/components/forms/Form";
 import { Form as IForm, QuestionForm } from "@/types/questions-form";
+import { ApplicationStage } from "@/types/application";
+import GeneralCommentModal from "@/components/Modals/GeneralCommentModal";
+import DecisionsBox from "@/app/sdf/applications/[id]/DecisionsBox";
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const { stages } = useSelector((state: any) => state.empStages);
   const stagesArr = stages?.map((stage: any) => stage?.stage);
   const profile = useSelector((state: any) => state.auth);
   const [decisionsLoading, setDecisionsLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<any>("");
   const forms = useSelector((state: any) => state.forms);
   const [applicationLoading, setApplicationLoading] = useState(true);
 
@@ -52,13 +57,21 @@ const Page = () => {
       close: closeMakeFirstDueDiligencyDecision,
     },
   ] = useDisclosure(false);
+  const [
+    isOpenGeneralCommentModal,
+    { open: openGeneralCommentModal, close: closeGeneralCommentModal },
+  ] = useDisclosure(false);
   const [selectedStage, setSelectedStage] = useState<
     "Evaluation" | "Due Diligence"
+  >();
+  const [generalCommentType, setGeneralCommentType] = useState<
+    "EVALUATION" | "DUE_DILIGENCY"
   >();
   const fetchApplication = async () => {
     setApplicationLoading(true);
     try {
       const res = await authorizedApi.get(`/application/get-application/${id}`);
+      console.log(res.data.data.data);
       setApplication(res.data.data.data);
       setComments(JSON.parse(res.data.data.data.comments));
       setApplicationLoading(false);
@@ -70,10 +83,10 @@ const Page = () => {
   };
   useEffect(() => {
     fetchApplication();
-  }, [id]);
+  }, []);
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
-      JSON.parse(application?.call.subwindowForms || "{}")
+      JSON.parse(application?.call.subwindowForms || "{}"),
     ).find((key: string) => key === application?.subWindow.uuid);
 
     return (
@@ -103,7 +116,7 @@ const Page = () => {
       return false; // No commentable questions found.
     } catch (error: any) {
       throw new Error(
-        `An error occurred while checking commentable questions: ${error.message}`
+        `An error occurred while checking commentable questions: ${error.message}`,
       );
     }
   };
@@ -117,6 +130,7 @@ const Page = () => {
       </div>
     );
   }
+  console.log(application);
   return (
     <div className="flex flex-col gap-6 rounded-3xl">
       <div className="bg-white rounded-2xl gap-6 p-5">
@@ -131,7 +145,7 @@ const Page = () => {
                   `/admin/applicant-details/${application?.applicant?.uuid ?? id}`,
                   {
                     responseType: "blob",
-                  }
+                  },
                 );
                 const contentDisposition =
                   response.headers["content-disposition"];
@@ -243,6 +257,24 @@ const Page = () => {
             </div>
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Sector
+              </p>
+              {application?.sectors?.[0]?.name || ""}
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Sub Window
+              </p>
+              <p>{application?.subWindow?.title}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
+                Trade
+              </p>
+              <p>{application?.trades?.[0]?.trade?.title}</p>
+            </div>
+            <div className="flex gap-3 justify-start items-center">
+              <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full">
                 Institution name
               </p>
               <p>
@@ -251,47 +283,59 @@ const Page = () => {
               </p>
             </div>
 
-            <div
-              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
-              onClick={() =>
-                handleDownloadFile(
-                  application?.applicant?.businesses[0]?.businessCertificate,
-                  "business_certificates"
-                )
-              }
-            >
-              {downloading ? (
-                <p>Loading ....</p>
-              ) : (
-                <>
-                  <span>
-                    <SolarPen2Bold />
-                  </span>
-                  <div>Download Certificate</div>
-                </>
-              )}
+            <div className="flex items-center gap-2">
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleViewFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates",
+                  )
+                }
+              >
+                <span>
+                  <SolarPen2Bold />
+                </span>
+                <div>View Certificate</div>
+              </div>
+              <div
+                className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4 py-2 items-center justify-center cursor-pointer"
+                onClick={() =>
+                  handleDownloadFile(
+                    application?.applicant?.businesses[0]?.businessCertificate,
+                    "business_certificates",
+                  )
+                }
+              >
+                {downloading ? (
+                  <p>Loading ....</p>
+                ) : (
+                  <>
+                    <span>
+                      <SolarPen2Bold />
+                    </span>
+                    <div>Download Certificate</div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div className="flex gap-6">
         <div
-          className={`flex  ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 `}
+          className={`flex  ${getApplicationStatus(application) === "ANSWERING" ? "w-full" : "w-[70%]"} gap-4 `}
         >
           <div className="flex flex-col gap-4 w-full">
             {form && (
               <Form
                 mode={
-                  Object.values(JSON.parse(application?.comments || "{}"))
-                    .length === 0
-                    ? "commenting"
-                    : "viewing"
+                  !application.areCommentsSubmitted ? "commenting" : "viewing"
                 }
                 answers={JSON.parse(application.answers)}
                 comments={comments}
                 setComments={
-                  Object.values(JSON.parse(application?.comments || "{}"))
-                    .length === 0
+                  !application.areCommentsSubmitted
                     ? (key: string, value: any) =>
                         setComments({ ...comments, [key]: value })
                     : undefined
@@ -302,10 +346,9 @@ const Page = () => {
                 }}
               />
             )}
-            {Object.values(JSON.parse(application?.comments || "{}")).length ===
-              0 &&
-              hasCommentableQuestion() &&
-              application?.currentStage !== "SUBMITTED" && (
+            {hasCommentableQuestion() &&
+              application.application?.currentStage !== "SUBMITTED" &&
+              !application.areCommentsSubmitted && (
                 <div className="w-full flex justify-center mt-4 space-x-4">
                   <button
                     type="button"
@@ -316,16 +359,38 @@ const Page = () => {
                   <button
                     type="button"
                     onClick={async () => {
-                      setLoading(true);
-                      handleAddComments(comments, form, application, () =>
-                        fetchApplication()
+                      setLoading("save");
+                      handleAddComments(
+                        "save",
+                        comments,
+                        form,
+                        application,
+                        () => fetchApplication(),
                       );
-                      setLoading(false);
+                      setLoading(null);
                     }}
                     disabled={loading}
                     className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                    {loading ? "Loading..." : "Save Comments"}
+                    {loading == "save" ? "Loading..." : "Save Comments"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setLoading("submit");
+                      handleAddComments(
+                        "submit",
+                        comments,
+                        form,
+                        application,
+                        () => fetchApplication(),
+                      );
+                      setLoading(null);
+                    }}
+                    disabled={loading}
+                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    {loading === "submit" ? "Loading..." : "Submit Comments"}
                   </button>
                 </div>
               )}
@@ -335,138 +400,22 @@ const Page = () => {
           <div className="flex  h-[500px] items-center justify-center bg-white w-[30%] rounded-2xl p-5 gap-4">
             <p>Loading ....</p>
           </div>
-        ) : application?.currentStage === "SUBMITTED" ? (
+        ) : getApplicationStatus(application) === "ANSWERING" ? (
           <div></div>
         ) : (
-          <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
-            <h2 className="font-bold">Decision</h2>
-            <div className="flex flex-col gap-2">
-              <h3 className="font-semibold">Evaluation Stage</h3>
-              <div
-                className={`font-medium  ${
-                  application?.stages?.find(
-                    (stage: any) => stage.stage === "EVALUATION"
-                  )?.status === "APPROVED"
-                    ? "bg-[#4BC500] text-[#4BC500]"
-                    : application?.status === "PENDING"
-                      ? "bg-red-600 text-red-600"
-                      : ""
-                } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-              >
-                {application?.stages?.find(
-                  (stage: any) => stage.stage === "EVALUATION"
-                )?.status ??
-                  application?.evaluationDecisions[0]?.decision ??
-                  "PENDING"}
-              </div>
-              {application?.evaluationDecisions?.length < 3 &&
-                !application?.evaluationDecisions?.find(
-                  (ev: any) =>
-                    ev.employee.user_id.toString() ===
-                    profile?.userProfile?.data.uuid.toString()
-                ) && (
-                  <>
-                    <div
-                      onClick={() => {
-                        setSelectedStage("Evaluation");
-                        openMakeDecision();
-                      }}
-                      className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
-                    >
-                      <p>Make a decision</p>
-                    </div>
-                  </>
-                )}
-
-              {application?.evaluationDecisions?.length > 0 && (
-                <div className="flex flex-col gap-2 mt-4">
-                  <button
-                    onClick={openEvaluationDetails}
-                    className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                  >
-                    View details
-                  </button>
-                </div>
-              )}
-            </div>
-            {application?.currentStage !== "EVALUATION" &&
-              stagesArr?.includes("DUE_DILIGENCY") && (
-                <div className="flex flex-col gap-2">
-                  <h3 className="font-bold">Due Diligence Stage</h3>
-                  <div
-                    className={`font-medium  ${
-                      application?.status === "APPROVED" ||
-                      application?.currentStage !== "EVALUATION"
-                        ? "bg-[#4BC500] text-[#4BC500]"
-                        : application?.status === "PENDING"
-                          ? "bg-red-600 text-red-600"
-                          : ""
-                    } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-                  >
-                    {application?.currentStage !== "EVALUATION" &&
-                    application?.currentStage !== "DUE_DILIGENCY"
-                      ? "APPROVED"
-                      : application?.status}
-                  </div>
-                  {application?.duediligencyDecisions?.length < 4 &&
-                    !application?.duediligencyDecisions.find(
-                      (dec: any) =>
-                        dec?.employee?.user_id ===
-                        profile?.userProfile?.data.uuid
-                    ) && (
-                      <div
-                        onClick={() => {
-                          setSelectedStage("Due Diligence");
-                          if (
-                            !application?.duediligencyForm &&
-                            application?.duediligencyDecisions?.length < 2
-                          ) {
-                            openMakeFirstDueDiligencyDecision();
-                          } else {
-                            openMakeDecision();
-                          }
-                        }}
-                        className="flex gap-2 items-center justify-center bg-[#005DE9] text-white rounded-full px-2 py-2 w-full cursor-pointer"
-                      >
-                        <p>Make a decision</p>
-                      </div>
-                    )}
-                  {application?.duediligencyForm && (
-                    <div className="flex flex-col gap-2 mt-4">
-                      <button
-                        onClick={openDueDiligencyDetails}
-                        className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                      >
-                        View details
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            {application?.stages?.find(
-              (stage: any) => stage?.stage === "GRANT_COMMITTEE"
-            ) && (
-              <div className="flex flex-col gap-2">
-                <h3 className="font-semibold">Grant Committee</h3>
-                <div className="font-medium bg-[#4BC500] bg-opacity-10 text-[#4BC500] w-fit justify-start items-center rounded-full px-4 py-2">
-                  {!application?.grantCommitteeDecision
-                    ? "Pending"
-                    : "APPROVED"}
-                </div>
-
-                {application?.grantCommitteeDecision && (
-                  <div className="flex flex-col gap-2 mt-4">
-                    <button
-                      onClick={openGrantCommitteeDetails}
-                      className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                    >
-                      View details
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+          <DecisionsBox
+            application={application}
+            setGeneralCommentType={setGeneralCommentType}
+            setSelectedStage={setSelectedStage}
+            openDueDiligencyDetails={openDueDiligencyDetails}
+            openEvaluationDetails={openEvaluationDetails}
+            openGeneralCommentModal={openGeneralCommentModal}
+            openMakeDecision={openMakeDecision}
+            openMakeFirstDueDiligencyDecision={
+              openMakeFirstDueDiligencyDecision
+            }
+            stagesArr={stagesArr}
+          />
         )}
       </div>
       <MakeFirstDueDiligencyDecision
@@ -499,6 +448,13 @@ const Page = () => {
         close={closeEvaluationDetails}
         evaluations={application?.evaluationDecisions || []}
         application={application}
+      />
+      <GeneralCommentModal
+        isOpen={isOpenGeneralCommentModal}
+        close={closeGeneralCommentModal}
+        onClose={() => fetchApplication()}
+        application={application}
+        type={generalCommentType as any}
       />
     </div>
   );

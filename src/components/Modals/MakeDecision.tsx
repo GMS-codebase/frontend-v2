@@ -111,6 +111,7 @@ const MakeDecision = ({
           }),
       };
       if (defaultData) {
+        console.log(defaultData);
         const endpoint =
           type === "Evaluation"
             ? `/application/evaluation/update-decision/${application?.uuid}/${defaultData?.uuid}`

@@ -10,33 +10,25 @@ import { useSelector } from "react-redux";
 import { unauthorizedApi } from "@/utils/api";
 import { Menu, Select, Tabs } from "@mantine/core";
 import { CiEdit, CiSearch } from "react-icons/ci";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const Page = () => {
-  const [isOpenTrade, { open, close }] = useDisclosure(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
-
-  const { contracts, loading: loadingContracts } = useSelector(
+  const { myContracts: contracts } = useSelector(
     (state: any) => state.contracts,
   );
-  const { applicationsForContractSigning: applications, loading } = useSelector(
+  const { myApplications: applications, myApplicationsLoading } = useSelector(
     (state: any) => state.applications,
   );
-
   const [contractsSignedApplications, setContractsSignedApplications] =
     useState<any[]>([]);
-  const [applicationsForContractSigning, setApplicationsForContractSigning] =
-    useState<any[]>([]);
-
   useEffect(() => {
     setContractsSignedApplications(
-      applications.filter((a: any) => a?.application?.uploadedContract),
-    );
-    setApplicationsForContractSigning(
       applications.filter(
-        (a: any) =>
-          !a?.application?.uploadedContract &&
-          a?.application?.uploadedSignedMinutes,
+        (a: any) => a?.application?.uploadedContract || a?.uploadedContract,
       ),
     );
   }, [applications]);
@@ -54,7 +46,6 @@ const Page = () => {
       className="w-full px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
     />
   );
-
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [contractState, setContractState] = useState<{
     isOpen: boolean;
@@ -63,7 +54,6 @@ const Page = () => {
     isOpen: false,
     application: null,
   });
-
   const handleDownloadInstructions = async (file: any) => {
     setLoadingDownload(true);
     try {
@@ -96,7 +86,8 @@ const Page = () => {
       header: "Applicant Name",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.application?.applicant?.name}
+          {row.original?.application?.applicant?.name ??
+            row.original?.applicant?.name}
         </div>
       ),
     },
@@ -105,7 +96,8 @@ const Page = () => {
       header: "Applicant Phone",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.application?.applicant?.phone}
+          {row.original?.application?.applicant?.phone ??
+            row.original?.applicant?.phone}
         </div>
       ),
     },
@@ -114,7 +106,8 @@ const Page = () => {
       header: "Applicant Email",
       cell: ({ row }) => (
         <div className="w-full">
-          {row.original?.application?.applicant?.email}
+          {row.original?.application?.applicant?.email ??
+            row.original?.applicant?.email}
         </div>
       ),
     },
@@ -125,8 +118,8 @@ const Page = () => {
         <div className="w-full">
           {
             contracts.filter(
-              (c: any) => c?.application_ID === row.original?.application?.uuid,
-            )?.contractNumber
+              (c: any) => c?.application_ID === row.original?.uuid,
+            )?.[0]?.contractNumber
           }
         </div>
       ),
@@ -152,23 +145,44 @@ const Page = () => {
               <h1 className="text-lg">Actions</h1>
             </Menu.Label>
             <Menu.Divider />
-            <Menu.Item
-              onClick={() => handleDownloadInstructions(row.original.contract)}
-            >
-              <div className="w-full py-1 flex text-base items-center gap-3 text-[#576074]">
+            <Menu.Item>
+              <Link
+                href={`/applicant/contracts/${row?.original?.uuid}`}
+                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+              >
                 <CiEdit size={21} color="#576074" />
                 View Contract
-              </div>
+              </Link>
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
       ),
     },
   ];
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({
+        left: -200,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({
+        left: 200,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <div className="w-full flex flex-col mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[20rem]">
+      <div className="w-full overflow-auto lg:flex justify-between items-center p-4">
+        <div className="relative lg:w-[20rem] w-full mb-2">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} />
           </span>
@@ -180,16 +194,38 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-        <div className="flex items-center gap-3 right-2">
-          <FilterDropDown placeholderText="Filter By Call" data={["call 1"]} />
-          <FilterDropDown
-            placeholderText="Filter By Sector"
-            data={["ICT and innovations"]}
-          />
-          <FilterDropDown
-            placeholderText="Filter By Trade"
-            data={["Manufacturing"]}
-          />
+        <div className="relative flex lg:w-[80%] w-full overflow-auto">
+          <button
+            className="lg:hidden absolute left-0 top-1/2 transform -translate-y-1/2 p-2 rounded-full z-10 bg-white shadow-md"
+            onClick={scrollLeft}
+          >
+            <FiChevronLeft className="w-6 h-6 text-gray-700" />
+          </button>
+
+          <div
+            ref={scrollContainerRef}
+            className="flex w-full gap-3 lg:flex-row lg:items-center overflow-auto scroll-smooth"
+          >
+            <FilterDropDown
+              placeholderText="Filter By Call"
+              data={["call 1"]}
+            />
+            <FilterDropDown
+              placeholderText="Filter By Sector"
+              data={["ICT and innovations"]}
+            />
+            <FilterDropDown
+              placeholderText="Filter By Trade"
+              data={["Manufacturing"]}
+            />
+          </div>
+
+          <button
+            className="lg:hidden absolute right-0 top-1/2 transform -translate-y-1/2 p-2 rounded-full z-10 bg-white shadow-md"
+            onClick={scrollRight}
+          >
+            <FiChevronRight className="w-6 h-6 text-gray-700" />
+          </button>
         </div>
       </div>
       <Tabs defaultValue="contracts">
@@ -203,7 +239,7 @@ const Page = () => {
           <DataTable
             columns={contractColumns}
             data={contractsSignedApplications}
-            loading={loadingContracts}
+            loading={myApplicationsLoading}
             noDataMessage="No Created Contracts"
           />
         </Tabs.Panel>

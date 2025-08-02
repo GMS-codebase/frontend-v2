@@ -68,8 +68,8 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[20rem]">
+      <div className="w-full lg:flex justify-between items-center p-4">
+        <div className="relative lg:w-[20rem] w-full mb-4">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} color="" />
           </span>
@@ -79,15 +79,15 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-        <div className="flex items-center gap-3">
-          <div className="w-44">
+        <div className="lg:flex  items-center gap-3">
+          <div className="w-44 py-1">
             <FilterDropDown
               placeholderText="Filter By Call"
               data={Array.from(new Set(data.map((item) => item.call)))}
             />
           </div>
           <div
-            className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white"
+            className="flex my-1 justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white"
             onClick={openReport}
           >
             <span>
@@ -95,7 +95,7 @@ const Page = () => {
             </span>
             <div>Add new Report</div>
           </div>
-          <div className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white">
+          <div className="flex my-1 justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white">
             <span>
               <SolarFileBold />
             </span>

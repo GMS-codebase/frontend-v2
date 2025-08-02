@@ -172,7 +172,7 @@ const RegisterModal = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[550px] max-h-[90vh] py-10  relative bg-white rounded-3xl p-4 flex flex-col items-center">
+      <div className="lg:w-[550px] max-h-[90vh] py-10 relative bg-white rounded-3xl p-4 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeAddEmployee}
@@ -195,12 +195,15 @@ const RegisterModal = ({
         />
         <div className="w-full flex flex-col items-center">
           <h1 className="text-2xl font-extrabold">Create employee</h1>
-          <h2 className="text-[#000F2369] text-lg font-medium">
+          <h2 className="text-primaryText text-center opacity-40 font-medium lg:text-xl">
             Provide employee details to register the employee.
           </h2>
         </div>
 
-        <div className="w-full px-10  flex flex-col items-center mt-4 overflow-hidden ">
+        <div
+          className="w-full lg:px-10 px-4  flex flex-col items-center mt-4 lg:overflow-hidden overflow-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
           <Stepper active={active} onStepClick={setActive} className="w-full">
             <Stepper.Step
               label="Contact Person"
@@ -212,7 +215,7 @@ const RegisterModal = ({
                 className="w-full  overflow-y-auto flex flex-col gap-2 px-2"
               >
                 <div className="space-y-1">
-                  <div className="w-full flex justify-between gap-3">
+                  <div className="w-full lg:flex justify-between gap-3">
                     <div className="w-full">
                       <label
                         htmlFor="firstname"
@@ -378,7 +381,7 @@ const RegisterModal = ({
               </form>
             </Stepper.Step>
             <Stepper.Step
-              label="Applicant Info"
+              label="Employee Info"
               description=""
               className="text-xs"
             >
@@ -540,7 +543,7 @@ const RegisterModal = ({
                   </button>
                   <button
                     type="submit"
-                    className="w-full px-4 py-3 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="w-full px-4 py-3  bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
                     {loading ? "Creating . . ." : "Create Employee"}
                   </button>

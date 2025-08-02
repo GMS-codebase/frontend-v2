@@ -1,22 +1,50 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/core/data-table";
+import { DataTable } from "@/components/core/data-table/paginated";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { CiSearch } from "react-icons/ci";
 import { Menu, Select } from "@mantine/core";
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
+import { getApplicationsPaginated, getApplicationStatus } from "@/services";
+import { useDispatch } from "react-redux";
+import { UnknownAction } from "redux";
 
 const Page = () => {
-  // Select applications from Redux store
-  const { applications: rawApplications, loading } = useSelector(
-    (state: any) => state.applications,
-  );
+  const {
+    applications: rawApplications,
+    loading,
+    total: totalApplications,
+    page,
+  } = useSelector((state: any) => state.applications);
+  const dispatch = useDispatch();
+  const [pageState, setPage] = useState(page ?? 1);
+  const [limit, setLimit] = useState(10);
+  const totalPages = totalApplications / limit;
 
-  // Format applications to flatten nested arrays
+  useEffect(() => {
+    dispatch(getApplicationsPaginated(page, limit) as unknown as UnknownAction);
+  }, [dispatch, page, limit]);
+
+  const handleNextPage = (newPage: number, limit: number) => {
+    dispatch(
+      getApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction,
+    );
+  };
+  const handlePreviousPage = (newPage: number, limit: number) => {
+    dispatch(
+      getApplicationsPaginated(newPage - 1, limit) as unknown as UnknownAction,
+    );
+  };
+  const handleChangePage = (newPage: number, limit: number) => {
+    dispatch(
+      getApplicationsPaginated(newPage, limit) as unknown as UnknownAction,
+    );
+  };
+
   const applications = useMemo(
     () =>
       rawApplications.map((app: any) => ({
@@ -39,7 +67,6 @@ const Page = () => {
     trade: "All",
   });
 
-  // Helper function to get unique values for dropdown filters
   const getUniqueValues = (key: string) => {
     return [
       "All",
@@ -65,11 +92,6 @@ const Page = () => {
     [applications],
   );
 
-  // Format stage string
-  const formatStage = (stage: string) => {
-    return stage.replace(/_/g, " ").toUpperCase();
-  };
-
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "applicationNumber",
@@ -79,10 +101,12 @@ const Page = () => {
       ),
     },
     {
-      accessorKey: "applicantName",
-      header: "Applicant Name",
+      accessorKey: "institutionName",
+      header: "Institution Name",
       cell: ({ row }) => (
-        <div className="truncate">{row.original?.applicant?.name}</div>
+        <div className="truncate">
+          {row.original?.applicant?.businesses?.[0]?.businessName}
+        </div>
       ),
     },
     {
@@ -125,7 +149,7 @@ const Page = () => {
       header: "Stage",
       cell: ({ row }) => (
         <div className="truncate">
-          {formatStage(row.original?.currentStage)}
+          {getApplicationStatus(row.original) || "-"}
         </div>
       ),
     },
@@ -153,7 +177,7 @@ const Page = () => {
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
                 <Link
-                  href={`/dynamic/applications/${row.original.uuid}`}
+                  href={`/admin/applications/${row.original.uuid}`}
                   className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <VscEye size={21} color="#576074" />
@@ -218,15 +242,15 @@ const Page = () => {
         const { stage, window, call, subWindow, sector, trade } =
           selectedFilters;
         return (
-          (stage === "All" || formatStage(app.currentStage) === stage) &&
+          (stage === "All" || app?.currentStage === stage) &&
           (call === "All" || app.call?.title === call) &&
           (window === "All" || app.window?.title === window) &&
           (subWindow === "All" || app.subWindow?.title === subWindow) &&
           (sector === "All" || app.sector?.name === sector) &&
-          (trade === "All" || app.trade?.trade?.title === trade)
+          (trade === "All" || app.trade?.trade.title === trade)
         );
       });
-  }, [applications, searchTerm, selectedFilters]);
+  }, [applications, searchTerm, selectedFilters, getUniqueValues]);
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
@@ -301,6 +325,23 @@ const Page = () => {
         data={filteredApplications}
         columns={columns}
         loading={loading}
+        totalApplications={totalApplications}
+        page={page}
+        setPage={setPage}
+        paginationFuncs={{
+          onChangePage: handleChangePage,
+          onNextPage: handleNextPage,
+          onPreviousPage: handlePreviousPage,
+        }}
+        paginationProps={{
+          isPaginated: true,
+          paginateOpts: {
+            page: page - 1,
+            totalPages: totalPages,
+            limit: limit,
+          },
+          setPaginateOpts: () => {},
+        }}
       />
     </div>
   );

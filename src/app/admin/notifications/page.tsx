@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Select } from "@mantine/core";
 import { ChangeEvent } from "react";
 import { ColumnDef } from "@tanstack/react-table";
@@ -11,6 +11,8 @@ import { ClipLoader } from "react-spinners";
 import { useSelector } from "react-redux";
 import { HiDotsHorizontal } from "react-icons/hi";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
+import { ApplicationStage } from "@/types/application";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const Page = () => {
   const [text, setText] = useState("");
@@ -144,7 +146,7 @@ const Page = () => {
       })
       .catch((error) => {
         notifications.show({
-          message: error.response.data.message,
+          message: error.response?.data.message,
           color: "red",
         });
       })
@@ -168,17 +170,41 @@ const Page = () => {
         placeholder={placeholderText}
         value={value}
         onChange={onChange}
-        className="w-full px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
+        className="w-fit px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
       />
     );
   };
 
+  const filtersContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = (direction: "left" | "right") => {
+    if (filtersContainerRef.current) {
+      const scrollAmount = 100;
+      if (direction === "left") {
+        filtersContainerRef.current.scrollLeft -= scrollAmount;
+      } else {
+        filtersContainerRef.current.scrollLeft += scrollAmount;
+      }
+    }
+  };
+
   return (
     <div className="w-full">
-      <div className="w-full flex justify-between items-center p-4">
-        <h1 className="text-2xl font-bold">Send Notifications</h1>
-        <div className="flex items-center gap-3 w-4/5 overflow-x-auto">
-          <div className="w-48">
+      <div className="lg:flex justify-between items-center p-4">
+        <h1 className="text-2xl font-bold mb-3">Send Notifications</h1>
+        <div className="flex items-center lg:max-w-[60%]">
+          <button
+            onClick={() => handleScroll("left")}
+            className="p-2 bg-white shadow-lg rounded-full mr-2"
+          >
+            <FiChevronLeft size={25} />
+          </button>
+
+          <div
+            ref={filtersContainerRef}
+            className="flex items-center gap-3 overflow-x-auto scrollbar-hide flex-grow"
+            style={{ scrollBehavior: "smooth" }}
+          >
             <FilterDropDown
               value={formData.filters.call}
               onChange={(value: string) =>
@@ -197,8 +223,6 @@ const Page = () => {
                   : []
               }
             />
-          </div>
-          <div className="w-48">
             <FilterDropDown
               value={formData.filters.window}
               onChange={(value: string) =>
@@ -217,8 +241,6 @@ const Page = () => {
                   : []
               }
             />
-          </div>
-          <div className="w-48">
             <FilterDropDown
               value={formData.filters.sector}
               onChange={(value: string) =>
@@ -237,8 +259,6 @@ const Page = () => {
                   : []
               }
             />
-          </div>
-          <div className="w-48">
             <FilterDropDown
               value={formData.filters.stage}
               onChange={(value: string) =>
@@ -249,8 +269,11 @@ const Page = () => {
               }
               placeholderText="Filter By Stage"
               data={[
-                { value: "EVALUATION", label: "Evaluation" },
-                { value: "DUE_DILIGENCY", label: "Due Diligency" },
+                { value: ApplicationStage.EVALUATION, label: "Evaluation" },
+                {
+                  value: ApplicationStage.DUE_DILIGENCY,
+                  label: "Due Diligency",
+                },
                 { value: "SDF_SECRETARIATE", label: "Sdf Secretariate" },
                 { value: "GRANT_COMMITTEE", label: "Grand Committee" },
                 { value: "CONTRACT_SIGNING", label: "Contract Signing" },
@@ -260,8 +283,6 @@ const Page = () => {
                 },
               ]}
             />
-          </div>
-          <div className="w-48">
             <FilterDropDown
               value={formData.filters.status}
               onChange={(value: string) =>
@@ -277,6 +298,12 @@ const Page = () => {
               ]}
             />
           </div>
+          <button
+            onClick={() => handleScroll("right")}
+            className="p-2 bg-white shadow-lg rounded-full ml-2"
+          >
+            <FiChevronRight size={25} />
+          </button>
         </div>
       </div>
       <form onSubmit={handleSubmit} className="p-4 w-full">
@@ -289,6 +316,7 @@ const Page = () => {
             name="subject"
             value={formData.subject}
             onChange={handleChange}
+            required
             className="mt-2 p-2 w-full border border-primary rounded-md shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-white"
           />
         </div>
@@ -301,6 +329,7 @@ const Page = () => {
           value={formData.message}
           onChange={handleChange}
           rows={4}
+          required
           className="mt-2 p-2 w-full border border-primary rounded-md shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-white"
         />
         <button
