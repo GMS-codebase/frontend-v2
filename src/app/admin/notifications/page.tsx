@@ -170,7 +170,7 @@ const Page = () => {
         placeholder={placeholderText}
         value={value}
         onChange={onChange}
-        className="w-fit px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
+        className="w-fit px-3 flex-shrink-0 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
       />
     );
   };
@@ -189,7 +189,7 @@ const Page = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className=" container mx-auto w-full">
       <div className="lg:flex justify-between items-center p-4">
         <h1 className="text-2xl font-bold mb-3">Send Notifications</h1>
         <div className="flex items-center lg:max-w-[60%]">
@@ -222,6 +222,7 @@ const Page = () => {
                     }))
                   : []
               }
+              
             />
             <FilterDropDown
               value={formData.filters.window}

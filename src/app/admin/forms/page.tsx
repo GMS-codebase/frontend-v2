@@ -105,7 +105,7 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full lg:flex justify-between items-center p-4">
+      <div className="w-full flex flex-col-reverse md:flex-row justify-between gap-4 items-end md:items-center p-4">
         <div className="relative lg:w-[25rem] w-full mb-4">
           <span className="absolute top-4 left-2">
             <BiSearch size={25} />

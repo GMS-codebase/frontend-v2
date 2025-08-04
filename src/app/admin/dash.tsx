@@ -18,9 +18,9 @@ const Dash: React.FC<DashProps> = ({ col1, col2, data, showSingleRow }) => {
     <div className="bg-white p-6 rounded-2xl w-full">
       {/* Headers */}
       <div className="flex justify-between text-black font-bold mb-2">
-        <span className="w-1/3">Priority sectors</span>
-        <span className="w-1/8">{col1}</span>
-        {col2 && <span className="w-1/4 text-center">{col2}</span>}
+        <span className="w-1/2 text-sm md:text-base">Priority sectors</span>
+        <span className="w-1/8 text-sm md:text-base">{col1}</span>
+        {col2 && <span className="w-1/4 text-center text-sm md:text-base">{col2}</span>}
       </div>
 
       {/* Data Rows */}
@@ -31,11 +31,11 @@ const Dash: React.FC<DashProps> = ({ col1, col2, data, showSingleRow }) => {
             className="flex justify-between items-center bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2"
           >
             <span className="text-base w-1/2">{item.sector}</span>
-            <span className="text-base bg-[#005DE91F] rounded-2xl px-3 text-primary font-bold text-center w-1/5">
+            <span className="text-base flex justify-center items-center bg-[#005DE91F] rounded-2xl px-3 text-primary font-bold text-center w-1/5">
               {item.col1Data}
             </span>
             {col2 && (
-              <span className="text-base bg-[#005DE91F] rounded-2xl px-3 text-primary font-bold text-center w-1/5">
+              <span className="text-base flex justify-center items-center bg-[#005DE91F] rounded-2xl px-3 text-primary font-bold text-center w-1/5">
                 {item.col2Data}
               </span>
             )}
