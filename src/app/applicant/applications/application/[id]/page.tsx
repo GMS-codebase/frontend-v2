@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SolarAddFolderBold,
   SolarClockSquareBold,
@@ -10,7 +10,7 @@ import {
 } from "@/components/core/icons";
 import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import MinutesNegotiation from "@/components/Application/MinutesNegotiation";
 import ProgressCircle from "@/components/CallsList/ProgressBar";
 import EvaluationDetails from "@/components/Modals/EvaluationDetails";
@@ -39,7 +39,8 @@ const Page = () => {
     stage: ApplicationStage.EVALUATION,
   });
   const forms = useSelector((state: any) => state.forms);
-  const application = myApplications.find((app: any) => app?.uuid === callId);
+  const [applicationLoading, setApplicationLoading] = useState(true);
+  const [application, setApplication] = useState<any>();
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
       JSON.parse(application?.call.subwindowForms || "{}"),
@@ -48,12 +49,27 @@ const Page = () => {
     return (
       form.uuid ===
       JSON.parse(application?.call.subwindowForms || "{}")[
-        foundSubWindow as any
+      foundSubWindow as any
       ]
     );
   });
-
-  console.log(application);
+  const fetchApplication = async () => {
+    setApplicationLoading(true);
+    try {
+      const res = await authorizedApi.get(
+        `/application/get-application/${callId}`,
+      );
+      setApplication(res.data.data.data);
+      setApplicationLoading(false);
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        window.history.back();
+      }
+    }
+  };
+  useEffect(() => {
+    fetchApplication();
+  }, []);
   const [
     isOpenEvaluationDetails,
     { open: openEvaluationDetails, close: closeEvaluationDetails },
@@ -67,7 +83,8 @@ const Page = () => {
     { open: openDueDiligencyDetails, close: closeDueDiligencyDetails },
   ] = useDisclosure(false);
 
-  if (calls?.loading && !call) {
+
+  if (applicationLoading) {
     return (
       <div className="w-full h-full flex items-center justify-center text-black">
         <p className="text-sm">Loading...</p>
@@ -79,8 +96,8 @@ const Page = () => {
     <div className="space-y-6 ">
       <div className="bg-white rounded-2xl py-10 px-3 flex flex-col gap-6  text-black">
         <div className="bg-white rounded-2xl gap-6 py-5 px-2">
-          <div className="flex justify-between items-start mt-5 gap-5">
-            <div className="flex flex-col justify-start items-start gap-6 font-semibold w-1/2">
+          <div className="flex flex-col md:flex-row justify-between items-start mt-5 gap-5">
+            <div className="flex flex-col justify-start items-start gap-6 font-semibold w-full md:w-1/2">
               <h1 className="text-2xl font-bold">Application Information</h1>
               <div className="flex gap-3 justify-start items-center">
                 <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
@@ -139,7 +156,7 @@ const Page = () => {
                 <p>{application?.finishedAnswering === true ? "YES" : "NO"}</p>
               </div>
             </div>
-            <div className="flex flex-col justify-start items-start gap-6 font-semibold w-1/2">
+            <div className="flex flex-col justify-start items-start gap-6 font-semibold w-full md:w-1/2">
               <div className="flex justify-between">
                 <div className="text-xl font-bold">Call Info</div>
               </div>
@@ -199,13 +216,9 @@ const Page = () => {
                         </span>
                         <div>
                           <p>Start date</p>
-                          <p>
-                            {application?.call &&
-                              format(
-                                application?.call?.startDate,
-                                "dd MMMM yyyy",
-                              )}
-                          </p>
+                          {application?.call?.startDate && isValid(new Date(application.call.startDate))
+                            ? format(new Date(application.call.startDate), "dd MMMM yyyy")
+                            : "-"}
                         </div>
                       </div>
 
@@ -216,11 +229,9 @@ const Page = () => {
                         <div>
                           <p>End Date</p>
                           <p>
-                            {application?.call &&
-                              format(
-                                application?.call?.endDate,
-                                "dd MMMM yyyy",
-                              )}
+                            {application?.call?.endDate && isValid(new Date(application.call.endDate))
+                              ? format(new Date(application.call.endDate), "dd MMMM yyyy")
+                              : "-"}
                           </p>
                         </div>
                       </div>
@@ -236,9 +247,9 @@ const Page = () => {
         (application?.currentStage === "FINISH_GRANT_APPROVAL" && (
           <MinutesNegotiation />
         ))}
-      <div className={` w-full  flex gap-6`}>
+      <div className={` w-full  flex flex-col-reverse md:flex-row gap-6`}>
         <div
-          className={`flex  ${application?.currentStage == "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 `}
+          className={`flex  ${application?.currentStage == "SUBMITTED" ? "w-full" : "w-full lg:w-[70%]"} gap-4 `}
         >
           {form && (
             <Form
@@ -282,23 +293,22 @@ const Page = () => {
                 <div className="flex flex-col gap-2">
                   <h3 className="font-semibold">Evaluation Stage</h3>
                   <div
-                    className={`font-medium  ${
-                      !application?.call?.closedEvaluation ||
+                    className={`font-medium  ${!application?.call?.closedEvaluation ||
                       application?.stages?.find(
                         (stage: any) => stage.stage === "EVALUATION",
                       )?.status === "APPROVED"
-                        ? "bg-[#4BC500] text-[#4BC500]"
-                        : application?.stages?.find(
-                              (stage: any) => stage.stage === "EVALUATION",
-                            )?.status === "REJECTED"
-                          ? "bg-red-600 text-red-600"
-                          : ""
-                    } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+                      ? "bg-[#4BC500] text-[#4BC500]"
+                      : application?.stages?.find(
+                        (stage: any) => stage.stage === "EVALUATION",
+                      )?.status === "REJECTED"
+                        ? "bg-red-600 text-red-600"
+                        : ""
+                      } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
                   >
                     {application?.call?.closedEvaluation
                       ? application?.stages?.find(
-                          (stage: any) => stage.stage === "EVALUATION",
-                        )?.status
+                        (stage: any) => stage.stage === "EVALUATION",
+                      )?.status
                       : "PENDING"}
                   </div>
 
@@ -352,76 +362,75 @@ const Page = () => {
                 {application?.stages?.find(
                   (stage: any) => stage.stage === "DUE_DILIGENCY",
                 )?.status != null && (
-                  <div className="flex flex-col gap-2">
-                    <h3 className="font-bold">Due Diligence Stage</h3>
-                    <div
-                      className={`font-medium ${
-                        !application?.call?.closedDueDiligency ||
-                        application?.stages?.find(
-                          (stage: any) => stage.stage === "DUE_DILIGENCY",
-                        )?.status === "APPROVED"
+                    <div className="flex flex-col gap-2">
+                      <h3 className="font-bold">Due Diligence Stage</h3>
+                      <div
+                        className={`font-medium ${!application?.call?.closedDueDiligency ||
+                          application?.stages?.find(
+                            (stage: any) => stage.stage === "DUE_DILIGENCY",
+                          )?.status === "APPROVED"
                           ? "bg-[#4BC500] text-[#4BC500]"
                           : application?.stages?.find(
-                                (stage: any) => stage.stage === "DUE_DILIGENCY",
-                              )?.status === "REJECTED"
+                            (stage: any) => stage.stage === "DUE_DILIGENCY",
+                          )?.status === "REJECTED"
                             ? "bg-red-600 text-red-600"
                             : ""
-                      } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
-                    >
-                      {application?.call?.closedDueDiligency
-                        ? application?.stages?.find(
+                          } bg-opacity-10  w-fit justify-start items-center rounded-full px-4 py-2`}
+                      >
+                        {application?.call?.closedDueDiligency
+                          ? application?.stages?.find(
                             (stage: any) => stage.stage === "DUE_DILIGENCY",
                           )?.status ||
                           application?.duediligencyDecisions[0]?.decision
-                        : "PENDING"}
-                    </div>
+                          : "PENDING"}
+                      </div>
 
-                    {application?.call?.closedDueDiligency &&
-                      application?.duediligencyDecisions[0]?.decision && (
-                        <div className="flex flex-col gap-2 mt-4">
+                      {application?.call?.closedDueDiligency &&
+                        application?.duediligencyDecisions[0]?.decision && (
+                          <div className="flex flex-col gap-2 mt-4">
+                            <button
+                              onClick={openDueDiligencyDetails}
+                              className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                            >
+                              View details
+                            </button>
+                          </div>
+                        )}
+                      {application?.stages.find(
+                        (stage: any) => stage.stage === "DUE_DILIGENCY",
+                      )?.status === "REJECTED" &&
+                        application?.call?.dueAppealOpened &&
+                        !application.hasAppealedDue && (
                           <button
-                            onClick={openDueDiligencyDetails}
+                            onClick={() =>
+                              setOpenMakeAppeal({
+                                opened: true,
+                                stage: ApplicationStage.DUE_DILIGENCY,
+                              })
+                            }
                             className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
                           >
-                            View details
+                            Appeal
                           </button>
-                        </div>
-                      )}
-                    {application?.stages.find(
-                      (stage: any) => stage.stage === "DUE_DILIGENCY",
-                    )?.status === "REJECTED" &&
-                      application?.call?.dueAppealOpened &&
-                      !application.hasAppealedDue && (
-                        <button
-                          onClick={() =>
-                            setOpenMakeAppeal({
-                              opened: true,
-                              stage: ApplicationStage.DUE_DILIGENCY,
-                            })
-                          }
-                          className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                        >
-                          Appeal
-                        </button>
-                      )}
-                    {application?.stages.find(
-                      (stage: any) => stage.stage === "DUE_DILIGENCY",
-                    )?.status === "REJECTED" &&
-                      application.hasAppealedDue && (
-                        <button
-                          onClick={() =>
-                            setViewAppealResults({
-                              opened: true,
-                              application,
-                            })
-                          }
-                          className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
-                        >
-                          View Appeal
-                        </button>
-                      )}
-                  </div>
-                )}
+                        )}
+                      {application?.stages.find(
+                        (stage: any) => stage.stage === "DUE_DILIGENCY",
+                      )?.status === "REJECTED" &&
+                        application.hasAppealedDue && (
+                          <button
+                            onClick={() =>
+                              setViewAppealResults({
+                                opened: true,
+                                application,
+                              })
+                            }
+                            className="font-medium bg-[#005DE9] text-white w-full flex justify-center items-center gap-2 rounded-full px-4 py-2"
+                          >
+                            View Appeal
+                          </button>
+                        )}
+                    </div>
+                  )}
                 {!application?.call?.closedGrant &&
                   application?.stages?.find(
                     (stage: any) => stage?.stage === "GRANT_COMMITTEE",
@@ -469,8 +478,8 @@ const Page = () => {
         application={application}
         stage={
           openMakeAppeal.stage as
-            | ApplicationStage.EVALUATION
-            | ApplicationStage.DUE_DILIGENCY
+          | ApplicationStage.EVALUATION
+          | ApplicationStage.DUE_DILIGENCY
         }
       />
       <ViewAppealResultsModal
