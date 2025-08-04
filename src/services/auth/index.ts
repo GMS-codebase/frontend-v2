@@ -13,7 +13,6 @@ class AuthService {
       await unauthorizedApi.post("/applicant/register", data);
       callback && callback();
     } catch (error: any) {
-      console.log(error);
       notifications.show({
         title: error.response.message
           ? error.response.data.message
@@ -31,7 +30,6 @@ class AuthService {
       const tokenData: { role: string } = jwtDecode(response.data.data.data);
       push(tokenData.role);
     } catch (error: any) {
-      console.log(error);
       notifications.show({
         title: "Error Logging In ",
         message: error?.response?.data?.message,
@@ -40,6 +38,25 @@ class AuthService {
     }
   }
 
+  async requestReset(email: string, callback?: () => void) {
+    try {
+      await unauthorizedApi.put("/auth/password/reset", {
+        email,
+      });
+      notifications.show({
+        title: "Reset password email sent successfully",
+        message: "Check your email for the reset password link",
+        color: "green",
+      });
+      callback && callback();
+    } catch (error: any) {
+      notifications.show({
+        title: "Error requesting to reset password  ",
+        message: error?.response?.data?.message,
+        color: "red",
+      });
+    }
+  }
   async setPassword(
     data: SetPasswordForm,
     token: string,
@@ -54,8 +71,9 @@ class AuthService {
       callback && callback();
     } catch (error) {
       notifications.show({
-        title: "Error Logging In ",
-        message: "There was an error logging in",
+        title: "Error Setting Up Your Password ",
+        message:
+          "There was an error while setting up your password, Please recheck the link from your email or contact our team",
         color: "red",
       });
     }

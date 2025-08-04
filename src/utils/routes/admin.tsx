@@ -1,7 +1,7 @@
 "use client";
 import * as Icons from "@/components/core/icons";
 import { Route } from "@/types";
-
+import * as SolarIconSet from "solar-icon-set";
 const adminRoutes: Route[] = [
   {
     label: "Dashboard",
@@ -29,6 +29,21 @@ const adminRoutes: Route[] = [
     icon: <Icons.SolarSuitcaseBold />,
   },
   {
+    label: "Budget Lines",
+    path: "/admin/budgetlines",
+    icon: <Icons.SolarSuitcaseBold />,
+  },
+  {
+    label: "Question Forms",
+    path: "/admin/forms",
+    icon: <Icons.SolarSuitcaseBold />,
+  },
+  {
+    label: "Survey",
+    path: "/admin/survey",
+    icon: <Icons.SolarPaperclipRounded2Bold />,
+  },
+  {
     label: "Applicants",
     path: "/admin/applicants",
     icon: <Icons.SolarUsersGroupTwoRoundedBold />,
@@ -37,6 +52,11 @@ const adminRoutes: Route[] = [
     label: "Applications",
     path: "/admin/applications",
     icon: <Icons.SolarFolderWithFilesBold />,
+  },
+  {
+    label: "Appeals",
+    path: "/admin/appeals",
+    icon: <Icons.SolarDocumentTextBroken />,
   },
   {
     label: "Application Reports",
@@ -49,7 +69,7 @@ const adminRoutes: Route[] = [
     icon: <Icons.SolarBellBold />,
   },
   {
-    label: "Employees",
+    label: "Users",
     path: "/admin/employees",
     icon: <Icons.SolarUsersGroupRoundedBold />,
   },
@@ -59,9 +79,19 @@ const adminRoutes: Route[] = [
     icon: <Icons.SolarDocumentsBold />,
   },
   {
-    label: "M&E Reports",
+    label: "M&E and OSHE Reports",
     path: "/admin/reports/m_and_e",
     icon: <Icons.SolarFileBold />,
+  },
+  {
+    label: "Roles",
+    path: "/admin/roles",
+    icon: <SolarIconSet.ShieldUser iconStyle="Bold" size={30} />,
+  },
+  {
+    label: "Announcements",
+    path: "/admin/announcements",
+    icon: <Icons.SolarUsersGroupTwoRoundedBold />,
   },
   {
     label: "Profile",

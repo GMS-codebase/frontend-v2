@@ -2,6 +2,7 @@
 import React from "react";
 import { SolarPen2Bold } from "@/components/core/icons";
 import ApplicantTable from "./IndexTable";
+
 const Page = () => {
   return (
     <div className="">
@@ -19,13 +20,13 @@ const Page = () => {
           <div className="flex  w-4/5  font-semibold ">
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                <div>Business Name</div>
+                <div>Institution Name</div>
               </div>
               <div className="mt-2 ml-4">RUTARE TVET SCHOOL</div>
             </div>
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                <div>Business Type </div>
+                <div>Institution Type </div>
               </div>
               <div className="mt-2 ml-4">TRAINING_INSTITUTE</div>
             </div>
@@ -119,13 +120,13 @@ const Page = () => {
           <div className="flex  w-4/5  font-semibold ">
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                <div>Business Name</div>
+                <div>Institution Name</div>
               </div>
               <div className="mt-2 ml-4">Butare Tvet</div>
             </div>
             <div className="flex w-1/2">
               <div className="flex  gap-2  bg-gray-400 bg-opacity-10 px-4  py-2 rounded-full items-center justify-center">
-                <div>Business Name</div>
+                <div>Institution Name</div>
               </div>
               <div className="mt-2 ml-4">Butare Tvet</div>
             </div>

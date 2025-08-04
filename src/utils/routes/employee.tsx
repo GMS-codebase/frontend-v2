@@ -3,20 +3,20 @@ import * as Icons from "@/components/core/icons";
 import { Route } from "@/types";
 
 const employeeRoutes: Route[] = [
+  // {
+  //   label: "Dashboard",
+  //   path: "/employee",
+  //   icon: <Icons.SolarPieChart2Bold />,
+  // },
   {
-    label: "Dashboard",
-    path: "/employee",
-    icon: <Icons.SolarPieChart2Bold />,
+    label: "Applications",
+    path: "/employee/applications",
+    icon: <Icons.SolarFolderWithFilesBold />,
   },
   {
     label: "Applicants",
     path: "/employee/applicants",
     icon: <Icons.SolarUsersGroupTwoRoundedBold />,
-  },
-  {
-    label: "Applications",
-    path: "/employee/applications",
-    icon: <Icons.SolarFolderWithFilesBold />,
   },
   {
     label: "Application Reports",
@@ -29,7 +29,7 @@ const employeeRoutes: Route[] = [
     icon: <Icons.SolarDocumentsBold />,
   },
   {
-    label: "M&E Reports",
+    label: "M&E and OSHE Reports",
     path: "/employee/reports/m_and_e",
     icon: <Icons.SolarFileBold />,
   },

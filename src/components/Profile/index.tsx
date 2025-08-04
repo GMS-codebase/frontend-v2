@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import * as Icons from "@/components/core/icons";
 import { SolarUploadBold } from "@/components/core/icons";
-import { Select, Skeleton } from "@mantine/core";
+import { isOptionsGroup, Select, Skeleton } from "@mantine/core";
 import Image from "next/image";
 import { BsPerson } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
@@ -11,10 +11,10 @@ import { Upload } from "solar-icon-set";
 import { useDispatch, useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
 import { LOGOUT } from "@/actions/AuthActions";
-import { GET_PROFILE_ERROR } from "@/actions/ProfileActions";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "cookies-next";
 import { notifications } from "@mantine/notifications";
+import { useDisclosure } from "@mantine/hooks";
 const Profile = () => {
   const profile = useSelector((state: any) => state.profile);
   const [activeSection, setActiveSection] = useState("contact");
@@ -28,11 +28,12 @@ const Profile = () => {
     institution: profile?.profile?.institution,
   });
   useEffect(() => {
+    console.log(profile.profile);
     setFormData({
       firstName: profile?.profile?.firstname,
       lastName: profile?.profile?.lastname,
       email: profile?.profile?.email,
-      phoneNumber: profile?.profile?.phoneNumber,
+      phoneNumber: profile?.profile?.phone,
       gender: profile?.profile?.gender,
       position: profile?.profile?.position,
       institution: profile?.profile?.institution,
@@ -41,17 +42,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   const navigate = useRouter();
   const [loading, setLoading] = useState(false);
-  const handleLogout = () => {
-    dispatch({ type: LOGOUT });
-    dispatch({ type: GET_PROFILE_ERROR });
-    setLoading(true);
-    navigate.push("/");
-    notifications.show({
-      message: "Logged Out Successfully!",
-      color: "blue",
-      duration: 6000,
-    });
-  };
+
   return (
     <div className="w-full bg-white rounded-2xl ">
       {profile?.loading ? (
@@ -79,7 +70,9 @@ const Profile = () => {
                   <Icons.SolarUserBold className="w-[100px] h-[100px]" />
                 </button>
                 <div className="">
-                  <h1 className="text-2xl">{profile?.profile?.firstname}</h1>
+                  <h1 className="lg:text-2xl text-xl">
+                    {profile?.profile?.firstname}
+                  </h1>
                   <h1 className="font-bold text-primary">
                     {profile?.profile?.role}
                   </h1>
@@ -88,9 +81,9 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="w-full flex gap-4 p-5">
-            <div className="w-[60%]">
-              <div className="flex  mb-10 mt-5">
+          <div className="w-full flex gap-4 justify-center  p-5">
+            <div className="lg:w-[60%] w-full">
+              <div className="flex mb-10 mt-5">
                 <button
                   className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 rounded-l-2xl ${
                     activeSection === "contact"
@@ -129,10 +122,9 @@ const Profile = () => {
                         <input
                           type="text"
                           name="firstName"
-                          placeholder="Hugues"
                           value={formData.firstName}
                           className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                          required
+                          disabled
                         />
                       </div>
                     </div>
@@ -151,9 +143,8 @@ const Profile = () => {
                           type="text"
                           name="lastName"
                           value={formData.lastName}
-                          placeholder="Ishema"
                           className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                          required
+                          disabled
                         />
                       </div>
                     </div>
@@ -174,9 +165,8 @@ const Profile = () => {
                         type="text"
                         name="email"
                         value={formData.email}
-                        placeholder="huguesishema@gmail.com"
                         className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        required
+                        disabled
                       />
                     </div>
                   </div>
@@ -201,9 +191,8 @@ const Profile = () => {
                         type="text"
                         name="phoneNumber"
                         value={formData.phoneNumber}
-                        placeholder="789 175 211"
                         className="block w-full pl-[6.5rem] pr-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        required
+                        disabled
                       />
                     </div>
                   </div>
@@ -215,17 +204,12 @@ const Profile = () => {
                     >
                       Gender
                     </label>
-                    <Select
+                    <input
+                      type="text"
                       name="gender"
-                      value={formData.gender === 1 ? "male" : "female"}
-                      data={[
-                        { value: "male", label: "Male" },
-                        { value: "female", label: "Female" },
-                        { value: "other", label: "Other" },
-                      ]}
-                      placeholder="Select your gender"
-                      required
-                      className="mt-1 block w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none sm:text-sm"
+                      value={formData.gender}
+                      className="mt-1 block w-full px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm capitalize"
+                      disabled
                     />
                   </div>
                 </div>
@@ -245,7 +229,7 @@ const Profile = () => {
                       value={formData.position}
                       placeholder="Type in your position"
                       className="mt-1 block w-full px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
+                      disabled
                     />
                   </div>
 
@@ -262,63 +246,12 @@ const Profile = () => {
                       value={formData.institution}
                       placeholder="Type in your department"
                       className="mt-1 block w-full px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
+                      disabled
                     />
                   </div>
                 </div>
               )}
-
-              <div className="w-full gap-2 flex justify-center mt-4">
-                <button
-                  type="submit"
-                  className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Save
-                </button>
-              </div>
             </div>
-            <div className="w-[50%] p-5">
-              <label
-                htmlFor="fileUpload"
-                className="block text-xs font-bold text-gray-700"
-              >
-                Attachment
-              </label>
-              <div className="relative mt-1 flex flex-col items-center justify-center w-full h-[90%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                <label
-                  htmlFor="file-upload"
-                  className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
-                >
-                  {/* <Icons.MingcuteUpload3Fill className="text-[#005DE9]  w-32 h-32 bg-[#005DE924] bg-opacity-50 rounded-full p-5 " /> */}
-                  <div className="text-center">
-                    <p className="text-lg text-gray-500">Upload file</p>
-                    <p className="text-lg text-gray-400">or drag and drop</p>
-                  </div>
-                </label>
-                <input
-                  id="file-upload"
-                  type="file"
-                  style={{ display: "none" }}
-                  className="content-none"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-          <div className="w-full flex justify-end px-10">
-            <button
-              onClick={handleLogout}
-              type="button"
-              className="w-[43%] px-4 py-2 bg-red-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-            >
-              {loading ? <ClipLoader size={20} color="white" /> : "Logout"}
-            </button>
           </div>
         </>
       )}

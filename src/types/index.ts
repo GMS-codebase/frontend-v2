@@ -4,7 +4,25 @@ export type Route = {
   icon: any;
 };
 
+export type BudgetLine = {
+  uuid?: string;
+  name: string;
+  status?: any;
+};
+
+export type Form = {
+  uuid?: string;
+  name: string;
+  dto: string;
+};
+
 export type Window = {
+  subWindows: any;
+  title: string;
+  description: string;
+  uuid: string;
+};
+export type SubWindow = {
   title: string;
   description: string;
   uuid: string;
@@ -12,15 +30,31 @@ export type Window = {
 export type Trade = {
   title: string;
   description: string;
+  shortname: string;
+  uuid: string;
+};
+export type TradeSector = {
+  trade: Trade;
+  sector: Sector;
+  theWindow: Window;
   uuid: string;
 };
 export type Sector = {
-  title: string;
+  name: string;
   description: string;
   uuid: string;
+  trades: Trade[];
+};
+
+export type ReduxState = {
+  applications: any;
 };
 
 export type Application = {
+  uuid: string;
+};
+
+export type Applicant = {
   uuid: string;
 };
 
@@ -31,6 +65,13 @@ export type Contract = {
 
 export type Contact = {
   uuid: string;
+  firstName: string;
+  lastName: string;
+  mobile: string;
+  mobile1: string;
+  position: string;
+  gender: string;
+  email: string;
 };
 
 export type Comments = {
@@ -41,11 +82,13 @@ export type Comments = {
   institutionComment: string;
   trainingManualComment: string;
   trainingEquipmentComment: string;
+  premisesAttachmentComment: string;
   identificationEmployeeComment: string;
   staffComment: string;
   sustainabilityComment: string;
   previousFinancialReportComment: string;
   trainingPremisesComment: string;
+  assessmentComment: string;
   contributionFromApplicantComment: string;
   recruitmentTrainerComment: string;
   MOUsAttachmentComment: string;
@@ -53,6 +96,24 @@ export type Comments = {
   assessmentEquipmentComment: string;
   recruitmentCandidatesNumberComment: string;
   assessorsAndFacilitatorsComment: string;
-  budgetAttachmentComment: string;
-  contributionComment: string;
+  budgetSummaryAttachmentComment: string;
+  contributionComment?: string;
+  budgetLinesComment?: string;
+  trainingProcessComment?: string;
+  assessmentProcessComment?: string;
+};
+
+export type Call = {
+  uuid: string;
+  title: string;
+  status: "OPEN" | "CLOSED";
+  startDate: string;
+  endDate: string;
+  description: string;
+  appealDays: string;
+  windows: Window[] | string[];
+  form: Form | string;
+  subwindowForms: string;
+  sectors: Sector[] | string[];
+  attachment: File | string | null;
 };

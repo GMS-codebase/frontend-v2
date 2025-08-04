@@ -5,10 +5,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { applicationsData as data } from "@/utils/constants/dummy";
-import CallsActions from "../../applications/CallsAction";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
+import AddEditCall from "@/components/Modals/call/AddEditCall";
 import { Select } from "@mantine/core";
 
 const Page = () => {
@@ -46,7 +45,7 @@ const Page = () => {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => <CallsActions />,
+      cell: ({ row }) => <div></div>,
     },
   ];
 
@@ -120,7 +119,6 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable columns={columns} data={data} />
       </div>
-      <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
     </div>
   );
 };

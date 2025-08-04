@@ -4,7 +4,7 @@ import { DataTable } from "@/components/core/data-table";
 import { meReports as data } from "@/utils/constants/dummy";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
+import AddEditCall from "@/components/Modals/call/AddEditCall";
 import { Select } from "@mantine/core";
 import { HiDotsHorizontal } from "react-icons/hi";
 import MeActions from "./MeActions";
@@ -19,7 +19,6 @@ const Page = () => {
   const [isOpenCall, { open: openCall, close: closeCall }] =
     useDisclosure(false);
   const mereports = useSelector((state: any) => state.mereports);
-  console.log(mereports);
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "title",
@@ -69,8 +68,8 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[20rem]">
+      <div className="w-full lg:flex justify-between items-center p-4">
+        <div className="relative lg:w-[20rem] w-full mb-4">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} color="" />
           </span>
@@ -80,15 +79,15 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-        <div className="flex items-center gap-3">
-          <div className="w-44">
+        <div className="lg:flex  items-center gap-3">
+          <div className="w-44 py-1">
             <FilterDropDown
               placeholderText="Filter By Call"
               data={Array.from(new Set(data.map((item) => item.call)))}
             />
           </div>
           <div
-            className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white"
+            className="flex my-1 justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white"
             onClick={openReport}
           >
             <span>
@@ -96,7 +95,7 @@ const Page = () => {
             </span>
             <div>Add new Report</div>
           </div>
-          <div className="flex  justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white">
+          <div className="flex my-1 justify-between text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white">
             <span>
               <SolarFileBold />
             </span>
@@ -112,7 +111,10 @@ const Page = () => {
         )}
       </div>
       <AddReportModal isOpen={isOpenReportModal} onClose={closeReport} />
-      <AddCall isOpenAddCall={isOpenCall} closeAddCall={closeCall} />
+      <AddEditCall
+        isOpenAddEditCall={isOpenCall}
+        closeAddEditCall={closeCall}
+      />
     </div>
   );
 };

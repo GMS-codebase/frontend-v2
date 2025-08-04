@@ -1,184 +1,115 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { BiSearch } from "react-icons/bi";
-import { SolarAddFolderBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { applicationsData as data } from "@/utils/constants/dummy";
-import CallsActions from "./CallsAction";
 import { CiSearch } from "react-icons/ci";
-import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
-import { Select } from "@mantine/core";
-import { useRef } from "react";
+import { Menu, Select } from "@mantine/core";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useSelector } from "react-redux";
-
+import Link from "next/link";
+import { VscEye } from "react-icons/vsc";
+import {
+  getApplicationsPaginated,
+  getApplicationStatus,
+  getApplicationStatus2,
+  getEmployeeApplicationsPaginated,
+  shortenString,
+} from "@/services";
+import { UnknownAction } from "redux";
+import { useDispatch } from "react-redux";
+import { filterByStep } from "@/utils/funcs";
+import EmployeeApplicationsPage from "@/components/pages/applications/employees";
 const Page = () => {
-  const [isOpenCall, { open, close }] = useDisclosure(false);
-  const { applications, loading } = useSelector(
-    (state: any) => state.applications,
-  );
-  console.log(applications, loading);
-  const filtersContainerRef = useRef<HTMLDivElement>(null);
-
-  const columns: ColumnDef<any>[] = [
-    {
-      accessorKey: "applicationNumber",
-      header: "Application Number",
-      cell: ({ row }) => <div>{row.original?.applicationNumber}</div>,
-    },
-    {
-      accessorKey: "applicantName",
-      header: "Applicant Name",
-      cell: ({ row }) => <div>{row.original?.applicantName}</div>,
-    },
-    {
-      accessorKey: "window",
-      header: "Window",
-      cell: ({ row }) => (
-        <div>
-          WINDOW {row.original?.window?.number} : {row.original?.window?.name}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "sector",
-      header: "Sector",
-      cell: ({ row }) => <div>{row.original?.sector}</div>,
-    },
-    {
-      accessorKey: "trade",
-      header: "Trade",
-      cell: ({ row }) => <div>{row.original?.trade}</div>,
-    },
-    {
-      accessorKey: "stage",
-      header: "Stage",
-      cell: ({ row }) => <div>{row.original?.currentStage}</div>,
-    },
-    {
-      accessorKey: "actions",
-      header: "Actions",
-      cell: ({ row }) => <CallsActions application={row.original} />,
-    },
-  ];
-
-  const FilterDropDown = ({
-    placeholderText,
-    data,
-  }: {
-    placeholderText: string;
-    data: any[];
-  }) => {
-    return (
-      <Select
-        data={data}
-        placeholder={placeholderText}
-        defaultValue={placeholderText}
-        className="w-full px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
-      />
+  const {
+    applications: rawApplications,
+    loading,
+    page,
+  } = useSelector((state: any) => state.applications);
+  const [limit, setLimit] = useState(10);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(
+      getEmployeeApplicationsPaginated(page, limit) as unknown as UnknownAction,
     );
-  };
+  }, [dispatch, page, limit]);
+  const { stages } = useSelector((state: any) => state.empStages);
+  console.log(stages);
 
-  const handleScroll = (direction: "left" | "right") => {
-    if (filtersContainerRef.current) {
-      const scrollAmount = 100;
-      if (direction === "left") {
-        filtersContainerRef.current.scrollLeft -= scrollAmount;
-      } else {
-        filtersContainerRef.current.scrollLeft += scrollAmount;
-      }
-    }
-  };
+  const applications = useMemo(
+    () =>
+      rawApplications
+        .map((app: any) => ({
+          ...app,
+          sector: app.sectors?.[0] || null,
+          trade: app.trades?.[0] || null,
+        }))
+        .filter((app: any) => {
+          const matchingStage = stages.find(
+            (stage: any) => stage.sector == app.sector.name,
+          );
+          return matchingStage;
+        }),
+    [rawApplications, stages],
+  );
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedFilters, setSelectedFilters] = useState({
+    stage: "All",
+    step: "PENDING",
+    window: "All",
+    subWindow: "All",
+    call: "All",
+    sector: "All",
+    trade: "All",
+  });
+
+  const filteredApplications = useMemo(() => {
+    return applications
+      .filter(
+        (app: any) =>
+          app.applicationNumber
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          app.applicant?.name
+            .toLowerCase()
+            .includes(
+              searchTerm.toLowerCase() ||
+                app.applicant?.businesses?.[0]?.businessName
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase()),
+            ),
+      )
+      .filter((app: any) => {
+        const { stage, window, call, subWindow, sector, trade, step } =
+          selectedFilters;
+        return (
+          (stage === "All" ||
+            (getApplicationStatus2(app) === stage &&
+              filterByStep(app, step))) &&
+          (call === "All" || app.call?.title === call) &&
+          (window === "All" || app.window?.title === window) &&
+          (subWindow === "All" || app.subWindow?.title === subWindow) &&
+          (sector === "All" || app.sector?.name === sector) &&
+          (trade === "All" || app.trade?.trade.title === trade)
+        );
+      });
+  }, [applications, searchTerm, selectedFilters]);
   return (
-    <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[20rem]">
-          <span className="absolute top-4 left-4">
-            <CiSearch size={25} color="" />
-          </span>
-          <input
-            name="search"
-            className="w-full p-3 py-4 pl-12 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
-            placeholder="Search"
-          />
-        </div>
-        <div className="flex items-center">
-          <button
-            onClick={() => handleScroll("left")}
-            className="p-2 bg-white shadow-lg rounded-full mr-2"
-          >
-            <FiChevronLeft size={25} />
-          </button>
-
-          <div
-            ref={filtersContainerRef}
-            className="flex items-center gap-3 overflow-x-hidden scrollbar-hide"
-            style={{ scrollBehavior: "smooth", maxWidth: "calc(4 * 11rem)" }}
-          >
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By stage"
-                data={["Duediligence"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Window"
-                data={["Window 1: Apprenticeship and Internships"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Subwindow"
-                data={["Rapid apprentices"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By Sector"
-                data={["ICT & Innovations"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By trade"
-                data={["Agriculture"]}
-              />
-            </div>
-            <div className="w-44 flex-shrink-0">
-              <FilterDropDown
-                placeholderText="Filter By District"
-                data={[
-                  "Kicukiro",
-                  "Musanze",
-                  "Nyagatare",
-                  "Muhanga",
-                  "Nyarugenge",
-                  "Kamonyi",
-                  "Nyanza",
-                  "Gasabo",
-                ]}
-              />
-            </div>
-          </div>
-
-          <button
-            onClick={() => handleScroll("right")}
-            className="p-2 bg-white shadow-lg rounded-full ml-2"
-          >
-            <FiChevronRight size={25} />
-          </button>
-        </div>
-      </div>
-
-      <div className="w-full h-full">
-        <DataTable columns={columns} data={applications} tableWidth={1800} />
-      </div>
-      <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
-    </div>
+    <EmployeeApplicationsPage
+      applications={filteredApplications.map((app: any) => ({
+        ...app,
+        currentStage: getApplicationStatus2(app),
+      }))}
+      type="employee"
+      loading={loading}
+      selectedFilters={selectedFilters}
+      setSelectedFilters={setSelectedFilters}
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm}
+    />
   );
 };
+
 export default Page;
