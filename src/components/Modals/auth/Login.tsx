@@ -42,8 +42,8 @@ const LoginModal = ({
           case "applicant":
             navigate.push("/applicant/contacts");
             break;
-          case "grant":
-            navigate.push("/grant");
+          case "grant_committee":
+            navigate.push("/grandcommittee");
             break;
           case "sdf":
             navigate.push("/sdf/contracts");
