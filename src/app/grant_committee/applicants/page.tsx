@@ -60,7 +60,7 @@ const Page = () => {
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
                 <Link
-                  href={`/admin/applicants/${row.original.uuid}`}
+                  href={`/grant_committee/applicants/${row.original.uuid}`}
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <FiEye size={21} color="#576074" />
