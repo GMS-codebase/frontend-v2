@@ -8,10 +8,10 @@ import { callsData as data } from "@/utils/constants/dummy";
 import CallsActions from "./CallsAction";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
+import AddEditCall from "@/components/Modals/call/AddEditCall";
 import { useState } from "react";
-import UpdateCall from "@/components/Modals/UpdateCall";
-import DeleteCall from "@/components/Modals/DeleteCall";
+// import UpdateCall from "@/components/Modals/UpdateCall";
+// import DeleteCall from "@/components/Modals/DeleteCall";
 import { useSelector } from "react-redux";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 import { format } from "date-fns";
@@ -27,7 +27,13 @@ const Page = () => {
     {
       accessorKey: "title",
       header: "Title",
-      cell: ({ row }) => <div>{row.original?.title}</div>,
+      cell: ({ row }) => (
+        <div>
+          {row.original?.title?.length > 30
+            ? row.original?.title?.slice(0, 30) + "..."
+            : row.original?.title}
+        </div>
+      ),
     },
     {
       accessorKey: "startDate",
@@ -74,16 +80,6 @@ const Page = () => {
             placeholder="Search"
           />
         </div>
-
-        <button
-          onClick={open}
-          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-        >
-          <span className="text-2xl">
-            <SolarAddFolderBold />
-          </span>
-          <h1 className="text-base font-medium text-white">New Call</h1>
-        </button>
       </div>
 
       <div className="w-full h-full">
@@ -97,7 +93,7 @@ const Page = () => {
           />
         )}
       </div>
-      <AddCall isOpenAddCall={isOpen} closeAddCall={close} />
+      {/* <AddEditCall isOpenAddCall={isOpen} closeAddCall={close} />
       <UpdateCall
         isOpenUpdateCall={isOpenCall.openUpdate}
         closeUpdateCall={() =>
@@ -118,7 +114,7 @@ const Page = () => {
             openUpdate: false,
           })
         }
-      />
+      /> */}
     </div>
   );
 };

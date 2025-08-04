@@ -8,27 +8,32 @@ import { useDisclosure } from "@mantine/hooks";
 import AddEmployee from "@/components/Modals/AddEmployee";
 import UpdateEmployee from "@/components/Modals/UpdateEmployee";
 import DeleteEmployee from "@/components/Modals/DeleteEmployee";
-import NewRoleModal from "@/components/Modals/newRole"; // Import the NewRoleModal component
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ClipLoader } from "react-spinners";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
-import { getEmployees } from "@/utils/funcs";
+import { getEmployees } from "@/services";
 
 const Page = () => {
   const [
     isOpenAddEmployee,
     { open: openAddEmployee, close: closeAddEmployee },
   ] = useDisclosure(false);
-  const [isOpenAddRole, { open: openAddRole, close: closeAddRole }] =
-    useDisclosure(false);
+  useDisclosure(false);
+
   const employees = useSelector((state: any) => state.employees);
-  console.log(employees);
+  const dispatch = useDispatch();
+
+  const [searchQuery, setSearchQuery] = useState("");
   const [isOpenEmployee, setIsOpenEmployee] = useState({
     openUpdate: false,
     openDelete: false,
     employee: null,
   });
+
+  const filteredEmployees = employees?.employees?.filter((employee: any) =>
+    employee?.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
@@ -63,39 +68,34 @@ const Page = () => {
       ),
     },
   ];
-  const dispatch = useDispatch();
+
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[25rem]">
+      <div className="w-full lg:flex justify-between items-center p-4">
+        <div className="relative lg:w-[25rem] w-full mb-4">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} />
           </span>
           <input
             name="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full p-3 py-4 pl-12 text-base placeholder:text-black text-black rounded-full bg-[#005DE908] border-none outline-none"
             placeholder="Search"
           />
         </div>
 
-        <button
-          onClick={openAddEmployee}
-          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-        >
-          <span className="text-2xl">
-            <SolarUserPlusBold />
-          </span>
-          <h1 className="text-base font-medium text-white">New Employee</h1>
-        </button>
-        <button
-          onClick={openAddRole}
-          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-        >
-          <span className="text-2xl">
-            <SolarUserPlusBold />
-          </span>
-          <h1 className="text-base font-medium text-white">Add another role</h1>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={openAddEmployee}
+            className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+          >
+            <span className="text-2xl">
+              <SolarUserPlusBold />
+            </span>
+            <h1 className="text-base font-medium text-white">New Employee</h1>
+          </button>
+        </div>
       </div>
 
       {employees?.loading ? (
@@ -108,7 +108,7 @@ const Page = () => {
         </div>
       ) : (
         <div className="w-full h-full">
-          <DataTable columns={columns} data={employees?.employees ?? []} />
+          <DataTable columns={columns} data={filteredEmployees ?? []} />
         </div>
       )}
       <AddEmployee
@@ -136,7 +136,6 @@ const Page = () => {
           })
         }
       />
-      <NewRoleModal isOpen={isOpenAddRole} onClose={closeAddRole} />
     </div>
   );
 };

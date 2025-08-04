@@ -51,7 +51,6 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
 
   const handleSubmit = async (values: any) => {
     setIsSubmitting(true);
-    console.log(form.values.report);
     const submitForm = new FormData();
     submitForm.append("title", form.values.title);
     submitForm.append("call", form.values.call);
@@ -100,7 +99,10 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
         centered
         closeOnClickOutside={false}
       >
-        <div className="w-[40vw] h-[800px] flex flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative overflow-y-auto">
+        <div
+          className="lg:w-[40vw] w-full h-fit lg:h-[800px] flex flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative overflow-y-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
           <div className="absolute top-3 right-3 m-4 text-center mt-0">
             <button
               onClick={onClose}

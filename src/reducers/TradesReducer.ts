@@ -5,6 +5,7 @@ import {
   GET_TRADES_LOADING,
   UPDATE_TRADE_SUCCESS,
   DELETE_TRADE_SUCCESS,
+  GET_SECTOR_TRADES_SUCCESS,
 } from "@/actions/TradesActions";
 import { Trade } from "@/types";
 
@@ -12,7 +13,7 @@ const initialState = {
   trades: [],
   error: null,
   isError: false,
-  loading: false,
+  loading: true,
 };
 
 type Action = {
@@ -33,6 +34,12 @@ export default function TradesReducer(state = initialState, action: Action) {
         loading: false,
         trades: action.payload,
       };
+    case GET_SECTOR_TRADES_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        sectorTrades: action.payload,
+      };
     case GET_TRADES_ERROR:
       return {
         ...state,
@@ -51,9 +58,9 @@ export default function TradesReducer(state = initialState, action: Action) {
     case UPDATE_TRADE_SUCCESS:
       return {
         ...state,
-        trade: state.trades.map((trade: Trade) =>
-          trade.uuid === action.payload.id
-            ? { ...trade, ...action.payload.data }
+        trades: state.trades?.map((trade: Trade) =>
+          trade.uuid == action.payload.uuid
+            ? { ...trade, ...action.payload }
             : trade,
         ),
         error: null,

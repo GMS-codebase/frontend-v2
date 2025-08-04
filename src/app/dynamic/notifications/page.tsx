@@ -12,6 +12,7 @@ import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { ClipLoader } from "react-spinners";
 import { useSelector } from "react-redux";
+import { ApplicationStage } from "@/types/application";
 
 const Page = () => {
   const [text, setText] = useState("");
@@ -66,11 +67,9 @@ const Page = () => {
   const { windows } = useSelector((state: any) => state.windows);
   const { calls } = useSelector((state: any) => state.calls);
   const { sectors } = useSelector((state: any) => state.sectors);
-  console.log(windows, calls, sectors);
   const handleSubmit = (event: any) => {
     event.preventDefault();
     setLoading(true);
-    console.log("Form Data: ", formData);
     authorizedApi
       .post("/notifications", formData)
       .then((res) => {
@@ -96,9 +95,7 @@ const Page = () => {
           });
         }
       })
-      .catch((error) => {
-        console.log("Error sending notification: ", error);
-      })
+      .catch((error) => {})
       .finally(() => setLoading(false));
   };
   const FilterDropDown = ({
@@ -143,7 +140,7 @@ const Page = () => {
               data={
                 calls
                   ? calls?.map((call: any) => {
-                      return { value: call.uuid, label: call.title };
+                      return { value: call.uuid, label: call?.title };
                     })
                   : []
               }
@@ -198,8 +195,11 @@ const Page = () => {
               }
               placeholderText="Filter By Stage"
               data={[
-                { value: "EVALUATION", label: "Evaluation" },
-                { value: "DUE_DILIGENCY", label: "Due Diligency" },
+                { value: ApplicationStage.EVALUATION, label: "Evaluation" },
+                {
+                  value: ApplicationStage.DUE_DILIGENCY,
+                  label: "Due Diligency",
+                },
                 { value: "SDF_SECRETARIATE", label: "Sdf Secretariate" },
                 { value: "GRANT_COMMITTEE", label: "Grand Committee" },
                 { value: "CONTRACT_SIGNING", label: "Contract Signing" },

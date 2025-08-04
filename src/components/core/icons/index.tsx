@@ -1,6 +1,38 @@
 import React from "react";
 import type { SVGProps } from "react";
 
+export const SolarEyeIcon = (props: SVGProps<SVGSVGElement>) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={48}
+      height={48}
+      viewBox="0 0 48 48"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        d="M41.56 26.13a1.25 1.25 0 0 0 1.57.81c.65-.21 1.02-.91.81-1.57l-.001-.003C43.85 25.1 38.841 10 23.999 10C9.16 10 4.15 25.1 4.062 25.368l-.001.002c-.21.66.15 1.36.81 1.57s1.36-.15 1.57-.81C6.62 25.57 10.95 12.5 24 12.5s17.38 13.07 17.56 13.63M17.5 27a6.5 6.5 0 1 1 13 0a6.5 6.5 0 0 1-13 0m6.5-9a9 9 0 1 0 0 18a9 9 0 0 0 0-18"
+      ></path>
+    </svg>
+  );
+};
+export function SolarDocumentTextBroken(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <g fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <path d="M3 10c0-3.771 0-5.657 1.172-6.828C5.343 2 7.229 2 11 2h2c3.771 0 5.657 0 6.828 1.172C21 4.343 21 6.229 21 10v4c0 3.771 0 5.657-1.172 6.828C18.657 22 16.771 22 13 22h-2c-3.771 0-5.657 0-6.828-1.172C3 19.657 3 17.771 3 14z" />
+        <path strokeLinecap="round" d="M8 12h8m-8 4h5" />
+      </g>
+    </svg>
+  );
+}
 export function SolarIphoneLinear(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -57,6 +89,28 @@ export function SolarCheckCircleBold(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function SolarChecklistMinimalisticOutline(
+  props: SVGProps<SVGSVGElement>,
+) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2s10 4.477 10 10m-5.97-3.03a.75.75 0 0 1 0 1.06l-5 5a.75.75 0 0 1-1.06 0l-2-2a.75.75 0 1 1 1.06-1.06l1.47 1.47l2.235-2.235L14.97 8.97a.75.75 0 0 1 1.06 0"
+        clipRule="evenodd"
+      ></path>
+    </svg>
+  );
+}
+
 export function SolarWindowFrameBold(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -117,6 +171,25 @@ export function SolarTrashBinTrashOutline(props: SVGProps<SVGSVGElement>) {
       <path
         fill="currentColor"
         d="M9.425 10.254a.75.75 0 0 1 .821.671l.5 5a.75.75 0 0 1-1.492.15l-.5-5a.75.75 0 0 1 .671-.821m5.15 0a.75.75 0 0 1 .671.82l-.5 5a.75.75 0 0 1-1.492-.149l.5-5a.75.75 0 0 1 .82-.671"
+      ></path>
+    </svg>
+  );
+}
+
+export function SolarShieldUserBold(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        d="M3 10.417c0-3.198 0-4.797.378-5.335c.377-.537 1.88-1.052 4.887-2.081l.573-.196C10.405 2.268 11.188 2 12 2s1.595.268 3.162.805l.573.196c3.007 1.029 4.51 1.544 4.887 2.081C21 5.62 21 7.22 21 10.417v1.574c0 5.638-4.239 8.375-6.899 9.536C13.38 21.842 13.02 22 12 22s-1.38-.158-2.101-.473C7.239 20.365 3 17.63 3 11.991zM14 9a2 2 0 1 1-4 0a2 2 0 0 1 4 0m-2 8c4 0 4-.895 4-2s-1.79-2-4-2s-4 .895-4 2s0 2 4 2"
+        clipRule="evenodd"
       ></path>
     </svg>
   );
@@ -1251,6 +1324,73 @@ export function SolarAltArrowRightOutline(props: SVGProps<SVGSVGElement>) {
         d="M8.512 4.43a.75.75 0 0 1 1.057.082l6 7a.75.75 0 0 1 0 .976l-6 7a.75.75 0 0 1-1.138-.976L14.012 12L8.431 5.488a.75.75 0 0 1 .08-1.057"
         clipRule="evenodd"
       ></path>
+    </svg>
+  );
+}
+
+export function SolarUsersGroupTwoRoundedLineDuotone(
+  props: SVGProps<SVGSVGElement>,
+) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <g fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <circle cx={12} cy={6} r={4}></circle>
+        <path
+          strokeLinecap="round"
+          d="M18 9c1.657 0 3-1.12 3-2.5S19.657 4 18 4M6 9C4.343 9 3 7.88 3 6.5S4.343 4 6 4"
+          opacity={0.5}
+        ></path>
+        <ellipse cx={12} cy={17} rx={6} ry={4}></ellipse>
+        <path
+          strokeLinecap="round"
+          d="M20 19c1.754-.385 3-1.359 3-2.5s-1.246-2.115-3-2.5M4 19c-1.754-.385-3-1.359-3-2.5s1.246-2.115 3-2.5"
+          opacity={0.5}
+        ></path>
+      </g>
+    </svg>
+  );
+}
+export function SolarArrowDown(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+    >
+      <path
+        fill="#005DEF"
+        d="m12.37 15.835l6.43-6.63C19.201 8.79 18.958 8 18.43 8H5.57c-.528 0-.771.79-.37 1.205l6.43 6.63c.213.22.527.22.74 0"
+      />
+    </svg>
+  );
+}
+
+export function SolarBenzeneRingBroken(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <g
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth={1.5}
+      >
+        <path d="M7.02 6.638c-.985.586-1.479.88-1.75 1.362S5 9.069 5 10.241v3.518c0 1.172 0 1.758.27 2.241c.271.483.765.776 1.75 1.362l2.96 1.759c.986.586 1.479.879 2.02.879s1.034-.293 2.02-.88l2.96-1.758c.985-.586 1.479-.88 1.75-1.362c.25-.448.269-.986.27-2M9.98 4.88C10.965 4.292 11.458 4 12 4s1.034.293 2.02.88l2.96 1.758c.985.586 1.479.88 1.75 1.362c.25.448.269.986.27 2"></path>
+        <path strokeLinejoin="round" d="M5 8L2 6m17 2l3-2M5 16l-3 2"></path>
+        <path d="m12 16.884l4-2.384"></path>
+      </g>
     </svg>
   );
 }

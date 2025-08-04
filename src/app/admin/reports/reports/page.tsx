@@ -24,11 +24,11 @@ const Page = () => {
 
   return (
     <div className="w-full">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[20rem]">
+      <div className="w-full lg:flex justify-between items-center p-4">
+        <div className="relative lg:w-[20rem] w-full mb-4">
           <h1 className="font-bold text-xl">Export Report</h1>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex w-full overflow-auto items-center gap-3">
           <div className="w-44">
             <FilterDropDown
               placeholderText="Filter By Call"

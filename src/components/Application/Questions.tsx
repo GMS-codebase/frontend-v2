@@ -61,7 +61,7 @@ const Questions: React.FC<QuestionsProps> = ({
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setInputs({ ...inputs, [name]: value });
@@ -77,7 +77,7 @@ const Questions: React.FC<QuestionsProps> = ({
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    inputName: string
+    inputName: string,
   ) => {
     const uploadedFile = e.target.files ? e.target.files[0] : null;
     setFiles({ ...files, [inputName]: uploadedFile });
@@ -152,8 +152,8 @@ const Questions: React.FC<QuestionsProps> = ({
     const questionType = question.dto
       ? question.dto[key].type
       : question.arrayItemType
-      ? question.arrayItemType
-      : question.type;
+        ? question.arrayItemType
+        : question.type;
 
     if (questionType === "textarea") {
       return (
@@ -207,7 +207,7 @@ const Questions: React.FC<QuestionsProps> = ({
         if (question.selector.toLowerCase() === "trades") {
           options = tradesData.trades?.map((trade: any) =>
             //@ts-ignore
-            question.getOptions(trade)
+            question.getOptions(trade),
           );
         }
       }
@@ -228,7 +228,7 @@ const Questions: React.FC<QuestionsProps> = ({
           }}
           data={options}
           className="mt-1 block w-full  pl-5  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          placeholder="Select Business Type"
+          placeholder="Select Institution Type"
         />
       );
     } else {

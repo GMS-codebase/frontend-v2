@@ -145,7 +145,7 @@ const RegisterModal = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="w-[550px] max-h-[90vh] py-10  relative bg-white rounded-3xl p-4 flex flex-col items-center">
+      <div className="lg:w-[550px] max-h-[90vh] py-10 relative bg-white rounded-3xl p-4 flex flex-col items-center">
         <button
           className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
           onClick={closeRegister}
@@ -167,14 +167,90 @@ const RegisterModal = ({
           height={50}
         />
         <div className="w-full flex flex-col items-center">
-          <h1 className="text-2xl font-extrabold">Register</h1>
-          <h2 className="text-[#000F2369] text-lg font-medium">
+          <h1 className="text-3xl font-extrabold text-primaryText">Register</h1>
+          <h2 className="text-primaryText opacity-40 font-medium lg:text-xl">
             Provide your details to register your account.
           </h2>
         </div>
 
-        <div className="w-full px-10  flex flex-col items-center mt-4 overflow-hidden ">
+        <div
+          className="w-full px-10  flex flex-col items-center mt-4 lg:overflow-hidden overflow-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
           <Stepper active={active} onStepClick={setActive} className="w-full">
+            <Stepper.Step
+              label="Applicant Info"
+              description=""
+              className="text-xs"
+            >
+              <div className="mt-4 w-full h-[70%] overflow-y-auto flex flex-col gap-2 px-2">
+                <div className="w-full">
+                  <label
+                    htmlFor="institution"
+                    className="block text-xs font-bold text-gray-700"
+                  >
+                    Institution Name
+                  </label>
+                  <div className="w-full relative">
+                    <span className="absolute top-1/2  -translate-y-1/2  left-3">
+                      <HiOutlineMail className="w-5 h-5" />
+                    </span>
+                    <input
+                      type="text"
+                      name="institution"
+                      value={formData.institution}
+                      placeholder="Type in institution name"
+                      onChange={handleChange}
+                      className={`w-full bg-gray-100 p-3 rounded-3xl pl-10 outline-primary transition-all duration-150 ${
+                        errors.institution ? "border-red-500" : ""
+                      }`}
+                    />
+                  </div>
+                  {errors.institution && (
+                    <p className="text-red-500 text-xs">{errors.institution}</p>
+                  )}
+                </div>
+                <div className="w-full">
+                  <label
+                    htmlFor="institution"
+                    className="block text-xs font-bold text-gray-700"
+                  >
+                    Position
+                  </label>
+                  <div className="w-full relative">
+                    <span className="absolute top-1/2  -translate-y-1/2  left-3">
+                      <HiOutlineMail className="w-5 h-5" />
+                    </span>
+                    <input
+                      type="text"
+                      name="position"
+                      value={formData.position}
+                      placeholder="Type in position name"
+                      onChange={handleChange}
+                      className={`w-full bg-gray-100 p-3 rounded-3xl pl-10 outline-primary transition-all duration-150 ${
+                        errors.position ? "border-red-500" : ""
+                      }`}
+                    />
+                  </div>
+                  {errors.position && (
+                    <p className="text-red-500 text-xs">{errors.position}</p>
+                  )}
+                </div>
+                <div className="w-full flex justify-center mt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (validateStep2()) {
+                        setActive(1);
+                      }
+                    }}
+                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </Stepper.Step>
             <Stepper.Step
               label="Contact Person"
               description=""
@@ -185,7 +261,7 @@ const RegisterModal = ({
                 className="w-full  overflow-y-auto flex flex-col gap-2 px-2"
               >
                 <div className="space-y-1">
-                  <div className="w-full flex justify-between gap-3">
+                  <div className="w-full lg:flex justify-between gap-3">
                     <div className="w-full">
                       <label
                         htmlFor="firstname"
@@ -335,110 +411,6 @@ const RegisterModal = ({
                   )}
                 </div>
 
-                <div className="w-full flex justify-center mt-4">
-                  <button
-                    type="submit"
-                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  >
-                    Next
-                  </button>
-                </div>
-                <h1 className="w-full text-center text-[#000F2369] text-base font-medium mt-4">
-                  Already have an account?{" "}
-                  <span
-                    className="text-base font-medium cursor-pointer text-primary"
-                    onClick={() => {
-                      closeRegister();
-                      openLogin();
-                    }}
-                  >
-                    Login
-                  </span>
-                </h1>
-              </form>
-            </Stepper.Step>
-            <Stepper.Step
-              label="Applicant Info"
-              description=""
-              className="text-xs"
-            >
-              <form
-                onSubmit={handleSubmit}
-                className="mt-4 w-full h-[70%] overflow-y-auto flex flex-col gap-2 px-2"
-              >
-                <div className="w-full">
-                  <label
-                    htmlFor="institution"
-                    className="block text-xs font-bold text-gray-700"
-                  >
-                    Institution Name
-                  </label>
-                  <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <HiOutlineMail />
-                    </span>
-                    <input
-                      type="text"
-                      name="institution"
-                      value={formData.institution}
-                      placeholder="Type in institution name"
-                      onChange={handleChange}
-                      className={`mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-                        errors.institution ? "border-red-500" : ""
-                      }`}
-                    />
-                    {errors.institution && (
-                      <p className="text-red-500 text-xs">
-                        {errors.institution}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="w-full">
-                  <label
-                    htmlFor="position"
-                    className="block text-xs font-bold text-gray-700"
-                  >
-                    Position
-                  </label>
-                  <div className="mt-1 pl-4 relative block w-full bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                    <span className="absolute left-2 top-[10px]">
-                      <HiOutlineMail />
-                    </span>
-                    <Select
-                      name="position"
-                      value={formData.position}
-                      onChange={(value: any) => {
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          position: value,
-                        }));
-                        errors.position &&
-                          setErrors((prevErrors) => ({
-                            ...prevErrors,
-                            position: "",
-                          }));
-                      }}
-                      data={[
-                        { value: "CEO", label: "CEO" },
-                        { value: "CTO", label: "CTO" },
-                        {
-                          value: "Marketing Manager",
-                          label: "Marketing Manager",
-                        },
-                      ]}
-                      placeholder="Select your position"
-                      className={`mt-1 block w-full  focus:outline-none sm:text-sm ${
-                        errors.position ? "border-red-500" : ""
-                      }`}
-                    />
-                  </div>
-                  {errors.position && (
-                    <p className="text-red-500 text-xs">{errors.position}</p>
-                  )}
-                </div>
-
                 <div className="w-full flex flex-col justify-center mt-4 gap-3">
                   <button
                     type="submit"
@@ -455,10 +427,10 @@ const RegisterModal = ({
                     Go Back
                   </button>
                 </div>
-                <h1 className="text-[#000F2369] text-base font-medium mt-4">
+                <h1 className="w-full text-center text-[#000F2369] text-base font-medium mt-4">
                   Already have an account?{" "}
                   <span
-                    className="text-base font-medium text-primary cursor-pointer"
+                    className="text-base font-medium cursor-pointer text-primary"
                     onClick={() => {
                       closeRegister();
                       openLogin();

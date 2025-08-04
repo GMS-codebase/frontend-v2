@@ -4,7 +4,7 @@ import { DataTable } from "@/components/core/data-table";
 import { meReports as data } from "@/utils/constants/dummy";
 import { CiSearch } from "react-icons/ci";
 import { useDisclosure } from "@mantine/hooks";
-import AddCall from "@/components/Modals/AddCall";
+import AddEditCall from "@/components/Modals/call/AddEditCall";
 import { Select } from "@mantine/core";
 import { HiDotsHorizontal } from "react-icons/hi";
 import MeActions from "./MeActions";
@@ -60,8 +60,8 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[20rem]">
+      <div className="w-full lg:flex justify-between items-center p-4">
+        <div className="relative lg:w-[20rem] mb-4 w-full">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} color="" />
           </span>
@@ -84,7 +84,7 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable columns={columns} data={data} />
       </div>
-      <AddCall isOpenAddCall={isOpenCall} closeAddCall={close} />
+      <AddEditCall isOpenAddEditCall={isOpenCall} closeAddEditCall={close} />
     </div>
   );
 };

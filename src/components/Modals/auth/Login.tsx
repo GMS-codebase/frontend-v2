@@ -9,17 +9,21 @@ import {
   SolarLetterLinear,
   SolarLockKeyholeMinimalisticOutline,
 } from "../../core/icons";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginModal = ({
   opened,
   close,
   openRegister,
+  openForgotPassword,
 }: {
   opened: boolean;
   close: () => void;
   openRegister: () => void;
+  openForgotPassword: () => void;
 }) => {
   const navigate = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
   const handleSubmit = async (values: { email: string; password: string }) => {
     setLoading(true);
     await AuthService.login(
@@ -28,7 +32,6 @@ const LoginModal = ({
         password: values.password,
       },
       (role: string) => {
-        console.log(role);
         switch (role?.toLowerCase()) {
           case "admin":
             navigate.push("/admin");
@@ -37,21 +40,24 @@ const LoginModal = ({
             navigate.push("/dynamic");
             break;
           case "employee":
-            navigate.push("/employee");
+            navigate.push("/employee/applications");
+            break;
+          case "normal_employee":
+            navigate.push("/employee/applications");
             break;
           case "applicant":
-            navigate.push("/applicant/contacts");
+            navigate.push("/applicant/applications");
             break;
           case "grant_committee":
-            navigate.push("/grandcommittee");
+            navigate.push("/grant_committee");
             break;
-          case "sdf":
+          case "sdf_secretariate":
             navigate.push("/sdf/contracts");
             break;
           default:
             navigate.push("/");
         }
-      },
+      }
     );
     setLoading(false);
   };
@@ -82,7 +88,7 @@ const LoginModal = ({
       withCloseButton={false}
       centered
     >
-      <div className="w-[40vw] max-h-[90vh] py-10  flex flex-col gap-2 align-middle rounded-3xl bg-white p-10 relative">
+      <div className="lg:w-[40vw] max-h-[90vh] py-10  flex flex-col gap-2 align-middle rounded-3xl bg-white p-10 relative">
         <Image
           src={require("@/assets/Vectors/sidevecto.svg")}
           alt=""
@@ -144,13 +150,20 @@ const LoginModal = ({
                 <SolarLockKeyholeMinimalisticOutline className="w-5 h-5" />
               </span>
               <input
-                type="password"
+                type={!showPassword ? "password" : "text"}
                 id="password"
                 placeholder="Type in your password"
                 name="password"
                 className="w-full bg-gray-100 p-3 rounded-3xl pl-10 outline-primary transition-all duration-150"
                 {...form.getInputProps("password")}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
             {form.errors.password && (
               <p className="text-red-500 text-sm mt-1">
@@ -159,7 +172,10 @@ const LoginModal = ({
             )}
           </div>
 
-          <div className="text-secondaryText font-medium  underline mb-10">
+          <div
+            onClick={openForgotPassword}
+            className="text-secondaryText font-medium  underline mb-10"
+          >
             Forgot password?
           </div>
           <button

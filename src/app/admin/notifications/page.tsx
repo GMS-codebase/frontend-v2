@@ -1,17 +1,18 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Select } from "@mantine/core";
 import { ChangeEvent } from "react";
-import { TableData } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import { applicationsData as data } from "@/utils/constants/dummy";
-import CallsActions from "../calls/CallsAction";
 import { CiSearch } from "react-icons/ci";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { ClipLoader } from "react-spinners";
 import { useSelector } from "react-redux";
+import { HiDotsHorizontal } from "react-icons/hi";
+import TableSkeleton from "@/components/core/data-table/TableSkeleton";
+import { ApplicationStage } from "@/types/application";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const Page = () => {
   const [text, setText] = useState("");
@@ -23,67 +24,113 @@ const Page = () => {
       window: "",
       sector: "",
       stage: "",
+      status: "",
     },
   });
+
+  const [loading, setLoading] = useState(false);
+  const { windows } = useSelector((state: any) => state.windows);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { calls } = useSelector((state: any) => state.calls);
+  const { sectors } = useSelector((state: any) => state.sectors);
+  const [filteredApplicants, setFilteredApplicants] = useState([]);
+  const { applicants, loading: applicantsLoading } = useSelector(
+    (state: any) => state.applicants,
+  );
+
+  // const filterApplicants = () => {
+  //   const query = `/applicant/filter?callId=${formData.filters.call}&windowId=${formData.filters.window}&sectorId=${formData.filters.sector}&stage=${formData.filters.stage}&status=${formData.filters.status}`;
+
+  //   setLoading(true);
+  //   authorizedApi
+  //     .get(query)
+  //     .then((response) => {
+  //       const applicants = JSON.stringify(response.data.data.data) == "{}" ? [] : response.data.data.data;
+
+  //       // Search logic for name, institution, email, phone
+  //       const searchFilteredApplicants = applicants.filter((applicant: any) => {
+  //         return (
+  //           applicant.name.toLowerCase().includes(text.toLowerCase()) ||
+  //           applicant.institution.toLowerCase().includes(text.toLowerCase()) ||
+  //           applicant.email.toLowerCase().includes(text.toLowerCase()) ||
+  //           applicant.phone.toLowerCase().includes(text.toLowerCase())
+  //         );
+  //       });
+
+  //       setFilteredApplicants(searchFilteredApplicants);
+  //     })
+  //     .catch((error) => {
+
+  //     })
+  //     .finally(() => setLoading(false));
+  // };
+
+  // useEffect(() => {
+  //   filterApplicants()
+  // }, [formData.filters, text]);
+
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setText(event.target.value);
+  };
+
+  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = event.target;
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
+  };
+
   const columns: ColumnDef<any>[] = [
     {
-      accessorKey: "applicationNumber",
-      header: "Application Number",
-      cell: ({ row }) => <div>{row.original?.applicationNumber}</div>,
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
     },
     {
-      accessorKey: "applicantName",
-      header: "Applicant Name",
-      cell: ({ row }) => <div>{row.original?.applicantName}</div>,
-    },
-    {
-      accessorKey: "window",
-      header: "Window",
+      accessorKey: "institution",
+      header: "Institution Name",
       cell: ({ row }) => (
-        <div>
-          WINDOW {row.original?.window.number} : {row.original?.window.name}
-        </div>
+        <div className="w-full">{row.original?.institution}</div>
       ),
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+      cell: ({ row }) => <div className="w-full">{row.original?.email}</div>,
+    },
+    {
+      accessorKey: "phone",
+      header: "Phone",
+      cell: ({ row }) => <div className="w-full">{row.original?.phone}</div>,
     },
     {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <CallsActions
-          setIsCall={function (employee: any): void {
-            throw new Error("Function not implemented.");
-          }}
-          call={undefined}
-        />
+        <div>
+          <button
+            style={{
+              background:
+                "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+            }}
+            className="p-3 rounded-full border text-white hover:bg-red-100"
+          >
+            <HiDotsHorizontal size={25} color="white" />
+          </button>
+        </div>
       ),
     },
   ];
-  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    const { name, value } = event.target;
-    setFormData((prevState) => ({ ...prevState, [name]: value }));
-  };
-  const [loading, setLoading] = useState(false);
-  const { windows } = useSelector((state: any) => state.windows);
-  const { calls } = useSelector((state: any) => state.calls);
-  const { sectors } = useSelector((state: any) => state.sectors);
-  console.log(windows, calls, sectors);
+
   const handleSubmit = (event: any) => {
     event.preventDefault();
-    setLoading(true);
-    console.log("Form Data: ", formData);
+    setIsSubmitting(true);
     authorizedApi
       .post("/notifications", formData)
       .then((res) => {
-        if (res.data.status === 204) {
-          notifications.show({
-            message: res.data.message,
-            color: "red",
-          });
-        } else {
-          notifications.show({
-            message: res.data.message,
-            color: "blue",
-          });
+        notifications.show({
+          message: res.data.message,
+          color: res.data.status === 204 ? "red" : "blue",
+        });
+        if (res.data.status !== 204) {
           setFormData({
             subject: "",
             message: "",
@@ -92,15 +139,20 @@ const Page = () => {
               window: "",
               sector: "",
               stage: "",
+              status: "",
             },
           });
         }
       })
       .catch((error) => {
-        console.log("Error sending notification: ", error);
+        notifications.show({
+          message: error.response?.data.message,
+          color: "red",
+        });
       })
-      .finally(() => setLoading(false));
+      .finally(() => setIsSubmitting(false));
   };
+
   const FilterDropDown = ({
     placeholderText,
     data,
@@ -116,40 +168,61 @@ const Page = () => {
       <Select
         data={data}
         placeholder={placeholderText}
-        defaultValue={placeholderText}
         value={value}
         onChange={onChange}
-        className="w-full px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
+        className="w-fit px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
       />
     );
   };
+
+  const filtersContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = (direction: "left" | "right") => {
+    if (filtersContainerRef.current) {
+      const scrollAmount = 100;
+      if (direction === "left") {
+        filtersContainerRef.current.scrollLeft -= scrollAmount;
+      } else {
+        filtersContainerRef.current.scrollLeft += scrollAmount;
+      }
+    }
+  };
+
   return (
-    <div>
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[20rem]">
-          <h1 className="text-2xl font-bold">Send Notifications</h1>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="w-48">
+    <div className="w-full">
+      <div className="lg:flex justify-between items-center p-4">
+        <h1 className="text-2xl font-bold mb-3">Send Notifications</h1>
+        <div className="flex items-center lg:max-w-[60%]">
+          <button
+            onClick={() => handleScroll("left")}
+            className="p-2 bg-white shadow-lg rounded-full mr-2"
+          >
+            <FiChevronLeft size={25} />
+          </button>
+
+          <div
+            ref={filtersContainerRef}
+            className="flex items-center gap-3 overflow-x-auto scrollbar-hide flex-grow"
+            style={{ scrollBehavior: "smooth" }}
+          >
             <FilterDropDown
               value={formData.filters.call}
               onChange={(value: string) =>
                 setFormData({
                   ...formData,
-                  filters: { ...formData.filters, call: value },
+                  filters: { ...formData?.filters, call: value },
                 })
               }
               placeholderText="Filter By Call"
               data={
                 calls
-                  ? calls?.map((call: any) => {
-                      return { value: call.uuid, label: call.title };
-                    })
+                  ? calls.map((call: any) => ({
+                      value: call?.uuid,
+                      label: call?.title,
+                    }))
                   : []
               }
             />
-          </div>
-          <div className="w-48">
             <FilterDropDown
               value={formData.filters.window}
               onChange={(value: string) =>
@@ -161,14 +234,13 @@ const Page = () => {
               placeholderText="Filter By Window"
               data={
                 windows
-                  ? windows?.map((window: any) => {
-                      return { value: window.uuid, label: window?.title };
-                    })
+                  ? windows.map((window: any) => ({
+                      value: window.uuid,
+                      label: window?.title,
+                    }))
                   : []
               }
             />
-          </div>
-          <div className="w-48">
             <FilterDropDown
               value={formData.filters.sector}
               onChange={(value: string) =>
@@ -180,14 +252,13 @@ const Page = () => {
               placeholderText="Filter By Sector"
               data={
                 sectors
-                  ? sectors?.map((sector: any) => {
-                      return { value: sector.uuid, label: sector?.name };
-                    })
+                  ? sectors.map((sector: any) => ({
+                      value: sector.uuid,
+                      label: sector?.name,
+                    }))
                   : []
               }
             />
-          </div>
-          <div className="w-48">
             <FilterDropDown
               value={formData.filters.stage}
               onChange={(value: string) =>
@@ -198,8 +269,11 @@ const Page = () => {
               }
               placeholderText="Filter By Stage"
               data={[
-                { value: "EVALUATION", label: "Evaluation" },
-                { value: "DUE_DILIGENCY", label: "Due Diligency" },
+                { value: ApplicationStage.EVALUATION, label: "Evaluation" },
+                {
+                  value: ApplicationStage.DUE_DILIGENCY,
+                  label: "Due Diligency",
+                },
                 { value: "SDF_SECRETARIATE", label: "Sdf Secretariate" },
                 { value: "GRANT_COMMITTEE", label: "Grand Committee" },
                 { value: "CONTRACT_SIGNING", label: "Contract Signing" },
@@ -209,7 +283,27 @@ const Page = () => {
                 },
               ]}
             />
+            <FilterDropDown
+              value={formData.filters.status}
+              onChange={(value: string) =>
+                setFormData({
+                  ...formData,
+                  filters: { ...formData.filters, status: value },
+                })
+              }
+              placeholderText="Filter By Status"
+              data={[
+                { value: "APPROVED", label: "Approved" },
+                { value: "REJECTED", label: "Rejected" },
+              ]}
+            />
           </div>
+          <button
+            onClick={() => handleScroll("right")}
+            className="p-2 bg-white shadow-lg rounded-full ml-2"
+          >
+            <FiChevronRight size={25} />
+          </button>
         </div>
       </div>
       <form onSubmit={handleSubmit} className="p-4 w-full">
@@ -222,6 +316,7 @@ const Page = () => {
             name="subject"
             value={formData.subject}
             onChange={handleChange}
+            required
             className="mt-2 p-2 w-full border border-primary rounded-md shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-white"
           />
         </div>
@@ -234,36 +329,46 @@ const Page = () => {
           value={formData.message}
           onChange={handleChange}
           rows={4}
+          required
           className="mt-2 p-2 w-full border border-primary rounded-md shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50 bg-white"
         />
         <button
           type="submit"
           className="w-full px-4 py-2 mt-5 bg-blue-500 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
-          {loading ? (
+          {isSubmitting ? (
             <ClipLoader size={20} color="white" />
           ) : (
             "Send notification"
           )}
         </button>
       </form>
-      <div className="relative  w-full my-5 flex justify-between">
+      {/* <div className="relative w-full my-5 flex justify-between">
         <h1 className="font-bold text-xl">Concerned Applicants</h1>
-        <div className="relative  w-[20rem]">
+        <div className="relative w-[20rem]">
           <span className="absolute top-4 left-4">
-            <CiSearch size={25} color="" />
+            <CiSearch size={25} />
           </span>
           <input
             name="search"
             className="w-full p-3 py-4 pl-12 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
             placeholder="Search"
+            value={text}
+            onChange={handleSearchChange}
           />
         </div>
       </div>
       <div className="w-full h-full">
-        <DataTable columns={columns} data={data} />
-      </div>
+        {applicantsLoading || loading ? (
+          <TableSkeleton columns={columns} />
+        ) : filteredApplicants?.length === 0 ? (
+          <h1 className="w-full text-center">No Applicants Found!</h1>
+        ) : (
+          <DataTable columns={columns} data={filteredApplicants ?? []} />
+        )}
+      </div> */}
     </div>
   );
 };
+
 export default Page;

@@ -1,16 +1,23 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+"use client";
 import { authorizedApi } from "@/utils/api";
-import { Checkbox, Modal, Select, Stepper } from "@mantine/core";
+import { getApplicantProfile } from "@/services";
+import { Checkbox, Modal, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { useDispatch } from "react-redux";
 import { User } from "solar-icon-set";
 import { Upload } from "solar-icon-set";
 import { CalendarMinimalistic, Folder2, ShieldWarning } from "solar-icon-set";
+// @typescript-eslint/no-var-requires
+const { Provinces, Districts, Sectors, Cells, Villages } = require("rwanda");
 
 type FormData = {
   tin: string;
   year_of_placement: string;
   business_type: string;
+  business_name: string;
   reg_no_or_school_code: string;
   reg_date: string;
   is_private: boolean;
@@ -32,16 +39,20 @@ const CompleteProfile = ({
   isOpenCompleteProfile,
   closeCompleteProfile,
   finishAddingProfile,
+  defaultData,
 }: {
   isOpenCompleteProfile: boolean;
   closeCompleteProfile: () => void;
   finishAddingProfile?: () => void;
+  defaultData?: any;
 }) => {
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState(1);
   const [loading, setLoading] = useState(false);
   const [certificate, setCertificate] = useState<any>();
   const [formData, setFormData] = useState<FormData>({
     tin: "",
+    business_name: "",
     year_of_placement: "",
     business_type: "",
     reg_no_or_school_code: "",
@@ -60,13 +71,63 @@ const CompleteProfile = ({
     cell: "",
     village: "",
   });
+  const ProvincesOptions = Provinces();
+  const DistrictOptions = formData.province ? Districts(formData.province) : [];
+  const SectorOptions =
+    formData.district && formData.province
+      ? Sectors(formData.province, formData.district)
+      : [];
+  const CellOptions =
+    formData.sector && formData.district && formData.province
+      ? Cells(formData.province, formData.district, formData.sector)
+      : [];
+  const VillageOptions =
+    formData.cell && formData.sector && formData.district && formData.province
+      ? Villages(
+          formData.province,
+          formData.district,
+          formData.sector,
+          formData.cell,
+        )
+      : [];
 
+  useEffect(() => {
+    if (defaultData) {
+      console.log("default data --> ", defaultData);
+      const locations = defaultData?.addressLine?.split("-");
+      setFormData({
+        tin: defaultData?.tinNumber,
+        is_private: defaultData?.private,
+        reg_no_or_school_code: defaultData?.registrationNumber,
+        reg_date: defaultData?.registrationDate,
+        business_phone: defaultData.phone,
+        year_of_placement: defaultData.yearOfEstablishment,
+        business_address: defaultData?.addressLine,
+        employee_number: defaultData.employeeNumber,
+        business_type: defaultData?.businessType,
+        bank_name: defaultData?.bankName,
+        bank_account: defaultData?.businessAccount,
+        po_box: defaultData?.poBox,
+        province: locations[4]?.split(" ")[1],
+        district: locations[3]?.split(" ")[1],
+        sector: locations[2]?.split(" ")[1],
+        cell: locations[1]?.split(" ")[1],
+        village: locations[0]?.split(" ")[0],
+        email: defaultData?.email,
+        business_name: defaultData?.businessName,
+      });
+      setCertificate(defaultData?.businessCertificate);
+      setErrors({});
+    }
+  }, [defaultData]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
     if (activeTab === 1) {
       if (!formData.tin) newErrors.tin = "TIN is required.";
+      if (!formData.business_name)
+        newErrors.business_name = "Institution Name is required.";
       if (!formData.reg_no_or_school_code)
         newErrors.reg_no_or_school_code =
           "Registration number or school code is required.";
@@ -75,21 +136,22 @@ const CompleteProfile = ({
       if (formData.is_private === undefined)
         newErrors.is_private = "Private status is required.";
       if (!formData.business_type)
-        newErrors.business_type = "Business type is required.";
-      if (!certificate) newErrors.certificate = "Certificate is required.";
+        newErrors.business_type = "Institution type is required.";
+      if (!certificate && !defaultData)
+        newErrors.certificate = "Certificate is required.";
     } else if (activeTab === 2) {
       if (!formData.employee_number)
         newErrors.employee_number = "Employee number is required.";
       if (!formData.business_phone)
-        newErrors.business_phone = "Business phone is required.";
+        newErrors.business_phone = "Institution phone is required.";
       if (!formData.po_box) newErrors.po_box = "PO Box is required.";
       if (!formData.business_address)
-        newErrors.business_address = "Business address is required.";
+        newErrors.business_address = "Institution address is required.";
       if (!formData.bank_account)
         newErrors.bank_account = "Bank account is required.";
       if (!formData.year_of_placement)
         newErrors.year_of_placement = "Year of establishment is required.";
-      if (!formData.email) newErrors.email = "Business Email  is required.";
+      if (!formData.email) newErrors.email = "Institution Email  is required.";
       if (!formData.bank_name) newErrors.bank_name = "Bank name is required.";
     } else if (activeTab === 3) {
       if (!formData.year_of_placement)
@@ -100,11 +162,9 @@ const CompleteProfile = ({
       if (!formData.cell) newErrors.cell = "Cell is required.";
       if (!formData.village) newErrors.village = "Village is required.";
     }
-    console.log(newErrors);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleNext = () => {
     if (validate()) {
       setActiveTab((current) => (current < 3 ? current + 1 : current));
@@ -112,15 +172,24 @@ const CompleteProfile = ({
   };
 
   const handlePrev = () =>
-    setActiveTab((current) => (current > 0 ? current - 1 : current));
+    setActiveTab((current) => (current > 1 ? current - 1 : current));
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+      ...(name === "province" && {
+        district: "",
+        sector: "",
+        cell: "",
+        village: "",
+      }),
+      ...(name === "district" && { sector: "", cell: "", village: "" }),
+      ...(name === "sector" && { cell: "", village: "" }),
+      ...(name === "cell" && { village: "" }),
     }));
 
     if (errors[name]) {
@@ -139,12 +208,31 @@ const CompleteProfile = ({
       Object.keys(formData).forEach((key) => {
         submitData.append(key, formData[key as keyof FormData] as string);
       });
+      submitData.append("isprivate", String(formData.is_private));
+      const updateData = submitData;
+      const payload = defaultData ? updateData : submitData;
+      updateData.append("year_of_establishment", formData.year_of_placement);
+      updateData.append(
+        "number_of_employees",
+        String(formData.employee_number),
+      );
+      updateData.append("phone", formData.business_phone);
       if (certificate) {
         submitData.append("certificate", certificate);
       }
-      console.log(submitData);
-      authorizedApi
-        .put("/applicant/update/profile", submitData)
+      const endPoint = "/applicant/update/business";
+      (defaultData
+        ? authorizedApi.put(endPoint, payload, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+        : authorizedApi.post("/applicant/complete/profile", payload, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+      )
         .then((_res) => {
           notifications.show({
             message: "Profile updated successfully!",
@@ -160,6 +248,7 @@ const CompleteProfile = ({
             employee_number: 0,
             bank_name: "",
             bank_account: "",
+            business_name: "",
             business_phone: "",
             email: "",
             po_box: "",
@@ -170,6 +259,8 @@ const CompleteProfile = ({
             cell: "",
             village: "",
           });
+          console.log("profile updated successfully!");
+          getApplicantProfile(dispatch);
           finishAddingProfile && finishAddingProfile();
         })
         .catch((err) => {
@@ -201,64 +292,15 @@ const CompleteProfile = ({
         >
           <IoMdClose size={25} color={"#000"} />
         </button>
-        <div className="w-11/12 flex justify-between items-start mt-4">
-          <div className="w-[43%] flex flex-col items-start">
-            <h1 className="text-2xl font-extrabold">Complete your profile</h1>
-            <h2 className="text-[#000F2369] text-lg font-medium w-4/5">
-              Provide the below details to complete. Provide the below details
-              to complete.
+        <div className="  my-4 text-center w-full">
+          <h1 className="text-2xl font-extrabold">
+            {defaultData ? "Update business" : "Complete your"} profile
+          </h1>
+          {!defaultData && (
+            <h2 className="text-[#000F2369] text-lg font-medium 5">
+              Provide the below details to complete.
             </h2>
-          </div>
-          <div className="w-[55%] flex items-center">
-            <div
-              onClick={() => setActiveTab(1)}
-              className={`w-1/3 flex justify-end ${
-                activeTab === 1 ? "bg-[#005DE90A]" : ""
-              }`}
-            >
-              <button
-                className={`py-2 transition-all duration-300 text-xs w-full font-medium ${
-                  activeTab === 1
-                    ? "border-b-2 border-[#005DE9] text-[#005DE9]"
-                    : ""
-                }`}
-              >
-                Call Details
-              </button>
-            </div>
-            <div
-              onClick={() => setActiveTab(2)}
-              className={`w-1/3 flex justify-end ${
-                activeTab === 2 ? "bg-[#005DE90A]" : ""
-              }`}
-            >
-              <button
-                className={`py-2 transition-all duration-200 text-xs w-full font-medium ${
-                  activeTab === 2
-                    ? "border-b-2 border-[#005DE9] text-[#005DE9]"
-                    : ""
-                }`}
-              >
-                Timeline Details
-              </button>
-            </div>
-            <div
-              onClick={() => setActiveTab(3)}
-              className={`w-1/3 flex justify-start ${
-                activeTab === 3 ? "bg-[#005DE90A]" : ""
-              }`}
-            >
-              <button
-                className={`py-2 transition-all duration-300 text-xs w-full  font-medium ${
-                  activeTab === 3
-                    ? "border-b-2 border-[#005DE9] text-[#005DE9]"
-                    : ""
-                }`}
-              >
-                Category Details
-              </button>
-            </div>
-          </div>
+          )}
         </div>
 
         <div className="w-11/12 flex flex-col items-center mt-4 overflow-hidden">
@@ -267,10 +309,10 @@ const CompleteProfile = ({
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
                   <label
-                    htmlFor="TIN"
+                    htmlFor="business_name"
                     className="block text-xs font-bold text-gray-700"
                   >
-                    TIN
+                    Institution Name
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
@@ -278,16 +320,18 @@ const CompleteProfile = ({
                     </span>
                     <input
                       type="text"
-                      name="tin"
-                      value={formData.tin}
-                      placeholder="Call title"
+                      name="business_name"
+                      value={formData.business_name}
+                      placeholder="Institution Name"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2.5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
-                  {errors.tin && (
-                    <p className="text-red-500 text-sm">{errors.tin}</p>
+                  {errors.business_name && (
+                    <p className="text-red-500 text-sm">
+                      {errors.business_name}
+                    </p>
                   )}
                 </div>
                 <div className="w-full">
@@ -307,7 +351,7 @@ const CompleteProfile = ({
                       value={formData.reg_no_or_school_code}
                       placeholder="Registration number"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -321,42 +365,27 @@ const CompleteProfile = ({
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
                   <label
-                    htmlFor="business_type"
+                    htmlFor="TIN"
                     className="block text-xs font-bold text-gray-700"
                   >
-                    Business Type
+                    TIN
                   </label>
                   <div className="w-full relative">
                     <span className="absolute left-2 top-[10px]">
                       <Folder2 />
                     </span>
-                    <Select
-                      name="business_type"
-                      value={formData.business_type}
-                      onChange={(value: any) => {
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          business_type: value,
-                        }));
-                        //@ts-ignore
-                        errors.business_type &&
-                          setErrors((prevData) => ({
-                            ...prevData,
-                            business_type: "",
-                          }));
-                      }}
-                      data={[
-                        { label: "School", value: "school" },
-                        { label: "Institution", value: "institution" },
-                      ]}
-                      className="mt-1 block w-full  pl-5  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      placeholder="Select Business Type"
+                    <input
+                      type="text"
+                      name="tin"
+                      value={formData.tin}
+                      placeholder="TIN"
+                      onChange={handleChange}
+                      className="mt-1 block w-full pl-8 px-3 py-2.5 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
+                      required
                     />
                   </div>
-                  {errors.business_type && (
-                    <p className="text-red-500 text-sm">
-                      {errors.business_type}
-                    </p>
+                  {errors.tin && (
+                    <p className="text-red-500 text-sm">{errors.tin}</p>
                   )}
                 </div>
                 <div className="w-full">
@@ -376,7 +405,8 @@ const CompleteProfile = ({
                       value={formData.reg_date}
                       placeholder="Registration Date"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      max={new Date().toISOString().split("T")[0]}
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -387,12 +417,62 @@ const CompleteProfile = ({
               </div>
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
+                  <div className="w-full">
+                    <label
+                      htmlFor="business_type"
+                      className="block text-xs font-bold text-gray-700"
+                    >
+                      Institution Type
+                    </label>
+                    <div className="w-full relative">
+                      <span className="absolute left-2 top-[10px]">
+                        <Folder2 />
+                      </span>
+                      <Select
+                        defaultValue={null}
+                        clearable={true}
+                        name="business_type"
+                        value={formData.business_type}
+                        onChange={(value: any) => {
+                          setFormData((prevData) => ({
+                            ...prevData,
+                            business_type: value,
+                          }));
+                          //@ts-ignore
+                          errors.business_type &&
+                            setErrors((prevData) => ({
+                              ...prevData,
+                              business_type: "",
+                            }));
+                        }}
+                        data={[
+                          { label: "Company", value: "company" },
+                          { label: "Cooperative", value: "cooperative" },
+                          { label: "NGO", value: "ngo" },
+                          { label: "Trade Union", value: "tradeUnion" },
+                          { label: "Association", value: "association" },
+                          { label: "School", value: "school" },
+                          {
+                            label: "Training Center(VTC)",
+                            value: "training center",
+                          },
+                        ]}
+                        className="mt-1 block w-full  pl-5  bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
+                        placeholder="Select Institution type"
+                      />
+                    </div>
+                    {errors.business_type && (
+                      <p className="text-red-500 text-sm">
+                        {errors.business_type}
+                      </p>
+                    )}
+                  </div>
                   <div className="w-full mt-5">
                     <label
                       htmlFor="is_private"
                       className="block text-xs font-bold text-gray-700"
                     >
-                      Is Internal
+                      Is Private
                     </label>
                     <div className="mt-1 pl-1 flex flex-col gap-2">
                       <Checkbox
@@ -422,9 +502,10 @@ const CompleteProfile = ({
                     htmlFor="fileUpload"
                     className="block text-xs font-bold text-gray-700"
                   >
-                    Attachment (Certificate)
+                    Attachment (Recognized Registration Certificate/
+                    Accreditation)
                   </label>
-                  <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                  <div className="flex mt-1 p-4 flex-col items-center justify-center w-full h-[100%] border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ">
                     <label
                       htmlFor="file-upload"
                       className="flex flex-col items-center justify-center space-y-2 cursor-pointer"
@@ -511,7 +592,7 @@ const CompleteProfile = ({
                       value={formData.employee_number}
                       placeholder="Employee Number"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -538,7 +619,7 @@ const CompleteProfile = ({
                       value={formData.bank_name}
                       placeholder="Bank Name"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -565,7 +646,7 @@ const CompleteProfile = ({
                       value={formData.year_of_placement}
                       placeholder="year of establishment"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -592,7 +673,7 @@ const CompleteProfile = ({
                       value={formData.bank_account}
                       placeholder="Bank Account"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -621,7 +702,7 @@ const CompleteProfile = ({
                       value={formData.email}
                       placeholder="Type the email"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -646,7 +727,7 @@ const CompleteProfile = ({
                       value={formData.business_phone}
                       placeholder="Phone number"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -675,7 +756,7 @@ const CompleteProfile = ({
                       value={formData.business_address}
                       placeholder="Address"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -702,7 +783,7 @@ const CompleteProfile = ({
                       value={formData.po_box}
                       placeholder="PO box"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 "
                       required
                     />
                   </div>
@@ -740,24 +821,24 @@ const CompleteProfile = ({
                   >
                     Province
                   </label>
-                  <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <Folder2 />
-                    </span>
-                    <input
-                      type="text"
-                      name="province"
-                      value={formData.province}
-                      placeholder="Province"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
-                    />
-                  </div>
+                  <select
+                    name="province"
+                    value={formData.province}
+                    onChange={handleChange}
+                    className="items-center px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                  >
+                    <option value="">Select Province</option>
+                    {ProvincesOptions?.map((option: string, index: number) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                   {errors.province && (
                     <p className="text-red-500 text-sm">{errors.province}</p>
                   )}
                 </div>
+
                 <div className="w-full">
                   <label
                     htmlFor="district"
@@ -765,25 +846,25 @@ const CompleteProfile = ({
                   >
                     District
                   </label>
-                  <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <User />
-                    </span>
-                    <input
-                      type="text"
-                      name="district"
-                      value={formData.district}
-                      placeholder="District"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
-                    />
-                  </div>
+                  <select
+                    name="district"
+                    value={formData.district}
+                    onChange={handleChange}
+                    className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                  >
+                    <option value="">Select District</option>
+                    {DistrictOptions?.map((option: string, index: number) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                   {errors.district && (
                     <p className="text-red-500 text-sm">{errors.district}</p>
                   )}
                 </div>
               </div>
+
               <div className="w-full flex justify-between gap-3">
                 <div className="w-full">
                   <label
@@ -792,24 +873,24 @@ const CompleteProfile = ({
                   >
                     Sector
                   </label>
-                  <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <Folder2 />
-                    </span>
-                    <input
-                      type="text"
-                      name="sector"
-                      value={formData.sector}
-                      placeholder="sector"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
-                    />
-                  </div>
+                  <select
+                    name="sector"
+                    value={formData.sector}
+                    onChange={handleChange}
+                    className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                  >
+                    <option value="">Select Sector</option>
+                    {SectorOptions?.map((option: string, index: number) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                   {errors.sector && (
                     <p className="text-red-500 text-sm">{errors.sector}</p>
                   )}
                 </div>
+
                 <div className="w-full">
                   <label
                     htmlFor="cell"
@@ -817,20 +898,19 @@ const CompleteProfile = ({
                   >
                     Cell
                   </label>
-                  <div className="w-full relative">
-                    <span className="absolute left-2 top-[10px]">
-                      <Folder2 />
-                    </span>
-                    <input
-                      type="text"
-                      name="cell"
-                      value={formData.cell}
-                      placeholder="Cell"
-                      onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
-                    />
-                  </div>
+                  <select
+                    name="cell"
+                    value={formData.cell}
+                    onChange={handleChange}
+                    className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                  >
+                    <option value="">Select Cell</option>
+                    {CellOptions?.map((option: string, index: number) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                   {errors.cell && (
                     <p className="text-red-500 text-sm">{errors.cell}</p>
                   )}
@@ -839,25 +919,24 @@ const CompleteProfile = ({
 
               <div className="w-full">
                 <label
-                  htmlFor="address"
+                  htmlFor="village"
                   className="block text-xs font-bold text-gray-700"
                 >
                   Village
                 </label>
-                <div className="w-full relative">
-                  <span className="absolute left-2 top-[10px]">
-                    <Folder2 />
-                  </span>
-                  <input
-                    type="village"
-                    name="village"
-                    value={formData.village}
-                    placeholder="Village"
-                    onChange={handleChange}
-                    className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    required
-                  />
-                </div>
+                <select
+                  name="village"
+                  value={formData.village}
+                  onChange={handleChange}
+                  className="items-center px-3 py-2 block bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500  block w-full"
+                >
+                  <option value="">Select Village</option>
+                  {VillageOptions?.map((option: string, index: number) => (
+                    <option key={index} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
                 {errors.village && (
                   <p className="text-red-500 text-sm">{errors.village}</p>
                 )}

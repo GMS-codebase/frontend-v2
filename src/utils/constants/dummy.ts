@@ -4503,6 +4503,27 @@ export const employee = [
     title: "ICT & Digital Skills Specialist",
   },
 ];
+
+export const ContractDetails = [
+  {
+    title: "First Installment",
+    amount: "14363666.50",
+    percentage: "50",
+    paid: "YES",
+  },
+  {
+    title: "Second Installment",
+    amount: "14363666.50",
+    percentage: "50",
+    paid: "YES",
+  },
+  {
+    title: "Third Installment",
+    amount: "14363666.50",
+    percentage: "50",
+    paid: "YES",
+  },
+];
 export const applicationsData = [
   {
     applicationNumber: "GMS-APP-0001924",
