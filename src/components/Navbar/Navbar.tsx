@@ -215,6 +215,7 @@ const Navbar = () => {
             getApplicants(dispatch),
             getContracts(dispatch),
             getMinutes(dispatch),
+            getEmpStages(dispatch),
             getApplicationsReadyForMinutes(dispatch, "sdf"),
             getUploadedMinutes(dispatch, "sdf"),
             getApprovedMinutes(dispatch, "sdf"),
@@ -243,7 +244,7 @@ const Navbar = () => {
             getApplications(dispatch),
             getCalls(dispatch),
             getForms(dispatch),
-        
+
           ]);
         }
       } catch (error) {
