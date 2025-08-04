@@ -241,7 +241,8 @@ const Navbar = () => {
             getBudgetLines(dispatch),
             getAppeals(dispatch, "applicant"),
             getApplications(dispatch),
-            getCalls(dispatch)
+            getCalls(dispatch),
+            getForms(dispatch),
         
           ]);
         }
