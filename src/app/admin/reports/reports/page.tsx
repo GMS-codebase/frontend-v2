@@ -17,7 +17,7 @@ const Page = () => {
         data={data}
         placeholder={placeholderText}
         defaultValue={placeholderText}
-        className="w-full px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
+        className="!min-w-[176px] px-3 py-2 flex-shrink-0 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
       />
     );
   };
@@ -28,7 +28,7 @@ const Page = () => {
         <div className="relative lg:w-[20rem] w-full mb-4">
           <h1 className="font-bold text-xl">Export Report</h1>
         </div>
-        <div className="flex w-full overflow-auto items-center gap-3">
+        <div className="flex w-full overflow-auto items-center gap-3 custom-scrollbar">
           <div className="w-44">
             <FilterDropDown
               placeholderText="Filter By Call"

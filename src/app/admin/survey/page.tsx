@@ -1398,7 +1398,7 @@ const SurveyPage = () => {
 
   return (
     <div className="font-[Urbanist] text-[1.125rem] font-medium bg-white min-h-screen">
-      <div className="container mx-auto py-10 px-4">
+      <div className=" py-10 px-4">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
           Surveys Overview
         </h1>
@@ -1683,7 +1683,7 @@ const SurveyPage = () => {
             </div>
           </div>
 
-          <div className="w-full px-4 sm:px-5 overflow-x-auto">
+          <div className="w-full overflow-x-auto">
             {activeTab === "responsesPerType" ? (
               <CustomDataTable
                 columns={responsesPerTypeColumns}

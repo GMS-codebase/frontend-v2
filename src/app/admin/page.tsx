@@ -210,8 +210,8 @@ const Dashboard = () => {
           {callStatsError}
         </div>
       ) : (
-        <div className="mt-8 flex flex-wrap gap-6">
-          <div className="bg-white p-6 rounded-2xl flex-grow">
+        <div className="mt-8 flex flex-col md:flex-row flex-wrap gap-6 overflow-hidden">
+          <div className="bg-white p-6 rounded-2xl flex-grow overflow-y-auto md:max-h-[456px] custom-scrollbar">
             <h2 className="text-lg font-semibold mb-4">
               Applicants per Priority Sector
             </h2>
@@ -223,7 +223,7 @@ const Dashboard = () => {
                   className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2"
                 >
                   <span className="text-base">{sector}</span>
-                  <span className="text-base bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                  <span className="text-base flex justify-center items-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                     {count as any}
                   </span>
                 </div>
@@ -243,7 +243,7 @@ const Dashboard = () => {
               </span>
             </div>
           </div>
-          <div className=" bg-white rounded-2xl w-[25%] p-6 flex-grow">
+          <div className=" bg-white rounded-2xl min-w-[287px] md:min-w-[350px] w-[100%] md:w-[25%] p-6 flex-grow">
             <div className="my-5">
               <div className="relative flex items-center justify-center flex-col">
                 <div className="">
@@ -315,7 +315,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-2xl flex-grow p-4">
+          <div className="bg-white rounded-2xl flex-grow p-4 ">
             <div className="md:flex justify-between mb-8">
               <h2 className="text-lg font-semibold ">Total Applicants</h2>
               <div className="rounded-full bg-slate-400 bg-opacity-10">
@@ -338,7 +338,7 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="h-[90%] rounded-lg flex flex-col items-center justify-center gap-3">
+            <div className="h-[90%] rounded-lg flex flex-col items-center justify-center gap-3 pb-5">
               <BasicGauges
                 applicationsByBusinessType={
                   Object.keys(callStats?.businessTypeGroupings || {}).reduce(
@@ -380,7 +380,7 @@ const Dashboard = () => {
           Export as excel
         </div>
       </div>
-      <div className="grid md:grid-cols-2 grid-cols-1 gap-10">
+      <div className="grid lg:grid-cols-2 grid-cols-1 gap-10">
         {/* Submissions Data */}
         {submissionsDataLoading ? (
           <div className="bg-gray-200 animate-pulse rounded-2xl h-64 w-full"></div>
@@ -392,8 +392,8 @@ const Dashboard = () => {
           <div className="bg-white p-6 rounded-2xl">
             <div className="md:flex justify-between mb-5">
               <p className="font-bold text-xl">Number of Submissions</p>
-              <div className="text-md gap-4 flex items-center justify-center">
-                <div className="rounded-full bg-slate-400 bg-opacity-10">
+              <div className="text-md gap-4 flex items-center justify-end mt-2 md:mt-0">
+                <div className="rounded-full bg-slate-400 bg-opacity-10 w-full md:w-auto">
                   <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
                     <span className="text-gray-400">
                       <SolarBenzeneRingBroken />
@@ -427,10 +427,10 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="flex justify-between ">
-              <span className="w-1/2">Sector</span>
-              <span className="w-1/5 text-center">Applicants</span>
-              <span className="w-1/5 text-center">Applications</span>
+            <div className="flex justify-between text-black font-bold">
+              <span className="w-1/2 text-sm md:text-base">Sector</span>
+              <span className="w-1/5 text-sm md:text-base text-center">Applicants</span>
+              <span className="w-1/5 text-sm md:text-base text-center">Applications</span>
             </div>
             <div className="space-y-4">
               {Object.keys(submissionsData || {}).length === 0 ? (
@@ -453,24 +453,24 @@ const Dashboard = () => {
                     className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2"
                   >
                     <span className="w-1/2">{key}</span>
-                    <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                    <span className="w-1/5 text-center flex justify-center items-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                       {submissionsData[key].applicants}
                     </span>
-                    <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                    <span className="w-1/5 text-center flex justify-center items-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                       {submissionsData[key].applications}
                     </span>
                   </div>
                 ))
               )}
               <div className="flex justify-between px-4 py-2 rounded-xl bg-[#005DE91F] text-primary font-bold">
-                <span>Total</span>
-                <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                <span className="w-1/2">Total</span>
+                <span className="w-1/5 text-center flex justify-center items-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(submissionsData || {}).reduce(
                     (sum, key) => sum + submissionsData[key].applicants,
                     0
                   )}
                 </span>
-                <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                <span className="w-1/5 text-center flex justify-center items-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(submissionsData || {}).reduce(
                     (sum, key) => sum + submissionsData[key].applications,
                     0
@@ -492,8 +492,8 @@ const Dashboard = () => {
           <div className="bg-white p-6 rounded-2xl">
             <div className="md:flex justify-between mb-5">
               <p className="font-bold text-xl">Applicants</p>
-              <div className="text-md gap-4 flex items-center justify-center">
-                <div className="rounded-full bg-slate-400 bg-opacity-10">
+              <div className="text-md gap-4 flex items-center justify-end">
+                <div className="rounded-full bg-slate-400 bg-opacity-10 w-full md:w-auto">
                   <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
                     <span className="text-gray-400">
                       <SolarBenzeneRingBroken />
@@ -527,9 +527,9 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="flex justify-between ">
-              <span className="w-1/2">Sector</span>
-              <span className="w-1/5 text-center">Applicants</span>
+            <div className="flex justify-between text-black font-bold">
+              <span className="w-1/2 text-sm md:text-base">Sector</span>
+              <span className="w-1/5 text-sm md:text-base text-center">Applicants</span>
             </div>
             <div className="space-y-4">
               {Object.keys(applicantsData || {}).length === 0 ? (
@@ -552,7 +552,7 @@ const Dashboard = () => {
                     className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2"
                   >
                     <span className="w-1/2">{key}</span>
-                    <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                    <span className="w-1/5 text-center flex justify-center items-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                       {applicantsData[key]}
                     </span>
                   </div>
@@ -560,7 +560,7 @@ const Dashboard = () => {
               )}
               <div className="flex justify-between px-4 py-2 rounded-xl bg-[#005DE91F] text-primary font-bold">
                 <span>Total</span>
-                <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                <span className="w-1/5 text-center flex justify-center items-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(applicantsData || {}).reduce(
                     (sum, key) => sum + applicantsData[key],
                     0
@@ -582,8 +582,8 @@ const Dashboard = () => {
           <div className="bg-white p-6 rounded-2xl">
             <div className="md:flex justify-between mb-5">
               <p className="font-bold text-lg">Applications</p>
-              <div className="text-md gap-4 flex items-center justify-center">
-                <div className="rounded-full bg-slate-400 bg-opacity-10">
+              <div className="text-md gap-4 flex items-center justify-end mt-2 md:mt-0">
+                <div className="rounded-full bg-slate-400 bg-opacity-10  w-full md:w-auto">
                   <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
                     <span className="text-gray-400">
                       <SolarBenzeneRingBroken />
@@ -617,9 +617,9 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="flex justify-between ">
-              <span className="w-1/2">Sector</span>
-              <span className="w-1/5 text-center">Applications</span>
+            <div className="flex justify-between text-black font-bold">
+              <span className="w-1/2 text-sm md:text-base">Sector</span>
+              <span className="w-1/5 text-sm md:text-base text-center">Applications</span>
             </div>
             <div className="space-y-4">
               {Object.keys(applicationsData || {}).length === 0 ? (
@@ -642,7 +642,7 @@ const Dashboard = () => {
                     className="flex justify-between bg-[#005DE91F] px-4 py-2 rounded-xl text-primary mt-2"
                   >
                     <span className="w-1/2">{key}</span>
-                    <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                    <span className="w-1/5 text-center flex justify-center items-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                       {applicationsData[key]}
                     </span>
                   </div>
@@ -650,7 +650,7 @@ const Dashboard = () => {
               )}
               <div className="flex justify-between px-4 py-2 rounded-xl bg-[#005DE91F] text-primary font-bold">
                 <span>Total</span>
-                <span className="w-1/5 text-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
+                <span className="w-1/5 text-center flex justify-center items-center bg-[#005DE91F] rounded-2xl px-4 text-primary font-bold">
                   {Object.keys(applicationsData || {}).reduce(
                     (sum, key) => sum + applicationsData[key],
                     0
@@ -661,11 +661,11 @@ const Dashboard = () => {
           </div>
         )}
 
-        <div className="bg-white p-6 rounded-2sm">
-          <div className="md:flex justify-between">
+        <div className="bg-white rounded-2xl">
+          <div className="md:flex justify-between p-6">
             <p className="font-bold text-lg">Selected Trainees</p>
-            <div className="text-md gap-4 flex items-center justify-center">
-              <div className="rounded-full bg-slate-400 bg-opacity-10">
+            <div className="text-md gap-4 flex items-center justify-end mt-2 md:mt-0">
+              <div className="rounded-full bg-slate-400 bg-opacity-10 w-full md:w-auto">
                 <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
                   <span className="text-gray-400">
                     <SolarBenzeneRingBroken />
@@ -686,13 +686,13 @@ const Dashboard = () => {
           </div>
           <Dash col1="Number" data={dashTablesData} showSingleRow={true} />
         </div>
-        <div className="bg-white p-6 rounded-2xl">
-          <div className="flex flex-col justify-between gap-3 w-full">
+        <div className="bg-white rounded-2xl">
+          <div className="flex flex-col justify-between gap-3 w-full p-6">
             <p className="w-full font-bold text-lg">
               Number of graduates trainees before 2025
             </p>
-            <div className="flex items-center justify-between w-full">
-              <div className="rounded-full bg-slate-400 bg-opacity-10 md:w-[40%] px-3">
+            <div className="flex items-center justify-end gap-5 w-full">
+              <div className="rounded-full bg-slate-400 bg-opacity-10 w-full lg:w-[40%] px-3">
                 <label
                   htmlFor="call"
                   className="w-full flex items-center py-2 gap-2 rounded-full"
@@ -721,12 +721,12 @@ const Dashboard = () => {
           </div>
           <Dash col1="Male" col2="Female" data={dashTablesData} />
         </div>
-        <div className="bg-white p-6 rounded-2xl">
-          <div className=" justify-center items-center">
+        <div className="bg-white rounded-2xl">
+          <div className=" justify-center items-center p-6">
             <p className="font-bold text-lg">
               Number of Trainees Starting from 2025
             </p>
-            <div className="text-md gap-2 md:grid-cols-4 grid grid-cols-2 my-2 ">
+            <div className="text-md gap-2 grid grid-cols-2 my-2 ">
               <div className="flex gap-2 rounded-full bg-slate-400 bg-opacity-10 items-center justify-center py-2 px-5">
                 <span className="text-gray-400">
                   <SolarCalendarBold />
@@ -739,21 +739,24 @@ const Dashboard = () => {
                 </span>
                 <p className="text-xs">Ending date</p>
               </div>
-              <div className="rounded-full bg-slate-400 bg-opacity-10">
-                <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
-                  <span className="text-gray-400">
-                    <SolarBenzeneRingBroken />
-                  </span>
-                  <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none text-xs">
-                    <option value="select-stage">All</option>
-                    <option value="select-stage">Ongoing</option>
-                    <option value="select-stage">Completed</option>
-                    <option value="select-stage">Graduated</option>
-                  </select>
+              <div />
+              <div className="flex items-center gap-5">
+                <div className="rounded-full bg-slate-400 bg-opacity-10 w-full">
+                  <div className="flex items-center justify-around px-6 py-2 gap-2 rounded-full w-full">
+                    <span className="text-gray-400">
+                      <SolarBenzeneRingBroken />
+                    </span>
+                    <select className="w-full rounded-full text-md bg-transparent outline-none border-none appearance-none text-xs">
+                      <option value="select-stage">All</option>
+                      <option value="select-stage">Ongoing</option>
+                      <option value="select-stage">Completed</option>
+                      <option value="select-stage">Graduated</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <AdminAction call={null} setIsCall={() => {}} />{" "}
+                <div>
+                  <AdminAction call={null} setIsCall={() => {}} />{" "}
+                </div>
               </div>
             </div>
           </div>

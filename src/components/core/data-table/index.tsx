@@ -149,7 +149,7 @@ export function DataTable({
                     {headerGroup.headers.map((header, i) => (
                       <td
                         className={clsx(
-                          "p-2 font-medium py-5 whitespace-nowrap text-xl text-primary ",
+                          "p-2 font-medium py-5 whitespace-nowrap text-base md:text-xl text-primary ",
                           i === 0 && "pl-4",
                           i === headerGroup.headers.length - 1 && "pr-4",
                         )}
@@ -184,7 +184,7 @@ export function DataTable({
         <>
           <div className={`${tableClass} w-full overflow-auto data-table`}>
             <table
-              className={`table-row-spacing`}
+              className={`table-row-spacing min-w-[950px]`}
               style={{ width: tableWidth ?? "100%" }}
             >
               <thead className="text-mainPurple">
@@ -193,7 +193,7 @@ export function DataTable({
                     {headerGroup.headers.map((header, i) => (
                       <td
                         className={clsx(
-                          "p-2 font-medium py-5 whitespace-nowrap text-xl text-primary ",
+                          "p-2 font-medium py-5 whitespace-nowrap text-base md:text-xl text-primary ",
                           i === 0 && "pl-4",
                           i === headerGroup.headers.length - 1 && "pr-4",
                         )}
