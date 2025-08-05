@@ -225,6 +225,7 @@ const Navbar = () => {
             getApplicationsForContractSigning(dispatch),
             getProfile(dispatch),
             getApplications(dispatch),
+            getForms(dispatch)
           ]);
         } else if (currentRole === "GRANT_COMMITTEE") {
           await Promise.all([getApplications(dispatch), getProfile(dispatch)]);
