@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { SolarUserPlusBold } from "@/components/core/icons";
 import { Select } from "@mantine/core";
 import { useRef } from "react";
@@ -15,7 +15,7 @@ const Page = () => {
   }: {
     placeholderText: string;
     data: any[];
-    className:string;
+    className: string;
   }) => {
     return (
       <Select
@@ -27,19 +27,18 @@ const Page = () => {
     );
   };
 
-    const filtersContainerRef = useRef<HTMLDivElement>(null);
-  
-    const handleScroll = (direction: "left" | "right") => {
-      if (filtersContainerRef.current) {
-        const scrollAmount = 100;
-        if (direction === "left") {
-          filtersContainerRef.current.scrollLeft -= scrollAmount;
-        } else {
-          filtersContainerRef.current.scrollLeft += scrollAmount;
-        }
-      }
-    };
+  const filtersContainerRef = useRef<HTMLDivElement>(null);
 
+  const handleScroll = (direction: "left" | "right") => {
+    if (filtersContainerRef.current) {
+      const scrollAmount = 100;
+      if (direction === "left") {
+        filtersContainerRef.current.scrollLeft -= scrollAmount;
+      } else {
+        filtersContainerRef.current.scrollLeft += scrollAmount;
+      }
+    }
+  };
 
   return (
     <div className="w-full">
@@ -47,8 +46,6 @@ const Page = () => {
         <div className="relative lg:w-[20rem] w-full mb-4">
           <h1 className="font-bold text-xl">Export Report</h1>
         </div>
-        <div className="flex w-full overflow-auto items-center gap-3 custom-scrollbar">
-          <div className="w-44">
         <div className="flex items-center lg:max-w-[60%]">
           <button
             onClick={() => handleScroll("left")}

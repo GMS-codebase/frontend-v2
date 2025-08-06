@@ -32,6 +32,7 @@ const actionMappings = {
   employees: DELETE_EMPLOYEE_SUCCESS,
   budgetLines: DELETE_BUDGET_LINE_SUCCESS,
   forms: DELETE_FORM_SUCCESS,
+  trainings: DELETE_FORM_SUCCESS,
   surveys: DELETE_SURVEY_SUCCESS, // Added surveys action mapping
 };
 
@@ -45,6 +46,7 @@ const routeMappings = {
   employees: "/employees",
   budgetLines: "/budgetlines/delete",
   forms: "/forms/delete",
+  trainings: "/trainings/delete",
   surveys: "/survey/remove", // Updated to use correct survey delete endpoint
 };
 

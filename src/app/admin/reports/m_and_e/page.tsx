@@ -61,14 +61,14 @@ const Page = () => {
         data={data}
         placeholder={placeholderText}
         defaultValue={placeholderText}
-        className="w-full px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
+        className="px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
       />
     );
   };
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex flex-col md:flex-row justify-between gap-4 p-4">
+      <div className="w-full flex flex-col lg:flex-row justify-between gap-4 p-4">
         <div className="relative lg:w-[20rem] w-full md:mb-4">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} color="" />
@@ -80,7 +80,7 @@ const Page = () => {
           />
         </div>
         <div className="lg:flex  items-center gap-3">
-          <div className="w-full md:w-44 py-1">
+          <div className="min-w-[130px] w-full py-1">
             <FilterDropDown
               placeholderText="Filter By Call"
               data={Array.from(new Set(data.map((item) => item.call)))}
@@ -93,13 +93,13 @@ const Page = () => {
             <span>
               <SolarFileBold />
             </span>
-            <div>Add new Report</div>
+            <div className="whitespace-nowrap">Add new Report</div>
           </div>
           <div className="flex my-1 justify-center text-center items-center gap-2 px-4 py-3 bg-[#005DE9] rounded-full text-white">
             <span>
               <SolarFileBold />
             </span>
-            <div>Export Report</div>
+            <div className="whitespace-nowrap">Export Report</div>
           </div>
         </div>
       </div>

@@ -15,38 +15,7 @@ import { VscEye } from "react-icons/vsc";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import { Training } from "@/types";
 import AddEditTraining from "@/components/Modals/training/AddEditTraining";
-
-//test data 
-export const trainingsData: Training[] = [
-  {
-    uuid: "trn-001",
-    title: "My Training 1",
-    startDate: "2025-08-11",
-    endDate: "2025-08-15",
-    status: "rejected",
-    materialFile: "",
-    traineesFile: "",
-  },
-  {
-    uuid: "trn-002",
-    title: "My Training 2",
-    startDate: "2025-09-01",
-    endDate: "2025-09-05",
-    status: "draft",
-    materialFile: "",
-    traineesFile: "",
-  },
-  {
-    uuid: "trn-003",
-    title: "My Training 2",
-    startDate: "2025-07-20",
-    endDate: "2025-07-22",
-    status: "accepted",
-    materialFile: "",
-    traineesFile: "",
-  },
-];
-
+import { trainingsData } from "@/utils/constants/trainings";
 
 const Page = () => {
   const [
@@ -83,41 +52,41 @@ const Page = () => {
       header: "End Date",
       cell: ({ row }) => <div className="w-full">{row.original?.endDate}</div>,
     },
-  {
-  accessorKey: "response",
-  header: "Response",
-  cell: ({ row }) => {
-    const { status, uuid, response } = row.original;
+    {
+      accessorKey: "response",
+      header: "Response",
+      cell: ({ row }) => {
+        const { status, uuid, response } = row.original;
 
-    if (status === "accepted") {
-      return (
-        <button
-          className="px-3 py-1 bg-primary text-white rounded-full text-sm"
-          onClick={() => {
-            window.location.href = `/applicant/trainings/${uuid}`;
-          }}
-        >
-          View
-        </button>
-      );
-    }
+        if (status === "accepted") {
+          return (
+            <button
+              className="px-3 py-1 bg-primary text-white rounded-full text-sm"
+              onClick={() => {
+                window.location.href = `/applicant/trainings/${uuid}`;
+              }}
+            >
+              View
+            </button>
+          );
+        }
 
-    if (status === "draft") {
-      return (
-        <button
-          className="px-3 py-1 bg-primary/20 border border-primary text-primary rounded-full text-sm"
-          onClick={() => {
-            console.log("Request action for", uuid);
-          }}
-        >
-          Request
-        </button>
-      );
-    }
+        if (status === "draft") {
+          return (
+            <button
+              className="px-3 py-1 bg-primary/20 border border-primary text-primary rounded-full text-sm"
+              onClick={() => {
+                console.log("Request action for", uuid);
+              }}
+            >
+              Request
+            </button>
+          );
+        }
 
-    return <div className="text-gray-400">-</div>;
-  },
-},
+        return <div className="text-gray-400">-</div>;
+      },
+    },
 
     {
       accessorKey: "status",
