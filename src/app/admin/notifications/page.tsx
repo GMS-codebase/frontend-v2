@@ -156,11 +156,13 @@ const Page = () => {
   const FilterDropDown = ({
     placeholderText,
     data,
+    className,
     onChange,
     value,
   }: {
     placeholderText: string;
     data: any[];
+    className?: string;
     onChange: (value: any) => void;
     value: string;
   }) => {
@@ -189,24 +191,25 @@ const Page = () => {
   };
 
   return (
-    <div className=" container mx-auto w-full">
+    <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="lg:flex justify-between items-center p-4">
         <h1 className="text-2xl font-bold mb-3">Send Notifications</h1>
-        <div className="flex items-center lg:max-w-[60%]">
+        <div className="flex items-center w-full lg:max-w-[60%]">
           <button
             onClick={() => handleScroll("left")}
-            className="p-2 bg-white shadow-lg rounded-full mr-2"
+            className="p-2 lg:hidden bg-white shadow-lg rounded-full mr-2"
           >
             <FiChevronLeft size={25} />
           </button>
 
           <div
             ref={filtersContainerRef}
-            className="flex items-center gap-3 overflow-x-auto scrollbar-hide flex-grow"
+            className="flex gap-3 overflow-x-auto scrollbar-hide flex-grow sm:w-full w-auto whitespace-nowrap px-2 py-2"
             style={{ scrollBehavior: "smooth" }}
           >
             <FilterDropDown
               value={formData.filters.call}
+              className="flex-shrink-0"
               onChange={(value: string) =>
                 setFormData({
                   ...formData,
@@ -226,6 +229,7 @@ const Page = () => {
             />
             <FilterDropDown
               value={formData.filters.window}
+              className="flex-shrink-0"
               onChange={(value: string) =>
                 setFormData({
                   ...formData,
@@ -244,6 +248,7 @@ const Page = () => {
             />
             <FilterDropDown
               value={formData.filters.sector}
+              className="flex-shrink-0"
               onChange={(value: string) =>
                 setFormData({
                   ...formData,
@@ -262,6 +267,7 @@ const Page = () => {
             />
             <FilterDropDown
               value={formData.filters.stage}
+              className="flex-shrink-0"
               onChange={(value: string) =>
                 setFormData({
                   ...formData,
@@ -286,6 +292,7 @@ const Page = () => {
             />
             <FilterDropDown
               value={formData.filters.status}
+              className="flex-shrink-0"
               onChange={(value: string) =>
                 setFormData({
                   ...formData,
@@ -301,7 +308,7 @@ const Page = () => {
           </div>
           <button
             onClick={() => handleScroll("right")}
-            className="p-2 bg-white shadow-lg rounded-full ml-2"
+            className="p-2 lg:hidden bg-white shadow-lg rounded-full ml-2"
           >
             <FiChevronRight size={25} />
           </button>

@@ -215,6 +215,7 @@ const Navbar = () => {
             getApplicants(dispatch),
             getContracts(dispatch),
             getMinutes(dispatch),
+            getEmpStages(dispatch),
             getApplicationsReadyForMinutes(dispatch, "sdf"),
             getUploadedMinutes(dispatch, "sdf"),
             getApprovedMinutes(dispatch, "sdf"),
@@ -224,6 +225,7 @@ const Navbar = () => {
             getApplicationsForContractSigning(dispatch),
             getProfile(dispatch),
             getApplications(dispatch),
+            getForms(dispatch)
           ]);
         } else if (currentRole === "GRANT_COMMITTEE") {
           await Promise.all([getApplications(dispatch), getProfile(dispatch)]);
@@ -241,8 +243,9 @@ const Navbar = () => {
             getBudgetLines(dispatch),
             getAppeals(dispatch, "applicant"),
             getApplications(dispatch),
-            getCalls(dispatch)
-        
+            getCalls(dispatch),
+            getForms(dispatch),
+
           ]);
         }
       } catch (error) {
