@@ -44,7 +44,7 @@ const Page = () => {
       accessorKey: "sector",
       header: "Sector",
       cell: ({ row }) => (
-        <div className="truncate">{row?.original?.sectors[0]?.name}</div>
+        <div className="truncate">{row?.original?.sectors?.[0]?.name}</div>
       ),
     },
     {

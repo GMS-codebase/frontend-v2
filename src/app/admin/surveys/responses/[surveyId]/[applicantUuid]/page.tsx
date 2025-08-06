@@ -8,6 +8,7 @@ import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Clock, User, FileText, Download } from "lucide-react";
+import SurveyForms from "@/components/forms/SurveyForms";
 
 interface SurveyResponse {
   uuid: string;
@@ -290,63 +291,28 @@ const IndividualResponsePage = () => {
   const fetchResponse = useCallback(async () => {
     try {
       setLoading(true);
-      // First, try the trainee-specific endpoint
-      try {
-        const traineeResponse = await authorizedApi.get(
-          `/survey/survey-responseByTrainee/${surveyId}/${applicantUuid}`
-        );
-        if (traineeResponse.data) {
-          setIsTraineeResponse(true);
-          const responseData = traineeResponse.data;
-          setResponse(responseData);
-          // Parse the answers
-          if (responseData.answers) {
-            let questionMap: { [key: string]: string } = {};
-            // Parse questions if available
-            if (responseData.survey?.qns) {
-              questionMap = parseQuestions(responseData.survey.qns);
-            }
-            const parsed = parseAnswers(responseData.answers, questionMap);
-            setParsedAnswers(parsed);
-          } else {
-            setParsedAnswers([]);
-          }
-          notifications.show({
-            message: "Trainee response loaded successfully",
-            color: "green",
-          });
-          return;
+      const applicantResponse = await authorizedApi.get(
+        `/survey/survey-response/${surveyId}/${applicantUuid}`
+      );
+      setIsTraineeResponse(false);
+      const responseData = applicantResponse.data;
+      setResponse(responseData);
+      // Parse the answers
+      if (responseData.answers) {
+        let questionMap: { [key: string]: string } = {};
+        // Parse questions if available
+        if (responseData.survey?.qns) {
+          questionMap = parseQuestions(responseData.survey.qns);
         }
-      } catch (traineeError) {
-        console.log("Not a trainee response, trying applicant endpoint...");
+        const parsed = parseAnswers(responseData.answers, questionMap);
+        setParsedAnswers(parsed);
+      } else {
+        setParsedAnswers([]);
       }
-      // If trainee endpoint fails, try the general endpoint for applicants
-      try {
-        const applicantResponse = await authorizedApi.get(
-          `/survey/survey-response/${surveyId}/${applicantUuid}`
-        );
-        setIsTraineeResponse(false);
-        const responseData = applicantResponse.data;
-        setResponse(responseData);
-        // Parse the answers
-        if (responseData.answers) {
-          let questionMap: { [key: string]: string } = {};
-          // Parse questions if available
-          if (responseData.survey?.qns) {
-            questionMap = parseQuestions(responseData.survey.qns);
-          }
-          const parsed = parseAnswers(responseData.answers, questionMap);
-          setParsedAnswers(parsed);
-        } else {
-          setParsedAnswers([]);
-        }
-        notifications.show({
-          message: "Applicant response loaded successfully",
-          color: "green",
-        });
-      } catch (applicantError) {
-        throw new Error("Failed to load response from both endpoints");
-      }
+      notifications.show({
+        message: "Applicant response loaded successfully",
+        color: "green",
+      });
     } catch (error) {
       console.error("Error fetching response:", error);
       notifications.show({
@@ -477,7 +443,7 @@ const IndividualResponsePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className=" px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
           {/* Header */}
           <div className="flex items-center justify-between">
@@ -502,11 +468,10 @@ const IndividualResponsePage = () => {
               <button
                 onClick={() => handleStatusChange("REVIEWED")}
                 disabled={isUpdating || response.status === "REVIEWED"}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  response.status === "REVIEWED"
-                    ? "bg-green-100 text-green-800 cursor-not-allowed"
-                    : "bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"
-                } ${isUpdating ? "opacity-50 cursor-not-allowed" : ""}`}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${response.status === "REVIEWED"
+                  ? "bg-green-100 text-green-800 cursor-not-allowed"
+                  : "bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"
+                  } ${isUpdating ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 {isUpdating ? "Updating..." : "Mark as Reviewed"}
               </button>
@@ -522,11 +487,10 @@ const IndividualResponsePage = () => {
                 </h1>
                 <div className="flex items-center space-x-3">
                   <div
-                    className={`px-4 py-2 rounded-full text-sm font-medium ${
-                      response.status === "REVIEWED"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-amber-100 text-amber-800"
-                    }`}
+                    className={`px-4 py-2 rounded-full text-sm font-medium ${response.status === "REVIEWED"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-amber-100 text-amber-800"
+                      }`}
                   >
                     {response.status === "REVIEWED"
                       ? "Reviewed"
@@ -675,64 +639,16 @@ const IndividualResponsePage = () => {
                 <h2 className="text-2xl font-semibold text-gray-900">
                   Survey Responses
                 </h2>
-                {parsedAnswers.length > 0 && (
-                  <span className="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full">
-                    {parsedAnswers.length} response
-                    {parsedAnswers.length !== 1 ? "s" : ""} found
-                  </span>
-                )}
               </div>
 
-              {parsedAnswers.length === 0 ? (
-                <div className="text-center py-12">
-                  <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No responses found
-                  </h3>
-                  <p className="text-gray-600">
-                    This survey response does not contain any parseable answers.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  {parsedAnswers.map((answer, index) => (
-                    <div
-                      key={index}
-                      className="border border-gray-200 rounded-lg overflow-hidden shadow-sm"
-                    >
-                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <span className="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full mb-2">
-                              Question {index + 1}
-                            </span>
-                            <h3 className="text-lg font-semibold text-gray-900 leading-relaxed">
-                              {answer.question}
-                            </h3>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="bg-white px-6 py-5">
-                        <div className="flex items-start space-x-3">
-                          <div className="flex-shrink-0">
-                            <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-500 mb-1">
-                              Answer:
-                            </p>
-                            <div className="prose max-w-none">
-                              <p className="text-gray-900 leading-relaxed whitespace-pre-wrap text-base">
-                                {answer.answer}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <SurveyForms
+                mode="viewing"
+                formData={{
+                  ...response.survey,
+                  qns: JSON.parse(response.survey.qns),
+                } as any}
+                answers={JSON.parse(response.answers)}
+              />
             </CardContent>
           </Card>
         </div>

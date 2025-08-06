@@ -67,42 +67,42 @@ const Page = () => {
           app.applicant?.name
             .toLowerCase()
             .includes(
-              searchTerm.toLowerCase() ||
-                app.applicant?.businesses?.[0]?.businessName
-                  .toLowerCase()
-                  .includes(searchTerm.toLowerCase()),
-            ),
+              searchTerm.toLowerCase()) ||
+          app.applicant?.businesses?.[0]?.businessName
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()),
+            
       )
-      .filter((app: any) => {
-        const { stage, window, call, subWindow, sector, trade, step } =
-          selectedFilters;
-        return (
-          (stage === "All" ||
-            (getApplicationStatus2(app?.currentStage) === stage &&
-              filterByStep(app, step))) &&
-          (call === "All" || app.call?.title === call) &&
-          (window === "All" || app.window?.title === window) &&
-          (subWindow === "All" || app.subWindow?.title === subWindow) &&
-          (sector === "All" || app.sector?.name === sector) &&
-          (trade === "All" || app.trade?.trade.title === trade)
-        );
-      });
-  }, [applications, searchTerm, selectedFilters]);
+    .filter((app: any) => { 
+      const { stage, window, call, subWindow, sector, trade, step } =
+        selectedFilters;
+      return (
+        (stage === "All" ||
+          (getApplicationStatus2(app?.currentStage) === stage &&
+            filterByStep(app, step))) &&
+        (call === "All" || app.call?.title === call) &&
+        (window === "All" || app.window?.title === window) &&
+        (subWindow === "All" || app.subWindow?.title === subWindow) &&
+        (sector === "All" || app.sector?.name === sector) &&
+        (trade === "All" || app.trade?.trade.title === trade)
+      );
+    });
+}, [applications, searchTerm, selectedFilters]);
 
-  return (
-    <EmployeeApplicationsPage
-      applications={filteredApplications.map((app: any) => ({
-        ...app,
-        currentStage: getApplicationStatus2(app),
-      }))}
-      type="sdf"
-      loading={loading}
-      selectedFilters={selectedFilters}
-      setSelectedFilters={setSelectedFilters}
-      searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
-    />
-  );
+return (
+  <EmployeeApplicationsPage
+    applications={filteredApplications.map((app: any) => ({
+      ...app,
+      currentStage: getApplicationStatus2(app),
+    }))}
+    type="sdf"
+    loading={loading}
+    selectedFilters={selectedFilters}
+    setSelectedFilters={setSelectedFilters}
+    searchTerm={searchTerm}
+    setSearchTerm={setSearchTerm}
+  />
+);
 };
 
 export default Page;

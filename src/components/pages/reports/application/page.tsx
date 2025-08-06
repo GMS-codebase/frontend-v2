@@ -37,8 +37,8 @@ const ApplicationReports = () => {
     () =>
       rawApplications.map((app: any) => ({
         ...app,
-        sector: app.sectors[0] || null,
-        trade: app.trades[0] || null,
+        sector: app.sectors?.[0] || null,
+        trade: app.trades?.[0] || null,
       })),
     [rawApplications],
   );
@@ -165,8 +165,8 @@ const ApplicationReports = () => {
         window: row.window?.title,
         call: row.call?.title,
         subWindow: row.subWindow?.title,
-        sector: row.sectors[0]?.name,
-        trade: row.trades[0]?.trade?.title,
+        sector: row.sectors?.[0]?.name,
+        trade: row.trades?.[0]?.trade?.title,
         stage: row?.finishedAnswering! ? "SUBMITTED" : "ANSWERING",
         contacts: contact,
         institutionType: capitalize(
@@ -176,7 +176,7 @@ const ApplicationReports = () => {
           ? "Private"
           : "Public",
         requestedBeneficiaries:
-          calculateTotalTrainees(JSON.parse(row?.answers)) ?? "None",
+          calculateTotalTrainees(JSON.parse(row?.answers || "{}")) ?? "None",
         approvedBeneficiaries:
           row?.numberOfTrainees === null ? "0" : row?.numberOfTrainees,
         generalComment: row?.evaluationFinalDecision ?? "-",
@@ -189,7 +189,8 @@ const ApplicationReports = () => {
         cell: row.applicant.businesses?.[0]?.addressLine?.split("-")[1] ?? "",
         village:
           row.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "",
-        submissionDate: formatDate(row?.lastUpdatedAt, "yyyy-MM-dd"),
+        submissionDate: row?.lastUpdatedAt ? formatDate(row.lastUpdatedAt, "yyyy-MM-dd") : "-",
+
       };
     },
   );
@@ -247,7 +248,7 @@ const ApplicationReports = () => {
               onChange={(value: any) => {
                 setReportType(value);
               }}
-              className={`w-[33%] px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
+              className={`flex-shrink-0 px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
             />
           </div>
 
@@ -282,10 +283,10 @@ const ApplicationReports = () => {
               getReportName(
                 selectedFilters.call,
                 selectedFilters.sector,
-                reportType,
+                reportType
               ),
               formattedSubmissionData,
-              columns,
+              columns
             )
           }
           data={formattedSubmissionData!}
