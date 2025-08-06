@@ -22,17 +22,15 @@ import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Badge from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "@/components/ui/Table";
+import { Menu } from "@mantine/core";
 import { Dropdown, DropdownItem } from "@/components/ui/Dropdown";
 import { Select, SelectItem } from "@/components/ui/Select";
 import { IoArrowBack } from "react-icons/io5";
+import { DataTable } from "@/components/core/data-table";
+import { ColumnDef } from "@tanstack/react-table";
+import { HiDotsHorizontal } from "react-icons/hi";
+import Link from "next/link";
+import { VscEye } from "react-icons/vsc";
 
 // Types
 interface Survey {
@@ -446,6 +444,9 @@ const SurveyViewPage = () => {
     }
   }, [id, fetchSurvey, fetchResponses]);
 
+
+  console.log(responses)
+
   const filteredResponses = responses.filter((response) => {
     if (statusFilter === "reviewed" && response.status !== "REVIEWED")
       return false;
@@ -563,105 +564,107 @@ const SurveyViewPage = () => {
     setDateToFilter("");
   };
 
-  const renderResponseRow = (response: SurveyResponse) => {
-    const respondent = response.applicant || response.trainee;
-    const respondentType = response.applicant
-      ? "Applicant"
-      : response.trainee
-        ? "Trainee"
-        : "N/A";
 
-    let displayAnswer = "No answers provided";
-    let answerCount = 0;
-    try {
-      const questionMap = parseQuestions(response.survey?.qns ?? "");
-      const parsedAnswers = parseAnswers(response.answers ?? "", questionMap);
-      if (parsedAnswers.length > 0) {
-        displayAnswer = parsedAnswers[0].answer;
-        answerCount = parsedAnswers.length;
-      }
-    } catch (error) {
-      console.warn("Failed to parse answers for display:", error);
-    }
+  const columns: ColumnDef<SurveyResponse>[] = [
+    {
+      accessorKey: "respondent",
+      header: "Respondent",
+      cell: ({ row }) => {
+        const respondent = row.original.applicant || row.original.trainee;
+        const respondentType = row.original.applicant
+          ? "Applicant"
+          : row.original.trainee
+            ? "Trainee"
+            : "N/A";
 
-    return (
-      <TableRow key={response.uuid || ""}>
-        <TableCell>
+        return (
           <div className="flex items-center space-x-3">
             <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
               <User className="w-4 h-4 text-blue-600" />
             </div>
             <div>
-              <p className="font-medium text-gray-900">
-                {respondent?.name || "N/A"}
-              </p>
-              <p className="text-sm text-gray-500">
-                {respondent?.email || "N/A"}
-              </p>
+              <p className="font-medium text-gray-900">{respondent?.name || "N/A"}</p>
+              <p className="text-sm text-gray-500">{respondent?.email || "N/A"}</p>
               <p className="text-xs text-blue-600">{respondentType}</p>
             </div>
           </div>
-        </TableCell>
-        <TableCell>
+        );
+      },
+    },
+    {
+      accessorKey: "submitted_at",
+      header: "Submitted",
+      cell: ({ row }) => {
+        const submittedAt = row.original.submitted_at;
+        return (
           <div className="flex items-center space-x-2">
             <Clock className="w-4 h-4 text-gray-400" />
             <div>
               <p className="text-sm font-medium text-gray-900">
-                {response.submitted_at
-                  ? format(new Date(response.submitted_at), "MMM dd, yyyy")
-                  : "N/A"}
+                {submittedAt ? format(new Date(submittedAt), "MMM dd, yyyy") : "N/A"}
               </p>
               <p className="text-xs text-gray-500">
-                {response.submitted_at
-                  ? format(new Date(response.submitted_at), "HH:mm")
-                  : "N/A"}
+                {submittedAt ? format(new Date(submittedAt), "HH:mm") : "N/A"}
               </p>
             </div>
           </div>
-        </TableCell>
-        <TableCell>
-          <div className="max-w-md">
-            <p
-              className="text-sm text-gray-900 line-clamp-2"
-              title={displayAnswer}
-            >
-              {displayAnswer}
-            </p>
-            {answerCount > 1 && (
-              <p className="text-xs text-gray-500">
-                +{answerCount - 1} more answers
-              </p>
-            )}
-          </div>
-        </TableCell>
-        <TableCell>
-          <Badge
-            variant={response.status === "REVIEWED" ? "success" : "warning"}
-          >
-            {response.status === "REVIEWED" ? "Reviewed" : "Pending"}
+        );
+      },
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.original.status;
+        return (
+          <Badge variant={status === "REVIEWED" ? "success" : "warning"}>
+            {status === "REVIEWED" ? "Reviewed" : "Pending"}
           </Badge>
-        </TableCell>
-        <TableCell>
-          <Dropdown
-            trigger={
-              <Button variant="ghost" size="sm">
-                <MoreHorizontal className="w-4 h-4" />
-              </Button>
-            }
-          >
-            <DropdownItem>
-              <a
-                href={`/admin/surveys/responses/${id}/${response.applicant?.uuid || response.trainee?.uuid}`}
-                className="flex gap-2 items-center"
-              >
-                <Eye className="w-4 h-4 mr-2" /> View Details
-              </a>
-            </DropdownItem>
-          </Dropdown>
-        </TableCell>
-      </TableRow>
-    );
-  };
+        );
+      },
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const respondentId =
+          row.original.applicant?.uuid || row.original.trainee?.uuid || "unknown";
+
+        return (
+          <div>
+            <Menu shadow="lg" width={200}>
+              <Menu.Target>
+                <button
+                  style={{
+                    background:
+                      "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+                  }}
+                  className="p-3 rounded-full border text-white hover:bg-red-100"
+                >
+                  <HiDotsHorizontal size={25} color="white" />
+                </button>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Label>
+                  <h1 className="text-lg">Actions</h1>
+                </Menu.Label>
+                <Menu.Divider />
+                <Menu.Item className="bg-[#F0F0F0]">
+                  <Link
+                    href={`/admin/surveys/responses/${id}/${respondentId}`}
+                    className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                  >
+                    <VscEye size={21} color="#576074" />
+                    View Details
+                  </Link>
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </div>
+        );
+      },
+    },
+  ];
 
   const reviewedCount = filteredResponses.filter(
     (r) => r.status === "REVIEWED"
@@ -672,7 +675,7 @@ const SurveyViewPage = () => {
 
   if (loading) {
     return (
-      <div className="w-full p-6 max-w-7xl mx-auto text-center">
+      <div className="w-full p-6  text-center">
         <div className="flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
           <span className="ml-3 text-gray-600">Loading survey data...</span>
@@ -683,7 +686,7 @@ const SurveyViewPage = () => {
 
   if (error) {
     return (
-      <div className="w-full p-6 max-w-7xl mx-auto">
+      <div className="w-full p-6 ">
         <button
           onClick={() => router.back()}
           className="flex items-center gap-2 text-blue-500 mb-6 hover:underline font-medium"
@@ -697,7 +700,7 @@ const SurveyViewPage = () => {
 
   if (!survey) {
     return (
-      <div className="w-full p-6 max-w-7xl mx-auto">
+      <div className="w-full p-6 ">
         <button
           onClick={() => router.back()}
           className="flex items-center gap-2 text-blue-500 mb-6 hover:underline font-medium"
@@ -710,8 +713,8 @@ const SurveyViewPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className=" bg-gray-50">
+      <div className=" px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <div className="mb-4 lg:mb-0">
@@ -889,99 +892,62 @@ const SurveyViewPage = () => {
             </CardContent>
           </Card>
 
-          <Card padding="none">
-            <div className="overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Respondent</TableHead>
-                    <TableHead>Submitted</TableHead>
-                    <TableHead>Response</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {loading ? (
-                    <TableRow>
-                      <td colSpan={5} className="text-center py-12">
-                        <div className="flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                          <span className="ml-3 text-gray-600">
-                            Loading responses...
-                          </span>
-                        </div>
-                      </td>
-                    </TableRow>
-                  ) : filteredResponses.length === 0 ? (
-                    <TableRow>
-                      <td colSpan={5} className="text-center py-12">
-                        <div className="flex flex-col items-center">
-                          <FileText className="w-12 h-12 text-gray-400 mb-4" />
-                          <h3 className="text-lg font-medium text-gray-900 mb-2">
-                            No responses found
-                          </h3>
-                          <p className="text-gray-600">
-                            {responses.length === 0
-                              ? "No survey responses have been submitted yet."
-                              : "No responses match your current filters."}
-                          </p>
-                        </div>
-                      </td>
-                    </TableRow>
-                  ) : (
-                    filteredResponses.map(renderResponseRow)
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+          <DataTable
+            columns={columns}
+            data={filteredResponses ?? []}
+            loading={loading}
+            noDataMessage={
+              responses.length === 0
+                ? "No survey responses have been submitted yet."
+                : "No responses match your current filters."
+            }
+          />
 
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
-                <div className="text-sm text-gray-700">
-                  Showing page {currentPage} of {totalPages} ({totalResponses}{" "}
-                  total responses)
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                  >
-                    <ChevronLeft className="w-4 h-4" /> Previous
-                  </Button>
-                  <div className="flex items-center space-x-1">
-                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                      const pageNum =
-                        Math.max(1, Math.min(totalPages - 4, currentPage - 2)) +
-                        i;
-                      return (
-                        <Button
-                          key={pageNum}
-                          variant={
-                            pageNum === currentPage ? "primary" : "outline"
-                          }
-                          size="sm"
-                          onClick={() => handlePageChange(pageNum)}
-                        >
-                          {pageNum}
-                        </Button>
-                      );
-                    })}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                  >
-                    Next <ChevronRight className="w-4 h-4" />
-                  </Button>
-                </div>
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
+              <div className="text-sm text-gray-700">
+                Showing page {currentPage} of {totalPages} ({totalResponses}{" "}
+                total responses)
               </div>
-            )}
-          </Card>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="w-4 h-4" /> Previous
+                </Button>
+                <div className="flex items-center space-x-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    const pageNum =
+                      Math.max(1, Math.min(totalPages - 4, currentPage - 2)) +
+                      i;
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={
+                          pageNum === currentPage ? "primary" : "outline"
+                        }
+                        size="sm"
+                        onClick={() => handlePageChange(pageNum)}
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Next <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

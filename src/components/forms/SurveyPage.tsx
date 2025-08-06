@@ -4,6 +4,7 @@ import { Survey as ISurvey } from "@/types/surveys-form";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { HiOutlineDocumentAdd } from "react-icons/hi";
+import { v4 as uuid } from "uuid";
 
 interface SurveyPageProps {
   mode: "creating" | "viewing" | "answering" | "commenting";
@@ -30,7 +31,7 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
   setComments,
 }) => {
   const [newSurvey, setNewSurvey] = useState<ISurvey>({
-    id: `${surveyType}-s-${pageIndex}-${pageSurveys?.length}`,
+    id: uuid(),
     title: "Question Title",
     description: "Question SubTitle",
     type: "text",
@@ -43,7 +44,7 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
   const handleAddSurvey = (survey: ISurvey) => {
     onChange([...pageSurveys, survey]);
     setNewSurvey({
-      id: `${surveyType}-s-${pageIndex}-${pageSurveys?.length + 1}`,
+      id: uuid(),
       title: "Question Title",
       description: "Question SubTitle",
       type: "text",

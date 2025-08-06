@@ -18,8 +18,6 @@ import { format } from "date-fns";
 import { HiDotsHorizontal } from "react-icons/hi";
 import Link from "next/link";
 import { notifications } from "@mantine/notifications";
-import { Menu } from "@mantine/core";
-
 import { authorizedApi } from "@/utils/api";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
@@ -35,6 +33,8 @@ import {
 } from "@/components/ui/Table";
 import { Dropdown, DropdownItem } from "@/components/ui/Dropdown";
 import { Select, SelectItem } from "@/components/ui/Select";
+import { Menu } from "@mantine/core";
+import { VscEye } from "react-icons/vsc";
 
 // Types based on the API response
 interface Survey {
@@ -486,17 +486,34 @@ const SurveyResponsesPage = () => {
           </Badge>
         </TableCell>
         <TableCell>
-          <Menu.Target>
-            <button
-              style={{
-                background:
-                  "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-              }}
-              className="p-3 rounded-full border text-white hover:bg-red-100"
-            >
-              <HiDotsHorizontal size={25} color="white" />
-            </button>
-          </Menu.Target>
+          <Menu shadow="lg" width={200}>
+            <Menu.Target>
+              <button
+                style={{
+                  background:
+                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+                }}
+                className="p-3 rounded-full border text-white hover:bg-red-100"
+              >
+                <HiDotsHorizontal size={25} color="white" />
+              </button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>
+                <h1 className="text-lg">Actions</h1>
+              </Menu.Label>
+              <Menu.Divider />
+              <Menu.Item className="bg-[#F0F0F0]">
+                <Link
+                  href={`/sdf/survey/responses/${response.survey.id}/${respondent?.uuid}`}
+                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                >
+                  <VscEye size={21} color="#576074" />
+                  View Details
+                </Link>
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </TableCell>
       </TableRow>
     );
