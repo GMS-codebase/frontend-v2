@@ -74,6 +74,14 @@ export type Contact = {
   email: string;
 };
 
+export type Training ={
+  uuid:string;
+  title:string;
+  startDate: string;
+  endDate: string;
+  status: "rejected" | "accepted" | "draft"
+}
+
 export type Comments = {
   titleComment: string;
   activitiesComment: string;

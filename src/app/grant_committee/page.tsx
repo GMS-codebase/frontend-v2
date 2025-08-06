@@ -103,13 +103,13 @@ const Page = () => {
         </div>
       </div>
       <p className="my-3">Overview</p>
-      <div className="flex items-center gap-2">
-        <div className="w-3/5 bg-white rounded-2xl shadow p-3">
+      <div className="lg:flex items-center lg:gap-2 gap-6">
+        <div className="lg:w-3/5 bg-white rounded-2xl shadow p-3">
           <p className="text-xl font-medium">SDP Graduates Per year</p>
           {/* Insert the DashboardLineChart component here */}
           <DashboardLineChart data={lineChartData} />
         </div>
-        <div className="w-2/5 bg-white rounded-2xl shadow p-3">
+        <div className="lg:w-2/5 w-full bg-white rounded-2xl shadow p-3">
           <div className="flex items-center justify-between">
             <p>Applicants rate analysis</p>
             <Select
