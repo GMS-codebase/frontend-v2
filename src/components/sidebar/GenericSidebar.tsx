@@ -51,14 +51,10 @@ const GenericSidebar = ({
     return (
         <div className="relative">
             <button
-           className={`${!isSidebarOpen ? "lg:hidden flex items-center text-white bg-blue-600 justify-center fixed top-2 left-2 z-50 w-6 h-6 rounded-full" : "bg-white"}`}
+                className={`${!isSidebarOpen ? "lg:hidden flex items-center text-white bg-blue-600 justify-center fixed top-2 left-2 z-50 w-6 h-6 rounded-full" : "bg-white"}`}
                 onClick={() => setSidebarOpen(!isSidebarOpen)}
             >
-<<<<<<< HEAD
-                {!isSidebarOpen && <HamburgerMenu />}
-=======
-              {!isSidebarOpen && <HamburgerMenu className="rounded-full" />}
->>>>>>> f1b4359d6d66191276c82164fea3ea59169717aa
+                {!isSidebarOpen && <HamburgerMenu className="rounded-full" />}
             </button>
 
             <div
@@ -110,12 +106,10 @@ const GenericSidebar = ({
                         routes.map((route, index) => (
                             <div key={index} className="mx-2">
                                 <Link
-                                    onClick={() =>{
-                                        setCookie("breadcrumb", route.label)
-                                        setSidebarOpen(false)
-                                    }
-                                      
-                                    }
+                                    onClick={() => {
+                                        setCookie("breadcrumb", route.label);
+                                        setSidebarOpen(false);
+                                    }}
                                     href={route.path}
                                     className={`flex items-center ${
                                         isCompressed

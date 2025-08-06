@@ -182,7 +182,8 @@ const Page = () => {
 
     return (
         <div className="w-full flex flex-col mb-20 pb-10">
-            <div className="w-full overflow-auto lg:flex justify-between items-center p-4">
+            <div className="w-full overflow-hidden lg:flex justify-between items-center p-4">
+                {/* Search Input */}
                 <div className="relative lg:w-[20rem] w-full mb-2">
                     <span className="absolute top-4 left-4">
                         <CiSearch size={25} />
@@ -195,7 +196,10 @@ const Page = () => {
                         placeholder="Search"
                     />
                 </div>
-                <div className="relative flex lg:w-[80%] w-full overflow-auto">
+
+                {/* Filter Carousel */}
+                <div className="relative flex lg:w-[80%] w-full">
+                    {/* Left Scroll Button */}
                     <button
                         className="lg:hidden absolute left-0 top-1/2 transform -translate-y-1/2 p-2 rounded-full z-10 bg-white shadow-md"
                         onClick={scrollLeft}
@@ -203,27 +207,32 @@ const Page = () => {
                         <FiChevronLeft className="w-6 h-6 text-gray-700" />
                     </button>
 
+                    {/* Filters Container */}
                     <div
                         ref={scrollContainerRef}
-                        className="flex w-full gap-3 lg:flex-row lg:items-center overflow-auto scroll-smooth"
+                        className="flex w-full gap-3 lg:flex-row lg:items-center overflow-x-auto scroll-smooth snap-x snap-mandatory"
                     >
-                        <FilterDropDown
-                            placeholderText="Filter By Call"
-                            data={["call 1"]}
-                       
-                        />
-                        <FilterDropDown
-                            placeholderText="Filter By Sector"
-                            data={["ICT and innovations"]}
-                     
-                        />
-                        <FilterDropDown
-                            placeholderText="Filter By Trade"
-                            data={["Manufacturing"]}
-                    
-                        />
+                        <div className="snap-center flex-shrink-0 w-full lg:w-auto">
+                            <FilterDropDown
+                                placeholderText="Filter By Call"
+                                data={["call 1"]}
+                            />
+                        </div>
+                        <div className="snap-center flex-shrink-0 w-full lg:w-auto">
+                            <FilterDropDown
+                                placeholderText="Filter By Sector"
+                                data={["ICT and innovations"]}
+                            />
+                        </div>
+                        <div className="snap-center flex-shrink-0 w-full lg:w-auto">
+                            <FilterDropDown
+                                placeholderText="Filter By Trade"
+                                data={["Manufacturing"]}
+                            />
+                        </div>
                     </div>
 
+                    {/* Right Scroll Button */}
                     <button
                         className="lg:hidden absolute right-0 top-1/2 transform -translate-y-1/2 p-2 rounded-full z-10 bg-white shadow-md"
                         onClick={scrollRight}
@@ -232,6 +241,7 @@ const Page = () => {
                     </button>
                 </div>
             </div>
+
             <Tabs defaultValue="contracts">
                 <Tabs.List className="w-auto float-end my-6 mr-5">
                     <Tabs.Tab value="contracts" className="px-4">
