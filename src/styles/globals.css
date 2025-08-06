@@ -42,6 +42,11 @@ body {
   font-size: 12px !important;
 }
 
+.custom-scrollbar::-webkit-scrollbar{
+  width: 6px;
+  background-color: transparent;
+}
+
 .sidebar-container::-webkit-scrollbar {
   width: 6px;
   background-color: transparent;

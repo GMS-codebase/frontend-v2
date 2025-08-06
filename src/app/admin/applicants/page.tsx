@@ -91,7 +91,7 @@ const Page = () => {
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[20rem]">
+        <div className="relative w-full md:w-[20rem]">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} color="" />
           </span>

@@ -151,15 +151,15 @@ const Page = () => {
           </div>
           <div className="flex justify-between items-center w-3/5  font-semibold px-10"></div>
           <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-            <div className="w-full flex justify-between items-center py-4 px-10">
+            <div className="w-full flex flex-col md:flex-row justify-between md:items-center gap-3 py-4 px-10">
               <div className="flex  gap-2  bg-gray-400 rounded-full bg-opacity-10 px-4  py-2 font-semibold items-center justify-center">
                 <span>
                   <SolarBookmarkBold />
                 </span>
                 <div>Sectors</div>
               </div>
-              <div className="flex gap-3 items-center">
-                <div className="relative w-[25rem]">
+              <div className=" xl:w-[50%] flex flex-col md:flex-row justify-end gap-3 items-center">
+                <div className="relative w-full">
                   <span className="absolute top-4 left-2">
                     <CiSearch size={25} />
                   </span>
@@ -174,12 +174,12 @@ const Page = () => {
 
                 <button
                   onClick={openAssignSectorSubWindow}
-                  className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+                  className="bg-primary text-white py-4 px-7 rounded-full flex flex-row items-center gap-3 self-end md:self-center"
                 >
                   <span className="text-2xl">
                     <SolarAddFolderBold />
                   </span>
-                  <h1 className="text-base font-medium text-white">
+                  <h1 className="text-base font-medium text-white whitespace-nowrap">
                     Assign Sector To SubWindow
                   </h1>
                 </button>
