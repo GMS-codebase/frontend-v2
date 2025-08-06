@@ -6,6 +6,7 @@ import DetailsSection from "./_partials/details-section";
 import Trainees from "./_partials/trainees";
 import ResponseSection from "./_partials/response-section";
 import PDFViewerModal from "@/components/PDFViewer";
+import CertificationGrid from "./_partials/certificationGrid";
 
 type props = {
   trainingId: string;
@@ -23,17 +24,16 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
           <h1 className="text-xl md:text-2xl font-bold text-primaryText">
             Training manual
           </h1>
-          <Button className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3">
-            <h1 className="text-base font-medium text-white">
-              Request Training
-            </h1>
+          <Button className="bg-primary text-white py-3 px-7 !rounded-full">
+            Request Training
           </Button>
         </div>
         <div className="py-10 flex flex-col gap-10">
           <PDFViewerContainer pdfUrl={PDF_URL} />
           <CompetenciesSection />
           <DetailsSection />
-          <Trainees pdf_url={PDF_URL} />
+          <Trainees />
+          <CertificationGrid />
           <ResponseSection />
         </div>
       </div>

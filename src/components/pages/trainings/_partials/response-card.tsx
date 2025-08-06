@@ -1,8 +1,7 @@
-import TextArea from "@/components/textarea2";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import { Select, SelectItem } from "@/components/ui/Select";
-import React, { FC, useState } from "react";
+import { FC, useState } from "react";
 
 type responseStatus = "rejected" | "accepted" | "pending" | "edit";
 
@@ -87,10 +86,15 @@ const ResponseCard: FC<props> = ({ response }) => {
               onValueChange={setSelectedRequest}
               className="!min-w-[150px] w-full lg:w-auto h-full rounded-2xl"
             >
-              <SelectItem value="approved">Approved</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-              <SelectItem value="pending">Pending Review</SelectItem>
-              <SelectItem value="needs-revision">Needs Revision</SelectItem>
+              <SelectItem value="request training">Request training</SelectItem>
+              <SelectItem value="Adding trainees">Adding trainees</SelectItem>
+              <SelectItem value="Editing trainees">Editing trainees</SelectItem>
+              <SelectItem value="Removing trainees">
+                Removing trainees
+              </SelectItem>
+              <SelectItem value="Select competence">
+                Select competence
+              </SelectItem>
             </Select>
           </div>
 
