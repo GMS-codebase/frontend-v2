@@ -74,13 +74,15 @@ export type Contact = {
   email: string;
 };
 
-export type Training ={
-  uuid:string;
-  title:string;
+export type Training = {
+  uuid: string;
+  title: string;
   startDate: string;
   endDate: string;
-  status: "rejected" | "accepted" | "draft"
-}
+  materialFile: any;
+  traineesFile: any;
+  status: "rejected" | "accepted" | "draft";
+};
 
 export type Comments = {
   titleComment: string;
