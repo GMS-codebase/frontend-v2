@@ -9,7 +9,7 @@ import sdfRoutes from "@/utils/routes/sdf";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
-export default function AdminLayout({
+export default function SdfLayout({
   children,
 }: {
   children: React.ReactNode;
