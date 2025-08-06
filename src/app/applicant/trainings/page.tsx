@@ -230,7 +230,6 @@ const Page = () => {
         />
       </div>
 
-      {/* Replace/Add the Add/Edit modal component for trainings */}
       {/* <AddEditTraining
         isOpen={isOpenAddEditTraining}
         close={() => {
