@@ -34,7 +34,7 @@ export default function AdminLayout({
         <div
           className={`${
             isCompressed ? "w-[6%]" : "lg:w-[23%]"
-          } h-full bg-white rounded-2xl side-section`}
+          } h-[99%] bg-white rounded-2xl side-section`}
         >
           <GenericSidebar
             routes={grant_committeeRoutes}
@@ -44,7 +44,7 @@ export default function AdminLayout({
         </div>
         <div
           className={`${
-            isCompressed ? "w-[93%]" : "w-[75%]"
+            isCompressed ? "w-[93%]" : "lg:w-[75%] w-full"
           } h-screen flex flex-col  bg-transparent side-section`}
         >
           <Navbar />

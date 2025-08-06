@@ -185,7 +185,7 @@ const Page = () => {
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-6  text-black">
-          <div className="flex justify-between">
+          <div className="flex flex-col md:flex-row justify-between">
             <div className="text-xl font-bold">Call Info</div>
             <div
               onClick={handleDownloadInstructions}
@@ -229,7 +229,7 @@ const Page = () => {
                 </span>
                 <div>Timeline</div>
               </div>
-              <div className="flex gap-4  ">
+              <div className="flex flex-col md:flex-row gap-4  ">
                 <ProgressCircle
                   activeColor="#005DE9"
                   bgColor="#fff"
