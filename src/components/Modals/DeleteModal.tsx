@@ -58,6 +58,7 @@ type DeleteType =
   | "employees"
   | "budgetLines"
   | "forms"
+  | "trainings"
   | "surveys"; // Added surveys to the type
 
 const DeleteModal = ({
