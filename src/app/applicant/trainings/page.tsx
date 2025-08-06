@@ -14,6 +14,7 @@ import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import { Training } from "@/types";
+import AddEditTraining from "@/components/Modals/training/AddEditTraining";
 
 //test data 
 export const trainingsData: Training[] = [
@@ -23,6 +24,8 @@ export const trainingsData: Training[] = [
     startDate: "2025-08-11",
     endDate: "2025-08-15",
     status: "rejected",
+    materialFile: "",
+    traineesFile: "",
   },
   {
     uuid: "trn-002",
@@ -30,6 +33,8 @@ export const trainingsData: Training[] = [
     startDate: "2025-09-01",
     endDate: "2025-09-05",
     status: "draft",
+    materialFile: "",
+    traineesFile: "",
   },
   {
     uuid: "trn-003",
@@ -37,6 +42,8 @@ export const trainingsData: Training[] = [
     startDate: "2025-07-20",
     endDate: "2025-07-22",
     status: "accepted",
+    materialFile: "",
+    traineesFile: "",
   },
 ];
 
@@ -230,16 +237,16 @@ const Page = () => {
         />
       </div>
 
-      {/* <AddEditTraining
-        isOpen={isOpenAddEditTraining}
-        close={() => {
+      <AddEditTraining
+        isOpenAddEditTraining={isOpenAddEditTraining}
+        closeAddEditTraining={() => {
           closeAddEditTraining();
           setSelectedTraining(null);
         }}
-        defaultData={selectedTraining}
-      /> */}
+        defaultData={selectedTraining as any}
+      />
 
-      {/* <DeleteModal
+      <DeleteModal
         closeModal={() => {
           setSelectedTraining(null);
           closeDeleteTraining();
@@ -247,7 +254,7 @@ const Page = () => {
         id={selectedTraining?.uuid as any}
         type="trainings"
         isOpenModal={isOpenDeleteTraining}
-      /> */}
+      />
     </div>
   );
 };
