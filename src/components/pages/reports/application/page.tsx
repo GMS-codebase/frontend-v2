@@ -31,7 +31,7 @@ const ApplicationReports = () => {
   const [reportType, setReportType] =
     useState<IReportType>("Submission Report");
   const { applications: rawApplications, loading } = useSelector(
-    (state: any) => state.applications,
+    (state: any) => state.applications
   );
   const applications = useMemo(
     () =>
@@ -40,7 +40,7 @@ const ApplicationReports = () => {
         sector: app.sectors?.[0] || null,
         trade: app.trades?.[0] || null,
       })),
-    [rawApplications],
+    [rawApplications]
   );
 
   const filtersContainerRef = useRef<HTMLDivElement>(null);
@@ -60,9 +60,9 @@ const ApplicationReports = () => {
       ...new Set(
         applications
           .map((app: any) =>
-            key.split(".").reduce((obj, property) => obj?.[property], app),
+            key.split(".").reduce((obj, property) => obj?.[property], app)
           )
-          .filter(Boolean),
+          .filter(Boolean)
       ),
     ];
   };
@@ -76,7 +76,7 @@ const ApplicationReports = () => {
       trades: getUniqueValues("trade.trade.title"),
       call: getUniqueValues("call.title"),
     }),
-    [applications],
+    [applications]
   );
 
   const FilterDropDown = ({
@@ -122,7 +122,7 @@ const ApplicationReports = () => {
   const getReportName = (
     call: string,
     sector: string,
-    type: string,
+    type: string
   ): string => {
     return `${call == "All" ? "All Calls" : call} - ${sector == "All" ? "All Sectors" : sector} - ${type}`;
   };
@@ -133,7 +133,7 @@ const ApplicationReports = () => {
           app.applicationNumber
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
+          app.applicant?.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade } =
@@ -170,7 +170,7 @@ const ApplicationReports = () => {
         stage: row?.finishedAnswering! ? "SUBMITTED" : "ANSWERING",
         contacts: contact,
         institutionType: capitalize(
-          row.applicant.businesses?.[0]?.businessType,
+          row.applicant.businesses?.[0]?.businessType
         ),
         legalStatus: row.applicant.businesses?.[0]?.private
           ? "Private"
@@ -189,17 +189,24 @@ const ApplicationReports = () => {
         cell: row.applicant.businesses?.[0]?.addressLine?.split("-")[1] ?? "",
         village:
           row.applicant.businesses?.[0]?.addressLine?.split("-")[0] ?? "",
-        submissionDate: row?.lastUpdatedAt ? formatDate(row.lastUpdatedAt, "yyyy-MM-dd") : "-",
-
+        submissionDate: row?.lastUpdatedAt
+          ? formatDate(row.lastUpdatedAt, "yyyy-MM-dd")
+          : "-",
       };
-    },
+    }
   );
   const columns =
     reportType === "Submission Report" ? submissionColumns : evaluationColumns;
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full lg:flex justify-between items-center p-4 gap-5">
-        <div className="relative lg:w-[20rem] mb-4">
+      <div className="w-full flex flex-col lg:flex-row justify-between items-end lg:items-center  p-4 gap-5">
+        <button
+          className="w-[8rem] p-4 bg-blue-500 rounded-full text-white hover:bg-blue-600 m-4 whitespace-nowrap md:hidden"
+          onClick={showExport}
+        >
+          Export Data
+        </button>
+        <div className="relative w-full lg:w-[20rem]">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} color="" />
           </span>
@@ -211,7 +218,7 @@ const ApplicationReports = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex items-center lg:max-w-[60%]">
+        <div className="flex items-center w-[100%] lg:max-w-[60%] mt-4 lg:mt-0">
           <button
             onClick={() => handleScroll("left")}
             className="p-2 bg-white shadow-lg rounded-full mr-2"
@@ -248,19 +255,20 @@ const ApplicationReports = () => {
               onChange={(value: any) => {
                 setReportType(value);
               }}
-              className={`flex-shrink-0 px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
+              className={`px-3 py-2 !min-w-[200px] w-[33%] text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black`}
             />
           </div>
 
           <button
             onClick={() => handleScroll("right")}
-            className="p-2 bg-white shadow-lg rounded-full ml-2"
+            className="p-2 bg-white shadow-lg rounded-full ml-2 self-center"
           >
             <FiChevronRight size={25} />
           </button>
         </div>
+        <div className="flex flex-col lg:flex-row justify-between"></div>
         <button
-          className="w-[8rem] p-3 bg-blue-500 rounded-full text-white hover:bg-blue-600 m-4"
+          className="w-[8rem] p-4 bg-blue-500 rounded-full text-white hover:bg-blue-600 m-4 whitespace-nowrap hidden md:block"
           onClick={showExport}
         >
           Export Data
