@@ -49,8 +49,8 @@ const Page = () => {
     () =>
       rawApplications.map((app: any) => ({
         ...app,
-        sector: app.sectors[0] || null,
-        trade: app.trades[0] || null,
+        sector: app.sectors?.[0] || null,
+        trade: app.trades?.[0] || null,
       })),
     [rawApplications]
   );

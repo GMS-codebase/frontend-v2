@@ -15,7 +15,7 @@ import { FilterDropDown } from "../applications/filters";
 
 const AppealsPage = () => {
   const { appeals, loading } = useSelector((state: any) => state.appeals);
-  console.log(appeals);
+  console.log(appeals)
   const [viewAppeal, setViewAppeal] = useState<any>({
     open: false,
     appeal: null,
@@ -36,10 +36,9 @@ const AppealsPage = () => {
     return [
       "All",
       ...new Set(
-        appeals
-          .map((app: any) =>
-            key.split(".").reduce((obj, property) => obj?.[property], app),
-          )
+        (appeals.data || [])?.map((app: any) =>
+          key.split(".").reduce((obj, property) => obj?.[property], app),
+        )
           .filter(Boolean),
       ),
     ];
@@ -50,14 +49,12 @@ const AppealsPage = () => {
       stages: getUniqueValues("stage.stage"),
       windows: getUniqueValues("application.window.title"),
       subwindows: getUniqueValues("application.subWindow.title"),
-      sectors: getUniqueValues("application.sectors[0].name"),
+      sectors: getUniqueValues("application.sectors?.[0].name"),
       trades: getUniqueValues("application.trade.trade.title"),
       call: getUniqueValues("call.title"),
     }),
     [appeals],
   );
-
-  console.log("filterOptions --> ", filterOptions);
   const FilterDropDown = ({
     placeholderText,
     data,
@@ -98,7 +95,7 @@ const AppealsPage = () => {
     }
   };
   const filteredAppeals = useMemo(() => {
-    return appeals
+    return (appeals.data || [])
       .filter(
         (app: any) =>
           app?.application_number

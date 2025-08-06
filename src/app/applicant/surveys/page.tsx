@@ -81,7 +81,6 @@ const Page = () => {
     try {
       setLoading(true);
       const response = await authorizedApi.get("/survey/get-all-survey");
-
       const availableSurveys = response.data
         .filter(
           (survey: any) =>
@@ -458,7 +457,7 @@ const Page = () => {
                   qns: selectedSurvey.questions || selectedSurvey.qns,
                 }}
                 answers={submittedResponses}
-                setAnswers={() => {}} // No-op since we're in view mode
+                setAnswers={() => { }} // No-op since we're in view mode
               />
             ) : null}
           </div>
@@ -470,7 +469,7 @@ const Page = () => {
   return (
     <div className="font-[Urbanist] text-[1.125rem] font-medium bg-white min-h-screen">
       <div className="w-full !overflow-x-hidden px-6 py-4">
-        <div className="max-w-7xl mx-auto">
+        <div className="">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-3xl font-bold text-gray-900">
               Available Surveys
@@ -607,7 +606,7 @@ const Page = () => {
                                 {Object.keys(survey.questions || {}).length}{" "}
                                 Section
                                 {Object.keys(survey.questions || {}).length !==
-                                1
+                                  1
                                   ? "s"
                                   : ""}
                               </Text>
@@ -761,7 +760,7 @@ const Page = () => {
                                 {Object.keys(survey.questions || {}).length}{" "}
                                 Section
                                 {Object.keys(survey.questions || {}).length !==
-                                1
+                                  1
                                   ? "s"
                                   : ""}
                               </Text>

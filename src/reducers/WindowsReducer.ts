@@ -83,9 +83,9 @@ export default function WindowsReducer(state = initialState, action: Action) {
           window.uuid === action.payload.windowId
             ? {
                 ...window,
-                subWindows: [...window.subWindows, action.payload.data],
+                subWindows: [...(window.subWindows || []), action.payload.data],
               }
-            : window,
+            : window
         ),
         error: null,
         isError: false,
@@ -97,7 +97,7 @@ export default function WindowsReducer(state = initialState, action: Action) {
         windows: state.windows.map((window: Window) =>
           window.uuid === action.payload.uuid
             ? { ...window, ...action.payload }
-            : window,
+            : window
         ),
         error: null,
         isError: false,
@@ -107,7 +107,7 @@ export default function WindowsReducer(state = initialState, action: Action) {
       return {
         ...state,
         windows: state.windows.filter(
-          (window: Window) => window.uuid !== action.payload.id,
+          (window: Window) => window.uuid !== action.payload.id
         ),
         error: null,
         isError: false,
@@ -120,13 +120,13 @@ export default function WindowsReducer(state = initialState, action: Action) {
           window.uuid == action.payload.windowId
             ? {
                 ...window,
-                subWindows: window.subWindows.map((sub: any) =>
+                subWindows: (window.subWindows || []).map((sub: any) =>
                   sub.uuid === action.payload.data.uuid
                     ? { ...sub, ...action.payload.data }
-                    : sub,
+                    : sub
                 ),
               }
-            : window,
+            : window
         ),
         error: null,
         isError: false,
@@ -139,11 +139,11 @@ export default function WindowsReducer(state = initialState, action: Action) {
           window.uuid === action.payload.windowId
             ? {
                 ...window,
-                subWindows: window.subWindows.filter(
-                  (sub: any) => sub.uuid !== action.payload.data.uuid,
+                subWindows: (window.subWindows || []).filter(
+                  (sub: any) => sub.uuid !== action.payload.data.uuid
                 ),
               }
-            : window,
+            : window
         ),
         error: null,
         isError: false,

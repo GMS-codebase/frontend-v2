@@ -116,7 +116,7 @@ export const submissionColumns: ColumnDef<any>[] = [
     header: "Requested Beneficiaries",
     cell: ({ row }) => (
       <div className="truncate w-full text-center">
-        {calculateTotalTrainees(JSON.parse(row?.original.answers))! ?? "None"}
+        {calculateTotalTrainees(JSON.parse(row?.original.answers || "{}"))! ?? "None"}
       </div>
     ),
   },
@@ -181,7 +181,7 @@ export const submissionColumns: ColumnDef<any>[] = [
     header: "Submission Date",
     cell: ({ row }) => (
       <div className="truncate">
-        {formatDate(row?.original?.lastUpdatedAt, "yyyy-MM-dd")}
+        {row.original.lastUpdatedAt ? formatDate(row?.original?.lastUpdatedAt, "yyyy-MM-dd"):"-"}
       </div>
     ),
   },
@@ -376,7 +376,7 @@ export const evaluationColumns: ColumnDef<any>[] = [
     header: "Requested Beneficiaries",
     cell: ({ row }) => (
       <div className="truncate w-full text-center">
-        {calculateTotalTrainees(JSON.parse(row?.original.answers))! ?? "None"}
+        {calculateTotalTrainees(JSON.parse(row?.original.answers || "{}"))! ?? "None"}
       </div>
     ),
   },
@@ -420,7 +420,7 @@ export const evaluationColumns: ColumnDef<any>[] = [
     header: "Submission Date",
     cell: ({ row }) => (
       <div className="truncate">
-        {formatDate(row?.original?.lastUpdatedAt, "yyyy-MM-dd")}
+        {row.original.lastUpdatedAt ? formatDate(row?.original?.lastUpdatedAt, "yyyy-MM-dd"):"-"}
       </div>
     ),
   },

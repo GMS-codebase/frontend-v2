@@ -14,11 +14,14 @@ const ViewAppealResultsModal = ({
   onClose,
   application,
 }: ViewAppealResultsProps) => {
-  const { appeals } = useSelector((state: any) => state?.appeals);
-  const appeal = appeals.find(
-    (appeal: any) =>
-      appeal.application_number === application?.applicationNumber,
-  );
+  const { appeals } = useSelector((state: any) => state?.appeals ?? {});
+  const appeal = Array.isArray(appeals)
+    ? appeals.find(
+      (appeal: any) =>
+        appeal.application_number === application?.applicationNumber,
+    )
+    : undefined;
+
   return (
     <Modal
       size=""
@@ -37,13 +40,12 @@ const ViewAppealResultsModal = ({
         <div className="w-full px-5 flex flex-col items-center mt-4 overflow-hidden pb-8">
           <FaGavel
             size={40}
-            className={`${
-              appeal?.decision === "APPROVE"
-                ? "text-green-500"
-                : appeal?.decision === "REJECT"
-                  ? "text-red-500"
-                  : "text-blue-500"
-            } mb-4`}
+            className={`${appeal?.decision === "APPROVE"
+              ? "text-green-500"
+              : appeal?.decision === "REJECT"
+                ? "text-red-500"
+                : "text-blue-500"
+              } mb-4`}
           />
           <h1 className="text-2xl font-extrabold text-center">
             Appeal Details
@@ -54,13 +56,12 @@ const ViewAppealResultsModal = ({
                 Status
               </h2>
               <div
-                className={`mt-1 inline-block px-3 py-1 rounded-full text-sm ${
-                  appeal?.status === "APPROVED"
-                    ? "bg-green-100 text-green-800"
-                    : appeal?.status === "REJECTED"
-                      ? "bg-red-100 text-red-800"
-                      : "bg-yellow-100 text-yellow-800"
-                }`}
+                className={`mt-1 inline-block px-3 py-1 rounded-full text-sm ${appeal?.status === "APPROVED"
+                  ? "bg-green-100 text-green-800"
+                  : appeal?.status === "REJECTED"
+                    ? "bg-red-100 text-red-800"
+                    : "bg-yellow-100 text-yellow-800"
+                  }`}
               >
                 {appeal?.status || "PENDING"}
               </div>
