@@ -1,6 +1,6 @@
 import { Training } from "@/types";
 
-//test data 
+//test data
 export const trainingsData: Training[] = [
   {
     uuid: "trn-001",
@@ -8,6 +8,8 @@ export const trainingsData: Training[] = [
     startDate: "2025-08-11",
     endDate: "2025-08-15",
     status: "rejected",
+    materialFile: "",
+    traineesFile: "",
   },
   {
     uuid: "trn-002",
@@ -15,6 +17,8 @@ export const trainingsData: Training[] = [
     startDate: "2025-09-01",
     endDate: "2025-09-05",
     status: "draft",
+    materialFile: "",
+    traineesFile: "",
   },
   {
     uuid: "trn-003",
@@ -22,5 +26,7 @@ export const trainingsData: Training[] = [
     startDate: "2025-07-20",
     endDate: "2025-07-22",
     status: "accepted",
+    materialFile: "",
+    traineesFile: "",
   },
 ];
