@@ -332,7 +332,7 @@ const Navbar = () => {
               <button className="text-2xl text-primary ">
                 <Icons.SolarUserBold />
               </button>
-              <h1 className="text-lg font-medium capitalize">
+              <h1 className="text-sm md:text-lg font-medium capitalize">
                 {getDisplayName()}
               </h1>
             </div>
