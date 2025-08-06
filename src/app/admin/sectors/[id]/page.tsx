@@ -201,9 +201,9 @@ const Page = () => {
               <SolarBookmarkBold />
               <span>Trades</span>
             </div>
-            <div className="lg:flex lg:space-y-0 space-y-2 gap-3 items-center">
+            <div className="flex flex-col lg:flex-row lg:space-y-0 space-y-2 gap-3 items-end">
               {/* Search Bar */}
-              <div className="relative lg:w-[25rem] w-full lg:mt-0">
+              <div className="relative lg:w-[20rem] w-full lg:mt-0">
                 <CiSearch className="absolute top-4 left-2" size={25} />
                 <input
                   type="text"
@@ -217,7 +217,7 @@ const Page = () => {
               {/* Add New Trade Button */}
               <button
                 onClick={openAddSector}
-                className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+                className="bg-primary text-white h-full py-4 px-7 rounded-full flex flex-row items-center gap-3"
               >
                 <SolarAddFolderBold className="text-2xl" />
                 <span className="text-base font-medium">New Sector Trade</span>

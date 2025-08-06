@@ -172,7 +172,7 @@ const Page = () => {
         placeholder={placeholderText}
         value={value}
         onChange={onChange}
-        className={`w-fit px-3 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black ${className}`}
+        className="w-fit px-3 flex-shrink-0 py-2 text-base text-black rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
       />
     );
   };
@@ -225,6 +225,7 @@ const Page = () => {
                     }))
                   : []
               }
+              
             />
             <FilterDropDown
               value={formData.filters.window}
