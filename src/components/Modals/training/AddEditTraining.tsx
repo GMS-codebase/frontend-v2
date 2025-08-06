@@ -232,13 +232,13 @@ const handleSubmit = async()=>{
                 <div className="flex justify-between gap-4 mt-4">
                   <button
                     onClick={closeAddEditTraining}
-                    className="w-full px-4 py-2 bg-primary text-white rounded-full shadow-sm outline-none"
+                    className="w-full px-4 py-2 bg-primaryText text-white rounded-full shadow-sm outline-none"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={nextStep}
-                    className="w-full px-4 py-2 bg-primaryText text-white rounded-full shadow-sm outline-none"
+                    className="w-full px-4 py-2 bg-primary text-white rounded-full shadow-sm outline-none"
                   >
                     Next
                   </button>
@@ -346,14 +346,14 @@ const handleSubmit = async()=>{
                 <div className="flex justify-between gap-4 mt-4">
                   <button
                     onClick={prevStep}
-                    className="w-full px-4 py-2 bg-primary text-white rounded-full shadow-sm outline-none"
+                    className="w-full px-4 py-2 bg-primaryText text-white rounded-full shadow-sm outline-none"
                   >
                     Back
                   </button>
                   <button
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="w-full px-4 py-2 bg-primaryText text-white rounded-full shadow-sm outline-none"
+                    className="w-full px-4 py-2 bg-primary  text-white rounded-full shadow-sm outline-none"
                   >
                     {loading ? "Saving..." : "Save"}
                   </button>
