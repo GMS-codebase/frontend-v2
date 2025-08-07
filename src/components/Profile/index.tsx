@@ -102,7 +102,7 @@ const Profile = () => {
                   }`}
                   onClick={() => setActiveSection("employment")}
                 >
-                  <h1 className="text-base font-medium ">Employment details</h1>
+                  <h1 className="text-base fchont-medium ">Employment details</h1>
                 </button>
               </div>
               {activeSection === "contact" ? (

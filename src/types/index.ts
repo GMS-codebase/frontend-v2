@@ -127,3 +127,11 @@ export type Call = {
   sectors: Sector[] | string[];
   attachment: File | string | null;
 };
+
+export type TrainingData = {
+    uuid: string;
+    title: string;
+    Applicant: string;
+    Call: string;
+    status: "REJECTED" | "ACCEPTED" | "UNDER REVIEW";
+};

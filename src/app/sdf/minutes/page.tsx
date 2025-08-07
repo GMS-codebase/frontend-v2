@@ -342,113 +342,108 @@ const Page = () => {
   };
 
   return (
-    <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[25rem]">
-          <span className="absolute top-4 left-2">
-            <BiSearch size={25} />
-          </span>
-          <input
-            name="search"
-            className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
-            placeholder="Search"
-          />
-        </div>
-        <div
-          // ref={filtersContainerRef}
-          className="flex items-center gap-3 overflow-x-hidden scrollbar-hide"
-          style={{ scrollBehavior: "smooth", maxWidth: "calc(4 * 11rem)" }}
-        >
-          <div className="w-44 flex-shrink-0">
-            <FilterDropDown
-              placeholderText="Filter By Call"
-              data={["Call Test"]}
-            />
+      <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
+          <div className="w-full flex flex-col md:flex-row md:justify-between items-center p-4 gap-4">
+        <div className="relative w-full md:w-[20rem]">
+                  <span className="absolute top-4 left-2">
+                      <BiSearch size={25} />
+                  </span>
+                  <input
+                      name="search"
+                      className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
+                      placeholder="Search"
+                  />
+              </div>
+              <div
+                  // ref={filtersContainerRef}
+                  className="flex flex-col md:flex-row gap-3 w-full md:w-auto"
+              >
+                  <FilterDropDown
+                      placeholderText="Filter By Call"
+                      data={["Call Test"]}
+                  />
+
+                  <FilterDropDown
+                      placeholderText="Filter By Sector"
+                      data={["ICT & Innovations"]}
+                  />
+
+                  <FilterDropDown
+                      placeholderText="Filter By trade"
+                      data={["Agriculture"]}
+                  />
+              </div>
           </div>
-          <div className="w-44 flex-shrink-0">
-            <FilterDropDown
-              placeholderText="Filter By Sector"
-              data={["ICT & Innovations"]}
-            />
-          </div>
-          <div className="w-44 flex-shrink-0">
-            <FilterDropDown
-              placeholderText="Filter By trade"
-              data={["Agriculture"]}
-            />
-          </div>
-        </div>
+
+          <Tabs defaultValue="applications">
+              <Tabs.List className="w-auto my-2 ml-5 float-end">
+                  <Tabs.Tab value="applications">Ready</Tabs.Tab>
+                  <Tabs.Tab value="minutes">Uploaded</Tabs.Tab>
+                  <Tabs.Tab value="approved">Approved</Tabs.Tab>
+                  <Tabs.Tab value="rejected">Rejected</Tabs.Tab>
+                  <Tabs.Tab value="negotiated">Negotiated</Tabs.Tab>
+              </Tabs.List>
+
+              <Tabs.Panel value="applications">
+                  <h1 className="text-base p-4 font-bold">
+                      {" "}
+                      Ready For Contract negotiation
+                  </h1>
+                  <DataTable
+                      columns={columns}
+                      data={readyForMinutesNegotiation}
+                      loading={loadingMinutes}
+                      noDataMessage="No Application ready for contract negotiation"
+                  />
+              </Tabs.Panel>
+              <Tabs.Panel value="minutes">
+                  <h1 className="text-base p-4 font-bold">
+                      Contract Negotiations Uploaded
+                  </h1>
+                  <DataTable
+                      columns={minuteColumns}
+                      data={uploadedMinutes}
+                      loading={loadingMinutes}
+                      noDataMessage="No Created Contract Negotiations"
+                  />
+              </Tabs.Panel>
+
+              <Tabs.Panel value="approved">
+                  <h1 className="text-base p-4 font-bold">
+                      Approved contract negotiations
+                  </h1>
+                  <DataTable
+                      columns={approvedColumns}
+                      loading={loadingMinutes}
+                      data={approvedMinutes}
+                      noDataMessage="No Approved contract negotiation"
+                  />
+              </Tabs.Panel>
+
+              <Tabs.Panel value="rejected">
+                  <h1 className="text-base p-4 font-bold">
+                      Rejected contract negotiations
+                  </h1>
+                  <DataTable
+                      columns={rejectedColumns}
+                      data={allRejectedMinutes}
+                      loading={loadingMinutes}
+                      noDataMessage="No Rejected contract negotiations"
+                  />
+              </Tabs.Panel>
+              <Tabs.Panel value="negotiated">
+                  <h1 className="text-base p-4 font-bold">
+                      Negotiated contract negotiations
+                  </h1>
+                  <DataTable
+                      columns={negotiatedColumns}
+                      data={negotiatedMinutes}
+                      loading={loadingMinutes}
+                      noDataMessage="No Negotiated contract negotiations"
+                  />
+              </Tabs.Panel>
+          </Tabs>
       </div>
-
-      <Tabs defaultValue="applications">
-        <Tabs.List className="w-auto my-2 ml-5 float-end">
-          <Tabs.Tab value="applications">Ready</Tabs.Tab>
-          <Tabs.Tab value="minutes">Uploaded</Tabs.Tab>
-          <Tabs.Tab value="approved">Approved</Tabs.Tab>
-          <Tabs.Tab value="rejected">Rejected</Tabs.Tab>
-          <Tabs.Tab value="negotiated">Negotiated</Tabs.Tab>
-        </Tabs.List>
-
-        <Tabs.Panel value="applications">
-          <h1 className="text-base p-4 font-bold">
-            {" "}
-            Ready For Contract negotiation
-          </h1>
-          <DataTable
-            columns={columns}
-            data={readyForMinutesNegotiation}
-            loading={loadingMinutes}
-            noDataMessage="No Application ready for contract negotiation"
-          />
-        </Tabs.Panel>
-        <Tabs.Panel value="minutes">
-          <h1 className="text-base p-4 font-bold">
-            Contract Negotiations Uploaded
-          </h1>
-          <DataTable
-            columns={minuteColumns}
-            data={uploadedMinutes}
-            loading={loadingMinutes}
-            noDataMessage="No Created Contract Negotiations"
-          />
-        </Tabs.Panel>
-
-        <Tabs.Panel value="approved">
-          <h1 className="text-base p-4 font-bold">
-            Approved contract negotiations
-          </h1>
-          <DataTable
-            columns={approvedColumns}
-            loading={loadingMinutes}
-            data={approvedMinutes}
-            noDataMessage="No Approved contract negotiation"
-          />
-        </Tabs.Panel>
-
-        <Tabs.Panel value="rejected">
-          <h1 className="text-base p-4 font-bold">
-            Rejected contract negotiations
-          </h1>
-          <DataTable
-            columns={rejectedColumns}
-            data={allRejectedMinutes}
-            loading={loadingMinutes}
-            noDataMessage="No Rejected contract negotiations"
-          />
-        </Tabs.Panel>
-        <Tabs.Panel value="negotiated">
-          <h1 className="text-base p-4 font-bold">
-            Negotiated contract negotiations
-          </h1>
-          <DataTable
-            columns={negotiatedColumns}
-            data={negotiatedMinutes}
-            loading={loadingMinutes}
-            noDataMessage="No Negotiated contract negotiations"
-          />
-        </Tabs.Panel>
-      </Tabs>
-    </div>
   );
 };
 

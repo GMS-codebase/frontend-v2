@@ -11,8 +11,8 @@ import CallModal from "@/components/Modals/techInnov";
 import SuccessModal from "@/components/Modals/success";
 import SetPasswordModal from "@/components/Modals/auth/SetPasswordModal";
 import {
-  SolarFolder2Bold,
-  SolarShieldWarningBold,
+    SolarFolder2Bold,
+    SolarShieldWarningBold,
 } from "@/components/core/icons";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
@@ -64,22 +64,25 @@ function Page() {
     { open: openTraineeLogin, close: closeTraineeLogin },
   ] = useDisclosure(false);
 
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+    const searchParams = useSearchParams();
+    const token = searchParams.get("token");
 
-  useEffect(() => {
-    if (token) {
-      openSetPassword();
-    }
-  }, [token, openSetPassword]);
+    useEffect(() => {
+        if (token) {
+            openSetPassword();
+        }
+    }, [token, openSetPassword]);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -200, behavior: "smooth" });
-    }
-  };
+    const scrollLeft = () => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollBy({
+                left: -200,
+                behavior: "smooth",
+            });
+        }
+    };
 
   const scrollRight = () => {
     if (scrollContainerRef.current) {
@@ -236,9 +239,9 @@ function Page() {
   );
 }
 export default function DefaultPage() {
-  return (
-    <Suspense>
-      <Page />
-    </Suspense>
-  );
+    return (
+        <Suspense>
+            <Page />
+        </Suspense>
+    );
 }

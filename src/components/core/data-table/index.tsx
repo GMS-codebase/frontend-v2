@@ -253,7 +253,7 @@ export function DataTable({
               </tbody>
             </table>
           </div>
-          <div className="flex w-full justify-between items-start flex-row-reverse px-10 mt-4">
+          <div className="flex flex-col w-full justify-between items-start md:flex-row-reverse px-10 mt-4">
             <Pagination
               total={
                 isPaginated
@@ -283,7 +283,7 @@ export function DataTable({
                   });
                   return;
                 }
-                table?.previousPage();
+                table?.previousPage(); 
               }}
               onChange={(page) => {
                 onPaginate(page - 1);
