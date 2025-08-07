@@ -14,31 +14,7 @@ import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import { TrainingData } from "@/types";
-
-//test data
-export const trainingsData: TrainingData[] = [
-    {
-        uuid: "trn-001",
-        title: "My Training 1",
-        Applicant: "Applicant 1",
-        Call: "My Training 1",
-        status: "ACCEPTED",
-    },
-    {
-        uuid: "trn-001",
-        title: "My Training 1",
-        Applicant: "Applicant 1",
-        Call: "My Training 1",
-        status: "REJECTED",
-    },
-    {
-        uuid: "trn-001",
-        title: "My Training 1",
-        Applicant: "Applicant 1",
-        Call: "My Training 1",
-        status:"UNDER REVIEW",
-    },
-];
+import { trainingsData } from "@/utils/constants/trainings";
 
 const Page = () => {
     const [
