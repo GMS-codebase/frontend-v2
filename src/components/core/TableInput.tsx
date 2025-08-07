@@ -1,12 +1,14 @@
 import { Question, TableColumn } from "@/types/questions-form";
+import { Survey } from "@/types/surveys-form";
 import React, { useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 
 interface TableInputProps {
   value: any;
   onChange: (data: Record<string, any>[]) => void;
-  question: Question;
-  onQuestionChange: (question: Question) => void;
+  question?: Question;
+  survey?: Survey;
+  onQuestionChange: (question: Question | Survey) => void;
   disabled?: boolean;
   isEditing?: boolean;
   mode: "creating" | "viewing" | "answering" | "commenting";
@@ -16,13 +18,15 @@ const TableInput: React.FC<TableInputProps> = ({
   value,
   onChange,
   question,
+  survey,
   onQuestionChange,
   disabled = false,
   mode = "creating",
   isEditing = false,
 }) => {
+  const data = question || survey;
   const [rows, setRows] = useState<Record<string, any>[]>(value || []);
-  const [columns, setColumns] = useState<TableColumn[]>(question.columns || []);
+  const [columns, setColumns] = useState<TableColumn[]>(data?.columns || []);
 
   const handleAddRow = () => {
     setRows((prev) => [...prev, {}]);
@@ -47,28 +51,31 @@ const TableInput: React.FC<TableInputProps> = ({
   };
 
   const handleAddColumn = () => {
+    if(!data) return;
     const newColumn: TableColumn = { title: "New Column", type: "text" };
     const updatedColumns = [...columns, newColumn];
     setColumns(updatedColumns);
-    onQuestionChange({ ...question, columns: updatedColumns });
+    onQuestionChange({ ...data, columns: updatedColumns });
   };
 
   const handleRemoveColumn = (index: number) => {
+    if(!data) return;
     const updatedColumns = [...columns];
     updatedColumns.splice(index, 1);
     setColumns(updatedColumns);
-    onQuestionChange({ ...question, columns: updatedColumns });
+    onQuestionChange({ ...data, columns: updatedColumns });
   };
 
   const handleColumnChange = (
     index: number,
     key: keyof TableColumn,
-    value: any,
+    value: any
   ) => {
+    if(!data) return;
     const updatedColumns = [...columns];
     updatedColumns[index][key] = value;
     setColumns(updatedColumns);
-    onQuestionChange({ ...question, columns: updatedColumns });
+    onQuestionChange({ ...data, columns: updatedColumns });
   };
 
   if (mode === "viewing" || mode === "commenting") {
@@ -154,7 +161,7 @@ const TableInput: React.FC<TableInputProps> = ({
                             handleColumnChange(
                               idx,
                               "options",
-                              e.target.value.split(","),
+                              e.target.value.split(",")
                             )
                           }
                           className="border border-gray-300 rounded py-1 px-2"

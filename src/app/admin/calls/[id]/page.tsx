@@ -149,7 +149,7 @@ const Page = () => {
                 </span>
                 <div>Timeline</div>
               </div>
-              <div className="lg:flex  gap-5">
+              <div className="flex flex-col lg:flex-row  gap-5">
                 <div className="flex  ">
                   <ProgressCircle
                     activeColor="#005DE9"
@@ -159,7 +159,7 @@ const Page = () => {
                     startDate={call?.startDate}
                   />
                 </div>
-                <div className="flex flex-col  bg-[#005DE9]  bg-opacity-10 px-4 py-2 rounded-3xl items-center justify-center font-semibold gap-2">
+                <div className="flex flex-col md:flex-row lg:flex-col  bg-[#005DE9]  bg-opacity-10 px-4 py-2 rounded-3xl items-center justify-center font-semibold gap-2">
                   <div className="flex gap-2 items-center justify-center">
                     <span className="text-[#005DE9]">
                       <SolarCalendarBold />

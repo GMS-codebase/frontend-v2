@@ -99,7 +99,10 @@ const AddReportModal = ({ isOpen, onClose }: AddReportModalProps) => {
         centered
         closeOnClickOutside={false}
       >
-        <div className="lg:w-[40vw] w-full h-fit lg:h-[800px] flex flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative overflow-y-auto" style={{ scrollbarWidth: "none" }}>
+        <div
+          className="lg:w-[40vw] w-full h-fit lg:h-[800px] flex flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative overflow-y-auto"
+          style={{ scrollbarWidth: "none" }}
+        >
           <div className="absolute top-3 right-3 m-4 text-center mt-0">
             <button
               onClick={onClose}

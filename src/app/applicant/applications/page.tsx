@@ -44,7 +44,7 @@ const Page = () => {
       accessorKey: "sector",
       header: "Sector",
       cell: ({ row }) => (
-        <div className="truncate">{row?.original?.sectors[0]?.name}</div>
+        <div className="truncate">{row?.original?.sectors?.[0]?.name}</div>
       ),
     },
     {
@@ -52,7 +52,7 @@ const Page = () => {
       header: "Trade",
       cell: ({ row }) => (
         <div className="truncate">
-          {shortenString(row.original?.trades[0]?.trade?.title, 20)}
+          {shortenString(row.original?.trades?.[0]?.trade?.title || "-", 20)}
         </div>
       ),
     },
@@ -90,7 +90,7 @@ const Page = () => {
               <Menu.Item className="bg-[#F0F0F0]">
                 <Link
                   href={
-                    row.original.stages.length > 0 ||
+                    (row.original.stages?.length ?? 0) > 0 ||
                     row.original.call.status === CALL_STATUS.CLOSED
                       ? `/applicant/applications/application/${row.original.uuid}`
                       : `/applicant/applications/call/${row.original.call.uuid}/${row.original.uuid}/apply`

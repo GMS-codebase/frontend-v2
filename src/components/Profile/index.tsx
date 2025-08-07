@@ -70,7 +70,9 @@ const Profile = () => {
                   <Icons.SolarUserBold className="w-[100px] h-[100px]" />
                 </button>
                 <div className="">
-                  <h1 className="lg:text-2xl text-xl">{profile?.profile?.firstname}</h1>
+                  <h1 className="lg:text-2xl text-xl">
+                    {profile?.profile?.firstname}
+                  </h1>
                   <h1 className="font-bold text-primary">
                     {profile?.profile?.role}
                   </h1>
@@ -100,7 +102,7 @@ const Profile = () => {
                   }`}
                   onClick={() => setActiveSection("employment")}
                 >
-                  <h1 className="text-base font-medium ">Employment details</h1>
+                  <h1 className="text-base fchont-medium ">Employment details</h1>
                 </button>
               </div>
               {activeSection === "contact" ? (

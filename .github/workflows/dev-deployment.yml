@@ -41,21 +41,12 @@ jobs:
           cd dev
           git status
 
-      # Cache npm dependencies
-      - name: Cache npm dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('dev/package-lock.json', 'dev/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       # Install dependencies and build the application
       - name: Install dependencies and build the application
         run: |
           cd dev
-          npm install --force
-          npm run build
+          pnpm install --force --no-frozen-lockfile
+          pnpm run build
 
       # Install dependencies and build the application
       - name: Mode .next, package.json, node_modules folder to builds folder

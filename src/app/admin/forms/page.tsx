@@ -16,26 +16,26 @@ import DeleteModal from "@/components/Modals/DeleteModal";
 import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
 
 const Page = () => {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [
-        isOpenCreateEdit,
-        { open: openCreateEditModal, close: closeCreateEditModal },
-    ] = useDisclosure(false);
-    const [
-        isOpenActivateDeactivateForm,
-        {
-            open: openActivateDeactivateFormModal,
-            close: closeActivateDeactivateFormModal,
-        },
-    ] = useDisclosure(false);
-    const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
-        useDisclosure(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [
+    isOpenCreateEdit,
+    { open: openCreateEditModal, close: closeCreateEditModal },
+  ] = useDisclosure(false);
+  const [
+    isOpenActivateDeactivateForm,
+    {
+      open: openActivateDeactivateFormModal,
+      close: closeActivateDeactivateFormModal,
+    },
+  ] = useDisclosure(false);
+  const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
+    useDisclosure(false);
 
   const forms = useSelector((state: any) => state.forms);
   const [selectedForm, setSelectedForm] = useState<any>("");
   const filteredForms =
     forms.forms?.filter((form: any) =>
-      form?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+      form?.name?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
 
   const columns: ColumnDef<any>[] = [
@@ -105,7 +105,7 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full lg:flex justify-between items-center p-4">
+      <div className="w-full flex flex-col-reverse md:flex-row justify-between gap-4 items-end md:items-center p-4">
         <div className="relative lg:w-[25rem] w-full mb-4">
           <span className="absolute top-4 left-2">
             <BiSearch size={25} />
@@ -141,15 +141,17 @@ const Page = () => {
           }
         />
       </div>
-      <DeleteModal
-        isOpenModal={isOpenDelete}
-        closeModal={() => {
-          closeDeleteModal();
-          setSelectedForm(null);
-        }}
-        type="forms"
-        id={selectedForm?.uuid}
-      />
+      {selectedForm?.uuid && (
+        <DeleteModal
+          isOpenModal={isOpenDelete}
+          closeModal={() => {
+            closeDeleteModal();
+            setSelectedForm(null);
+          }}
+          type="forms"
+          id={selectedForm.uuid}
+        />
+      )}
     </div>
   );
 };

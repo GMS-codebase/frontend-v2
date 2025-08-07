@@ -146,9 +146,9 @@ import { QuestionForm } from "@/types/questions-form";
 import { useRouter } from "next/navigation";
 import { ApplicationStage } from "@/types/application";
 
-export const getAppeals = async (
+export const exportAppealsReport = async (
   dispatch: Dispatch<UnknownAction>,
-  user: string,
+  user: string
 ) => {
   dispatch({ type: GET_APPEALS_LOADING });
   const api =
@@ -159,7 +159,37 @@ export const getAppeals = async (
       dispatch({ type: GET_APPEALS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_APPEALS_ERROR, payload: err.response.data.error });
+      dispatch({
+        type: GET_APPEALS_ERROR,
+        payload:
+          err?.response?.data?.error ||
+          err?.response?.data?.message ||
+          err?.message ||
+          "Unknown error",
+      });
+    });
+};
+export const getAppeals = async (
+  dispatch: Dispatch<UnknownAction>,
+  user: string
+) => {
+  dispatch({ type: GET_APPEALS_LOADING });
+  const api =
+    user === "applicant" ? "/appeals/all-appeals/mine/all" : "/appeals/all";
+  authorizedApi
+    .get(api)
+    .then((res) => {
+      dispatch({ type: GET_APPEALS_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_APPEALS_ERROR,
+        payload:
+          err?.response?.data?.error ||
+          err?.response?.data?.message ||
+          err?.message ||
+          "Unknown error",
+      });
     });
 };
 export const shortenString = (str: string, maxLength: number = 30) => {
@@ -173,7 +203,7 @@ export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_WINDOWS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_WINDOWS_ERROR, payload: err.response.data.error });
+      dispatch({ type: GET_WINDOWS_ERROR, payload: err?.response?.data?.error });
     });
 };
 export const getSubWindows = async (dispatch: Dispatch<UnknownAction>) => {
@@ -186,7 +216,7 @@ export const getSubWindows = async (dispatch: Dispatch<UnknownAction>) => {
     .catch((err) => {
       dispatch({
         type: GET_SUB_WINDOWS_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
@@ -197,11 +227,11 @@ export const getMyProfile = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: SET_USER_PROFILE, payload: res.data.data }); //Todo: change this only when the BEs change the response schema
     })
     .catch((err) => {
-      dispatch({ type: SET_USER_ERROR, payload: err.response.data.error });
+      dispatch({ type: SET_USER_ERROR, payload: err?.response?.data?.error });
     });
 };
 export const getMyApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   authorizedApi
     .get("/applicant/me")
@@ -209,7 +239,7 @@ export const getMyApplicantProfile = async (
       dispatch({ type: SET_APPLICANT_PROFILE, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: SET_APPLICANT_ERROR, payload: err.response.data.error });
+      dispatch({ type: SET_APPLICANT_ERROR, payload: err?.response?.data?.error });
     });
 };
 export const getSectorTrades = async (dispatch: Dispatch<UnknownAction>) => {
@@ -223,7 +253,7 @@ export const getSectorTrades = async (dispatch: Dispatch<UnknownAction>) => {
       });
     })
     .catch((err) => {
-      dispatch({ type: GET_SECTORS_ERROR, payload: err.response.data.error });
+      dispatch({ type: GET_SECTORS_ERROR, payload: err?.response?.data?.error });
     });
 };
 export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
@@ -234,11 +264,11 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_SECTORS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_SECTORS_ERROR, payload: err.response.data.error });
+      dispatch({ type: GET_SECTORS_ERROR, payload: err?.response?.data?.error });
     });
 };
 export const getApplicationsByStage = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   try {
     dispatch({ type: SET_APPLICATIONS_BY_STAGE_LOADING });
@@ -256,12 +286,12 @@ export const getApplicationsByStage = async (
 export const getApplicantsByStage = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string,
+  stage: string
 ) => {
   try {
     dispatch({ type: SET_APPLICANTS_BY_STAGE_LOADING });
     const response = await authorizedApi.get(
-      `/applicants/stage?callUuid=${call}&currentStage=${stage}`,
+      `/applicants/stage?callUuid=${call}&currentStage=${stage}`
     );
     dispatch({ type: GET_APPLICANTS_BY_STAGE, payload: response.data });
   } catch (err: any) {
@@ -276,12 +306,12 @@ export const getApplicantsByStage = async (
 export const getGenderCountByStage = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string,
+  stage: string
 ) => {
   try {
     dispatch({ type: SET_GENDER_COUNT_BY_STAGE_LOADING });
     const response = await authorizedApi.get(
-      `/gender-count/stage?callUuid=${call}&currentStage=${stage}`,
+      `/gender-count/stage?callUuid=${call}&currentStage=${stage}`
     );
     dispatch({ type: GET_GENDER_COUNT_BY_STAGE, payload: response.data });
   } catch (err: any) {
@@ -296,12 +326,12 @@ export const getGenderCountByStage = async (
 export const getBusinessTypeByStage = async (
   dispatch: Dispatch<UnknownAction>,
   call: string,
-  stage: string,
+  stage: string
 ) => {
   try {
     dispatch({ type: SET_BUSINESS_TYPE_BY_STAGE_LOADING });
     const response = await authorizedApi.get(
-      `/business-type/stage?callUuid=${call}&currentStage=${stage}`,
+      `/business-type/stage?callUuid=${call}&currentStage=${stage}`
     );
     dispatch({ type: GET_BUSINESS_TYPE_BY_STAGE, payload: response.data });
   } catch (err: any) {
@@ -314,7 +344,7 @@ export const getBusinessTypeByStage = async (
 
 // Fetch submissions by sector
 export const getSubmissionsBySector = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   try {
     dispatch({ type: SET_SUBMISSIONS_BY_SECTOR_LOADING });
@@ -335,7 +365,7 @@ export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_TRADES_SUCCESS, payload: res.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_TRADES_ERROR, payload: err.response.data.error });
+      dispatch({ type: GET_TRADES_ERROR, payload: err?.response?.data?.error });
     });
 };
 export const getForms = async (dispatch: Dispatch<UnknownAction>) => {
@@ -346,7 +376,7 @@ export const getForms = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_FORMS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_FORMS_ERROR, payload: err.response.data.error });
+      dispatch({ type: GET_FORMS_ERROR, payload: err?.response?.data?.error });
     });
 };
 export const getBudgetLines = async (dispatch: Dispatch<UnknownAction>) => {
@@ -359,7 +389,7 @@ export const getBudgetLines = async (dispatch: Dispatch<UnknownAction>) => {
     .catch((err) => {
       dispatch({
         type: GET_BUDGET_LINES_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
@@ -371,7 +401,7 @@ export const getCalls = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_CALLS_SUCCESS, payload: res.data?.data?.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_CALLS_ERROR, payload: err.response.data.error });
+      dispatch({ type: GET_CALLS_ERROR, payload: err?.response?.data?.error });
     });
 };
 export const getRoles = async (dispatch: Dispatch<UnknownAction>) => {
@@ -382,7 +412,7 @@ export const getRoles = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_ROLES_SUCCESS, payload: res.data?.data?.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_ROLES_ERROR, payload: err.response.data.error });
+      dispatch({ type: GET_ROLES_ERROR, payload: err?.response?.data?.error });
     });
 };
 
@@ -394,7 +424,7 @@ export const handleDownloadFile = async (file: any, service: string) => {
       `/admin/download/${service}/${encodeURIComponent(filename)}`,
       {
         responseType: "blob",
-      },
+      }
     );
     const blob = new Blob([response.data], {
       type: response.headers["content-type"],
@@ -435,11 +465,11 @@ export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
     .catch((err) => {
       dispatch({
         type: GET_APPLICANTS_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
       dispatch({
         type: GET_APPLICANTS_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
@@ -454,7 +484,7 @@ export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
       });
     })
     .catch((err) => {
-      dispatch({ type: GET_CONTRACTS_ERROR, payload: err.response.data.error });
+      dispatch({ type: GET_CONTRACTS_ERROR, payload: err?.response?.data?.error });
     });
 };
 
@@ -469,7 +499,7 @@ export const getMinutes = async (dispatch: Dispatch<UnknownAction>) => {
       });
     })
     .catch((err) => {
-      dispatch({ type: GET_MINUTES_ERROR, payload: err.response.data.error });
+      dispatch({ type: GET_MINUTES_ERROR, payload: err?.response?.data?.error });
     });
 };
 export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
@@ -483,11 +513,11 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
       });
     })
     .catch((err) => {
-      dispatch({ type: GET_STAGES_ERROR, payload: err.response.data.error });
+      dispatch({ type: GET_STAGES_ERROR, payload: err?.response?.data?.error });
     });
 };
 export const getApplicationsForContractSigning = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   dispatch({ type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING });
   authorizedApi
@@ -501,7 +531,7 @@ export const getApplicationsForContractSigning = async (
     .catch((err) => {
       dispatch({
         type: GET_APPLICATIONS_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
@@ -529,7 +559,7 @@ export const getApplicationsByEmployee = async (dispatch: Dispatch) => {
 
   try {
     const response = await authorizedApi.get(
-      `/application/all/not-paginated/by-employee`,
+      `/application/all/not-paginated/by-employee`
     );
     dispatch({
       type: GET_APPLICATIONS_SUCCESS,
@@ -551,7 +581,7 @@ export const getApplicationsPaginated =
 
     try {
       const response = await authorizedApi.get(
-        `/application/all?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`,
+        `/application/all?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
       );
       dispatch({
         type: GET_PAGINATED_APPLICATIONS_SUCCESS,
@@ -574,7 +604,7 @@ export const getEmployeeApplicationsPaginated =
 
     try {
       const response = await authorizedApi.get(
-        `/application/all/paginated/by-employee?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`,
+        `/application/all/paginated/by-employee?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
       );
       dispatch({
         type: GET_PAGINATED_APPLICATIONS_SUCCESS,
@@ -604,7 +634,7 @@ export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
     .catch((err) => {
       dispatch({
         type: GET_MY_APPLICATIONS_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
@@ -622,7 +652,7 @@ export const getAnnouncement = async (dispatch: Dispatch<UnknownAction>) => {
     .catch((err) => {
       dispatch({
         type: GET_ANNOUNCEMENT_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
@@ -637,7 +667,7 @@ export const getMyContacts = async (dispatch: Dispatch<UnknownAction>) => {
     .catch((err) => {
       dispatch({
         type: GET_MY_CONTACTS_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
@@ -651,13 +681,13 @@ export const getMyContracts = async (dispatch: Dispatch<UnknownAction>) => {
     .catch((err) => {
       dispatch({
         type: GET_MY_CONTRACTS_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
 export const getApplicationsReadyForMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string,
+  role: string
 ) => {
   dispatch({ type: GET_APPLICATIONS_READY_FOR_MINUTES_LOADING });
   authorizedApi
@@ -671,13 +701,13 @@ export const getApplicationsReadyForMinutes = async (
     .catch((err) => {
       dispatch({
         type: GET_MINUTES_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
 export const getUploadedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string,
+  role: string
 ) => {
   dispatch({ type: GET_UPLOADED_MINUTES_LOADING });
   authorizedApi
@@ -691,13 +721,13 @@ export const getUploadedMinutes = async (
     .catch((err) => {
       dispatch({
         type: GET_MY_CONTRACTS_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
 export const getApprovedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string,
+  role: string
 ) => {
   dispatch({ type: GET_APPROVED_MINUTES_LOADING });
   authorizedApi
@@ -711,13 +741,13 @@ export const getApprovedMinutes = async (
     .catch((err) => {
       dispatch({
         type: GET_MY_CONTRACTS_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
 export const getRejectedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string,
+  role: string
 ) => {
   dispatch({ type: GET_REJECTED_MINUTES_LOADING });
   authorizedApi
@@ -731,20 +761,20 @@ export const getRejectedMinutes = async (
     .catch((err) => {
       dispatch({
         type: GET_MY_CONTRACTS_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
 export const getNegotiatedMinutes = async (
   dispatch: Dispatch<UnknownAction>,
-  role: string,
+  role: string
 ) => {
   dispatch({ type: GET_NEGOTIATED_MINUTES_LOADING });
   authorizedApi
     .get(
       `/negotiation-contract/applications/${role}/${
         role === "applicant" ? "negotiate" : "negotiating"
-      }`,
+      }`
     )
     .then((res) => {
       dispatch({
@@ -755,7 +785,7 @@ export const getNegotiatedMinutes = async (
     .catch((err) => {
       dispatch({
         type: GET_MY_CONTRACTS_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
@@ -767,7 +797,7 @@ export const getEmployees = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_EMPLOYEES_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_EMPLOYEES_ERROR, payload: err.response.data.error });
+      dispatch({ type: GET_EMPLOYEES_ERROR, payload: err?.response?.data?.error });
     });
 };
 export const getMEReports = async (dispatch: Dispatch<UnknownAction>) => {
@@ -780,7 +810,7 @@ export const getMEReports = async (dispatch: Dispatch<UnknownAction>) => {
     .catch((err) => {
       dispatch({
         type: GET_MEREPORTS_ERROR,
-        payload: err.response.data.error,
+        payload: err?.response?.data?.error,
       });
     });
 };
@@ -789,17 +819,19 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/auth/me")
     .then((res) => {
+      console.log("Getting profile")
+      console.log(res.data.data.data);
       dispatch({ type: GET_PROFILE_SUCCESS, payload: res.data?.data?.data });
     })
     .catch((err) => {
       dispatch({
         type: GET_PROFILE_ERROR,
-        payload: err.response.data.error ?? "Network Error",
+        payload: err?.response?.data?.error ?? "Network Error",
       });
     });
 };
 export const getApplicantProfile = async (
-  dispatch: Dispatch<UnknownAction>,
+  dispatch: Dispatch<UnknownAction>
 ) => {
   dispatch({ type: GET_APPLICANT_PROFILE_LOADING });
   authorizedApi
@@ -813,13 +845,13 @@ export const getApplicantProfile = async (
     .catch((err) => {
       dispatch({
         type: GET_PROFILE_ERROR,
-        payload: err.response.data.error ?? "Network Error",
+        payload: err?.response?.data?.error ?? "Network Error",
       });
     });
 };
 const validateQuestions = async (
   answers: { [key: string]: any },
-  form: Form,
+  form: Form
 ): Promise<string | null> => {
   try {
     if (!form.qns) {
@@ -852,7 +884,7 @@ const validateQuestions = async (
 
 const validateComments = async (
   comments: { [key: string]: any },
-  form: Form,
+  form: Form
 ): Promise<string | null> => {
   try {
     if (!form.qns) {
@@ -886,7 +918,7 @@ export const handleSubmit = async (
   answers: any,
   application: any,
   form: any,
-  callback?: () => void,
+  callback?: () => void
 ) => {
   const error =
     type === "save" ? undefined : await validateQuestions(answers, form);
@@ -903,7 +935,7 @@ export const handleSubmit = async (
       `/application/${type === "save" ? "saveApplicationStatus" : "fillApplication"}/${application.uuid}`,
       {
         answers: JSON.stringify(answers),
-      },
+      }
     );
     notifications.show({
       message:
@@ -929,7 +961,7 @@ export const handleAddComments = async (
   comments: any,
   form: any,
   application: any,
-  callback?: () => void,
+  callback?: () => void
 ) => {
   const error =
     action === "save" ? undefined : await validateComments(comments, form);
@@ -948,7 +980,7 @@ export const handleAddComments = async (
         : `/application/comment/${application.uuid}`,
       {
         comments: JSON.stringify(comments),
-      },
+      }
     );
     notifications.show({
       message: "Comments Added Successfully!",

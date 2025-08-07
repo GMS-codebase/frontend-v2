@@ -49,8 +49,8 @@ const Page = () => {
     () =>
       rawApplications.map((app: any) => ({
         ...app,
-        sector: app.sectors[0] || null,
-        trade: app.trades[0] || null,
+        sector: app.sectors?.[0] || null,
+        trade: app.trades?.[0] || null,
       })),
     [rawApplications],
   );
@@ -250,7 +250,7 @@ const Page = () => {
           (trade === "All" || app.trade?.trade.title === trade)
         );
       });
-  }, [applications, searchTerm, selectedFilters]);
+  }, [applications, searchTerm, selectedFilters, getUniqueValues]);
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">

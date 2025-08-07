@@ -1,5 +1,3 @@
-import { QuestionForm } from "./questions-form";
-
 export type Route = {
   label: string;
   path: string;
@@ -76,6 +74,14 @@ export type Contact = {
   email: string;
 };
 
+export type Training ={
+  uuid:string;
+  title:string;
+  startDate: string;
+  endDate: string;
+  status: "rejected" | "accepted" | "draft"
+}
+
 export type Comments = {
   titleComment: string;
   activitiesComment: string;
@@ -118,4 +124,12 @@ export type Call = {
   subwindowForms: string;
   sectors: Sector[] | string[];
   attachment: File | string | null;
+};
+
+export type TrainingData = {
+    uuid: string;
+    title: string;
+    Applicant: string;
+    Call: string;
+    status: "REJECTED" | "ACCEPTED" | "UNDER REVIEW";
 };

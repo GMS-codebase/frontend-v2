@@ -1,4 +1,5 @@
 "use client";
+<<<<<<< HEAD
 import React, { useState } from "react";
 import DonutChart from "@/components/chart/DonutChart";
 import {
@@ -69,6 +70,55 @@ const Page = () => {
     setLoading(true);
     try {
       const filename = call.attachment.split("/").pop();
+=======
+import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { useSelector } from "react-redux";
+import { authorizedApi } from "@/utils/api";
+import { IoIosSave } from "react-icons/io";
+import { useRouter } from "next/navigation";
+import { getMyApplications, handleSubmit } from "@/services";
+import Form from "@/components/forms/Form";
+import { useDispatch } from "react-redux";
+
+const Page = () => {
+  const router = useRouter();
+  const [answers, setAnswers] = useState<{ [key: string]: any }>({});
+  const { id, applicationId } = useParams();
+  const [loading, setLoading] = useState<any>();
+  const [applicationLoading, setApplicationLoading] = useState(true);
+  const [application, setApplication] = useState<any>();
+  const fetchApplication = async () => {
+    setApplicationLoading(true);
+    try {
+      const res = await authorizedApi.get(
+        `/application/get-application/${applicationId}`,
+      );
+      setApplication(res.data.data.data);
+      setApplicationLoading(false);
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        window.history.back();
+      }
+    }
+  };
+  useEffect(() => {
+    fetchApplication();
+  }, [applicationId]);
+
+  useEffect(() => {
+    if (application) {
+      setAnswers(JSON.parse(application?.answers || "{}"));
+    }
+  }, [application]);
+  const dispatch = useDispatch();
+
+  const forms = useSelector((state: any) => state.forms);
+  const form = forms.forms.find((form: any) => {
+    const foundSubWindow = Object.keys(
+      JSON.parse(application?.call.subwindowForms || "{}"),
+    ).find((key: string) => key === application?.subWindow.uuid);
+>>>>>>> e45f39579d5458ea9afaea053e65995972d19b40
 
       const response = await unauthorizedApi.get(
         `/admin/download/calls/${filename}`,
@@ -176,12 +226,27 @@ const Page = () => {
 
   if (calls.loading) {
     return (
+<<<<<<< HEAD
       <div className="w-full h-full flex items-center justify-center">
         <p>Loading</p>
+=======
+      form.uuid ===
+      JSON.parse(application?.call.subwindowForms || "{}")[
+      foundSubWindow as any
+      ]
+    );
+  });
+
+  if (applicationLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p>Loading...</p>
+>>>>>>> e45f39579d5458ea9afaea053e65995972d19b40
       </div>
     );
   }
   return (
+<<<<<<< HEAD
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-6  text-black">
@@ -272,6 +337,47 @@ const Page = () => {
               {call?.description}
             </div>
           </div>
+=======
+    <div>
+      <div className="flex flex-col gap-4 w-full  ">
+        <div className=" flex justify-between items-center">
+          <p className="font-semibold text-2xl">Questions and answers</p>
+        </div>
+        {form && (
+          <Form
+            mode="answering"
+            formData={{ name: form?.name, qns: JSON.parse(form?.qns || "{}") }}
+            answers={answers}
+            setAnswers={(key: string, value: any) => {
+              setAnswers({ ...answers, [key]: value });
+            }}
+          />
+        )}
+        <div className="w-full grid  grid-cols-3 gap-x-4">
+          <button
+            type="button"
+            onClick={() => setAnswers({})}
+            className="w-full px-4 py-2 bg-[#000F23] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          >
+            Reset
+          </button>
+          <button
+            className="bg-primary text-white py-3 px-10 flex items-center gap-2 rounded-full  w-full justify-center"
+            onClick={() => {
+              handleSubmit("save", setLoading, answers, application, form);
+            }}
+            disabled={loading === "save"}
+          >
+            {loading === "save" ? (
+              <p>Loading...</p>
+            ) : (
+              <>
+                <IoIosSave />
+                <p className="">Save Draft</p>
+              </>
+            )}
+          </button>
+>>>>>>> e45f39579d5458ea9afaea053e65995972d19b40
           <button
             onClick={handleApply}
             disabled={applyLoading}
@@ -305,6 +411,7 @@ const Page = () => {
           </div>
         </div>
       </div>
+<<<<<<< HEAD
       <CompleteProfile
         closeCompleteProfile={() => {
           setApplyLoading(false);
@@ -341,6 +448,8 @@ const Page = () => {
         call={call}
         existingApplication={existingApplication}
       />
+=======
+>>>>>>> e45f39579d5458ea9afaea053e65995972d19b40
     </div>
   );
 };

@@ -16,17 +16,16 @@ const CallsList = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
+    const node = scrollRef.current;
     const checkScrollable = () => {
-      if (scrollRef.current) {
-        setIsScrollable(
-          scrollRef.current.scrollWidth > scrollRef.current.clientWidth,
-        );
+      if (node) {
+        setIsScrollable(node.scrollWidth > node.clientWidth);
       }
     };
 
     const handleScroll = () => {
-      if (scrollRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      if (node) {
+        const { scrollLeft, scrollWidth, clientWidth } = node;
         const scrolledPercentage =
           (scrollLeft / (scrollWidth - clientWidth)) * 100;
         setScrollProgress(scrolledPercentage);
@@ -36,14 +35,14 @@ const CallsList = () => {
     checkScrollable();
     window.addEventListener("resize", checkScrollable);
 
-    if (scrollRef.current) {
-      scrollRef.current.addEventListener("scroll", handleScroll);
+    if (node) {
+      node.addEventListener("scroll", handleScroll);
     }
 
     return () => {
       window.removeEventListener("resize", checkScrollable);
-      if (scrollRef.current) {
-        scrollRef.current.removeEventListener("scroll", handleScroll);
+      if (node) {
+        node.removeEventListener("scroll", handleScroll);
       }
     };
   }, []);

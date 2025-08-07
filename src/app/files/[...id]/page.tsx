@@ -45,6 +45,22 @@ const Page: React.FC = () => {
     const decodedFile = decodeURIComponent(file);
     const extension = decodedFile?.split(".").pop()?.toLowerCase() || "";
 
+    const displayFile = async (
+      service: string,
+      file: string,
+      extension: string,
+    ) => {
+      const blob = await handleDownloadFile(service, file);
+      if (blob) {
+        const blobUrl = URL.createObjectURL(blob);
+        setFileBlobUrl(blobUrl);
+
+        if (extension === "docx") {
+          renderDocx(blob);
+        }
+      }
+    };
+
     if (service && decodedFile) {
       setFileType(extension);
       displayFile(service, decodedFile, extension);
@@ -57,23 +73,7 @@ const Page: React.FC = () => {
         setFileBlobUrl(null);
       }
     };
-  }, [id]);
-
-  const displayFile = async (
-    service: string,
-    file: string,
-    extension: string,
-  ) => {
-    const blob = await handleDownloadFile(service, file);
-    if (blob) {
-      const blobUrl = URL.createObjectURL(blob);
-      setFileBlobUrl(blobUrl);
-
-      if (extension === "docx") {
-        renderDocx(blob);
-      }
-    }
-  };
+  }, [id, fileBlobUrl]);
 
   const renderDocx = async (blob: Blob) => {
     const arrayBuffer = await blob.arrayBuffer();
