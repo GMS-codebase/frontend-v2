@@ -145,6 +145,11 @@ import {
 import { QuestionForm } from "@/types/questions-form";
 import { useRouter } from "next/navigation";
 import { ApplicationStage } from "@/types/application";
+import {
+  GET_SURVEY_TRAINEES_ERROR,
+  GET_SURVEY_TRAINEES_LOADING,
+  GET_SURVEY_TRAINEES_SUCCESS,
+} from "@/actions/SurveyTraineeActions";
 
 export const exportAppealsReport = async (
   dispatch: Dispatch<UnknownAction>,
@@ -203,7 +208,10 @@ export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_WINDOWS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_WINDOWS_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: GET_WINDOWS_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getSubWindows = async (dispatch: Dispatch<UnknownAction>) => {
@@ -239,7 +247,10 @@ export const getMyApplicantProfile = async (
       dispatch({ type: SET_APPLICANT_PROFILE, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: SET_APPLICANT_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: SET_APPLICANT_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getSectorTrades = async (dispatch: Dispatch<UnknownAction>) => {
@@ -253,7 +264,10 @@ export const getSectorTrades = async (dispatch: Dispatch<UnknownAction>) => {
       });
     })
     .catch((err) => {
-      dispatch({ type: GET_SECTORS_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: GET_SECTORS_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
@@ -264,7 +278,10 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_SECTORS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_SECTORS_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: GET_SECTORS_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getApplicationsByStage = async (
@@ -366,6 +383,22 @@ export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
     })
     .catch((err) => {
       dispatch({ type: GET_TRADES_ERROR, payload: err?.response?.data?.error });
+    });
+};
+
+export const getSurveyTrainee = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_SURVEY_TRAINEES_LOADING });
+  authorizedApi
+    .get("/survey-trainee")
+    .then((res) => {
+      console.log(res.data.data.data)
+      dispatch({ type: GET_SURVEY_TRAINEES_SUCCESS, payload: res.data.data.data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_SURVEY_TRAINEES_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getForms = async (dispatch: Dispatch<UnknownAction>) => {
@@ -484,7 +517,10 @@ export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
       });
     })
     .catch((err) => {
-      dispatch({ type: GET_CONTRACTS_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: GET_CONTRACTS_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 
@@ -499,7 +535,10 @@ export const getMinutes = async (dispatch: Dispatch<UnknownAction>) => {
       });
     })
     .catch((err) => {
-      dispatch({ type: GET_MINUTES_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: GET_MINUTES_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
@@ -797,7 +836,10 @@ export const getEmployees = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_EMPLOYEES_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_EMPLOYEES_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: GET_EMPLOYEES_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getMEReports = async (dispatch: Dispatch<UnknownAction>) => {
@@ -819,7 +861,7 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/auth/me")
     .then((res) => {
-      console.log("Getting profile")
+      console.log("Getting profile");
       console.log(res.data.data.data);
       dispatch({ type: GET_PROFILE_SUCCESS, payload: res.data?.data?.data });
     })

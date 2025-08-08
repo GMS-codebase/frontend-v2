@@ -20,6 +20,7 @@ import { DELETE_EMPLOYEE_SUCCESS } from "@/actions/EmployeesActions";
 import { DELETE_BUDGET_LINE_SUCCESS } from "@/actions/BudgetLinesActions";
 import { DELETE_FORM_SUCCESS } from "@/actions/FormsActions";
 import { DELETE_SURVEY_SUCCESS } from "@/actions/SurveyActions";
+import { DELETE_SURVEY_TRAINEE_SUCCESS } from "@/actions/SurveyTraineeActions";
 
 // Redux action mappings
 const actionMappings = {
@@ -34,6 +35,7 @@ const actionMappings = {
   forms: DELETE_FORM_SUCCESS,
   trainings: DELETE_FORM_SUCCESS,
   surveys: DELETE_SURVEY_SUCCESS, // Added surveys action mapping
+  surveyTrainee: DELETE_SURVEY_TRAINEE_SUCCESS, // Added surveys action mapping
 };
 
 const routeMappings = {
@@ -47,7 +49,8 @@ const routeMappings = {
   budgetLines: "/budgetlines/delete",
   forms: "/forms/delete",
   trainings: "/trainings/delete",
-  surveys: "/survey/remove", // Updated to use correct survey delete endpoint
+  surveys: "/survey/remove",
+  surveyTrainee: "/survey-trainee",
 };
 
 type DeleteType =
@@ -61,7 +64,8 @@ type DeleteType =
   | "budgetLines"
   | "forms"
   | "trainings"
-  | "surveys"; // Added surveys to the type
+  | "surveys"
+  | "surveyTrainee"
 
 const DeleteModal = ({
   isOpenModal,

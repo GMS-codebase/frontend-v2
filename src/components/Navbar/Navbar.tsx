@@ -37,6 +37,7 @@ import {
   getNegotiatedMinutes,
   getApplicantProfile,
   getApplicationsByEmployee,
+  getSurveyTrainee,
 } from "@/services";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
@@ -232,6 +233,11 @@ const Navbar = () => {
         } else if (currentRole === "APPLICANT") {
           await Promise.all([
             getApplicantProfile(dispatch),
+            getWindows(dispatch),
+            getSectors(dispatch),
+            getSubWindows(dispatch),
+            getTrades(dispatch),
+            getSurveyTrainee(dispatch),
             getMyContacts(dispatch),
             getMyContracts(dispatch),
             getMyApplicantProfile(dispatch),
@@ -245,7 +251,6 @@ const Navbar = () => {
             getApplications(dispatch),
             getCalls(dispatch),
             getForms(dispatch),
-
           ]);
         }
       } catch (error) {
