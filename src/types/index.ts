@@ -135,3 +135,12 @@ export type TrainingData = {
     Call: string;
     status: "REJECTED" | "ACCEPTED" | "UNDER REVIEW";
 };
+
+export type Trainee = {
+    firstName: string;
+    lastName: string;
+    nationalId: string;
+    dob: string;
+    email: string;
+    phone: string;
+};
