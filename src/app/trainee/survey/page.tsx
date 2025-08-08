@@ -22,7 +22,7 @@ import {
   Stack,
   Menu,
 } from "@mantine/core";
-import { ESurveyStatus } from "@/types/surveys-form";
+import { ESurveyStatus, ESurveyType } from "@/types/surveys-form";
 import { HiDotsHorizontal } from "react-icons/hi";
 
 const Page = () => {
@@ -87,8 +87,7 @@ const Page = () => {
             (survey.survey_status === ESurveyStatus.ONGOING ||
               survey.survey_status === "expired" ||
               new Date(survey.expiry_date) < new Date()) &&
-            (survey.survey_TYPE === "GENERALSURVEY" ||
-              survey.survey_TYPE === "COMPANYSURVEY")
+            (survey.survey_TYPE === "GENERALSURVEY" || survey.survey_TYPE === "TRAINEESURVEY")
         )
         .map((survey: any) => {
           let transformedQuestions;
@@ -317,11 +316,11 @@ const Page = () => {
           typeof surveyId === "string"
             ? Number.parseInt(surveyId, 10)
             : surveyId,
-        userId: userId,
-        userName: userName,
+        traineeUuid: userId,
+        traineeName: userName,
         answers: JSON.stringify(surveyAnswers),
       };
-      await authorizedApi.post("/survey/submit-company-survey", responseData);
+      await authorizedApi.post("/survey/submit-trainee-survey", responseData);
       setCompletedSurveys((prev) => [...prev, String(surveyId)]);
       setSelectedSurvey(null);
       setSurveyAnswers({});
@@ -376,7 +375,7 @@ const Page = () => {
     if (activeTab === "general") {
       return survey.survey_type === "GENERALSURVEY";
     } else if (activeTab === "company") {
-      return survey.survey_type === "COMPANYSURVEY";
+      return survey.survey_type === "TRAINEESURVEY";
     }
     return true;
   });
@@ -481,13 +480,13 @@ const Page = () => {
               <Tabs.Tab value="general" className="text-lg px-6 py-3">
                 General Surveys
               </Tabs.Tab>
-              <Tabs.Tab value="company" className="text-lg px-6 py-3">
-                Company Surveys
+              <Tabs.Tab value="trainee" className="text-lg px-6 py-3">
+                Trainee Surveys
               </Tabs.Tab>
             </Tabs.List>
 
             <Tabs.Panel value="general">
-              {filteredSurveys.length === 0 ? (
+              {filteredSurveys.filter((sv) => sv.survey_type == ESurveyType.GENERALSURVEY).length === 0 ? (
                 <div className="text-center py-16">
                   <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                     <FiFileText className="w-12 h-12 text-gray-400" />
@@ -501,7 +500,7 @@ const Page = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredSurveys.map((survey) => {
+                  {filteredSurveys.filter((sv) => sv.survey_type == ESurveyType.GENERALSURVEY).map((survey) => {
                     const isCompleted = completedSurveys.includes(
                       survey.uuid || ""
                     );
@@ -518,6 +517,7 @@ const Page = () => {
                             : "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                         }}
                       >
+
                         {/* Status Badge */}
                         {isCompleted ? (
                           <div className="absolute top-3 right-3 z-10">
@@ -640,8 +640,8 @@ const Page = () => {
               )}
             </Tabs.Panel>
 
-            <Tabs.Panel value="company">
-              {filteredSurveys.length === 0 ? (
+            <Tabs.Panel value="trainee">
+              {filteredSurveys.filter((sv) => sv.survey_type == ESurveyType.TRAINEESURVEY).length === 0 ? (
                 <div className="text-center py-16">
                   <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                     <FiFileText className="w-12 h-12 text-gray-400" />
@@ -650,12 +650,12 @@ const Page = () => {
                     No surveys available
                   </p>
                   <p className="text-gray-400">
-                    Check back later for new company surveys.
+                    Check back later for new trainee surveys.
                   </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredSurveys.map((survey) => {
+                  {filteredSurveys.filter((sv) => sv.survey_type == ESurveyType.TRAINEESURVEY).map((survey) => {
                     const isCompleted = completedSurveys.includes(
                       survey.uuid || ""
                     );
