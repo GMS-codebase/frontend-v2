@@ -28,6 +28,7 @@ class AuthService {
       const response = await unauthorizedApi.post("/auth/login", data);
       setCookie("token", response.data.data.data);
       const tokenData: { role: string } = jwtDecode(response.data.data.data);
+      console.log(tokenData);
       push(tokenData.role);
     } catch (error: any) {
       notifications.show({
@@ -60,12 +61,12 @@ class AuthService {
   async setPassword(
     data: SetPasswordForm,
     token: string,
-    callback?: () => void,
+    callback?: () => void
   ) {
     try {
       const response = await unauthorizedApi.post(
         `/auth/set-password?token=${token}`,
-        data,
+        data
       );
       setCookie("token", response.data.token);
       callback && callback();

@@ -309,10 +309,6 @@ const IndividualResponsePage = () => {
       } else {
         setParsedAnswers([]);
       }
-      notifications.show({
-        message: "Applicant response loaded successfully",
-        color: "green",
-      });
     } catch (error) {
       console.error("Error fetching response:", error);
       notifications.show({

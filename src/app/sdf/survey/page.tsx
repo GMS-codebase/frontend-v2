@@ -240,11 +240,6 @@ const SurveyResponsesPage = () => {
         setTotalResponses(apiResponse.total);
         setTotalPages(apiResponse.lastPage);
         setCurrentPage(Number.parseInt(apiResponse.page));
-
-        notifications.show({
-          message: "Responses loaded successfully",
-          color: "green",
-        });
       } catch (error) {
         console.error("Error fetching responses:", error);
         notifications.show({
