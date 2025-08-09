@@ -36,6 +36,7 @@ const Page = () => {
   const [surveyAnswers, setSurveyAnswers] = useState<Record<string, any>>({});
   const [submitLoading, setSubmitLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [userLoading, setUserLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"list" | "survey" | "responses">(
@@ -56,6 +57,7 @@ const Page = () => {
         throw new Error("User UUID not found in response");
       }
       setUserId(userData.uuid);
+      setUserEmail(userData.email)
       if (userData.name) {
         setUserName(userData.name);
       } else if (userData.firstname && userData.lastname) {
@@ -211,7 +213,7 @@ const Page = () => {
       if (!userId) return;
       try {
         const response = await authorizedApi.get(
-          `/survey/survey-response/${surveyId}/${userId}`
+          `/survey/survey-responseByTrainee/${surveyId}/${userId}`
         );
         if (response.data?.answers) {
           const answers = JSON.parse(response.data.answers);
@@ -301,7 +303,7 @@ const Page = () => {
       });
       return;
     }
-    if (!userId || !userName) {
+    if (!userId || !userName || !userEmail) {
       notifications.show({
         title: "Error",
         message: "User information missing. Please log in again.",
@@ -320,7 +322,11 @@ const Page = () => {
         traineeName: userName,
         answers: JSON.stringify(surveyAnswers),
       };
-      await authorizedApi.post("/survey/submit-trainee-survey", responseData);
+      await authorizedApi.post("/survey/submit-trainee-survey", responseData, {
+        headers: {
+          email: userEmail
+        }
+      });
       setCompletedSurveys((prev) => [...prev, String(surveyId)]);
       setSelectedSurvey(null);
       setSurveyAnswers({});

@@ -299,10 +299,6 @@ const SurveyViewPage = () => {
       setError(null);
       const response = await authorizedApi.get(`/survey/single-survey/${id}`);
       setSurvey(response.data);
-      notifications.show({
-        message: "Survey data loaded successfully",
-        color: "green",
-      });
     } catch (err: any) {
       console.error("Error fetching survey:", err);
       setError(err.response?.data?.message || "Failed to load survey data");
@@ -414,11 +410,6 @@ const SurveyViewPage = () => {
         setTotalResponses(total);
         setTotalPages(totalPagesCalc);
         setCurrentPage(page);
-
-        notifications.show({
-          message: "Responses loaded successfully",
-          color: "green",
-        });
       } catch (err: any) {
         console.error("Error fetching responses:", err);
         notifications.show({
