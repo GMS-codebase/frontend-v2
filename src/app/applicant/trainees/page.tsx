@@ -1,156 +1,253 @@
-// TRAINEE FEATURE COMMENTED OUT
-/*
 "use client";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
+import { BiSearch } from "react-icons/bi";
+import { SolarAddFolderBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { Menu } from "@mantine/core";
-import Link from "next/link";
-import { FiEye } from "react-icons/fi";
-import { useSelector } from "react-redux";
-import { SolarAddFolderBold } from "@/components/core/icons";
 import { useDisclosure } from "@mantine/hooks";
-import AddTrainee from "@/components/Modals/AddTrainee";
-import { authorizedApi } from "@/utils/api";
+import AddSurveyTrainee from "@/components/Modals/trainee/AddEditSurveyTrainee";
+import { useSelector } from "react-redux";
+import { Menu, Button } from "@mantine/core";
+import { CiEdit } from "react-icons/ci";
+import { RiDeleteBinLine } from "react-icons/ri";
+
+import DeleteModal from "@/components/Modals/DeleteModal";
 
 const Page = () => {
-  const [isOpenAddTrainee, { open: openAddTrainee, close: closeAddTrainee }] =
+  const [searchQuery, setSearchQuery] = useState("");
+  const [
+    isOpenCreateEdit,
+    { open: openCreateEditModal, close: closeCreateEditModal },
+  ] = useDisclosure(false);
+  const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
-  const [trainees, setTrainees] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [lastPage, setLastPage] = useState(1);
 
-  const fetchTrainees = async (page: number) => {
-    setLoading(true);
-    try {
-      const response = await authorizedApi.get(
-        `/applicant/trainees?page=${page}&limit=10`
+  const surveyTrainee = useSelector((state: any) => state.surveyTrainee);
+  const [selectedSurveyTrainee, setSelectedSurveyTrainee] = useState<any>(null);
+
+  const filteredSurveyTrainee =
+    surveyTrainee.surveyTrainees?.filter((item: any) => {
+      const fullname = `${item.firstname} ${item.lastname}`.toLowerCase();
+      return (
+        fullname.includes(searchQuery.toLowerCase()) ||
+        (item.email?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.nationalId?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.sector?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.window?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.subWindow?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
       );
-      setTrainees(response.data.data);
-      setTotal(response.data.total);
-      setLastPage(response.data.lastPage);
-    } catch (error) {
-      console.error("Error fetching trainees:", error);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchTrainees(page);
-  }, [page]);
+    }) ?? [];
 
   const columns: ColumnDef<any>[] = [
     {
-      accessorKey: "name",
-      header: "Name",
-      cell: ({ row }) => <div className="w-full">{row.original?.name}</div>,
-    },
-    {
-      accessorKey: "nationalId",
-      header: "ID Number",
+      accessorKey: "fullname",
+      header: "Full Name",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.nationalId}</div>
+        <div className="truncate max-w-[150px]" title={`${row.original.firstname} ${row.original.lastname}`}>
+          {`${row.original.firstname} ${row.original.lastname}`}
+        </div>
       ),
     },
     {
       accessorKey: "email",
       header: "Email",
-      cell: ({ row }) => <div className="w-full">{row.original?.email}</div>,
+      cell: ({ row }) => (
+        <div className="truncate max-w-[200px]" title={row.original.email || "-"}>
+          {row.original.email || "-"}
+        </div>
+      ),
     },
     {
-      accessorKey: "phone",
-      header: "Phone",
-      cell: ({ row }) => <div className="w-full">{row.original?.phone}</div>,
+      accessorKey: "nationalId",
+      header: "National ID",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[150px]" title={row.original.nationalId || "-"}>
+          {row.original.nationalId || "-"}
+        </div>
+      ),
     },
     {
-      accessorKey: "approvalStatus",
+      accessorKey: "phoneNumber",
+      header: "Phone Number",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[150px]" title={row.original.phoneNumber || "-"}>
+          {row.original.phoneNumber || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "gender",
+      header: "Gender",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[80px]" title={row.original.gender || "-"}>
+          {row.original.gender || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "dob",
+      header: "Date of Birth",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[120px]" title={row.original.dob ? new Date(row.original.dob).toLocaleDateString() : "-"}>
+          {row.original.dob ? new Date(row.original.dob).toLocaleDateString() : "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "applicantName",
+      header: "Applicant Name",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[180px]" title={row.original.applicant?.name || "-"}>
+          {row.original.applicant?.name || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "sector",
+      header: "Sector",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[150px]" title={row.original.sector?.name || "-"}>
+          {row.original.sector?.name || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "window",
+      header: "Window",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[180px]" title={row.original.window?.title || "-"}>
+          {row.original.window?.title || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "subWindow",
+      header: "Sub Window",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[180px]" title={row.original.subWindow?.title || "-"}>
+          {row.original.subWindow?.title || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "status",
       header: "Status",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.approvalStatus}</div>
+        <div className="truncate max-w-[100px]" title={row.original.deletedStatus ? "Deleted" : "Active"}>
+          {row.original.deletedStatus ? "Deleted" : "Active"}
+        </div>
       ),
     },
     {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <div>
-          <Menu shadow="lg" width={300}>
-            <Menu.Target>
-              <button
-                style={{
-                  background:
-                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+        <Menu shadow="lg" width={300}>
+          <Menu.Target>
+            <button
+              style={{
+                background:
+                  "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
+              }}
+              className="p-3 rounded-full border text-white hover:bg-red-100"
+            >
+              <HiDotsHorizontal size={25} color="white" />
+            </button>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Label>
+              <h1 className="text-lg">Actions</h1>
+            </Menu.Label>
+            <Menu.Divider />
+            <Menu.Item>
+              <div
+                onClick={() => {
+                  setSelectedSurveyTrainee(row.original);
+                  openCreateEditModal();
                 }}
-                className="p-3 rounded-full border text-white hover:bg-red-100"
+                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
               >
-                <HiDotsHorizontal size={25} color="white" />
-              </button>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Label>
-                <h1 className="text-lg">Actions</h1>
-              </Menu.Label>
-              <Menu.Divider />
-              <Menu.Item className="bg-[#F0F0F0]">
-                <Link
-                  href={`/applicant/trainees/${row.original.uuid}`}
-                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                >
-                  <FiEye size={21} color="#576074" />
-                  View Details
-                </Link>
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </div>
+                <CiEdit size={21} color="#576074" />
+                Edit
+              </div>
+            </Menu.Item>
+            <Menu.Item>
+              <div
+                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                onClick={() => {
+                  setSelectedSurveyTrainee(row.original);
+                  openDeleteModal();
+                }}
+              >
+                <RiDeleteBinLine size={21} color="#576074" />
+                Remove
+              </div>
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
       ),
     },
   ];
 
+
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4">
-        <h1 className="text-2xl font-bold">Trainees</h1>
+      <div className="w-full flex flex-col-reverse md:flex-row justify-between gap-4 items-end md:items-center p-4">
+        <div className="relative lg:w-[25rem] w-full mb-4">
+          <span className="absolute top-4 left-2">
+            <BiSearch size={25} />
+          </span>
+          <input
+            name="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
+            placeholder="Search"
+          />
+        </div>
+
         <button
+          onClick={openCreateEditModal}
           className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-          onClick={openAddTrainee}
         >
           <span className="text-2xl">
             <SolarAddFolderBold />
           </span>
-          <h1 className="text-base font-medium text-white">Add Trainee</h1>
+          <h1 className="text-base font-medium text-white">New Survey Trainee</h1>
         </button>
       </div>
-      <div className="w-full h-full px-4">
+      <div className="w-full h-full">
         <DataTable
           columns={columns}
-          data={trainees}
-          loading={loading}
-          paginationProps={{
-            isPaginated: true,
-            paginateOpts: {
-              page: page - 1,
-              limit: 10,
-              totalPages: lastPage,
-            },
-            setPaginateOpts: () => setPage(page + 1),
-          }}
-          totalApplications={total}
+          data={filteredSurveyTrainee}
+          loading={surveyTrainee.loading}
+          noDataMessage={
+            searchQuery
+              ? `No Survey Trainee found related to ${searchQuery}`
+              : "No Survey Trainee Added So Far"
+          }
         />
       </div>
-
-      <AddTrainee
-        isOpenEditTrainee={isOpenAddTrainee}
-        closeEditTrainee={closeAddTrainee}
+      <AddSurveyTrainee
+        isOpenAddEditSurveyTrainee={isOpenCreateEdit}
+        closeAddEditSurveyTrainee={() => {
+          closeCreateEditModal();
+          setSelectedSurveyTrainee(null);
+        }}
+        defaultData={selectedSurveyTrainee}
+      />
+      <DeleteModal
+        isOpenModal={isOpenDelete}
+        closeModal={() => {
+          closeDeleteModal();
+          setSelectedSurveyTrainee(null);
+        }}
+        type="surveyTrainee"
+        id={selectedSurveyTrainee?.uuid}
       />
     </div>
   );
 };
 
 export default Page;
-*/
-
-export default function Placeholder() { return null; }

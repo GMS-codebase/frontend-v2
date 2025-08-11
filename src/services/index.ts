@@ -145,6 +145,11 @@ import {
 import { QuestionForm } from "@/types/questions-form";
 import { useRouter } from "next/navigation";
 import { ApplicationStage } from "@/types/application";
+import {
+  GET_SURVEY_TRAINEES_ERROR,
+  GET_SURVEY_TRAINEES_LOADING,
+  GET_SURVEY_TRAINEES_SUCCESS,
+} from "@/actions/SurveyTraineeActions";
 
 export const exportAppealsReport = async (
   dispatch: Dispatch<UnknownAction>,
@@ -378,6 +383,25 @@ export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
     })
     .catch((err) => {
       dispatch({ type: GET_TRADES_ERROR, payload: err?.response?.data?.error });
+    });
+};
+
+export const getSurveyTrainee = async (dispatch: Dispatch<UnknownAction>) => {
+  dispatch({ type: GET_SURVEY_TRAINEES_LOADING });
+  authorizedApi
+    .get("/survey-trainee")
+    .then((res) => {
+      console.log(res.data.data.data);
+      dispatch({
+        type: GET_SURVEY_TRAINEES_SUCCESS,
+        payload: res.data.data.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_SURVEY_TRAINEES_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getForms = async (dispatch: Dispatch<UnknownAction>) => {
@@ -1084,3 +1108,18 @@ export const getApplicationStatus2 = (application: any) => {
     return application.currentStage;
   }
 };
+
+  export const getTrainings = async (dispatch: any) => {
+    try {
+      dispatch({ type: "FETCH_TRAININGS_REQUEST" });
+      const res = await authorizedApi.get("/training/by-applicant");
+      dispatch({
+        type: "SET_TRAININGS",
+        payload: res.data.data.data,
+      });
+      console.log("Trainings fetched successfully:", res.data.data.data);
+    } catch (err) {
+      console.error("Failed to fetch trainings:", err);
+      dispatch({ type: "SET_TRAININGS", payload: [] });
+    }
+  };
