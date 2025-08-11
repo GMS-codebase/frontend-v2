@@ -1,6 +1,7 @@
 "use client";
 import { BiSearch } from "react-icons/bi";
 import { SolarAddFolderBold } from "@/components/core/icons";
+
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
@@ -13,8 +14,8 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
 import DeleteModal from "@/components/Modals/DeleteModal";
-import { TrainingData } from "@/types";
 import { trainingsData } from "@/utils/constants/trainings";
+import { Training } from "@/types";
 
 const Page = () => {
     const [
@@ -27,7 +28,9 @@ const Page = () => {
         { open: openDeleteTraining, close: closeDeleteTraining },
     ] = useDisclosure(false);
 
-    const [selectedTraining, setSelectedTraining] = useState<TrainingData | null>(
+
+    const [selectedTraining, setSelectedTraining] = useState<Training | null>(
+
         null
     );
     const [searchQuery, setSearchQuery] = useState("");
@@ -157,7 +160,7 @@ const Page = () => {
     
 
     const filteredTrainings =
-        trainings?.mytrainings?.filter((training: TrainingData) =>
+        trainings?.mytrainings?.filter((training: Training) =>
             training?.title?.toLowerCase().includes(searchQuery.toLowerCase())
         ) ?? [];
 

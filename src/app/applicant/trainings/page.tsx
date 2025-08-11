@@ -5,8 +5,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useDisclosure } from "@mantine/hooks";
-import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
 import { Menu } from "@mantine/core";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
@@ -15,24 +15,28 @@ import { VscEye } from "react-icons/vsc";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import { Training } from "@/types";
 import AddEditTraining from "@/components/Modals/training/AddEditTraining";
-import { trainingsData } from "@/utils/constants/trainings";
+import { getTrainings } from "@/services";
 
 const Page = () => {
+  const dispatch = useDispatch();
   const [
     isOpenAddEditTraining,
     { open: openAddEditTraining, close: closeAddEditTraining },
   ] = useDisclosure(false);
-
   const [
     isOpenDeleteTraining,
     { open: openDeleteTraining, close: closeDeleteTraining },
   ] = useDisclosure(false);
-
   const [selectedTraining, setSelectedTraining] = useState<Training | null>(
     null
   );
   const [searchQuery, setSearchQuery] = useState("");
   const trainings = useSelector((state: any) => state.trainings);
+  const applications = useSelector((state: any) => state.applications);
+
+  useEffect(() => {
+    getTrainings(dispatch);
+  }, [dispatch]);
 
   const columns: ColumnDef<any>[] = [
     {
@@ -43,20 +47,36 @@ const Page = () => {
     {
       accessorKey: "startDate",
       header: "Start Date",
-      cell: ({ row }) => (
-        <div className="w-full">{row.original?.startDate}</div>
-      ),
+      cell: ({ row }) => {
+        const date = row.original?.startDate
+          ? new Date(row.original.startDate).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            })
+          : "-";
+        return <div className="w-full">{date}</div>;
+      },
     },
     {
       accessorKey: "endDate",
       header: "End Date",
-      cell: ({ row }) => <div className="w-full">{row.original?.endDate}</div>,
+      cell: ({ row }) => {
+        const date = row.original?.endDate
+          ? new Date(row.original.endDate).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            })
+          : "-";
+        return <div className="w-full">{date}</div>;
+      },
     },
     {
       accessorKey: "response",
       header: "Response",
       cell: ({ row }) => {
-        const { status, uuid, response } = row.original;
+        const { status, uuid } = row.original;
 
         if (status === "accepted") {
           return (
@@ -87,7 +107,6 @@ const Page = () => {
         return <div className="text-gray-400">-</div>;
       },
     },
-
     {
       accessorKey: "status",
       header: "Status",
@@ -159,10 +178,14 @@ const Page = () => {
     },
   ];
 
-  const filteredTrainings =
-    trainings?.mytrainings?.filter((training: Training) =>
+  const filteredTrainings = trainings?.trainings?.filter((training: Training) =>
       training?.title?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
+    console.log("Filtered Trainings:", trainings);
+
+  const applicationId = applications?.myApplications?.find(
+    (app: any) => app.currentStage === "CONTRACT_SIGNING"
+  )?.uuid;
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
@@ -180,23 +203,21 @@ const Page = () => {
           />
         </div>
 
-        {(!trainings?.mytrainings || trainings.mytrainings.length < 1) && (
-          <button
-            onClick={openAddEditTraining}
-            className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3 mt-0 sm:mt-3"
-          >
-            <span className="text-2xl">
-              <SolarAddFolderBold />
-            </span>
-            <h1 className="text-base font-medium text-white">New Training</h1>
-          </button>
-        )}
+        <button
+          onClick={openAddEditTraining}
+          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3 mt-0 sm:mt-3"
+        >
+          <span className="text-2xl">
+            <SolarAddFolderBold />
+          </span>
+          <h1 className="text-base font-medium text-white">New Training</h1>
+        </button>
       </div>
 
       <div className="w-full h-full">
         <DataTable
           columns={columns}
-          data={trainingsData}
+          data={filteredTrainings || []}
           loading={trainings?.loading}
           noDataMessage={
             searchQuery
@@ -213,6 +234,7 @@ const Page = () => {
           setSelectedTraining(null);
         }}
         defaultData={selectedTraining as any}
+        applicationId={applicationId} 
       />
 
       <DeleteModal
