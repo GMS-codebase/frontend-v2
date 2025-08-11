@@ -1,13 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Menu } from "@mantine/core";
 import Link from "next/link";
 import { CiSearch } from "react-icons/ci";
 import { FiEye } from "react-icons/fi";
+import { getApplicants } from "@/services";
+import { UnknownAction } from "redux";
+import { IPaginatedQuery } from "@/types/base.type";
 const Page = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const columns: ColumnDef<any>[] = [
@@ -72,11 +75,70 @@ const Page = () => {
       ),
     },
   ];
-  const applicants = useSelector((state: any) => state.applicants);
 
-  const ApplicantsWithProfile = applicants?.applicants?.filter(
+  const dispatch = useDispatch();
+
+  const {
+    applicants,
+    loading,
+    total: totalApplicants,
+    page: currentPageFromRedux,
+  } = useSelector((state: any) => state.applicants);
+
+  // Local state for pagination
+  const [paginateOpts, setLocalPaginateOpts] = useState<
+    IPaginatedQuery & { totalPages: number }
+  >({
+    page: (currentPageFromRedux ?? 1) - 1, // UI 0-based
+    limit: 10,
+    totalPages: 1,
+  });
+
+  useEffect(() => {
+    setLocalPaginateOpts((prev) => ({
+      ...prev,
+      totalPages: Math.ceil((totalApplicants ?? 0) / (prev?.limit ?? 10)),
+    }));
+  }, [totalApplicants]);
+
+  // Fetch data whenever page or limit changes
+  useEffect(() => {
+    dispatch(
+      getApplicants(
+        (paginateOpts.page ?? 0) + 1,
+        paginateOpts.limit
+      ) as unknown as UnknownAction
+    );
+  }, [dispatch, paginateOpts.page, paginateOpts.limit]);
+
+  const setPaginateOpts: React.Dispatch<
+    React.SetStateAction<IPaginatedQuery & { totalPages: number }>
+  > = (value) => {
+    if (typeof value === "function") {
+      setLocalPaginateOpts((prev) => {
+        const next = value(prev);
+        dispatch(
+          getApplicants(
+            (next.page ?? 0) + 1,
+            next.limit
+          ) as unknown as UnknownAction
+        );
+        return next;
+      });
+    } else {
+      setLocalPaginateOpts(value);
+      dispatch(
+        getApplicants(
+          (value.page ?? 0) + 1,
+          value.limit
+        ) as unknown as UnknownAction
+      );
+    }
+  };
+
+  const ApplicantsWithProfile = applicants?.filter(
     (applicant: any) =>
-      applicant.has_completed_profile || applicant.applications.length > 0,
+      applicant.has_completed_profile || applicant.applications.length > 0
   );
 
   const filteredApplicants = ApplicantsWithProfile?.filter(
@@ -86,7 +148,7 @@ const Page = () => {
       applicant.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       applicant.businesses[0]?.businessName
         ?.toLowerCase()
-        .includes(searchTerm.toLowerCase()),
+        .includes(searchTerm.toLowerCase())
   );
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
@@ -108,12 +170,18 @@ const Page = () => {
         <DataTable
           columns={columns}
           data={filteredApplicants ?? []}
-          loading={applicants?.loading}
+          loading={loading}
           noDataMessage={
             searchTerm
               ? `No applicants matching ${searchTerm} found`
               : "No applicants yet"
           }
+          totalApplications={totalApplicants}
+          paginationProps={{
+            isPaginated: true,
+            paginateOpts,
+            setPaginateOpts,
+          }}
         />
       </div>
     </div>
