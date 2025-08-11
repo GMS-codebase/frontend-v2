@@ -1,18 +1,24 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CallsList from "../../../components/CallsList/page";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 import { Menu } from "@mantine/core";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { Call } from "@/types";
-import { getApplicationStatus, shortenString } from "@/services";
+import {
+  getApplicationStatus,
+  getMyApplications,
+  shortenString,
+} from "@/services";
 import { CALL_STATUS } from "@/utils/enums";
+import { IPaginatedQuery } from "@/types/base.type";
+import { UnknownAction } from "redux";
 const Page = () => {
   const columns: ColumnDef<any>[] = [
     {
@@ -107,9 +113,68 @@ const Page = () => {
       ),
     },
   ];
-  const myApplications = useSelector((state: any) => state.applications);
+  // const myApplications = useSelector((state: any) => state.applications);
   const calls = useSelector((state: any) => state.calls);
 
+  const dispatch = useDispatch();
+
+  const {
+    myApplications,
+    myApplicationsLoading,
+    total: totalApplications,
+    page: currentPageFromRedux,
+  } = useSelector((state: any) => state.applications);
+
+  // Local state for pagination
+  const [paginateOpts, setLocalPaginateOpts] = useState<
+    IPaginatedQuery & { totalPages: number }
+  >({
+    page: (currentPageFromRedux ?? 1) - 1, // UI 0-based
+    limit: 10,
+    totalPages: 1,
+  });
+
+  useEffect(() => {
+    setLocalPaginateOpts((prev) => ({
+      ...prev,
+      totalPages: Math.ceil((totalApplications ?? 0) / (prev?.limit ?? 10)),
+    }));
+  }, [totalApplications]);
+
+  // Fetch data whenever page or limit changes
+  useEffect(() => {
+    dispatch(
+      getMyApplications(
+        (paginateOpts.page ?? 0) + 1,
+        paginateOpts.limit
+      ) as unknown as UnknownAction
+    );
+  }, [dispatch, paginateOpts.page, paginateOpts.limit]);
+
+  const setPaginateOpts: React.Dispatch<
+    React.SetStateAction<IPaginatedQuery & { totalPages: number }>
+  > = (value) => {
+    if (typeof value === "function") {
+      setLocalPaginateOpts((prev) => {
+        const next = value(prev);
+        dispatch(
+          getMyApplications(
+            (next.page ?? 0) + 1,
+            next.limit
+          ) as unknown as UnknownAction
+        );
+        return next;
+      });
+    } else {
+      setLocalPaginateOpts(value);
+      dispatch(
+        getMyApplications(
+          (value.page ?? 0) + 1,
+          value.limit
+        ) as unknown as UnknownAction
+      );
+    }
+  };
   return (
     <div className="w-full  flex flex-col gap-4">
       {calls?.calls?.filter((call: Call) => call.status === "OPEN").length >
@@ -129,9 +194,15 @@ const Page = () => {
         <div className="w-full h-full">
           <DataTable
             columns={columns}
-            data={myApplications.myApplications}
-            loading={myApplications.loading}
+            data={myApplications}
+            loading={myApplicationsLoading}
             noDataMessage={"You haven't made any applications yet"}
+            totalApplications={totalApplications}
+            paginationProps={{
+              isPaginated: true,
+              paginateOpts,
+              setPaginateOpts,
+            }}
           />
         </div>
       </div>
@@ -140,3 +211,63 @@ const Page = () => {
 };
 
 export default Page;
+
+// const dispatch = useDispatch();
+
+// const {
+//   paginatedApplications,
+//   paginationLoading,
+//   total: totalApplications,
+//   page: currentPageFromRedux, // backend 1-based page
+// } = useSelector((state: any) => state.applications);
+
+// // Local state for pagination
+// const [paginateOpts, setLocalPaginateOpts] = useState<
+//   IPaginatedQuery & { totalPages: number }
+// >({
+//   page: (currentPageFromRedux ?? 1) - 1, // UI 0-based
+//   limit: 10,
+//   totalPages: 1,
+// });
+
+// useEffect(() => {
+//   setLocalPaginateOpts((prev) => ({
+//     ...prev,
+//     totalPages: Math.ceil((totalApplications ?? 0) / (prev?.limit ?? 10)),
+//   }));
+// }, [totalApplications]);
+
+// // Fetch data whenever page or limit changes
+// useEffect(() => {
+//   dispatch(
+//     getApplicationsPaginated(
+//       (paginateOpts.page ?? 0) + 1,
+//       paginateOpts.limit
+//     ) as unknown as UnknownAction
+//   );
+// }, [dispatch, paginateOpts.page, paginateOpts.limit]);
+
+// const setPaginateOpts: React.Dispatch<
+//   React.SetStateAction<IPaginatedQuery & { totalPages: number }>
+// > = (value) => {
+//   if (typeof value === "function") {
+//     setLocalPaginateOpts((prev) => {
+//       const next = value(prev);
+//       dispatch(
+//         getApplicationsPaginated(
+//           (next.page ?? 0) + 1,
+//           next.limit
+//         ) as unknown as UnknownAction
+//       );
+//       return next;
+//     });
+//   } else {
+//     setLocalPaginateOpts(value);
+//     dispatch(
+//       getApplicationsPaginated(
+//         (value.page ?? 0) + 1,
+//         value.limit
+//       ) as unknown as UnknownAction
+//     );
+//   }
+// };
