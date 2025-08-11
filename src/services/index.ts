@@ -203,7 +203,10 @@ export const getWindows = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_WINDOWS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_WINDOWS_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: GET_WINDOWS_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getSubWindows = async (dispatch: Dispatch<UnknownAction>) => {
@@ -239,7 +242,10 @@ export const getMyApplicantProfile = async (
       dispatch({ type: SET_APPLICANT_PROFILE, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: SET_APPLICANT_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: SET_APPLICANT_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getSectorTrades = async (dispatch: Dispatch<UnknownAction>) => {
@@ -253,7 +259,10 @@ export const getSectorTrades = async (dispatch: Dispatch<UnknownAction>) => {
       });
     })
     .catch((err) => {
-      dispatch({ type: GET_SECTORS_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: GET_SECTORS_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
@@ -264,7 +273,10 @@ export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_SECTORS_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_SECTORS_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: GET_SECTORS_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getApplicationsByStage = async (
@@ -484,7 +496,10 @@ export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
       });
     })
     .catch((err) => {
-      dispatch({ type: GET_CONTRACTS_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: GET_CONTRACTS_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 
@@ -499,7 +514,10 @@ export const getMinutes = async (dispatch: Dispatch<UnknownAction>) => {
       });
     })
     .catch((err) => {
-      dispatch({ type: GET_MINUTES_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: GET_MINUTES_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
@@ -621,23 +639,26 @@ export const getEmployeeApplicationsPaginated =
       });
     }
   };
-export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_MY_APPLICATIONS_LOADING });
-  authorizedApi
-    .get("/application/all-application")
-    .then((res) => {
-      dispatch({
-        type: GET_MY_APPLICATIONS_SUCCESS,
-        payload: res.data.data.data,
+export const getMyApplications =
+  (page?: any, limit?: any) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: GET_MY_APPLICATIONS_LOADING });
+    authorizedApi
+      .get(
+        `/application/all-application?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      )
+      .then((res) => {
+        dispatch({
+          type: GET_MY_APPLICATIONS_SUCCESS,
+          payload: res.data.data,
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_MY_APPLICATIONS_ERROR,
+          payload: err?.response?.data?.error,
+        });
       });
-    })
-    .catch((err) => {
-      dispatch({
-        type: GET_MY_APPLICATIONS_ERROR,
-        payload: err?.response?.data?.error,
-      });
-    });
-};
+  };
 
 export const getAnnouncement = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_ANNOUNCEMENT_LOADING });
@@ -797,7 +818,10 @@ export const getEmployees = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_EMPLOYEES_SUCCESS, payload: res.data.data.data });
     })
     .catch((err) => {
-      dispatch({ type: GET_EMPLOYEES_ERROR, payload: err?.response?.data?.error });
+      dispatch({
+        type: GET_EMPLOYEES_ERROR,
+        payload: err?.response?.data?.error,
+      });
     });
 };
 export const getMEReports = async (dispatch: Dispatch<UnknownAction>) => {
@@ -819,7 +843,7 @@ export const getProfile = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/auth/me")
     .then((res) => {
-      console.log("Getting profile")
+      console.log("Getting profile");
       console.log(res.data.data.data);
       dispatch({ type: GET_PROFILE_SUCCESS, payload: res.data?.data?.data });
     })
