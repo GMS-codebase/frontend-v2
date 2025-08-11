@@ -3,12 +3,15 @@ import { BiSearch } from "react-icons/bi";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 import { Menu, Select } from "@mantine/core";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
 import { useEffect, useState } from "react";
+import { UnknownAction } from "redux";
+import { getApplicants } from "@/services";
+import { IPaginatedQuery } from "@/types/base.type";
 
 const Page = () => {
   const columns: ColumnDef<any>[] = [
@@ -74,11 +77,69 @@ const Page = () => {
     },
   ];
 
-  const { applicants, loading } = useSelector((state: any) => state.applicants);
+  const dispatch = useDispatch();
+
+  const {
+    applicants,
+    loading,
+    total: totalApplicants,
+    page: currentPageFromRedux,
+  } = useSelector((state: any) => state.applicants);
+
+  // Local state for pagination
+  const [paginateOpts, setLocalPaginateOpts] = useState<
+    IPaginatedQuery & { totalPages: number }
+  >({
+    page: (currentPageFromRedux ?? 1) - 1, // UI 0-based
+    limit: 10,
+    totalPages: 1,
+  });
+
+  useEffect(() => {
+    setLocalPaginateOpts((prev) => ({
+      ...prev,
+      totalPages: Math.ceil((totalApplicants ?? 0) / (prev?.limit ?? 10)),
+    }));
+  }, [totalApplicants]);
+
+  // Fetch data whenever page or limit changes
+  useEffect(() => {
+    dispatch(
+      getApplicants(
+        (paginateOpts.page ?? 0) + 1,
+        paginateOpts.limit
+      ) as unknown as UnknownAction
+    );
+  }, [dispatch, paginateOpts.page, paginateOpts.limit]);
+
+  const setPaginateOpts: React.Dispatch<
+    React.SetStateAction<IPaginatedQuery & { totalPages: number }>
+  > = (value) => {
+    if (typeof value === "function") {
+      setLocalPaginateOpts((prev) => {
+        const next = value(prev);
+        dispatch(
+          getApplicants(
+            (next.page ?? 0) + 1,
+            next.limit
+          ) as unknown as UnknownAction
+        );
+        return next;
+      });
+    } else {
+      setLocalPaginateOpts(value);
+      dispatch(
+        getApplicants(
+          (value.page ?? 0) + 1,
+          value.limit
+        ) as unknown as UnknownAction
+      );
+    }
+  };
+
   const [filteredApplicants, setFilteredApplicants] = useState(applicants);
   const [selectedFilters, setSelectedFilters] = useState<string>("All");
 
-  console.log("applicants --> ", applicants);
   useEffect(() => {
     setFilteredApplicants(
       applicants?.filter((applicant: any) =>
@@ -86,8 +147,8 @@ const Page = () => {
           ? true
           : selectedFilters === "Completed Profile"
             ? applicant.has_completed_profile
-            : !applicant.has_completed_profile,
-      ),
+            : !applicant.has_completed_profile
+      )
     );
   }, [applicants, selectedFilters]);
 
@@ -120,7 +181,16 @@ const Page = () => {
             No Applicants Found!
           </h1>
         ) : (
-          <DataTable columns={columns} data={filteredApplicants ?? []} />
+          <DataTable
+            columns={columns}
+            data={filteredApplicants ?? []}
+            totalApplications={totalApplicants}
+            paginationProps={{
+              isPaginated: true,
+              paginateOpts,
+              setPaginateOpts,
+            }}
+          />
         )}
       </div>
     </div>
