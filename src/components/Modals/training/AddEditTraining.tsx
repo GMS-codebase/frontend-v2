@@ -1,49 +1,130 @@
 import { Modal, MultiSelect, Popover, Select, Stepper } from "@mantine/core";
-import { FormEvent, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { IoMdClose } from "react-icons/io";
-import axios from "axios";import { Training } from "@/types";
+import { authorizedApi } from "@/utils/api";
+import { Training } from "@/types";
 import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
 import { Folder2 } from "solar-icon-set";
-import { SolarUploadBold } from "@/components/core/icons";
+import { SolarUploadBold, SolarCheckCircleBold } from "@/components/core/icons";
+import { notifications } from "@mantine/notifications";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ADD_TRAINING_SUCCESS,
+  UPDATE_TRAINING_SUCCESS,
+} from "@/actions/TrainingActions";
+import { getTrainings } from "@/services";
 
 const AddEditTraining = ({
   isOpenAddEditTraining,
   closeAddEditTraining,
   defaultData,
+  applicationId,
 }: {
   isOpenAddEditTraining: boolean;
   closeAddEditTraining: () => void;
   defaultData?: Training;
+  applicationId?: string;
 }) => {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<any>({});
   const [showStartPicker, setShowStartPicker] = useState(false);
-   const [startOpened, setStartOpened] = useState(false);
-   const [endOpened, setEndOpened] = useState(false);
+  const [startOpened, setStartOpened] = useState(false);
+  const [endOpened, setEndOpened] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
   const startRef = useRef<HTMLDivElement | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
- const [formData, setFormData] = useState<Partial<Training>>({
-   title: "",
-   startDate: "",
-   endDate: "",
-   materialFile: null,
-   traineesFile: null,
- });
+  const [trainingManual, setTrainingManual] = useState<File | string | null>(
+    null
+  );
+  const [traineesFile, setTraineesFile] = useState<File | string | null>(null);
 
+  const [formData, setFormData] = useState<Partial<Training>>({
+    title: "",
+    startDate: "",
+    endDate: "",
+    competencies: [],
+    applicationId: applicationId || "",
+  });
+
+  const [traineeData, setTraineeData] = useState({
+    firstName: "",
+    lastName: "",
+    nationalId: "",
+    dob: "",
+    gender: "",
+    district: "",
+    disability: "",
+    parentPhoneNumber: "",
+    traineePhoneNumber: "",
+    trainingProgram: "",
+    educationLevel: "",
+    institutionName: "",
+    maritalStatus: "",
+  });
+
+  const [trainees, setTrainees] = useState<
+    {
+      firstName: string;
+      lastName: string;
+      nationalId: string;
+      dob: string;
+      gender: string;
+      district: string;
+      disability: string;
+      parentPhoneNumber: string;
+      traineePhoneNumber: string;
+      trainingProgram: string;
+      educationLevel: string;
+      institutionName: string;
+      maritalStatus: string;
+    }[]
+  >([]);
+  const [competencies, setCompetencies] = useState<string[]>([]);
+  const [competenceInput, setCompetenceInput] = useState("");
+  const dispatch = useDispatch();
+  const myApplications = useSelector((state: any) => state.applications);
+
+  useEffect(() => {
+    if (defaultData) {
+      setFormData({
+        title: defaultData.title,
+        startDate: defaultData.startDate.toString(),
+        endDate: defaultData.endDate.toString(),
+        competencies: defaultData.competencies || [],
+        applicationId: defaultData.applicationId || applicationId || "",
+      });
+      setTrainingManual(defaultData.trainingManual || null);
+      setTraineesFile(defaultData.traineesFile || null);
+      setCompetencies(defaultData.competencies || []);
+      setTrainees(defaultData.trainees || []);
+    }
+  }, [defaultData, applicationId]);
 
   const nextStep = () =>
-    setActive((current) => (current < 3 ? current + 1 : current));
+    setActive((current) => (current < 2 ? current + 1 : current));
   const prevStep = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
 
   const handleChange = (e: any) => {
-    const { name, value, files } = e.target;
+    const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: files ? files[0] : value,
+      [name]: value,
     }));
+  };
+
+  const handleTraineeChange = (e: any) => {
+    const { name, value } = e.target;
+    setTraineeData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleCompetenceChange = (e: any) => {
+    setCompetenceInput(e.target.value);
   };
 
   useEffect(() => {
@@ -62,47 +143,264 @@ const AddEditTraining = ({
   const formatDisplay = (dateStr?: string) =>
     dateStr ? dayjs(dateStr).format("YYYY-MM-DD") : "";
 
-const handleSubmit = async()=>{
-// submit logic
-}
+  const handleAddTrainee = () => {
+    const newErrors: any = {
+      firstName: !traineeData.firstName ? "First name is required" : "",
+      lastName: !traineeData.lastName ? "Last name is required" : "",
+      nationalId: !traineeData.nationalId ? "National ID is required" : "",
+      dob: !traineeData.dob ? "Date of birth is required" : "",
+      gender: !traineeData.gender ? "Gender is required" : "",
+      district: !traineeData.district ? "District is required" : "",
+      disability: !traineeData.disability
+        ? "Disability status is required"
+        : "",
+      parentPhoneNumber: !traineeData.parentPhoneNumber
+        ? "Parent phone number is required"
+        : "",
+      traineePhoneNumber: !traineeData.traineePhoneNumber
+        ? "Trainee phone number is required"
+        : "",
+      trainingProgram: !traineeData.trainingProgram
+        ? "Training program is required"
+        : "",
+      educationLevel: !traineeData.educationLevel
+        ? "Education level is required"
+        : "",
+      institutionName: !traineeData.institutionName
+        ? "Institution name is required"
+        : "",
+      maritalStatus: !traineeData.maritalStatus
+        ? "Marital status is required"
+        : "",
+    };
+
+    if (Object.values(newErrors).some((error) => error)) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setTrainees((prev) => [...prev, { ...traineeData }]);
+    setTraineeData({
+      firstName: "",
+      lastName: "",
+      nationalId: "",
+      dob: "",
+      gender: "",
+      district: "",
+      disability: "",
+      parentPhoneNumber: "",
+      traineePhoneNumber: "",
+      trainingProgram: "",
+      educationLevel: "",
+      institutionName: "",
+      maritalStatus: "",
+    });
+    setErrors({});
+  };
+
+  const handleRemoveTrainee = (index: number) => {
+    setTrainees((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAddCompetence = () => {
+    if (competenceInput.trim()) {
+      setCompetencies((prev) => [...prev, competenceInput.trim()]);
+      setFormData((prev) => ({
+        ...prev,
+        competencies: [...(prev.competencies || []), competenceInput.trim()],
+      }));
+      setCompetenceInput("");
+    }
+  };
+
+  const handleRemoveCompetence = (index: number) => {
+    setCompetencies((prev) => prev.filter((_, i) => i !== index));
+    setFormData((prev) => ({
+      ...prev,
+      competencies: prev.competencies?.filter((_, i) => i !== index) || [],
+    }));
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    setErrors({});
+
+    const newErrors: any = {};
+    if (!formData.title) newErrors.title = "Title is required";
+    if (!formData.startDate) newErrors.startDate = "Start date is required";
+    if (!formData.endDate) newErrors.endDate = "End date is required";
+    if (!formData.competencies?.length)
+      newErrors.competencies = "At least one competency is required";
+    if (!formData.applicationId)
+      newErrors.applicationId = "Application ID is required";
+    if (!trainees.length && !traineesFile)
+      newErrors.trainees = "Trainees or trainees file is required";
+
+    if (Object.keys(newErrors).length) {
+      setErrors(newErrors);
+      setLoading(false);
+      notifications.show({
+        message: "Please fill all required fields",
+        color: "red",
+      });
+      return;
+    }
+
+    const submitData = new FormData();
+    submitData.append("title", formData.title as string);
+    submitData.append("startDate", formData.startDate as string);
+    submitData.append("endDate", formData.endDate as string);
+    submitData.append("competencies", JSON.stringify(formData.competencies));
+    submitData.append("applicationId", formData.applicationId as string);
+
+    if (trainees.length) {
+      trainees.forEach((trainee, index) => {
+        submitData.append(`trainees[${index}][firstName]`, trainee.firstName);
+        submitData.append(`trainees[${index}][lastName]`, trainee.lastName);
+        submitData.append(`trainees[${index}][nationalId]`, trainee.nationalId);
+        submitData.append(`trainees[${index}][dob]`, trainee.dob);
+        submitData.append(
+          `trainees[${index}][gender]`,
+          trainee.gender.toUpperCase()
+        );
+        submitData.append(`trainees[${index}][district]`, trainee.district);
+        submitData.append(`trainees[${index}][disability]`, trainee.disability);
+        submitData.append(
+          `trainees[${index}][parentPhoneNumber]`,
+          trainee.parentPhoneNumber
+        );
+        submitData.append(
+          `trainees[${index}][traineePhoneNumber]`,
+          trainee.traineePhoneNumber
+        );
+        submitData.append(
+          `trainees[${index}][trainingProgram]`,
+          trainee.trainingProgram
+        );
+        submitData.append(
+          `trainees[${index}][educationLevel]`,
+          trainee.educationLevel
+        );
+        submitData.append(
+          `trainees[${index}][institutionName]`,
+          trainee.institutionName
+        );
+        submitData.append(
+          `trainees[${index}][maritalStatus]`,
+          trainee.maritalStatus.toUpperCase()
+        );
+      });
+    }
+
+    if (traineesFile) {
+      submitData.append("trainees", traineesFile);
+    }
+
+    if (trainingManual) {
+      submitData.append("trainingManual", trainingManual);
+    }
+
+    for (const [key, value] of submitData.entries()) {
+      console.log(`FormData ${key}:`, value);
+    }
+
+    const apiUrl = defaultData
+      ? `/training/${defaultData.uuid}`
+      : "/training/create";
+
+    try {
+   const res = await (defaultData
+     ? authorizedApi.put(apiUrl, submitData, {
+         headers: {
+           "Content-Type": "multipart/form-data",
+         },
+       })
+     : authorizedApi.post(apiUrl, submitData, {
+         headers: {
+           "Content-Type": "multipart/form-data",
+         },
+       }));
+
+      dispatch({
+        type: defaultData ? UPDATE_TRAINING_SUCCESS : ADD_TRAINING_SUCCESS,
+        payload: res.data.data.data,
+      });
+
+      notifications.show({
+        message: defaultData
+          ? "Training updated successfully!"
+          : "Training created successfully!",
+        color: "blue",
+      });
+
+      // Reset form
+      setFormData({
+        title: "",
+        startDate: "",
+        endDate: "",
+        competencies: [],
+        applicationId: applicationId || "",
+      });
+      setTrainingManual(null);
+      setTraineesFile(null);
+      setTrainees([]);
+      setCompetencies([]);
+      setActive(0);
+
+      getTrainings(dispatch);
+      closeAddEditTraining();
+    } catch (err: any) {
+      console.error("Submission error:", err.response?.data);
+      notifications.show({
+        message: err.response?.data?.message ?? "Failed to submit training!",
+        color: "red",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Modal
-      size={""}
+      size={"60%"}
       opened={isOpenAddEditTraining}
       onClose={closeAddEditTraining}
+      centered
       closeOnClickOutside={false}
       withCloseButton={false}
+      styles={{ body: { overflow: "auto", maxHeight: "90vh" } }}
     >
-      <div className="w-full md:w-[70vw] p-3 lg:w-[50vw] max-h-[90vh] overflow-y-auto  relative bg-white rounded-3xl pt-10 pb-10 flex flex-col items-center modal">
+      <div className="w-full max-w-[100vw] md:max-w-[90vw] max-h-[90vh] overflow-y-auto relative bg-white rounded-2xl pt-8 pb-8 flex flex-col items-center">
         <button
-          className={"absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"}
+          className={"absolute top-4 right-4 bg-gray-100 p-1 rounded-md"}
           onClick={closeAddEditTraining}
         >
-          <IoMdClose size={25} color={"#000"} />
+          <IoMdClose size={20} color={"#000"} />
         </button>
-        <div className="w-full flex flex-col items-center ">
-          <h1 className="text-2xl font-extrabold">
+        <div className="w-full flex flex-col items-center">
+          <h1 className="text-2xl font-bold">
             {defaultData ? "Update Training" : "Create Training"}
           </h1>
-          <h2 className="text-[#000F2369] text-lg font-medium">
-            Provide your Training details to{" "}
-            {defaultData ? "update " : "create a new "} Training.
+          <h2 className="text-[#000F2369] text-base font-medium">
+            Provide your details to {defaultData ? "update" : "create a new"}{" "}
+            training.
           </h2>
         </div>
-        <div className="w-full flex flex-col items-center mt-4  px-[5%]">
-          <Stepper active={active} onStepClick={setActive} className="w-full">
+        <div className="w-full flex flex-col items-center mt-4 px-[3%]">
+          <Stepper
+            active={active}
+            onStepClick={setActive}
+            className="w-full"
+            styles={{ steps: { gap: "1rem" } }}
+          >
             {/* Step 1 - Training Details */}
             <Stepper.Step label="Training Details">
               <div className="flex flex-col gap-4">
                 <div className="w-full">
-                  <label
-                    htmlFor="callTitle"
-                    className="block text-xs font-bold text-gray-700"
-                  >
+                  <label className="block text-sm font-medium text-gray-700">
                     Title
                   </label>
-                  <div className="w-full relative">
+                  <div className="w-full relative mt-1">
                     <span className="absolute left-2 top-[10px]">
                       <Folder2 />
                     </span>
@@ -110,33 +408,47 @@ const handleSubmit = async()=>{
                       type="text"
                       name="title"
                       value={formData.title}
-                      placeholder="Call title"
+                      placeholder="Training title"
                       onChange={handleChange}
-                      className="mt-1 block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-2xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      required
+                      className={`block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm ${errors.title ? "border-red-500" : ""}`}
                     />
+                    {errors.title && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.title}
+                      </p>
+                    )}
                   </div>
-                  {}
                 </div>
-
                 <div>
-                  <label className="text-xs font-semibold">
-                    Select Training
+                  <label className="text-sm font-medium">
+                    Select Application
                   </label>
                   <Select
-                    placeholder="Select training"
-                    data={[
-                      { value: "web", label: "Web Development" },
-                      { value: "ml", label: "Machine Learning" },
-                    ]}
-                    className="bg-[#000F230A] rounded-2xl"
+                    placeholder="Select application"
+                    data={
+                      myApplications.myApplications
+                        ?.filter(
+                          (app: any) => app.currentStage === "CONTRACT_SIGNING"
+                        )
+                        .map((app: any) => ({
+                          value: app.uuid,
+                          label: app.applicationNumber,
+                        })) || []
+                    }
+                    value={formData.applicationId}
+                    onChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        applicationId: value || "",
+                      }))
+                    }
+                    className="bg-[#000F230A] rounded-xl mt-1"
+                    error={errors.applicationId}
                   />
                 </div>
-
                 <div className="flex gap-4">
-                  {/* START DATE */}
                   <div className="flex-1">
-                    <label className="text-xs font-semibold">Start Date</label>
+                    <label className="text-sm font-medium">Start Date</label>
                     <Popover
                       opened={startOpened}
                       onChange={setStartOpened}
@@ -149,12 +461,12 @@ const handleSubmit = async()=>{
                           type="text"
                           readOnly
                           value={formatDisplay(formData.startDate)}
-                          placeholder="Select start date"
+                          placeholder="YYYY-MM-DD"
                           onClick={() => {
                             setStartOpened((o) => !o);
                             setEndOpened(false);
                           }}
-                          className="mt-1 w-full pl-3 py-2 bg-[#000F230A] rounded-2xl cursor-pointer"
+                          className={`mt-1 w-full pl-3 py-2 bg-[#000F230A] rounded-xl cursor-pointer text-sm ${errors.startDate ? "border-red-500" : ""}`}
                         />
                       </Popover.Target>
                       <Popover.Dropdown>
@@ -178,11 +490,14 @@ const handleSubmit = async()=>{
                         />
                       </Popover.Dropdown>
                     </Popover>
+                    {errors.startDate && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.startDate}
+                      </p>
+                    )}
                   </div>
-
-                  {/* END DATE */}
                   <div className="flex-1">
-                    <label className="text-xs font-semibold">End Date</label>
+                    <label className="text-sm font-medium">End Date</label>
                     <Popover
                       opened={endOpened}
                       onChange={setEndOpened}
@@ -195,12 +510,12 @@ const handleSubmit = async()=>{
                           type="text"
                           readOnly
                           value={formatDisplay(formData.endDate)}
-                          placeholder="Select end date"
+                          placeholder="YYYY-MM-DD"
                           onClick={() => {
                             setEndOpened((o) => !o);
                             setStartOpened(false);
                           }}
-                          className="mt-1 w-full pl-3 py-2 bg-[#000F230A] rounded-2xl cursor-pointer"
+                          className={`mt-1 w-full pl-3 py-2 bg-[#000F230A] rounded-xl cursor-pointer text-sm ${errors.endDate ? "border-red-500" : ""}`}
                         />
                       </Popover.Target>
                       <Popover.Dropdown>
@@ -226,137 +541,464 @@ const handleSubmit = async()=>{
                         />
                       </Popover.Dropdown>
                     </Popover>
+                    {errors.endDate && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.endDate}
+                      </p>
+                    )}
                   </div>
                 </div>
-
                 <div className="flex justify-between gap-4 mt-4">
                   <button
                     onClick={closeAddEditTraining}
-                    className="w-full px-4 py-2 bg-primaryText text-white rounded-full shadow-sm outline-none"
+                    className="w-full px-4 py-2 bg-black text-white rounded-xl shadow-sm outline-none text-sm"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={nextStep}
-                    className="w-full px-4 py-2 bg-primary text-white rounded-full shadow-sm outline-none"
+                    className="w-full px-4 py-2 bg-blue-600 text-white rounded-xl shadow-sm outline-none text-sm"
                   >
                     Next
                   </button>
                 </div>
               </div>
             </Stepper.Step>
-
             {/* Step 2 - Training Material Upload */}
             <Stepper.Step label="Training Material Upload">
               <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-4">
-                  <label className="text-xs font-semibold">
-                    Training Manual
-                  </label>
-                  <button className="bg-blue-600 text-white py-2 px-4 rounded-full">
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium">Training Manual</label>
+                  <button className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm">
                     Download Template
                   </button>
                 </div>
-
-                <div className="w-full border-dashed border-2 border-blue-500 rounded-2xl h-36 flex items-center justify-center bg-[#000F230A]">
-                  <label className="cursor-pointer items-center justify-center text-center place-items-center">
-                    <SolarUploadBold className="text-blue-500 text-3xl items-center" />
-                    <p className="text-sm">Upload File</p>
-                    <p className="text-xs text-gray-400">
-                      Drag & drop or click
-                    </p>
+                <div className="w-full border-dashed border-2 border-blue-500 rounded-xl h-40 flex items-center justify-center bg-[#000F230A]">
+                  <label className="cursor-pointer flex flex-col items-center justify-center text-center">
+                    {trainingManual ? (
+                      <>
+                        <SolarCheckCircleBold className="text-blue-500 text-3xl" />
+                        <p className="text-sm">File Uploaded</p>
+                        <p className="text-xs text-gray-400">
+                          {trainingManual instanceof File
+                            ? trainingManual.name
+                            : trainingManual}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <SolarUploadBold className="text-blue-500 text-3xl" />
+                        <p className="text-sm">Upload File</p>
+                        <p className="text-xs text-gray-400">
+                          Drag & Drop or click to upload file
+                        </p>
+                      </>
+                    )}
                     <input
                       type="file"
-                      name="material"
+                      name="trainingManual"
                       onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          materialFile: e.target.files?.[0] || null,
-                        }))
+                        setTrainingManual(e.target.files?.[0] || null)
                       }
+                      accept=".pdf,.doc,.docx"
                       hidden
                     />
                   </label>
                 </div>
-
                 <div>
-                  <label className="text-xs font-semibold">
-                    Related Application
-                  </label>
-                  <Select
-                    placeholder="Select related application"
-                    data={[
-                      { value: "applicationA", label: "Application A" },
-                      { value: "applicationB", label: "Application B" },
-                    ]}
-                    className="bg-[#000F230A] rounded-2xl"
-                  />
+                  <label className="text-sm font-medium">Competencies</label>
+                  <div className="flex gap-2 mt-1">
+                    <input
+                      type="text"
+                      value={competenceInput}
+                      onChange={handleCompetenceChange}
+                      className={`w-full px-3 py-2 bg-[#000F230A] rounded-xl text-sm ${errors.competencies ? "border-red-500" : ""}`}
+                      placeholder="Type a competence"
+                    />
+                    <button
+                      onClick={handleAddCompetence}
+                      className="px-3 py-2 bg-blue-600 text-white rounded-xl text-sm"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  {errors.competencies && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.competencies}
+                    </p>
+                  )}
+                  <div className="flex gap-2 mt-2 flex-wrap">
+                    {competencies.map((competence, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center bg-white px-3 py-1 rounded-xl shadow-sm text-sm"
+                      >
+                        <span className="mr-2">{competence}</span>
+                        <button
+                          onClick={() => handleRemoveCompetence(index)}
+                          className="text-gray-400 hover:text-red-500"
+                        >
+                          <IoMdClose size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-
                 <div className="flex justify-between gap-4 mt-4">
                   <button
                     onClick={prevStep}
-                    className="w-full px-4 py-2 bg-primaryText text-white rounded-full shadow-sm outline-none"
+                    className="w-full px-4 py-2 bg-black text-white rounded-xl shadow-sm outline-none text-sm"
                   >
                     Back
                   </button>
                   <button
                     onClick={nextStep}
-                    className="w-full px-4 py-2 bg-primary text-white rounded-full shadow-sm outline-none"
+                    className="w-full px-4 py-2 bg-blue-600 text-white rounded-xl shadow-sm outline-none text-sm"
                   >
                     Next
                   </button>
                 </div>
               </div>
             </Stepper.Step>
-
             {/* Step 3 - Trainees Details */}
             <Stepper.Step label="Trainees Details">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-4">
-                  <label className="text-xs font-semibold">
-                    Trainees Template
-                  </label>
-                  <button className="bg-blue-600 text-white py-2 px-4 rounded-full">
-                    Download Template
-                  </button>
+              <div className="flex flex-col gap-4 md:flex-row">
+                <div className="flex flex-col gap-4 w-full md:w-3/5">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium">Trainees</label>
+                    <button className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm w-full">
+                      Download Template
+                    </button>
+                    <div className="w-full border-dashed border-2 border-blue-500 rounded-xl h-40 flex items-center justify-center bg-[#000F230A]">
+                      <label className="cursor-pointer flex flex-col items-center justify-center text-center">
+                        {traineesFile ? (
+                          <>
+                            <SolarCheckCircleBold className="text-blue-500 text-3xl" />
+                            <p className="text-sm">File Uploaded</p>
+                            <p className="text-xs text-gray-400">
+                              {traineesFile instanceof File
+                                ? traineesFile.name
+                                : traineesFile}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <SolarUploadBold className="text-blue-500 text-3xl" />
+                            <p className="text-sm">Upload File</p>
+                            <p className="text-xs text-gray-400">
+                              Drag & Drop or click to upload file
+                            </p>
+                          </>
+                        )}
+                        <input
+                          type="file"
+                          name="traineesFile"
+                          onChange={(e) =>
+                            setTraineesFile(e.target.files?.[0] || null)
+                          }
+                          accept=".xlsx,.xls"
+                          hidden
+                        />
+                      </label>
+                    </div>
+                    {errors.trainees && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.trainees}
+                      </p>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">First Name</label>
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={traineeData.firstName}
+                        onChange={handleTraineeChange}
+                        className={`px-3 py-2 rounded-xl bg-gray-100 outline-none text-sm ${errors.firstName ? "border-red-500" : ""}`}
+                        placeholder="First name"
+                      />
+                      {errors.firstName && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.firstName}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">Last Name</label>
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={traineeData.lastName}
+                        onChange={handleTraineeChange}
+                        className={`px-3 py-2 rounded-xl bg-gray-100 outline-none text-sm ${errors.lastName ? "border-red-500" : ""}`}
+                        placeholder="Last name"
+                      />
+                      {errors.lastName && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.lastName}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">National ID</label>
+                      <input
+                        type="text"
+                        name="nationalId"
+                        value={traineeData.nationalId}
+                        onChange={handleTraineeChange}
+                        className={`px-3 py-2 rounded-xl bg-gray-100 outline-none text-sm ${errors.nationalId ? "border-red-500" : ""}`}
+                        placeholder="National ID"
+                      />
+                      {errors.nationalId && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.nationalId}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">
+                        Date of Birth
+                      </label>
+                      <input
+                        type="date"
+                        name="dob"
+                        value={traineeData.dob}
+                        onChange={handleTraineeChange}
+                        className={`px-3 py-2 rounded-xl bg-gray-100 outline-none text-sm ${errors.dob ? "border-red-500" : ""}`}
+                      />
+                      {errors.dob && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.dob}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">Gender</label>
+                      <Select
+                        data={["MALE", "FEMALE", "OTHER"]}
+                        value={traineeData.gender}
+                        onChange={(val) =>
+                          setTraineeData((prev) => ({
+                            ...prev,
+                            gender: val || "",
+                          }))
+                        }
+                        placeholder="Select gender"
+                        className={`rounded-xl text-sm bg-gray-100 ${errors.gender ? "border-red-500" : ""}`}
+                      />
+                      {errors.gender && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.gender}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">District</label>
+                      <input
+                        type="text"
+                        name="district"
+                        value={traineeData.district}
+                        onChange={handleTraineeChange}
+                        className={`px-3 py-2 rounded-xl bg-gray-100 outline-none text-sm ${errors.district ? "border-red-500" : ""}`}
+                        placeholder="District"
+                      />
+                      {errors.district && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.district}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">Disability</label>
+                      <Select
+                        data={["Yes", "No"]}
+                        value={traineeData.disability}
+                        onChange={(val) =>
+                          setTraineeData((prev) => ({
+                            ...prev,
+                            disability: val || "",
+                          }))
+                        }
+                        placeholder="Do they have a disability?"
+                        className={`rounded-xl text-sm bg-gray-100 ${errors.disability ? "border-red-500" : ""}`}
+                      />
+                      {errors.disability && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.disability}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">
+                        Parent/Guardian Phone
+                      </label>
+                      <input
+                        type="tel"
+                        name="parentPhoneNumber"
+                        value={traineeData.parentPhoneNumber}
+                        onChange={handleTraineeChange}
+                        className={`px-3 py-2 rounded-xl bg-gray-100 outline-none text-sm ${errors.parentPhoneNumber ? "border-red-500" : ""}`}
+                        placeholder="Parent phone"
+                      />
+                      {errors.parentPhoneNumber && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.parentPhoneNumber}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">
+                        Trainee Phone
+                      </label>
+                      <input
+                        type="tel"
+                        name="traineePhoneNumber"
+                        value={traineeData.traineePhoneNumber}
+                        onChange={handleTraineeChange}
+                        className={`px-3 py-2 rounded-xl bg-gray-100 outline-none text-sm ${errors.traineePhoneNumber ? "border-red-500" : ""}`}
+                        placeholder="Trainee phone"
+                      />
+                      {errors.traineePhoneNumber && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.traineePhoneNumber}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">
+                        Training Program
+                      </label>
+                      <input
+                        type="text"
+                        name="trainingProgram"
+                        value={traineeData.trainingProgram}
+                        onChange={handleTraineeChange}
+                        className={`px-3 py-2 rounded-xl bg-gray-100 outline-none text-sm ${errors.trainingProgram ? "border-red-500" : ""}`}
+                        placeholder="Training program"
+                      />
+                      {errors.trainingProgram && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.trainingProgram}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">
+                        Education Level
+                      </label>
+                      <Select
+                        data={[
+                          "Primary",
+                          "Secondary",
+                          "Vocational",
+                          "University",
+                        ]}
+                        value={traineeData.educationLevel}
+                        onChange={(val) =>
+                          setTraineeData((prev) => ({
+                            ...prev,
+                            educationLevel: val || "",
+                          }))
+                        }
+                        placeholder="Select level"
+                        className={`rounded-xl text-sm bg-gray-100 ${errors.educationLevel ? "border-red-500" : ""}`}
+                      />
+                      {errors.educationLevel && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.educationLevel}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">
+                        Institution Name
+                      </label>
+                      <input
+                        type="text"
+                        name="institutionName"
+                        value={traineeData.institutionName}
+                        onChange={handleTraineeChange}
+                        className={`px-3 py-2 rounded-xl bg-gray-100 outline-none text-sm ${errors.institutionName ? "border-red-500" : ""}`}
+                        placeholder="Institution name"
+                      />
+                      {errors.institutionName && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.institutionName}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium">
+                        Marital Status
+                      </label>
+                      <Select
+                        data={["SINGLE", "MARRIED", "DIVORCED", "WIDOWED"]}
+                        value={traineeData.maritalStatus}
+                        onChange={(val) =>
+                          setTraineeData((prev) => ({
+                            ...prev,
+                            maritalStatus: val || "",
+                          }))
+                        }
+                        placeholder="Select marital status"
+                        className={`rounded-xl text-sm bg-gray-100 ${errors.maritalStatus ? "border-red-500" : ""}`}
+                      />
+                      {errors.maritalStatus && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.maritalStatus}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex justify-between gap-4">
+                    <button
+                      onClick={handleAddTrainee}
+                      className="w-full px-4 py-2 bg-blue-600 text-white rounded-xl shadow-sm outline-none text-sm"
+                    >
+                      Add Trainee
+                    </button>
+                  </div>
+                  <div className="flex justify-between gap-4 mt-4">
+                    <button
+                      onClick={prevStep}
+                      className="w-full px-4 py-2 bg-black text-white rounded-xl shadow-sm outline-none text-sm"
+                    >
+                      Back
+                    </button>
+                    <button
+                      onClick={handleSubmit}
+                      disabled={loading}
+                      className="w-full px-4 py-2 bg-blue-600 text-white rounded-xl shadow-sm outline-none text-sm"
+                    >
+                      {loading
+                        ? "Saving..."
+                        : defaultData
+                          ? "Update Training"
+                          : "Create Training"}
+                    </button>
+                  </div>
                 </div>
-
-                <div className="w-full border-dashed border-2 border-blue-500 rounded-2xl h-36 flex items-center justify-center bg-[#000F230A]">
-                  <label className="cursor-pointer items-center justify-center text-center place-items-center">
-                    <SolarUploadBold className="text-blue-500 text-3xl items-center" />
-                    <p className="text-sm">Upload File</p>
-                    <p className="text-xs text-gray-400">
-                      Drag & drop or click
-                    </p>
-                    <input
-                      type="file"
-                      name="material"
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          materialFile: e.target.files?.[0] || null,
-                        }))
-                      }
-                      hidden
-                    />
-                  </label>
-                </div>
-
-                <div className="flex justify-between gap-4 mt-4">
-                  <button
-                    onClick={prevStep}
-                    className="w-full px-4 py-2 bg-primaryText text-white rounded-full shadow-sm outline-none"
-                  >
-                    Back
-                  </button>
-                  <button
-                    onClick={handleSubmit}
-                    disabled={loading}
-                    className="w-full px-4 py-2 bg-primary  text-white rounded-full shadow-sm outline-none"
-                  >
-                    {loading ? "Saving..." : "Save"}
-                  </button>
+                <div className="hidden md:block w-full md:w-2/5 bg-gray-100 rounded-xl p-4 max-h-[100vh]">
+                  <h3 className="text-base font-medium mb-2">
+                    Trainees Preview
+                  </h3>
+                  <div className="flex flex-col gap-2 overflow-y-scroll max-h-[90vh]">
+                    {trainees.map((trainee, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center bg-white px-3 py-1 rounded-xl shadow-sm text-sm"
+                      >
+                        <span>{`${trainee.firstName} ${trainee.lastName}`}</span>
+                        <button
+                          onClick={() => handleRemoveTrainee(index)}
+                          className="text-gray-400 hover:text-red-500"
+                        >
+                          <IoMdClose size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </Stepper.Step>

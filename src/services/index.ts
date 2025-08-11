@@ -374,12 +374,12 @@ export const getSubmissionsBySector = async (
     });
   }
 };
-export const getTrades = async (dispatch: Dispatch<UnknownAction>) => {
+export const getTrades =(page?:any, limit?:any)=> async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_TRADES_LOADING });
   authorizedApi
-    .get("/trade")
+    .get(`/trade?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`)
     .then((res) => {
-      dispatch({ type: GET_TRADES_SUCCESS, payload: res.data.data });
+      dispatch({ type: GET_TRADES_SUCCESS, payload: res.data }); 
     })
     .catch((err) => {
       dispatch({ type: GET_TRADES_ERROR, payload: err?.response?.data?.error });
@@ -391,8 +391,11 @@ export const getSurveyTrainee = async (dispatch: Dispatch<UnknownAction>) => {
   authorizedApi
     .get("/survey-trainee")
     .then((res) => {
-      console.log(res.data.data.data)
-      dispatch({ type: GET_SURVEY_TRAINEES_SUCCESS, payload: res.data.data.data });
+      console.log(res.data.data.data);
+      dispatch({
+        type: GET_SURVEY_TRAINEES_SUCCESS,
+        payload: res.data.data.data,
+      });
     })
     .catch((err) => {
       dispatch({
@@ -485,27 +488,30 @@ export const handleViewFile = (file: string, service: string): void => {
   }
 };
 
-export const getApplicants = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_APPLICANTS_LOADING });
-  authorizedApi
-    .get("/applicant/all")
-    .then((res) => {
-      dispatch({
-        type: GET_APPLICANTS_SUCCESS,
-        payload: res.data.data.data,
+export const getApplicants =
+  (page?: any, limit?: any) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: GET_APPLICANTS_LOADING });
+    authorizedApi
+      .get(
+        `/applicant/all?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      )
+      .then((res) => {
+        dispatch({
+          type: GET_APPLICANTS_SUCCESS,
+          payload: res.data.data,
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_APPLICANTS_ERROR,
+          payload: err?.response?.data?.error,
+        });
+        dispatch({
+          type: GET_APPLICANTS_ERROR,
+          payload: err?.response?.data?.error,
+        });
       });
-    })
-    .catch((err) => {
-      dispatch({
-        type: GET_APPLICANTS_ERROR,
-        payload: err?.response?.data?.error,
-      });
-      dispatch({
-        type: GET_APPLICANTS_ERROR,
-        payload: err?.response?.data?.error,
-      });
-    });
-};
+  };
 export const getContracts = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_CONTRACTS_LOADING });
   authorizedApi
@@ -660,23 +666,26 @@ export const getEmployeeApplicationsPaginated =
       });
     }
   };
-export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_MY_APPLICATIONS_LOADING });
-  authorizedApi
-    .get("/application/all-application")
-    .then((res) => {
-      dispatch({
-        type: GET_MY_APPLICATIONS_SUCCESS,
-        payload: res.data.data.data,
+export const getMyApplications =
+  (page?: any, limit?: any) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: GET_MY_APPLICATIONS_LOADING });
+    authorizedApi
+      .get(
+        `/application/all-application?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      )
+      .then((res) => {
+        dispatch({
+          type: GET_MY_APPLICATIONS_SUCCESS,
+          payload: res.data.data,
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_MY_APPLICATIONS_ERROR,
+          payload: err?.response?.data?.error,
+        });
       });
-    })
-    .catch((err) => {
-      dispatch({
-        type: GET_MY_APPLICATIONS_ERROR,
-        payload: err?.response?.data?.error,
-      });
-    });
-};
+  };
 
 export const getAnnouncement = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_ANNOUNCEMENT_LOADING });
@@ -1100,5 +1109,20 @@ export const getApplicationStatus2 = (application: any) => {
     return "ANSWERING";
   } else {
     return application.currentStage;
+  }
+};
+
+export const getTrainings = async (dispatch: any) => {
+  try {
+    dispatch({ type: "FETCH_TRAININGS_REQUEST" });
+    const res = await authorizedApi.get("/training/by-applicant");
+    dispatch({
+      type: "SET_TRAININGS",
+      payload: res.data.data.data,
+    });
+    console.log("Trainings fetched successfully:", res.data.data.data);
+  } catch (err) {
+    console.error("Failed to fetch trainings:", err);
+    dispatch({ type: "SET_TRAININGS", payload: [] });
   }
 };

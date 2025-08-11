@@ -1,19 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { useState, useMemo, useEffect } from "react";
-import { useSelector } from "react-redux";
-import Link from "next/link";
-import { VscEye } from "react-icons/vsc";
+import EmployeeApplicationsPage from "@/components/pages/applications/employees";
 import {
   getApplications,
   getApplicationsPaginated,
-  getApplicationStatus,
-  getApplicationStatus2,
+  getApplicationStatus2
 } from "@/services";
-import { useDispatch } from "react-redux";
-import { UnknownAction } from "redux";
+import { IPaginatedQuery } from "@/types/base.type";
 import { filterByStep } from "@/utils/funcs";
-import EmployeeApplicationsPage from "@/components/pages/applications/employees";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { UnknownAction } from "redux";
 
 const Page = () => {
   const { applications, loading, page } = useSelector(
@@ -38,8 +35,68 @@ const Page = () => {
     trade: "All",
   });
 
+  const dispatch = useDispatch();
+
+  const {
+    paginatedApplications,
+    paginationLoading,
+    total: totalApplications,
+    page: currentPageFromRedux,
+  } = useSelector((state: any) => state.applications);
+
+  // Local state for pagination
+  const [paginateOpts, setLocalPaginateOpts] = useState<
+    IPaginatedQuery & { totalPages: number }
+  >({
+    page: (currentPageFromRedux ?? 1) - 1,
+    limit: 10,
+    totalPages: 1,
+  });
+
+  useEffect(() => {
+    setLocalPaginateOpts((prev) => ({
+      ...prev,
+      totalPages: Math.ceil((totalApplications ?? 0) / (prev?.limit ?? 10)),
+    }));
+  }, [totalApplications]);
+
+  // Fetch data whenever page or limit changes
+  useEffect(() => {
+    dispatch(
+      getApplicationsPaginated(
+        (paginateOpts.page ?? 0) + 1,
+        paginateOpts.limit
+      ) as unknown as UnknownAction
+    );
+  }, [dispatch, paginateOpts.page, paginateOpts.limit]);
+
+  const setPaginateOpts: React.Dispatch<
+    React.SetStateAction<IPaginatedQuery & { totalPages: number }>
+  > = (value) => {
+    if (typeof value === "function") {
+      setLocalPaginateOpts((prev) => {
+        const next = value(prev);
+        dispatch(
+          getApplicationsPaginated(
+            (next.page ?? 0) + 1,
+            next.limit
+          ) as unknown as UnknownAction
+        );
+        return next;
+      });
+    } else {
+      setLocalPaginateOpts(value);
+      dispatch(
+        getApplicationsPaginated(
+          (value.page ?? 0) + 1,
+          value.limit
+        ) as unknown as UnknownAction
+      );
+    }
+  };
+
   const filteredApplications = useMemo(() => {
-    return applications
+    return paginatedApplications
       .filter(
         (app: any) =>
           app.applicationNumber
@@ -51,8 +108,8 @@ const Page = () => {
               searchTerm.toLowerCase() ||
                 app.applicant?.businesses?.[0]?.businessName
                   .toLowerCase()
-                  .includes(searchTerm.toLowerCase()),
-            ),
+                  .includes(searchTerm.toLowerCase())
+            )
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade, step } =
@@ -68,7 +125,7 @@ const Page = () => {
           (trade === "All" || app.trade?.trade.title === trade)
         );
       });
-  }, [applications, searchTerm, selectedFilters]);
+  }, [paginatedApplications, searchTerm, selectedFilters]);
 
   return (
     <EmployeeApplicationsPage
@@ -77,11 +134,17 @@ const Page = () => {
         currentStage: getApplicationStatus2(app),
       }))}
       type="admin"
-      loading={loading}
+      loading={paginationLoading}
       selectedFilters={selectedFilters}
       setSelectedFilters={setSelectedFilters}
       searchTerm={searchTerm}
       setSearchTerm={setSearchTerm}
+      totalApplications={totalApplications}
+      paginationProps={{
+        isPaginated: true,
+        paginateOpts,
+        setPaginateOpts,
+      }}
     />
   );
 };

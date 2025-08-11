@@ -13,6 +13,9 @@ const initialState = {
   error: null,
   isError: false,
   loading: true,
+  total: 0,
+  page: 1,
+  totalPages: 0,
 };
 
 type Action = {
@@ -34,7 +37,10 @@ export default function ApplicantsReducer(
       return {
         ...state,
         loading: false,
-        applicants: action.payload,
+        applicants: action.payload.data,
+        total: action.payload.totalItems,
+        page: action.payload.currentPage,
+        totalPages: action.payload.totalPages,
       };
     case GET_APPLICANTS_ERROR:
       return {

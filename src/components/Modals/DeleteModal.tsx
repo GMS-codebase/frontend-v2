@@ -48,7 +48,7 @@ const routeMappings = {
   employees: "/employees",
   budgetLines: "/budgetlines/delete",
   forms: "/forms/delete",
-  trainings: "/trainings/delete",
+  trainings: "/training/delete",
   surveys: "/survey/remove",
   surveyTrainee: "/survey-trainee",
 };

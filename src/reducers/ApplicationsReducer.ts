@@ -57,7 +57,7 @@ export default function ApplicationsReducer(
     case GET_MY_APPLICATIONS_LOADING:
       return {
         ...state,
-        myLoading: true,
+        myApplicationsLoading: true,
       };
     case GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING:
       return {
@@ -103,7 +103,10 @@ export default function ApplicationsReducer(
       return {
         ...state,
         myApplicationsLoading: false,
-        myApplications: action.payload,
+        myApplications: action.payload.data,
+        total: action.payload.totalItems,
+        page: action.payload.currentPage,
+        totalPages: action.payload.totalPages,
       };
 
     case GET_APPLICATIONS_ERROR:
@@ -112,6 +115,7 @@ export default function ApplicationsReducer(
         ...state,
         isError: true,
         loading: false,
+        myApplicationsLoading:false,
         error: action.payload,
       };
 
