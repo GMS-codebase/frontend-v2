@@ -1110,21 +1110,19 @@ const SurveyPage = () => {
                 <Menu.Divider />
                 <Menu.Item
                   leftSection={<FiEye className="h-4 w-4" />}
-                  onClick={() => {
-                    window.location.href = `/admin/surveys/view/${survey.id}`;
-                  }}
                 >
-                  View Details
+                  <Link href={`/admin/survey/view/${survey.id}`}>
+                    View Details
+                  </Link>
                 </Menu.Item>
 
                 {canEdit && (
                   <Menu.Item
                     leftSection={<CiEdit className="h-4 w-4" />}
-                    onClick={() =>
-                      (window.location.href = `/admin/surveys/create-edit/${survey.id}`)
-                    }
                   >
-                    Edit Survey
+                    <Link href={`/admin/survey/create-edit/${survey.id}`}>
+                      Edit Survey
+                    </Link>
                   </Menu.Item>
                 )}
 
@@ -1171,101 +1169,6 @@ const SurveyPage = () => {
           </div>
         );
       },
-    },
-  ];
-
-  // Column definitions for Responses table
-  const responseColumns: ColumnDef<SurveyResponse>[] = [
-    {
-      accessorKey: "applicant",
-      header: () => <div className="text-left font-semibold">Applicant</div>,
-      cell: ({ row }) => (
-        <div className="font-medium">{row.original.applicant.name}</div>
-      ),
-    },
-    {
-      accessorKey: "survey",
-      header: () => <div className="text-left font-semibold">Survey</div>,
-      cell: ({ row }) => <div>{row.original.survey.name}</div>,
-    },
-    {
-      accessorKey: "submitted_at",
-      header: () => <div className="text-left font-semibold">Timestamp</div>,
-      cell: ({ row }) => (
-        <div>
-          {format(new Date(row.original.submitted_at), "MMM dd, yyyy HH:mm")}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "response",
-      header: () => <div className="text-left font-semibold">Response</div>,
-      cell: ({ row }) => {
-        const questionMap = parseQuestions(row.original.survey?.qns);
-        return (
-          <div className="max-w-md truncate" title={row.original.response}>
-            {renderAnswers(row.original.answers, questionMap)}
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "status",
-      header: () => <div className="text-left font-semibold">Status</div>,
-      cell: ({ row }) => (
-        <div
-          className={`px-3 py-1 rounded-full text-sm w-fit ${row.original.reviewed ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"}`}
-        >
-          {row.original.reviewed ? "Reviewed" : "Pending"}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "actions",
-      header: () => <div className="text-right font-semibold">Actions</div>,
-      cell: ({ row }) => (
-        <div className="flex justify-end">
-          <Menu shadow="lg" width={200} position="bottom-end">
-            <Menu.Target>
-              <button
-                style={{
-                  background:
-                    "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-                }}
-                className="p-2.5 rounded-full text-white hover:opacity-90 transition-opacity"
-              >
-                <HiDotsHorizontal size={18} color="white" />
-              </button>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Label>
-                <h1 className="text-lg font-medium">Actions</h1>
-              </Menu.Label>
-              <Menu.Divider />
-              <Menu.Item
-                leftSection={<FiEye className="h-4 w-4" />}
-                onClick={() => {
-                  // Navigate to the details page
-                  window.location.href = `/admin/surveys/responses/${row.original.survey.id}/${row.original.applicant.uuid}`;
-                }}
-              >
-                View Details
-              </Menu.Item>
-              {!row.original.reviewed && (
-                <Menu.Item>
-                  <div
-                    className="w-full py-2 flex text-base items-center gap-3 text-[#576074] cursor-pointer"
-                    onClick={() => handleMarkAsReviewed(row.original.uuid)}
-                  >
-                    <CiEdit size={18} color="#576074" />
-                    Mark as Reviewed
-                  </div>
-                </Menu.Item>
-              )}
-            </Menu.Dropdown>
-          </Menu>
-        </div>
-      ),
     },
   ];
 
@@ -1382,12 +1285,10 @@ const SurveyPage = () => {
               <Menu.Divider />
               <Menu.Item
                 leftSection={<FiEye className="h-4 w-4" />}
-                onClick={() => {
-                  // Navigate to the responses for this survey
-                  window.location.href = `/admin/surveys/view/${row.original.id}`;
-                }}
               >
-                View Responses
+                <Link href={`/admin/survey/view/${row.original.id}`}>
+                  View Responses
+                </Link>
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>
@@ -1406,7 +1307,7 @@ const SurveyPage = () => {
         {/* New Survey Button */}
         <div className="flex justify-end mb-6">
           <Link
-            href="/admin/surveys/create-edit/create"
+            href="/admin/survey/create-edit/create"
             className="text-white py-2.5 px-6 rounded-full flex items-center gap-2 hover:opacity-90 transition-opacity whitespace-nowrap"
             style={{
               background:
@@ -1501,11 +1402,10 @@ const SurveyPage = () => {
           <div className="w-full p-5 border-b overflow-x-auto">
             <div className="flex space-x-4 md:space-x-8 min-w-max">
               <button
-                className={`text-base md:text-lg font-medium pb-2 ${
-                  activeTab === "all"
+                className={`text-base md:text-lg font-medium pb-2 ${activeTab === "all"
                     ? "text-[#005DE9] border-b-2 border-[#005DE9]"
                     : "text-gray-500 hover:text-gray-700"
-                }`}
+                  }`}
                 onClick={() => {
                   setActiveTab("all");
                   setSelectedSurvey(null);
@@ -1515,11 +1415,10 @@ const SurveyPage = () => {
                 All Surveys
               </button>
               <button
-                className={`text-base md:text-lg font-medium pb-2 ${
-                  activeTab === "draft"
+                className={`text-base md:text-lg font-medium pb-2 ${activeTab === "draft"
                     ? "text-[#005DE9] border-b-2 border-[#005DE9]"
                     : "text-gray-500 hover:text-gray-700"
-                }`}
+                  }`}
                 onClick={() => {
                   setActiveTab("draft");
                   setSelectedSurvey(null);
@@ -1529,11 +1428,10 @@ const SurveyPage = () => {
                 Draft
               </button>
               <button
-                className={`text-base md:text-lg font-medium pb-2 ${
-                  activeTab === "ongoing"
+                className={`text-base md:text-lg font-medium pb-2 ${activeTab === "ongoing"
                     ? "text-[#005DE9] border-b-2 border-[#005DE9]"
                     : "text-gray-500 hover:text-gray-700"
-                }`}
+                  }`}
                 onClick={() => {
                   setActiveTab("ongoing");
                   setSelectedSurvey(null);
@@ -1543,11 +1441,10 @@ const SurveyPage = () => {
                 Ongoing
               </button>
               <button
-                className={`text-base md:text-lg font-medium pb-2 ${
-                  activeTab === "ended"
+                className={`text-base md:text-lg font-medium pb-2 ${activeTab === "ended"
                     ? "text-[#005DE9] border-b-2 border-[#005DE9]"
                     : "text-gray-500 hover:text-gray-700"
-                }`}
+                  }`}
                 onClick={() => {
                   setActiveTab("ended");
                   setSelectedSurvey(null);
@@ -1557,11 +1454,10 @@ const SurveyPage = () => {
                 Ended
               </button>
               <button
-                className={`text-base md:text-lg font-medium pb-2 ${
-                  activeTab === "responsesPerType"
+                className={`text-base md:text-lg font-medium pb-2 ${activeTab === "responsesPerType"
                     ? "text-[#005DE9] border-b-2 border-[#005DE9]"
                     : "text-gray-500 hover:text-gray-700"
-                }`}
+                  }`}
                 onClick={() => {
                   setActiveTab("responsesPerType");
                   setSelectedSurvey(null);
@@ -1653,15 +1549,14 @@ const SurveyPage = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-gray-500 rounded-full bg-[#005DE908] border-none outline-none focus:ring-2 focus:ring-blue-100"
-                placeholder={`Search ${
-                  activeTab === "responsesPerType"
+                placeholder={`Search ${activeTab === "responsesPerType"
                     ? "surveys"
                     : activeTab === "ongoing"
                       ? "ongoing surveys"
                       : activeTab === "ended"
                         ? "ended surveys"
                         : "surveys"
-                }...`}
+                  }...`}
               />
             </div>
             {/* Survey Type Filter */}

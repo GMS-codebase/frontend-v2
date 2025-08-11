@@ -7,7 +7,6 @@ import { getCookie } from "cookies-next";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getApplicants,
-  getApplications,
   getCalls,
   getEmployees,
   getMyApplicantProfile,
@@ -38,6 +37,7 @@ import {
   getApplicantProfile,
   getApplicationsByEmployee,
   getSurveyTrainee,
+  getApplications,
 } from "@/services";
 import { Menu } from "@mantine/core";
 import { IoMdLogOut } from "react-icons/io";
@@ -184,7 +184,6 @@ const Navbar = () => {
             getRoles(dispatch),
             getBudgetLines(dispatch),
             getAppeals(dispatch, "admin"),
-            getApplications(dispatch),
             getWindows(dispatch),
             getSectors(dispatch),
             getSubWindows(dispatch),
@@ -225,7 +224,6 @@ const Navbar = () => {
             getAppeals(dispatch, "sdf"),
             getApplicationsForContractSigning(dispatch),
             getProfile(dispatch),
-            getApplications(dispatch),
             getForms(dispatch)
           ]);
         } else if (currentRole === "GRANT_COMMITTEE") {
@@ -248,7 +246,6 @@ const Navbar = () => {
             getNegotiatedMinutes(dispatch, "applicant"),
             getBudgetLines(dispatch),
             getAppeals(dispatch, "applicant"),
-            getApplications(dispatch),
             getCalls(dispatch),
             getForms(dispatch),
           ]);

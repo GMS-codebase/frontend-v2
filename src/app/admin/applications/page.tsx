@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
 import {
+  getApplications,
   getApplicationsPaginated,
   getApplicationStatus,
   getApplicationStatus2,
@@ -23,6 +24,9 @@ const Page = () => {
   const [limit] = useState(10);
   console.log("first application --> ", applications.slice(1, 5));
   console.log(loading);
+  useEffect(() => {
+    getApplications(dispatch);
+  }, []);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
     stage: "All",
