@@ -663,23 +663,26 @@ export const getEmployeeApplicationsPaginated =
       });
     }
   };
-export const getMyApplications = async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_MY_APPLICATIONS_LOADING });
-  authorizedApi
-    .get("/application/all-application")
-    .then((res) => {
-      dispatch({
-        type: GET_MY_APPLICATIONS_SUCCESS,
-        payload: res.data.data.data,
+export const getMyApplications =
+  (page?: any, limit?: any) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: GET_MY_APPLICATIONS_LOADING });
+    authorizedApi
+      .get(
+        `/application/all-application?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      )
+      .then((res) => {
+        dispatch({
+          type: GET_MY_APPLICATIONS_SUCCESS,
+          payload: res.data.data,
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_MY_APPLICATIONS_ERROR,
+          payload: err?.response?.data?.error,
+        });
       });
-    })
-    .catch((err) => {
-      dispatch({
-        type: GET_MY_APPLICATIONS_ERROR,
-        payload: err?.response?.data?.error,
-      });
-    });
-};
+  };
 
 export const getAnnouncement = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_ANNOUNCEMENT_LOADING });

@@ -1,6 +1,6 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/core/data-table/paginated";
+import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { CiSearch } from "react-icons/ci";
 import { Menu, Select } from "@mantine/core";
@@ -12,37 +12,67 @@ import { VscEye } from "react-icons/vsc";
 import { getApplicationsPaginated, getApplicationStatus } from "@/services";
 import { useDispatch } from "react-redux";
 import { UnknownAction } from "redux";
+import { IPaginatedQuery } from "@/types/base.type";
 
 const Page = () => {
+  const dispatch = useDispatch();
+
   const {
     paginatedApplications: rawApplications,
-    loading,
+    paginationLoading,
     total: totalApplications,
-    page,
+    page: currentPageFromRedux,
   } = useSelector((state: any) => state.applications);
-  const dispatch = useDispatch();
-  const [pageState, setPage] = useState(page ?? 1);
-  const [limit, setLimit] = useState(10);
-  const totalPages = totalApplications / limit;
+
+  // Local state for pagination
+  const [paginateOpts, setLocalPaginateOpts] = useState<
+    IPaginatedQuery & { totalPages: number }
+  >({
+    page: (currentPageFromRedux ?? 1) - 1,
+    limit: 10,
+    totalPages: 1,
+  });
 
   useEffect(() => {
-    dispatch(getApplicationsPaginated(page, limit) as unknown as UnknownAction);
-  }, [dispatch, page, limit]);
+    setLocalPaginateOpts((prev) => ({
+      ...prev,
+      totalPages: Math.ceil((totalApplications ?? 0) / (prev?.limit ?? 10)),
+    }));
+  }, [totalApplications]);
 
-  const handleNextPage = (newPage: number, limit: number) => {
+  // Fetch data whenever page or limit changes
+  useEffect(() => {
     dispatch(
-      getApplicationsPaginated(newPage + 1, limit) as unknown as UnknownAction
+      getApplicationsPaginated(
+        (paginateOpts.page ?? 0) + 1,
+        paginateOpts.limit
+      ) as unknown as UnknownAction
     );
-  };
-  const handlePreviousPage = (newPage: number, limit: number) => {
-    dispatch(
-      getApplicationsPaginated(newPage - 1, limit) as unknown as UnknownAction
-    );
-  };
-  const handleChangePage = (newPage: number, limit: number) => {
-    dispatch(
-      getApplicationsPaginated(newPage, limit) as unknown as UnknownAction
-    );
+  }, [dispatch, paginateOpts.page, paginateOpts.limit]);
+
+  const setPaginateOpts: React.Dispatch<
+    React.SetStateAction<IPaginatedQuery & { totalPages: number }>
+  > = (value) => {
+    if (typeof value === "function") {
+      setLocalPaginateOpts((prev) => {
+        const next = value(prev);
+        dispatch(
+          getApplicationsPaginated(
+            (next.page ?? 0) + 1,
+            next.limit
+          ) as unknown as UnknownAction
+        );
+        return next;
+      });
+    } else {
+      setLocalPaginateOpts(value);
+      dispatch(
+        getApplicationsPaginated(
+          (value.page ?? 0) + 1,
+          value.limit
+        ) as unknown as UnknownAction
+      );
+    }
   };
 
   const applications = useMemo(
@@ -324,23 +354,13 @@ const Page = () => {
       <DataTable
         data={filteredApplications}
         columns={columns}
-        loading={loading}
+        loading={paginationLoading}
+        noDataMessage={"No applications yet"}
         totalApplications={totalApplications}
-        page={page}
-        setPage={setPage}
-        paginationFuncs={{
-          onChangePage: handleChangePage,
-          onNextPage: handleNextPage,
-          onPreviousPage: handlePreviousPage,
-        }}
         paginationProps={{
           isPaginated: true,
-          paginateOpts: {
-            page: page - 1,
-            totalPages: totalPages,
-            limit: limit,
-          },
-          setPaginateOpts: () => {},
+          paginateOpts,
+          setPaginateOpts,
         }}
       />
     </div>
