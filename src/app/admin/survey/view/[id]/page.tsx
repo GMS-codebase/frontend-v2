@@ -64,7 +64,8 @@ interface Applicant {
 
 interface Trainee {
   uuid: string;
-  name?: string;
+  firstname?: string;
+  lastname?: string;
   email?: string;
   phone?: string;
   gender?: string;
@@ -367,27 +368,6 @@ const SurveyViewPage = () => {
               }
             }
 
-            // Fetch trainee name if available
-            if (item.trainee && item.trainee.uuid && !item.trainee.name) {
-              try {
-                const traineeResponse = await authorizedApi.get(
-                  `/applicant/trainees/${item.trainee.uuid}`
-                );
-                enrichedItem = {
-                  ...enrichedItem,
-                  trainee: {
-                    ...item.trainee,
-                    name: traineeResponse.data.name || "N/A",
-                  },
-                };
-              } catch (err) {
-                console.warn(
-                  `Failed to fetch trainee name for uuid ${item.trainee.uuid}:`,
-                  err
-                );
-              }
-            }
-
             const questionMap = parseQuestions(item.survey?.qns ?? "");
             const parsedAnswers = parseAnswers(item.answers ?? "", questionMap);
 
@@ -456,14 +436,14 @@ const SurveyViewPage = () => {
     if (dateToFilter && submittedDate > new Date(dateToFilter)) return false;
     const searchLower = searchQuery.toLowerCase();
     const applicantName = response.applicant?.name?.toLowerCase() || "";
-    const traineeName = response.trainee?.name?.toLowerCase() || "";
+    const traineeName = (response.trainee?.firstname || "") + " " + (response.trainee?.lastname || "") || "";
     const email =
       response.applicant?.email?.toLowerCase() ||
       response.trainee?.email?.toLowerCase() ||
       "";
     return (
       applicantName.includes(searchLower) ||
-      traineeName.includes(searchLower) ||
+      traineeName.toLowerCase().includes(searchLower) ||
       email.includes(searchLower)
     );
   });
@@ -488,7 +468,7 @@ const SurveyViewPage = () => {
         headers.join(","),
         ...filteredResponses.map((response) => {
           const respondent =
-            response.applicant?.name || response.trainee?.name || "N/A";
+            response.applicant?.name || (response.trainee?.firstname || "") + " " + (response.trainee?.lastname || "") || "N/A";
           const respondentType = response.applicant
             ? "Applicant"
             : response.trainee
@@ -559,7 +539,7 @@ const SurveyViewPage = () => {
   const columns: ColumnDef<SurveyResponse>[] = [
     {
       accessorKey: "respondent",
-      header: "Respondent",
+      header: "Respondent updfgh",
       cell: ({ row }) => {
         const respondent = row.original.applicant || row.original.trainee;
         const respondentType = row.original.applicant
@@ -574,7 +554,8 @@ const SurveyViewPage = () => {
               <User className="w-4 h-4 text-blue-600" />
             </div>
             <div>
-              <p className="font-medium text-gray-900">{respondent?.name || "N/A"}</p>
+              {/* @ts-ignore */}
+              <p className="font-medium text-gray-900">{respondent?.name || respondent?.firstname + respondent?.lastname || "N/A"}</p>
               <p className="text-sm text-gray-500">{respondent?.email || "N/A"}</p>
               <p className="text-xs text-blue-600">{respondentType}</p>
             </div>
@@ -620,6 +601,7 @@ const SurveyViewPage = () => {
       cell: ({ row }) => {
         const respondentId =
           row.original.applicant?.uuid || row.original.trainee?.uuid || "unknown";
+          const isTrainee = row.original.trainee?.uuid ? true : false;
 
         return (
           <div>
@@ -642,7 +624,7 @@ const SurveyViewPage = () => {
                 <Menu.Divider />
                 <Menu.Item className="bg-[#F0F0F0]">
                   <Link
-                    href={`/admin/surveys/responses/${id}/${respondentId}`}
+                    href={`/admin/survey/responses/${id}/${isTrainee ? "trainee" : "applicant"}/${respondentId}`}
                     className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                   >
                     <VscEye size={21} color="#576074" />

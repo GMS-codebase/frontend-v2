@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
 import {
+  getApplications,
   getApplicationsPaginated,
   getApplicationStatus,
   getApplicationStatus2,
@@ -22,13 +23,16 @@ import { useDispatch } from "react-redux";
 import { filterByStep } from "@/utils/funcs";
 import EmployeeApplicationsPage from "@/components/pages/applications/employees";
 const Page = () => {
+  const dispatch = useDispatch();
   const {
     applications: rawApplications,
     loading,
     page,
   } = useSelector((state: any) => state.applications);
   const { stages } = useSelector((state: any) => state.empStages);
-  console.log(stages);
+  useEffect(() => {
+    getApplications(dispatch);
+  }, []);
 
   const applications = useMemo(
     () =>

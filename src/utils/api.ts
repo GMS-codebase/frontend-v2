@@ -9,7 +9,7 @@ function getAccessTokenFromLocalStorage(): string | undefined {
 
 export const authorizedApi: AxiosInstance = axios.create({
   baseURL: api,
-  timeout: 30000,
+  timeout: 300000,
 });
 
 authorizedApi.interceptors.request.use(

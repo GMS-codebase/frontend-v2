@@ -404,6 +404,7 @@ const SurveyResponsesPage = () => {
   const renderResponseRow = (response: SurveyResponse) => {
     const respondent = response.applicant || response.trainee;
     const respondentType = response.applicant ? "Applicant" : "Trainee";
+    const isTrainee = response.trainee?.uuid ? true : false;
 
     // Parse answers for display
     let displayAnswer = "No answers provided";
@@ -500,7 +501,7 @@ const SurveyResponsesPage = () => {
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
                 <Link
-                  href={`/sdf/survey/responses/${response.survey.id}/${respondent?.uuid}`}
+                  href={`/sdf/survey/responses/${response.survey.id}/${isTrainee ? "trainee" : "applicant"}/${respondent?.uuid}`}
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <VscEye size={21} color="#576074" />
