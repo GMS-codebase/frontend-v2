@@ -72,6 +72,8 @@ const Navbar = () => {
               ? "GRANT_COMMITTEE"
               : active.startsWith("/trainee")
                 ? "TRAINEE"
+                : active.startsWith("/survey_trainee")
+                  ? "SURVEY_TRAINEE"
                 : null;
 
     setCurrentRole(role);
@@ -98,6 +100,8 @@ const Navbar = () => {
         }
       );
 
+      console.log("🎯 Direct API call result:", response);
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -118,35 +122,15 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    // Get trainee data from localStorage
-    const storedData = localStorage.getItem("traineeData");
-    if (storedData) {
-      try {
-        const parsedData = JSON.parse(storedData);
-        if (parsedData.role === "TRAINEE") {
-          setTraineeData(parsedData);
-          setProfileLoading(false);
-          return;
-        }
-      } catch (error) {
-        console.error("Error parsing trainee data:", error);
-      }
-    }
-
-    // If not trainee, fetch profile from API
-    if (currentRole && currentRole !== "TRAINEE") {
+    console.log("🎯 Current Role:", currentRole);
+    if (currentRole) {
       fetchUserProfile().finally(() => setProfileLoading(false));
     }
   }, [currentRole]);
 
   const handleLogout = () => {
-    if (traineeData) {
-      // Clear trainee data from localStorage
-      localStorage.removeItem("traineeData");
-    } else {
-      dispatch({ type: LOGOUT });
-      dispatch({ type: GET_PROFILE_ERROR });
-    }
+    dispatch({ type: LOGOUT });
+    dispatch({ type: GET_PROFILE_ERROR });
     setLoading(true);
     navigate.push("/");
     notifications.show({
@@ -176,7 +160,6 @@ const Navbar = () => {
 
     const fetchOtherData = async () => {
       try {
-
         if (currentRole === "ADMIN") {
           await Promise.all([
             getApplicants(dispatch),
@@ -228,6 +211,8 @@ const Navbar = () => {
           ]);
         } else if (currentRole === "GRANT_COMMITTEE") {
           await Promise.all([getApplications(dispatch), getProfile(dispatch)]);
+        }else if (currentRole === "SURVEY_TRAINEE") {
+          await Promise.all([ getProfile(dispatch)]);
         } else if (currentRole === "APPLICANT") {
           await Promise.all([
             getApplicantProfile(dispatch),
@@ -261,22 +246,6 @@ const Navbar = () => {
   const { profile } = useSelector((state: any) => state.profile);
   const { applicantProfile } = useSelector((state: any) => state.profile);
 
-  // Debug logging
-  useEffect(() => {
-    console.log("Current Role:", currentRole);
-    console.log("Redux Profile:", profile);
-    console.log("Local User Profile:", userProfile);
-    console.log("Applicant Profile:", applicantProfile);
-    console.log("Trainee Data:", traineeData);
-    console.log("Profile Loading:", profileLoading);
-  }, [
-    profile,
-    applicantProfile,
-    traineeData,
-    currentRole,
-    profileLoading,
-    userProfile,
-  ]);
 
   // Get display name based on user type
   const getDisplayName = () => {

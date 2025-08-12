@@ -68,7 +68,8 @@ interface Applicant {
 
 interface Trainee {
   uuid: string;
-  name: string;
+  firstname: string;
+  lastname: string;
   email: string;
   phone: string;
   gender: string;
@@ -292,7 +293,7 @@ const SurveyResponsesPage = () => {
     // Search filter
     const searchLower = searchQuery.toLowerCase();
     const applicantName = response.applicant?.name?.toLowerCase() || "";
-    const traineeName = response.trainee?.name?.toLowerCase() || "";
+    const traineeName = response.trainee?.firstname?.toLowerCase() + " " + response.trainee?.lastname?.toLowerCase() || "";
     const surveyName = response.survey.name.toLowerCase();
     const email =
       response.applicant?.email?.toLowerCase() ||
@@ -331,7 +332,7 @@ const SurveyResponsesPage = () => {
         headers.join(","),
         ...filteredResponses.map((response) => {
           const respondent =
-            response.applicant?.name || response.trainee?.name || "N/A";
+            response.applicant?.name || response.trainee?.firstname + " " + response.trainee?.lastname || "N/A";
           const respondentType = response.applicant ? "Applicant" : "Trainee";
           const email =
             response.applicant?.email || response.trainee?.email || "N/A";
@@ -429,10 +430,10 @@ const SurveyResponsesPage = () => {
             </div>
             <div>
               <p className="font-medium text-gray-900">
-                {respondent?.name || "N/A"}
+                {response.applicant ? response.applicant.name : response.trainee ? response.trainee.firstname + " " + response.trainee.lastname : "N/A"}
               </p>
               <p className="text-sm text-gray-500">
-                {respondent?.email || "N/A"}
+                {response.applicant?.email || response.trainee?.email || "N/A"}
               </p>
               <p className="text-xs text-blue-600">{respondentType}</p>
             </div>
