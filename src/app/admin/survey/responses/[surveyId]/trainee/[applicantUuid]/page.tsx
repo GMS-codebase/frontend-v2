@@ -9,6 +9,7 @@ import { notifications } from "@mantine/notifications";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Clock, User, FileText, Download } from "lucide-react";
 import SurveyForms from "@/components/forms/SurveyForms";
+import jsPDF from "jspdf";
 
 interface SurveyResponse {
   uuid: string;
@@ -34,6 +35,10 @@ interface SurveyResponse {
     gender: string;
     nationalId: string;
     applicationNumber: string;
+    applicant:{
+      name:string;
+      address:string;
+    }
   };
 }
 
@@ -348,42 +353,150 @@ const IndividualResponsePage = () => {
     }
   };
 
-  // Export response as formatted text
+  // Export response as PDF
   const handleExportResponse = () => {
     if (!response || !parsedAnswers.length) return;
 
     const respondent = response.trainee;
-    const respondentType =  "Trainee";
+    const respondentType = "Trainee";
 
-    let exportText = `Survey Response Export\n`;
-    exportText += `========================\n\n`;
-    exportText += `Survey: ${response.survey.name}\n`;
-    exportText += `Survey Type: ${response.survey.survey_TYPE}\n`;
-    exportText += `Respondent: ${respondent?.firstname + " " + respondent?.lastname || "N/A"} (${respondentType})\n`;
-    exportText += `Email: ${respondent?.email || "N/A"}\n`;
-    exportText += `Submitted: ${format(new Date(response.submitted_at), "MMM dd, yyyy HH:mm")}\n`;
-    exportText += `Status: ${response.status}\n\n`;
-    exportText += `Responses:\n`;
-    exportText += `----------\n\n`;
+    // Create new PDF document
+    const doc = new jsPDF();
+    
+    // Set initial position
+    let yPosition = 20;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    const contentWidth = pageWidth - (2 * margin);
 
-    parsedAnswers.forEach((answer, index) => {
-      exportText += `${index + 1}. ${answer.question}\n`;
-      exportText += `   Answer: ${answer.answer}\n\n`;
+    // Helper function to add text with word wrapping
+    const addWrappedText = (text: string, x: number, y: number, maxWidth: number) => {
+      const lines = doc.splitTextToSize(text, maxWidth);
+      doc.text(lines, x, y);
+      return lines.length * 7; // Approximate line height
+    };
+
+    // Helper function to check if we need a new page
+    const checkNewPage = (requiredHeight: number) => {
+      if (yPosition + requiredHeight > doc.internal.pageSize.getHeight() - 20) {
+        doc.addPage();
+        yPosition = 20;
+        return true;
+      }
+      return false;
+    };
+
+    // Title
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text("Survey Response Export", pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 15;
+
+    // Separator line
+    doc.setDrawColor(200, 200, 200);
+    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 20;
+
+    // Survey Information
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text("Survey Information", margin, yPosition);
+    yPosition += 10;
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    
+    const surveyInfo = [
+      `Survey: ${response.survey.name}`,
+      `Survey Type: ${response.survey.survey_TYPE}`,
+      `Status: ${response.status}`,
+      `Created: ${format(new Date(response.survey.created_at), "MMM dd, yyyy")}`,
+      `Expires: ${format(new Date(response.survey.expiry_date), "MMM dd, yyyy")}`,
+      `Submitted: ${format(new Date(response.submitted_at), "MMM dd, yyyy HH:mm")}`
+    ];
+
+    surveyInfo.forEach(info => {
+      doc.text(info, margin, yPosition);
+      yPosition += 7;
     });
 
-    // Create and download file
-    const blob = new Blob([exportText], { type: "text/plain" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `survey-response-${response.survey.name}-${respondent?.firstname + " " + respondent?.lastname || "unknown"}-${format(new Date(), "yyyy-MM-dd")}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    yPosition += 10;
+
+    // Respondent Information
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text("Respondent Information", margin, yPosition);
+    yPosition += 10;
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    
+    const respondentInfo = [
+      `Name: ${respondent?.firstname + " " + respondent?.lastname || "N/A"}`,
+      `Type: ${respondentType}`,
+      `Email: ${respondent?.email || "N/A"}`,
+      `Phone: ${respondent?.phoneNumber || "N/A"}`,
+      `Gender: ${respondent?.gender || "N/A"}`,
+      `National ID: ${respondent?.nationalId || "N/A"}`
+    ];
+
+    // Add company information if available
+    if (response.trainee?.applicant) {
+      respondentInfo.push(
+        `Company Owner: ${response.trainee.applicant.name || "N/A"}`,
+        `Company Address: ${response.trainee.applicant.address || "N/A"}`
+      );
+    }
+
+    respondentInfo.forEach(info => {
+      doc.text(info, margin, yPosition);
+      yPosition += 7;
+    });
+
+    yPosition += 15;
+
+    // Survey Responses
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text("Survey Responses", margin, yPosition);
+    yPosition += 10;
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+
+    // Add each question and answer
+    parsedAnswers.forEach((answer, index) => {
+      const questionText = `${index + 1}. ${answer.question}`;
+      const answerText = `Answer: ${answer.answer}`;
+      
+      // Check if we need a new page
+      const questionHeight = doc.splitTextToSize(questionText, contentWidth).length * 7;
+      const answerHeight = doc.splitTextToSize(answerText, contentWidth).length * 7;
+      const totalHeight = questionHeight + answerHeight + 10;
+      
+      checkNewPage(totalHeight);
+
+      // Add question
+      doc.setFont('helvetica', 'bold');
+      const questionLines = doc.splitTextToSize(questionText, contentWidth);
+      doc.text(questionLines, margin, yPosition);
+      yPosition += questionLines.length * 7;
+
+      // Add answer
+      doc.setFont('helvetica', 'normal');
+      const answerLines = doc.splitTextToSize(answerText, contentWidth);
+      doc.text(answerLines, margin + 10, yPosition);
+      yPosition += answerLines.length * 7 + 5;
+    });
+
+    // Generate filename
+    const filename = `survey-response-${response.survey.name.replace(/[^a-zA-Z0-9]/g, '-')}-${(respondent?.firstname + "-" + respondent?.lastname || "unknown").replace(/[^a-zA-Z0-9]/g, '-')}-${format(new Date(), "yyyy-MM-dd")}.pdf`;
+
+    // Save the PDF
+    doc.save(filename);
 
     notifications.show({
-      message: "Response exported successfully",
+      message: "Response exported as PDF successfully",
       color: "green",
     });
   };
@@ -451,7 +564,7 @@ const IndividualResponsePage = () => {
                   className="px-4 py-2 rounded-md text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 flex items-center gap-2"
                 >
                   <Download className="w-4 h-4" />
-                  Export Response
+                  Export as PDF
                 </button>
               )}
               <button
@@ -542,6 +655,22 @@ const IndividualResponsePage = () => {
                           </span>
                         </div>
                       </>
+                    )}
+                                        {response.trainee?.applicant && (
+                      <>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Company Owner Name:</span>
+                        <span className="font-medium text-gray-900 text-right max-w-xs">
+                          {response.trainee?.applicant.name || "N/A"}
+                        </span>
+                      </div>
+                                            <div className="flex justify-between">
+                                            <span className="text-gray-600">Company Address:</span>
+                                            <span className="font-medium text-gray-900 text-right max-w-xs">
+                                              {response.trainee?.applicant.address || "N/A"}
+                                            </span>
+                                          </div>
+                                          </>
                     )}
                   </div>
                 </div>
