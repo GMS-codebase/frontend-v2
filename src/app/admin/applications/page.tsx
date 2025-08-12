@@ -13,14 +13,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { UnknownAction } from "redux";
 
 const Page = () => {
-  const { applications, loading, page } = useSelector(
-    (state: any) => state.applications,
-  );
-
   const dispatch = useDispatch();
-  const [limit] = useState(10);
-  console.log("first application --> ", applications.slice(1, 5));
-  console.log(loading);
+
   useEffect(() => {
     getApplications(dispatch);
   }, []);
@@ -34,8 +28,6 @@ const Page = () => {
     sector: "All",
     trade: "All",
   });
-
-  const dispatch = useDispatch();
 
   const {
     paginatedApplications,
