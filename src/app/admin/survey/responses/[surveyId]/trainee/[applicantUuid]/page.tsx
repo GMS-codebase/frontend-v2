@@ -25,19 +25,12 @@ interface SurveyResponse {
     created_at: string;
     expiry_date: string;
   };
-  applicant?: {
-    uuid: string;
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-    gender: string;
-  };
   trainee?: {
     uuid: string;
-    name: string;
+    firstname: string;
+    lastname: string;
     email: string;
-    phone: string;
+    phoneNumber: string;
     gender: string;
     nationalId: string;
     applicationNumber: string;
@@ -359,14 +352,14 @@ const IndividualResponsePage = () => {
   const handleExportResponse = () => {
     if (!response || !parsedAnswers.length) return;
 
-    const respondent = response.applicant || response.trainee;
-    const respondentType = response.applicant ? "Applicant" : "Trainee";
+    const respondent = response.trainee;
+    const respondentType =  "Trainee";
 
     let exportText = `Survey Response Export\n`;
     exportText += `========================\n\n`;
     exportText += `Survey: ${response.survey.name}\n`;
     exportText += `Survey Type: ${response.survey.survey_TYPE}\n`;
-    exportText += `Respondent: ${respondent?.name || "N/A"} (${respondentType})\n`;
+    exportText += `Respondent: ${respondent?.firstname + " " + respondent?.lastname || "N/A"} (${respondentType})\n`;
     exportText += `Email: ${respondent?.email || "N/A"}\n`;
     exportText += `Submitted: ${format(new Date(response.submitted_at), "MMM dd, yyyy HH:mm")}\n`;
     exportText += `Status: ${response.status}\n\n`;
@@ -383,7 +376,7 @@ const IndividualResponsePage = () => {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `survey-response-${response.survey.name}-${respondent?.name || "unknown"}-${format(new Date(), "yyyy-MM-dd")}.txt`;
+    link.download = `survey-response-${response.survey.name}-${respondent?.firstname + " " + respondent?.lastname || "unknown"}-${format(new Date(), "yyyy-MM-dd")}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -434,8 +427,8 @@ const IndividualResponsePage = () => {
     );
   }
 
-  const respondent = response.applicant || response.trainee;
-  const respondentType = response.applicant ? "Applicant" : "Trainee";
+  const respondent = response.trainee;
+  const respondentType = "Trainee";
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -513,7 +506,7 @@ const IndividualResponsePage = () => {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Name:</span>
                       <span className="font-medium text-gray-900">
-                        {respondent?.name || "N/A"}
+                        {response.trainee ? response.trainee.firstname + " " + response.trainee.lastname : "N/A"}
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -525,7 +518,7 @@ const IndividualResponsePage = () => {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Phone:</span>
                       <span className="font-medium text-gray-900">
-                        {respondent?.phone || "N/A"}
+                        {respondent?.phoneNumber || "N/A"}
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -548,23 +541,7 @@ const IndividualResponsePage = () => {
                             {response.trainee.nationalId || "N/A"}
                           </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">
-                            Application Number:
-                          </span>
-                          <span className="font-medium text-gray-900">
-                            {response.trainee.applicationNumber || "N/A"}
-                          </span>
-                        </div>
                       </>
-                    )}
-                    {response.applicant && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Address:</span>
-                        <span className="font-medium text-gray-900 text-right max-w-xs">
-                          {response.applicant.address || "N/A"}
-                        </span>
-                      </div>
                     )}
                   </div>
                 </div>
