@@ -1,26 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/core/data-table";
-import { HiDotsHorizontal } from "react-icons/hi";
-import { CiSearch } from "react-icons/ci";
-import { Menu, Select } from "@mantine/core";
-import { useRef, useState, useMemo, useEffect } from "react";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { useSelector } from "react-redux";
-import Link from "next/link";
-import { VscEye } from "react-icons/vsc";
-import {
-  getApplications,
-  getApplicationsPaginated,
-  getApplicationStatus,
-  getApplicationStatus2,
-  getEmployeeApplicationsPaginated,
-  shortenString,
-} from "@/services";
-import { UnknownAction } from "redux";
-import { useDispatch } from "react-redux";
-import { filterByStep } from "@/utils/funcs";
 import EmployeeApplicationsPage from "@/components/pages/applications/employees";
 import { getApplicationsPaginated, getApplicationStatus2 } from "@/services";
 import { IPaginatedQuery } from "@/types/base.type";
@@ -89,9 +68,6 @@ const Page = () => {
   };
 
   const { stages } = useSelector((state: any) => state.empStages);
-  useEffect(() => {
-    getApplications(dispatch);
-  }, []);
 
   const applications = useMemo(
     () =>
