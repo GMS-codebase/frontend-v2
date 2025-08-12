@@ -35,6 +35,7 @@ import { Dropdown, DropdownItem } from "@/components/ui/Dropdown";
 import { Select, SelectItem } from "@/components/ui/Select";
 import { Menu } from "@mantine/core";
 import { VscEye } from "react-icons/vsc";
+import * as XLSX from "xlsx";
 
 // Types based on the API response
 interface Survey {
@@ -318,65 +319,68 @@ const SurveyResponsesPage = () => {
   // Handle Excel export
   const handleExportToExcel = useCallback(() => {
     try {
-      // Create CSV content
-      const headers = [
-        "Respondent",
-        "Type",
-        "Email",
-        "Survey",
-        "Submitted",
-        "Status",
-        "Responses",
+      // Create Excel workbook
+      const workbook = XLSX.utils.book_new();
+      
+      // Prepare data for export
+      const exportData = filteredResponses.map((response) => {
+        const respondent =
+          response.applicant?.name || response.trainee?.firstname + " " + response.trainee?.lastname || "N/A";
+        const respondentType = response.applicant ? "Applicant" : "Trainee";
+        const email =
+          response.applicant?.email || response.trainee?.email || "N/A";
+        const survey = response.survey.name;
+        const submitted = format(
+          new Date(response.submitted_at),
+          "yyyy-MM-dd HH:mm"
+        );
+        const status = response.status;
+
+        // Parse answers for export
+        let answersText = "No answers";
+        try {
+          const questionMap = parseQuestions(response.survey.qns);
+          const parsedAnswers = parseAnswers(response.answers, questionMap);
+          answersText = parsedAnswers
+            .map((r) => `${r.question}: ${r.answer}`)
+            .join("; ");
+        } catch (error) {
+          console.warn("Failed to parse answers for export:", error);
+        }
+
+        return {
+          Respondent: respondent,
+          Type: respondentType,
+          Email: email,
+          Survey: survey,
+          Submitted: submitted,
+          Status: status,
+          Responses: answersText,
+        };
+      });
+
+      // Create worksheet
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+      // Set column widths for better readability
+      worksheet["!cols"] = [
+        { wch: 25 }, // Respondent
+        { wch: 12 }, // Type
+        { wch: 30 }, // Email
+        { wch: 25 }, // Survey
+        { wch: 20 }, // Submitted
+        { wch: 12 }, // Status
+        { wch: 60 }, // Responses
       ];
-      const csvContent = [
-        headers.join(","),
-        ...filteredResponses.map((response) => {
-          const respondent =
-            response.applicant?.name || response.trainee?.firstname + " " + response.trainee?.lastname || "N/A";
-          const respondentType = response.applicant ? "Applicant" : "Trainee";
-          const email =
-            response.applicant?.email || response.trainee?.email || "N/A";
-          const survey = response.survey.name;
-          const submitted = format(
-            new Date(response.submitted_at),
-            "yyyy-MM-dd HH:mm"
-          );
-          const status = response.status;
 
-          // Parse answers for export
-          let answersText = "No answers";
-          try {
-            const questionMap = parseQuestions(response.survey.qns);
-            const parsedAnswers = parseAnswers(response.answers, questionMap);
-            answersText = parsedAnswers
-              .map((r) => `${r.question}: ${r.answer}`)
-              .join("; ");
-          } catch (error) {
-            console.warn("Failed to parse answers for export:", error);
-          }
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Survey Responses");
 
-          return [
-            respondent,
-            respondentType,
-            email,
-            survey,
-            submitted,
-            status,
-            `"${answersText}"`,
-          ].join(",");
-        }),
-      ].join("\n");
+      // Generate filename
+      const filename = `survey-responses-${format(new Date(), "yyyy-MM-dd")}.xlsx`;
 
-      // Download CSV
-      const blob = new Blob([csvContent], { type: "text/csv" });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `survey-responses-${format(new Date(), "yyyy-MM-dd")}.csv`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      // Save the Excel file
+      XLSX.writeFile(workbook, filename);
 
       notifications.show({
         message: "Excel file exported successfully",
@@ -542,11 +546,10 @@ const SurveyResponsesPage = () => {
             <div className="flex space-x-3">
               <Button
                 onClick={handleExportToExcel}
-                variant="secondary"
-                disabled={filteredResponses.length === 0}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2"
               >
-                <Download className="w-4 h-4 mr-2" />
-                Export CSV
+                <Download className="w-4 h-4" />
+                Export Excel
               </Button>
             </div>
           </div>

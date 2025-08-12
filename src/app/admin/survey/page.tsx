@@ -33,6 +33,7 @@ import {
 import { Select, SelectItem } from "@/components/ui/Select";
 import { Tabs } from "@mantine/core";
 import Button from "@/components/ui/Button";
+import * as XLSX from "xlsx";
 
 interface SurveyWithResponseCount extends Survey {
   responseCount: number;
@@ -778,20 +779,11 @@ const SurveyPage = () => {
   const formatResponsesForExport = (responses: SurveyResponse[]) => {
     if (responses.length === 0) return [];
 
-    // Create headers
-    const headers = [
-      "Applicant Name",
-      "Survey Name",
-      "Survey Type",
-      "Email",
-      "Submitted At",
-      "Status",
-      "Responses",
-    ];
-
-    const data = [headers];
-
-    responses.forEach((response) => {
+    // Create Excel workbook
+    const workbook = XLSX.utils.book_new();
+    
+    // Prepare data for export
+    const exportData = responses.map((response) => {
       const respondent =
         response.applicant?.name || response.trainee?.name || "N/A";
       const email =
@@ -815,54 +807,63 @@ const SurveyPage = () => {
         console.warn("Failed to parse answers for export:", error);
       }
 
-      data.push([
-        respondent,
-        surveyName,
-        surveyType,
-        email,
-        submittedAt,
-        status,
-        answersText,
-      ]);
+      return {
+        "Applicant Name": respondent,
+        "Survey Name": surveyName,
+        "Survey Type": surveyType,
+        "Email": email,
+        "Submitted At": submittedAt,
+        "Status": status,
+        "Responses": answersText,
+      };
     });
 
-    return data;
+    // Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+    // Set column widths for better readability
+    worksheet["!cols"] = [
+      { wch: 25 }, // Applicant Name
+      { wch: 25 }, // Survey Name
+      { wch: 15 }, // Survey Type
+      { wch: 30 }, // Email
+      { wch: 20 }, // Submitted At
+      { wch: 12 }, // Status
+      { wch: 60 }, // Responses
+    ];
+
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "All Survey Responses");
+
+    // Generate filename
+    const filename = `all-survey-responses-${format(new Date(), "yyyy-MM-dd")}.xlsx`;
+
+    // Save the Excel file
+    XLSX.writeFile(workbook, filename);
+
+    return exportData;
   };
 
   // formatResponsesBySurveyType is used for downloading responses per survey type
   const formatResponsesBySurveyType = (responses: SurveyResponse[]) => {
     if (responses.length === 0) return [];
 
+    // Create Excel workbook
+    const workbook = XLSX.utils.book_new();
+    
     // Group responses by survey type
-    const responsesByType = responses.reduce(
-      (acc, response) => {
-        const type = response.survey?.survey_TYPE || "Unknown";
-        if (!acc[type]) {
-          acc[type] = [];
-        }
-        acc[type].push(response);
-        return acc;
-      },
-      {} as Record<string, SurveyResponse[]>
-    );
+    const responsesByType: Record<string, SurveyResponse[]> = {};
+    responses.forEach((response) => {
+      const type = response.survey?.survey_TYPE || "Unknown";
+      if (!responsesByType[type]) {
+        responsesByType[type] = [];
+      }
+      responsesByType[type].push(response);
+    });
 
-    // Create headers
-    const headers = [
-      "Applicant Name",
-      "Survey Name",
-      "Email",
-      "Submitted At",
-      "Status",
-      "Responses",
-    ];
-
-    // Create data for each survey type
-    const dataByType: Record<string, string[][]> = {};
-
+    // Create a worksheet for each survey type
     Object.entries(responsesByType).forEach(([type, typeResponses]) => {
-      const data = [headers];
-
-      typeResponses.forEach((response) => {
+      const exportData = typeResponses.map((response) => {
         const respondent =
           response.applicant?.name || response.trainee?.name || "N/A";
         const email =
@@ -888,20 +889,40 @@ const SurveyPage = () => {
           console.warn("Failed to parse answers for export:", error);
         }
 
-        data.push([
-          respondent,
-          surveyName,
-          email,
-          submittedAt,
-          status,
-          answersText,
-        ]);
+        return {
+          "Applicant Name": respondent,
+          "Survey Name": surveyName,
+          "Email": email,
+          "Submitted At": submittedAt,
+          "Status": status,
+          "Responses": answersText,
+        };
       });
 
-      dataByType[type] = data;
+      // Create worksheet for this survey type
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+      // Set column widths for better readability
+      worksheet["!cols"] = [
+        { wch: 25 }, // Applicant Name
+        { wch: 25 }, // Survey Name
+        { wch: 30 }, // Email
+        { wch: 20 }, // Submitted At
+        { wch: 12 }, // Status
+        { wch: 60 }, // Responses
+      ];
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(workbook, worksheet, type);
     });
 
-    return dataByType;
+    // Generate filename
+    const filename = `survey-responses-by-type-${format(new Date(), "yyyy-MM-dd")}.xlsx`;
+
+    // Save the Excel file
+    XLSX.writeFile(workbook, filename);
+
+    return responsesByType;
   };
 
   // Enhanced filter logic for surveys
