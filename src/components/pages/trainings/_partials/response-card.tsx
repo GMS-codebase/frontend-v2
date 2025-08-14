@@ -75,53 +75,6 @@ const ResponseCard: FC<props> = ({ response }) => {
           {response.timestamp}
         </div>
       </div>
-
-      {/* Action section */}
-      {response.status === "accepted" && (
-        <div className="flex flex-col lg:flex-row gap-4 items-stretch w-full mt-4">
-          {/* Select */}
-          <div className="rounded-2xl w-full lg:w-auto">
-            <Select
-              value={selectedRequest}
-              onValueChange={setSelectedRequest}
-              className="!min-w-[150px] w-full lg:w-auto h-full rounded-2xl"
-            >
-              <SelectItem value="request training">Request training</SelectItem>
-              <SelectItem value="Adding trainees">Adding trainees</SelectItem>
-              <SelectItem value="Editing trainees">Editing trainees</SelectItem>
-              <SelectItem value="Removing trainees">
-                Removing trainees
-              </SelectItem>
-              <SelectItem value="Select competence">
-                Select competence
-              </SelectItem>
-            </Select>
-          </div>
-
-          {/* Textarea */}
-          <div className="flex-1 w-full">
-            <textarea
-              id="textarea"
-              name={"message"}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={1}
-              className="w-full p-2 pl-4 border-none outline outline-1 outline-[#000F2305] bg-[#000F2308] rounded-2xl shadow-sm resize-none focus:ring-opacity-50"
-            />
-          </div>
-
-          {/* Send Button */}
-          <div className="w-full lg:w-auto">
-            <Button
-              onClick={handleSend}
-              className="w-full lg:w-auto bg-primary hover:bg-primary/80 text-white px-6 py-2 rounded-2xl font-medium"
-              disabled={!selectedRequest || !message.trim()}
-            >
-              Send
-            </Button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
