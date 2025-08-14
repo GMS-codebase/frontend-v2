@@ -1,7 +1,11 @@
 import Button from "@/components/ui/Button";
 import { Checkbox } from "@mantine/core";
+import { FC } from "react";
 
-const CertificationGrid = () => {
+type props = {
+  currentRole:string | null;
+}
+const CertificationGrid:FC<props> = ({currentRole}) => {
   const trainees = [
     { id: 1, name: "John Mukunzi", attended: true },
     { id: 2, name: "Jane Doe", attended: false },
@@ -16,9 +20,13 @@ const CertificationGrid = () => {
         <h2 className="text-xl md:text-2xl font-bold text-primaryText">
           Certification
         </h2>
-        <Button className="!rounded-full !bg-primary py-3">
-          Request certification
-        </Button>
+        {
+          currentRole === "APPLICANT" && (
+            <Button className="!rounded-full !bg-primary py-3">
+              Request certification
+            </Button>
+          )
+        }
       </div>
       <div className="p-6 bg-[#F6F6F6] rounded-3xl">
         <h2 className="text-base font-normal mb-6">

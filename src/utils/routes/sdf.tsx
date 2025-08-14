@@ -39,6 +39,11 @@ const sdfRoutes: Route[] = [
     icon: <Icons.SolarDocumentsBold />,
   },
   {
+    label: "Trainings",
+    path: "/sdf/trainings",
+    icon: <Icons.SolarFolderWithFilesBold />,
+  },
+  {
     label: "M&E and OSHE Reports",
     path: "/sdf/reports/m_and_e",
     icon: <Icons.SolarFileBold />,

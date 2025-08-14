@@ -374,17 +374,21 @@ export const getSubmissionsBySector = async (
     });
   }
 };
-export const getTrades =(page?:any, limit?:any)=> async (dispatch: Dispatch<UnknownAction>) => {
-  dispatch({ type: GET_TRADES_LOADING });
-  authorizedApi
-    .get(`/trade?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`)
-    .then((res) => {
-      dispatch({ type: GET_TRADES_SUCCESS, payload: res.data }); 
-    })
-    .catch((err) => {
-      dispatch({ type: GET_TRADES_ERROR, payload: err?.response?.data?.error });
-    });
-};
+export const getTrades =
+  (page?: any, limit?: any) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: GET_TRADES_LOADING });
+    authorizedApi
+      .get(`/trade?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`)
+      .then((res) => {
+        dispatch({ type: GET_TRADES_SUCCESS, payload: res.data });
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_TRADES_ERROR,
+          payload: err?.response?.data?.error,
+        });
+      });
+  };
 
 export const getSurveyTrainee = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_SURVEY_TRAINEES_LOADING });
@@ -1126,3 +1130,52 @@ export const getTrainings = async (dispatch: any) => {
     dispatch({ type: "SET_TRAININGS", payload: [] });
   }
 };
+
+export const getSDFTrainings =
+  (page?: any, limit?: any) => async (dispatch: any) => {
+    try {
+      dispatch({ type: "FETCH_TRAININGS_REQUEST" });
+      const res = await authorizedApi.get(
+        `/training/all?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      );
+      dispatch({
+        type: "SET_TRAININGS",
+        payload: res.data.data.data,
+      });
+    } catch (err) {
+      dispatch({ type: "SET_TRAININGS", payload: [] });
+    }
+  };
+
+
+  export const requestMakeDecision = async ()=>{
+    try {
+      const response = await authorizedApi.put("/training/request-make-decision");
+      notifications.show({
+        message: "Request to make decision sent successfully!",
+        color: "green",
+      });
+      return response.data;
+    } catch (error) {
+      notifications.show({
+        message: "Failed to send request!",
+        color: "red",
+      });
+    }
+  }
+
+  export const makeDecision = async ()=>{
+    try {
+      const response = await authorizedApi.put("/training/make-decision");
+      notifications.show({
+        message: "Decision made successfully!",
+        color: "green",
+      });
+      return response.data;
+    } catch (error) {
+      notifications.show({
+        message: "Failed to make decision!",
+        color: "red",
+      });
+    }
+  }

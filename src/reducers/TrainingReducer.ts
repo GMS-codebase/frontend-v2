@@ -3,6 +3,8 @@ import { ADD_TRAINING_SUCCESS, UPDATE_TRAINING_SUCCESS } from "@/actions/Trainin
 const initialState = {
   trainings: [],
   loading: false,
+  total: 0,
+  page: 1,
 };
 
 export const TrainingReducer = (state = initialState, action: any) => {
@@ -25,7 +27,17 @@ export const TrainingReducer = (state = initialState, action: any) => {
         ),
         loading: false,
       };
+    case "DELETE_TRAINING_SUCCESS":
+      return {
+        ...state,
+        trainings: state.trainings.filter(
+          (t: any) => t.id !== action.payload.id
+        ),
+        loading: false,
+      };
+    
     default:
       return state;
   }
+
 };
