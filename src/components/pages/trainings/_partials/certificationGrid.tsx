@@ -32,7 +32,9 @@ const CertificationGrid: FC<Props> = ({ currentRole, training }) => {
       .filter((t) => t.certificationRequested)
       .map((t) => t.uuid);
     setSelectedIds(preselected);
-  }, [pendingTrainees]);
+  }, [training?.trainees]);
+
+
   const handleToggle = (id: string) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((uuid) => uuid !== id) : [...prev, id]
