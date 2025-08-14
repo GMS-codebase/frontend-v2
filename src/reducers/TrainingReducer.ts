@@ -3,6 +3,8 @@ import { ADD_TRAINING_SUCCESS, UPDATE_TRAINING_SUCCESS } from "@/actions/Trainin
 const initialState = {
   trainings: [],
   loading: false,
+  total: 0,
+  page: 1,
 };
 
 export const TrainingReducer = (state = initialState, action: any) => {
