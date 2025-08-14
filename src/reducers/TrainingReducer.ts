@@ -25,7 +25,17 @@ export const TrainingReducer = (state = initialState, action: any) => {
         ),
         loading: false,
       };
+    case "DELETE_TRAINING_SUCCESS":
+      return {
+        ...state,
+        trainings: state.trainings.filter(
+          (t: any) => t.id !== action.payload.id
+        ),
+        loading: false,
+      };
+    
     default:
       return state;
   }
+
 };

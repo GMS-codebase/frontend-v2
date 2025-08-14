@@ -13,7 +13,9 @@ import {
   ADD_TRAINING_SUCCESS,
   UPDATE_TRAINING_SUCCESS,
 } from "@/actions/TrainingActions";
-import { getTrainings } from "@/services";
+import { getMyApplications, getTrainings } from "@/services";
+import { UnknownAction } from "redux";
+import { IPaginatedQuery } from "@/types/base.type";
 
 const AddEditTraining = ({
   isOpenAddEditTraining,
@@ -84,7 +86,40 @@ const AddEditTraining = ({
   const [competencies, setCompetencies] = useState<string[]>([]);
   const [competenceInput, setCompetenceInput] = useState("");
   const dispatch = useDispatch();
-  const myApplications = useSelector((state: any) => state.applications);
+  // const myApplications = useSelector((state: any) => state.applications);
+  // console.log(myApplications.myApplications);
+
+  const {
+    myApplications,
+    myApplicationsLoading,
+    total: totalApplications,
+    page: currentPageFromRedux,
+  } = useSelector((state: any) => state.applications);
+
+  const [paginateOpts, setLocalPaginateOpts] = useState<
+    IPaginatedQuery & { totalPages: number }
+  >({
+    page: (currentPageFromRedux ?? 1) - 1,
+    limit: 30,
+    totalPages: 1,
+  });
+
+  useEffect(() => {
+    setLocalPaginateOpts((prev) => ({
+      ...prev,
+      totalPages: Math.ceil((totalApplications ?? 0) / (prev?.limit ?? 10)),
+    }));
+  }, [totalApplications]);
+
+  // Fetch data whenever page or limit changes
+  useEffect(() => {
+    dispatch(
+      getMyApplications(
+        (paginateOpts.page ?? 0) + 1,
+        paginateOpts.limit
+      ) as unknown as UnknownAction
+    );
+  }, [dispatch, paginateOpts.page, paginateOpts.limit]);
 
   useEffect(() => {
     if (defaultData) {
@@ -293,7 +328,7 @@ const AddEditTraining = ({
     }
 
     if (traineesFile) {
-      submitData.append("trainees", traineesFile);
+      submitData.append("traineesFile", traineesFile);
     }
 
     if (trainingManual) {
@@ -309,17 +344,17 @@ const AddEditTraining = ({
       : "/training/create";
 
     try {
-   const res = await (defaultData
-     ? authorizedApi.put(apiUrl, submitData, {
-         headers: {
-           "Content-Type": "multipart/form-data",
-         },
-       })
-     : authorizedApi.post(apiUrl, submitData, {
-         headers: {
-           "Content-Type": "multipart/form-data",
-         },
-       }));
+      const res = await (defaultData
+        ? authorizedApi.put(apiUrl, submitData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+        : authorizedApi.post(apiUrl, submitData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }));
 
       dispatch({
         type: defaultData ? UPDATE_TRAINING_SUCCESS : ADD_TRAINING_SUCCESS,
@@ -352,7 +387,7 @@ const AddEditTraining = ({
     } catch (err: any) {
       console.error("Submission error:", err.response?.data);
       notifications.show({
-        message: err.response?.data?.message ?? "Failed to submit training!",
+        message: err.response?.data?.message,
         color: "red",
       });
     } finally {
@@ -426,14 +461,14 @@ const AddEditTraining = ({
                   <Select
                     placeholder="Select application"
                     data={
-                      myApplications.myApplications
+                      myApplications
                         ?.filter(
                           (app: any) => app.currentStage === "CONTRACT_SIGNING"
                         )
                         .map((app: any) => ({
                           value: app.uuid,
                           label: app.applicationNumber,
-                        })) || []
+                        })) || "No applications on contract signing"
                     }
                     value={formData.applicationId}
                     onChange={(value) =>
@@ -567,12 +602,6 @@ const AddEditTraining = ({
             {/* Step 2 - Training Material Upload */}
             <Stepper.Step label="Training Material Upload">
               <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium">Training Manual</label>
-                  <button className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm">
-                    Download Template
-                  </button>
-                </div>
                 <div className="w-full border-dashed border-2 border-blue-500 rounded-xl h-40 flex items-center justify-center bg-[#000F230A]">
                   <label className="cursor-pointer flex flex-col items-center justify-center text-center">
                     {trainingManual ? (
@@ -665,10 +694,17 @@ const AddEditTraining = ({
               <div className="flex flex-col gap-4 md:flex-row">
                 <div className="flex flex-col gap-4 w-full md:w-3/5">
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium">Trainees</label>
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm w-full">
-                      Download Template
-                    </button>
+                    <div className="flex flex-col gap-2">
+                      <a
+                        href={"/files/trainee_creation_format.xlsx"}
+                        download={true}
+                        className="w-full py-2 px-4 text-center justify-center font-bold bg-primary text-white flex items-center rounded-full"
+                      >
+                        <span className="hidden lg:flex">
+                          Download Template
+                        </span>
+                      </a>
+                    </div>
                     <div className="w-full border-dashed border-2 border-blue-500 rounded-xl h-40 flex items-center justify-center bg-[#000F230A]">
                       <label className="cursor-pointer flex flex-col items-center justify-center text-center">
                         {traineesFile ? (
