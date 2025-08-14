@@ -12,14 +12,27 @@ import DetailsSection from "./_partials/details-section";
 import ResponseSection from "./_partials/response-section";
 import Trainees from "./_partials/trainees";
 import { usePathname } from "next/navigation";
+import {
+  getTrainingById,
+  requestTrainingReview,
+  sdfMakeTrainingDecision,
+} from "@/services";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 type props = {
   trainingId: string;
 };
 
 const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
-  const [loading, setLoading] = useState(false);
-  const [training, setTraining] = useState<ITraining | null>(null);
+  const dispatch = useDispatch();
+
+  const {
+    currentTraining: training,
+    loading,
+    requestReviewLoading,
+  } = useSelector((state: any) => state.trainings);
+
   const [selectedRequest, setSelectedRequest] = useState("");
   const responseRef = React.useRef<HTMLDivElement | null>(null);
   const active = usePathname();
@@ -39,24 +52,22 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
     setCurrentRole(role);
   }, [active]);
 
-  const fetchTraining = async () => {
-    setLoading(true);
-    try {
-      const res = await authorizedApi.get(`/training/${trainingId}`);
-      setTraining(res.data.data.data);
-      setLoading(false);
-    } catch (error: any) {
-      if (error.response?.status === 404) {
-        window.history.back();
-      }
-    }
-  };
   useEffect(() => {
-    fetchTraining();
-  }, [trainingId]);
+    dispatch(getTrainingById(trainingId) as any);
+  }, [dispatch]);
+
+  //handle request training review by sdf
+  const handleReviewRequest = () => {
+    dispatch(requestTrainingReview(trainingId) as any);
+  };
 
   const handleAddTraineeRequest = () => {
     setSelectedRequest("ADD");
+    responseRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleMakeDecision = () => {
+    setSelectedRequest("APPROVE_TRAINING");
     responseRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -76,11 +87,22 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
           <h1 className="text-xl md:text-2xl font-bold text-primaryText">
             Training manual
           </h1>
-          {currentRole === "APPLICANT" && training?.status === "DRAFT" && (
-            <Button className="bg-primary text-white py-3 px-7 !rounded-full">
-              Request Training
+          {currentRole === "APPLICANT" && training?.status === "DRAFT" ? (
+            <Button
+              onClick={handleReviewRequest}
+              className="bg-primary text-white py-3 px-7 !rounded-full"
+            >
+              {requestReviewLoading ? <Loader2 /> : "Request Training"}
             </Button>
-          )}
+          ) : training.status === "REVIEW" &&
+            currentRole === "SDF_SECRETARIATE" ? (
+            <Button
+              onClick={handleMakeDecision}
+              className="bg-primary text-white py-3 px-7 !rounded-full"
+            >
+              {"Make Decision"}
+            </Button>
+          ) : null}
         </div>
         <div className="py-10 flex flex-col gap-10">
           <PDFViewerContainer pdfUrl={training?.trainingManual as string} />
@@ -100,8 +122,10 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
           <CertificationGrid currentRole={currentRole} />
           <div ref={responseRef}>
             <ResponseSection
+              training={training}
               selectedRequest={selectedRequest}
               setSelectedRequest={setSelectedRequest}
+              currentRole={currentRole as string}
             />
           </div>
         </div>
