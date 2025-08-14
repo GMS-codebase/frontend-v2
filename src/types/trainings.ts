@@ -1,3 +1,16 @@
+
+export interface IResponse {
+  uuid: string;
+  deletedStatus: boolean;
+  doneAt: string;
+  lastUpdatedAt: string;
+  doneBy: string;
+  lastUpdatedBy: string | null;
+  message: string;
+  numberOfTraineesRequired: number | null;
+  status: "ACCEPTED" | "REJECTED" | string;
+}
+
 export interface ITraining {
      uuid: string;
   deletedStatus: boolean;
@@ -14,6 +27,7 @@ export interface ITraining {
   application: any;
   applicant: any;
   trainees: ITrainingTrainee[];
+  trainingRequestResponses: IResponse[];
 }
 
 

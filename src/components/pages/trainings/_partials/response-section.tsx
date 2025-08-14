@@ -7,62 +7,24 @@ import { FC, useState } from "react";
 import ResponseCard from "./response-card";
 import { useDispatch } from "react-redux";
 import { sdfMakeTrainingDecision } from "@/services";
-import { ITraining } from "@/types/trainings";
+import { IResponse, ITraining } from "@/types/trainings";
 import { useSelector } from "react-redux";
 import { notifications } from "@mantine/notifications";
-
-interface Response {
-  id: string;
-  user: string;
-  message: string;
-  status: "rejected" | "accepted" | "pending" | "edit";
-  timestamp: string;
-}
 
 interface ResponseSectionProps {
   training: ITraining;
   selectedRequest: string;
   setSelectedRequest: (value: string) => void;
   currentRole?: string;
+  trainingResponse: IResponse[];
 }
-
-const mockResponses: Response[] = [
-  {
-    id: "1",
-    user: "RTB SDF",
-    message: "Remember to add all points that were discussed yesterday",
-    status: "rejected",
-    timestamp: "21/7/2025 - 20:23:21",
-  },
-  {
-    id: "2",
-    user: "RTB SDF",
-    message:
-      "We talked about including tvet schools in the summit , I think you forgot to mention it",
-    status: "rejected",
-    timestamp: "02/6/2025 - 16:23:21",
-  },
-  {
-    id: "3",
-    user: "RTB SDF",
-    message: "Request allowed",
-    status: "accepted",
-    timestamp: "02/6/2025 - 16:23:21",
-  },
-  {
-    id: "4",
-    user: "RTB SDF",
-    message: "Request allowed",
-    status: "edit",
-    timestamp: "02/6/2025 - 16:23:21",
-  },
-];
 
 const ResponseSection: FC<ResponseSectionProps> = ({
   training,
   selectedRequest,
   setSelectedRequest,
   currentRole,
+  trainingResponse,
 }) => {
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
@@ -121,9 +83,15 @@ const ResponseSection: FC<ResponseSectionProps> = ({
       </h2>
 
       <div className="space-y-4 bg-[#F6F6F6] px-5 py-3 md:px-10 md:py-9 rounded-[21px]">
-        {mockResponses.map((response, idx) => (
-          <ResponseCard key={idx} response={response} />
-        ))}
+        {trainingResponse ? (
+          trainingResponse.map((response, idx) => (
+            <ResponseCard key={idx} response={response} />
+          ))
+        ) : (
+          <h2 className="text-gray-500 text-sm my-5 text-center">
+            No responses yet
+          </h2>
+        )}
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 w-full mt-4">
           {/* Select */}
           <div className="w-full lg:w-auto">
