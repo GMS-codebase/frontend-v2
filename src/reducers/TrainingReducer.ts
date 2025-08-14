@@ -1,5 +1,11 @@
 import {
   ADD_TRAINING_SUCCESS,
+  CERTIFICATION_DECISION_FAILURE,
+  CERTIFICATION_DECISION_REQUEST,
+  CERTIFICATION_DECISION_SUCCESS,
+  CERTIFICATION_REVIEW_FAILURE,
+  CERTIFICATION_REVIEW_REQUEST,
+  CERTIFICATION_REVIEW_SUCCESS,
   FETCH_TRAINING_BY_ID_FAILURE,
   FETCH_TRAINING_BY_ID_REQUEST,
   FETCH_TRAINING_BY_ID_SUCCESS,
@@ -14,10 +20,11 @@ import {
 
 const initialState = {
   trainings: [],
-  currentTraining: {},
+  currentTraining: {} as any,
   loading: false,
   requestReviewLoading: false,
   decisionLoading: false,
+  certificationLoading: false,
   total: 0,
   page: 1,
 };
@@ -75,16 +82,64 @@ export const TrainingReducer = (state = initialState, action: any) => {
 
     case REQUEST_REVIEW_FAILURE:
       return { ...state, requestReviewLoading: false, error: action.payload };
-    
-      // sdf make desicion
+
+    // sdf make desicion
     case MAKE_DECISION_REQUEST:
       return { ...state, decisionLoading: true, error: null };
 
     case MAKE_DECISION_SUCCESS:
-      return { ...state, decisionLoading: false, currentTraining: action.payload };
+      return {
+        ...state,
+        decisionLoading: false,
+        currentTraining: action.payload,
+      };
 
     case MAKE_DECISION_FAILURE:
       return { ...state, decisionLoading: false, error: action.payload };
+
+    //request certification LB
+    case CERTIFICATION_REVIEW_REQUEST:
+      return { ...state, certificationLoading: true, error: null };
+
+    case CERTIFICATION_REVIEW_SUCCESS:
+      return {
+        ...state,
+        certificationLoading: false,
+        currentTraining: {
+          ...state.currentTraining,
+          trainees: state.currentTraining?.trainees.map((trainee: any) => {
+            const updated = action.payload.find(
+              (u: any) => u.uuid === trainee.uuid
+            );
+            return updated ? updated : trainee;
+          }),
+        },
+      };
+
+    case CERTIFICATION_REVIEW_FAILURE:
+      return { ...state, certificationLoading: false, error: action.payload };
+
+    //approve certification LB
+    case CERTIFICATION_DECISION_REQUEST:
+      return { ...state, certificationLoading: true, error: null };
+
+    case CERTIFICATION_DECISION_SUCCESS:
+      return {
+        ...state,
+        certificationLoading: false,
+        currentTraining: {
+          ...state.currentTraining,
+          trainees: state.currentTraining?.trainees.map((trainee: any) => {
+            const updated = action.payload.find(
+              (u: any) => u.uuid === trainee.uuid
+            );
+            return updated ? updated : trainee;
+          }),
+        },
+      };
+
+    case CERTIFICATION_DECISION_FAILURE:
+      return { ...state, certificationLoading: false, error: action.payload };
     default:
       return state;
   }
