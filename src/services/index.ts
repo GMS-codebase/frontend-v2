@@ -150,6 +150,17 @@ import {
   GET_SURVEY_TRAINEES_LOADING,
   GET_SURVEY_TRAINEES_SUCCESS,
 } from "@/actions/SurveyTraineeActions";
+import {
+  FETCH_TRAINING_BY_ID_FAILURE,
+  FETCH_TRAINING_BY_ID_REQUEST,
+  FETCH_TRAINING_BY_ID_SUCCESS,
+  MAKE_DECISION_FAILURE,
+  MAKE_DECISION_REQUEST,
+  MAKE_DECISION_SUCCESS,
+  REQUEST_REVIEW_FAILURE,
+  REQUEST_REVIEW_REQUEST,
+  REQUEST_REVIEW_SUCCESS,
+} from "@/actions/TrainingActions";
 
 export const exportAppealsReport = async (
   dispatch: Dispatch<UnknownAction>,
@@ -1131,6 +1142,7 @@ export const getTrainings = async (dispatch: any) => {
   }
 };
 
+
 export const getSDFTrainings =
   (page?: any, limit?: any) => async (dispatch: any) => {
     try {
@@ -1147,35 +1159,93 @@ export const getSDFTrainings =
     }
   };
 
-
-  export const requestMakeDecision = async ()=>{
-    try {
-      const response = await authorizedApi.put("/training/request-make-decision");
-      notifications.show({
-        message: "Request to make decision sent successfully!",
-        color: "green",
-      });
-      return response.data;
-    } catch (error) {
-      notifications.show({
-        message: "Failed to send request!",
-        color: "red",
-      });
-    }
+  export const getTrainingById = (id: string) => async (dispatch: any) => {
+  try {
+    dispatch({ type: FETCH_TRAINING_BY_ID_REQUEST });
+    const res = await authorizedApi.get(`/training/${id}`);
+    dispatch({
+      type: FETCH_TRAINING_BY_ID_SUCCESS,
+      payload: res.data.data.data,
+    });
+  } catch (err: any) {
+    dispatch({ type: FETCH_TRAINING_BY_ID_FAILURE, payload: err.message });
   }
+};
 
-  export const makeDecision = async ()=>{
-    try {
-      const response = await authorizedApi.put("/training/make-decision");
-      notifications.show({
-        message: "Decision made successfully!",
-        color: "green",
-      });
-      return response.data;
-    } catch (error) {
-      notifications.show({
-        message: "Failed to make decision!",
-        color: "red",
-      });
-    }
+export const requestTrainingReview = (id: string) => async (dispatch: any) => {
+  try {
+    dispatch({ type: REQUEST_REVIEW_REQUEST });
+    const res = await authorizedApi.put(`/training/request-review/${id}`);
+    dispatch({
+      type: REQUEST_REVIEW_SUCCESS,
+      payload: res.data.data.data,
+    });
+    notifications.show({
+      message: "Request to Review sent successfully!",
+      color: "green",
+    });
+  } catch (err: any) {
+    dispatch({ type: REQUEST_REVIEW_FAILURE, payload: err.message });
+    notifications.show({
+      message: "Failed to send request!",
+      color: "red",
+    });
   }
+};
+
+export const sdfMakeTrainingDecision = ({ trainingId, decision,message }: { trainingId: string, decision: string,message:string }) => async (dispatch: any) => {
+  try {
+    dispatch({ type: MAKE_DECISION_REQUEST });
+    const res = await authorizedApi.put(`/training/make-decision/${trainingId}`, { decision,message });
+    dispatch({
+      type: MAKE_DECISION_SUCCESS,
+      payload: res.data.data.data,
+    });
+    notifications.show({
+      message: "Request to Response sent successfully!",
+      color: "green",
+    });
+  } catch (err: any) {
+    dispatch({ type: MAKE_DECISION_FAILURE, payload: err.message });
+    notifications.show({
+      message: "Failed to send response!",
+      color: "red",
+    });
+  }
+};
+
+ 
+export const sdfMakeDecision = async (
+  trainingId:string) => {
+  try {
+    const response = await authorizedApi.put(
+      `/training/request-review/${trainingId}`
+    );
+    notifications.show({
+      message: "Request to Review sent successfully!",
+      color: "green",
+    });
+    return response.data;
+  } catch (error) {
+    notifications.show({
+      message: "Failed to send request!",
+      color: "red",
+    });
+  }
+};
+
+export const makeDecision = async () => {
+  try {
+    const response = await authorizedApi.put("/training/make-decision");
+    notifications.show({
+      message: "Decision made successfully!",
+      color: "green",
+    });
+    return response.data;
+  } catch (error) {
+    notifications.show({
+      message: "Failed to make decision!",
+      color: "red",
+    });
+  }
+};
