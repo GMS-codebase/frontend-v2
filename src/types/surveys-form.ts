@@ -85,6 +85,8 @@ export interface IForm {
   hasSurvey_Started?: boolean;
   surveyStartingTime?: Date;
   sections?: Section[];
+  flag1?: boolean; // Submitted response flag
+  flag2?: boolean; // Draft saved flag
 }
 
 export interface Survey {
