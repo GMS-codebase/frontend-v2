@@ -1,16 +1,27 @@
 import { DataTable } from "@/components/core/data-table";
 import Button from "@/components/ui/Button";
+import { ITrainingTrainee } from "@/types/trainings";
 import { traineesData } from "@/utils/constants/trainings";
 import { Menu } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit2, Edit2Icon } from "lucide-react";
 import Link from "next/link";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { VscEye } from "react-icons/vsc";
+import { VscEdit, VscEye, VscTrash } from "react-icons/vsc";
 import { Pen2 } from "solar-icon-set";
 
-const Trainees = () => {
-  const traineesColumns: ColumnDef<any>[] = [
+type props = {
+  trainees: ITrainingTrainee[];
+  handleAddTraineeRequest?: () => void;
+  currentRole: string | null;
+};
+
+const Trainees = ({
+  trainees,
+  handleAddTraineeRequest,
+  currentRole,
+}: props) => {
+  const traineesColumns: ColumnDef<ITrainingTrainee>[] = [
     {
       accessorKey: "firstName",
       header: "First name",
@@ -26,28 +37,48 @@ const Trainees = () => {
     {
       accessorKey: "nid",
       header: "NID",
-      cell: ({ row }) => <div className="w-full">{row.original?.nid}</div>,
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.nationalId}</div>
+      ),
     },
     {
       accessorKey: "phoneNumber",
       header: "Phone number",
       cell: ({ row }) => (
-        <div className="w-full">{row.original?.phoneNumber}</div>
+        <div className="w-full">{row.original?.traineePhoneNumber}</div>
       ),
     },
     {
-      accessorKey: "email",
-      header: "Email",
+      accessorKey: "educationLevel",
+      header: "Education Level",
       cell: ({ row }) => (
         <div className="w-full truncate max-w-[180px]">
-          {row.original?.email}
+          {row.original?.educationLevel}
         </div>
       ),
     },
     {
-      accessorKey: "dob",
-      header: "DOB",
-      cell: ({ row }) => <div className="w-full">{row.original?.dob}</div>,
+      accessorKey: "institutionName",
+      header: "Institution Name",
+      cell: ({ row }) => (
+        <div className="w-full truncate max-w-[180px]">
+          {row.original?.institutionName}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "graduateStatus",
+      header: "Graduate Status",
+      cell: ({ row }) => (
+        <div className="w-full truncate max-w-[180px] text-center">
+          {row.original?.graduateStatus}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "gender",
+      header: "Gender",
+      cell: ({ row }) => <div className="w-full">{row.original?.gender}</div>,
     },
     {
       accessorKey: "actions",
@@ -80,6 +111,28 @@ const Trainees = () => {
                   View
                 </Link>
               </Menu.Item>
+              {currentRole === "APPLICANT" && (
+                <>
+                  <Menu.Item className="bg-[#F0F0F0]">
+                    <Link
+                      href={`#`}
+                      className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                    >
+                      <VscEdit size={21} color="blue" />
+                      Request Edit
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item className="bg-[#F0F0F0]">
+                    <Link
+                      href={`#`}
+                      className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                    >
+                      <VscTrash size={21} color="red" />
+                      Request Delete
+                    </Link>
+                  </Menu.Item>
+                </>
+              )}
             </Menu.Dropdown>
           </Menu>
         </div>
@@ -92,25 +145,22 @@ const Trainees = () => {
         <h2 className="text-xl md:text-2xl font-bold text-primaryText">
           Trainees
         </h2>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 w-full lg:w-auto">
-          <Button className="!rounded-full bg-primary text-white gap-2 !py-3">
-            <Pen2 />
-            Request Remove Trainee/s
-          </Button>
-          <Button className="!rounded-full bg-primary text-white gap-2 !py-3">
-            <Pen2 />
-            Request Remove Trainee/s
-          </Button>
-          <Button className="!rounded-full bg-primary text-white gap-2 !py-3">
-            <Pen2 />
-            Request Remove Trainee/s
-          </Button>
-        </div>
+        {currentRole === "APPLICANT" && (
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 w-full lg:w-auto">
+            <Button
+              onClick={() => handleAddTraineeRequest?.()}
+              className="!rounded-full bg-primary text-white gap-2 !py-3"
+            >
+              <Pen2 />
+              Request Add Trainee/s
+            </Button>
+          </div>
+        )}
       </div>
       <div>
         <DataTable
           columns={traineesColumns}
-          data={traineesData}
+          data={trainees}
           loading={false}
           noDataMessage={"You do not have any trainings yet"}
         />
