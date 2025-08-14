@@ -125,44 +125,50 @@ const Page = () => {
               } else {
                 transformedQuestions = {};
               }
-            } else {
-              transformedQuestions = survey.qns || {};
             }
-          } catch (parseError) {
-            console.warn("Failed to parse survey questions:", parseError);
-            transformedQuestions = {};
+
+            return {
+              ...survey,
+              uuid: survey.id.toString(),
+              id: survey.id,
+              name: survey.name,
+              questions: transformedQuestions,
+              qns: transformedQuestions,
+              created_at: new Date(survey.created_at),
+              expiry_date: new Date(survey.expiry_date),
+              survey_status: survey.survey_status,
+              survey_type: survey.survey_TYPE,
+              hasSurvey_Started: survey.hasSurvey_Started,
+              surveyStartingTime: survey.surveyStartingTime,
+              flag1: survey.flag1 || false, // Submitted response flag
+              flag2: survey.flag2 || false, // Draft saved flag
+            };
+          } catch (error) {
+            console.error("Error transforming survey:", error);
+            return {
+              ...survey,
+              uuid: survey.id.toString(),
+              id: survey.id,
+              name: survey.name,
+              questions: {},
+              qns: {},
+              created_at: new Date(survey.created_at),
+              expiry_date: new Date(survey.expiry_date),
+              survey_status: survey.survey_status,
+              survey_type: survey.survey_TYPE,
+              hasSurvey_Started: survey.hasSurvey_Started,
+              surveyStartingTime: survey.surveyStartingTime,
+              flag1: survey.flag1 || false,
+              flag2: survey.flag2 || false,
+            };
           }
-
-          // Normalize status
-          const isExpired =
-            survey.survey_status === "expired" ||
-            new Date(survey.expiry_date) < new Date();
-          const normalizedStatus = isExpired
-            ? ESurveyStatus.ENDED
-            : survey.survey_status;
-
-          return {
-            uuid: survey.id.toString(),
-            id: survey.id,
-            name: survey.name,
-            description: `Survey created on ${new Date(survey.created_at).toLocaleDateString()}`,
-            questions: transformedQuestions,
-            qns: transformedQuestions,
-            expiry_date: survey.expiry_date,
-            survey_status: normalizedStatus,
-            created_at: survey.created_at,
-            survey_type: survey.survey_TYPE,
-            hasSurvey_Started: survey.hasSurvey_Started,
-          };
         });
 
       setSurveys(availableSurveys);
 
-      if (availableSurveys.length === 0) {
-        notifications.show({
-          message: "No active surveys available at the moment",
-          color: "blue",
-        });
+      // Fetch user responses and drafts for each survey
+      if (userId) {
+        await fetchUserSurveyData(availableSurveys);
       }
     } catch (error) {
       console.error("Error fetching surveys:", error);
@@ -173,7 +179,58 @@ const Page = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [userId]);
+
+  // Fetch user survey data (responses and drafts) for all surveys
+  const fetchUserSurveyData = useCallback(async (surveys: IForm[]) => {
+    if (!userId) return;
+
+    try {
+      // Fetch all user responses and drafts in parallel
+      const surveyDataPromises = surveys.map(async (survey) => {
+        const surveyId = survey.id?.toString() || survey.uuid;
+        if (!surveyId) return;
+
+        try {
+          // Check for submitted response
+          const responseResponse = await authorizedApi.get(
+            `/survey/survey-responseByTrainee/${surveyId}/${userId}`
+          );
+          
+          if (responseResponse.data?.answers) {
+            // User has submitted this survey
+            setCompletedSurveys(prev => [...prev, survey.uuid || ""]);
+            setSubmittedResponses(prev => ({
+              ...prev,
+              [survey.uuid || ""]: JSON.parse(responseResponse.data.answers)
+            }));
+          }
+        } catch (error) {
+          // No submitted response found, check for draft
+          try {
+            const draftResponse = await authorizedApi.get(
+              `/survey/get-response-draft?surveyId=${surveyId}&userId=${userId}`
+            );
+            
+            if (draftResponse.data?.answers) {
+              // User has a draft for this survey
+              setSurveyAnswers(prev => ({
+                ...prev,
+                [survey.uuid || ""]: JSON.parse(draftResponse.data.answers)
+              }));
+            }
+          } catch (draftError) {
+            // No draft found either
+            console.log(`No draft found for survey ${surveyId}`);
+          }
+        }
+      });
+
+      await Promise.all(surveyDataPromises);
+    } catch (error) {
+      console.error("Error fetching user survey data:", error);
+    }
+  }, [userId]);
 
   // Load user data and surveys on component mount
   useEffect(() => {
@@ -352,12 +409,31 @@ const Page = () => {
     }
   };
 
-  // Handle survey selection and check for draft
+  // Handle survey selection
   const handleSelectSurvey = (survey: IForm) => {
     setSelectedSurvey(survey);
     setViewMode("survey");
-    if (survey.uuid && userId) {
-      fetchDraftResponses(survey.uuid);
+    
+    // Load existing answers if available
+    const existingAnswers = surveyAnswers[survey.uuid || ""];
+    if (existingAnswers) {
+      setSurveyAnswers(existingAnswers);
+    } else {
+      setSurveyAnswers({});
+    }
+  };
+
+  // Handle continuing a draft
+  const handleContinueDraft = (survey: IForm) => {
+    setSelectedSurvey(survey);
+    setViewMode("survey");
+    
+    // Load existing draft answers
+    const existingAnswers = surveyAnswers[survey.uuid || ""];
+    if (existingAnswers) {
+      setSurveyAnswers(existingAnswers);
+    } else {
+      setSurveyAnswers({});
     }
   };
 
@@ -512,23 +588,33 @@ const Page = () => {
                     );
                     const isEnded =
                       survey.survey_status === ESurveyStatus.ENDED;
+                    const hasSubmitted = survey.flag1 || isCompleted;
+                    const hasDraft = survey.flag2;
 
                     return (
                       <Card
                         key={survey.uuid}
                         className="relative overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg"
                         style={{
-                          background: isCompleted
+                          background: hasSubmitted
                             ? "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)"
+                            : hasDraft
+                            ? "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)"
                             : "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                         }}
                       >
 
                         {/* Status Badge */}
-                        {isCompleted ? (
+                        {hasSubmitted ? (
                           <div className="absolute top-3 right-3 z-10">
                             <span className="bg-green-500 text-white font-bold text-xs px-4 py-1 rounded-full shadow uppercase tracking-wide">
                               COMPLETED
+                            </span>
+                          </div>
+                        ) : hasDraft ? (
+                          <div className="absolute top-3 right-3 z-10">
+                            <span className="bg-yellow-500 text-white font-bold text-xs px-4 py-1 rounded-full shadow uppercase tracking-wide">
+                              DRAFT SAVED
                             </span>
                           </div>
                         ) : (
@@ -620,7 +706,7 @@ const Page = () => {
                           </Stack>
 
                           {/* Action Button */}
-                          {isCompleted ? (
+                          {hasSubmitted ? (
                             <Button
                               variant="primary"
                               className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
@@ -628,6 +714,25 @@ const Page = () => {
                             >
                               View Responses
                             </Button>
+                          ) : hasDraft ? (
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                className="border-yellow-500 text-yellow-600 hover:bg-yellow-50 px-4 py-2 rounded-md transition-colors"
+                                onClick={() => handleContinueDraft(survey)}
+                                disabled={isEnded}
+                              >
+                                Continue Draft
+                              </Button>
+                              <Button
+                                variant="primary"
+                                className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
+                                onClick={() => handleSelectSurvey(survey)}
+                                disabled={isEnded}
+                              >
+                                {isEnded ? "Survey Ended" : "Take Survey"}
+                              </Button>
+                            </div>
                           ) : (
                             <Button
                               variant="primary"
@@ -667,22 +772,32 @@ const Page = () => {
                     );
                     const isEnded =
                       survey.survey_status === ESurveyStatus.ENDED;
+                    const hasSubmitted = survey.flag1 || isCompleted;
+                    const hasDraft = survey.flag2;
 
                     return (
                       <Card
                         key={survey.uuid}
                         className="relative overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg"
                         style={{
-                          background: isCompleted
+                          background: hasSubmitted
                             ? "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)"
+                            : hasDraft
+                            ? "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)"
                             : "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                         }}
                       >
                         {/* Status Badge */}
-                        {isCompleted ? (
+                        {hasSubmitted ? (
                           <div className="absolute top-3 right-3 z-10">
                             <span className="bg-green-500 text-white font-bold text-xs px-4 py-1 rounded-full shadow uppercase tracking-wide">
                               COMPLETED
+                            </span>
+                          </div>
+                        ) : hasDraft ? (
+                          <div className="absolute top-3 right-3 z-10">
+                            <span className="bg-yellow-500 text-white font-bold text-xs px-4 py-1 rounded-full shadow uppercase tracking-wide">
+                              DRAFT SAVED
                             </span>
                           </div>
                         ) : (
@@ -774,7 +889,7 @@ const Page = () => {
                           </Stack>
 
                           {/* Action Button */}
-                          {isCompleted ? (
+                          {hasSubmitted ? (
                             <Button
                               variant="primary"
                               className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
@@ -782,6 +897,25 @@ const Page = () => {
                             >
                               View Responses
                             </Button>
+                          ) : hasDraft ? (
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                className="border-yellow-500 text-yellow-600 hover:bg-yellow-50 px-4 py-2 rounded-md transition-colors"
+                                onClick={() => handleContinueDraft(survey)}
+                                disabled={isEnded}
+                              >
+                                Continue Draft
+                              </Button>
+                              <Button
+                                variant="primary"
+                                className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
+                                onClick={() => handleSelectSurvey(survey)}
+                                disabled={isEnded}
+                              >
+                                {isEnded ? "Survey Ended" : "Take Survey"}
+                              </Button>
+                            </div>
                           ) : (
                             <Button
                               variant="primary"
