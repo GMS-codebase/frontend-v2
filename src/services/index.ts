@@ -151,6 +151,12 @@ import {
   GET_SURVEY_TRAINEES_SUCCESS,
 } from "@/actions/SurveyTraineeActions";
 import {
+  CERTIFICATION_DECISION_FAILURE,
+  CERTIFICATION_DECISION_REQUEST,
+  CERTIFICATION_DECISION_SUCCESS,
+  CERTIFICATION_REVIEW_FAILURE,
+  CERTIFICATION_REVIEW_REQUEST,
+  CERTIFICATION_REVIEW_SUCCESS,
   FETCH_TRAINING_BY_ID_FAILURE,
   FETCH_TRAINING_BY_ID_REQUEST,
   FETCH_TRAINING_BY_ID_SUCCESS,
@@ -1142,7 +1148,6 @@ export const getTrainings = async (dispatch: any) => {
   }
 };
 
-
 export const getSDFTrainings =
   (page?: any, limit?: any) => async (dispatch: any) => {
     try {
@@ -1159,7 +1164,7 @@ export const getSDFTrainings =
     }
   };
 
-  export const getTrainingById = (id: string) => async (dispatch: any) => {
+export const getTrainingById = (id: string) => async (dispatch: any) => {
   try {
     dispatch({ type: FETCH_TRAINING_BY_ID_REQUEST });
     const res = await authorizedApi.get(`/training/${id}`);
@@ -1193,59 +1198,91 @@ export const requestTrainingReview = (id: string) => async (dispatch: any) => {
   }
 };
 
-export const sdfMakeTrainingDecision = ({ trainingId, decision,message }: { trainingId: string, decision: string,message:string }) => async (dispatch: any) => {
-  try {
-    dispatch({ type: MAKE_DECISION_REQUEST });
-    const res = await authorizedApi.put(`/training/make-decision/${trainingId}`, { decision,message });
-    dispatch({
-      type: MAKE_DECISION_SUCCESS,
-      payload: res.data.data.data,
-    });
-    notifications.show({
-      message: "Request to Response sent successfully!",
-      color: "green",
-    });
-  } catch (err: any) {
-    dispatch({ type: MAKE_DECISION_FAILURE, payload: err.message });
-    notifications.show({
-      message: "Failed to send response!",
-      color: "red",
-    });
-  }
-};
+export const sdfMakeTrainingDecision =
+  ({
+    trainingId,
+    decision,
+    message,
+  }: {
+    trainingId: string;
+    decision: string;
+    message: string;
+  }) =>
+  async (dispatch: any) => {
+    try {
+      dispatch({ type: MAKE_DECISION_REQUEST });
+      const res = await authorizedApi.put(
+        `/training/make-decision/${trainingId}`,
+        { decision, message }
+      );
+      dispatch({
+        type: MAKE_DECISION_SUCCESS,
+        payload: res.data.data.data,
+      });
+      notifications.show({
+        message: "Request to Response sent successfully!",
+        color: "green",
+      });
+    } catch (err: any) {
+      dispatch({ type: MAKE_DECISION_FAILURE, payload: err.message });
+      notifications.show({
+        message: "Failed to send response!",
+        color: "red",
+      });
+    }
+  };
 
- 
-export const sdfMakeDecision = async (
-  trainingId:string) => {
-  try {
-    const response = await authorizedApi.put(
-      `/training/request-review/${trainingId}`
-    );
-    notifications.show({
-      message: "Request to Review sent successfully!",
-      color: "green",
-    });
-    return response.data;
-  } catch (error) {
-    notifications.show({
-      message: "Failed to send request!",
-      color: "red",
-    });
-  }
-};
+  //sertification services LB
+export const requestCertificationReview =
+  ({ trainingId, trainees }: { trainingId: string; trainees: string[] }) =>
+  async (dispatch: any) => {
+    try {
+      dispatch({ type: CERTIFICATION_REVIEW_REQUEST });
+      const res = await authorizedApi.post(
+        `/training/request-certification/${trainingId}`,
+        { trainees }
+      );
+      dispatch({
+        type: CERTIFICATION_REVIEW_SUCCESS,
+        payload: res.data.data.data,
+      });
+      notifications.show({
+        message: "Certification Request sent successfully!",
+        color: "green",
+      });
+    } catch (err: any) {
+      dispatch({ type: CERTIFICATION_REVIEW_FAILURE, payload: err.message });
+      notifications.show({
+        message: "Failed to send certification request!",
+        color: "red",
+      });
+    }
+  };
 
-export const makeDecision = async () => {
-  try {
-    const response = await authorizedApi.put("/training/make-decision");
-    notifications.show({
-      message: "Decision made successfully!",
-      color: "green",
-    });
-    return response.data;
-  } catch (error) {
-    notifications.show({
-      message: "Failed to make decision!",
-      color: "red",
-    });
-  }
-};
+export const sdfCertificationDecision =
+  ({ trainingId, trainees }: { trainingId: string; trainees: string[] }) =>
+  async (dispatch: any) => {
+    try {
+      dispatch({ type: CERTIFICATION_DECISION_REQUEST });
+      const res = await authorizedApi.post(
+        `/training/certification-decision/${trainingId}`,
+        { trainees }
+      );
+      dispatch({
+        type: CERTIFICATION_DECISION_SUCCESS,
+        payload: res.data.data.data,
+      });
+      notifications.show({
+        message: "Certification Decision made successfully!",
+        color: "green",
+      });
+    } catch (err: any) {
+      dispatch({ type: CERTIFICATION_DECISION_FAILURE, payload: err.message });
+      notifications.show({
+        message: "Failed to make certification decision!",
+        color: "red",
+      });
+    }
+  };
+
+

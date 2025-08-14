@@ -1,20 +1,11 @@
 import Badge from "@/components/ui/Badge";
-import Button from "@/components/ui/Button";
-import { Select, SelectItem } from "@/components/ui/Select";
+import { IResponse } from "@/types/trainings";
+import { format } from "date-fns";
 import { FC, useState } from "react";
 
-type responseStatus = "rejected" | "accepted" | "pending" | "edit";
-
-interface Response {
-  id: string;
-  user: string;
-  message: string;
-  status: responseStatus;
-  timestamp: string;
-}
 
 type props = {
-  response: Response;
+  response: IResponse;
 };
 
 const ResponseCard: FC<props> = ({ response }) => {
@@ -29,27 +20,23 @@ const ResponseCard: FC<props> = ({ response }) => {
 
   const renderStatusBadge = (status: string) => {
     switch (status) {
-      case "rejected":
+      case "REJECTED":
         return (
           <Badge className="bg-red-100 text-red-800 hover:bg-red-100 px-3 py-1 rounded-full font-medium">
             REJECTED
           </Badge>
         );
-      case "accepted":
+      case "ACCEPTED":
         return (
           <Badge className="bg-green-100 text-green-800 hover:bg-green-100 px-3 py-1 rounded-full font-medium">
-            Accepted
+            ACCEPTED
           </Badge>
         );
-      case "edit":
+      case "PENDING":
         return (
-          <Button
-            variant="outline"
-            size="sm"
-            className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 px-3 py-1 rounded-full font-medium"
-          >
-            Edit
-          </Button>
+          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 px-3 py-1 rounded-full font-medium">
+            PENDING
+          </Badge>
         );
       default:
         return null;
@@ -64,7 +51,7 @@ const ResponseCard: FC<props> = ({ response }) => {
           {renderStatusBadge(response.status)}
           <div className="flex-1 min-w-0">
             <div className="font-medium text-gray-900 mb-1 break-words">
-              {response.user}
+              {response.doneBy ?? "Unknown"}
             </div>
             <div className="text-gray-600 text-sm leading-relaxed break-words">
               {response.message}
@@ -72,7 +59,7 @@ const ResponseCard: FC<props> = ({ response }) => {
           </div>
         </div>
         <div className="text-gray-500 text-sm md:ml-4 whitespace-nowrap">
-          {response.timestamp}
+          {format(new Date(response.doneAt), "dd MMM yyyy")}
         </div>
       </div>
     </div>
