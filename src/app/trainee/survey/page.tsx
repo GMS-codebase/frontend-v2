@@ -1,7 +1,7 @@
 "use client";
+
 import { useEffect, useState, useCallback } from "react";
 import type { IForm } from "@/types/surveys-form";
-import SurveyForms from "@/components/forms/SurveyForms";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import {
@@ -24,28 +24,17 @@ import {
 } from "@mantine/core";
 import { ESurveyStatus, ESurveyType } from "@/types/surveys-form";
 import { HiDotsHorizontal } from "react-icons/hi";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [surveys, setSurveys] = useState<IForm[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSurvey, setSelectedSurvey] = useState<IForm | null>(null);
-  const [surveyResponses, setSurveyResponses] = useState<Record<string, any>>(
-    {}
-  );
-  const [completedSurveys, setCompletedSurveys] = useState<string[]>([]);
-  const [surveyAnswers, setSurveyAnswers] = useState<Record<string, any>>({});
-  const [submitLoading, setSubmitLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [userLoading, setUserLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<"list" | "survey" | "responses">(
-    "list"
-  );
-  const [submittedResponses, setSubmittedResponses] = useState<
-    Record<string, any>
-  >({});
   const [activeTab, setActiveTab] = useState<string | null>("general");
+  const router = useRouter();
 
   // Fetch logged-in user data
   const fetchUserData = useCallback(async () => {
@@ -78,7 +67,7 @@ const Page = () => {
     }
   }, []);
 
-  // Fetch available surveys for applicants
+  // Fetch available surveys for trainees
   const fetchSurveys = useCallback(async () => {
     try {
       setLoading(true);
@@ -165,11 +154,6 @@ const Page = () => {
         });
 
       setSurveys(availableSurveys);
-
-      // Fetch user responses and drafts for each survey
-      if (userId) {
-        await fetchUserSurveyData(availableSurveys);
-      }
     } catch (error) {
       console.error("Error fetching surveys:", error);
       notifications.show({
@@ -179,58 +163,7 @@ const Page = () => {
     } finally {
       setLoading(false);
     }
-  }, [userId]);
-
-  // Fetch user survey data (responses and drafts) for all surveys
-  const fetchUserSurveyData = useCallback(async (surveys: IForm[]) => {
-    if (!userId) return;
-
-    try {
-      // Fetch all user responses and drafts in parallel
-      const surveyDataPromises = surveys.map(async (survey) => {
-        const surveyId = survey.id?.toString() || survey.uuid;
-        if (!surveyId) return;
-
-        try {
-          // Check for submitted response
-          const responseResponse = await authorizedApi.get(
-            `/survey/survey-responseByTrainee/${surveyId}/${userId}`
-          );
-          
-          if (responseResponse.data?.answers) {
-            // User has submitted this survey
-            setCompletedSurveys(prev => [...prev, survey.uuid || ""]);
-            setSubmittedResponses(prev => ({
-              ...prev,
-              [survey.uuid || ""]: JSON.parse(responseResponse.data.answers)
-            }));
-          }
-        } catch (error) {
-          // No submitted response found, check for draft
-          try {
-            const draftResponse = await authorizedApi.get(
-              `/survey/get-response-draft?surveyId=${surveyId}&userId=${userId}`
-            );
-            
-            if (draftResponse.data?.answers) {
-              // User has a draft for this survey
-              setSurveyAnswers(prev => ({
-                ...prev,
-                [survey.uuid || ""]: JSON.parse(draftResponse.data.answers)
-              }));
-            }
-          } catch (draftError) {
-            // No draft found either
-            console.log(`No draft found for survey ${surveyId}`);
-          }
-        }
-      });
-
-      await Promise.all(surveyDataPromises);
-    } catch (error) {
-      console.error("Error fetching user survey data:", error);
-    }
-  }, [userId]);
+  }, []);
 
   // Load user data and surveys on component mount
   useEffect(() => {
@@ -241,223 +174,27 @@ const Page = () => {
     });
   }, [fetchUserData, fetchSurveys, userId]);
 
-  // Fetch draft responses for a survey when selected
-  const fetchDraftResponses = useCallback(
-    async (surveyId: string) => {
-      if (!userId) return;
-      try {
-        const response = await authorizedApi.get(
-          `/survey/survey-draft/${surveyId}/${userId}`
-        );
-        if (response.data.success && response.data.data?.answers) {
-          const draftAnswers = JSON.parse(response.data.data.answers);
-          setSurveyAnswers(draftAnswers);
-          notifications.show({
-            message: "Loaded draft responses",
-            color: "blue",
-          });
-        }
-      } catch (error) {
-        console.warn("No draft found or error fetching draft:", error);
-      }
-    },
-    [userId]
-  );
-
-  // Fetch submitted responses for a survey
-  const fetchSubmittedResponses = useCallback(
-    async (surveyId: string) => {
-      if (!userId) return;
-      try {
-        const response = await authorizedApi.get(
-          `/survey/survey-responseByTrainee/${surveyId}/${userId}`
-        );
-        if (response.data?.answers) {
-          const answers = JSON.parse(response.data.answers);
-          setSubmittedResponses(answers);
-          setViewMode("responses");
-        } else {
-          notifications.show({
-            message: "No submitted responses found.",
-            color: "blue",
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching submitted responses:", error);
-        notifications.show({
-          message: "Failed to load submitted responses",
-          color: "red",
-        });
-      }
-    },
-    [userId]
-  );
-
-  // Handle setting survey answers
-  const handleSetAnswers = (key: string, value: any) => {
-    setSurveyAnswers((prev) => {
-      const newAnswers = {
-        ...prev,
-        [key]: value,
-      };
-
-      // Remove empty answers
-      Object.keys(newAnswers).forEach((k) => {
-        if (
-          newAnswers[k] === "" ||
-          newAnswers[k] === null ||
-          newAnswers[k] === undefined ||
-          (Array.isArray(newAnswers[k]) && newAnswers[k].length === 0)
-        ) {
-          delete newAnswers[k];
-        }
-      });
-
-      return newAnswers;
-    });
-  };
-
-  // Save survey as draft
-  const handleSaveDraft = async (surveyId: string) => {
-    if (!userId) {
-      notifications.show({
-        message: "User not identified. Please log in again.",
-        color: "red",
-      });
-      return;
-    }
-
-    try {
-      setSubmitLoading(true);
-
-      await authorizedApi.post("/survey/save-response-draft", {
-        survey_id: surveyId,
-        answers: JSON.stringify(surveyAnswers),
-      });
-
-      notifications.show({
-        message: "Survey saved as draft successfully",
-        color: "green",
-      });
-    } catch (error: any) {
-      console.error("Error saving draft:", error);
-      notifications.show({
-        message: error.response?.data?.message || "Failed to save draft",
-        color: "red",
-      });
-    } finally {
-      setSubmitLoading(false);
-    }
-  };
-
-  // Handle survey submission
-  const handleSurveySubmit = async (surveyId: string | number) => {
-    if (!surveyAnswers || Object.keys(surveyAnswers).length === 0) {
-      notifications.show({
-        title: "Warning",
-        message: "Please answer at least one question before submitting",
-        color: "orange",
-      });
-      return;
-    }
-    if (!userId || !userName || !userEmail) {
-      notifications.show({
-        title: "Error",
-        message: "User information missing. Please log in again.",
-        color: "red",
-      });
-      return;
-    }
-    try {
-      setSubmitLoading(true);
-      const responseData = {
-        surveyId:
-          typeof surveyId === "string"
-            ? Number.parseInt(surveyId, 10)
-            : surveyId,
-        traineeUuid: userId,
-        traineeName: userName,
-        answers: JSON.stringify(surveyAnswers),
-      };
-      await authorizedApi.post("/survey/submit-trainee-survey", responseData, {
-        headers: {
-          email: userEmail
-        }
-      });
-      setCompletedSurveys((prev) => [...prev, String(surveyId)]);
-      setSelectedSurvey(null);
-      setSurveyAnswers({});
-      notifications.show({
-        title: "Success",
-        message: "Thank you for completing the survey!",
-        color: "green",
-      });
-
-      // Refresh surveys list
-      fetchSurveys();
-    } catch (error: any) {
-      console.error("Error submitting survey:", error);
-      notifications.show({
-        title: "Error",
-        message:
-          error.response?.data?.message ||
-          "Failed to submit survey. Please try again.",
-        color: "red",
-      });
-    } finally {
-      setSubmitLoading(false);
-    }
-  };
-
-  // Handle survey selection
+  // Handle survey selection - navigate to individual survey page
   const handleSelectSurvey = (survey: IForm) => {
-    setSelectedSurvey(survey);
-    setViewMode("survey");
-    
-    // Load existing answers if available
-    const existingAnswers = surveyAnswers[survey.uuid || ""];
-    if (existingAnswers) {
-      setSurveyAnswers(existingAnswers);
-    } else {
-      setSurveyAnswers({});
-    }
+    router.push(`/trainee/survey/${survey.id}`);
   };
 
-  // Handle continuing a draft
+  // Handle continuing a draft - navigate to individual survey page
   const handleContinueDraft = (survey: IForm) => {
-    setSelectedSurvey(survey);
-    setViewMode("survey");
-    
-    // Load existing draft answers
-    const existingAnswers = surveyAnswers[survey.uuid || ""];
-    if (existingAnswers) {
-      setSurveyAnswers(existingAnswers);
-    } else {
-      setSurveyAnswers({});
-    }
+    router.push(`/trainee/survey/${survey.id}`);
   };
 
-  // Handle viewing submitted responses
+  // Handle viewing responses - navigate to individual survey page
   const handleViewResponses = (survey: IForm) => {
-    setSelectedSurvey(survey);
-    if (survey.uuid) {
-      fetchSubmittedResponses(survey.uuid);
-    }
-  };
-
-  // Handle going back to survey list
-  const handleBackToList = () => {
-    setSelectedSurvey(null);
-    setViewMode("list");
-    setSubmittedResponses({});
+    router.push(`/trainee/survey/${survey.id}`);
   };
 
   // Filter surveys by type
   const filteredSurveys = surveys.filter((survey) => {
     if (activeTab === "general") {
-      return survey.survey_type === "GENERALSURVEY";
-    } else if (activeTab === "company") {
-      return survey.survey_type === "TRAINEESURVEY";
+      return survey.survey_type === ESurveyType.GENERALSURVEY;
+    } else if (activeTab === "trainee") {
+      return survey.survey_type === ESurveyType.TRAINEESURVEY;
     }
     return true;
   });
@@ -476,73 +213,6 @@ const Page = () => {
         <p className="text-red-500">
           Unable to load user data. Please log in again.
         </p>
-      </div>
-    );
-  }
-
-  if (selectedSurvey) {
-    return (
-      <div className="font-[Urbanist] text-[1.125rem] font-medium bg-white min-h-screen">
-        <div className="w-full !overflow-x-hidden">
-          <div className="flex items-center justify-between my-4">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={handleBackToList}
-                className="text-gray-600 hover:text-gray-800"
-              >
-                ← Back to Surveys
-              </button>
-              <h1 className="text-2xl font-bold">{selectedSurvey.name}</h1>
-            </div>
-            {viewMode === "survey" && (
-              <div className="flex gap-4">
-                <Button
-                  onClick={() => handleSaveDraft(selectedSurvey.uuid || "")}
-                  loading={submitLoading}
-                  className="px-6 py-2"
-                  variant="outline"
-                  color="blue"
-                  disabled={submitLoading}
-                >
-                  {submitLoading ? "Saving..." : "Save as Draft"}
-                </Button>
-                <Button
-                  onClick={() => handleSurveySubmit(selectedSurvey.uuid || "")}
-                  loading={submitLoading}
-                  className="px-6 py-2"
-                  variant="filled"
-                  color="blue"
-                  disabled={submitLoading}
-                >
-                  {submitLoading ? "Submitting..." : "Submit Survey"}
-                </Button>
-              </div>
-            )}
-          </div>
-          <div className="bg-white rounded-lg shadow p-8">
-            {viewMode === "survey" ? (
-              <SurveyForms
-                mode="answering"
-                formData={{
-                  ...selectedSurvey,
-                  qns: selectedSurvey.questions || selectedSurvey.qns,
-                }}
-                answers={surveyAnswers}
-                setAnswers={handleSetAnswers}
-              />
-            ) : viewMode === "responses" ? (
-              <SurveyForms
-                mode="viewing"
-                formData={{
-                  ...selectedSurvey,
-                  qns: selectedSurvey.questions || selectedSurvey.qns,
-                }}
-                answers={submittedResponses}
-                setAnswers={() => { }} // No-op since we're in view mode
-              />
-            ) : null}
-          </div>
-        </div>
       </div>
     );
   }
@@ -583,18 +253,14 @@ const Page = () => {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredSurveys.filter((sv) => sv.survey_type == ESurveyType.GENERALSURVEY).map((survey) => {
-                    const isCompleted = completedSurveys.includes(
-                      survey.uuid || ""
-                    );
-                    const isEnded =
-                      survey.survey_status === ESurveyStatus.ENDED;
-                    const hasSubmitted = survey.flag1 || isCompleted;
+                    const isEnded = survey.survey_status === ESurveyStatus.ENDED;
+                    const hasSubmitted = survey.flag1;
                     const hasDraft = survey.flag2;
 
                     return (
                       <Card
                         key={survey.uuid}
-                        className="relative overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg"
+                        className="relative overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg cursor-pointer"
                         style={{
                           background: hasSubmitted
                             ? "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)"
@@ -602,8 +268,8 @@ const Page = () => {
                             ? "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)"
                             : "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                         }}
+                        onClick={() => handleSelectSurvey(survey)}
                       >
-
                         {/* Status Badge */}
                         {hasSubmitted ? (
                           <div className="absolute top-3 right-3 z-10">
@@ -710,7 +376,10 @@ const Page = () => {
                             <Button
                               variant="primary"
                               className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
-                              onClick={() => handleViewResponses(survey)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleViewResponses(survey);
+                              }}
                             >
                               View Responses
                             </Button>
@@ -719,25 +388,23 @@ const Page = () => {
                               <Button
                                 variant="outline"
                                 className="border-yellow-500 text-yellow-600 hover:bg-yellow-50 px-4 py-2 rounded-md transition-colors"
-                                onClick={() => handleContinueDraft(survey)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleContinueDraft(survey);
+                                }}
                                 disabled={isEnded}
                               >
                                 Continue Draft
-                              </Button>
-                              <Button
-                                variant="primary"
-                                className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
-                                onClick={() => handleSelectSurvey(survey)}
-                                disabled={isEnded}
-                              >
-                                {isEnded ? "Survey Ended" : "Take Survey"}
                               </Button>
                             </div>
                           ) : (
                             <Button
                               variant="primary"
                               className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
-                              onClick={() => handleSelectSurvey(survey)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSelectSurvey(survey);
+                              }}
                               disabled={isEnded}
                             >
                               {isEnded ? "Survey Ended" : "Take Survey"}
@@ -767,18 +434,14 @@ const Page = () => {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredSurveys.filter((sv) => sv.survey_type == ESurveyType.TRAINEESURVEY).map((survey) => {
-                    const isCompleted = completedSurveys.includes(
-                      survey.uuid || ""
-                    );
-                    const isEnded =
-                      survey.survey_status === ESurveyStatus.ENDED;
-                    const hasSubmitted = survey.flag1 || isCompleted;
+                    const isEnded = survey.survey_status === ESurveyStatus.ENDED;
+                    const hasSubmitted = survey.flag1;
                     const hasDraft = survey.flag2;
 
                     return (
                       <Card
                         key={survey.uuid}
-                        className="relative overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg"
+                        className="relative overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg cursor-pointer"
                         style={{
                           background: hasSubmitted
                             ? "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)"
@@ -786,6 +449,7 @@ const Page = () => {
                             ? "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)"
                             : "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                         }}
+                        onClick={() => handleSelectSurvey(survey)}
                       >
                         {/* Status Badge */}
                         {hasSubmitted ? (
@@ -893,7 +557,10 @@ const Page = () => {
                             <Button
                               variant="primary"
                               className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
-                              onClick={() => handleViewResponses(survey)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleViewResponses(survey);
+                              }}
                             >
                               View Responses
                             </Button>
@@ -902,25 +569,23 @@ const Page = () => {
                               <Button
                                 variant="outline"
                                 className="border-yellow-500 text-yellow-600 hover:bg-yellow-50 px-4 py-2 rounded-md transition-colors"
-                                onClick={() => handleContinueDraft(survey)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleContinueDraft(survey);
+                                }}
                                 disabled={isEnded}
                               >
                                 Continue Draft
-                              </Button>
-                              <Button
-                                variant="primary"
-                                className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
-                                onClick={() => handleSelectSurvey(survey)}
-                                disabled={isEnded}
-                              >
-                                {isEnded ? "Survey Ended" : "Take Survey"}
                               </Button>
                             </div>
                           ) : (
                             <Button
                               variant="primary"
                               className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-colors"
-                              onClick={() => handleSelectSurvey(survey)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSelectSurvey(survey);
+                              }}
                               disabled={isEnded}
                             >
                               {isEnded ? "Survey Ended" : "Take Survey"}
