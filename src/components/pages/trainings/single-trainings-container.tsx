@@ -119,13 +119,17 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
             handleAddTraineeRequest={handleAddTraineeRequest}
             currentRole={currentRole}
           />
-          <CertificationGrid currentRole={currentRole} />
+          <CertificationGrid
+            currentRole={currentRole}
+            training={training}
+          />
           <div ref={responseRef}>
             <ResponseSection
               training={training}
               selectedRequest={selectedRequest}
               setSelectedRequest={setSelectedRequest}
               currentRole={currentRole as string}
+              trainingResponse={training?.trainingRequestResponses}
             />
           </div>
         </div>
