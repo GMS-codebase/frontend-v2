@@ -1,42 +1,97 @@
 "use client";
-import { BiSearch } from "react-icons/bi";
-import { SolarAddFolderBold } from "@/components/core/icons";
-import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
-import { HiDotsHorizontal } from "react-icons/hi";
-import { useDisclosure } from "@mantine/hooks";
-import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
-import { Menu } from "@mantine/core";
-import { CiEdit } from "react-icons/ci";
-import { RiDeleteBinLine } from "react-icons/ri";
-import Link from "next/link";
-import { VscEye } from "react-icons/vsc";
-import DeleteModal from "@/components/Modals/DeleteModal";
+import { getSDFTrainings } from "@/services";
 import { Training } from "@/types";
-import AddEditTraining from "@/components/Modals/training/AddEditTraining";
-import { getTrainings } from "@/services";
+import { IPaginatedQuery } from "@/types/base.type";
+import { Menu, Select } from "@mantine/core";
+import { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { BiSearch } from "react-icons/bi";
+import { CiEdit } from "react-icons/ci";
+import { HiDotsHorizontal } from "react-icons/hi";
+import { RiDeleteBinLine } from "react-icons/ri";
+import { VscEye } from "react-icons/vsc";
+import { useDispatch, useSelector } from "react-redux";
+import { UnknownAction } from "redux";
 
 const Page = () => {
   const dispatch = useDispatch();
-  const [
-    isOpenAddEditTraining,
-    { open: openAddEditTraining, close: closeAddEditTraining },
-  ] = useDisclosure(false);
-  const [
-    isOpenDeleteTraining,
-    { open: openDeleteTraining, close: closeDeleteTraining },
-  ] = useDisclosure(false);
-  const [selectedTraining, setSelectedTraining] = useState<Training | null>(
-    null
-  );
+
   const [searchQuery, setSearchQuery] = useState("");
-  const {trainings,loading} = useSelector((state: any) => state.trainings);
-  const applications = useSelector((state: any) => state.applications);
+
+  const {
+    trainings,
+    loading,
+    total: totalTrainings,
+    page: currentPageFromRedux,
+  } = useSelector((state: any) => state.trainings);
+
+  // Local state for pagination
+  const [paginateOpts, setLocalPaginateOpts] = useState<
+    IPaginatedQuery & { totalPages: number }
+  >({
+    page: (currentPageFromRedux ?? 1) - 1,
+    limit: 10,
+    totalPages: 1,
+  });
 
   useEffect(() => {
-    getTrainings(dispatch);
-  }, [dispatch]);
+    setLocalPaginateOpts((prev) => ({
+      ...prev,
+      totalPages: Math.ceil((totalTrainings ?? 0) / (prev?.limit ?? 10)),
+    }));
+  }, [totalTrainings]);
+
+  // Fetch data whenever page or limit changes
+  useEffect(() => {
+    dispatch(
+      getSDFTrainings(
+        (paginateOpts.page ?? 0) + 1,
+        paginateOpts.limit
+      ) as unknown as UnknownAction
+    );
+  }, [dispatch, paginateOpts.page, paginateOpts.limit]);
+
+  const setPaginateOpts: React.Dispatch<
+    React.SetStateAction<IPaginatedQuery & { totalPages: number }>
+  > = (value) => {
+    if (typeof value === "function") {
+      setLocalPaginateOpts((prev) => {
+        const next = value(prev);
+        dispatch(
+          getSDFTrainings(
+            (next.page ?? 0) + 1,
+            next.limit
+          ) as unknown as UnknownAction
+        );
+        return next;
+      });
+    } else {
+      setLocalPaginateOpts(value);
+      dispatch(
+        getSDFTrainings(
+          (value.page ?? 0) + 1,
+          value.limit
+        ) as unknown as UnknownAction
+      );
+    }
+  };
+
+  const FilterDropDown = ({
+    placeholderText,
+    data,
+  }: {
+    placeholderText: string;
+    data: any[];
+  }) => (
+    <Select
+      data={data}
+      placeholder={placeholderText}
+      defaultValue={placeholderText}
+      className="w-full px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
+    />
+  );
 
   const columns: ColumnDef<any>[] = [
     {
@@ -140,36 +195,12 @@ const Page = () => {
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
                 <Link
-                  href={`/applicant/trainings/${row.original.uuid}`}
+                  href={`/sdf/trainings/${row.original.uuid}`}
                   className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <VscEye size={21} color="#576074" />
                   View
                 </Link>
-              </Menu.Item>
-              <Menu.Item>
-                <div
-                  onClick={() => {
-                    setSelectedTraining(row.original);
-                    openAddEditTraining();
-                  }}
-                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                >
-                  <CiEdit size={21} color="#576074" />
-                  Request Edit
-                </div>
-              </Menu.Item>
-              <Menu.Item>
-                <div
-                  onClick={() => {
-                    setSelectedTraining(row.original);
-                    openDeleteTraining();
-                  }}
-                  className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                >
-                  <RiDeleteBinLine size={21} color="#576074" />
-                  Remove
-                </div>
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>
@@ -178,18 +209,14 @@ const Page = () => {
     },
   ];
 
-  const filteredTrainings = trainings?.filter((training: Training) =>
+  const filteredTrainings =
+    trainings?.filter((training: Training) =>
       training?.title?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
-    console.log("Filtered Trainings:", filteredTrainings);
-
-  const applicationId = applications?.myApplications?.find(
-    (app: any) => app.currentStage === "CONTRACT_SIGNING"
-  )?.uuid;
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full lg:flex justify-between items-center p-4">
+      <div className="w-full flex flex-col md:flex-row md:justify-between items-center p-4 gap-4">
         <div className="relative lg:w-[25rem] w-full mt-4 lg:mt-0">
           <span className="absolute top-4 left-2">
             <BiSearch size={25} />
@@ -203,49 +230,46 @@ const Page = () => {
           />
         </div>
 
-        <button
-          onClick={openAddEditTraining}
-          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3 mt-0 sm:mt-3"
-        >
-          <span className="text-2xl">
-            <SolarAddFolderBold />
-          </span>
-          <h1 className="text-base font-medium text-white">New Training</h1>
-        </button>
+        <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+          <FilterDropDown
+            placeholderText="Filter By status"
+            data={["ACCEPTED", "REJECTED", "UNDER REVIEW"]}
+          />
+
+          <FilterDropDown
+            placeholderText="Filter By requests"
+            data={["Respond"]}
+          />
+          <FilterDropDown
+            placeholderText="Filter By Call"
+            data={["call 1,call 2"]}
+          />
+
+          <FilterDropDown
+            placeholderText="Filter By Sector"
+            data={["Manufacturing", "Constrution"]}
+          />
+        </div>
       </div>
 
       <div className="w-full h-full">
         <DataTable
           columns={columns}
-          data={filteredTrainings || []}
+          data={filteredTrainings}
           loading={loading}
           noDataMessage={
             searchQuery
               ? `No trainings matching "${searchQuery}"`
               : "You do not have any trainings yet"
           }
+          totalApplications={totalTrainings}
+          paginationProps={{
+            isPaginated: true,
+            paginateOpts,
+            setPaginateOpts,
+          }}
         />
       </div>
-
-      <AddEditTraining
-        isOpenAddEditTraining={isOpenAddEditTraining}
-        closeAddEditTraining={() => {
-          closeAddEditTraining();
-          setSelectedTraining(null);
-        }}
-        defaultData={selectedTraining as any}
-        applicationId={applicationId} 
-      />
-
-      <DeleteModal
-        closeModal={() => {
-          setSelectedTraining(null);
-          closeDeleteTraining();
-        }}
-        id={selectedTraining?.uuid as any}
-        type="trainings"
-        isOpenModal={isOpenDeleteTraining}
-      />
     </div>
   );
 };
