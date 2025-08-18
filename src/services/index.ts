@@ -1179,3 +1179,6 @@ export const getSDFTrainings =
       });
     }
   }
+
+// Export the new survey API function
+export { getApplicantApplicationsInfo } from "./api/survey";

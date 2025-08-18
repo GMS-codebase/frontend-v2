@@ -4,9 +4,11 @@ import React, { useEffect, useState } from "react";
 import { Modal, Select } from "@mantine/core";
 import { IoMdClose } from "react-icons/io";
 import { notifications } from "@mantine/notifications";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { SECTOR_STATUS, SUBWINDOW_STATUS, TRADE_STATUS, WINDOW_STATUS } from "@/utils/enums";
+import { getSurveyTrainee } from "@/services";
+import { getApplicantApplicationsInfo, ApplicantApplicationInfo } from "@/services/api/survey";
 
 interface Props {
     isOpenAddEditSurveyTrainee: boolean;
@@ -21,6 +23,8 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
 }) => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
+    const [applicationsInfo, setApplicationsInfo] = useState<ApplicantApplicationInfo[]>([]);
+    const [applicationsLoading, setApplicationsLoading] = useState(true);
 
     const [formData, setFormData] = useState({
         firstname: "",
@@ -38,10 +42,28 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const windows = useSelector((state: any) => state.windows);
-    const trades = useSelector((state: any) => state.trades?.trades || []);
-    const { sectors } = useSelector((state: any) => state.sectors);
+    // Fetch applicant applications info on component mount
+    useEffect(() => {
+        const fetchApplicationsInfo = async () => {
+            try {
+                setApplicationsLoading(true);
+                const data = await getApplicantApplicationsInfo();
+                setApplicationsInfo(data);
+            } catch (error) {
+                console.error("Failed to fetch applications info:", error);
+                notifications.show({
+                    message: "Failed to fetch applications information",
+                    color: "red",
+                });
+            } finally {
+                setApplicationsLoading(false);
+            }
+        };
 
+        if (isOpenAddEditSurveyTrainee) {
+            fetchApplicationsInfo();
+        }
+    }, [isOpenAddEditSurveyTrainee]);
 
     useEffect(() => {
         if (defaultData) {
@@ -61,73 +83,140 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
         }
     }, [defaultData]);
 
-    const MultiWindowData =
-        windows?.windows
-            ?.filter(
-                (window: any) =>
-                    window.subWindows.some(
-                        (sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE
-                    ) && window.status === WINDOW_STATUS.ACTIVE
-            )
-            .map((window: any) => ({
+    // Get all unique windows from applications
+    const MultiWindowData = applicationsInfo
+        .flatMap(app => app.windows)
+        .filter(window => 
+            window.status === WINDOW_STATUS.ACTIVE &&
+            window.subWindows.some(sub => sub.status === SUBWINDOW_STATUS.ACTIVE)
+        )
+        .map(window => ({
                 value: window.uuid,
                 label: window.title,
-            })) ?? [];
+        }))
+        .filter((window, index, self) => 
+            index === self.findIndex(w => w.value === window.value)
+        );
 
-    const getSubWindowsData = () =>
-        windows?.windows
-            ?.filter((window: any) => formData.windowId === window.uuid)
-            .flatMap((window: any) =>
+    // Get subwindows for selected window
+    const getSubWindowsData = () => {
+        if (!formData.windowId) return [];
+        
+        return applicationsInfo
+            .flatMap(app => app.windows)
+            .filter(window => window.uuid === formData.windowId)
+            .flatMap(window => 
                 window.subWindows
-                    ?.filter((sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE)
-                    .map((subWindow: any) => ({
+                    .filter(sub => sub.status === SUBWINDOW_STATUS.ACTIVE)
+                    .map(subWindow => ({
                         value: subWindow.uuid,
                         label: subWindow.title,
                     }))
-            ) || [];
-
-
-    const getSectorData = () => {
-        const sectorMap = new Map();
-        windows?.windows?.forEach((window: any) =>
-            window.subWindows
-                ?.filter((subWindow: any) => subWindow.uuid === formData.subWindowId)
-                .forEach((subWindow: any) =>
-                    subWindow.sectors?.forEach((sector: any) => {
-                        const matching = sectors.find(
-                            (s: any) =>
-                                s.uuid === sector.uuid &&
-                                s.trades.some(
-                                    (trad: any) => trad.trade.status === TRADE_STATUS.ACTIVE
-                                ) &&
-                                sector.status === SECTOR_STATUS.ACTIVE
-                        );
-                        if (matching && !sectorMap.has(matching.uuid)) {
-                            sectorMap.set(matching.uuid, {
-                                value: matching.uuid,
-                                label: matching.name,
-                            });
-                        }
-                    })
-                )
-        );
-        return Array.from(sectorMap.values());
-    };
-
-    const getTradesData = () => {
-        return sectors
-            .filter((sc: any) => sc.uuid === formData.sectorId)
-            .flatMap((sec: any) => {
-                console.log(sec.trades)
-                return sec.trades.map((trade: any) => ({
-                    value: trade.uuid,
-                    label: trade.trade.title
-                }))
-            }
             );
     };
 
+    // Get sectors for selected subwindow
+    const getSectorData = () => {
+        if (!formData.subWindowId) return [];
+        
+        const sectorMap = new Map();
+        
+        applicationsInfo.forEach(app => {
+            app.windows.forEach(window => {
+                window.subWindows.forEach(subWindow => {
+                    if (subWindow.uuid === formData.subWindowId) {
+                        subWindow.sectors.forEach(sector => {
+                            if (sector.status === SECTOR_STATUS.ACTIVE) {
+                                const hasActiveTrades = sector.trades.some(
+                                    trade => trade.trade.status === TRADE_STATUS.ACTIVE
+                                );
+                                
+                                if (hasActiveTrades && !sectorMap.has(sector.uuid)) {
+                                    sectorMap.set(sector.uuid, {
+                                        value: sector.uuid,
+                                        label: sector.name,
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        });
+        
+        return Array.from(sectorMap.values());
+    };
 
+    // Get trades for selected sector
+    const getTradesData = () => {
+        if (!formData.sectorId) return [];
+        
+        const trades: { value: string; label: string }[] = [];
+        
+        applicationsInfo.forEach(app => {
+            app.windows.forEach(window => {
+                window.subWindows.forEach(subWindow => {
+                    subWindow.sectors.forEach(sector => {
+                        if (sector.uuid === formData.sectorId) {
+                            sector.trades.forEach(trade => {
+                                if (trade.trade.status === TRADE_STATUS.ACTIVE) {
+                                    trades.push({
+                    value: trade.uuid,
+                                        label: trade.trade.title,
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+        });
+        
+        return trades;
+    };
+
+    // Reset dependent fields when parent selection changes
+    const handleWindowChange = (windowId: string | null) => {
+        setFormData(prev => ({ 
+            ...prev, 
+            windowId: windowId || "",
+            subWindowId: "",
+            sectorId: "",
+            tradeId: ""
+        }));
+        setErrors(prev => ({ 
+            ...prev, 
+            subWindowId: "",
+            sectorId: "",
+            tradeId: ""
+        }));
+    };
+
+    const handleSubWindowChange = (subWindowId: string | null) => {
+        setFormData(prev => ({ 
+            ...prev, 
+            subWindowId: subWindowId || "",
+            sectorId: "",
+            tradeId: ""
+        }));
+        setErrors(prev => ({ 
+            ...prev, 
+            sectorId: "",
+            tradeId: ""
+        }));
+    };
+
+    const handleSectorChange = (sectorId: string | null) => {
+        setFormData(prev => ({ 
+            ...prev, 
+            sectorId: sectorId || "",
+            tradeId: ""
+        }));
+        setErrors(prev => ({ 
+            ...prev, 
+            tradeId: ""
+        }));
+    };
 
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
@@ -141,7 +230,7 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
         if (!formData.windowId) newErrors.windowId = "Window is required.";
         if (!formData.subWindowId) newErrors.subWindowId = "Sub window is required.";
         if (!formData.tradeId) newErrors.tradeId = "Trade is required.";
-        if (!formData.sectorId.length) newErrors.sectorId = "At least one sector must be selected.";
+        if (!formData.sectorId) newErrors.sectorId = "Sector is required.";
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -169,6 +258,8 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
                         : "Survey trainee created successfully",
                     color: "blue",
                 });
+                // Dispatch to refresh the survey trainees list
+                getSurveyTrainee(dispatch);
                 closeAddEditSurveyTrainee();
             })
             .catch((err) => {
@@ -283,15 +374,14 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
                         {errors.nationalId && <p className="text-red-500 text-sm">{errors.nationalId}</p>}
                     </div>
 
-
-
                     <div>
                         <label className="block mb-1 font-medium">Window</label>
                         <Select
-                            placeholder="Select Window"
+                            placeholder={applicationsLoading ? "Loading..." : "Select Window"}
                             data={MultiWindowData || []}
                             value={formData.windowId}
-                            onChange={(val) => setFormData((prev) => ({ ...prev, windowId: val || "" }))}
+                            onChange={handleWindowChange}
+                            disabled={applicationsLoading}
                         />
                         {errors.windowId && <p className="text-red-500 text-sm">{errors.windowId}</p>}
                     </div>
@@ -302,18 +392,20 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
                             placeholder="Select Sub Window"
                             data={getSubWindowsData() || []}
                             value={formData.subWindowId}
-                            onChange={(val) => setFormData((prev) => ({ ...prev, subWindowId: val || "" }))}
+                            onChange={handleSubWindowChange}
+                            disabled={!formData.windowId}
                         />
                         {errors.subWindowId && <p className="text-red-500 text-sm">{errors.subWindowId}</p>}
                     </div>
 
                     <div>
-                        <label className="block mb-1 font-medium">Sectors</label>
+                        <label className="block mb-1 font-medium">Sector</label>
                         <Select
                             placeholder="Select Sector"
                             data={getSectorData() || []}
                             value={formData.sectorId}
-                            onChange={(val) => setFormData((prev) => ({ ...prev, sectorId: val || "" }))}
+                            onChange={handleSectorChange}
+                            disabled={!formData.subWindowId}
                         />
                         {errors.sectorId && <p className="text-red-500 text-sm">{errors.sectorId}</p>}
                     </div>
@@ -325,6 +417,7 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
                             data={getTradesData() || []}
                             value={formData.tradeId}
                             onChange={(val) => setFormData((prev) => ({ ...prev, tradeId: val || "" }))}
+                            disabled={!formData.sectorId}
                         />
                         {errors.tradeId && <p className="text-red-500 text-sm">{errors.tradeId}</p>}
                     </div>
@@ -347,7 +440,6 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
                 </form>
             </div>
         </Modal>
-
     );
 };
 
