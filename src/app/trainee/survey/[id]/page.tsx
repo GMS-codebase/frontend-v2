@@ -240,6 +240,9 @@ const TraineeSurveyPage = () => {
         message: "Survey saved as draft successfully",
         color: "green",
       });
+      
+      // Redirect to survey listing page
+      router.push("/trainee/survey");
     } catch (error: any) {
       console.error("Error saving draft:", error);
       notifications.show({
@@ -291,6 +294,11 @@ const TraineeSurveyPage = () => {
         message: "Thank you for completing the survey!",
         color: "green",
       });
+      
+      // Redirect to survey listing page after successful submission
+      setTimeout(() => {
+        router.push("/trainee/survey");
+      }, 2000); // Give user 2 seconds to see the success message
     } catch (error: any) {
       console.error("Error submitting survey:", error);
       notifications.show({
@@ -494,28 +502,6 @@ const TraineeSurveyPage = () => {
                     <h2 className="text-2xl font-semibold text-gray-900">
                       {hasDraft ? "Continue Your Draft" : "Take Survey"}
                     </h2>
-                    {!hasSubmitted && (
-                      <div className="flex gap-3">
-                        <Button
-                          onClick={handleSaveDraft}
-                          loading={submitLoading}
-                          variant="outline"
-                          color="blue"
-                          disabled={submitLoading}
-                        >
-                          {submitLoading ? "Saving..." : "Save as Draft"}
-                        </Button>
-                        <Button
-                          onClick={handleSurveySubmit}
-                          loading={submitLoading}
-                          variant="filled"
-                          color="blue"
-                          disabled={submitLoading || survey.survey_status === "ENDED"}
-                        >
-                          {submitLoading ? "Submitting..." : "Submit Survey"}
-                        </Button>
-                      </div>
-                    )}
                   </div>
 
                   {survey.survey_status === "ENDED" ? (
@@ -537,6 +523,10 @@ const TraineeSurveyPage = () => {
                       }}
                       answers={surveyAnswers}
                       setAnswers={handleSetAnswers}
+                      onSaveDraft={handleSaveDraft}
+                      onSubmit={handleSurveySubmit}
+                      submitLoading={submitLoading}
+                      saveLoading={submitLoading}
                     />
                   )}
                 </div>

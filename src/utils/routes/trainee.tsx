@@ -9,6 +9,11 @@ const traineeRoutes: Route[] = [
     path: "/trainee/survey",
     icon: <Icons.SolarPaperclipRounded2Bold />,
   },
+  {
+    label: "Profile",
+    path: "/trainee/profile",
+    icon: <Icons.SolarUserBold />,
+  },
 ];
 
 export default traineeRoutes;
