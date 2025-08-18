@@ -5,64 +5,77 @@ import Input from "@/components/ui/Input";
 import { Select, SelectItem } from "@/components/ui/Select";
 import { FC, useState } from "react";
 import ResponseCard from "./response-card";
-
-interface Response {
-  id: string;
-  user: string;
-  message: string;
-  status: "rejected" | "accepted" | "pending" | "edit";
-  timestamp: string;
-}
+import { useDispatch } from "react-redux";
+import { sdfMakeTrainingDecision } from "@/services";
+import { IResponse, ITraining } from "@/types/trainings";
+import { useSelector } from "react-redux";
+import { notifications } from "@mantine/notifications";
 
 interface ResponseSectionProps {
+  training: ITraining;
   selectedRequest: string;
   setSelectedRequest: (value: string) => void;
+  currentRole?: string;
+  trainingResponse: IResponse[];
 }
 
-const mockResponses: Response[] = [
-  {
-    id: "1",
-    user: "RTB SDF",
-    message: "Remember to add all points that were discussed yesterday",
-    status: "rejected",
-    timestamp: "21/7/2025 - 20:23:21",
-  },
-  {
-    id: "2",
-    user: "RTB SDF",
-    message:
-      "We talked about including tvet schools in the summit , I think you forgot to mention it",
-    status: "rejected",
-    timestamp: "02/6/2025 - 16:23:21",
-  },
-  {
-    id: "3",
-    user: "RTB SDF",
-    message: "Request allowed",
-    status: "accepted",
-    timestamp: "02/6/2025 - 16:23:21",
-  },
-  {
-    id: "4",
-    user: "RTB SDF",
-    message: "Request allowed",
-    status: "edit",
-    timestamp: "02/6/2025 - 16:23:21",
-  },
-];
-
 const ResponseSection: FC<ResponseSectionProps> = ({
+  training,
   selectedRequest,
   setSelectedRequest,
+  currentRole,
+  trainingResponse,
 }) => {
+  const dispatch = useDispatch();
   const [message, setMessage] = useState("");
   const [addNumber, setAddNumber] = useState(1);
+  const [decision, setDecision] = useState("");
+
+  const { decisionLoading } = useSelector((state: any) => state.trainings);
 
   const handleSend = () => {
-    console.log("Sending response:", { selectedRequest, message });
-    setMessage("");
-    setSelectedRequest("");
+    if (selectedRequest) {
+      switch (selectedRequest) {
+        case "ADD":
+          // Handle adding trainees
+          break;
+        case "EDIT":
+          // Handle editing trainees
+          break;
+        case "REMOVE":
+          // Handle removing trainees
+          break;
+        case "APPROVE_TRAINING":
+          handleMakeDecisionRequest();
+          break;
+        default:
+          break;
+      }
+
+      // Reset the form
+      setMessage("");
+      setSelectedRequest("");
+    }
   };
+
+  //handle request make decision by sdf
+  const handleMakeDecisionRequest = () => {
+    if (!decision || !message.trim())
+      return notifications.show({
+        message: "Please provide a message and select a decision.",
+        color: "red",
+      });
+    if (currentRole === "SDF_SECRETARIATE") {
+      dispatch(
+        sdfMakeTrainingDecision({
+          trainingId: training?.uuid,
+          message,
+          decision,
+        }) as any
+      );
+    }
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-xl md:text-2xl font-bold text-primaryText">
@@ -70,44 +83,74 @@ const ResponseSection: FC<ResponseSectionProps> = ({
       </h2>
 
       <div className="space-y-4 bg-[#F6F6F6] px-5 py-3 md:px-10 md:py-9 rounded-[21px]">
-        {mockResponses.map((response, idx) => (
-          <ResponseCard key={idx} response={response} />
-        ))}
-        <div className="flex flex-col lg:flex-row gap-4 items-center w-full mt-4">
+        {trainingResponse ? (
+          trainingResponse.map((response, idx) => (
+            <ResponseCard key={idx} response={response} />
+          ))
+        ) : (
+          <h2 className="text-gray-500 text-sm my-5 text-center">
+            No responses yet
+          </h2>
+        )}
+        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 w-full mt-4">
           {/* Select */}
-          <div className="rounded-2xl w-full lg:w-auto">
+          <div className="w-full lg:w-auto">
             <Select
               value={selectedRequest}
               onValueChange={setSelectedRequest}
-              className="!min-w-[150px] w-full lg:w-auto h-full rounded-2xl"
+              className="min-w-[180px] rounded-2xl w-full lg:w-auto"
             >
-              <SelectItem value="ADD">Adding trainees</SelectItem>
-              <SelectItem value="EDIT">Editing trainees</SelectItem>
-              <SelectItem value="REMOVE">Removing trainees</SelectItem>
-              <SelectItem value="SELECT_COMPETENCE">
-                Select competence
-              </SelectItem>
+              {training.status === "REVIEW" &&
+                currentRole === "SDF_SECRETARIATE" && (
+                  <SelectItem value="APPROVE_TRAINING">
+                    Approve Training
+                  </SelectItem>
+                )}
+              {training.status === "ACCEPTED" &&
+                currentRole === "APPLICANT" && (
+                  <>
+                    <SelectItem value="ADD">Adding trainees</SelectItem>
+                    <SelectItem value="EDIT">Editing trainees</SelectItem>
+                    <SelectItem value="REMOVE">Removing trainees</SelectItem>
+                  </>
+                )}
             </Select>
           </div>
-          <div className=" w-full lg:w-[70px]">
-            {selectedRequest === "ADD" && (
+
+          {/* Number Input (only when ADD is selected) */}
+          {selectedRequest === "ADD" && (
+            <div className="w-full lg:w-28">
               <Input
                 type="number"
                 value={addNumber}
                 onChange={(e) => setAddNumber(Number(e.target.value))}
+                className="rounded-2xl"
               />
+            </div>
+          )}
+          {selectedRequest === "APPROVE_TRAINING" &&
+            training.status === "REVIEW" && (
+              <div className="w-full lg:w-fit">
+                <Select
+                  value={decision}
+                  onValueChange={setDecision}
+                  className=" rounded-2xl w-full lg:w-auto"
+                >
+                  <SelectItem value="ACCEPT">Accept Training</SelectItem>
+                  <SelectItem value="REJECT">Reject Training</SelectItem>
+                </Select>
+              </div>
             )}
-          </div>
 
           {/* Textarea */}
-          <div className="flex-1 w-full h-full">
+          <div className="flex-1 w-full">
             <textarea
               id="textarea"
-              name={"message"}
+              name="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={2}
-              className="w-full h-full p-2 pl-4 border-none outline outline-1 outline-[#000F2305] bg-[#000F2308] rounded-2xl shadow-sm resize-none focus:ring-opacity-50"
+              className="w-full p-3 border-none outline outline-1 outline-gray-200 bg-gray-50 rounded-2xl shadow-sm resize-none focus:ring-2 focus:ring-primary/40"
             />
           </div>
 
@@ -116,7 +159,7 @@ const ResponseSection: FC<ResponseSectionProps> = ({
             <Button
               onClick={handleSend}
               className="w-full lg:w-auto bg-primary hover:bg-primary/80 text-white px-6 py-2 rounded-2xl font-medium"
-              disabled={!selectedRequest || !message.trim()}
+              disabled={!selectedRequest || !message.trim() || decisionLoading}
             >
               Send
             </Button>
