@@ -2,7 +2,7 @@
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import { Select, SelectItem } from "@/components/ui/Select";
+
 import { FC, useState } from "react";
 import ResponseCard from "./response-card";
 import { useDispatch } from "react-redux";
@@ -10,6 +10,13 @@ import { sdfMakeTrainingDecision } from "@/services";
 import { IResponse, ITraining } from "@/types/trainings";
 import { useSelector } from "react-redux";
 import { notifications } from "@mantine/notifications";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/another-select";
 
 interface ResponseSectionProps {
   training: ITraining;
@@ -95,25 +102,28 @@ const ResponseSection: FC<ResponseSectionProps> = ({
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 w-full mt-4">
           {/* Select */}
           <div className="w-full lg:w-auto">
-            <Select
-              value={selectedRequest}
-              onValueChange={setSelectedRequest}
-              className="min-w-[180px] rounded-2xl w-full lg:w-auto"
-            >
-              {training.status === "REVIEW" &&
-                currentRole === "SDF_SECRETARIATE" && (
-                  <SelectItem value="APPROVE_TRAINING">
-                    Approve Training
-                  </SelectItem>
-                )}
-              {training.status === "ACCEPTED" &&
-                currentRole === "APPLICANT" && (
-                  <>
-                    <SelectItem value="ADD">Adding trainees</SelectItem>
-                    <SelectItem value="EDIT">Editing trainees</SelectItem>
-                    <SelectItem value="REMOVE">Removing trainees</SelectItem>
-                  </>
-                )}
+            <Select value={selectedRequest} onValueChange={setSelectedRequest}>
+              <SelectTrigger className="min-w-[180px] rounded-lg w-full lg:w-auto bg-white">
+                <SelectValue placeholder="Select an option" />
+              </SelectTrigger>
+
+              <SelectContent className="bg-white w-full">
+                {training.status === "REVIEW" &&
+                  currentRole === "SDF_SECRETARIATE" && (
+                    <SelectItem value="APPROVE_TRAINING">
+                      Approve Training
+                    </SelectItem>
+                  )}
+
+                {training.status === "ACCEPTED" &&
+                  currentRole === "APPLICANT" && (
+                    <>
+                      <SelectItem value="ADD">Adding trainees</SelectItem>
+                      <SelectItem value="EDIT">Editing trainees</SelectItem>
+                      <SelectItem value="REMOVE">Removing trainees</SelectItem>
+                    </>
+                  )}
+              </SelectContent>
             </Select>
           </div>
 
@@ -131,13 +141,15 @@ const ResponseSection: FC<ResponseSectionProps> = ({
           {selectedRequest === "APPROVE_TRAINING" &&
             training.status === "REVIEW" && (
               <div className="w-full lg:w-fit">
-                <Select
-                  value={decision}
-                  onValueChange={setDecision}
-                  className=" rounded-2xl w-full lg:w-auto"
-                >
-                  <SelectItem value="ACCEPT">Accept Training</SelectItem>
-                  <SelectItem value="REJECT">Reject Training</SelectItem>
+                <Select value={decision} onValueChange={setDecision}>
+                  <SelectTrigger className="rounded-2xl w-full lg:w-auto">
+                    <SelectValue placeholder="Select decision" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectItem value="ACCEPT">Accept Training</SelectItem>
+                    <SelectItem value="REJECT">Reject Training</SelectItem>
+                  </SelectContent>
                 </Select>
               </div>
             )}
