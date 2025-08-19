@@ -7,6 +7,7 @@ interface CheckboxInputProps {
   required?: boolean;
   label?: string;
   error?: string;
+  questionId?: string; // Add questionId prop
 }
 
 const CheckboxInput: React.FC<CheckboxInputProps> = ({
@@ -15,7 +16,8 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
   onChange,
   required,
   label,
-  error
+  error,
+  questionId
 }) => {
   const handleChange = (option: string) => {
     const newValue = value.includes(option)
@@ -36,34 +38,41 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
         {options.map((option, index) => (
           <label
             key={index}
-            className="flex items-center gap-3 cursor-pointer group"
+            className={`flex items-center gap-3 cursor-pointer group p-3 rounded-lg border-2 transition-all duration-200 ${
+              value.includes(option)
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-gray-200 hover:border-gray-300 text-gray-700 hover:text-gray-900'
+            }`}
           >
             <div className="relative">
               <input
                 type="checkbox"
+                name={`${questionId || `checkbox-${Math.random()}`}-${index}`} // Use questionId as base name
                 checked={value.includes(option)}
                 onChange={() => handleChange(option)}
                 className="w-5 h-5 border-2 border-gray-300 rounded appearance-none cursor-pointer
                   checked:bg-primary checked:border-primary transition-all duration-200
                   focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
-              <svg
-                className={`absolute top-0.5 left-0.5 w-4 h-4 pointer-events-none
-                  ${value.includes(option) ? 'opacity-100' : 'opacity-0'}
-                  transition-opacity duration-200`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="white"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+              {value.includes(option) && (
+                <svg
+                  className="absolute top-0.5 left-0.5 w-4 h-4 pointer-events-none text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              )}
             </div>
-            <span className="text-gray-700 group-hover:text-gray-900 transition-colors">
+            <span className={`font-medium transition-colors ${
+              value.includes(option) ? 'text-primary' : 'text-gray-700 group-hover:text-gray-900'
+            }`}>
               {option}
             </span>
           </label>

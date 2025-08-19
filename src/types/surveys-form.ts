@@ -69,6 +69,16 @@ export interface Section {
   questions: Survey[];
 }
 
+// New interface for conditional logic
+export interface ConditionalLogic {
+  enabled: boolean;
+  dependsOn: string; // ID of the question this depends on
+  showWhen: {
+    operator: "equals" | "not_equals" | "contains" | "not_contains" | "greater_than" | "less_than";
+    value: string | number | boolean;
+  };
+}
+
 export interface IForm {
   uuid?: string;
   id?: number;
@@ -85,21 +95,15 @@ export interface IForm {
   hasSurvey_Started?: boolean;
   surveyStartingTime?: Date;
   sections?: Section[];
+  flag1?: boolean; // Submitted response flag
+  flag2?: boolean; // Draft saved flag
 }
 
 export interface Survey {
   id: string;
   title: string;
   description: string;
-  type:
-    | "text"
-    | "paragraph"
-    | "file"
-    | "table"
-    | "radio"
-    | "checkbox"
-    | "select"
-    | "multiselect";
+  type: "number" | "radio" | "checkbox"; // Restricted to only these three types
   required: boolean;
   commentable: boolean;
   name: string;
@@ -107,6 +111,8 @@ export interface Survey {
   columns?: TableColumn[];
   choices?: string[];
   template?: string;
+  // New conditional logic properties
+  conditionalLogic?: ConditionalLogic;
 }
 
 export interface TableColumn {

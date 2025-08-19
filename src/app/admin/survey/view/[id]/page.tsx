@@ -462,32 +462,32 @@ const SurveyViewPage = () => {
       
       // Prepare data for export
       const exportData = filteredResponses.map((response) => {
-        const respondent =
-          response.applicant?.name || (response.trainee?.firstname || "") + " " + (response.trainee?.lastname || "") || "N/A";
-        const respondentType = response.applicant
-          ? "Applicant"
-          : response.trainee
-            ? "Trainee"
+          const respondent =
+            response.applicant?.name || (response.trainee?.firstname || "") + " " + (response.trainee?.lastname || "") || "N/A";
+          const respondentType = response.applicant
+            ? "Applicant"
+            : response.trainee
+              ? "Trainee"
+              : "N/A";
+          const email =
+            response.applicant?.email || response.trainee?.email || "N/A";
+          const submitted = response.submitted_at
+            ? format(new Date(response.submitted_at), "yyyy-MM-dd HH:mm")
             : "N/A";
-        const email =
-          response.applicant?.email || response.trainee?.email || "N/A";
-        const submitted = response.submitted_at
-          ? format(new Date(response.submitted_at), "yyyy-MM-dd HH:mm")
-          : "N/A";
-        const status = response.status || "N/A";
-        let answersText = "No answers";
-        try {
-          const questionMap = parseQuestions(response.survey?.qns ?? "");
-          const parsedAnswers = parseAnswers(
-            response.answers ?? "",
-            questionMap
-          );
-          answersText = parsedAnswers
-            .map((r) => `${r.question}: ${r.answer}`)
-            .join("; ");
-        } catch (error) {
-          console.warn("Failed to parse answers for export:", error);
-        }
+          const status = response.status || "N/A";
+          let answersText = "No answers";
+          try {
+            const questionMap = parseQuestions(response.survey?.qns ?? "");
+            const parsedAnswers = parseAnswers(
+              response.answers ?? "",
+              questionMap
+            );
+            answersText = parsedAnswers
+              .map((r) => `${r.question}: ${r.answer}`)
+              .join("; ");
+          } catch (error) {
+            console.warn("Failed to parse answers for export:", error);
+          }
         
         return {
           Respondent: respondent,

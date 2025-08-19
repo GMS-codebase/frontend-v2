@@ -850,14 +850,14 @@ const SurveyPage = () => {
 
     // Create Excel workbook
     const workbook = XLSX.utils.book_new();
-    
+
     // Group responses by survey type
     const responsesByType: Record<string, SurveyResponse[]> = {};
     responses.forEach((response) => {
-      const type = response.survey?.survey_TYPE || "Unknown";
+        const type = response.survey?.survey_TYPE || "Unknown";
       if (!responsesByType[type]) {
         responsesByType[type] = [];
-      }
+        }
       responsesByType[type].push(response);
     });
 

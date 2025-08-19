@@ -9,8 +9,6 @@ interface SurveyTypeProps {
   onChange: (updatedFormData: any) => void;
   answers?: { [key: string]: any };
   setAnswers?: (key: string, value: any) => void;
-  comments?: { [key: string]: any };
-  setComments?: (key: string, value: any) => void;
   goToNext?: () => void;
   goToPrev?: () => void;
 }
@@ -22,8 +20,6 @@ const SurveyType: React.FC<SurveyTypeProps> = ({
   onChange,
   answers,
   setAnswers,
-  comments,
-  setComments,
   goToNext,
   goToPrev,
 }) => {
@@ -71,8 +67,6 @@ const SurveyType: React.FC<SurveyTypeProps> = ({
         onAddPage={handleAddPage}
         answers={answers}
         setAnswers={setAnswers}
-        comments={comments}
-        setComments={setComments}
         mode={mode}
         pageIndex={currentPage}
         surveyType={surveyType}

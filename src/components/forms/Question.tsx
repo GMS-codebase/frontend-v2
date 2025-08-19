@@ -311,6 +311,7 @@ const renderQuestionType = (
         onChange={(data) => options?.setAnswers?.(question.id, data)}
         required={question.required}
         label={question.description || question.title}
+        questionId={question.id}
       />
     )}
     {question.type === "checkbox" && (
@@ -320,6 +321,7 @@ const renderQuestionType = (
         onChange={(data) => options?.setAnswers?.(question.id, data)}
         required={question.required}
         label={question.description || question.title}
+        questionId={question.id}
       />
     )}
     {question.type === "file" && (
