@@ -34,6 +34,9 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
   } = useSelector((state: any) => state.trainings);
 
   const [selectedRequest, setSelectedRequest] = useState("");
+
+  console.log(selectedRequest);
+
   const responseRef = React.useRef<HTMLDivElement | null>(null);
   const active = usePathname();
 
@@ -115,14 +118,11 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
           />
           <DetailsSection training={training} />
           <Trainees
-            trainees={training?.trainees ?? []}
+            training={training}
             handleAddTraineeRequest={handleAddTraineeRequest}
             currentRole={currentRole}
           />
-          <CertificationGrid
-            currentRole={currentRole}
-            training={training}
-          />
+          <CertificationGrid currentRole={currentRole} training={training} />
           <div ref={responseRef}>
             <ResponseSection
               training={training}

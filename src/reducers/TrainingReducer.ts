@@ -1,4 +1,7 @@
 import {
+  ADD_TRAINEE_REQUEST_FAILURE,
+  ADD_TRAINEE_REQUEST_REQUEST,
+  ADD_TRAINEE_REQUEST_SUCCESS,
   ADD_TRAINING_SUCCESS,
   CERTIFICATION_DECISION_FAILURE,
   CERTIFICATION_DECISION_REQUEST,
@@ -6,12 +9,18 @@ import {
   CERTIFICATION_REVIEW_FAILURE,
   CERTIFICATION_REVIEW_REQUEST,
   CERTIFICATION_REVIEW_SUCCESS,
+  EDIT_TRAINEE_REQUEST_FAILURE,
+  EDIT_TRAINEE_REQUEST_REQUEST,
+  EDIT_TRAINEE_REQUEST_SUCCESS,
   FETCH_TRAINING_BY_ID_FAILURE,
   FETCH_TRAINING_BY_ID_REQUEST,
   FETCH_TRAINING_BY_ID_SUCCESS,
   MAKE_DECISION_FAILURE,
   MAKE_DECISION_REQUEST,
   MAKE_DECISION_SUCCESS,
+  REMOVE_TRAINEE_REQUEST_FAILURE,
+  REMOVE_TRAINEE_REQUEST_REQUEST,
+  REMOVE_TRAINEE_REQUEST_SUCCESS,
   REQUEST_REVIEW_FAILURE,
   REQUEST_REVIEW_REQUEST,
   REQUEST_REVIEW_SUCCESS,
@@ -140,6 +149,49 @@ export const TrainingReducer = (state = initialState, action: any) => {
 
     case CERTIFICATION_DECISION_FAILURE:
       return { ...state, certificationLoading: false, error: action.payload };
+//=============================================================================================
+    //applicant request add, remove and edit trainees
+    case ADD_TRAINEE_REQUEST_REQUEST:
+      return { ...state, decisionLoading: true, error: null };
+
+    case ADD_TRAINEE_REQUEST_SUCCESS:
+      return {
+        ...state,
+        decisionLoading: false,
+        // currentTraining: action.payload,
+      };
+
+    case ADD_TRAINEE_REQUEST_FAILURE:
+      return { ...state, decisionLoading: false, error: action.payload };
+
+    //applicant request remove trainee
+    case REMOVE_TRAINEE_REQUEST_REQUEST:
+      return { ...state, decisionLoading: true, error: null };
+
+    case REMOVE_TRAINEE_REQUEST_SUCCESS:
+      return {
+        ...state,
+        decisionLoading: false,
+        // currentTraining: action.payload,
+      };
+
+    case REMOVE_TRAINEE_REQUEST_FAILURE:
+      return { ...state, decisionLoading: false, error: action.payload };
+
+    //applicant request edit trainee
+    case EDIT_TRAINEE_REQUEST_REQUEST:
+      return { ...state, decisionLoading: true, error: null };
+
+    case EDIT_TRAINEE_REQUEST_SUCCESS:
+      return {
+        ...state,
+        decisionLoading: false,
+        // currentTraining: action.payload,
+      };
+
+    case EDIT_TRAINEE_REQUEST_FAILURE:
+      return { ...state, decisionLoading: false, error: action.payload };
+//============================================================================================
     default:
       return state;
   }
