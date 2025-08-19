@@ -1,27 +1,73 @@
 import { DataTable } from "@/components/core/data-table";
 import Button from "@/components/ui/Button";
-import { ITrainingTrainee } from "@/types/trainings";
-import { traineesData } from "@/utils/constants/trainings";
+import { ITraining, ITrainingTrainee } from "@/types/trainings";
 import { Menu } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit2, Edit2Icon } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { VscEdit, VscEye, VscTrash } from "react-icons/vsc";
 import { Pen2 } from "solar-icon-set";
 
 type props = {
-  trainees: ITrainingTrainee[];
+  training: ITraining;
   handleAddTraineeRequest?: () => void;
   currentRole: string | null;
 };
 
 const Trainees = ({
-  trainees,
+  training,
   handleAddTraineeRequest,
   currentRole,
 }: props) => {
+  const trainees: ITrainingTrainee[] = training?.trainees;
+
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const handleToggle = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
   const traineesColumns: ColumnDef<ITrainingTrainee>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <div className="flex items-center justify-center">
+          <input
+            className="w-4 h-5"
+            type="checkbox"
+            checked={
+              table.getRowModel().rows.length > 0 &&
+              table
+                .getRowModel()
+                .rows.every((row) => selectedIds.includes(row.original.uuid))
+            }
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedIds(
+                  table.getRowModel().rows.map((r) => r.original.uuid)
+                );
+              } else {
+                setSelectedIds([]);
+              }
+            }}
+          />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="flex items-center justify-center">
+          <input
+            className="w-4 h-4"
+            type="checkbox"
+            checked={selectedIds.includes(row.original.uuid)}
+            onChange={() => handleToggle(row.original.uuid)}
+          />
+        </div>
+      ),
+    },
+
     {
       accessorKey: "firstName",
       header: "First name",
@@ -145,8 +191,26 @@ const Trainees = ({
         <h2 className="text-xl md:text-2xl font-bold text-primaryText">
           Trainees
         </h2>
-        {currentRole === "APPLICANT" && (
+        {currentRole === "APPLICANT" && training.status === "ACCEPTED" && (
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 w-full lg:w-auto">
+            {selectedIds.length > 0 && (
+              <Button
+                // onClick={() => handleRemoveTraineeRequest?.()}
+                className="!rounded-full bg-red-500 text-white gap-2 !py-3"
+              >
+                <VscTrash />
+                Request Remove Trainee/s
+              </Button>
+            )}
+            {selectedIds.length > 0 && (
+              <Button
+                // onClick={() => handleRemoveTraineeRequest?.()}
+                className="!rounded-full bg-primary text-white gap-2 !py-3"
+              >
+                <Pen2 />
+                Request Edit Trainee/s
+              </Button>
+            )}
             <Button
               onClick={() => handleAddTraineeRequest?.()}
               className="!rounded-full bg-primary text-white gap-2 !py-3"
@@ -160,7 +224,7 @@ const Trainees = ({
       <div>
         <DataTable
           columns={traineesColumns}
-          data={trainees}
+          data={trainees ?? []}
           loading={false}
           noDataMessage={"You do not have any trainings yet"}
         />

@@ -151,18 +151,27 @@ import {
   GET_SURVEY_TRAINEES_SUCCESS,
 } from "@/actions/SurveyTraineeActions";
 import {
+  ADD_TRAINEE_REQUEST_FAILURE,
+  ADD_TRAINEE_REQUEST_REQUEST,
+  ADD_TRAINEE_REQUEST_SUCCESS,
   CERTIFICATION_DECISION_FAILURE,
   CERTIFICATION_DECISION_REQUEST,
   CERTIFICATION_DECISION_SUCCESS,
   CERTIFICATION_REVIEW_FAILURE,
   CERTIFICATION_REVIEW_REQUEST,
   CERTIFICATION_REVIEW_SUCCESS,
+  EDIT_TRAINEE_REQUEST_FAILURE,
+  EDIT_TRAINEE_REQUEST_REQUEST,
+  EDIT_TRAINEE_REQUEST_SUCCESS,
   FETCH_TRAINING_BY_ID_FAILURE,
   FETCH_TRAINING_BY_ID_REQUEST,
   FETCH_TRAINING_BY_ID_SUCCESS,
   MAKE_DECISION_FAILURE,
   MAKE_DECISION_REQUEST,
   MAKE_DECISION_SUCCESS,
+  REMOVE_TRAINEE_REQUEST_FAILURE,
+  REMOVE_TRAINEE_REQUEST_REQUEST,
+  REMOVE_TRAINEE_REQUEST_SUCCESS,
   REQUEST_REVIEW_FAILURE,
   REQUEST_REVIEW_REQUEST,
   REQUEST_REVIEW_SUCCESS,
@@ -1232,7 +1241,7 @@ export const sdfMakeTrainingDecision =
     }
   };
 
-  //sertification services LB
+//sertification services LB
 export const requestCertificationReview =
   ({ trainingId, trainees }: { trainingId: string; trainees: string[] }) =>
   async (dispatch: any) => {
@@ -1284,5 +1293,118 @@ export const sdfCertificationDecision =
       });
     }
   };
+
+//trainee request responses services
+export const requestAddTrainee =
+  ({
+    trainingId,
+    numberOfTrainees,
+    reason,
+    description,
+  }: {
+    trainingId: string;
+    numberOfTrainees: number;
+    reason: string;
+    description: string;
+  }) =>
+  async (dispatch: any) => {
+    try {
+      dispatch({ type: ADD_TRAINEE_REQUEST_REQUEST });
+      const res = await authorizedApi.post(
+        `/training/${trainingId}/trainees/request-add`,
+        { numberOfTrainees, reason, description }
+      );
+      dispatch({
+        type: ADD_TRAINEE_REQUEST_SUCCESS,
+        payload: res.data.data.data,
+      });
+      notifications.show({
+        message: "Trainee Request sent successfully!",
+        color: "green",
+      });
+    } catch (err: any) {
+      dispatch({ type: ADD_TRAINEE_REQUEST_FAILURE, payload: err.message });
+      notifications.show({
+        message: "Failed to send trainee add request!",
+        color: "red",
+      });
+    }
+  };
+
+//request edit trainees
+export const requestEditTrainee =
+  ({
+    trainingId,
+    traineesIds,
+    reason,
+    description,
+  }: {
+    trainingId: string;
+    traineesIds: string[];
+    reason: string;
+    description: string;
+  }) =>
+  async (dispatch: any) => {
+    try {
+      dispatch({ type: EDIT_TRAINEE_REQUEST_REQUEST });
+      const res = await authorizedApi.post(
+        `/training/${trainingId}/trainees/request-edit`,
+        { traineesIds, reason, description }
+      );
+      dispatch({
+        type: EDIT_TRAINEE_REQUEST_SUCCESS,
+        payload: res.data.data.data,
+      });
+      notifications.show({
+        message: "Trainee Edit Request sent successfully!",
+        color: "green",
+      });
+    } catch (err: any) {
+      dispatch({ type: EDIT_TRAINEE_REQUEST_FAILURE, payload: err.message });
+      notifications.show({
+        message: "Failed to send trainee Edit Request!",
+        color: "red",
+      });
+    }
+  };
+
+
+  //request remove trainees
+export const requestRemoveTrainee =
+  ({
+    trainingId,
+    traineesIds,
+    reason,
+    description,
+  }: {
+    trainingId: string;
+    traineesIds: string[];
+    reason: string;
+    description: string;
+  }) =>
+  async (dispatch: any) => {
+    try {
+      dispatch({ type: REMOVE_TRAINEE_REQUEST_REQUEST });
+      const res = await authorizedApi.post(
+        `/training/${trainingId}/trainees/request-remove`,
+        { traineesIds, reason, description }
+      );
+      dispatch({
+        type: REMOVE_TRAINEE_REQUEST_SUCCESS,
+        payload: res.data.data.data,
+      });
+      notifications.show({
+        message: "Trainee Remove Request sent successfully!",
+        color: "green",
+      });
+    } catch (err: any) {
+      dispatch({ type: REMOVE_TRAINEE_REQUEST_FAILURE, payload: err.message });
+      notifications.show({
+        message: "Failed to send trainee Remove Request!",
+        color: "red",
+      });
+    }
+  };
+
 
 
