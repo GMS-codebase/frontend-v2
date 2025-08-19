@@ -5,6 +5,8 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { HiOutlineDocumentAdd } from "react-icons/hi";
 import { v4 as uuid } from "uuid";
+import { shouldShowQuestion } from "@/utils/surveyConditionalLogic";
+import { useSurveyContext } from "@/contexts/SurveyContext";
 
 interface SurveyPageProps {
   mode: "creating" | "viewing" | "answering" | "commenting";
@@ -15,8 +17,6 @@ interface SurveyPageProps {
   onAddPage: () => void;
   answers?: { [key: string]: any };
   setAnswers?: (key: string, value: any) => void;
-  comments?: { [key: string]: any };
-  setComments?: (key: string, value: any) => void;
 }
 
 const SurveyPage: React.FC<SurveyPageProps> = ({
@@ -27,27 +27,29 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
   onChange,
   answers,
   setAnswers,
-  comments,
-  setComments,
 }) => {
   const [newSurvey, setNewSurvey] = useState<ISurvey>({
     id: uuid(),
     title: "Question Title",
     description: "Question SubTitle",
-    type: "text",
+    type: "number",
     required: false,
     commentable: false,
     name: "Question Title",
     survey_TYPE: surveyType,
   });
 
+  const { addQuestion, removeQuestion } = useSurveyContext();
+
   const handleAddSurvey = (survey: ISurvey) => {
     onChange([...pageSurveys, survey]);
+    // Add to context for conditional logic
+    addQuestion(survey);
     setNewSurvey({
       id: uuid(),
       title: "Question Title",
       description: "Question SubTitle",
-      type: "text",
+      type: "number",
       required: false,
       commentable: false,
       name: "Question Title",
@@ -60,11 +62,15 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
       s.id === updatedSurvey.id ? updatedSurvey : s
     );
     onChange(updatedSurveys);
+    // Update in context for conditional logic
+    addQuestion(updatedSurvey);
   };
 
   const deleteSurvey = (surveyId: string) => {
     const updatedSurveys = pageSurveys?.filter((s) => s.id !== surveyId);
     onChange(updatedSurveys);
+    // Remove from context for conditional logic
+    removeQuestion(surveyId);
   };
 
   const handleDragEnd = (result: any) => {
@@ -76,6 +82,11 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
 
     onChange(reorderedSurveys);
   };
+
+  // Filter questions based on conditional logic when in answering mode
+  const visibleSurveys = mode === "answering" 
+    ? pageSurveys?.filter(survey => shouldShowQuestion(survey, answers || {}, pageSurveys))
+    : pageSurveys;
 
   return (
     <div className="space-y-6">
@@ -109,6 +120,17 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
           </div>
         </div>
       )}
+      
+      {/* Show conditional logic info in answering mode */}
+      {mode === "answering" && pageSurveys && pageSurveys.length > 0 && (
+        <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <p className="text-sm text-blue-800">
+            <strong>Note:</strong> Some questions may be hidden based on your previous answers. 
+            Answer the visible questions to see additional questions.
+          </p>
+        </div>
+      )}
+
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="surveys-list" type="group">
           {(provided: any) => (
@@ -117,7 +139,7 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
               ref={provided.innerRef}
               className="space-y-4 relative"
             >
-              {pageSurveys?.map((survey, index) => (
+              {visibleSurveys?.map((survey, index) => (
                 <Draggable
                   key={survey.id}
                   draggableId={survey.id}
@@ -139,8 +161,6 @@ const SurveyPage: React.FC<SurveyPageProps> = ({
                         deleteSurvey={deleteSurvey}
                         answers={answers}
                         setAnswers={setAnswers}
-                        comments={comments}
-                        setComments={setComments}
                       />
                     </div>
                   )}

@@ -1408,3 +1408,6 @@ export const requestRemoveTrainee =
 
 
 
+
+// Export the new survey API function
+export { getApplicantApplicationsInfo } from "./api/survey";

@@ -3,9 +3,7 @@ import { AiOutlineEdit } from "react-icons/ai";
 import Toggle from "../core/toggle";
 import { MdOutlineDelete } from "react-icons/md";
 import { FiEdit3 } from "react-icons/fi";
-import FileInput from "../core/FileInput";
-import TableInput from "../core/TableInput";
-import { Survey } from "@/types/surveys-form";
+import { Survey, ConditionalLogic } from "@/types/surveys-form";
 import RadioInput from "../core/RadioInput";
 import CheckboxInput from "../core/CheckBoxInput";
 
@@ -19,6 +17,7 @@ import { notifications } from "@mantine/notifications";
 import { useSelector } from "react-redux";
 import { CiEdit } from "react-icons/ci";
 import { IoIosCloseCircle } from "react-icons/io";
+import { useSurveyContext } from "@/contexts/SurveyContext";
 
 interface CreateSurveyProps {
   survey: Survey;
@@ -47,8 +46,6 @@ const SurveyComponent: React.FC<SurveyProps> = ({
   onChange,
   answers,
   setAnswers,
-  comments,
-  setComments,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -103,9 +100,7 @@ const SurveyComponent: React.FC<SurveyProps> = ({
           edit={() => setIsEditing(true)}
           answers={answers}
           setAnswers={setAnswers}
-          comments={comments}
           deleteSurvey={deleteSurvey}
-          setComments={setComments}
         />
       )}
 
@@ -125,50 +120,178 @@ const SurveyComponent: React.FC<SurveyProps> = ({
 const CreateSurvey: React.FC<CreateSurveyProps> = ({ survey, onSave }) => {
   const [editingSurvey, setEditingSurvey] = useState(survey);
   const [showingDescription, setShowingDescription] = useState(true);
-  const [showingTemplateExample, setShowingTemplateExample] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
 
-  const handleFileChange = async (files: FileList | null) => {
-    if (!files) return;
-    const file = files[0];
-    setSelectedFile(file);
-    setIsUploading(true);
-    try {
-      if (survey.template) {
-        await authorizedApi.post("/api/v2/files/delete", {
-          folder: survey.id,
-          filename: survey.template,
-        });
-      }
+  // Get available questions from context
+  const { getDependencyOptions, availableQuestions } = useSurveyContext();
+  const [selectedDependencyQuestion, setSelectedDependencyQuestion] = useState<any>(null);
 
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("folder", survey.id);
-      const response = await authorizedApi.post("/files/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      setEditingSurvey({
-        ...editingSurvey,
-        template: response.data.data.data,
-      });
-    } catch (error) {
-      console.error("File upload failed", error);
-    } finally {
-      setIsUploading(false);
+  // Get available questions for dependency selection
+  const availableQuestionsForDependency = getDependencyOptions(survey.id);
+
+  // Debug: Log available questions
+  useEffect(() => {
+    console.log("Available questions in context:", availableQuestions);
+    console.log("Available questions for dependency:", availableQuestionsForDependency);
+  }, [availableQuestions, availableQuestionsForDependency]);
+
+  // Update selected dependency question when dependency changes
+  useEffect(() => {
+    if (editingSurvey.conditionalLogic?.dependsOn) {
+      const question = availableQuestionsForDependency.find(q => q.value === editingSurvey.conditionalLogic?.dependsOn);
+      setSelectedDependencyQuestion(question);
+    } else {
+      setSelectedDependencyQuestion(null);
     }
-  };
+  }, [editingSurvey.conditionalLogic?.dependsOn, availableQuestionsForDependency]);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     key: keyof Survey
   ) => {
     const updatedSurvey = { ...editingSurvey, [key]: e.target.value };
-    if (key === "type" && e.target.value === "table")
-      updatedSurvey.columns = [];
     setEditingSurvey(updatedSurvey);
   };
+
+  const handleConditionalLogicChange = (field: keyof ConditionalLogic, value: any) => {
+    setEditingSurvey(prev => ({
+      ...prev,
+      conditionalLogic: {
+        ...prev.conditionalLogic,
+        [field]: value,
+      } as ConditionalLogic,
+    }));
+  };
+
+  const handleConditionalLogicShowWhenChange = (field: keyof ConditionalLogic['showWhen'], value: any) => {
+    setEditingSurvey(prev => ({
+      ...prev,
+      conditionalLogic: {
+        ...prev.conditionalLogic,
+        showWhen: {
+          ...prev.conditionalLogic?.showWhen,
+          [field]: value,
+        },
+      } as ConditionalLogic,
+    }));
+  };
+
+  const toggleConditionalLogic = () => {
+    if (!editingSurvey.conditionalLogic?.enabled) {
+      setEditingSurvey(prev => ({
+        ...prev,
+        conditionalLogic: {
+          enabled: true,
+          dependsOn: "",
+          showWhen: {
+            operator: "equals",
+            value: "",
+          },
+        },
+      }));
+    } else {
+      setEditingSurvey(prev => ({
+        ...prev,
+        conditionalLogic: undefined,
+      }));
+    }
+  };
+
+  // Get available operators based on the selected dependency question type
+  const getAvailableOperators = () => {
+    if (!selectedDependencyQuestion) return [];
+
+    switch (selectedDependencyQuestion.type) {
+      case "number":
+        return [
+          { value: "equals", label: "equals" },
+          { value: "not_equals", label: "does not equal" },
+          { value: "greater_than", label: "greater than" },
+          { value: "less_than", label: "less than" },
+        ];
+      case "radio":
+        return [
+          { value: "equals", label: "equals" },
+          { value: "not_equals", label: "does not equal" },
+        ];
+      case "checkbox":
+        return [
+          { value: "contains", label: "contains" },
+          { value: "not_contains", label: "does not contain" },
+        ];
+      default:
+        return [];
+    }
+  };
+
+  // Render value input based on the selected dependency question type
+  const renderValueInput = () => {
+    if (!selectedDependencyQuestion) {
+      return (
+        <input
+          type="text"
+          value={String(editingSurvey.conditionalLogic?.showWhen?.value || "")}
+          onChange={(e) => handleConditionalLogicShowWhenChange("value", e.target.value)}
+          placeholder="Select a question first"
+          className="p-2 border rounded text-sm bg-gray-100"
+          disabled
+        />
+      );
+    }
+
+    switch (selectedDependencyQuestion.type) {
+      case "number":
+        return (
+          <input
+            type="number"
+            value={String(editingSurvey.conditionalLogic?.showWhen?.value || "")}
+            onChange={(e) => handleConditionalLogicShowWhenChange("value", e.target.value)}
+            placeholder="Enter number"
+            className="p-2 border rounded text-sm"
+          />
+        );
+      case "radio":
+        return (
+          <select
+            value={String(editingSurvey.conditionalLogic?.showWhen?.value || "")}
+            onChange={(e) => handleConditionalLogicShowWhenChange("value", e.target.value)}
+            className="p-2 border rounded text-sm"
+          >
+            <option value="">Select an option</option>
+            {selectedDependencyQuestion.choices?.map((choice: string) => (
+              <option key={choice} value={choice}>
+                {choice}
+              </option>
+            ))}
+          </select>
+        );
+      case "checkbox":
+        return (
+          <select
+            value={String(editingSurvey.conditionalLogic?.showWhen?.value || "")}
+            onChange={(e) => handleConditionalLogicShowWhenChange("value", e.target.value)}
+            className="p-2 border rounded text-sm"
+          >
+            <option value="">Select an option</option>
+            {selectedDependencyQuestion.choices?.map((choice: string) => (
+              <option key={choice} value={choice}>
+                {choice}
+              </option>
+            ))}
+          </select>
+        );
+      default:
+        return (
+          <input
+            type="text"
+            value={String(editingSurvey.conditionalLogic?.showWhen?.value || "")}
+            onChange={(e) => handleConditionalLogicShowWhenChange("value", e.target.value)}
+            placeholder="Enter value"
+            className="p-2 border rounded text-sm"
+          />
+        );
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
@@ -187,12 +310,9 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ survey, onSave }) => {
           <option value="" disabled>
             Select Survey Type
           </option>
-          <option value="text">Text</option>
-          <option value="paragraph">Paragraph</option>
+          <option value="number">Number</option>
           <option value="radio">Radio Choices</option>
           <option value="checkbox">Checkbox Choices</option>
-          <option value="file">File</option>
-          <option value="table">Table</option>
         </select>
       </div>
 
@@ -259,77 +379,95 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ survey, onSave }) => {
           </div>
         )}
       </div>
+
+      {/* Conditional Logic Section */}
+      <div className="border-t-2 py-3">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-medium text-gray-900">Conditional Logic</h3>
+          <button
+            type="button"
+            onClick={toggleConditionalLogic}
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+              editingSurvey.conditionalLogic?.enabled
+                ? "bg-red-100 text-red-700 hover:bg-red-200"
+                : "bg-green-100 text-green-700 hover:bg-green-200"
+            }`}
+          >
+            {editingSurvey.conditionalLogic?.enabled ? "Disable" : "Enable"}
+          </button>
+        </div>
+        
+        {editingSurvey.conditionalLogic?.enabled && (
+          <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+            {availableQuestionsForDependency.length === 0 ? (
+              <div className="text-sm text-orange-600 bg-orange-50 p-3 rounded border border-orange-200">
+                <strong>No questions available:</strong> You need to create at least one question before setting up conditional logic.
+              </div>
+            ) : (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    This question will be shown when:
+                  </label>
+                  <div className="grid grid-cols-3 gap-3">
+                    <select
+                      value={editingSurvey.conditionalLogic?.showWhen?.operator || "equals"}
+                      onChange={(e) => handleConditionalLogicShowWhenChange("operator", e.target.value)}
+                      className="p-2 border rounded text-sm"
+                    >
+                      {getAvailableOperators().map(operator => (
+                        <option key={operator.value} value={operator.value}>
+                          {operator.label}
+                        </option>
+                      ))}
+                    </select>
+                    
+                    {renderValueInput()}
+                    
+                    <select
+                      value={editingSurvey.conditionalLogic?.dependsOn || ""}
+                      onChange={(e) => handleConditionalLogicChange("dependsOn", e.target.value)}
+                      className="p-2 border rounded text-sm"
+                    >
+                      <option value="">Select question... ({availableQuestionsForDependency.length} available)</option>
+                      {availableQuestionsForDependency.map(question => (
+                        <option key={question.value} value={question.value}>
+                          {question.label} ({question.type})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                
+                {selectedDependencyQuestion && (
+                  <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded">
+                    <strong>Selected Question:</strong> {selectedDependencyQuestion.label} ({selectedDependencyQuestion.type})
+                    {selectedDependencyQuestion.choices && (
+                      <div className="mt-1">
+                        <strong>Available options:</strong> {selectedDependencyQuestion.choices.join(", ")}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded">
+                  <strong>Example:</strong> This question will be shown when &quot;{selectedDependencyQuestion?.label || 'Question 1'}&quot; {editingSurvey.conditionalLogic?.showWhen?.operator || 'equals'} &quot;{editingSurvey.conditionalLogic?.showWhen?.value || 'value'}&quot;
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
       <div className="border-t-2 py-3 w-full overflow-x-auto">
         {renderSurveyType("creating", editingSurvey, {
           onSurveyChange: (survey) => setEditingSurvey(survey),
           isEditing: true,
         })}
       </div>
-      {showingTemplateExample && (
-        <div className="border-t-2 py-3 w-full overflow-x-auto">
-          <p className="text-sm text-gray-900">Template</p>
-          <div
-            className={`flex mt-2 p-4 flex-col items-center justify-center w-full h-48 border-blue-500 border-dashed border-2 bg-[#000F230A] rounded-2xl `}
-          >
-            <label
-              htmlFor={`template-upload-${editingSurvey.id}`}
-              className="flex flex-col items-center justify-center space-y-2 cursor-pointer w-full h-full"
-              style={{ width: "100%", height: "100%" }}
-            >
-              <div className="text-[#005DE9] w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
-                <span className="text-2xl font-bold">+</span>
-              </div>
-              {selectedFile || editingSurvey.template ? (
-                <div className="text-center">
-                  <p className="text-xl font-medium text-gray-700">
-                    {editingSurvey.template
-                      ? editingSurvey.template
-                      : selectedFile?.name}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {isUploading ? "Uploading..." : "File selected"}
-                  </p>
-                </div>
-              ) : (
-                <div className="text-center">
-                  <p className="text-md text-gray-500">Upload file</p>
-                  <p className="text-md text-gray-400">or drag and drop</p>
-                </div>
-              )}
-            </label>
-            <input
-              id={`template-upload-${editingSurvey.id}`}
-              type="file"
-              style={{ display: "none" }}
-              onChange={(e) => handleFileChange(e.target.files)}
-            />
-            {(selectedFile || editingSurvey.template) && (
-              <button
-                onClick={() => setSelectedFile(null)}
-                className="mt-4 bg-gray-200 text-black font-semibold rounded-full px-4 py-2"
-              >
-                Select Another File
-              </button>
-            )}
-          </div>
-        </div>
-      )}
 
       <div className="border-t-2 pt-3 flex justify-end gap-3">
         <div className="flex items-center gap-2">
-          {editingSurvey.type === "file" && (
-            <div className="flex items-center gap-2">
-              <label className="block">Show Template Example:</label>
-              <Toggle
-                value={showingTemplateExample}
-                onChange={(value) => {
-                  setShowingTemplateExample(value);
-                  if (!value)
-                    setEditingSurvey({ ...editingSurvey, description: "" });
-                }}
-              />
-            </div>
-          )}
           <div className="flex items-center gap-2">
             <label className="block">Show Description:</label>
             <Toggle
@@ -347,15 +485,6 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ survey, onSave }) => {
               value={editingSurvey.required}
               onChange={(value) =>
                 setEditingSurvey({ ...editingSurvey, required: value })
-              }
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="block">Commentable:</label>
-            <Toggle
-              value={editingSurvey.commentable}
-              onChange={(value) =>
-                setEditingSurvey({ ...editingSurvey, commentable: value })
               }
             />
           </div>
@@ -377,28 +506,19 @@ const renderSurveyType = (
   options?: {
     answers?: { [key: string]: any };
     setAnswers?: (key: string, value: any) => void;
-    comments?: { [key: string]: any };
-    setComments?: (key: string, value: any) => void;
     onSurveyChange?: (survey: Survey) => void;
     isEditing?: boolean;
   }
 ) => (
   <>
-    {survey.type === "text" && (
+    {survey.type === "number" && (
       <input
-        type="text"
+        type="number"
         className="w-full p-3 border rounded-2xl outline-none"
         value={options?.answers?.[survey.id] || ""}
         onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
         disabled={mode !== "answering"}
-      />
-    )}
-    {survey.type === "paragraph" && (
-      <textarea
-        className="w-full p-3 border rounded-2xl outline-none"
-        value={options?.answers?.[survey.id] || ""}
-        onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
-        disabled={mode !== "answering"}
+        placeholder="Enter a number"
       />
     )}
     {survey.type === "radio" && (
@@ -408,6 +528,7 @@ const renderSurveyType = (
         onChange={(value) => options?.setAnswers?.(survey.id, value)}
         required={survey.required}
         label={survey.description || "Select an option"}
+        questionId={survey.id}
       />
     )}
     {survey.type === "checkbox" && (
@@ -417,41 +538,9 @@ const renderSurveyType = (
         onChange={(value) => options?.setAnswers?.(survey.id, value)}
         required={survey.required}
         label={survey.description || "Select options"}
+        questionId={survey.id}
       />
     )}
-    {survey.type === "file" && (
-      <FileInput
-        mode={mode}
-        survey={survey}
-        onChange={(answer) => options?.setAnswers?.(survey.id, answer)}
-        value={options?.answers?.[survey.id]}
-        accept=".pdf"
-        disabled={mode !== "answering"}
-      />
-    )}
-    {survey.type === "table" && (
-      <TableInput
-        survey={survey}
-        mode={mode}
-        value={options?.answers?.[survey.id]}
-        onChange={(data) => options?.setAnswers?.(survey.id, data)}
-        onQuestionChange={options?.onSurveyChange as any}
-        isEditing={mode !== "answering"}
-      />
-    )}
-    {survey.commentable &&
-      (options?.comments || options?.setComments) &&
-      (mode === "commenting" || "viewing") && (
-        <div className="my-2">
-          <p>Comment</p>
-          <textarea
-            className="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-            value={options?.comments?.[survey.id] || ""}
-            onChange={(e) => options?.setComments?.(survey.id, e.target.value)}
-            disabled={mode !== "commenting"}
-          />
-        </div>
-      )}
   </>
 );
 
@@ -461,8 +550,6 @@ interface ViewSurveyProps {
   edit: () => void;
   answers?: { [key: string]: any };
   setAnswers?: (key: string, value: any) => void;
-  comments?: { [key: string]: any };
-  setComments?: (key: string, value: any) => void;
   deleteSurvey: (surveyId: string) => void;
 }
 
@@ -471,9 +558,7 @@ const ViewSurvey: React.FC<ViewSurveyProps> = ({
   mode,
   edit,
   answers,
-  comments,
   setAnswers,
-  setComments,
   deleteSurvey,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -579,12 +664,21 @@ const ViewSurvey: React.FC<ViewSurveyProps> = ({
         <p className="text-gray-600 text-sm">{survey.description}</p>
       )}
 
+      {/* Show conditional logic information */}
+      {survey.conditionalLogic?.enabled && (
+        <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+          <p className="text-sm text-yellow-800">
+            <strong>Conditional Logic:</strong> This question will be shown when the answer to &quot;
+            {survey.conditionalLogic.dependsOn}&quot; {survey.conditionalLogic.showWhen.operator} &quot;
+            {survey.conditionalLogic.showWhen.value}&quot;
+          </p>
+        </div>
+      )}
+
       <div className="space-y-6">
         {renderSurveyType(mode, survey, {
           answers,
           setAnswers,
-          comments,
-          setComments,
         })}
       </div>
     </div>
