@@ -15,7 +15,7 @@ import { VscEye } from "react-icons/vsc";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import { Training } from "@/types";
 import AddEditTraining from "@/components/Modals/training/AddEditTraining";
-import { getTrainings } from "@/services";
+import { getTrainings, requestTrainingReview } from "@/services";
 
 const Page = () => {
   const dispatch = useDispatch();
@@ -78,7 +78,7 @@ const Page = () => {
       cell: ({ row }) => {
         const { status, uuid } = row.original;
 
-        if (status === "accepted") {
+        if (status === "ACCEPTED" || status === "REJECTED") {
           return (
             <button
               className="px-3 py-1 bg-primary text-white rounded-full text-sm"
@@ -86,25 +86,36 @@ const Page = () => {
                 window.location.href = `/applicant/trainings/${uuid}`;
               }}
             >
-              View
+              View response
             </button>
           );
         }
 
-        if (status === "draft") {
+        if (status === "REVIEW") {
           return (
             <button
               className="px-3 py-1 bg-primary/20 border border-primary text-primary rounded-full text-sm"
-              onClick={() => {
-                console.log("Request action for", uuid);
+             onClick={() => {
+                window.location.href = `/applicant/trainings/${uuid}`;
               }}
             >
+              View Training
+            </button>
+          );
+        }
+       if (status ==="DRAFT") {
+          return (
+            <button
+              className="px-3 py-1 bg-primary/20 border border-primary text-primary rounded-full text-sm"
+              onClick={       
+      dispatch(requestTrainingReview(uuid) as any)
+      }>
               Request
             </button>
           );
         }
 
-        return <div className="text-gray-400">-</div>;
+        else return <div className="text-gray-400">-</div>;
       },
     },
     {
