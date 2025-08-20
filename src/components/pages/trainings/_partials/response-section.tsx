@@ -2,11 +2,15 @@
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-
 import { FC, useState } from "react";
 import ResponseCard from "./response-card";
 import { useDispatch } from "react-redux";
-import { sdfMakeTrainingDecision } from "@/services";
+import {
+  sdfMakeTrainingDecision,
+  requestAddTrainee,
+  requestEditTrainee,
+  requestRemoveTrainee,
+} from "@/services";
 import { IResponse, ITraining } from "@/types/trainings";
 import { useSelector } from "react-redux";
 import { notifications } from "@mantine/notifications";
@@ -24,6 +28,7 @@ interface ResponseSectionProps {
   setSelectedRequest: (value: string) => void;
   currentRole?: string;
   trainingResponse: IResponse[];
+  selectedTraineeIds: string[]; // Receive selected trainee IDs
 }
 
 const ResponseSection: FC<ResponseSectionProps> = ({
@@ -32,10 +37,12 @@ const ResponseSection: FC<ResponseSectionProps> = ({
   setSelectedRequest,
   currentRole,
   trainingResponse,
+  selectedTraineeIds,
 }) => {
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
   const [addNumber, setAddNumber] = useState(1);
+  const [reason, setReason] = useState("");
   const [decision, setDecision] = useState("");
 
   const { decisionLoading } = useSelector((state: any) => state.trainings);
@@ -44,13 +51,65 @@ const ResponseSection: FC<ResponseSectionProps> = ({
     if (selectedRequest) {
       switch (selectedRequest) {
         case "ADD":
-          // Handle adding trainees
+          if (!reason.trim() || !message.trim()) {
+            notifications.show({
+              message: "Please provide a reason and description.",
+              color: "red",
+            });
+            return;
+          }
+          dispatch(
+            requestAddTrainee({
+              trainingId: training?.uuid,
+              numberOfTrainees: addNumber,
+              reason,
+              description: message,
+            }) as any
+          );
           break;
         case "EDIT":
-          // Handle editing trainees
+          if (
+            !reason.trim() ||
+            !message.trim() ||
+            selectedTraineeIds.length === 0
+          ) {
+            notifications.show({
+              message:
+                "Please provide a reason, description, and select at least one trainee.",
+              color: "red",
+            });
+            return;
+          }
+          dispatch(
+            requestEditTrainee({
+              trainingId: training?.uuid,
+              traineesIds: selectedTraineeIds,
+              reason,
+              description: message,
+            }) as any
+          );
           break;
         case "REMOVE":
-          // Handle removing trainees
+          if (
+            !reason.trim() ||
+            !message.trim() ||
+            selectedTraineeIds.length === 0
+          ) {
+            notifications.show({
+              message:
+                "Please provide a reason, description, and select at least one trainee.",
+              color: "red",
+            });
+            return;
+          }
+          dispatch(
+            requestRemoveTrainee({
+              trainingId: training?.uuid,
+              traineesIds: selectedTraineeIds,
+              reason,
+              description: message,
+            }) as any
+          );
           break;
         case "APPROVE_TRAINING":
           handleMakeDecisionRequest();
@@ -61,11 +120,13 @@ const ResponseSection: FC<ResponseSectionProps> = ({
 
       // Reset the form
       setMessage("");
+      setReason("");
+      setAddNumber(1);
+      setDecision("");
       setSelectedRequest("");
     }
   };
 
-  //handle request make decision by sdf
   const handleMakeDecisionRequest = () => {
     if (!decision || !message.trim())
       return notifications.show({
@@ -135,9 +196,26 @@ const ResponseSection: FC<ResponseSectionProps> = ({
                 value={addNumber}
                 onChange={(e) => setAddNumber(Number(e.target.value))}
                 className="rounded-2xl"
+                placeholder="Number of trainees"
               />
             </div>
           )}
+
+          {/* Reason Input */}
+          {(selectedRequest === "ADD" ||
+            selectedRequest === "EDIT" ||
+            selectedRequest === "REMOVE") && (
+            <div className="w-full lg:w-1/3">
+              <Input
+                type="text"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                className="rounded-2xl"
+                placeholder="Reason for request"
+              />
+            </div>
+          )}
+
           {selectedRequest === "APPROVE_TRAINING" &&
             training.status === "REVIEW" && (
               <div className="w-full lg:w-fit">
@@ -163,6 +241,7 @@ const ResponseSection: FC<ResponseSectionProps> = ({
               onChange={(e) => setMessage(e.target.value)}
               rows={2}
               className="w-full p-3 border-none outline outline-1 outline-gray-200 bg-gray-50 rounded-2xl shadow-sm resize-none focus:ring-2 focus:ring-primary/40"
+              placeholder="Enter your message"
             />
           </div>
 
@@ -171,7 +250,14 @@ const ResponseSection: FC<ResponseSectionProps> = ({
             <Button
               onClick={handleSend}
               className="w-full lg:w-auto bg-primary hover:bg-primary/80 text-white px-6 py-2 rounded-2xl font-medium"
-              disabled={!selectedRequest || !message.trim() || decisionLoading}
+              disabled={
+                !selectedRequest ||
+                !message.trim() ||
+                decisionLoading ||
+                (selectedRequest !== "APPROVE_TRAINING" && !reason.trim()) ||
+                ((selectedRequest === "EDIT" || selectedRequest === "REMOVE") &&
+                  selectedTraineeIds.length === 0)
+              }
             >
               Send
             </Button>
