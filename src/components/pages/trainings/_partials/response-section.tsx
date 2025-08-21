@@ -21,6 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/another-select";
+import CertificationConfirmModal from "@/components/Modals/training/CertificationConfirmModal";
+
 
 interface ResponseSectionProps {
   training: ITraining;
@@ -28,7 +30,8 @@ interface ResponseSectionProps {
   setSelectedRequest: (value: string) => void;
   currentRole?: string;
   trainingResponse: IResponse[];
-  selectedTraineeIds: string[]; // Receive selected trainee IDs
+  selectedTraineeIds: string[];
+  traineeNames?: string[]; 
 }
 
 const ResponseSection: FC<ResponseSectionProps> = ({
@@ -38,101 +41,114 @@ const ResponseSection: FC<ResponseSectionProps> = ({
   currentRole,
   trainingResponse,
   selectedTraineeIds,
+  traineeNames = [],
 }) => {
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
   const [addNumber, setAddNumber] = useState(1);
   const [reason, setReason] = useState("");
   const [decision, setDecision] = useState("");
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<string | null>(null);
 
   const { decisionLoading } = useSelector((state: any) => state.trainings);
 
   const handleSend = () => {
     if (selectedRequest) {
-      switch (selectedRequest) {
-        case "ADD":
-          if (!reason.trim() || !message.trim()) {
-            notifications.show({
-              message: "Please provide a reason and description.",
-              color: "red",
-            });
-            return;
-          }
-          dispatch(
-            requestAddTrainee({
-              trainingId: training?.uuid,
-              numberOfTrainees: addNumber,
-              reason,
-              description: message,
-            }) as any
-          );
-          break;
-        case "EDIT":
-          if (
-            !reason.trim() ||
-            !message.trim() ||
-            selectedTraineeIds.length === 0
-          ) {
-            notifications.show({
-              message:
-                "Please provide a reason, description, and select at least one trainee.",
-              color: "red",
-            });
-            return;
-          }
-          dispatch(
-            requestEditTrainee({
-              trainingId: training?.uuid,
-              traineesIds: selectedTraineeIds,
-              reason,
-              description: message,
-            }) as any
-          );
-          break;
-        case "REMOVE":
-          if (
-            !reason.trim() ||
-            !message.trim() ||
-            selectedTraineeIds.length === 0
-          ) {
-            notifications.show({
-              message:
-                "Please provide a reason, description, and select at least one trainee.",
-              color: "red",
-            });
-            return;
-          }
-          dispatch(
-            requestRemoveTrainee({
-              trainingId: training?.uuid,
-              traineesIds: selectedTraineeIds,
-              reason,
-              description: message,
-            }) as any
-          );
-          break;
-        case "APPROVE_TRAINING":
-          handleMakeDecisionRequest();
-          break;
-        default:
-          break;
+      if (["ADD", "EDIT", "REMOVE"].includes(selectedRequest)) {
+        setPendingAction(selectedRequest);
+        setIsConfirmModalOpen(true);
+      } else if (selectedRequest === "APPROVE_TRAINING") {
+        handleMakeDecisionRequest();
       }
-
-      // Reset the form
-      setMessage("");
-      setReason("");
-      setAddNumber(1);
-      setDecision("");
-      setSelectedRequest("");
     }
   };
 
+  const handleConfirmAction = () => {
+    const combinedReason =
+      `${reason.trim()}${reason.trim() && message.trim() ? ": " : ""}${message.trim()}`.trim();
+
+    switch (pendingAction) {
+      case "ADD":
+        if (!combinedReason) {
+          notifications.show({
+            message: "Please provide a reason or description.",
+            color: "red",
+          });
+          setIsConfirmModalOpen(false);
+          return;
+        }
+        dispatch(
+          requestAddTrainee({
+            trainingId: training?.uuid,
+            numberOfTrainees: addNumber,
+            reason: combinedReason,
+          }) as any
+        );
+        break;
+      case "EDIT":
+        if (!combinedReason || selectedTraineeIds.length === 0) {
+          notifications.show({
+            message:
+              "Please provide a reason or description and select at least one trainee.",
+            color: "red",
+          });
+          setIsConfirmModalOpen(false);
+          return;
+        }
+        dispatch(
+          requestEditTrainee({
+            trainingId: training?.uuid,
+            traineeIds: selectedTraineeIds,
+          }) as any
+        );
+        break;
+      case "REMOVE":
+        if (!combinedReason || selectedTraineeIds.length === 0) {
+          notifications.show({
+            message:
+              "Please provide a reason or description and select at least one trainee.",
+            color: "red",
+          });
+          setIsConfirmModalOpen(false);
+          return;
+        }
+        dispatch(
+          requestRemoveTrainee({
+            trainingId: training?.uuid,
+            traineeIds: selectedTraineeIds,
+            reason: combinedReason,
+          }) as any
+        );
+        break;
+      default:
+        break;
+    }
+
+    // Reset the form
+    setMessage("");
+    setReason("");
+    setAddNumber(1);
+    setDecision("");
+    setSelectedRequest("");
+    setIsConfirmModalOpen(false);
+    setPendingAction(null);
+  };
+
   const handleMakeDecisionRequest = () => {
-    if (!decision || !message.trim())
+    if (!decision || !message.trim()) {
       return notifications.show({
         message: "Please provide a message and select a decision.",
         color: "red",
       });
+    }
+    if (currentRole === "SDF_SECRETARIATE") {
+      setPendingAction("APPROVE_TRAINING");
+      setIsConfirmModalOpen(true);
+    }
+  };
+
+  const handleConfirmDecision = () => {
     if (currentRole === "SDF_SECRETARIATE") {
       dispatch(
         sdfMakeTrainingDecision({
@@ -142,6 +158,11 @@ const ResponseSection: FC<ResponseSectionProps> = ({
         }) as any
       );
     }
+    setMessage("");
+    setDecision("");
+    setSelectedRequest("");
+    setIsConfirmModalOpen(false);
+    setPendingAction(null);
   };
 
   return (
@@ -252,10 +273,11 @@ const ResponseSection: FC<ResponseSectionProps> = ({
               className="w-full lg:w-auto bg-primary hover:bg-primary/80 text-white px-6 py-2 rounded-2xl font-medium"
               disabled={
                 !selectedRequest ||
-                !message.trim() ||
                 decisionLoading ||
-                (selectedRequest !== "APPROVE_TRAINING" && !reason.trim()) ||
-                ((selectedRequest === "EDIT" || selectedRequest === "REMOVE") &&
+                (selectedRequest === "APPROVE_TRAINING" && !message.trim()) ||
+                (selectedRequest === "EDIT" &&
+                  selectedTraineeIds.length === 0) ||
+                (selectedRequest === "REMOVE" &&
                   selectedTraineeIds.length === 0)
               }
             >
@@ -264,6 +286,26 @@ const ResponseSection: FC<ResponseSectionProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      <CertificationConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => {
+          setIsConfirmModalOpen(false);
+          setPendingAction(null);
+        }}
+        onConfirm={
+          pendingAction === "APPROVE_TRAINING"
+            ? handleConfirmDecision
+            : handleConfirmAction
+        }
+        action={pendingAction as any}
+        traineeNames={
+          pendingAction === "EDIT" || pendingAction === "REMOVE"
+            ? traineeNames
+            : undefined
+        }
+      />
     </div>
   );
 };

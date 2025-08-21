@@ -25,7 +25,6 @@ type props = {
 
 const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
   const dispatch = useDispatch();
-
   const {
     currentTraining: training,
     loading,
