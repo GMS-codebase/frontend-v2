@@ -31,7 +31,7 @@ const Page = () => {
     null
   );
   const [searchQuery, setSearchQuery] = useState("");
-  const {trainings,loading} = useSelector((state: any) => state.trainings);
+  const { trainings, loading } = useSelector((state: any) => state.trainings);
   const applications = useSelector((state: any) => state.applications);
 
   useEffect(() => {
@@ -89,33 +89,27 @@ const Page = () => {
               View response
             </button>
           );
-        }
-
-        if (status === "REVIEW") {
+        } else if (status === "REVIEW") {
           return (
             <button
               className="px-3 py-1 bg-primary/20 border border-primary text-primary rounded-full text-sm"
-             onClick={() => {
+              onClick={() => {
                 window.location.href = `/applicant/trainings/${uuid}`;
               }}
             >
               View Training
             </button>
           );
-        }
-       if (status ==="DRAFT") {
+        } else if (status === "DRAFT") {
           return (
             <button
               className="px-3 py-1 bg-primary/20 border border-primary text-primary rounded-full text-sm"
-              onClick={       
-      dispatch(requestTrainingReview(uuid) as any)
-      }>
+              onClick={() => dispatch(requestTrainingReview(uuid) as any)}
+            >
               Request
             </button>
           );
-        }
-
-        else return <div className="text-gray-400">-</div>;
+        } else return <div className="text-gray-400">-</div>;
       },
     },
     {
@@ -189,10 +183,11 @@ const Page = () => {
     },
   ];
 
-  const filteredTrainings = trainings?.filter((training: Training) =>
+  const filteredTrainings =
+    trainings?.filter((training: Training) =>
       training?.title?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
-    console.log("Filtered Trainings:", filteredTrainings);
+  console.log("Filtered Trainings:", filteredTrainings);
 
   const applicationId = applications?.myApplications?.find(
     (app: any) => app.currentStage === "CONTRACT_SIGNING"
@@ -245,7 +240,7 @@ const Page = () => {
           setSelectedTraining(null);
         }}
         defaultData={selectedTraining as any}
-        applicationId={applicationId} 
+        applicationId={applicationId}
       />
 
       <DeleteModal
