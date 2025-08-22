@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Survey, ConditionalLogic } from "@/types/surveys-form";
+import { useSurveyContext } from "@/contexts/SurveyContext";
 import { shouldShowQuestion } from "@/utils/surveyConditionalLogic";
 
 /**
@@ -9,6 +10,13 @@ import { shouldShowQuestion } from "@/utils/surveyConditionalLogic";
 const ConditionalLogicDemo: React.FC = () => {
   const [answers, setAnswers] = useState<{ [key: string]: any }>({});
   const [showAllQuestions, setShowAllQuestions] = useState(false);
+  const { getQuestionById } = useSurveyContext();
+
+  // Get the dependent question title for display
+  const getDependentQuestionTitle = (questionId: string) => {
+    const dependentQuestion = getQuestionById(questionId);
+    return dependentQuestion?.title || `Question ${questionId}`;
+  };
 
   // Sample questions with conditional logic
   const sampleQuestions: Survey[] = [
@@ -119,7 +127,7 @@ const ConditionalLogicDemo: React.FC = () => {
           </p>
           {question.conditionalLogic && (
             <p className="text-xs text-gray-400 mt-1">
-              Shows when: &quot;{question.conditionalLogic.dependsOn}&quot; {question.conditionalLogic.showWhen.operator} &quot;{question.conditionalLogic.showWhen.value}&quot;
+              Shows when: &quot;{getDependentQuestionTitle(question.conditionalLogic.dependsOn)}&quot; {question.conditionalLogic.showWhen.operator} &quot;{question.conditionalLogic.showWhen.value}&quot;
             </p>
           )}
         </div>
@@ -136,7 +144,7 @@ const ConditionalLogicDemo: React.FC = () => {
         {question.conditionalLogic && (
           <div className="mb-3 p-2 bg-blue-50 rounded border border-blue-200">
             <p className="text-xs text-blue-700">
-              <strong>Conditional:</strong> Shows when &quot;{question.conditionalLogic.dependsOn}&quot; {question.conditionalLogic.showWhen.operator} &quot;{question.conditionalLogic.showWhen.value}&quot;
+              <strong>Conditional:</strong> Shows when &quot;{getDependentQuestionTitle(question.conditionalLogic.dependsOn)}&quot; {question.conditionalLogic.showWhen.operator} &quot;{question.conditionalLogic.showWhen.value}&quot;
             </p>
           </div>
         )}
