@@ -169,7 +169,7 @@ const SurveyType: React.FC<SurveyTypeProps> = ({
       {allSurveys.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
           <p className="text-lg mb-2">No questions added yet</p>
-          <p className="text-sm">Click "Add Question" to start building your survey</p>
+          <p className="text-sm">Click &quot;Add Question&quot; to start building your survey</p>
         </div>
       ) : (
         <DragDropContext onDragEnd={handleDragEnd}>
