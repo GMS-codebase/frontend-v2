@@ -79,6 +79,32 @@ class AuthService {
       });
     }
   }
+
+  async changePassword(
+    data: {
+      oldpassword: string;
+      newpassword: string;
+      confirmpassword: string;
+    },
+    callback?: () => void
+  ) {
+    try {
+      await authorizedApi.post("/auth/password/change", data);
+      notifications.show({
+        title: "Success",
+        message: "Password changed successfully",
+        color: "green",
+      });
+      callback && callback();
+    } catch (error: any) {
+      notifications.show({
+        title: "Error Changing Password",
+        message: error?.response?.data?.message || "Failed to change password",
+        color: "red",
+      });
+      throw error;
+    }
+  }
 }
 
 const service = new AuthService();

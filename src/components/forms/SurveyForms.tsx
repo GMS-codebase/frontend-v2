@@ -64,6 +64,7 @@ const SurveyForms: React.FC<Props> = ({
       console.log(`Processing survey type: ${typeName}`, surveyType);
       
       if (surveyType.pages) {
+        // Flatten all surveys from all pages into a single array
         surveyType.pages.forEach((page, pageIndex) => {
           console.log(`Processing page ${pageIndex}:`, page);
           
@@ -150,7 +151,7 @@ const SurveyForms: React.FC<Props> = ({
             [newType.name]: {
               name: newType.name,
               description: newType.description,
-              pages: [{ surveys: [] }],
+              pages: [{ surveys: [] }], // Single page with empty surveys array
             },
           },
         };
