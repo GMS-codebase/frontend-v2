@@ -8,10 +8,12 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { useDisclosure } from "@mantine/hooks";
 import AddSurveyTrainee from "@/components/Modals/trainee/AddEditSurveyTrainee";
 import ImportTraineesModal from "@/components/Modals/trainee/ImportTraineesModal";
+import ViewTraineeModal from "@/components/Modals/trainee/ViewTraineeModal";
 import { useSelector } from "react-redux";
 import { Menu, Button } from "@mantine/core";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { BiShow } from "react-icons/bi";
 import DeleteModal from "@/components/Modals/DeleteModal";
 
 const Page = () => {
@@ -27,6 +29,9 @@ const Page = () => {
   const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
 
+  const [isOpenView, { open: openViewModal, close: closeViewModal }] =
+    useDisclosure(false);
+
   const surveyTrainee = useSelector((state: any) => state.surveyTrainee);
   const auth = useSelector((state: any) => state.auth);
   const [selectedSurveyTrainee, setSelectedSurveyTrainee] = useState<any>(null);
@@ -40,9 +45,19 @@ const Page = () => {
         (item.nationalId?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
         (item.sector?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
         (item.window?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
-        (item.subWindow?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
+        (item.subWindow?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.province?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.residenceSector?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.district?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.cell?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.village?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
       );
     }) ?? [];
+
+  const handleView = (trainee: any) => {
+    setSelectedSurveyTrainee(trainee);
+    openViewModal();
+  };
 
   const columns: ColumnDef<any>[] = [
     {
@@ -100,11 +115,83 @@ const Page = () => {
       ),
     },
     {
-      accessorKey: "applicantName",
-      header: "Applicant Name",
+      accessorKey: "province",
+      header: "Province",
       cell: ({ row }) => (
-        <div className="truncate max-w-[150px]" title={row.original.applicantName || "-"}>
-          {row.original.applicantName || "-"}
+        <div className="truncate max-w-[120px]" title={row.original.province || "-"}>
+          {row.original.province || "-"}
+        </div>
+      ),
+    },
+        {
+      accessorKey: "district",
+      header: "District",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[120px]" title={row.original.district || "-"}>
+          {row.original.district || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "residenceSector",
+      header: "Residence Sector",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[120px]" title={row.original.residenceSector || "-"}>
+          {row.original.residenceSector || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "cell",
+      header: "Cell",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[100px]" title={row.original.cell || "-"}>
+          {row.original.cell || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "village",
+      header: "Village",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[120px]" title={row.original.village || "-"}>
+          {row.original.village || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "window",
+      header: "Window",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[120px]" title={row.original.window?.title || "-"}>
+          {row.original.window?.title || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "subWindow",
+      header: "Sub Window",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[120px]" title={row.original.subWindow?.title || "-"}>
+          {row.original.subWindow?.title || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "sector",
+      header: "Sector",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[120px]" title={row.original.sector?.name || row.original.sector || "-"}>
+          {row.original.sector?.name || row.original.sector || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "trade",
+      header: "Trade",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[120px]" title={row.original.trade?.name || "-"}>
+          {row.original.trade?.name || "-"}
         </div>
       ),
     },
@@ -123,6 +210,15 @@ const Page = () => {
               <h1 className="text-lg">Actions</h1>
             </Menu.Label>
             <Menu.Divider />
+            <Menu.Item>
+              <div
+                onClick={() => handleView(row.original)}
+                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+              >
+                <BiShow size={21} color="#576074" />
+                View
+              </div>
+            </Menu.Item>
             <Menu.Item>
               <div
                 onClick={() => {
@@ -211,6 +307,14 @@ const Page = () => {
         }}
         defaultData={selectedSurveyTrainee}
         applicantId={auth?.userProfile?.uuid}
+      />
+      <ViewTraineeModal
+        isOpen={isOpenView}
+        onClose={() => {
+          closeViewModal();
+          setSelectedSurveyTrainee(null);
+        }}
+        trainee={selectedSurveyTrainee}
       />
       <ImportTraineesModal
         isOpen={isOpenImport}

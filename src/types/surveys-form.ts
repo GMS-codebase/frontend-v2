@@ -103,7 +103,7 @@ export interface Survey {
   id: string;
   title: string;
   description: string;
-  type: "number" | "radio" | "checkbox"; // Restricted to only these three types
+  type: "number" | "radio" | "checkbox" | "text" | "paragraph"; // Restricted to only these three types
   required: boolean;
   commentable: boolean;
   name: string;
