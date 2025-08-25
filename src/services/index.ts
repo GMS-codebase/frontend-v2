@@ -416,10 +416,15 @@ export const getTrades =
       });
   };
 
-export const getSurveyTrainee = async (dispatch: Dispatch<UnknownAction>) => {
+export const getSurveyTrainee = async (dispatch: Dispatch<UnknownAction>, applicantId?: string) => {
   dispatch({ type: GET_SURVEY_TRAINEES_LOADING });
+  
+  const url = applicantId 
+    ? `/survey-trainee?applicantId=${applicantId}`
+    : "/survey-trainee";
+    
   authorizedApi
-    .get("/survey-trainee")
+    .get(url)
     .then((res) => {
       console.log(res.data.data.data);
       dispatch({
