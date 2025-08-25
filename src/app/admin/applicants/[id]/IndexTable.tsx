@@ -9,9 +9,11 @@ import { Menu } from "@mantine/core";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { BiShow } from "react-icons/bi";
 import { SolarAddFolderBold } from "@/components/core/icons";
 import AddEditSurveyTrainee from "@/components/Modals/trainee/AddEditSurveyTrainee";
 import ImportTraineesModal from "@/components/Modals/trainee/ImportTraineesModal";
+import ViewTraineeModal from "@/components/Modals/trainee/ViewTraineeModal";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import { getSurveyTrainee } from "@/services";
 import { authorizedApi } from "@/utils/api";
@@ -36,6 +38,11 @@ const ApplicantTable = ({ data, applicantId }: { data: any; applicantId: string 
   const [
     isOpenDelete,
     { open: openDeleteModal, close: closeDeleteModal },
+  ] = useDisclosure(false);
+
+  const [
+    isOpenView,
+    { open: openViewModal, close: closeViewModal },
   ] = useDisclosure(false);
 
   const surveyTrainee = useSelector((state: any) => state.surveyTrainee);
@@ -64,7 +71,12 @@ const ApplicantTable = ({ data, applicantId }: { data: any; applicantId: string 
       (trainee.nationalId?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
       (trainee.sector?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
       (trainee.window?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
-      (trainee.subWindow?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
+      (trainee.subWindow?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+      (trainee.province?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+      (trainee.district?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+      (trainee.residenceSector?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+      (trainee.cell?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+      (trainee.village?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
     );
   });
 
@@ -76,6 +88,11 @@ const ApplicantTable = ({ data, applicantId }: { data: any; applicantId: string 
   const handleDelete = (trainee: any) => {
     setSelectedTrainee(trainee);
     openDeleteModal();
+  };
+
+  const handleView = (trainee: any) => {
+    setSelectedTrainee(trainee);
+    openViewModal();
   };
 
   const handleDeleteConfirm = async () => {
@@ -207,6 +224,41 @@ const ApplicantTable = ({ data, applicantId }: { data: any; applicantId: string 
       ),
     },
     {
+      accessorKey: "province",
+      header: "Province",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.province || "-"}</div>
+      ),
+    },
+    {
+      accessorKey: "district",
+      header: "District",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.district || "-"}</div>
+      ),
+    },
+    {
+      accessorKey: "residenceSector",
+      header: "Residence Sector",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.residenceSector || "-"}</div>
+      ),
+    },
+    {
+      accessorKey: "cell",
+      header: "Cell",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.cell || "-"}</div>
+      ),
+    },
+    {
+      accessorKey: "village",
+      header: "Village",
+      cell: ({ row }) => (
+        <div className="truncate">{row.original.village || "-"}</div>
+      ),
+    },
+    {
       accessorKey: "window",
       header: "Window",
       cell: ({ row }) => (
@@ -224,7 +276,7 @@ const ApplicantTable = ({ data, applicantId }: { data: any; applicantId: string 
       accessorKey: "sector",
       header: "Sector",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.sector?.name}</div>
+        <div className="truncate">{row.original.sector?.name || row.original.sector || "-"}</div>
       ),
     },
     {
@@ -245,6 +297,12 @@ const ApplicantTable = ({ data, applicantId }: { data: any; applicantId: string 
             </button>
           </Menu.Target>
           <Menu.Dropdown>
+            <Menu.Item onClick={() => handleView(row.original)}>
+              <div className="flex items-center gap-2">
+                <BiShow size={16} />
+                View
+              </div>
+            </Menu.Item>
             <Menu.Item onClick={() => handleEdit(row.original)}>
               <div className="flex items-center gap-2">
                 <CiEdit size={16} />
@@ -376,6 +434,13 @@ const ApplicantTable = ({ data, applicantId }: { data: any; applicantId: string 
         isOpen={isOpenImport}
         onClose={closeImportModal}
         applicantId={applicantId}
+      />
+
+      {/* View Trainee Modal */}
+      <ViewTraineeModal
+        isOpen={isOpenView}
+        onClose={closeViewModal}
+        trainee={selectedTrainee}
       />
 
       {/* Delete Confirmation Modal */}
