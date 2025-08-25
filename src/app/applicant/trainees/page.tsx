@@ -7,11 +7,11 @@ import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useDisclosure } from "@mantine/hooks";
 import AddSurveyTrainee from "@/components/Modals/trainee/AddEditSurveyTrainee";
+import ImportTraineesModal from "@/components/Modals/trainee/ImportTraineesModal";
 import { useSelector } from "react-redux";
 import { Menu, Button } from "@mantine/core";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
-
 import DeleteModal from "@/components/Modals/DeleteModal";
 
 const Page = () => {
@@ -20,10 +20,15 @@ const Page = () => {
     isOpenCreateEdit,
     { open: openCreateEditModal, close: closeCreateEditModal },
   ] = useDisclosure(false);
+  const [
+    isOpenImport,
+    { open: openImportModal, close: closeImportModal },
+  ] = useDisclosure(false);
   const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
 
   const surveyTrainee = useSelector((state: any) => state.surveyTrainee);
+  const auth = useSelector((state: any) => state.auth);
   const [selectedSurveyTrainee, setSelectedSurveyTrainee] = useState<any>(null);
 
   const filteredSurveyTrainee =
@@ -98,44 +103,8 @@ const Page = () => {
       accessorKey: "applicantName",
       header: "Applicant Name",
       cell: ({ row }) => (
-        <div className="truncate max-w-[180px]" title={row.original.applicant?.name || "-"}>
-          {row.original.applicant?.name || "-"}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "sector",
-      header: "Sector",
-      cell: ({ row }) => (
-        <div className="truncate max-w-[150px]" title={row.original.sector?.name || "-"}>
-          {row.original.sector?.name || "-"}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "window",
-      header: "Window",
-      cell: ({ row }) => (
-        <div className="truncate max-w-[180px]" title={row.original.window?.title || "-"}>
-          {row.original.window?.title || "-"}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "subWindow",
-      header: "Sub Window",
-      cell: ({ row }) => (
-        <div className="truncate max-w-[180px]" title={row.original.subWindow?.title || "-"}>
-          {row.original.subWindow?.title || "-"}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => (
-        <div className="truncate max-w-[100px]" title={row.original.deletedStatus ? "Deleted" : "Active"}>
-          {row.original.deletedStatus ? "Deleted" : "Active"}
+        <div className="truncate max-w-[150px]" title={row.original.applicantName || "-"}>
+          {row.original.applicantName || "-"}
         </div>
       ),
     },
@@ -143,15 +112,9 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <Menu shadow="lg" width={300}>
+        <Menu shadow="md" width={200}>
           <Menu.Target>
-            <button
-              style={{
-                background:
-                  "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-              }}
-              className="p-3 rounded-full border text-white hover:bg-red-100"
-            >
+            <button className="bg-primary text-white p-2 rounded-full">
               <HiDotsHorizontal size={25} color="white" />
             </button>
           </Menu.Target>
@@ -207,15 +170,26 @@ const Page = () => {
           />
         </div>
 
-        <button
-          onClick={openCreateEditModal}
-          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-        >
-          <span className="text-2xl">
-            <SolarAddFolderBold />
-          </span>
-          <h1 className="text-base font-medium text-white">New Survey Trainee</h1>
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={openImportModal}
+            className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+          >
+            <span className="text-2xl">
+              <SolarAddFolderBold />
+            </span>
+            <h1 className="text-base font-medium text-white">Import Trainees</h1>
+          </button>
+          <button
+            onClick={openCreateEditModal}
+            className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+          >
+            <span className="text-2xl">
+              <SolarAddFolderBold />
+            </span>
+            <h1 className="text-base font-medium text-white">New Survey Trainee</h1>
+          </button>
+        </div>
       </div>
       <div className="w-full h-full">
         <DataTable
@@ -236,6 +210,12 @@ const Page = () => {
           setSelectedSurveyTrainee(null);
         }}
         defaultData={selectedSurveyTrainee}
+        applicantId={auth?.userProfile?.uuid}
+      />
+      <ImportTraineesModal
+        isOpen={isOpenImport}
+        onClose={closeImportModal}
+        applicantId={auth?.userProfile?.uuid}
       />
       <DeleteModal
         isOpenModal={isOpenDelete}

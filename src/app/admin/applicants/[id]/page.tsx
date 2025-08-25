@@ -1,28 +1,31 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SolarPen2Bold } from "@/components/core/icons";
 import ApplicantTable from "./IndexTable";
 import { authorizedApi } from "@/utils/api";
 import { useParams } from "next/navigation";
 import { notifications } from "@mantine/notifications";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Applicant } from "@/types";
 import { ClipLoader } from "react-spinners";
+
 const Page = () => {
   const { id } = useParams();
+  const dispatch = useDispatch();
   const [downloading, setDownloading] = useState(false);
   const applicants = useSelector((state: any) => state.applicants);
   const applicant = applicants.applicants.filter(
     (app: Applicant) => app.uuid === id,
   )[0];
+
   return (
     <div className="">
       <div className="bg-white rounded-2xl p-10 mb-10 flex flex-col gap-6">
-        <div className="flex flex-col gap-6  text-black">
+        <div className="flex flex-col gap-6 text-black">
           <div className="md:flex md:justify-between">
             <div className="text-xl font-bold">Legal Status</div>
             <div
-              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center"
+              className="flex gap-2 p-2 bg-[#005DE9] rounded-full text-white px-4  py-2 items-center justify-center cursor-pointer"
               onClick={async (): Promise<void> => {
                 setDownloading(true);
                 try {
@@ -190,13 +193,9 @@ const Page = () => {
           </div>
         </div>
       </div>
-      {applicants?.loading ? (
-        <div className="w-full h-full flex justify-center items-center">
-          <ClipLoader size={20} />
-        </div>
-      ) : (
-        <ApplicantTable data={applicant} />
-      )}
+      
+      {/* ApplicantTable with integrated Survey Trainee functionality */}
+      <ApplicantTable data={applicant} applicantId={id as string} />
     </div>
   );
 };

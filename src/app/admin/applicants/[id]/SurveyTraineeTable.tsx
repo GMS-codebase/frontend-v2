@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/core/data-table";
 import { useSelector, useDispatch } from "react-redux";
 import { useDisclosure } from "@mantine/hooks";
-import { Menu } from "@mantine/core";
+import { Button, Menu } from "@mantine/core";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
@@ -17,9 +17,12 @@ import { getSurveyTrainee } from "@/services";
 import { authorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 
-const ApplicantTable = ({ data, applicantId }: { data: any; applicantId: string }) => {
+interface SurveyTraineeTableProps {
+  applicantId: string;
+}
+
+const SurveyTraineeTable = ({ applicantId }: SurveyTraineeTableProps) => {
   const dispatch = useDispatch();
-  const [activeTable, setActiveTable] = useState("contacts");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTrainee, setSelectedTrainee] = useState<any>(null);
   
@@ -106,69 +109,7 @@ const ApplicantTable = ({ data, applicantId }: { data: any; applicantId: string 
     openImportModal();
   };
 
-  const [isOpenCall, setIsOpenCall] = useState({
-    openUpdate: false,
-    openDelete: false,
-    call: null,
-  });
-
-  const contactColumns: ColumnDef<any>[] = [
-    {
-      accessorKey: "firstName",
-      header: "First Name",
-      cell: ({ row }) => <div>{row.original?.firstName}</div>,
-    },
-    {
-      accessorKey: "lastName",
-      header: "Last Name",
-      cell: ({ row }) => <div>{row.original?.lastName}</div>,
-    },
-    {
-      accessorKey: "mobile1",
-      header: "Mobile 1",
-      cell: ({ row }) => <div>{row.original?.mobile}</div>,
-    },
-    {
-      accessorKey: "mobile2",
-      header: "Mobile 2",
-      cell: ({ row }) => <div>{row.original?.mobile1}</div>,
-    },
-    {
-      accessorKey: "gender",
-      header: "Gender",
-      cell: ({ row }) => <div>{row.original?.gender}</div>,
-    },
-    {
-      accessorKey: "email",
-      header: "Email",
-      cell: ({ row }) => <div>{row.original?.email}</div>,
-    },
-  ];
-
-  const applicationColumns: ColumnDef<any>[] = [
-    {
-      accessorKey: "applicationNumber",
-      header: "Application Number",
-      cell: ({ row }) => <div>{row.original?.applicationNumber}</div>,
-    },
-    {
-      accessorKey: "applicantName",
-      header: "Applicant Name",
-      cell: ({ row }) => <div>{row.original?.name}</div>,
-    },
-    {
-      accessorKey: "email",
-      header: "Email",
-      cell: ({ row }) => <div>{row.original?.email}</div>,
-    },
-    {
-      accessorKey: "stage",
-      header: "Stage",
-      cell: ({ row }) => <div>{row.original?.currentStage}</div>,
-    },
-  ];
-
-  const traineeColumns: ColumnDef<any>[] = [
+  const columns: ColumnDef<any>[] = [
     {
       accessorKey: "fullname",
       header: "Full Name",
@@ -240,9 +181,9 @@ const ApplicantTable = ({ data, applicantId }: { data: any; applicantId: string 
       cell: ({ row }) => (
         <Menu shadow="md" width={200}>
           <Menu.Target>
-            <button className="bg-primary text-white p-2 rounded-full">
-              <HiDotsHorizontal size={16} color="white" />
-            </button>
+            <Button variant="subtle" size="sm">
+              <HiDotsHorizontal size={16} />
+            </Button>
           </Menu.Target>
           <Menu.Dropdown>
             <Menu.Item onClick={() => handleEdit(row.original)}>
@@ -263,104 +204,37 @@ const ApplicantTable = ({ data, applicantId }: { data: any; applicantId: string 
     },
   ];
 
-  const handleTableChange = (table: any) => {
-    setActiveTable(table);
-  };
-
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
-        <div className="relative w-[25rem]">
-          <span className="absolute top-4 left-4">
-            <CiSearch size={25} />
-          </span>
-          <input
-            name="search"
-            value={activeTable === "trainees" ? searchQuery : ""}
-            onChange={(e) => activeTable === "trainees" ? setSearchQuery(e.target.value) : undefined}
-            className="w-full p-3 py-4 pl-12 text-base text-black rounded-full bg-[#005DE908] border-none outline-none"
-            placeholder={activeTable === "trainees" ? "Search trainees..." : "Search"}
-          />
-        </div>
+        <div></div>
         <div className="flex gap-2">
           <button
-            onClick={() => handleTableChange("contacts")}
-            className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 ${
-              activeTable === "contacts"
-                ? "bg-[#005DE9] border-b-[#005DE9] text-[#005DE9] bg-opacity-50"
-                : "bg-[#005DE9] bg-opacity-50"
-            }`}
+            onClick={handleAddNew}
+            className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
           >
-            <h1 className="text-base font-medium text-white">Contacts</h1>
+            <span className="text-2xl">
+              <SolarAddFolderBold />
+            </span>
+            <h1 className="text-base font-medium text-white">Add Trainee</h1>
           </button>
           <button
-            onClick={() => handleTableChange("trainees")}
-            className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 ${
-              activeTable === "trainees"
-                ? "bg-[#005DE9] border-b-[#005DE9] text-[#005DE9] bg-opacity-50"
-                : "bg-[#005DE9] bg-opacity-50"
-            }`}
+            onClick={handleImport}
+            className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
           >
-            <h1 className="text-base font-medium text-white">Survey Trainees</h1>
+            <span className="text-2xl">
+              <SolarAddFolderBold />
+            </span>
+            <h1 className="text-base font-medium text-white">Import Trainees</h1>
           </button>
-          {/* <button
-            onClick={() => handleTableChange("applications")}
-            className={`w-full text-center justify-center border-b-2  py-3 px-7 flex flex-row items-center gap-3 ${
-              activeTable === "applications"
-                ? "bg-[#005DE9] border-b-[#005DE9] text-[#005DE9] bg-opacity-50"
-                : "bg-[#005DE9] bg-opacity-50"
-            }`}
-          >
-            <h1 className="text-base font-medium text-white">Applications</h1>
-          </button> */}
         </div>
       </div>
       
-      {/* Action buttons for trainees tab */}
-      {activeTable === "trainees" && (
-        <div className="w-full flex justify-end items-center p-4">
-          <div className="flex gap-2">
-            <button
-              onClick={handleAddNew}
-              className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-            >
-              <span className="text-2xl">
-                <SolarAddFolderBold />
-              </span>
-              <h1 className="text-base font-medium text-white">Add Trainee</h1>
-            </button>
-            <button
-              onClick={handleImport}
-              className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-            >
-              <span className="text-2xl">
-                <SolarAddFolderBold />
-              </span>
-              <h1 className="text-base font-medium text-white">Import Trainees</h1>
-            </button>
-          </div>
-        </div>
-      )}
-
       <div className="w-full h-full">
-        {activeTable === "contacts" && (
-          <DataTable
-            columns={contactColumns}
-            data={data?.applicantContacts ?? []}
-          />
-        )}
-        {activeTable === "trainees" && (
-          <DataTable
-            columns={traineeColumns}
-            data={searchFilteredTrainees}
-          />
-        )}
-        {/* {activeTable === "applications" && (
-          <DataTable
-            columns={applicationColumns}
-            data={data?.applications ?? []}
-          />
-        )} */}
+        <DataTable
+          columns={columns}
+          data={searchFilteredTrainees}
+        />
       </div>
 
       {/* Add/Edit Modal */}
@@ -389,4 +263,4 @@ const ApplicantTable = ({ data, applicantId }: { data: any; applicantId: string 
   );
 };
 
-export default ApplicantTable;
+export default SurveyTraineeTable;
