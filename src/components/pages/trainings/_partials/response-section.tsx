@@ -2,11 +2,15 @@
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-
 import { FC, useState } from "react";
 import ResponseCard from "./response-card";
 import { useDispatch } from "react-redux";
-import { sdfMakeTrainingDecision } from "@/services";
+import {
+  sdfMakeTrainingDecision,
+  requestAddTrainee,
+  requestEditTrainee,
+  requestRemoveTrainee,
+} from "@/services";
 import { IResponse, ITraining } from "@/types/trainings";
 import { useSelector } from "react-redux";
 import { notifications } from "@mantine/notifications";
@@ -17,6 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/another-select";
+import CertificationConfirmModal from "@/components/Modals/training/CertificationConfirmModal";
+
 
 interface ResponseSectionProps {
   training: ITraining;
@@ -24,6 +30,8 @@ interface ResponseSectionProps {
   setSelectedRequest: (value: string) => void;
   currentRole?: string;
   trainingResponse: IResponse[];
+  selectedTraineeIds: string[];
+  traineeNames?: string[]; 
 }
 
 const ResponseSection: FC<ResponseSectionProps> = ({
@@ -32,46 +40,115 @@ const ResponseSection: FC<ResponseSectionProps> = ({
   setSelectedRequest,
   currentRole,
   trainingResponse,
+  selectedTraineeIds,
+  traineeNames = [],
 }) => {
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
   const [addNumber, setAddNumber] = useState(1);
+  const [reason, setReason] = useState("");
   const [decision, setDecision] = useState("");
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<string | null>(null);
 
   const { decisionLoading } = useSelector((state: any) => state.trainings);
 
   const handleSend = () => {
     if (selectedRequest) {
-      switch (selectedRequest) {
-        case "ADD":
-          // Handle adding trainees
-          break;
-        case "EDIT":
-          // Handle editing trainees
-          break;
-        case "REMOVE":
-          // Handle removing trainees
-          break;
-        case "APPROVE_TRAINING":
-          handleMakeDecisionRequest();
-          break;
-        default:
-          break;
+      if (["ADD", "EDIT", "REMOVE"].includes(selectedRequest)) {
+        setPendingAction(selectedRequest);
+        setIsConfirmModalOpen(true);
+      } else if (selectedRequest === "APPROVE_TRAINING") {
+        handleMakeDecisionRequest();
       }
-
-      // Reset the form
-      setMessage("");
-      setSelectedRequest("");
     }
   };
 
-  //handle request make decision by sdf
+  const handleConfirmAction = () => {
+    const combinedReason =
+      `${reason.trim()}${reason.trim() && message.trim() ? ": " : ""}${message.trim()}`.trim();
+
+    switch (pendingAction) {
+      case "ADD":
+        if (!combinedReason) {
+          notifications.show({
+            message: "Please provide a reason or description.",
+            color: "red",
+          });
+          setIsConfirmModalOpen(false);
+          return;
+        }
+        dispatch(
+          requestAddTrainee({
+            trainingId: training?.uuid,
+            numberOfTrainees: addNumber,
+            reason: combinedReason,
+          }) as any
+        );
+        break;
+      case "EDIT":
+        if (!combinedReason || selectedTraineeIds.length === 0) {
+          notifications.show({
+            message:
+              "Please provide a reason or description and select at least one trainee.",
+            color: "red",
+          });
+          setIsConfirmModalOpen(false);
+          return;
+        }
+        dispatch(
+          requestEditTrainee({
+            trainingId: training?.uuid,
+            traineeIds: selectedTraineeIds,
+          }) as any
+        );
+        break;
+      case "REMOVE":
+        if (!combinedReason || selectedTraineeIds.length === 0) {
+          notifications.show({
+            message:
+              "Please provide a reason or description and select at least one trainee.",
+            color: "red",
+          });
+          setIsConfirmModalOpen(false);
+          return;
+        }
+        dispatch(
+          requestRemoveTrainee({
+            trainingId: training?.uuid,
+            traineeIds: selectedTraineeIds,
+            reason: combinedReason,
+          }) as any
+        );
+        break;
+      default:
+        break;
+    }
+
+    // Reset the form
+    setMessage("");
+    setReason("");
+    setAddNumber(1);
+    setDecision("");
+    setSelectedRequest("");
+    setIsConfirmModalOpen(false);
+    setPendingAction(null);
+  };
+
   const handleMakeDecisionRequest = () => {
-    if (!decision || !message.trim())
+    if (!decision || !message.trim()) {
       return notifications.show({
         message: "Please provide a message and select a decision.",
         color: "red",
       });
+    }
+    if (currentRole === "SDF_SECRETARIATE") {
+      setPendingAction("APPROVE_TRAINING");
+      setIsConfirmModalOpen(true);
+    }
+  };
+
+  const handleConfirmDecision = () => {
     if (currentRole === "SDF_SECRETARIATE") {
       dispatch(
         sdfMakeTrainingDecision({
@@ -81,6 +158,11 @@ const ResponseSection: FC<ResponseSectionProps> = ({
         }) as any
       );
     }
+    setMessage("");
+    setDecision("");
+    setSelectedRequest("");
+    setIsConfirmModalOpen(false);
+    setPendingAction(null);
   };
 
   return (
@@ -135,9 +217,26 @@ const ResponseSection: FC<ResponseSectionProps> = ({
                 value={addNumber}
                 onChange={(e) => setAddNumber(Number(e.target.value))}
                 className="rounded-2xl"
+                placeholder="Number of trainees"
               />
             </div>
           )}
+
+          {/* Reason Input */}
+          {(selectedRequest === "ADD" ||
+            selectedRequest === "EDIT" ||
+            selectedRequest === "REMOVE") && (
+            <div className="w-full lg:w-1/3">
+              <Input
+                type="text"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                className="rounded-2xl"
+                placeholder="Reason for request"
+              />
+            </div>
+          )}
+
           {selectedRequest === "APPROVE_TRAINING" &&
             training.status === "REVIEW" && (
               <div className="w-full lg:w-fit">
@@ -163,6 +262,7 @@ const ResponseSection: FC<ResponseSectionProps> = ({
               onChange={(e) => setMessage(e.target.value)}
               rows={2}
               className="w-full p-3 border-none outline outline-1 outline-gray-200 bg-gray-50 rounded-2xl shadow-sm resize-none focus:ring-2 focus:ring-primary/40"
+              placeholder="Enter your message"
             />
           </div>
 
@@ -171,13 +271,41 @@ const ResponseSection: FC<ResponseSectionProps> = ({
             <Button
               onClick={handleSend}
               className="w-full lg:w-auto bg-primary hover:bg-primary/80 text-white px-6 py-2 rounded-2xl font-medium"
-              disabled={!selectedRequest || !message.trim() || decisionLoading}
+              disabled={
+                !selectedRequest ||
+                decisionLoading ||
+                (selectedRequest === "APPROVE_TRAINING" && !message.trim()) ||
+                (selectedRequest === "EDIT" &&
+                  selectedTraineeIds.length === 0) ||
+                (selectedRequest === "REMOVE" &&
+                  selectedTraineeIds.length === 0)
+              }
             >
               Send
             </Button>
           </div>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      <CertificationConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => {
+          setIsConfirmModalOpen(false);
+          setPendingAction(null);
+        }}
+        onConfirm={
+          pendingAction === "APPROVE_TRAINING"
+            ? handleConfirmDecision
+            : handleConfirmAction
+        }
+        action={pendingAction as any}
+        traineeNames={
+          pendingAction === "EDIT" || pendingAction === "REMOVE"
+            ? traineeNames
+            : undefined
+        }
+      />
     </div>
   );
 };
