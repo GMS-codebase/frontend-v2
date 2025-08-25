@@ -1294,25 +1294,22 @@ export const sdfCertificationDecision =
     }
   };
 
-//trainee request responses services
 export const requestAddTrainee =
   ({
     trainingId,
     numberOfTrainees,
     reason,
-    description,
   }: {
     trainingId: string;
     numberOfTrainees: number;
     reason: string;
-    description: string;
   }) =>
   async (dispatch: any) => {
     try {
       dispatch({ type: ADD_TRAINEE_REQUEST_REQUEST });
       const res = await authorizedApi.post(
         `/training/${trainingId}/trainees/request-add`,
-        { numberOfTrainees, reason, description }
+        { numberOfTrainees, reason }
       );
       dispatch({
         type: ADD_TRAINEE_REQUEST_SUCCESS,
@@ -1331,25 +1328,14 @@ export const requestAddTrainee =
     }
   };
 
-//request edit trainees
 export const requestEditTrainee =
-  ({
-    trainingId,
-    traineesIds,
-    reason,
-    description,
-  }: {
-    trainingId: string;
-    traineesIds: string[];
-    reason: string;
-    description: string;
-  }) =>
+  ({ trainingId, traineeIds }: { trainingId: string; traineeIds: string[] }) =>
   async (dispatch: any) => {
     try {
       dispatch({ type: EDIT_TRAINEE_REQUEST_REQUEST });
       const res = await authorizedApi.post(
         `/training/${trainingId}/trainees/request-edit`,
-        { traineesIds, reason, description }
+         {traineeIds}
       );
       dispatch({
         type: EDIT_TRAINEE_REQUEST_SUCCESS,
@@ -1368,26 +1354,22 @@ export const requestEditTrainee =
     }
   };
 
-
-  //request remove trainees
 export const requestRemoveTrainee =
   ({
     trainingId,
-    traineesIds,
+    traineeIds,
     reason,
-    description,
   }: {
     trainingId: string;
-    traineesIds: string[];
+    traineeIds: string[];
     reason: string;
-    description: string;
   }) =>
   async (dispatch: any) => {
     try {
       dispatch({ type: REMOVE_TRAINEE_REQUEST_REQUEST });
       const res = await authorizedApi.post(
         `/training/${trainingId}/trainees/request-remove`,
-        { traineesIds, reason, description }
+        { traineeIds, reason }
       );
       dispatch({
         type: REMOVE_TRAINEE_REQUEST_SUCCESS,
@@ -1405,9 +1387,6 @@ export const requestRemoveTrainee =
       });
     }
   };
-
-
-
 
 // Export the new survey API function
 export { getApplicantApplicationsInfo } from "./api/survey";

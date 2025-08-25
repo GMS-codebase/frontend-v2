@@ -15,7 +15,7 @@ import { VscEye } from "react-icons/vsc";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import { Training } from "@/types";
 import AddEditTraining from "@/components/Modals/training/AddEditTraining";
-import { getTrainings } from "@/services";
+import { getTrainings, requestTrainingReview } from "@/services";
 
 const Page = () => {
   const dispatch = useDispatch();
@@ -31,7 +31,7 @@ const Page = () => {
     null
   );
   const [searchQuery, setSearchQuery] = useState("");
-  const {trainings,loading} = useSelector((state: any) => state.trainings);
+  const { trainings, loading } = useSelector((state: any) => state.trainings);
   const applications = useSelector((state: any) => state.applications);
 
   useEffect(() => {
@@ -78,7 +78,7 @@ const Page = () => {
       cell: ({ row }) => {
         const { status, uuid } = row.original;
 
-        if (status === "accepted") {
+        if (status === "ACCEPTED" || status === "REJECTED") {
           return (
             <button
               className="px-3 py-1 bg-primary text-white rounded-full text-sm"
@@ -86,25 +86,30 @@ const Page = () => {
                 window.location.href = `/applicant/trainings/${uuid}`;
               }}
             >
-              View
+              View response
             </button>
           );
-        }
-
-        if (status === "draft") {
+        } else if (status === "REVIEW") {
           return (
             <button
               className="px-3 py-1 bg-primary/20 border border-primary text-primary rounded-full text-sm"
               onClick={() => {
-                console.log("Request action for", uuid);
+                window.location.href = `/applicant/trainings/${uuid}`;
               }}
+            >
+              View Training
+            </button>
+          );
+        } else if (status === "DRAFT") {
+          return (
+            <button
+              className="px-3 py-1 bg-primary/20 border border-primary text-primary rounded-full text-sm"
+              onClick={() => dispatch(requestTrainingReview(uuid) as any)}
             >
               Request
             </button>
           );
-        }
-
-        return <div className="text-gray-400">-</div>;
+        } else return <div className="text-gray-400">-</div>;
       },
     },
     {
@@ -178,10 +183,11 @@ const Page = () => {
     },
   ];
 
-  const filteredTrainings = trainings?.filter((training: Training) =>
+  const filteredTrainings =
+    trainings?.filter((training: Training) =>
       training?.title?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
-    console.log("Filtered Trainings:", filteredTrainings);
+  console.log("Filtered Trainings:", filteredTrainings);
 
   const applicationId = applications?.myApplications?.find(
     (app: any) => app.currentStage === "CONTRACT_SIGNING"
@@ -234,7 +240,7 @@ const Page = () => {
           setSelectedTraining(null);
         }}
         defaultData={selectedTraining as any}
-        applicationId={applicationId} 
+        applicationId={applicationId}
       />
 
       <DeleteModal

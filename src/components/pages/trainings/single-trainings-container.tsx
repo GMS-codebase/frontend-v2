@@ -3,7 +3,6 @@
 import { PDFViewerContainer } from "@/components/PDFViewer/pdf-viewer-container";
 import Button from "@/components/ui/Button";
 import { ITraining } from "@/types/trainings";
-import { authorizedApi } from "@/utils/api";
 import { Loader2 } from "lucide-react";
 import React, { FC, useEffect, useState } from "react";
 import CertificationGrid from "./_partials/certificationGrid";
@@ -26,7 +25,6 @@ type props = {
 
 const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
   const dispatch = useDispatch();
-
   const {
     currentTraining: training,
     loading,
@@ -34,8 +32,7 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
   } = useSelector((state: any) => state.trainings);
 
   const [selectedRequest, setSelectedRequest] = useState("");
-
-  console.log(selectedRequest);
+  const [selectedTraineeIds, setSelectedTraineeIds] = useState<string[]>([]);
 
   const responseRef = React.useRef<HTMLDivElement | null>(null);
   const active = usePathname();
@@ -59,13 +56,23 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
     dispatch(getTrainingById(trainingId) as any);
   }, [dispatch]);
 
-  //handle request training review by sdf
+  // Handle request training review by sdf
   const handleReviewRequest = () => {
     dispatch(requestTrainingReview(trainingId) as any);
   };
 
   const handleAddTraineeRequest = () => {
     setSelectedRequest("ADD");
+    responseRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleEditTraineeRequest = () => {
+    setSelectedRequest("EDIT");
+    responseRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleRemoveTraineeRequest = () => {
+    setSelectedRequest("REMOVE");
     responseRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -120,7 +127,10 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
           <Trainees
             training={training}
             handleAddTraineeRequest={handleAddTraineeRequest}
+            handleEditTraineeRequest={handleEditTraineeRequest}
+            handleRemoveTraineeRequest={handleRemoveTraineeRequest}
             currentRole={currentRole}
+            setSelectedTraineeIds={setSelectedTraineeIds}
           />
           <CertificationGrid currentRole={currentRole} training={training} />
           <div ref={responseRef}>
@@ -130,6 +140,7 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
               setSelectedRequest={setSelectedRequest}
               currentRole={currentRole as string}
               trainingResponse={training?.trainingRequestResponses}
+              selectedTraineeIds={selectedTraineeIds}
             />
           </div>
         </div>

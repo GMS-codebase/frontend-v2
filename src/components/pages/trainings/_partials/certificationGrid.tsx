@@ -1,3 +1,4 @@
+"use client";
 import Button from "@/components/ui/Button";
 import {
   requestCertificationReview,
@@ -8,6 +9,7 @@ import { Checkbox } from "@mantine/core";
 import { Loader2 } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import CertificationConfirmModal from "@/components/Modals/training/CertificationConfirmModal";
 
 type Props = {
   currentRole: string | null;
@@ -16,13 +18,16 @@ type Props = {
 
 const CertificationGrid: FC<Props> = ({ currentRole, training }) => {
   const dispatch = useDispatch();
-
   const { certificationLoading } = useSelector((state: any) => state.trainings);
 
-  // Initialize selected IDs LB
+  // Initialize selected IDs
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalAction, setModalAction] = useState<
+    "CERTIFICATION_REQUEST" | "CERTIFICATION_DECISION" | null
+  >(null);
 
-  // Only trainees with pending certification are displayed LB
+  // Only trainees with pending certification are displayed
   const pendingTrainees =
     training?.trainees?.filter((t) => t.certificationStatus === "PENDING") ??
     [];
@@ -34,33 +39,72 @@ const CertificationGrid: FC<Props> = ({ currentRole, training }) => {
     setSelectedIds(preselected);
   }, [training?.trainees]);
 
-
   const handleToggle = (id: string) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((uuid) => uuid !== id) : [...prev, id]
     );
   };
 
+  // Get trainee names for modal
+  const getTraineeNames = () => {
+    return pendingTrainees
+      .filter((trainee) => selectedIds.includes(trainee.uuid))
+      .map((trainee) => `${trainee.firstName} ${trainee.lastName}`);
+  };
+
+  // Handle modal open
+  const openModal = (
+    action: "CERTIFICATION_REQUEST" | "CERTIFICATION_DECISION"
+  ) => {
+    if (selectedIds.length === 0) {
+      // Optionally handle case where no trainees are selected
+      return;
+    }
+    setModalAction(action);
+    setModalOpen(true);
+  };
+
+  // Handle modal confirm
+  const handleConfirm = () => {
+    if (modalAction === "CERTIFICATION_REQUEST") {
+      dispatch(
+        requestCertificationReview({
+          trainingId: training?.uuid,
+          trainees: selectedIds,
+        }) as any
+      );
+    } else if (modalAction === "CERTIFICATION_DECISION") {
+      dispatch(
+        sdfCertificationDecision({
+          trainingId: training?.uuid,
+          trainees: selectedIds,
+        }) as any
+      );
+    }
+    setModalOpen(false);
+    setModalAction(null);
+  };
+
   const handleCertificationRequest = () => {
-    dispatch(
-      requestCertificationReview({
-        trainingId: training?.uuid,
-        trainees: selectedIds,
-      }) as any
-    );
+    openModal("CERTIFICATION_REQUEST");
   };
 
   const handleCertificationResponse = () => {
-    dispatch(
-      sdfCertificationDecision({
-        trainingId: training?.uuid,
-        trainees: selectedIds,
-      }) as any
-    );
+    openModal("CERTIFICATION_DECISION");
   };
 
   return (
     <div className="flex flex-col gap-10 pt-10">
+      <CertificationConfirmModal
+        isOpen={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setModalAction(null);
+        }}
+        onConfirm={handleConfirm}
+        action={modalAction}
+        traineeNames={modalAction ? getTraineeNames() : undefined}
+      />
       <div className="flex items-center justify-between">
         <h2 className="text-xl md:text-2xl font-bold text-primaryText">
           Certification
@@ -72,11 +116,12 @@ const CertificationGrid: FC<Props> = ({ currentRole, training }) => {
               <Button
                 className="!rounded-full !bg-primary py-3"
                 onClick={handleCertificationRequest}
+                disabled={selectedIds.length === 0 || certificationLoading}
               >
                 {certificationLoading ? (
                   <Loader2 className="animate-spin text-white" fontSize={24} />
                 ) : (
-                  "Request certification"
+                  "Request Certification"
                 )}
               </Button>
             )}
@@ -84,6 +129,7 @@ const CertificationGrid: FC<Props> = ({ currentRole, training }) => {
               <Button
                 className="!rounded-full !bg-primary py-3"
                 onClick={handleCertificationResponse}
+                disabled={selectedIds.length === 0 || certificationLoading}
               >
                 {certificationLoading ? (
                   <Loader2 className="animate-spin text-white" fontSize={24} />
