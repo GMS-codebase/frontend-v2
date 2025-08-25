@@ -17,9 +17,7 @@ import { UnknownAction } from "redux";
 
 const Page = () => {
   const dispatch = useDispatch();
-
   const [searchQuery, setSearchQuery] = useState("");
-
   const {
     trainings,
     loading,
@@ -128,40 +126,40 @@ const Page = () => {
       },
     },
     {
-      accessorKey: "response",
-      header: "Response",
-      cell: ({ row }) => {
-        const { status, uuid } = row.original;
-
-        if (status === "accepted") {
-          return (
-            <button
-              className="px-3 py-1 bg-primary text-white rounded-full text-sm"
-              onClick={() => {
-                window.location.href = `/applicant/trainings/${uuid}`;
-              }}
-            >
-              View
-            </button>
-          );
-        }
-
-        if (status === "draft") {
-          return (
-            <button
-              className="px-3 py-1 bg-primary/20 border border-primary text-primary rounded-full text-sm"
-              onClick={() => {
-                console.log("Request action for", uuid);
-              }}
-            >
-              Request
-            </button>
-          );
-        }
-
-        return <div className="text-gray-400">-</div>;
-      },
-    },
+       accessorKey: "response",
+       header: "Response",
+       cell: ({ row }) => {
+         const { status, uuid } = row.original;
+ 
+         if (
+           status === "ACCEPTED" ||
+           status === "REJECTED" ||
+           status === "DRAFT"
+         ) {
+           return (
+             <button
+               className="px-3 py-1 bg-primary text-white rounded-full text-sm"
+               onClick={() => {
+                 window.location.href = `/sdf/trainings/${uuid}`;
+               }}
+             >
+               View Training
+             </button>
+           );
+         } else if (status === "REVIEW") {
+           return (
+             <button
+               className="px-3 py-1 bg-primary/20 border border-primary text-primary rounded-full text-sm"
+               onClick={() => {
+                  window.location.href = `/sdf/trainings/${uuid}`
+               }}
+             >
+               Make decision
+             </button>
+           );
+         } else return <div className="text-gray-400">-</div>;
+       },
+     },
     {
       accessorKey: "status",
       header: "Status",

@@ -564,6 +564,7 @@ const ViewSurvey: React.FC<ViewSurveyProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAnswered, setIsAnswered] = useState(false);
   const user = useSelector((state: any) => state.auth.user);
+  const { getQuestionById } = useSurveyContext();
 
   useEffect(() => {
     const checkAnswered = async () => {
@@ -578,6 +579,12 @@ const ViewSurvey: React.FC<ViewSurveyProps> = ({
     };
     checkAnswered();
   }, [survey.id, user?.id]);
+
+  // Get the dependent question title for display
+  const getDependentQuestionTitle = (questionId: string) => {
+    const dependentQuestion = getQuestionById(questionId);
+    return dependentQuestion?.title || `Question ${questionId}`;
+  };
 
   const handleSubmit = async () => {
     if (!user) {
@@ -669,7 +676,7 @@ const ViewSurvey: React.FC<ViewSurveyProps> = ({
         <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
           <p className="text-sm text-yellow-800">
             <strong>Conditional Logic:</strong> This question will be shown when the answer to &quot;
-            {survey.conditionalLogic.dependsOn}&quot; {survey.conditionalLogic.showWhen.operator} &quot;
+            {getDependentQuestionTitle(survey.conditionalLogic.dependsOn)}&quot; {survey.conditionalLogic.showWhen.operator} &quot;
             {survey.conditionalLogic.showWhen.value}&quot;
           </p>
         </div>

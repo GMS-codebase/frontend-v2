@@ -14,6 +14,8 @@ import {
   ChevronRight,
   Filter,
   CheckCheck,
+  BarChart3,
+  PieChart,
 } from "lucide-react";
 import { format } from "date-fns";
 import { notifications } from "@mantine/notifications";
@@ -32,6 +34,19 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
 import * as XLSX from "xlsx";
+import { Doughnut } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  ChartOptions,
+  ChartData,
+} from "chart.js";
+
+// Register Chart.js components
+ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
 // Types
 interface Survey {
@@ -98,6 +113,36 @@ interface SurveyResponse {
 interface ParsedAnswer {
   question: string;
   answer: string;
+}
+
+interface QuestionAnalytics {
+  question: string;
+  questionId: string;
+  surveyType: string;
+  sectionTitle?: string;
+  sectionDescription?: string;
+  totalResponses: number;
+  totalSubmissions: number;
+  answerDistribution: {
+    answer: string;
+    count: number;
+    percentage: number;
+  }[];
+}
+
+interface AnalyticsFilters {
+  window: string;
+  subwindow: string;
+  sector: string;
+  trade: string;
+  gender: string;
+  age: string;
+  province: string;
+  district: string;
+  cell: string;
+  village: string;
+  fromDate: string;
+  toDate: string;
 }
 
 // Parse survey questions
@@ -290,6 +335,25 @@ const SurveyViewPage = () => {
   const [dateFromFilter, setDateFromFilter] = useState<string>("");
   const [dateToFilter, setDateToFilter] = useState<string>("");
 
+  // Analytics state
+  const [activeTab, setActiveTab] = useState<"responses" | "analytics">("responses");
+  const [questionAnalytics, setQuestionAnalytics] = useState<QuestionAnalytics[]>([]);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsFilters, setAnalyticsFilters] = useState<AnalyticsFilters>({
+    window: "",
+    subwindow: "",
+    sector: "",
+    trade: "",
+    gender: "",
+    age: "",
+    province: "",
+    district: "",
+    cell: "",
+    village: "",
+    fromDate: "",
+    toDate: "",
+  });
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalResponses, setTotalResponses] = useState(0);
@@ -387,7 +451,7 @@ const SurveyViewPage = () => {
         const total = enrichedResponses.length;
         const totalPagesCalc = Math.ceil(total / pageSize);
 
-        setResponses(paginatedResponses);
+        setResponses(enrichedResponses); // Store all responses for analytics
         setTotalResponses(total);
         setTotalPages(totalPagesCalc);
         setCurrentPage(page);
@@ -408,6 +472,281 @@ const SurveyViewPage = () => {
     },
     [id, pageSize]
   );
+
+  // Process analytics data
+  const processAnalytics = useCallback(() => {
+    if (!responses.length || !survey) return;
+
+    setAnalyticsLoading(true);
+    try {
+      const questionMap = parseQuestions(survey.qns);
+      const analytics: QuestionAnalytics[] = [];
+
+      // Parse the survey questions to identify question types
+      let surveyQuestions: any[] = [];
+      try {
+        let cleanedQns = survey.qns.trim();
+        if (cleanedQns.startsWith('("') && cleanedQns.endsWith('")')) {
+          cleanedQns = cleanedQns.substring(2, cleanedQns.length - 2);
+        }
+        if (cleanedQns.startsWith('"') && cleanedQns.endsWith('"')) {
+          cleanedQns = cleanedQns.substring(1, cleanedQns.length - 1);
+        }
+        cleanedQns = cleanedQns.replace(/\\"/g, '"');
+        cleanedQns = cleanedQns.replace(/([{,])\s*([a-zA-Z0-9_\-]+):/g, '$1"$2":');
+
+        const parsed = JSON.parse(cleanedQns);
+        
+        if (Array.isArray(parsed)) {
+          surveyQuestions = parsed;
+        } else if (typeof parsed === "object") {
+          Object.values(parsed).forEach((section: any) => {
+            if (section && section.pages && Array.isArray(section.pages)) {
+              section.pages.forEach((pageContent: any) => {
+                if (pageContent && pageContent.surveys && Array.isArray(pageContent.surveys)) {
+                  surveyQuestions.push(...pageContent.surveys);
+                }
+              });
+            }
+          });
+        }
+      } catch (error) {
+        console.warn("Failed to parse survey structure for analytics:", error);
+      }
+
+      // Group questions by QuestionType/Survey Type with title and description
+      // First, let's get all unique questions from all responses
+      const allQuestions = new Set<string>();
+      responses.forEach(response => {
+        if (response.parsedAnswers) {
+          response.parsedAnswers.forEach(answer => {
+            allQuestions.add(answer.question);
+          });
+        }
+      });
+
+      console.log("All questions found:", Array.from(allQuestions));
+      console.log("Survey questions structure:", surveyQuestions);
+
+      // Create a map to store analytics grouped by question type
+      const analyticsByType: { [key: string]: QuestionAnalytics[] } = {};
+
+      // Process each question - only for radio choices and checkbox choices
+      allQuestions.forEach(question => {
+        // Find the question in survey structure to check its type
+        const surveyQuestion = surveyQuestions.find(q => 
+          q.title === question || q.question === question || q.id === question
+        );
+        
+        console.log(`Processing question: "${question}"`, {
+          surveyQuestion,
+          questionType: surveyQuestion?.type,
+          questionId: surveyQuestion?.id,
+          questionTitle: surveyQuestion?.title
+        });
+        
+        // Check if this is a choice-based question
+        let isChoiceQuestion = false;
+        
+        if (surveyQuestion && surveyQuestion.type) {
+          const questionType = surveyQuestion.type.toLowerCase();
+          isChoiceQuestion = questionType.includes('radio') || 
+                            questionType.includes('checkbox') || 
+                            questionType.includes('choice') ||
+                            questionType.includes('select') ||
+                            questionType.includes('dropdown');
+        } else {
+          // Fallback: if we can't determine question type, check if the question has multiple choice answers
+          // This helps when the survey structure doesn't clearly indicate question types
+          const questionResponses = responses.filter(response => 
+            response.parsedAnswers?.some(a => a.question === question)
+          );
+          
+          // Check if this question has multiple different answers (indicating it's a choice question)
+          const uniqueAnswers = new Set<string>();
+          questionResponses.forEach(response => {
+            const answer = response.parsedAnswers?.find(a => a.question === question);
+            if (answer && answer.answer) {
+              const cleanAnswer = answer.answer.trim();
+              if (cleanAnswer && cleanAnswer !== 'undefined' && cleanAnswer !== 'null') {
+                uniqueAnswers.add(cleanAnswer);
+              }
+            }
+          });
+          
+          console.log(`Question "${question}" has ${uniqueAnswers.size} unique answers:`, Array.from(uniqueAnswers));
+          
+          // If there are multiple different answers, it's likely a choice question
+          isChoiceQuestion = uniqueAnswers.size > 1;
+        }
+        
+        // Debug logging for question type detection
+        console.log(`Question: "${question}" - isChoiceQuestion: ${isChoiceQuestion}`, {
+          surveyQuestion,
+          questionType: surveyQuestion?.type
+        });
+        
+        // Only process choice-based questions
+        if (isChoiceQuestion) {
+          
+          const questionResponses = responses.filter(response => 
+            response.parsedAnswers?.some(a => a.question === question)
+          );
+
+          // Apply analytics filters
+          const filteredResponses = questionResponses.filter(response => {
+            const applicant = response.applicant;
+            const trainee = response.trainee;
+            
+            // Filter by gender
+            if (analyticsFilters.gender && 
+                applicant?.gender !== analyticsFilters.gender && 
+                trainee?.gender !== analyticsFilters.gender) {
+              return false;
+            }
+
+            // Filter by age
+            if (analyticsFilters.age && applicant?.age) {
+              const age = applicant.age;
+              const [minAge, maxAge] = analyticsFilters.age.split('-').map(Number);
+              if (age < minAge || age > maxAge) return false;
+            }
+
+            // Filter by date range
+            if (analyticsFilters.fromDate && response.submitted_at) {
+              if (new Date(response.submitted_at) < new Date(analyticsFilters.fromDate)) {
+                return false;
+              }
+            }
+            if (analyticsFilters.toDate && response.submitted_at) {
+              if (new Date(response.submitted_at) > new Date(analyticsFilters.toDate)) {
+                return false;
+              }
+            }
+
+            return true;
+          });
+
+          // Calculate answer distribution
+          const answerCounts: { [key: string]: number } = {};
+          let totalAnswers = 0;
+
+          filteredResponses.forEach(response => {
+            const answer = response.parsedAnswers?.find(a => a.question === question);
+            if (answer && answer.answer) {
+              const cleanAnswer = answer.answer.trim();
+              if (cleanAnswer) {
+                answerCounts[cleanAnswer] = (answerCounts[cleanAnswer] || 0) + 1;
+                totalAnswers++;
+              }
+            }
+          });
+
+          console.log(`Question "${question}" answer counts:`, answerCounts, `Total: ${totalAnswers}`);
+
+          // Only add analytics if we have meaningful data
+          if (totalAnswers > 0 && Object.keys(answerCounts).length > 0) {
+            const answerDistribution = Object.entries(answerCounts).map(([answer, count]) => ({
+              answer: answer || "No answer",
+              count,
+              percentage: totalAnswers > 0 ? Math.round((count / totalAnswers) * 100) : 0
+            }));
+
+            // Determine question type and section information
+            let questionType = "General Questions";
+            let sectionTitle = "General Questions";
+            let sectionDescription = "Questions from the general survey section";
+            
+            if (surveyQuestion) {
+              // Try to find the section this question belongs to
+              try {
+                if (survey.qns) {
+                  let cleanedQns = survey.qns.trim();
+                  if (cleanedQns.startsWith('("') && cleanedQns.endsWith('")')) {
+                    cleanedQns = cleanedQns.substring(2, cleanedQns.length - 2);
+                  }
+                  if (cleanedQns.startsWith('"') && cleanedQns.endsWith('"')) {
+                    cleanedQns = cleanedQns.substring(1, cleanedQns.length - 1);
+                  }
+                  cleanedQns = cleanedQns.replace(/\\"/g, '"');
+                  cleanedQns = cleanedQns.replace(/([{,])\s*([a-zA-Z0-9_\-]+):/g, '$1"$2":');
+
+                  const parsed = JSON.parse(cleanedQns);
+                  
+                  if (typeof parsed === "object") {
+                    Object.entries(parsed).forEach(([sectionKey, section]: [string, any]) => {
+                      if (section && section.pages && Array.isArray(section.pages)) {
+                        section.pages.forEach((pageContent: any) => {
+                          if (pageContent && pageContent.surveys && Array.isArray(pageContent.surveys)) {
+                            const foundQuestion = pageContent.surveys.find((q: any) => 
+                              q.title === question || q.question === question || q.id === question
+                            );
+                            if (foundQuestion) {
+                              questionType = sectionKey || "General Questions";
+                              sectionTitle = section.title || sectionKey || "General Questions";
+                              sectionDescription = section.description || `Questions from the ${sectionKey} section`;
+                            }
+                          }
+                        });
+                      }
+                    });
+                  }
+                }
+              } catch (error) {
+                console.warn("Failed to determine section for question:", question, error);
+              }
+            }
+
+            // Create analytics object with question name instead of ID
+            const analyticsItem: QuestionAnalytics = {
+              question: surveyQuestion?.title || surveyQuestion?.question || question, // Use question name/title instead of ID
+              questionId: surveyQuestion?.id || question,
+              surveyType: questionType,
+              sectionTitle: sectionTitle,
+              sectionDescription: sectionDescription,
+              totalResponses: totalAnswers,
+              totalSubmissions: filteredResponses.length,
+              answerDistribution: answerDistribution.sort((a, b) => b.count - a.count)
+            };
+
+            // Group by question type
+            if (!analyticsByType[questionType]) {
+              analyticsByType[questionType] = [];
+            }
+            analyticsByType[questionType].push(analyticsItem);
+          }
+        }
+      });
+
+      // Convert grouped analytics to flat array for backward compatibility
+      Object.values(analyticsByType).forEach(typeAnalytics => {
+        analytics.push(...typeAnalytics);
+      });
+
+      console.log("Processed analytics:", analytics);
+      console.log("Survey questions structure:", surveyQuestions);
+      console.log("Total responses processed:", responses.length);
+      console.log("Questions that were processed:", Array.from(allQuestions));
+      console.log("Questions that were identified as choice questions:", analytics.map(a => a.question));
+      setQuestionAnalytics(analytics);
+    } catch (error) {
+      console.error("Error processing analytics:", error);
+      notifications.show({
+        title: "Error",
+        message: "Failed to process analytics data",
+        color: "red",
+      });
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  }, [responses, survey, analyticsFilters]);
+
+  // Update analytics when filters change
+  useEffect(() => {
+    if (activeTab === "analytics" && responses.length > 0) {
+      processAnalytics();
+    }
+  }, [activeTab, responses, analyticsFilters, processAnalytics]);
 
   useEffect(() => {
     if (id) {
@@ -542,11 +881,139 @@ const SurveyViewPage = () => {
     setDateToFilter("");
   };
 
+  const clearAnalyticsFilters = () => {
+    setAnalyticsFilters({
+      window: "",
+      subwindow: "",
+      sector: "",
+      trade: "",
+      gender: "",
+      age: "",
+      province: "",
+      district: "",
+      cell: "",
+      village: "",
+      fromDate: "",
+      toDate: "",
+    });
+  };
+
+  const handleAnalyticsFilterChange = (key: keyof AnalyticsFilters, value: string) => {
+    setAnalyticsFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  // Chart options for donut charts
+  const chartOptions: ChartOptions<"doughnut"> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+        labels: {
+          usePointStyle: true,
+          padding: 20,
+          font: {
+            size: 12
+          }
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const label = context.label || '';
+            const value = context.parsed;
+            const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+            const percentage = ((value / total) * 100).toFixed(1);
+            return `${label}: ${value} (${percentage}%)`;
+          }
+        }
+      }
+    },
+    cutout: '60%'
+  };
+
+  // Render question analytics
+  const renderQuestionAnalytics = (analytics: QuestionAnalytics) => {
+    const colors = [
+      '#3B82F6', // Blue
+      '#10B981', // Green
+      '#F59E0B', // Yellow
+      '#EF4444', // Red
+      '#8B5CF6', // Purple
+      '#06B6D4', // Cyan
+      '#F97316', // Orange
+      '#84CC16', // Lime
+    ];
+
+    const chartData: ChartData<"doughnut"> = {
+      labels: analytics.answerDistribution.map(item => item.answer),
+      datasets: [{
+        data: analytics.answerDistribution.map(item => item.count),
+        backgroundColor: colors,
+        borderWidth: 2,
+        borderColor: '#ffffff',
+        hoverOffset: 4
+      }]
+    };
+
+    return (
+      <div key={analytics.questionId} className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              {analytics.question}
+            </h3>
+            <div className="flex items-center gap-4 text-sm text-gray-600">
+              <span>Total Responses: {analytics.totalResponses}</span>
+              <span>Total Submissions: {analytics.totalSubmissions}</span>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-blue-600">
+              {analytics.totalResponses}/{analytics.totalSubmissions}
+            </div>
+            <div className="text-sm text-gray-500">Answers/Submissions</div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Chart */}
+          <div className="h-80">
+            <Doughnut data={chartData} options={chartOptions} />
+          </div>
+
+          {/* Legend */}
+          <div className="space-y-3">
+            <h4 className="font-medium text-gray-900 mb-3">Answer Distribution</h4>
+            {analytics.answerDistribution.map((item, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div 
+                    className="w-4 h-4 rounded-full"
+                    style={{ backgroundColor: colors[index % colors.length] }}
+                  />
+                  <span className="text-sm font-medium text-gray-700">{item.answer}</span>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-semibold text-gray-900">{item.count}</div>
+                  <div className="text-xs text-gray-500">{item.percentage}%</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
 
   const columns: ColumnDef<SurveyResponse>[] = [
     {
       accessorKey: "respondent",
-      header: "Respondent updfgh",
+      header: "Respondent",
       cell: ({ row }) => {
         const respondent = row.original.applicant || row.original.trainee;
         const respondentType = row.original.applicant
@@ -795,137 +1262,541 @@ const SurveyViewPage = () => {
             </Card>
           </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4">
-                <Filter className="w-4 h-4" />
-                <span>Filters</span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                <div className="xl:col-span-2">
-                  <Input
-                    placeholder="Search responses, names, emails..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    icon={<Search className="w-4 h-4 text-gray-400" />}
-                  />
+          {/* Tab Navigation */}
+          <div className="border-b border-gray-200 mb-6">
+            <nav className="-mb-px flex space-x-8">
+              <button
+                onClick={() => setActiveTab("responses")}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === "responses"
+                    ? "border-blue-500 text-blue-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4" />
+                  Responses
                 </div>
-                <div>
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="reviewed">Reviewed</SelectItem>
-                  </Select>
+              </button>
+              <button
+                onClick={() => setActiveTab("analytics")}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === "analytics"
+                    ? "border-blue-500 text-blue-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4" />
+                  Analytics
                 </div>
-                <div>
-                  <Select
-                    value={surveyTypeFilter}
-                    onValueChange={setSurveyTypeFilter}
-                  >
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="TRAINEESURVEY">
-                      Trainee Survey
-                    </SelectItem>
-                    <SelectItem value="COMPANYSURVEY">
-                      Company Survey
-                    </SelectItem>
-                    <SelectItem value="GENERALSURVEY">
-                      General Survey
-                    </SelectItem>
-                  </Select>
-                </div>
-                <div>
-                  <Button
-                    onClick={clearFilters}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    Clear Filters
-                  </Button>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    From Date
-                  </label>
-                  <input
-                    type="date"
-                    value={dateFromFilter}
-                    onChange={(e) => setDateFromFilter(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    To Date
-                  </label>
-                  <input
-                    type="date"
-                    value={dateToFilter}
-                    onChange={(e) => setDateToFilter(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </button>
+            </nav>
+          </div>
 
-          <DataTable
-            columns={columns}
-            data={filteredResponses ?? []}
-            loading={loading}
-            noDataMessage={
-              responses.length === 0
-                ? "No survey responses have been submitted yet."
-                : "No responses match your current filters."
-            }
-          />
-
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
-              <div className="text-sm text-gray-700">
-                Showing page {currentPage} of {totalPages} ({totalResponses}{" "}
-                total responses)
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  <ChevronLeft className="w-4 h-4" /> Previous
-                </Button>
-                <div className="flex items-center space-x-1">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    const pageNum =
-                      Math.max(1, Math.min(totalPages - 4, currentPage - 2)) +
-                      i;
-                    return (
-                      <Button
-                        key={pageNum}
-                        variant={
-                          pageNum === currentPage ? "primary" : "outline"
-                        }
-                        size="sm"
-                        onClick={() => handlePageChange(pageNum)}
+          {/* Tab Content */}
+          {activeTab === "responses" ? (
+            <>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4">
+                    <Filter className="w-4 h-4" />
+                    <span>Filters</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                    <div className="xl:col-span-2">
+                      <Input
+                        placeholder="Search responses, names, emails..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        icon={<Search className="w-4 h-4 text-gray-400" />}
+                      />
+                    </div>
+                    <div>
+                      <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="reviewed">Reviewed</SelectItem>
+                      </Select>
+                    </div>
+                    <div>
+                      <Select
+                        value={surveyTypeFilter}
+                        onValueChange={setSurveyTypeFilter}
                       >
-                        {pageNum}
+                        <SelectItem value="all">All Types</SelectItem>
+                        <SelectItem value="TRAINEESURVEY">
+                          Trainee Survey
+                        </SelectItem>
+                        <SelectItem value="COMPANYSURVEY">
+                          Company Survey
+                        </SelectItem>
+                        <SelectItem value="GENERALSURVEY">
+                          General Survey
+                        </SelectItem>
+                      </Select>
+                    </div>
+                    <div>
+                      <Button
+                        onClick={clearFilters}
+                        variant="outline"
+                        className="w-full"
+                      >
+                        Clear Filters
                       </Button>
-                    );
-                  })}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        From Date
+                      </label>
+                      <input
+                        type="date"
+                        value={dateFromFilter}
+                        onChange={(e) => setDateFromFilter(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        To Date
+                      </label>
+                      <input
+                        type="date"
+                        value={dateToFilter}
+                        onChange={(e) => setDateToFilter(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <DataTable
+                columns={columns}
+                data={filteredResponses ?? []}
+                loading={loading}
+                noDataMessage={
+                  responses.length === 0
+                    ? "No survey responses have been submitted yet."
+                    : "No responses match your current filters."
+                }
+              />
+
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
+                  <div className="text-sm text-gray-700">
+                    Showing page {currentPage} of {totalPages} ({totalResponses}{" "}
+                    total responses)
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="w-4 h-4" /> Previous
+                    </Button>
+                    <div className="flex items-center space-x-1">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        const pageNum =
+                          Math.max(1, Math.min(totalPages - 4, currentPage - 2)) +
+                          i;
+                        return (
+                          <Button
+                            key={pageNum}
+                            variant={
+                              pageNum === currentPage ? "primary" : "outline"
+                            }
+                            size="sm"
+                            onClick={() => handlePageChange(pageNum)}
+                          >
+                            {pageNum}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next <ChevronRight className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  Next <ChevronRight className="w-4 h-4" />
-                </Button>
+              )}
+            </>
+          ) : (
+            <>
+              {/* Analytics Filters */}
+              {/* <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4">
+                    <Filter className="w-4 h-4" />
+                    <span>Analytics Filters</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Window
+                      </label>
+                      <input
+                        type="text"
+                        value={analyticsFilters.window}
+                        onChange={(e) => handleAnalyticsFilterChange("window", e.target.value)}
+                        placeholder="Enter window"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Subwindow
+                      </label>
+                      <input
+                        type="text"
+                        value={analyticsFilters.subwindow}
+                        onChange={(e) => handleAnalyticsFilterChange("subwindow", e.target.value)}
+                        placeholder="Enter subwindow"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Sector
+                      </label>
+                      <input
+                        type="text"
+                        value={analyticsFilters.sector}
+                        onChange={(e) => handleAnalyticsFilterChange("sector", e.target.value)}
+                        placeholder="Enter sector"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Trade
+                      </label>
+                      <input
+                        type="text"
+                        value={analyticsFilters.trade}
+                        onChange={(e) => handleAnalyticsFilterChange("trade", e.target.value)}
+                        placeholder="Enter trade"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Gender
+                      </label>
+                      <select
+                        value={analyticsFilters.gender}
+                        onChange={(e) => handleAnalyticsFilterChange("gender", e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">All Genders</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Age Range
+                      </label>
+                      <select
+                        value={analyticsFilters.age}
+                        onChange={(e) => handleAnalyticsFilterChange("age", e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">All Ages</option>
+                        <option value="18-25">18-25</option>
+                        <option value="26-35">26-35</option>
+                        <option value="36-45">36-45</option>
+                        <option value="46-55">46-55</option>
+                        <option value="56+">56+</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Province
+                      </label>
+                      <input
+                        type="text"
+                        value={analyticsFilters.province}
+                        onChange={(e) => handleAnalyticsFilterChange("province", e.target.value)}
+                        placeholder="Enter province"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        District
+                      </label>
+                      <input
+                        type="text"
+                        value={analyticsFilters.district}
+                        onChange={(e) => handleAnalyticsFilterChange("district", e.target.value)}
+                        placeholder="Enter district"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Cell
+                      </label>
+                      <input
+                        type="text"
+                        value={analyticsFilters.cell}
+                        onChange={(e) => handleAnalyticsFilterChange("cell", e.target.value)}
+                        placeholder="Enter cell"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Village
+                      </label>
+                      <input
+                        type="text"
+                        value={analyticsFilters.village}
+                        onChange={(e) => handleAnalyticsFilterChange("village", e.target.value)}
+                        placeholder="Enter village"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        From Date
+                      </label>
+                      <input
+                        type="date"
+                        value={analyticsFilters.fromDate}
+                        onChange={(e) => handleAnalyticsFilterChange("fromDate", e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        To Date
+                      </label>
+                      <input
+                        type="date"
+                        value={analyticsFilters.toDate}
+                        onChange={(e) => handleAnalyticsFilterChange("toDate", e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-3">
+                    <Button
+                      onClick={() => processAnalytics()}
+                      className="px-6"
+                    >
+                      Refresh Analytics
+                    </Button>
+                    <Button
+                      onClick={clearAnalyticsFilters}
+                      variant="outline"
+                      className="px-6"
+                    >
+                      Clear Analytics Filters
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card> */}
+
+                            {/* Analytics Content */}
+              <div className="space-y-6">
+                {analyticsLoading ? (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                    <span className="text-gray-600">Processing analytics...</span>
+                  </div>
+                ) : questionAnalytics.length > 0 ? (
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Question Analytics</h2>
+                    
+                    {/* Group analytics by question type */}
+                    {(() => {
+                      const groupedAnalytics: { [key: string]: QuestionAnalytics[] } = {};
+                      questionAnalytics.forEach(analytics => {
+                        if (!groupedAnalytics[analytics.surveyType]) {
+                          groupedAnalytics[analytics.surveyType] = [];
+                        }
+                        groupedAnalytics[analytics.surveyType].push(analytics);
+                      });
+
+                      return Object.entries(groupedAnalytics).map(([questionType, typeAnalytics]) => (
+                        <div key={questionType} className="mb-8">
+                          {/* Section Header */}
+                          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mb-6">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <h3 className="text-xl font-bold text-blue-900 mb-2">
+                                  {typeAnalytics[0]?.sectionTitle || questionType}
+                                </h3>
+                                <p className="text-blue-700 text-sm mb-3">
+                                  {typeAnalytics[0]?.sectionDescription || `Questions from the ${questionType} section`}
+                                </p>
+                                <div className="flex items-center gap-4 text-sm text-blue-600">
+                                  <span className="bg-blue-100 px-2 py-1 rounded-full">Type: {questionType}</span>
+                                  <span className="bg-blue-100 px-2 py-1 rounded-full">Questions: {typeAnalytics.length}</span>
+                                  <span className="bg-blue-100 px-2 py-1 rounded-full">Total Responses: {typeAnalytics.reduce((sum, a) => sum + a.totalResponses, 0)}</span>
+                                </div>
+                              </div>
+                              <div className="text-right ml-4">
+                                <div className="text-3xl font-bold text-blue-600">
+                                  {typeAnalytics.length}
+                                </div>
+                                <div className="text-sm text-blue-500">Questions</div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Questions in this section */}
+                          <div className="space-y-4">
+                            {typeAnalytics.map((analytics, index) => (
+                              <div key={analytics.questionId} className="relative">
+                                <div className="absolute -left-2 top-6 w-4 h-4 bg-blue-200 rounded-full border-2 border-white"></div>
+                                {renderQuestionAnalytics(analytics)}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ));
+                    })()}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No Analytics Available</h3>
+                    <p className="text-gray-600 mb-4">
+                      {responses.length > 0 
+                        ? "No choice-based questions found in the survey responses, or all questions are text-based questions that don't support analytics."
+                        : "No survey responses have been submitted yet."
+                      }
+                    </p>
+                    {responses.length > 0 && (
+                      <div className="text-left max-w-2xl mx-auto bg-gray-50 p-4 rounded-lg">
+                        <h4 className="font-medium text-gray-900 mb-2">Debug Information:</h4>
+                        <div className="text-sm text-gray-600 space-y-1">
+                          <p>Total Responses: {responses.length}</p>
+                          <p>Survey Type: {survey?.survey_TYPE || 'Unknown'}</p>
+                          <p>Questions Found: {responses.reduce((acc, r) => {
+                            if (r.parsedAnswers) {
+                              r.parsedAnswers.forEach(a => acc.add(a.question));
+                            }
+                            return acc;
+                          }, new Set()).size}</p>
+                          <p>Analytics Questions: {questionAnalytics.length}</p>
+                          <p>Total Responses Available: {responses.length}</p>
+                          <p>Survey Questions Parsed: {survey?.qns ? Object.keys(parseQuestions(survey.qns)).length : 0}</p>
+                          <details className="mt-2">
+                            <summary className="cursor-pointer text-blue-600 hover:text-blue-800">Show Question Details</summary>
+                            <div className="mt-2 space-y-1">
+                              {Array.from(responses.reduce((acc: Set<string>, r) => {
+                                if (r.parsedAnswers) {
+                                  r.parsedAnswers.forEach(a => acc.add(a.question));
+                                }
+                                return acc;
+                              }, new Set<string>())).map((question, index) => (
+                                <div key={index} className="text-xs bg-white p-2 rounded border">
+                                  <strong>Q{index + 1}:</strong> {String(question)}
+                                </div>
+                              ))}
+                            </div>
+                          </details>
+                          <details className="mt-2">
+                            <summary className="cursor-pointer text-blue-600 hover:text-blue-800">Show Survey Structure</summary>
+                            <div className="mt-2">
+                              <pre className="text-xs bg-white p-2 rounded border overflow-auto max-h-40">
+                                {JSON.stringify(survey?.qns ? parseQuestions(survey.qns) : {}, null, 2)}
+                              </pre>
+                            </div>
+                          </details>
+                          <details className="mt-2">
+                            <summary className="cursor-pointer text-blue-600 hover:text-blue-800">Show Raw Survey Data</summary>
+                            <div className="mt-2">
+                              <pre className="text-xs bg-white p-2 rounded border overflow-auto max-h-40">
+                                {JSON.stringify(survey?.qns || "No survey data", null, 2)}
+                              </pre>
+                            </div>
+                          </details>
+                          <details className="mt-2">
+                            <summary className="cursor-pointer text-blue-600 hover:text-blue-800">Show Question Types Analysis</summary>
+                            <div className="mt-2 space-y-2">
+                              {Array.from(responses.reduce((acc: Set<string>, r) => {
+                                if (r.parsedAnswers) {
+                                  r.parsedAnswers.forEach(a => acc.add(a.question));
+                                }
+                                return acc;
+                              }, new Set<string>())).map((question, index) => {
+                                // Try to find question type from survey structure
+                                let questionType = "Unknown";
+                                let questionId = "Unknown";
+                                try {
+                                  if (survey?.qns) {
+                                    let cleanedQns = survey.qns.trim();
+                                    if (cleanedQns.startsWith('("') && cleanedQns.endsWith('")')) {
+                                      cleanedQns = cleanedQns.substring(2, cleanedQns.length - 2);
+                                    }
+                                    if (cleanedQns.startsWith('"') && cleanedQns.endsWith('"')) {
+                                      cleanedQns = cleanedQns.substring(1, cleanedQns.length - 1);
+                                    }
+                                    cleanedQns = cleanedQns.replace(/\\"/g, '"');
+                                    cleanedQns = cleanedQns.replace(/([{,])\s*([a-zA-Z0-9_\-]+):/g, '$1"$2":');
+
+                                    const parsed = JSON.parse(cleanedQns);
+                                    if (typeof parsed === "object") {
+                                      Object.entries(parsed).forEach(([sectionKey, section]: [string, any]) => {
+                                        if (section && section.pages && Array.isArray(section.pages)) {
+                                          section.pages.forEach((pageContent: any) => {
+                                            if (pageContent && pageContent.surveys && Array.isArray(pageContent.surveys)) {
+                                              const foundQuestion = pageContent.surveys.find((q: any) => 
+                                                q.title === question || q.question === question || q.id === question
+                                              );
+                                              if (foundQuestion) {
+                                                questionType = foundQuestion.type || "No type specified";
+                                                questionId = foundQuestion.id || "No ID";
+                                              }
+                                            }
+                                          });
+                                        }
+                                      });
+                                    }
+                                  }
+                                } catch (error) {
+                                  questionType = "Parse error";
+                                }
+                                
+                                return (
+                                  <div key={index} className="text-xs bg-white p-2 rounded border">
+                                    <strong>Q{index + 1}:</strong> {String(question)}<br/>
+                                    <span className="text-gray-600">Type: {questionType} | ID: {questionId}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </details>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>

@@ -1,3 +1,5 @@
+"use client";
+
 import { DataTable } from "@/components/core/data-table";
 import Button from "@/components/ui/Button";
 import { ITraining, ITrainingTrainee } from "@/types/trainings";
@@ -12,22 +14,32 @@ import { Pen2 } from "solar-icon-set";
 type props = {
   training: ITraining;
   handleAddTraineeRequest?: () => void;
+  handleEditTraineeRequest?: () => void;
+  handleRemoveTraineeRequest?: () => void;
   currentRole: string | null;
+  setSelectedTraineeIds: (ids: string[]) => void;
 };
 
 const Trainees = ({
   training,
   handleAddTraineeRequest,
+  handleEditTraineeRequest,
+  handleRemoveTraineeRequest,
   currentRole,
+  setSelectedTraineeIds,
 }: props) => {
   const trainees: ITrainingTrainee[] = training?.trainees;
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const handleToggle = (id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
+    setSelectedIds((prev) => {
+      const newIds = prev.includes(id)
+        ? prev.filter((x) => x !== id)
+        : [...prev, id];
+      setSelectedTraineeIds(newIds);
+      return newIds;
+    });
   };
 
   const traineesColumns: ColumnDef<ITrainingTrainee>[] = [
@@ -46,11 +58,14 @@ const Trainees = ({
             }
             onChange={(e) => {
               if (e.target.checked) {
-                setSelectedIds(
-                  table.getRowModel().rows.map((r) => r.original.uuid)
-                );
+                const newIds = table
+                  .getRowModel()
+                  .rows.map((r) => r.original.uuid);
+                setSelectedIds(newIds);
+                setSelectedTraineeIds(newIds);
               } else {
                 setSelectedIds([]);
+                setSelectedTraineeIds([]);
               }
             }}
           />
@@ -67,7 +82,6 @@ const Trainees = ({
         </div>
       ),
     },
-
     {
       accessorKey: "firstName",
       header: "First name",
@@ -162,6 +176,12 @@ const Trainees = ({
                   <Menu.Item className="bg-[#F0F0F0]">
                     <Link
                       href={`#`}
+                      onClick={() => {
+                        const newIds = [row.original.uuid];
+                        setSelectedIds(newIds);
+                        setSelectedTraineeIds(newIds);
+                        handleEditTraineeRequest?.();
+                      }}
                       className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
                     >
                       <VscEdit size={21} color="blue" />
@@ -171,6 +191,12 @@ const Trainees = ({
                   <Menu.Item className="bg-[#F0F0F0]">
                     <Link
                       href={`#`}
+                      onClick={() => {
+                        const newIds = [row.original.uuid];
+                        setSelectedIds(newIds);
+                        setSelectedTraineeIds(newIds);
+                        handleRemoveTraineeRequest?.();
+                      }}
                       className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
                     >
                       <VscTrash size={21} color="red" />
@@ -195,7 +221,10 @@ const Trainees = ({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 w-full lg:w-auto">
             {selectedIds.length > 0 && (
               <Button
-                // onClick={() => handleRemoveTraineeRequest?.()}
+                onClick={() => {
+                  setSelectedTraineeIds(selectedIds);
+                  handleRemoveTraineeRequest?.();
+                }}
                 className="!rounded-full bg-red-500 text-white gap-2 !py-3"
               >
                 <VscTrash />
@@ -204,7 +233,10 @@ const Trainees = ({
             )}
             {selectedIds.length > 0 && (
               <Button
-                // onClick={() => handleRemoveTraineeRequest?.()}
+                onClick={() => {
+                  setSelectedTraineeIds(selectedIds);
+                  handleEditTraineeRequest?.();
+                }}
                 className="!rounded-full bg-primary text-white gap-2 !py-3"
               >
                 <Pen2 />
@@ -226,7 +258,7 @@ const Trainees = ({
           columns={traineesColumns}
           data={trainees ?? []}
           loading={false}
-          noDataMessage={"You do not have any trainings yet"}
+          noDataMessage={"You do not have any trainees yet"}
         />
       </div>
     </div>
