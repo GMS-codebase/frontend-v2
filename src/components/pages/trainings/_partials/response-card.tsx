@@ -1,23 +1,14 @@
 import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
 import { IResponse } from "@/types/trainings";
 import { format } from "date-fns";
 import { FC, useState } from "react";
-
 
 type props = {
   response: IResponse;
 };
 
 const ResponseCard: FC<props> = ({ response }) => {
-  const [message, setMessage] = useState("");
-  const [selectedRequest, setSelectedRequest] = useState("");
-
-  const handleSend = () => {
-    console.log("Sending response:", { selectedRequest, message });
-    setMessage("");
-    setSelectedRequest("");
-  };
-
   const renderStatusBadge = (status: string) => {
     switch (status) {
       case "REJECTED":
@@ -51,7 +42,8 @@ const ResponseCard: FC<props> = ({ response }) => {
           {renderStatusBadge(response.status)}
           <div className="flex-1 min-w-0">
             <div className="font-medium text-gray-900 mb-1 break-words">
-              {response.doneBy ?? "Unknown"}
+              {response.user?.firstname + " " + response.user?.lastname ||
+                "Unknown"}
             </div>
             <div className="text-gray-600 text-sm leading-relaxed break-words">
               {response.message}
