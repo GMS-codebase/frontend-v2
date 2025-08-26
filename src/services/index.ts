@@ -172,6 +172,9 @@ import {
   REMOVE_TRAINEE_REQUEST_FAILURE,
   REMOVE_TRAINEE_REQUEST_REQUEST,
   REMOVE_TRAINEE_REQUEST_SUCCESS,
+  REQUEST_RESPONSE_FAILURE,
+  REQUEST_RESPONSE_REQUEST,
+  REQUEST_RESPONSE_SUCCESS,
   REQUEST_REVIEW_FAILURE,
   REQUEST_REVIEW_REQUEST,
   REQUEST_REVIEW_SUCCESS,
@@ -1335,7 +1338,7 @@ export const requestEditTrainee =
       dispatch({ type: EDIT_TRAINEE_REQUEST_REQUEST });
       const res = await authorizedApi.post(
         `/training/${trainingId}/trainees/request-edit`,
-         {traineeIds}
+        { traineeIds }
       );
       dispatch({
         type: EDIT_TRAINEE_REQUEST_SUCCESS,
@@ -1383,6 +1386,35 @@ export const requestRemoveTrainee =
       dispatch({ type: REMOVE_TRAINEE_REQUEST_FAILURE, payload: err.message });
       notifications.show({
         message: "Failed to send trainee Remove Request!",
+        color: "red",
+      });
+    }
+  };
+
+export const makeTraineeActionRequestDecision =
+  (requestId: string, decision: "APPROVE" | "REJECT", message: string) =>
+  async (dispatch: any) => {
+    try {
+      dispatch({ type: REQUEST_RESPONSE_REQUEST });
+
+      const res = await authorizedApi.post(
+        `/training/trainees/request/${requestId}/make-decision`,
+        { decision, message }
+      );
+
+      dispatch({
+        type: REQUEST_RESPONSE_SUCCESS,
+        payload: res.data.data,
+      });
+
+      notifications.show({
+        message: `Request ${decision.toLowerCase()}d successfully!`,
+        color: "green",
+      });
+    } catch (err: any) {
+      dispatch({ type: REQUEST_RESPONSE_FAILURE, payload: err.message });
+      notifications.show({
+        message: "Failed to make decision!",
         color: "red",
       });
     }

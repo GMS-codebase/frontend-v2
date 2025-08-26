@@ -43,6 +43,7 @@ export interface ITraining {
   competencies: string[];
   application: any;
   applicant: any;
+  traineesToAdd?:number;
   trainees: ITrainingTrainee[];
   trainingRequestResponses: IResponse[];
 }

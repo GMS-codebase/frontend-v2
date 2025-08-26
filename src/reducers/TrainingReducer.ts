@@ -21,6 +21,9 @@ import {
   REMOVE_TRAINEE_REQUEST_FAILURE,
   REMOVE_TRAINEE_REQUEST_REQUEST,
   REMOVE_TRAINEE_REQUEST_SUCCESS,
+  REQUEST_RESPONSE_FAILURE,
+  REQUEST_RESPONSE_REQUEST,
+  REQUEST_RESPONSE_SUCCESS,
   REQUEST_REVIEW_FAILURE,
   REQUEST_REVIEW_REQUEST,
   REQUEST_REVIEW_SUCCESS,
@@ -149,7 +152,7 @@ export const TrainingReducer = (state = initialState, action: any) => {
 
     case CERTIFICATION_DECISION_FAILURE:
       return { ...state, certificationLoading: false, error: action.payload };
-//=============================================================================================
+
     //applicant request add, remove and edit trainees
     case ADD_TRAINEE_REQUEST_REQUEST:
       return { ...state, decisionLoading: true, error: null };
@@ -191,7 +194,19 @@ export const TrainingReducer = (state = initialState, action: any) => {
 
     case EDIT_TRAINEE_REQUEST_FAILURE:
       return { ...state, decisionLoading: false, error: action.payload };
-//============================================================================================
+
+    case REQUEST_RESPONSE_REQUEST:
+      return { ...state, decisionLoading: true, error: null };
+
+    case REQUEST_RESPONSE_SUCCESS:
+      return {
+        ...state,
+        decisionLoading: false,
+        // currentTraining: action.payload,
+      };
+
+    case REQUEST_RESPONSE_FAILURE:
+      return { ...state, decisionLoading: false, error: action.payload };
     default:
       return state;
   }

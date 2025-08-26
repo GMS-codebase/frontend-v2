@@ -6,11 +6,13 @@ import SideVector1 from "@/assets/Vectors/redSideVector.svg";
 import SideVector2 from "@/assets/Vectors/redSideVector2.svg";
 import SideVector3 from "@/assets/Vectors/sidevecto.svg";
 import SideVector4 from "@/assets/Vectors/sidevector2.svg";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (message?: string) => void;
   action:
     | "TRAINING_REQUEST"
     | "TRAINING_DECISION"
@@ -28,6 +30,7 @@ interface ConfirmModalProps {
     | null;
   traineeNames?: string[];
   traineeNumber?: number;
+  decisionLoading?: boolean;
 }
 
 const ConfirmationModal = ({
@@ -37,7 +40,10 @@ const ConfirmationModal = ({
   action,
   traineeNames,
   traineeNumber,
+  decisionLoading,
 }: ConfirmModalProps) => {
+  const [message, setMessage] = useState("");
+
   const getTitle = () => {
     switch (action) {
       case "TRAINING_REQUEST":
@@ -96,7 +102,7 @@ const ConfirmationModal = ({
           ? `Are you sure you want to request removing the following trainees: ${traineeNames.join(", ")}?`
           : "Are you sure you want to request removing trainees?";
       case "ADD_APPROVE":
-        return `Are you sure you want to approve adding these ${traineeNumber} trainees?`;
+        return `Are you sure you want to approve adding ${traineeNumber} trainees?`;
       case "EDIT_APPROVE":
         return `Are you sure you want to approve editing these ${traineeNumber} trainees?`;
       case "REMOVE_APPROVE":
@@ -119,6 +125,19 @@ const ConfirmationModal = ({
     action === "ADD_REJECT" ||
     action === "EDIT_REJECT";
 
+  const isDecisionAction =
+    action === "REMOVE_REJECT" ||
+    action === "REMOVE_APPROVE" ||
+    action === "ADD_REJECT" ||
+    action === "EDIT_REJECT" ||
+    action === "ADD_APPROVE" ||
+    action === "EDIT_APPROVE";
+
+  const handleConfirm = () => {
+    onConfirm(message);
+    setMessage("");
+  };
+
   return (
     <Modal
       size=""
@@ -127,7 +146,7 @@ const ConfirmationModal = ({
       closeOnClickOutside={false}
       withCloseButton={false}
     >
-      <div className="lg:w-[550px] lg:h-[300px] w-full h-full relative bg-white rounded-3xl p-4 pt-10 pb-4 flex flex-col items-center">
+      <div className="lg:w-[550px] w-full h-full relative bg-white rounded-3xl p-4 pt-10 pb-4 flex flex-col items-center">
         <button
           className="absolute top-5 right-5 bg-gray-100 p-1 rounded-lg"
           onClick={onClose}
@@ -153,6 +172,18 @@ const ConfirmationModal = ({
           <h2 className="text-[#000F2369] text-lg font-medium text-center mt-2">
             {getMessage()}
           </h2>
+          {isDecisionAction && (
+            <div className="space-y-1 w-full mt-2 px-3">
+              <label htmlFor="">message (optional)</label>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Enter a message..."
+                className="w-full mt-4 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                rows={3}
+              />
+            </div>
+          )}
           <div className="w-full flex justify-center mt-4 space-x-4 p-6">
             <button
               type="button"
@@ -162,10 +193,12 @@ const ConfirmationModal = ({
               Cancel
             </button>
             <button
-              onClick={onConfirm}
+              onClick={handleConfirm}
+              disabled={decisionLoading}
               type="button"
               className={`${isBadAction ? "bg-danger hover:bg-danger/80" : "bg-primary hover:bg-primary/80"} w-full px-4 py-3 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2`}
             >
+              {decisionLoading && <Loader2 className="animate-spin mr-2" />}
               Confirm
             </button>
           </div>

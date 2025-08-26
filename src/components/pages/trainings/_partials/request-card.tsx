@@ -1,9 +1,12 @@
 import ConfirmationModal from "@/components/Modals/training/CertificationConfirmModal";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
-import { IRequest, IResponse } from "@/types/trainings";
+import { makeTraineeActionRequestDecision } from "@/services";
+import { IRequest } from "@/types/trainings";
 import { format } from "date-fns";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 type props = {
   request: IRequest;
@@ -25,8 +28,40 @@ const getActionType = (
   }
 };
 
+const renderStatusBadge = (status: string) => {
+  switch (status) {
+    case "REJECTED":
+      return (
+        <Badge className="bg-red-100 text-red-800 hover:bg-red-100 px-3 py-1 rounded-full font-medium">
+          REJECTED
+        </Badge>
+      );
+    case "APPROVED":
+      return (
+        <Badge className="bg-green-100 text-green-800 hover:bg-green-100 px-3 py-1 rounded-full font-medium">
+          APPROVED
+        </Badge>
+      );
+    case "PENDING":
+      return (
+        <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 px-3 py-1 rounded-full font-medium">
+          PENDING
+        </Badge>
+      );
+    default:
+      return null;
+  }
+};
+
 const RequestCard: FC<props> = ({ request }) => {
+  const dispatch = useDispatch();
+
   const [modalOpen, setModalOpen] = useState(false);
+
+  const { decisionLoading, error } = useSelector(
+    (state: any) => state.trainings
+  );
+
   const [modalAction, setModalAction] = useState<
     | "ADD_APPROVE"
     | "EDIT_APPROVE"
@@ -43,35 +78,17 @@ const RequestCard: FC<props> = ({ request }) => {
     setModalOpen(true);
   };
 
-  const handleConfirm = () => {
-    //we'll handle API request here or dispatching LB
-    setModalOpen(false);
+  const handleConfirm = (message?: string) => {
+    if (!modalAction || !message) return;
+    const decision = modalAction.includes("APPROVE") ? "APPROVE" : "REJECT";
+    dispatch(makeTraineeActionRequestDecision(request.uuid, decision, message) as any);
   };
 
-  const renderStatusBadge = (status: string) => {
-    switch (status) {
-      case "REJECTED":
-        return (
-          <Badge className="bg-red-100 text-red-800 hover:bg-red-100 px-3 py-1 rounded-full font-medium">
-            REJECTED
-          </Badge>
-        );
-      case "ACCEPTED":
-        return (
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-100 px-3 py-1 rounded-full font-medium">
-            ACCEPTED
-          </Badge>
-        );
-      case "PENDING":
-        return (
-          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 px-3 py-1 rounded-full font-medium">
-            PENDING
-          </Badge>
-        );
-      default:
-        return null;
+  useEffect(() => {
+    if (!decisionLoading && modalOpen) {
+      setModalOpen(false);
     }
-  };
+  }, [decisionLoading]);
 
   return (
     <div className="w-full">
@@ -115,6 +132,7 @@ const RequestCard: FC<props> = ({ request }) => {
         onClose={() => setModalOpen(false)}
         onConfirm={handleConfirm}
         action={modalAction}
+        decisionLoading={decisionLoading}
         traineeNumber={request.newTraineesRequested}
       />
     </div>
