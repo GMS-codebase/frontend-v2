@@ -34,6 +34,7 @@ const actionMappings = {
   budgetLines: DELETE_BUDGET_LINE_SUCCESS,
   forms: DELETE_FORM_SUCCESS,
   trainings: DELETE_FORM_SUCCESS,
+  trainee:DELETE_FORM_SUCCESS,
   surveys: DELETE_SURVEY_SUCCESS, // Added surveys action mapping
   surveyTrainee: DELETE_SURVEY_TRAINEE_SUCCESS, // Added surveys action mapping
 };
@@ -49,6 +50,7 @@ const routeMappings = {
   budgetLines: "/budgetlines/delete",
   forms: "/forms/delete",
   trainings: "/training/delete",
+  trainee:"/training/trainee",
   surveys: "/survey/remove",
   surveyTrainee: "/survey-trainee",
 };
@@ -64,6 +66,7 @@ type DeleteType =
   | "budgetLines"
   | "forms"
   | "trainings"
+  |"trainee"
   | "surveys"
   | "surveyTrainee"
 
