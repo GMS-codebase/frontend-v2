@@ -1,4 +1,3 @@
-
 export interface IResponse {
   uuid: string;
   deletedStatus: boolean;
@@ -9,10 +8,28 @@ export interface IResponse {
   message: string;
   numberOfTraineesRequired: number | null;
   status: "ACCEPTED" | "REJECTED" | string;
+  user?:{
+    firstname:string;
+    lastname:string;
+  }
+}
+
+export interface IRequest {
+  uuid: string;
+  deletedStatus: boolean;
+  doneAt: string;
+  lastUpdatedAt: string;
+  doneBy: any;
+  lastUpdatedBy: any;
+  requestType: "ADD_TRAINEES" | "REMOVE_TRAINEES" | "EDIT_TRAINEES";
+  reason: string;
+  newTraineesRequested?: number;
+  answered: boolean;
+  status: any;
 }
 
 export interface ITraining {
-     uuid: string;
+  uuid: string;
   deletedStatus: boolean;
   doneAt: string;
   lastUpdatedAt: string;
@@ -30,12 +47,11 @@ export interface ITraining {
   trainingRequestResponses: IResponse[];
 }
 
-
 export interface ITrainingTrainee {
   uuid: string;
   deletedStatus: boolean;
-  doneAt: string;        
-  lastUpdatedAt: string; 
+  doneAt: string;
+  lastUpdatedAt: string;
   doneBy: string | null;
   lastUpdatedBy: string | null;
   nationalId: string;

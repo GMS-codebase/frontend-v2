@@ -4,6 +4,8 @@ import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
 import SideVector1 from "@/assets/Vectors/redSideVector.svg";
 import SideVector2 from "@/assets/Vectors/redSideVector2.svg";
+import SideVector3 from "@/assets/Vectors/sidevecto.svg";
+import SideVector4 from "@/assets/Vectors/sidevector2.svg";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -17,16 +19,24 @@ interface ConfirmModalProps {
     | "ADD"
     | "EDIT"
     | "REMOVE"
+    | "ADD_APPROVE"
+    | "EDIT_APPROVE"
+    | "REMOVE_APPROVE"
+    | "ADD_REJECT"
+    | "EDIT_REJECT"
+    | "REMOVE_REJECT"
     | null;
   traineeNames?: string[];
+  traineeNumber?: number;
 }
 
-const CertificationConfirmModal = ({
+const ConfirmationModal = ({
   isOpen,
   onClose,
   onConfirm,
   action,
   traineeNames,
+  traineeNumber,
 }: ConfirmModalProps) => {
   const getTitle = () => {
     switch (action) {
@@ -44,6 +54,18 @@ const CertificationConfirmModal = ({
         return "Confirm Editing Trainees";
       case "REMOVE":
         return "Confirm Removing Trainees";
+      case "ADD_APPROVE":
+        return "Approve Adding Trainees";
+      case "EDIT_APPROVE":
+        return "Approve Editing Trainees";
+      case "REMOVE_APPROVE":
+        return "Approve Removing Trainees";
+      case "ADD_REJECT":
+        return "Reject Adding Trainees";
+      case "EDIT_REJECT":
+        return "Reject Editing Trainees";
+      case "REMOVE_REJECT":
+        return "Reject Removing Trainees";
       default:
         return "Confirm Action";
     }
@@ -73,10 +95,29 @@ const CertificationConfirmModal = ({
         return traineeNames && traineeNames.length > 0
           ? `Are you sure you want to request removing the following trainees: ${traineeNames.join(", ")}?`
           : "Are you sure you want to request removing trainees?";
+      case "ADD_APPROVE":
+        return `Are you sure you want to approve adding these ${traineeNumber} trainees?`;
+      case "EDIT_APPROVE":
+        return `Are you sure you want to approve editing these ${traineeNumber} trainees?`;
+      case "REMOVE_APPROVE":
+        return "Are you sure you want to approve removing these trainees?";
+      case "ADD_REJECT":
+        return "Are you sure you want to reject adding these trainees?";
+      case "EDIT_REJECT":
+        return "Are you sure you want to reject editing these trainees?";
+      case "REMOVE_REJECT":
+        return "Are you sure you want to reject removing these trainees?";
       default:
         return "Are you sure you want to proceed with this action?";
     }
   };
+
+  const isBadAction =
+    action === "REMOVE" ||
+    action === "REMOVE_REJECT" ||
+    action === "REMOVE_APPROVE" ||
+    action === "ADD_REJECT" ||
+    action === "EDIT_REJECT";
 
   return (
     <Modal
@@ -94,14 +135,14 @@ const CertificationConfirmModal = ({
           <IoMdClose size={25} color={"#000"} />
         </button>
         <Image
-          src={SideVector1}
+          src={isBadAction ? SideVector1 : SideVector3}
           alt="vector"
           className="absolute bottom-[3rem] right-[-2rem] h-32"
           width={100}
           height={50}
         />
         <Image
-          src={SideVector2}
+          src={isBadAction ? SideVector2 : SideVector4}
           alt="vector"
           className="absolute top-[3rem] left-[-2rem] h-32"
           width={100}
@@ -123,7 +164,7 @@ const CertificationConfirmModal = ({
             <button
               onClick={onConfirm}
               type="button"
-              className="w-full px-4 py-3 bg-[#C50D0DF2] text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2"
+              className={`${isBadAction ? "bg-danger hover:bg-danger/80" : "bg-primary hover:bg-primary/80"} w-full px-4 py-3 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2`}
             >
               Confirm
             </button>
@@ -134,4 +175,4 @@ const CertificationConfirmModal = ({
   );
 };
 
-export default CertificationConfirmModal;
+export default ConfirmationModal;
