@@ -562,7 +562,7 @@ const AddEditCall = ({
                   </div>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-4 my-2 items-end">
+                <div className="flex flex-col lg:flex-row gap-4 my-2 lg:items-end">
                   <div className="flex-grow">
                     <label
                       htmlFor="subWindow"

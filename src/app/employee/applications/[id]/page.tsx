@@ -71,7 +71,6 @@ const Page = () => {
     setApplicationLoading(true);
     try {
       const res = await authorizedApi.get(`/application/get-application/${id}`);
-      console.log(res.data.data.data);
       setApplication(res.data.data.data);
       setComments(JSON.parse(res.data.data.data.comments));
       setApplicationLoading(false);
@@ -83,7 +82,7 @@ const Page = () => {
   };
   useEffect(() => {
     fetchApplication();
-  }, [id]);
+  }, []);
   const form = forms.forms.find((form: any) => {
     const foundSubWindow = Object.keys(
       JSON.parse(application?.call.subwindowForms || "{}"),
@@ -92,7 +91,7 @@ const Page = () => {
     return (
       form.uuid ===
       JSON.parse(application?.call.subwindowForms || "{}")[
-        foundSubWindow as any
+      foundSubWindow as any
       ]
     );
   });
@@ -100,8 +99,8 @@ const Page = () => {
 
   const hasCommentableQuestion = (): boolean => {
     try {
-      if (!form.qns) {
-        throw new Error("The form structure is invalid or missing questions.");
+      if (!form?.qns || !form) {
+        return false
       }
       const questionForm: QuestionForm = JSON.parse(form.qns);
       for (const [sectionKey, section] of Object.entries(questionForm)) {
@@ -337,7 +336,7 @@ const Page = () => {
                 setComments={
                   !application.areCommentsSubmitted
                     ? (key: string, value: any) =>
-                        setComments({ ...comments, [key]: value })
+                      setComments({ ...comments, [key]: value })
                     : undefined
                 }
                 formData={{

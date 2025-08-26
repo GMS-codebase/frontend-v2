@@ -35,7 +35,7 @@ authorizedApi.interceptors.request.use(
 
 export const unauthorizedApi: AxiosInstance = axios.create({
   baseURL: api,
-  timeout: 300000,
+  timeout: 30000,
   headers: {
     "Content-Type": "application/json",
   },

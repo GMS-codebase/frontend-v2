@@ -14,6 +14,10 @@ const initialState = {
   error: null,
   isError: false,
   loading: true,
+  total: 0,
+  page: 1,
+  totalPages: 0,
+
 };
 
 type Action = {
@@ -32,7 +36,10 @@ export default function TradesReducer(state = initialState, action: Action) {
       return {
         ...state,
         loading: false,
-        trades: action.payload,
+        trades: action.payload.data,
+        total: action.payload.totalItems,
+        page: action.payload.currentPage,
+        totalPages: action.payload.totalPages,
       };
     case GET_SECTOR_TRADES_SUCCESS:
       return {

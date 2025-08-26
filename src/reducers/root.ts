@@ -19,12 +19,16 @@ import BudgetLinesReducer from "./BudgetLinesReducer";
 import announcementsReducer from "./AnnouncementsReducer";
 import FormsReducer from "./FormsReducers";
 import AppealsReducer from "./AppealsReducer";
+import SurveyTraineeReducer from "./SurveyTraineesReducer";
+import { TrainingReducer } from "./TrainingReducer";
 const rootReducer = combineReducers({
   contacts: ContactsReducer,
+  trainings: TrainingReducer,
   auth: authReducer,
   windows: WindowsReducer,
   sectors: SectorsReducer,
   trades: TradesReducer,
+  surveyTrainee: SurveyTraineeReducer,
   calls: CallsReducer,
   applications: ApplicationsReducer,
   applicants: ApplicantsReducer,

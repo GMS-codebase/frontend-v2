@@ -22,11 +22,11 @@ const Page = () => {
 
   useEffect(() => {
     if (form) {
-      setFormData({
-        ...formData,
+      setFormData((prevData) => ({
+        ...prevData,
         name: form?.name || "",
         qns: JSON.parse(form?.qns || "{}"),
-      });
+      }));
     }
     setPageLoading(false);
   }, [form, id]);
@@ -38,14 +38,14 @@ const Page = () => {
         ([_, type]: any) =>
           type.pages &&
           type.pages.some(
-            (page: any) => page.questions && page.questions.length > 0,
-          ),
+            (page: any) => page.questions && page.questions.length > 0
+          )
       )
       .reduce((acc, [key, type]: any) => {
         acc[key] = {
           ...type,
           pages: type.pages.filter(
-            (page: any) => page.questions && page.questions.length > 0,
+            (page: any) => page.questions && page.questions.length > 0
           ),
         };
         return acc;
@@ -64,7 +64,7 @@ const Page = () => {
             })),
           })),
         },
-      ]),
+      ])
     );
     const request = form
       ? authorizedApi.put(`/forms/update/${id}`, {

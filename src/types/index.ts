@@ -1,5 +1,3 @@
-import { QuestionForm } from "./questions-form";
-
 export type Route = {
   label: string;
   path: string;
@@ -76,6 +74,32 @@ export type Contact = {
   email: string;
 };
 
+export type Training = {
+  uuid?: string;
+  title: string;
+  startDate: string;
+  status?: string;
+  endDate: string;
+  competencies: string[];
+  applicationId: string;
+  trainees?: {
+    firstName: string;
+    lastName: string;
+    nationalId: string;
+    dob: string;
+    gender: string;
+    district: string;
+    disability: string;
+    parentPhoneNumber: string;
+    traineePhoneNumber: string;
+    trainingProgram: string;
+    educationLevel: string;
+    institutionName: string;
+    maritalStatus: string;
+  }[];
+  trainingManual?: File | string | null;
+  traineesFile?: File | string | null;
+};
 export type Comments = {
   titleComment: string;
   activitiesComment: string;

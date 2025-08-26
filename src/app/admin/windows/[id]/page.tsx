@@ -196,15 +196,15 @@ const Page = () => {
           </div>
           <div className="flex justify-between items-center w-3/5  font-semibold px-10"></div>
           <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-            <div className="w-full md:flex justify-between items-center py-4 px-10">
+            <div className="w-full flex flex-col md:flex-row justify-between md:items-center py-4 px-10">
               <div className="flex  gap-2  bg-gray-400 rounded-full bg-opacity-10 px-4  py-2 font-semibold items-center justify-center">
                 <span>
                   <SolarBookmarkBold />
                 </span>
-                <div>Sub Windows</div>
+                <div className="text-sm lg:text-base">Sub Windows</div>
               </div>
-              <div className="lg:flex gap-3 items-center">
-                <div className="relative lg:w-[25rem] w-full my-3">
+              <div className="lg:w-[50%] flex flex-col md:flex-row justify-end gap-3 items-center">
+                <div className="relative w-full my-3">
                   <span className="absolute top-4 left-2">
                     <CiSearch size={25} />
                   </span>
@@ -219,12 +219,12 @@ const Page = () => {
 
                 <button
                   onClick={openAddEditSubWindow}
-                  className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+                  className="bg-primary text-white py-4 px-7 rounded-full flex flex-row items-center gap-3 self-end md:self-center"
                 >
                   <span className="text-2xl">
                     <SolarAddFolderBold />
                   </span>
-                  <h1 className="text-base font-medium text-white">
+                  <h1 className="text-base font-medium text-white whitespace-nowrap">
                     New Sub-Window
                   </h1>
                 </button>

@@ -176,7 +176,7 @@ const Page = () => {
             )}
           </div>
         </div>
-        <div className="flex justify-between items-center mt-5">
+        <div className="lg:flex justify-between items-center mt-5">
           <div className="flex flex-col justify-start items-start gap-6 font-semibold">
             <div className="flex gap-3 justify-start items-center">
               <p className="bg-gray-400 bg-opacity-10 px-4 py-2 rounded-full flex gap-2 justify-start items-start">
@@ -233,9 +233,9 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <div className="flex gap-6">
+      <div className="lg:flex gap-6">
         <div
-          className={`flex  ${application?.currentStage === "SUBMITTED" ? "w-full" : "w-[70%]"} gap-4 `}
+          className={`flex  ${application?.currentStage === "SUBMITTED" ? "w-full" : "lg:w-[70%]"} gap-4 `}
         >
           <div className="flex flex-col gap-4 w-full">
             {form && (
@@ -251,7 +251,7 @@ const Page = () => {
             )}
           </div>
         </div>
-        <div className="flex flex-col bg-white w-[30%] rounded-2xl p-5 gap-4">
+        <div className="flex flex-col bg-white lg:w-[30%] w-full rounded-2xl p-5 gap-4">
           <h2 className="font-bold">Decision</h2>
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold">Evaluation Stage</h3>

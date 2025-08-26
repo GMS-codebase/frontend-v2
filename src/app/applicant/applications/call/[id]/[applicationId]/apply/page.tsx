@@ -50,7 +50,7 @@ const Page = () => {
     return (
       form.uuid ===
       JSON.parse(application?.call.subwindowForms || "{}")[
-        foundSubWindow as any
+      foundSubWindow as any
       ]
     );
   });

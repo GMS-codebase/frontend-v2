@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { SolarAddFolderBold } from "@/components/core/icons";
 import { ColumnDef } from "@tanstack/react-table";
@@ -7,7 +7,7 @@ import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useDisclosure } from "@mantine/hooks";
 import AddTrade from "@/components/Modals/trades/AddEditTrade";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Menu, Button, Text, rem } from "@mantine/core";
 import { FiEye } from "react-icons/fi";
 import { CiEdit } from "react-icons/ci";
@@ -15,6 +15,9 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import Link from "next/link";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import ActivateDeactivateModal from "@/components/Modals/ActivateDeactivateModal";
+import { getTrades } from "@/services";
+import { UnknownAction } from "redux";
+import { IPaginatedQuery } from "@/types/base.type";
 
 const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,13 +35,72 @@ const Page = () => {
   const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
 
-  const trades = useSelector((state: any) => state.trades);
+  const dispatch = useDispatch();
+
+  const {
+    trades,
+    loading,
+    total: totalTrades,
+    page: currentPageFromRedux,
+  } = useSelector((state: any) => state.trades);
+
+  // Local state for pagination
+  const [paginateOpts, setLocalPaginateOpts] = useState<
+    IPaginatedQuery & { totalPages: number }
+  >({
+    page: (currentPageFromRedux ?? 1) - 1, // UI 0-based
+    limit: 10,
+    totalPages: 1,
+  });
+
+  useEffect(() => {
+    setLocalPaginateOpts((prev) => ({
+      ...prev,
+      totalPages: Math.ceil((totalTrades ?? 0) / (prev?.limit ?? 10)),
+    }));
+  }, [totalTrades]);
+
+  // Fetch data whenever page or limit changes
+  useEffect(() => {
+    dispatch(
+      getTrades(
+        (paginateOpts.page ?? 0) + 1,
+        paginateOpts.limit
+      ) as unknown as UnknownAction
+    );
+  }, [dispatch, paginateOpts.page, paginateOpts.limit]);
+
+  const setPaginateOpts: React.Dispatch<
+    React.SetStateAction<IPaginatedQuery & { totalPages: number }>
+  > = (value) => {
+    if (typeof value === "function") {
+      setLocalPaginateOpts((prev) => {
+        const next = value(prev);
+        dispatch(
+          getTrades(
+            (next.page ?? 0) + 1,
+            next.limit
+          ) as unknown as UnknownAction
+        );
+        return next;
+      });
+    } else {
+      setLocalPaginateOpts(value);
+      dispatch(
+        getTrades(
+          (value.page ?? 0) + 1,
+          value.limit
+        ) as unknown as UnknownAction
+      );
+    }
+  };
+
   const [selectedTrade, setSelectedTrade] = useState<any>("");
   const filteredTrades =
-    trades.trades?.filter(
+    trades?.filter(
       (trade: any) =>
         trade?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        trade?.shortname?.toLowerCase().includes(searchQuery.toLowerCase()),
+        trade?.shortname?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
 
   const columns: ColumnDef<any>[] = [
@@ -139,7 +201,7 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full lg:flex justify-between items-center p-4">
+      <div className="w-full flex flex-col-reverse md:flex-row justify-between gap-4 items-end md:items-center p-4">
         <div className="relative lg:w-[25rem] w-full mb-4">
           <span className="absolute top-4 left-2">
             <BiSearch size={25} />
@@ -167,12 +229,18 @@ const Page = () => {
         <DataTable
           columns={columns}
           data={filteredTrades}
-          loading={trades.loading}
+          loading={loading}
           noDataMessage={
             searchQuery
               ? `No Trades found related to ${searchQuery}`
               : "No Trades Added So Far"
           }
+          totalApplications={totalTrades}
+          paginationProps={{
+            isPaginated: true,
+            paginateOpts,
+            setPaginateOpts,
+          }}
         />
       </div>
       <AddTrade

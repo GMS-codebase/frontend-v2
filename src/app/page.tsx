@@ -21,6 +21,7 @@ import { unauthorizedApi } from "@/utils/api";
 import { notifications } from "@mantine/notifications";
 import ForgotPasswordModal from "@/components/Modals/auth/ForgotPassword";
 import Link from "next/link";
+import TraineeLoginModal from "@/components/Modals/auth/TraineeLogin";
 
 function Page() {
   const dispatch = useDispatch();
@@ -28,14 +29,14 @@ function Page() {
     getCalls(dispatch);
   }, []);
   const { calls, loading: loadingCalls } = useSelector(
-    (state: any) => state.calls,
+    (state: any) => state.calls
   );
   const sortedCalls = calls
     ? [...calls]
         .filter((call: any) => call.status === "OPEN")
         .sort(
           (a: any, b: any) =>
-            new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
+            new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
         )
     : [];
 
@@ -57,6 +58,10 @@ function Page() {
   const [
     isOpenSetPassword,
     { open: openSetPassword, close: closeSetPassword },
+  ] = useDisclosure(false);
+  const [
+    isOpenTraineeLogin,
+    { open: openTraineeLogin, close: closeTraineeLogin },
   ] = useDisclosure(false);
 
   const searchParams = useSearchParams();
@@ -106,6 +111,12 @@ function Page() {
           >
             Login
           </button>
+          {/* <button
+            className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
+            onClick={openTraineeLogin}
+          >
+            Login as Trainee
+          </button> */}
           <button
             className="py-2 px-4 lg:px-8 text-white font-bold bg-primary rounded-full"
             onClick={openRegister}
@@ -217,6 +228,10 @@ function Page() {
         token={token as string}
         openLogin={openLogin}
       />
+      {/* <TraineeLoginModal
+        opened={isOpenTraineeLogin}
+        close={closeTraineeLogin}
+      /> */}
     </div>
   );
 }

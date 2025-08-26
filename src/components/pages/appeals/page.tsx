@@ -36,11 +36,11 @@ const AppealsPage = () => {
     return [
       "All",
       ...new Set(
-        appeals
-          .map((app: any) =>
-            key.split(".").reduce((obj, property) => obj?.[property], app),
+        (appeals.data || [])
+          ?.map((app: any) =>
+            key.split(".").reduce((obj, property) => obj?.[property], app)
           )
-          .filter(Boolean),
+          .filter(Boolean)
       ),
     ];
   };
@@ -50,14 +50,12 @@ const AppealsPage = () => {
       stages: getUniqueValues("stage.stage"),
       windows: getUniqueValues("application.window.title"),
       subwindows: getUniqueValues("application.subWindow.title"),
-      sectors: getUniqueValues("application.sectors[0].name"),
+      sectors: getUniqueValues("application.sectors?.[0].name"),
       trades: getUniqueValues("application.trade.trade.title"),
       call: getUniqueValues("call.title"),
     }),
-    [appeals],
+    [appeals]
   );
-
-  console.log("filterOptions --> ", filterOptions);
   const FilterDropDown = ({
     placeholderText,
     data,
@@ -98,7 +96,7 @@ const AppealsPage = () => {
     }
   };
   const filteredAppeals = useMemo(() => {
-    return appeals
+    return (appeals.data || [])
       .filter(
         (app: any) =>
           app?.application_number
@@ -106,7 +104,7 @@ const AppealsPage = () => {
             ?.includes(searchTerm.toLowerCase()) ||
           app?.application?.applicant?.name
             .toLowerCase()
-            ?.includes(searchTerm.toLowerCase()),
+            ?.includes(searchTerm.toLowerCase())
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade } =
@@ -125,8 +123,8 @@ const AppealsPage = () => {
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex justify-between items-center p-4 gap-2">
-        <div className="relative w-[25rem]">
+      <div className="w-full flex flex-col-reverse md:flex-row justify-between items-center p-4 gap-2">
+        <div className="relative w-full md:w-[25rem]">
           <span className="absolute top-4 left-4">
             <CiSearch size={25} />
           </span>
@@ -138,64 +136,63 @@ const AppealsPage = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <div className="flex items-center lg:max-w-[60%]">
-          <button
-            onClick={() => handleScroll("left")}
-            className="p-2 bg-white shadow-lg rounded-full mr-2"
-          >
-            <FiChevronLeft size={25} />
-          </button>
-
-          <div
-            ref={filtersContainerRef}
-            className="flex items-center gap-3 overflow-x-auto scrollbar-hide flex-grow"
-            style={{ scrollBehavior: "smooth" }}
-          >
-            <FilterDropDown
-              placeholderText="Select Call"
-              data={filterOptions.call}
-              filterKey="call"
-              className="flex-shrink-0"
-            />
-            <FilterDropDown
-              placeholderText="Select Sector"
-              data={filterOptions.sectors}
-              filterKey="sector"
-              className="flex-shrink-0"
-            />
-            <FilterDropDown
-              placeholderText="Select Trade"
-              data={filterOptions.trades}
-              filterKey="trade"
-              className="flex-shrink-0"
-            />
-            <FilterDropDown
-              placeholderText="Select Window"
-              data={filterOptions.windows}
-              filterKey="window"
-              className="flex-shrink-0"
-            />
-            <FilterDropDown
-              placeholderText="Select sub Window"
-              data={filterOptions.subwindows}
-              filterKey="subWindow"
-              className="flex-shrink-0"
-            />
-          </div>
-
-          <button
-            onClick={() => handleScroll("right")}
-            className="p-2 bg-white shadow-lg rounded-full ml-2"
-          >
-            <FiChevronRight size={25} />
-          </button>
-        </div>
-        <button className="text-nowrap bg-primary py-2 text-white px-5 flex items-center gap-2 rounded-full">
+        <button className="text-nowrap bg-primary py-4 text-white px-5 flex items-center gap-2 rounded-full self-end md:self-center">
           <SolarIconSet.FileLeft iconStyle="Bold" className="my-auto" />
           Export As Excel
         </button>
       </div>
+      <div className="flex items-center p-5">
+        <button
+          onClick={() => handleScroll("left")}
+          className="p-2 bg-white shadow-lg rounded-full mr-2"
+        >
+          <FiChevronLeft size={25} />
+        </button>
 
+        <div
+          ref={filtersContainerRef}
+          className="flex items-center gap-3 overflow-x-auto scrollbar-hide flex-grow"
+          style={{ scrollBehavior: "smooth" }}
+        >
+          <FilterDropDown
+            placeholderText="Select Call"
+            data={filterOptions.call}
+            filterKey="call"
+            className="flex-shrink-0"
+          />
+          <FilterDropDown
+            placeholderText="Select Sector"
+            data={filterOptions.sectors}
+            filterKey="sector"
+            className="flex-shrink-0"
+          />
+          <FilterDropDown
+            placeholderText="Select Trade"
+            data={filterOptions.trades}
+            filterKey="trade"
+            className="flex-shrink-0"
+          />
+          <FilterDropDown
+            placeholderText="Select Window"
+            data={filterOptions.windows}
+            filterKey="window"
+            className="flex-shrink-0"
+          />
+          <FilterDropDown
+            placeholderText="Select sub Window"
+            data={filterOptions.subwindows}
+            filterKey="subWindow"
+            className="flex-shrink-0"
+          />
+        </div>
+
+        <button
+          onClick={() => handleScroll("right")}
+          className="p-2 bg-white shadow-lg rounded-full ml-2"
+        >
+          <FiChevronRight size={25} />
+        </button>
+      </div>
       <div className="w-full h-full">
         <DataTable
           columns={getColumns({ setViewAppeal })}
