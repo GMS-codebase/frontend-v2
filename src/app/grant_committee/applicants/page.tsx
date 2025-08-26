@@ -5,12 +5,16 @@ import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { applicantsData as data } from "@/utils/constants/dummy";
 import { useDisclosure } from "@mantine/hooks";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import TableSkeleton from "@/components/core/data-table/TableSkeleton";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { Menu } from "@mantine/core";
 import Link from "next/link";
 import { FiEye } from "react-icons/fi";
+import { UnknownAction } from "redux";
+import { getApplicants } from "@/services";
+import { IPaginatedQuery } from "@/types/base.type";
+import { useEffect, useState } from "react";
 
 const Page = () => {
   const columns: ColumnDef<any>[] = [
@@ -60,7 +64,7 @@ const Page = () => {
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
                 <Link
-                  href={`/admin/applicants/${row.original.uuid}`}
+                  href={`/grant_committee/applicants/${row.original.uuid}`}
                   className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
                 >
                   <FiEye size={21} color="#576074" />
@@ -74,10 +78,68 @@ const Page = () => {
     },
   ];
 
-  const applicants = useSelector((state: any) => state.applicants);
+  const dispatch = useDispatch();
 
-  const ApplicantsWithProfile = applicants?.applicants?.filter(
-    (applicant: any) => applicant.has_completed_profile,
+  const {
+    applicants,
+    loading,
+    total: totalApplicants,
+    page: currentPageFromRedux,
+  } = useSelector((state: any) => state.applicants);
+
+  // Local state for pagination
+  const [paginateOpts, setLocalPaginateOpts] = useState<
+    IPaginatedQuery & { totalPages: number }
+  >({
+    page: (currentPageFromRedux ?? 1) - 1, // UI 0-based
+    limit: 10,
+    totalPages: 1,
+  });
+
+  useEffect(() => {
+    setLocalPaginateOpts((prev) => ({
+      ...prev,
+      totalPages: Math.ceil((totalApplicants ?? 0) / (prev?.limit ?? 10)),
+    }));
+  }, [totalApplicants]);
+
+  // Fetch data whenever page or limit changes
+  useEffect(() => {
+    dispatch(
+      getApplicants(
+        (paginateOpts.page ?? 0) + 1,
+        paginateOpts.limit
+      ) as unknown as UnknownAction
+    );
+  }, [dispatch, paginateOpts.page, paginateOpts.limit]);
+
+  const setPaginateOpts: React.Dispatch<
+    React.SetStateAction<IPaginatedQuery & { totalPages: number }>
+  > = (value) => {
+    if (typeof value === "function") {
+      setLocalPaginateOpts((prev) => {
+        const next = value(prev);
+        dispatch(
+          getApplicants(
+            (next.page ?? 0) + 1,
+            next.limit
+          ) as unknown as UnknownAction
+        );
+        return next;
+      });
+    } else {
+      setLocalPaginateOpts(value);
+      dispatch(
+        getApplicants(
+          (value.page ?? 0) + 1,
+          value.limit
+        ) as unknown as UnknownAction
+      );
+    }
+  };
+
+  const ApplicantsWithProfile = applicants?.filter(
+    (applicant: any) => applicant.has_completed_profile
   );
 
   return (
@@ -100,7 +162,16 @@ const Page = () => {
         ) : ApplicantsWithProfile?.length === 0 ? (
           <h1>No Applicants Found!</h1>
         ) : (
-          <DataTable columns={columns} data={ApplicantsWithProfile ?? []} />
+          <DataTable
+            columns={columns}
+            data={ApplicantsWithProfile ?? []}
+            totalApplications={totalApplicants}
+            paginationProps={{
+              isPaginated: true,
+              paginateOpts,
+              setPaginateOpts,
+            }}
+          />
         )}
       </div>
     </div>

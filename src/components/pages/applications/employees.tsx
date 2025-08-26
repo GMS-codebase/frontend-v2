@@ -10,11 +10,13 @@ import { FilterDropDown } from "./filters";
 interface IApplicationsPage {
   type: "admin" | "employee" | "sdf";
   applications: any[];
-  loading: boolean;
   selectedFilters: any;
   searchTerm: string;
   setSearchTerm: (searchTerm: string) => void;
   setSelectedFilters: any;
+  loading?: boolean;
+  totalApplications?: number;
+  paginationProps?: any;
 }
 
 const EmployeeApplicationsPage = ({
@@ -25,6 +27,8 @@ const EmployeeApplicationsPage = ({
   searchTerm,
   setSearchTerm,
   setSelectedFilters,
+  totalApplications,
+  paginationProps,
 }: IApplicationsPage) => {
   const filtersContainerRef = useRef<HTMLDivElement>(null);
   console.log(applications);
@@ -197,6 +201,9 @@ const EmployeeApplicationsPage = ({
         data={applications}
         columns={ApplicationsColumns(type)}
         loading={loading}
+        totalApplications={totalApplications}
+        paginationProps={paginationProps}
+        noDataMessage={"No applications found"}
       />
     </div>
   );

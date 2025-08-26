@@ -37,7 +37,7 @@ const Page = () => {
     (state: any) => state.applications,
   );
   const existingApplication = myApplications.find(
-    (app: any) => app?.call?.uuid === callId && app.stages.length === 0,
+    (app: any) => app?.call?.uuid === callId && app?.stages?.length === 0,
   );
   const [
     isOpenCreateProfile,
@@ -113,14 +113,14 @@ const Page = () => {
       accessorKey: "sector",
       header: "Sector",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.sectors[0].name}</div>
+        <div className="truncate">{row.original.sectors?.[0].name}</div>
       ),
     },
     {
       accessorKey: "trade",
       header: "Trade",
       cell: ({ row }) => (
-        <div className="truncate">{row.original.trades[0].trade?.title}</div>
+        <div className="truncate">{row.original.trades?.[0].trade?.title}</div>
       ),
     },
     {
@@ -157,7 +157,7 @@ const Page = () => {
               <Menu.Item className="bg-[#F0F0F0]">
                 <Link
                   href={
-                    row.original.stages.length > 0
+                    row.original.stages?.length > 0
                       ? `/applicant/applications/application/${row.original.uuid}`
                       : `/applicant/applications/call/${row.original.call.uuid}/${row.original.uuid}/apply`
                   }
@@ -185,7 +185,7 @@ const Page = () => {
     <div className="bg-white rounded-2xl p-10 ">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-6  text-black">
-          <div className="flex justify-between">
+          <div className="flex flex-col md:flex-row justify-between">
             <div className="text-xl font-bold">Call Info</div>
             <div
               onClick={handleDownloadInstructions}
@@ -229,7 +229,7 @@ const Page = () => {
                 </span>
                 <div>Timeline</div>
               </div>
-              <div className="flex gap-4  ">
+              <div className="flex flex-col md:flex-row gap-4  ">
                 <ProgressCircle
                   activeColor="#005DE9"
                   bgColor="#fff"

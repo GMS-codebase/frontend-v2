@@ -306,20 +306,22 @@ const renderQuestionType = (
     )}
     {question.type === "radio" && (
       <RadioInput
-        question={question}
-        mode={mode}
-        value={options?.answers?.[question.id]}
+        options={question.choices || []}
+        value={options?.answers?.[question.id] || ""}
         onChange={(data) => options?.setAnswers?.(question.id, data)}
-        onQuestionChange={options?.onQuestionChange as any}
+        required={question.required}
+        label={question.description || question.title}
+        questionId={question.id}
       />
     )}
     {question.type === "checkbox" && (
       <CheckboxInput
-        question={question}
-        mode={mode}
+        options={question.choices || []}
         value={options?.answers?.[question.id] || []}
         onChange={(data) => options?.setAnswers?.(question.id, data)}
-        onQuestionChange={options?.onQuestionChange as any}
+        required={question.required}
+        label={question.description || question.title}
+        questionId={question.id}
       />
     )}
     {question.type === "file" && (

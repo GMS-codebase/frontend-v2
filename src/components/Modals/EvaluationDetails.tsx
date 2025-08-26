@@ -46,9 +46,9 @@ const EvaluationDetails = ({
         onClose={close}
         withCloseButton={false}
         centered
-        className="flex flex-col gap-4 rounded-full"
+        className="flex flex-col gap-4 rounded-full bg-red-500"
       >
-        <div className="flex w-[45vw] max-h-[90vh] overflow-y-auto flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative">
+        <div className="flex w-[100vw] max-w-3xl max-h-[90vh] overflow-y-auto flex-col gap-2 align-middle rounded-2xl bg-white p-10 relative">
           <div className="absolute right-3 m-4 text-center mt-0">
             <button
               onClick={close}

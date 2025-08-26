@@ -28,6 +28,7 @@ class AuthService {
       const response = await unauthorizedApi.post("/auth/login", data);
       setCookie("token", response.data.data.data);
       const tokenData: { role: string } = jwtDecode(response.data.data.data);
+      console.log(tokenData);
       push(tokenData.role);
     } catch (error: any) {
       notifications.show({
@@ -60,12 +61,12 @@ class AuthService {
   async setPassword(
     data: SetPasswordForm,
     token: string,
-    callback?: () => void,
+    callback?: () => void
   ) {
     try {
       const response = await unauthorizedApi.post(
         `/auth/set-password?token=${token}`,
-        data,
+        data
       );
       setCookie("token", response.data.token);
       callback && callback();
@@ -76,6 +77,32 @@ class AuthService {
           "There was an error while setting up your password, Please recheck the link from your email or contact our team",
         color: "red",
       });
+    }
+  }
+
+  async changePassword(
+    data: {
+      oldpassword: string;
+      newpassword: string;
+      confirmpassword: string;
+    },
+    callback?: () => void
+  ) {
+    try {
+      await authorizedApi.post("/auth/password/change", data);
+      notifications.show({
+        title: "Success",
+        message: "Password changed successfully",
+        color: "green",
+      });
+      callback && callback();
+    } catch (error: any) {
+      notifications.show({
+        title: "Error Changing Password",
+        message: error?.response?.data?.message || "Failed to change password",
+        color: "red",
+      });
+      throw error;
     }
   }
 }

@@ -1,87 +1,67 @@
-import { Question } from "@/types/questions-form";
-import React, { useEffect, useState } from "react";
+import React from 'react';
 
 interface RadioInputProps {
-  question: Question;
+  options: string[];
   value: string;
   onChange: (value: string) => void;
-  onQuestionChange: (updatedQuestion: Question) => void;
-  mode: "creating" | "viewing" | "answering" | "commenting";
-  disabled?: boolean;
+  required?: boolean;
+  label?: string;
+  error?: string;
+  questionId?: string; // Add questionId prop
 }
 
 const RadioInput: React.FC<RadioInputProps> = ({
-  question,
+  options,
   value,
   onChange,
-  onQuestionChange,
-  mode,
-  disabled,
+  required,
+  label,
+  error,
+  questionId
 }) => {
-  const [choices, setChoices] = useState<string[]>(question.choices || []);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-
-  const handleAddChoice = () => {
-    setChoices([...choices, ""]);
-    onQuestionChange({ ...question, choices: [...choices] });
-  };
-
-  const handleChoiceChange = (index: number, newChoice: string) => {
-    const updatedChoices = [...choices];
-    updatedChoices[index] = newChoice;
-    setChoices(updatedChoices);
-    onQuestionChange({ ...question, choices: updatedChoices });
-  };
-
-  const handleSelectionChange = (selectedValue: string) => {
-    onChange(selectedValue);
-  };
-
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-semibold text-gray-700">
-          Choices:
+    <div className="w-full">
+      {label && (
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
         </label>
-        <div className="space-y-2 mt-2">
-          {choices.map((choice, index) => (
-            <div key={index} className="flex items-center space-x-2">
+      )}
+      <div className="space-y-3">
+        {options.map((option, index) => (
+          <label
+            key={index}
+            className={`flex items-center gap-3 cursor-pointer group p-3 rounded-lg border-2 transition-all duration-200 ${
+              value === option
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-gray-200 hover:border-gray-300 text-gray-700 hover:text-gray-900'
+            }`}
+          >
+            <div className="relative">
               <input
                 type="radio"
-                name="choices"
-                value={choice}
-                checked={value === choice}
-                onChange={() => handleSelectionChange(choice)}
-                // disabled={mode !== "answering"}
-                className="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                name={questionId || `radio-${Math.random()}`} // Use questionId as name to prevent conflicts
+                value={option}
+                checked={value === option}
+                onChange={(e) => onChange(e.target.value)}
+                className="w-5 h-5 border-2 border-gray-300 rounded-full appearance-none cursor-pointer
+                  checked:border-primary checked:border-6 transition-all duration-200
+                  focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
-              <input
-                type="text"
-                value={choice}
-                onChange={(e) => handleChoiceChange(index, e.target.value)}
-                disabled={mode !== "creating" || disabled}
-                placeholder="Enter choice"
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
+              {value === option && (
+                <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-primary rounded-full"></div>
+              )}
             </div>
-          ))}
-          {mode === "creating" && (
-            <button
-              type="button"
-              onClick={handleAddChoice}
-              className="mt-2  bg-primary py-3 px-10 mb-5  text-white rounded-xl focus:outline-none"
-            >
-              + Add Choice
-            </button>
-          )}
-        </div>
+            <span className={`font-medium transition-colors ${
+              value === option ? 'text-primary' : 'text-gray-700 group-hover:text-gray-900'
+            }`}>
+              {option}
+            </span>
+          </label>
+        ))}
       </div>
-
-      {/* Display selected value when answering mode */}
-      {mode === "answering" && !disabled && value && (
-        <div className="mt-4 text-sm text-gray-700">
-          <strong>Your answer:</strong> {value}
-        </div>
+      {error && (
+        <p className="mt-1 text-sm text-red-500">{error}</p>
       )}
     </div>
   );

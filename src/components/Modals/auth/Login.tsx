@@ -32,6 +32,7 @@ const LoginModal = ({
         password: values.password,
       },
       (role: string) => {
+        console.log(role)
         switch (role?.toLowerCase()) {
           case "admin":
             navigate.push("/admin");
@@ -48,6 +49,9 @@ const LoginModal = ({
           case "applicant":
             navigate.push("/applicant/applications");
             break;
+          case "survey_trainee":
+            navigate.push("/trainee/survey");
+            break;
           case "grant_committee":
             navigate.push("/grant_committee");
             break;
@@ -57,7 +61,7 @@ const LoginModal = ({
           default:
             navigate.push("/");
         }
-      },
+      }
     );
     setLoading(false);
   };
@@ -68,15 +72,9 @@ const LoginModal = ({
       email: "",
       password: "",
     },
-
     validate: {
-      email: (value) =>
-        value
-          ? /^\S+@\S+\.\S+$/.test(value)
-            ? null
-            : "Invalid email"
-          : "Email is required",
-      password: (value) => (value ? null : "Password is required"),
+      email: (value) => (value ? null : "Email / NationalId is required"),
+      password: (value) => (value ? null : "Password/Phone Number is required"),
     },
   });
 
@@ -121,7 +119,7 @@ const LoginModal = ({
         >
           <div className="flex flex-col gap-1 mt-3">
             <label htmlFor="email" className="font-semibold">
-              Email
+              Email/National Id
             </label>
             <div className="relative w-full">
               <span className="absolute top-1/2  -translate-y-1/2  left-3">
@@ -143,7 +141,7 @@ const LoginModal = ({
 
           <div className="flex flex-col gap-1  mt-10 mb-2">
             <label htmlFor="password" className="font-semibold">
-              Password
+              Password/Phone Number
             </label>
             <div className="relative w-full">
               <span className="absolute top-1/2  -translate-y-1/2  left-3">
