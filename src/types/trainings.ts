@@ -8,10 +8,10 @@ export interface IResponse {
   message: string;
   numberOfTraineesRequired: number | null;
   status: "ACCEPTED" | "REJECTED" | string;
-  user?:{
-    firstname:string;
-    lastname:string;
-  }
+  user?: {
+    firstname: string;
+    lastname: string;
+  };
 }
 
 export interface IRequest {
@@ -43,7 +43,7 @@ export interface ITraining {
   competencies: string[];
   application: any;
   applicant: any;
-  traineesToAdd?:number;
+  traineesToAdd?: number;
   trainees: ITrainingTrainee[];
   trainingRequestResponses: IResponse[];
 }
@@ -59,6 +59,7 @@ export interface ITrainingTrainee {
   lastName: string;
   firstName: string;
   gender: "MALE" | "FEMALE" | string;
+  dob?:string;
   district: string;
   disability: string;
   maritalStatus: "SINGLE" | "MARRIED" | "DIVORCED" | "WIDOWED" | string;
@@ -71,5 +72,8 @@ export interface ITrainingTrainee {
   graduateStatus: "ONGOING" | "GRADUATED" | string;
   certificationRequested: boolean;
   certificationStatus: "PENDING" | "APPROVED" | "REJECTED" | string;
-  isAbleToBeEdited: boolean;
+  editRequested: boolean;
+  removalRequested: boolean;
+  canBeEdited: boolean;
+  canBeRemoved: boolean;
 }

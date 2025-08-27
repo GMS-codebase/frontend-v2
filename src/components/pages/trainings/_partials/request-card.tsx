@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 
 type props = {
   request: IRequest;
+  currentRole:string
 };
 
 const getActionType = (
@@ -53,7 +54,7 @@ const renderStatusBadge = (status: string) => {
   }
 };
 
-const RequestCard: FC<props> = ({ request }) => {
+const RequestCard: FC<props> = ({ request,currentRole }) => {
   const dispatch = useDispatch();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -109,7 +110,7 @@ const RequestCard: FC<props> = ({ request }) => {
           <div className="text-gray-500 text-sm md:ml-4 whitespace-nowrap">
             {format(new Date(request.doneAt), "dd MMM yyyy")}
           </div>
-          {request.status === "PENDING" && (
+          {request.status === "PENDING" && currentRole === "SDF_SECRETARIATE" && (
             <div className="flex items-center gap-5">
               <Button
                 onClick={() => handleOpenModal("REJECT")}

@@ -11,7 +11,7 @@ import {
   requestEditTrainee,
   requestRemoveTrainee,
 } from "@/services";
-import { IRequest, IResponse, ITraining } from "@/types/trainings";
+import { IResponse, ITraining } from "@/types/trainings";
 import { useSelector } from "react-redux";
 import { notifications } from "@mantine/notifications";
 import {
@@ -22,7 +22,6 @@ import {
   SelectValue,
 } from "@/components/ui/another-select";
 import ConfirmationModal from "@/components/Modals/training/CertificationConfirmModal";
-import RequestCard from "./request-card";
 
 interface RequestsResponseSectionProps {
   training: ITraining;
@@ -30,7 +29,6 @@ interface RequestsResponseSectionProps {
   setSelectedRequest: (value: string) => void;
   currentRole?: string;
   trainingResponse: IResponse[];
-  trainingRequests: IRequest[];
   selectedTraineeIds: string[];
   traineeNames?: string[];
 }
@@ -41,7 +39,6 @@ const RequestResponseSection: FC<RequestsResponseSectionProps> = ({
   setSelectedRequest,
   currentRole,
   trainingResponse,
-  trainingRequests,
   selectedTraineeIds,
   traineeNames = [],
 }) => {
@@ -169,23 +166,6 @@ const RequestResponseSection: FC<RequestsResponseSectionProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="space-y-6">
-        <h2 className="text-xl md:text-2xl font-bold text-primaryText">
-          Requests
-        </h2>
-        <div className="space-y-4 bg-[#F6F6F6] px-5 py-3 md:px-10 md:py-9 rounded-[21px]">
-          {trainingRequests ? (
-            trainingRequests.map((request, idx) => (
-              <RequestCard key={idx} request={request} />
-            ))
-          ) : (
-            <h2 className="text-gray-500 text-sm my-5 text-center">
-              No responses yet
-            </h2>
-          )}
-        </div>
-      </div>
-
       <h2 className="text-xl md:text-2xl font-bold text-primaryText">
         Responses
       </h2>

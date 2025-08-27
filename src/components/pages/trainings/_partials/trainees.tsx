@@ -177,56 +177,74 @@ const Trainees = ({
               </Menu.Label>
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
-                <Link
-                  href={`#`}
-                  className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                >
+                <span className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
                   <VscEye size={21} color="#576074" />
                   View
-                </Link>
+                </span>
               </Menu.Item>
               {currentRole === "APPLICANT" && (
                 <>
-                  <Menu.Item className="bg-[#F0F0F0]">
-                    <Link
-                      href={`#`}
+                  {row.original.canBeEdited ? (
+                    <Menu.Item
+                      className="bg-[#F0F0F0]"
+                      onClick={() => {
+                        setSelectedTrainee(row.original);
+                        setIsOpenAddEditTrainee(true);
+                      }}
+                    >
+                      <span className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
+                        <VscEdit size={21} color="blue" />
+                        Edit Trainee
+                      </span>
+                    </Menu.Item>
+                  ) : (
+                    <Menu.Item
+                      className="bg-[#F0F0F0]"
                       onClick={() => {
                         const newIds = [row.original.uuid];
                         setSelectedIds(newIds);
                         setSelectedTraineeIds(newIds);
                         handleEditTraineeRequest?.();
                       }}
-                      className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                      disabled={row.original.editRequested}
                     >
-                      <VscEdit size={21} color="blue" />
-                      Request Edit
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item className="bg-[#F0F0F0]">
-                    <Link
-                      href={`#`}
+                      <span className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
+                        <VscEdit size={21} color="blue" />
+                        {row.original.editRequested
+                          ? "Pending edit Request"
+                          : "Request Edit"}
+                      </span>
+                    </Menu.Item>
+                  )}
+                  {row.original.canBeRemoved ? (
+                    <Menu.Item
+                      className="bg-[#F0F0F0] text-[#576074]"
+                      onClick={() => openDeleteTrainee()}
+                    >
+                      <span className="flex items-center gap-3">
+                        <VscTrash size={21} color="red" />
+                        Delete
+                      </span>
+                    </Menu.Item>
+                  ) : (
+                    <Menu.Item
+                      className="bg-[#F0F0F0]"
                       onClick={() => {
                         const newIds = [row.original.uuid];
                         setSelectedIds(newIds);
                         setSelectedTraineeIds(newIds);
                         handleRemoveTraineeRequest?.();
                       }}
-                      className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                      disabled={row.original.removalRequested}
                     >
-                      <VscTrash size={21} color="red" />
-                      Request Delete
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item className="bg-[#F0F0F0]">
-                    <Button
-                      variant="ghost"
-                      onClick={() => openDeleteTrainee()}
-                      className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                    >
-                      <VscTrash size={21} color="red" />
-                      Delete
-                    </Button>
-                  </Menu.Item>
+                      <span className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
+                        <VscTrash size={21} color="red" />
+                        {row.original.removalRequested
+                          ? "Pending Delete Request"
+                          : "Request Delete"}
+                      </span>
+                    </Menu.Item>
+                  )}
                 </>
               )}
             </Menu.Dropdown>
@@ -303,6 +321,7 @@ const Trainees = ({
         isOpenAddEditTrainee={isOpenAddEditTrainee}
         closeAddEditTrainee={() => setIsOpenAddEditTrainee(false)}
         trainingId={training?.uuid}
+        defaultData={selectedTrainee!}
       />
 
       <DeleteModal
