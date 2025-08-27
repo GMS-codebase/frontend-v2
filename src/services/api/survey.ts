@@ -7,32 +7,28 @@ export interface SurveySubmission {
   answers: string;
 }
 
-export interface ApplicantApplicationInfo {
+export type ApplicantApplicationInfo  = {
   uuid: string;
   title: string;
-  windows: {
+  status: string;
+  subWindows: {
     uuid: string;
     title: string;
     status: string;
-    subWindows: {
+    sectors: {
       uuid: string;
-      title: string;
+      name: string;
       status: string;
-      sectors: {
+      trades: {
         uuid: string;
-        name: string;
-        status: string;
-        trades: {
-          uuid: string;
-          trade: {
-            title: string;
-            status: string;
-          };
-        }[];
+        trade: {
+          title: string;
+          status: string;
+        };
       }[];
     }[];
   }[];
-}
+}[]
 
 export const submitSurvey = async (data: SurveySubmission) => {
   try {
@@ -52,9 +48,20 @@ export const checkSurveyStatus = async (surveyId: number, userId: string) => {
   }
 };
 
-export const getApplicantApplicationsInfo = async (): Promise<ApplicantApplicationInfo[]> => {
+export const getApplicantApplicationsInfo = async (applicantId?: string): Promise<ApplicantApplicationInfo> => {
   try {
-    const response = await authorizedApi.get("/survey/get-applicant-applications-info");
+    let response;
+    
+    if (applicantId) {
+      // If applicantId is provided (admin/SDF user), pass it in request body
+      response = await authorizedApi.get("/survey/get-applicant-applications-info", {
+        params: { applicantId }
+      });
+    } else {
+      // If no applicantId (regular applicant user), use GET request
+      response = await authorizedApi.get("/survey/get-applicant-applications-info");
+    }
+    
     return response.data;
   } catch (error) {
     throw error;

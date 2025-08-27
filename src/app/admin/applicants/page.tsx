@@ -136,20 +136,6 @@ const Page = () => {
     }
   };
 
-  const ApplicantsWithProfile = applicants?.filter(
-    (applicant: any) =>
-      applicant.has_completed_profile || applicant.applications.length > 0
-  );
-
-  const filteredApplicants = ApplicantsWithProfile?.filter(
-    (applicant: any) =>
-      applicant.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      applicant.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      applicant.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      applicant.businesses[0]?.businessName
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase())
-  );
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex justify-between items-center p-4">
@@ -169,7 +155,7 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable
           columns={columns}
-          data={filteredApplicants ?? []}
+          data={applicants ?? []}
           loading={loading}
           noDataMessage={
             searchTerm
