@@ -15,6 +15,7 @@ import CompetenciesSection from "./_partials/competence-section";
 import DetailsSection from "./_partials/details-section";
 import RequestResponseSection from "./_partials/response-section";
 import Trainees from "./_partials/trainees";
+import TraineeRequestContainer from "./TraineeRequestContainer";
 
 type props = {
   trainingId: string;
@@ -130,6 +131,9 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
             setSelectedTraineeIds={setSelectedTraineeIds}
           />
           <CertificationGrid currentRole={currentRole} training={training} />
+          <div>
+            <TraineeRequestContainer trainingRequests={training?.traineeRequests} currentRole={currentRole as string}/>
+          </div>
           <div ref={responseRef}>
             <RequestResponseSection
               training={training}
@@ -137,7 +141,7 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
               setSelectedRequest={setSelectedRequest}
               currentRole={currentRole as string}
               trainingResponse={training?.trainingRequestResponses}
-              trainingRequests={training?.traineeRequests}
+              
               selectedTraineeIds={selectedTraineeIds}
             />
           </div>

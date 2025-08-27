@@ -17,6 +17,8 @@ const AddEditTrainingTrainee = ({
   defaultData?: ITrainingTrainee;
   trainingId?: string;
 }) => {
+  console.log("default data==>", defaultData);
+
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<any>({});
   const [traineesFile, setTraineesFile] = useState<File | string | null>(null);
@@ -57,7 +59,21 @@ const AddEditTrainingTrainee = ({
 
   useEffect(() => {
     if (defaultData) {
-      setTraineeData(defaultData as any);
+      setTraineeData({
+        firstName: defaultData.firstName,
+        lastName: defaultData.lastName,
+        nationalId: defaultData.nationalId,
+        dob: defaultData.dob!,
+        gender: defaultData.gender.toUpperCase(),
+        district: defaultData.district,
+        disability: defaultData.disability,
+        parentPhoneNumber: defaultData.parentPhoneNumber,
+        traineePhoneNumber: defaultData.traineePhoneNumber,
+        trainingProgram: defaultData.trainingProgram,
+        educationLevel: defaultData.educationLevel,
+        institutionName: defaultData.institutionName,
+        maritalStatus: defaultData.maritalStatus.toUpperCase(),
+      });
     }
   }, [defaultData, trainingId]);
 
@@ -132,24 +148,24 @@ const AddEditTrainingTrainee = ({
     setLoading(true);
     setErrors({});
 
-    const newErrors: any = {};
-    if (!trainees.length && !traineesFile)
-      newErrors.trainees = "Trainees or trainees file is required";
-
-    if (Object.keys(newErrors).length) {
-      setErrors(newErrors);
-      setLoading(false);
-      notifications.show({
-        message: "Please fill all required fields",
-        color: "red",
-      });
-      return;
+    if (defaultData) {
+      console.log("Updating trainee:==>", traineeData);
+    } else {
+      if (!trainees.length && !traineesFile) {
+        setErrors({ trainees: "Trainees or trainees file is required" });
+        setLoading(false);
+        return notifications.show({
+          message: "Please fill all required fields",
+          color: "red",
+        });
+      }
+      console.log("Adding trainees:", trainees, traineesFile);
     }
   };
 
   return (
     <Modal
-      size={"70%"}
+      size={defaultData ? "40%" : "70%"}
       opened={isOpenAddEditTrainee}
       onClose={closeAddEditTrainee}
       centered
@@ -175,53 +191,59 @@ const AddEditTrainingTrainee = ({
         </div>
         <div className="w-full flex flex-col items-center mt-4 px-10">
           <div className="flex flex-col gap-4 md:flex-row w-full">
-            <div className={`flex flex-col gap-4 w-full ${defaultData === undefined && "md:w-3/5"}`}>
-              <div className="flex flex-col gap-2">
+            <div
+              className={`flex flex-col gap-4 w-full ${defaultData === undefined && "md:w-3/5"}`}
+            >
+              {!defaultData && (
                 <div className="flex flex-col gap-2">
-                  <a
-                    href={"/files/trainee_creation_format.xlsx"}
-                    download={true}
-                    className="w-full py-2 px-4 text-center justify-center font-bold bg-primary text-white flex items-center rounded-full"
-                  >
-                    <span className="hidden lg:flex">Download Template</span>
-                  </a>
+                  <div className="flex flex-col gap-2">
+                    <a
+                      href={"/files/trainee_creation_format.xlsx"}
+                      download={true}
+                      className="w-full py-2 px-4 text-center justify-center font-bold bg-primary text-white flex items-center rounded-full"
+                    >
+                      <span className="hidden lg:flex">Download Template</span>
+                    </a>
+                  </div>
+                  <div className="w-full border-dashed border-2 border-blue-500 rounded-xl h-40 flex items-center justify-center bg-[#000F230A]">
+                    <label className="cursor-pointer flex flex-col items-center justify-center text-center">
+                      {traineesFile ? (
+                        <>
+                          <SolarCheckCircleBold className="text-blue-500 text-3xl" />
+                          <p className="text-sm">File Uploaded</p>
+                          <p className="text-xs text-gray-400">
+                            {traineesFile instanceof File
+                              ? traineesFile.name
+                              : traineesFile}
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <SolarUploadBold className="text-blue-500 text-3xl" />
+                          <p className="text-sm">Upload File</p>
+                          <p className="text-xs text-gray-400">
+                            Drag & Drop or click to upload file
+                          </p>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        name="traineesFile"
+                        onChange={(e) =>
+                          setTraineesFile(e.target.files?.[0] || null)
+                        }
+                        accept=".xlsx,.xls"
+                        hidden
+                      />
+                    </label>
+                  </div>
+                  {errors.trainees && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.trainees}
+                    </p>
+                  )}
                 </div>
-                <div className="w-full border-dashed border-2 border-blue-500 rounded-xl h-40 flex items-center justify-center bg-[#000F230A]">
-                  <label className="cursor-pointer flex flex-col items-center justify-center text-center">
-                    {traineesFile ? (
-                      <>
-                        <SolarCheckCircleBold className="text-blue-500 text-3xl" />
-                        <p className="text-sm">File Uploaded</p>
-                        <p className="text-xs text-gray-400">
-                          {traineesFile instanceof File
-                            ? traineesFile.name
-                            : traineesFile}
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <SolarUploadBold className="text-blue-500 text-3xl" />
-                        <p className="text-sm">Upload File</p>
-                        <p className="text-xs text-gray-400">
-                          Drag & Drop or click to upload file
-                        </p>
-                      </>
-                    )}
-                    <input
-                      type="file"
-                      name="traineesFile"
-                      onChange={(e) =>
-                        setTraineesFile(e.target.files?.[0] || null)
-                      }
-                      accept=".xlsx,.xls"
-                      hidden
-                    />
-                  </label>
-                </div>
-                {errors.trainees && (
-                  <p className="text-red-500 text-xs mt-1">{errors.trainees}</p>
-                )}
-              </div>
+              )}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col">
                   <label className="text-sm font-medium">First Name</label>
@@ -449,14 +471,16 @@ const AddEditTrainingTrainee = ({
                   )}
                 </div>
               </div>
-              {defaultData === undefined && <div className="flex justify-between gap-4">
-                <button
-                  onClick={handleAddTrainee}
-                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-xl shadow-sm outline-none text-sm"
-                >
-                  Add Trainee
-                </button>
-              </div>}
+              {defaultData === undefined && (
+                <div className="flex justify-between gap-4">
+                  <button
+                    onClick={handleAddTrainee}
+                    className="w-full px-4 py-2 bg-blue-600 text-white rounded-xl shadow-sm outline-none text-sm"
+                  >
+                    Add Trainee
+                  </button>
+                </div>
+              )}
               <div className="flex justify-between gap-4 mt-4">
                 <button
                   onClick={closeAddEditTrainee}
@@ -478,7 +502,9 @@ const AddEditTrainingTrainee = ({
               </div>
             </div>
             {defaultData === undefined && (
-              <div className={`hidden md:block w-full ${defaultData === undefined && "md:w-2/5"} bg-gray-100 rounded-xl p-4 max-h-[100vh]`}>
+              <div
+                className={`hidden md:block w-full ${defaultData === undefined && "md:w-2/5"} bg-gray-100 rounded-xl p-4 max-h-[100vh]`}
+              >
                 <h3 className="text-base font-medium mb-2">Trainees Preview</h3>
                 <div className="flex flex-col gap-2 overflow-y-scroll max-h-[90vh]">
                   {trainees.map((trainee, index) => (
