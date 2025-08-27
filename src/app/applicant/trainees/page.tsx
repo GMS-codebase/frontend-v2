@@ -7,11 +7,13 @@ import { DataTable } from "@/components/core/data-table";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useDisclosure } from "@mantine/hooks";
 import AddSurveyTrainee from "@/components/Modals/trainee/AddEditSurveyTrainee";
+import ImportTraineesModal from "@/components/Modals/trainee/ImportTraineesModal";
+import ViewTraineeModal from "@/components/Modals/trainee/ViewTraineeModal";
 import { useSelector } from "react-redux";
 import { Menu, Button } from "@mantine/core";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
-
+import { BiShow } from "react-icons/bi";
 import DeleteModal from "@/components/Modals/DeleteModal";
 
 const Page = () => {
@@ -20,10 +22,18 @@ const Page = () => {
     isOpenCreateEdit,
     { open: openCreateEditModal, close: closeCreateEditModal },
   ] = useDisclosure(false);
+  const [
+    isOpenImport,
+    { open: openImportModal, close: closeImportModal },
+  ] = useDisclosure(false);
   const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
 
+  const [isOpenView, { open: openViewModal, close: closeViewModal }] =
+    useDisclosure(false);
+
   const surveyTrainee = useSelector((state: any) => state.surveyTrainee);
+  const auth = useSelector((state: any) => state.auth);
   const [selectedSurveyTrainee, setSelectedSurveyTrainee] = useState<any>(null);
 
   const filteredSurveyTrainee =
@@ -35,9 +45,19 @@ const Page = () => {
         (item.nationalId?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
         (item.sector?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
         (item.window?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
-        (item.subWindow?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
+        (item.subWindow?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.province?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.residenceSector?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.district?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.cell?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+        (item.village?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
       );
     }) ?? [];
+
+  const handleView = (trainee: any) => {
+    setSelectedSurveyTrainee(trainee);
+    openViewModal();
+  };
 
   const columns: ColumnDef<any>[] = [
     {
@@ -95,20 +115,47 @@ const Page = () => {
       ),
     },
     {
-      accessorKey: "applicantName",
-      header: "Applicant Name",
+      accessorKey: "province",
+      header: "Province",
       cell: ({ row }) => (
-        <div className="truncate max-w-[180px]" title={row.original.applicant?.name || "-"}>
-          {row.original.applicant?.name || "-"}
+        <div className="truncate max-w-[120px]" title={row.original.province || "-"}>
+          {row.original.province || "-"}
+        </div>
+      ),
+    },
+        {
+      accessorKey: "district",
+      header: "District",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[120px]" title={row.original.district || "-"}>
+          {row.original.district || "-"}
         </div>
       ),
     },
     {
-      accessorKey: "sector",
-      header: "Sector",
+      accessorKey: "residenceSector",
+      header: "Residence Sector",
       cell: ({ row }) => (
-        <div className="truncate max-w-[150px]" title={row.original.sector?.name || "-"}>
-          {row.original.sector?.name || "-"}
+        <div className="truncate max-w-[120px]" title={row.original.residenceSector || "-"}>
+          {row.original.residenceSector || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "cell",
+      header: "Cell",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[100px]" title={row.original.cell || "-"}>
+          {row.original.cell || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "village",
+      header: "Village",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[120px]" title={row.original.village || "-"}>
+          {row.original.village || "-"}
         </div>
       ),
     },
@@ -116,7 +163,7 @@ const Page = () => {
       accessorKey: "window",
       header: "Window",
       cell: ({ row }) => (
-        <div className="truncate max-w-[180px]" title={row.original.window?.title || "-"}>
+        <div className="truncate max-w-[120px]" title={row.original.window?.title || "-"}>
           {row.original.window?.title || "-"}
         </div>
       ),
@@ -125,17 +172,26 @@ const Page = () => {
       accessorKey: "subWindow",
       header: "Sub Window",
       cell: ({ row }) => (
-        <div className="truncate max-w-[180px]" title={row.original.subWindow?.title || "-"}>
+        <div className="truncate max-w-[120px]" title={row.original.subWindow?.title || "-"}>
           {row.original.subWindow?.title || "-"}
         </div>
       ),
     },
     {
-      accessorKey: "status",
-      header: "Status",
+      accessorKey: "sector",
+      header: "Sector",
       cell: ({ row }) => (
-        <div className="truncate max-w-[100px]" title={row.original.deletedStatus ? "Deleted" : "Active"}>
-          {row.original.deletedStatus ? "Deleted" : "Active"}
+        <div className="truncate max-w-[120px]" title={row.original.sector?.name || row.original.sector || "-"}>
+          {row.original.sector?.name || row.original.sector || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "trade",
+      header: "Trade",
+      cell: ({ row }) => (
+        <div className="truncate max-w-[120px]" title={row.original.trade?.name || "-"}>
+          {row.original.trade?.name || "-"}
         </div>
       ),
     },
@@ -143,15 +199,9 @@ const Page = () => {
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <Menu shadow="lg" width={300}>
+        <Menu shadow="md" width={200}>
           <Menu.Target>
-            <button
-              style={{
-                background:
-                  "linear-gradient(84.73deg, #005DE9 10.01%, #0546A8 114.53%)",
-              }}
-              className="p-3 rounded-full border text-white hover:bg-red-100"
-            >
+            <button className="bg-primary text-white p-2 rounded-full">
               <HiDotsHorizontal size={25} color="white" />
             </button>
           </Menu.Target>
@@ -160,6 +210,15 @@ const Page = () => {
               <h1 className="text-lg">Actions</h1>
             </Menu.Label>
             <Menu.Divider />
+            <Menu.Item>
+              <div
+                onClick={() => handleView(row.original)}
+                className="w-full py-1 flex text-base items-center gap-3 text-[#576074]"
+              >
+                <BiShow size={21} color="#576074" />
+                View
+              </div>
+            </Menu.Item>
             <Menu.Item>
               <div
                 onClick={() => {
@@ -207,15 +266,26 @@ const Page = () => {
           />
         </div>
 
-        <button
-          onClick={openCreateEditModal}
-          className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
-        >
-          <span className="text-2xl">
-            <SolarAddFolderBold />
-          </span>
-          <h1 className="text-base font-medium text-white">New Survey Trainee</h1>
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={openImportModal}
+            className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+          >
+            <span className="text-2xl">
+              <SolarAddFolderBold />
+            </span>
+            <h1 className="text-base font-medium text-white">Import Trainees</h1>
+          </button>
+          <button
+            onClick={openCreateEditModal}
+            className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+          >
+            <span className="text-2xl">
+              <SolarAddFolderBold />
+            </span>
+            <h1 className="text-base font-medium text-white">New Survey Trainee</h1>
+          </button>
+        </div>
       </div>
       <div className="w-full h-full">
         <DataTable
@@ -236,6 +306,20 @@ const Page = () => {
           setSelectedSurveyTrainee(null);
         }}
         defaultData={selectedSurveyTrainee}
+        applicantId={auth?.userProfile?.uuid}
+      />
+      <ViewTraineeModal
+        isOpen={isOpenView}
+        onClose={() => {
+          closeViewModal();
+          setSelectedSurveyTrainee(null);
+        }}
+        trainee={selectedSurveyTrainee}
+      />
+      <ImportTraineesModal
+        isOpen={isOpenImport}
+        onClose={closeImportModal}
+        applicantId={auth?.userProfile?.uuid}
       />
       <DeleteModal
         isOpenModal={isOpenDelete}

@@ -18,6 +18,8 @@ import { useSelector } from "react-redux";
 import { CiEdit } from "react-icons/ci";
 import { IoIosCloseCircle } from "react-icons/io";
 import { useSurveyContext } from "@/contexts/SurveyContext";
+import FileInput from "../core/FileInput";
+import TableInput from "../core/TableInput";
 
 interface CreateSurveyProps {
   survey: Survey;
@@ -310,6 +312,8 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ survey, onSave }) => {
           <option value="" disabled>
             Select Survey Type
           </option>
+          <option value="text">Text</option>
+          <option value="paragraph">Paragraph</option>
           <option value="number">Number</option>
           <option value="radio">Radio Choices</option>
           <option value="checkbox">Checkbox Choices</option>
@@ -511,6 +515,23 @@ const renderSurveyType = (
   }
 ) => (
   <>
+      {survey.type === "text" && (
+      <input
+        type="text"
+        className="w-full p-3 border rounded-2xl outline-none"
+        value={options?.answers?.[survey.id] || ""}
+        onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
+        disabled={!options?.setAnswers}
+      />
+    )}
+    {survey.type === "paragraph" && (
+      <textarea
+        className="w-full p-3 border rounded-2xl outline-none"
+        value={options?.answers?.[survey.id] || ""}
+        onChange={(e) => options?.setAnswers?.(survey.id, e.target.value)}
+        disabled={!options?.setAnswers}
+      />
+    )}
     {survey.type === "number" && (
       <input
         type="number"

@@ -49,7 +49,7 @@ body {
 
 .sidebar-container::-webkit-scrollbar {
   width: 6px;
-  background-color: transparent;
+  /* background-color: transparent; */
 }
 
 textarea::-webkit-scrollbar {
@@ -83,10 +83,10 @@ textarea::-webkit-scrollbar-thumb {
     opacity 0.2s ease-in-out;
 }
 
-.pages-parent::-webkit-scrollbar {
+/* .pages-parent::-webkit-scrollbar {
   width: 1px;
   background: transparent;
-}
+} */
 
 .data-table::-webkit-scrollbar-track {
   background: transparent;
