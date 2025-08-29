@@ -1,8 +1,6 @@
-import Badge from "@/components/ui/Badge";
-import Button from "@/components/ui/Button";
-import { IResponse } from "@/types/trainings";
+import { FC } from "react";
 import { format } from "date-fns";
-import { FC, useState } from "react";
+import { IResponse } from "@/types/trainings";
 
 type props = {
   response: IResponse;
@@ -13,21 +11,21 @@ const ResponseCard: FC<props> = ({ response }) => {
     switch (status) {
       case "REJECTED":
         return (
-          <Badge className="bg-red-100 text-red-800 hover:bg-red-100 px-3 py-1 rounded-full font-medium">
+          <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full font-medium text-sm">
             REJECTED
-          </Badge>
+          </span>
         );
       case "ACCEPTED":
         return (
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-100 px-3 py-1 rounded-full font-medium">
-            ACCEPTED
-          </Badge>
+          <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium text-sm">
+            APPROVED
+          </span>
         );
       case "PENDING":
         return (
-          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 px-3 py-1 rounded-full font-medium">
+          <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-medium text-sm">
             PENDING
-          </Badge>
+          </span>
         );
       default:
         return null;
@@ -35,15 +33,15 @@ const ResponseCard: FC<props> = ({ response }) => {
   };
 
   return (
-    <div className="w-full">
-      {/* Header section */}
-      <div className="flex flex-col md:flex-row items-end md:items-center justify-between gap-2 py-2 rounded-lg">
+    <div className="w-full border rounded-lg shadow-sm bg-white p-4">
+      <div className="flex flex-col md:flex-row items-end md:items-center justify-between gap-2">
         <div className="flex items-start md:items-center gap-4 flex-1 w-full">
           {renderStatusBadge(response.status)}
           <div className="flex-1 min-w-0">
             <div className="font-medium text-gray-900 mb-1 break-words">
-              {response.user?.firstname + " " + response.user?.lastname ||
-                "Unknown"}
+              {response.user
+                ? response.user.firstname + " " + response.user.lastname
+                : "Unknown"}
             </div>
             <div className="text-gray-600 text-sm leading-relaxed break-words">
               {response.message}

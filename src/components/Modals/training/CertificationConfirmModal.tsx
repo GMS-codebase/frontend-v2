@@ -8,6 +8,7 @@ import SideVector3 from "@/assets/Vectors/sidevecto.svg";
 import SideVector4 from "@/assets/Vectors/sidevector2.svg";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useSelector } from "react-redux";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ interface ConfirmModalProps {
   traineeNames?: string[];
   traineeNumber?: number;
   decisionLoading?: boolean;
+  traineesIds?: string[];
 }
 
 const ConfirmationModal = ({
@@ -41,6 +43,7 @@ const ConfirmationModal = ({
   traineeNames,
   traineeNumber,
   decisionLoading,
+  traineesIds,
 }: ConfirmModalProps) => {
   const [message, setMessage] = useState("");
 
@@ -102,13 +105,13 @@ const ConfirmationModal = ({
           ? `Are you sure you want to request removing the following trainees: ${traineeNames.join(", ")}?`
           : "Are you sure you want to request removing trainees?";
       case "ADD_APPROVE":
-        return `Are you sure you want to approve adding ${traineeNumber} trainees?`;
+        return `Are you sure you want to approve adding ${traineeNumber} trainee(s)?`;
       case "EDIT_APPROVE":
-        return `Are you sure you want to approve editing these ${traineeNumber} trainees?`;
+        return `Are you sure you want to approve editing these trainee(s)?`;
       case "REMOVE_APPROVE":
         return "Are you sure you want to approve removing these trainees?";
       case "ADD_REJECT":
-        return "Are you sure you want to reject adding these trainees?";
+        return `Are you sure you want to reject adding these ${traineeNumber} trainee(s)?`;
       case "EDIT_REJECT":
         return "Are you sure you want to reject editing these trainees?";
       case "REMOVE_REJECT":
@@ -136,6 +139,17 @@ const ConfirmationModal = ({
   const handleConfirm = () => {
     onConfirm(message);
     setMessage("");
+  };
+
+  const { currentTraining } = useSelector((state: any) => state.trainings);
+
+  const getSelectedTrainees = () => {
+    if (traineesIds?.length && currentTraining?.trainees) {
+      return currentTraining.trainees.filter((t: any) =>
+        traineesIds.includes(t?.uuid)
+      );
+    }
+    return [];
   };
 
   return (
@@ -172,6 +186,22 @@ const ConfirmationModal = ({
           <h2 className="text-[#000F2369] text-lg font-medium text-center mt-2">
             {getMessage()}
           </h2>
+          <div className="w-full px-3">
+            {getSelectedTrainees().length > 0 && (
+              <div className="w-full mt-4 max-h-48 overflow-y-auto border rounded-lg p-3 bg-gray-50 ">
+                <h3 className="font-semibold mb-2">
+                  Selected Trainees ({getSelectedTrainees().length})
+                </h3>
+                <ul className="list-disc list-inside space-y-1 text-sm text-gray-700 ">
+                  {getSelectedTrainees().map((trainee: any) => (
+                    <li key={trainee.uui}>
+                      {trainee?.firstName + " " + trainee?.lastName}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
           {isDecisionAction && (
             <div className="space-y-1 w-full mt-2 px-3">
               <label htmlFor="">message (optional)</label>
@@ -196,7 +226,7 @@ const ConfirmationModal = ({
               onClick={handleConfirm}
               disabled={decisionLoading}
               type="button"
-              className={`${isBadAction ? "bg-danger hover:bg-danger/80" : "bg-primary hover:bg-primary/80"} w-full px-4 py-3 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2`}
+              className={`${isBadAction ? "bg-danger hover:bg-danger/80" : "bg-primary hover:bg-primary/80"} w-full flex items-center justify-center px-4 py-3 text-white rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-black-500 focus:ring-offset-2`}
             >
               {decisionLoading && <Loader2 className="animate-spin mr-2" />}
               Confirm
