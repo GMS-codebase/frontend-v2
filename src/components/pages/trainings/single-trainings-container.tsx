@@ -2,22 +2,16 @@
 
 import { PDFViewerContainer } from "@/components/PDFViewer/pdf-viewer-container";
 import Button from "@/components/ui/Button";
-import { ITraining } from "@/types/trainings";
+import { getTrainingById, requestTrainingReview } from "@/services";
 import { Loader2 } from "lucide-react";
+import { usePathname } from "next/navigation";
 import React, { FC, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import CertificationGrid from "./_partials/certificationGrid";
 import CompetenciesSection from "./_partials/competence-section";
 import DetailsSection from "./_partials/details-section";
-import ResponseSection from "./_partials/response-section";
+import RequestResponseSection from "./_partials/response-section";
 import Trainees from "./_partials/trainees";
-import { usePathname } from "next/navigation";
-import {
-  getTrainingById,
-  requestTrainingReview,
-  sdfMakeTrainingDecision,
-} from "@/services";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
 
 type props = {
   trainingId: string;
@@ -133,12 +127,14 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
             setSelectedTraineeIds={setSelectedTraineeIds}
           />
           <CertificationGrid currentRole={currentRole} training={training} />
+          
           <div ref={responseRef}>
-            <ResponseSection
+            <RequestResponseSection
               training={training}
               selectedRequest={selectedRequest}
               setSelectedRequest={setSelectedRequest}
               currentRole={currentRole as string}
+              trainingRequests={training?.traineeRequests}
               trainingResponse={training?.trainingRequestResponses}
               selectedTraineeIds={selectedTraineeIds}
             />

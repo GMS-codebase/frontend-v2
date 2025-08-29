@@ -154,24 +154,36 @@ import {
   ADD_TRAINEE_REQUEST_FAILURE,
   ADD_TRAINEE_REQUEST_REQUEST,
   ADD_TRAINEE_REQUEST_SUCCESS,
+  ADD_TRAINEES_FAILURE,
+  ADD_TRAINEES_REQUEST,
+  ADD_TRAINEES_SUCCESS,
   CERTIFICATION_DECISION_FAILURE,
   CERTIFICATION_DECISION_REQUEST,
   CERTIFICATION_DECISION_SUCCESS,
   CERTIFICATION_REVIEW_FAILURE,
   CERTIFICATION_REVIEW_REQUEST,
   CERTIFICATION_REVIEW_SUCCESS,
+  EDIT_TRAINEE_FAILURE,
+  EDIT_TRAINEE_REQUEST,
   EDIT_TRAINEE_REQUEST_FAILURE,
   EDIT_TRAINEE_REQUEST_REQUEST,
   EDIT_TRAINEE_REQUEST_SUCCESS,
+  EDIT_TRAINEE_SUCCESS,
   FETCH_TRAINING_BY_ID_FAILURE,
   FETCH_TRAINING_BY_ID_REQUEST,
   FETCH_TRAINING_BY_ID_SUCCESS,
   MAKE_DECISION_FAILURE,
   MAKE_DECISION_REQUEST,
   MAKE_DECISION_SUCCESS,
+  REMOVE_TRAINEE_FAILURE,
+  REMOVE_TRAINEE_REQUEST,
   REMOVE_TRAINEE_REQUEST_FAILURE,
   REMOVE_TRAINEE_REQUEST_REQUEST,
   REMOVE_TRAINEE_REQUEST_SUCCESS,
+  REMOVE_TRAINEE_SUCCESS,
+  REQUEST_RESPONSE_FAILURE,
+  REQUEST_RESPONSE_REQUEST,
+  REQUEST_RESPONSE_SUCCESS,
   REQUEST_REVIEW_FAILURE,
   REQUEST_REVIEW_REQUEST,
   REQUEST_REVIEW_SUCCESS,
@@ -416,13 +428,16 @@ export const getTrades =
       });
   };
 
-export const getSurveyTrainee = async (dispatch: Dispatch<UnknownAction>, applicantId?: string) => {
+export const getSurveyTrainee = async (
+  dispatch: Dispatch<UnknownAction>,
+  applicantId?: string
+) => {
   dispatch({ type: GET_SURVEY_TRAINEES_LOADING });
-  
-  const url = applicantId 
+
+  const url = applicantId
     ? `/survey-trainee?applicantId=${applicantId}`
     : "/survey-trainee";
-    
+
   authorizedApi
     .get(url)
     .then((res) => {
@@ -1340,7 +1355,7 @@ export const requestEditTrainee =
       dispatch({ type: EDIT_TRAINEE_REQUEST_REQUEST });
       const res = await authorizedApi.post(
         `/training/${trainingId}/trainees/request-edit`,
-         {traineeIds}
+        { traineeIds }
       );
       dispatch({
         type: EDIT_TRAINEE_REQUEST_SUCCESS,
@@ -1388,6 +1403,122 @@ export const requestRemoveTrainee =
       dispatch({ type: REMOVE_TRAINEE_REQUEST_FAILURE, payload: err.message });
       notifications.show({
         message: "Failed to send trainee Remove Request!",
+        color: "red",
+      });
+    }
+  };
+
+export const makeTraineeActionRequestDecision =
+  (requestId: string, decision: "APPROVE" | "REJECT", message: string) =>
+  async (dispatch: any) => {
+    try {
+      dispatch({ type: REQUEST_RESPONSE_REQUEST });
+
+      const res = await authorizedApi.post(
+        `/training/trainees/request/${requestId}/make-decision`,
+        { decision, message }
+      );
+
+      dispatch({
+        type: REQUEST_RESPONSE_SUCCESS,
+        payload: res.data.data,
+      });
+
+      notifications.show({
+        message: `Request ${decision.toLowerCase()}d successfully!`,
+        color: "green",
+      });
+    } catch (err: any) {
+      dispatch({ type: REQUEST_RESPONSE_FAILURE, payload: err.message });
+      notifications.show({
+        message: "Failed to make decision!",
+        color: "red",
+      });
+    }
+  };
+
+export const editTrainee =
+  (traineeId: string, data: any) => async (dispatch: any) => {
+    try {
+      dispatch({ type: EDIT_TRAINEE_REQUEST });
+
+      const res = await authorizedApi.put(
+        `/training/trainee/${traineeId}/edit`,
+        data
+      );
+
+      dispatch({
+        type: EDIT_TRAINEE_SUCCESS,
+        payload: res.data.data.data,
+      });
+
+      notifications.show({
+        message: "Trainee updated successfully!",
+        color: "green",
+      });
+    } catch (err: any) {
+      dispatch({ type: EDIT_TRAINEE_FAILURE, payload: err.message });
+      notifications.show({
+        message: "Failed to update trainee!",
+        color: "red",
+      });
+    }
+  };
+
+// Add multiple trainees
+export const addTrainees =
+  (trainingId: string, trainees: any[]) => async (dispatch: any) => {
+    try {
+      dispatch({ type: ADD_TRAINEES_REQUEST });
+
+      const res = await authorizedApi.put(
+        `/training/${trainingId}/trainees/add`,
+        trainees
+      );
+
+      dispatch({
+        type: ADD_TRAINEES_SUCCESS,
+        payload: res.data.data.data.trainees,
+      });
+
+      notifications.show({
+        message: "Trainees added successfully!",
+        color: "green",
+      });
+    } catch (err: any) {
+      dispatch({ type: ADD_TRAINEES_FAILURE, payload: err.message });
+      notifications.show({
+        message:err?.response?.data?.message || "Failed to add trainees!",
+        color: "red",
+      });
+    }
+  };
+
+
+  export const removeTrainee =
+  (trainingId: string, traineeId: string) =>
+  async (dispatch: any) => {
+    try {
+      dispatch({ type: REMOVE_TRAINEE_REQUEST });
+
+      const res = await authorizedApi.put(
+        `/training/${trainingId}/trainees/remove`,
+        { traineeId }
+      );
+
+      dispatch({
+        type: REMOVE_TRAINEE_SUCCESS,
+        payload: { removedId: traineeId },
+      });
+
+      notifications.show({
+        message: "Trainee removed successfully!",
+        color: "green",
+      });
+    } catch (err: any) {
+      dispatch({ type: REMOVE_TRAINEE_FAILURE, payload: err.message });
+      notifications.show({
+        message: "Failed to remove trainee!",
         color: "red",
       });
     }

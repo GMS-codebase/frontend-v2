@@ -9,7 +9,7 @@ import { Checkbox } from "@mantine/core";
 import { Loader2 } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CertificationConfirmModal from "@/components/Modals/training/CertificationConfirmModal";
+import ConfirmationModal from "@/components/Modals/training/CertificationConfirmModal";
 
 type Props = {
   currentRole: string | null;
@@ -95,7 +95,7 @@ const CertificationGrid: FC<Props> = ({ currentRole, training }) => {
 
   return (
     <div className="flex flex-col gap-10 pt-10">
-      <CertificationConfirmModal
+      <ConfirmationModal
         isOpen={modalOpen}
         onClose={() => {
           setModalOpen(false);
