@@ -254,8 +254,6 @@ const Trainees = ({
     },
   ];
 
-  const handleAddTrainee = () => {};
-
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col lg:flex-row gap-5 lg:gap-0 lg:items-center justify-between">
@@ -290,7 +288,10 @@ const Trainees = ({
             )}
             {canAddTrainees ? (
               <Button
-                onClick={() => setIsOpenAddEditTrainee(true)}
+                onClick={() => {
+                  setSelectedTrainee(undefined);
+                  setIsOpenAddEditTrainee(true);
+                }}
                 className="!rounded-full bg-primary text-white gap-2 !py-3"
               >
                 <Pen2 />

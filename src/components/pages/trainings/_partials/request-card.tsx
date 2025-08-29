@@ -1,18 +1,12 @@
+import { FC, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { format } from "date-fns";
+import { Accordion, Button } from "@mantine/core";
 import ConfirmationModal from "@/components/Modals/training/CertificationConfirmModal";
-import Badge from "@/components/ui/Badge";
-import Button from "@/components/ui/Button";
 import { makeTraineeActionRequestDecision } from "@/services";
 import { IRequest } from "@/types/trainings";
-import { format } from "date-fns";
-import { FC, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
 
-type props = {
-  request: IRequest;
-  currentRole:string
-};
-
+// --- Helpers ---
 const getActionType = (
   requestType: IRequest["requestType"],
   action: "APPROVE" | "REJECT"
@@ -33,36 +27,36 @@ const renderStatusBadge = (status: string) => {
   switch (status) {
     case "REJECTED":
       return (
-        <Badge className="bg-red-100 text-red-800 hover:bg-red-100 px-3 py-1 rounded-full font-medium">
-          REJECTED
-        </Badge>
+        <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+          Rejected
+        </span>
       );
     case "APPROVED":
       return (
-        <Badge className="bg-green-100 text-green-800 hover:bg-green-100 px-3 py-1 rounded-full font-medium">
-          APPROVED
-        </Badge>
+        <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+          Approved
+        </span>
       );
     case "PENDING":
       return (
-        <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 px-3 py-1 rounded-full font-medium">
-          PENDING
-        </Badge>
+        <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+          Pending
+        </span>
       );
     default:
       return null;
   }
 };
 
-const RequestCard: FC<props> = ({ request,currentRole }) => {
+// --- Component ---
+const RequestCard: FC<{ request: IRequest; currentRole: string }> = ({
+  request,
+  currentRole,
+}) => {
   const dispatch = useDispatch();
+  const { decisionLoading } = useSelector((state: any) => state.trainings);
 
   const [modalOpen, setModalOpen] = useState(false);
-
-  const { decisionLoading, error } = useSelector(
-    (state: any) => state.trainings
-  );
-
   const [modalAction, setModalAction] = useState<
     | "ADD_APPROVE"
     | "EDIT_APPROVE"
@@ -82,7 +76,9 @@ const RequestCard: FC<props> = ({ request,currentRole }) => {
   const handleConfirm = (message?: string) => {
     if (!modalAction || !message) return;
     const decision = modalAction.includes("APPROVE") ? "APPROVE" : "REJECT";
-    dispatch(makeTraineeActionRequestDecision(request.uuid, decision, message) as any);
+    dispatch(
+      makeTraineeActionRequestDecision(request.uuid, decision, message) as any
+    );
   };
 
   useEffect(() => {
@@ -91,43 +87,86 @@ const RequestCard: FC<props> = ({ request,currentRole }) => {
     }
   }, [decisionLoading]);
 
-  return (
-    <div className="w-full">
-      {/* Header section */}
-      <div className="flex flex-col md:flex-row items-end md:items-center justify-between gap-2 py-2 rounded-lg">
-        <div className="flex items-start md:items-center gap-4 flex-1 w-full">
-          {renderStatusBadge(request.status)}
-          <div className="flex-1 min-w-0">
-            <div className="font-medium text-gray-900 mb-1 break-words">
-              {request.requestType.toLowerCase()}
-            </div>
-            <div className="text-gray-600 text-sm leading-relaxed break-words">
-              {request.reason}
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col items-end gap-3">
-          <div className="text-gray-500 text-sm md:ml-4 whitespace-nowrap">
-            {format(new Date(request.doneAt), "dd MMM yyyy")}
-          </div>
-          {request.status === "PENDING" && currentRole === "SDF_SECRETARIATE" && (
-            <div className="flex items-center gap-5">
-              <Button
-                onClick={() => handleOpenModal("REJECT")}
-                className="bg-danger hover:bg-danger/80 text-white"
-              >
-                Reject
-              </Button>
-              <Button
-                onClick={() => handleOpenModal("APPROVE")}
-                className="bg-primary hover:bg-primary/80 text-white"
-              >
-                Approve
-              </Button>
-            </div>
-          )}
+  const baseContent = (
+    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 w-full">
+      <div className="flex items-start gap-3 flex-1">
+        {renderStatusBadge(request.status)}
+        <div className="flex-1 min-w-0">
+          <p className="font-medium text-gray-900 capitalize mb-1 break-words">
+            {request.requestType.replace("_", " ").toLowerCase()}
+          </p>
+          <p className="text-gray-600 text-sm leading-relaxed break-words">
+            {request.reason}
+          </p>
         </div>
       </div>
+      <div className="flex flex-col items-end gap-2 text-sm text-gray-500">
+        <span>{format(new Date(request.doneAt), "dd MMM yyyy")}</span>
+        {request.status === "PENDING" && currentRole === "SDF_SECRETARIATE" && (
+          <div className="flex items-center gap-2">
+            <Button
+              color="red"
+              size="xs"
+              onClick={() => handleOpenModal("REJECT")}
+            >
+              Reject
+            </Button>
+            <Button
+              color="blue"
+              size="xs"
+              onClick={() => handleOpenModal("APPROVE")}
+            >
+              Approve
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="w-full border rounded-lg shadow-sm bg-white">
+      {request.status === "PENDING" ? (
+        <div className="p-4">{baseContent}</div>
+      ) : (
+        <Accordion variant="separated">
+          <Accordion.Item value="response">
+            <Accordion.Control>
+              <div className="p-2 w-full">{baseContent}</div>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <div className="border-t bg-gray-50 p-4 space-y-2 rounded-b-lg">
+                <div>
+                  <p className="text-sm font-medium text-gray-800">
+                    Responded by:
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {request.response?.user.firstname}{" "}
+                    {request.response?.user.lastname}
+                    {" - "}
+                    {request.response?.user.role} @{" "}
+                    {request.response?.user.institution}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">Message:</p>
+                  <p className="text-sm text-gray-600 whitespace-pre-line">
+                    {request.response?.message || "No message provided."}
+                  </p>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Responded on{" "}
+                  {format(
+                    new Date(request.response?.doneAt),
+                    "dd MMM yyyy HH:mm"
+                  )}
+                </p>
+              </div>
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion>
+      )}
+
       <ConfirmationModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -135,6 +174,7 @@ const RequestCard: FC<props> = ({ request,currentRole }) => {
         action={modalAction}
         decisionLoading={decisionLoading}
         traineeNumber={request.newTraineesRequested}
+        traineesIds={request.traineeIds}
       />
     </div>
   );

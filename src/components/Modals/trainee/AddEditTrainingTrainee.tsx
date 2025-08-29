@@ -1,10 +1,12 @@
 import { SolarCheckCircleBold, SolarUploadBold } from "@/components/core/icons";
-import { Training } from "@/types";
-import { ITraining, ITrainingTrainee } from "@/types/trainings";
+import { addTrainees, editTrainee } from "@/services";
+import { ITrainingTrainee } from "@/types/trainings";
 import { Modal, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import React, { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
 
 const AddEditTrainingTrainee = ({
   isOpenAddEditTrainee,
@@ -17,9 +19,10 @@ const AddEditTrainingTrainee = ({
   defaultData?: ITrainingTrainee;
   trainingId?: string;
 }) => {
-  console.log("default data==>", defaultData);
-
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { editTraineeLoading, addTraineesLoading } = useSelector(
+    (state: any) => state.trainings
+  );
   const [errors, setErrors] = useState<any>({});
   const [traineesFile, setTraineesFile] = useState<File | string | null>(null);
 
@@ -85,6 +88,24 @@ const AddEditTrainingTrainee = ({
     }));
   };
 
+  const reset = () => {
+    setTraineeData({
+      firstName: "",
+      lastName: "",
+      nationalId: "",
+      dob: "",
+      gender: "",
+      district: "",
+      disability: "",
+      parentPhoneNumber: "",
+      traineePhoneNumber: "",
+      trainingProgram: "",
+      educationLevel: "",
+      institutionName: "",
+      maritalStatus: "",
+    });
+  };
+
   const handleAddTrainee = () => {
     const newErrors: any = {
       firstName: !traineeData.firstName ? "First name is required" : "",
@@ -122,21 +143,7 @@ const AddEditTrainingTrainee = ({
     }
 
     setTrainees((prev) => [...prev, { ...traineeData }]);
-    setTraineeData({
-      firstName: "",
-      lastName: "",
-      nationalId: "",
-      dob: "",
-      gender: "",
-      district: "",
-      disability: "",
-      parentPhoneNumber: "",
-      traineePhoneNumber: "",
-      trainingProgram: "",
-      educationLevel: "",
-      institutionName: "",
-      maritalStatus: "",
-    });
+    reset();
     setErrors({});
   };
 
@@ -145,22 +152,24 @@ const AddEditTrainingTrainee = ({
   };
 
   const handleSubmit = async () => {
-    setLoading(true);
     setErrors({});
 
     if (defaultData) {
-      console.log("Updating trainee:==>", traineeData);
+      dispatch(editTrainee(defaultData.uuid, traineeData) as any);
     } else {
       if (!trainees.length && !traineesFile) {
         setErrors({ trainees: "Trainees or trainees file is required" });
-        setLoading(false);
         return notifications.show({
           message: "Please fill all required fields",
           color: "red",
         });
       }
-      console.log("Adding trainees:", trainees, traineesFile);
+      dispatch(addTrainees(trainingId!, trainees) as any);
     }
+    reset();
+    setTrainees([]);
+    setTraineesFile(null);
+    closeAddEditTrainee();
   };
 
   return (
@@ -490,10 +499,13 @@ const AddEditTrainingTrainee = ({
                 </button>
                 <button
                   onClick={handleSubmit}
-                  disabled={loading}
-                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-xl shadow-sm outline-none text-sm"
+                  disabled={addTraineesLoading || editTraineeLoading}
+                  className="w-full px-4 py-2 bg-blue-600 text-white flex items-center justify-center gap-5 rounded-xl shadow-sm outline-none text-sm"
                 >
-                  {loading
+                  {editTraineeLoading && (
+                    <Loader2 className="animate-spin mr-2" />
+                  )}
+                  {addTraineesLoading || editTraineeLoading
                     ? "Saving..."
                     : defaultData
                       ? "Update Trainee"

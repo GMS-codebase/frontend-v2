@@ -7,7 +7,7 @@ export interface IResponse {
   lastUpdatedBy: string | null;
   message: string;
   numberOfTraineesRequired: number | null;
-  status: "ACCEPTED" | "REJECTED" | string;
+  status: "APPROVED" | "REJECTED" | string;
   user?: {
     firstname: string;
     lastname: string;
@@ -26,6 +26,23 @@ export interface IRequest {
   newTraineesRequested?: number;
   answered: boolean;
   status: any;
+  traineeIds?: string[];
+  response: {
+    uuid: string;
+    deletedStatus: boolean;
+    doneAt: string;
+    message: string;
+    status: "APPROVED" | "REJECTED" | string;
+    user: {
+      firstname: string;
+      lastname: string;
+      email: string;
+      institution: string;
+      role: string;
+      position: string;
+      phoneNumber: string;
+    };
+  };
 }
 
 export interface ITraining {
@@ -59,7 +76,7 @@ export interface ITrainingTrainee {
   lastName: string;
   firstName: string;
   gender: "MALE" | "FEMALE" | string;
-  dob?:string;
+  dob?: string;
   district: string;
   disability: string;
   maritalStatus: "SINGLE" | "MARRIED" | "DIVORCED" | "WIDOWED" | string;
