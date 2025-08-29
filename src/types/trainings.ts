@@ -1,4 +1,3 @@
-
 export interface IResponse {
   uuid: string;
   deletedStatus: boolean;
@@ -8,11 +7,46 @@ export interface IResponse {
   lastUpdatedBy: string | null;
   message: string;
   numberOfTraineesRequired: number | null;
-  status: "ACCEPTED" | "REJECTED" | string;
+  status: "APPROVED" | "REJECTED" | string;
+  user?: {
+    firstname: string;
+    lastname: string;
+  };
+}
+
+export interface IRequest {
+  uuid: string;
+  deletedStatus: boolean;
+  doneAt: string;
+  lastUpdatedAt: string;
+  doneBy: any;
+  lastUpdatedBy: any;
+  requestType: "ADD_TRAINEES" | "REMOVE_TRAINEES" | "EDIT_TRAINEES";
+  reason: string;
+  newTraineesRequested?: number;
+  answered: boolean;
+  status: any;
+  traineeIds?: string[];
+  response: {
+    uuid: string;
+    deletedStatus: boolean;
+    doneAt: string;
+    message: string;
+    status: "APPROVED" | "REJECTED" | string;
+    user: {
+      firstname: string;
+      lastname: string;
+      email: string;
+      institution: string;
+      role: string;
+      position: string;
+      phoneNumber: string;
+    };
+  };
 }
 
 export interface ITraining {
-     uuid: string;
+  uuid: string;
   deletedStatus: boolean;
   doneAt: string;
   lastUpdatedAt: string;
@@ -26,22 +60,23 @@ export interface ITraining {
   competencies: string[];
   application: any;
   applicant: any;
+  traineesToAdd?: number;
   trainees: ITrainingTrainee[];
   trainingRequestResponses: IResponse[];
 }
 
-
 export interface ITrainingTrainee {
   uuid: string;
   deletedStatus: boolean;
-  doneAt: string;        
-  lastUpdatedAt: string; 
+  doneAt: string;
+  lastUpdatedAt: string;
   doneBy: string | null;
   lastUpdatedBy: string | null;
   nationalId: string;
   lastName: string;
   firstName: string;
   gender: "MALE" | "FEMALE" | string;
+  dob?: string;
   district: string;
   disability: string;
   maritalStatus: "SINGLE" | "MARRIED" | "DIVORCED" | "WIDOWED" | string;
@@ -54,5 +89,8 @@ export interface ITrainingTrainee {
   graduateStatus: "ONGOING" | "GRADUATED" | string;
   certificationRequested: boolean;
   certificationStatus: "PENDING" | "APPROVED" | "REJECTED" | string;
-  isAbleToBeEdited: boolean;
+  editRequested: boolean;
+  removalRequested: boolean;
+  canBeEdited: boolean;
+  canBeRemoved: boolean;
 }
