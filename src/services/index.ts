@@ -454,6 +454,8 @@ export const getSurveyTrainee = async (
       });
     });
 };
+
+// Removed getAllSurveyTrainees - now using direct API calls in components
 export const getForms = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_FORMS_LOADING });
   authorizedApi

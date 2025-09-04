@@ -137,7 +137,7 @@ const ViewTraineeModal = ({ isOpen, onClose, trainee }: ViewTraineeModalProps) =
               </div>
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-600">Residence Sector</label>
-                <p className="text-base font-medium text-gray-900">{trainee.residenceSector || "-"}</p>
+                <p className="text-base font-medium text-gray-900">{trainee.residenceSector || trainee.redidenceSector || "-"}</p>
               </div>
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-600">Cell</label>
@@ -149,6 +149,37 @@ const ViewTraineeModal = ({ isOpen, onClose, trainee }: ViewTraineeModalProps) =
               </div>
             </div>
           </div>
+
+          {/* Applicant Information Section */}
+          {trainee.applicant && (
+            <div className="bg-[#000F230A] rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">👨‍💼</span>
+                </div>
+                <h2 className="text-lg font-semibold text-gray-800">Applicant Information</h2>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-600">Applicant Name</label>
+                  <p className="text-base font-medium text-gray-900">{trainee.applicant.name || "-"}</p>
+                </div>
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-600">Applicant Email</label>
+                  <p className="text-base font-medium text-gray-900">{trainee.applicant.email || "-"}</p>
+                </div>
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-600">Applicant Phone</label>
+                  <p className="text-base font-medium text-gray-900">{trainee.applicant.phone || "-"}</p>
+                </div>
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-600">Address</label>
+                  <p className="text-base font-medium text-gray-900">{trainee.applicant.address || "-"}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Program Information Section */}
           <div className="bg-[#000F230A] rounded-2xl p-6">
