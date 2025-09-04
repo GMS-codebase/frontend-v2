@@ -1,14 +1,13 @@
 "use client";
 
 import { DataTable } from "@/components/core/data-table";
-import DeleteModal from "@/components/Modals/DeleteModal";
+import DeleteTraineeModal from "@/components/Modals/DeleteTranee";
 import AddEditTrainingTrainee from "@/components/Modals/trainee/AddEditTrainingTrainee";
 import Button from "@/components/ui/Button";
 import { ITraining, ITrainingTrainee } from "@/types/trainings";
 import { Menu } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ColumnDef } from "@tanstack/react-table";
-import Link from "next/link";
 import { useState } from "react";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { VscEdit, VscEye, VscTrash } from "react-icons/vsc";
@@ -219,7 +218,10 @@ const Trainees = ({
                   {row.original.canBeRemoved ? (
                     <Menu.Item
                       className="bg-[#F0F0F0] text-[#576074]"
-                      onClick={() => openDeleteTrainee()}
+                      onClick={() => {
+                        setSelectedTrainee(row.original);
+                        openDeleteTrainee();
+                      }}
                     >
                       <span className="flex items-center gap-3">
                         <VscTrash size={21} color="red" />
@@ -325,13 +327,13 @@ const Trainees = ({
         defaultData={selectedTrainee!}
       />
 
-      <DeleteModal
+      <DeleteTraineeModal
         closeModal={() => {
           closeDeleteTrainee();
           setSelectedTrainee(null);
         }}
+        trainingId={training.uuid}
         id={selectedTrainee?.uuid as any}
-        type="trainee"
         isOpenModal={isOpenDeleteTrainee}
       />
     </div>
