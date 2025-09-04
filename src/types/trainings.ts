@@ -63,6 +63,7 @@ export interface ITraining {
   traineesToAdd?: number;
   trainees: ITrainingTrainee[];
   trainingRequestResponses: IResponse[];
+  traineeRequests?:IRequest[]
 }
 
 export interface ITrainingTrainee {
