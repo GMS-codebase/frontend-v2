@@ -21,6 +21,7 @@ import { DELETE_BUDGET_LINE_SUCCESS } from "@/actions/BudgetLinesActions";
 import { DELETE_FORM_SUCCESS } from "@/actions/FormsActions";
 import { DELETE_SURVEY_SUCCESS } from "@/actions/SurveyActions";
 import { DELETE_SURVEY_TRAINEE_SUCCESS } from "@/actions/SurveyTraineeActions";
+import { REMOVE_TRAINEE_SUCCESS } from "@/actions/TrainingActions";
 
 // Redux action mappings
 const actionMappings = {
@@ -34,7 +35,7 @@ const actionMappings = {
   budgetLines: DELETE_BUDGET_LINE_SUCCESS,
   forms: DELETE_FORM_SUCCESS,
   trainings: DELETE_FORM_SUCCESS,
-  trainee:DELETE_FORM_SUCCESS,
+  trainee: REMOVE_TRAINEE_SUCCESS,
   surveys: DELETE_SURVEY_SUCCESS, // Added surveys action mapping
   surveyTrainee: DELETE_SURVEY_TRAINEE_SUCCESS, // Added surveys action mapping
 };
@@ -50,7 +51,7 @@ const routeMappings = {
   budgetLines: "/budgetlines/delete",
   forms: "/forms/delete",
   trainings: "/training/delete",
-  trainee:"/training/trainee",
+  trainee: "/training/trainee",
   surveys: "/survey/remove",
   surveyTrainee: "/survey-trainee",
 };
@@ -66,9 +67,9 @@ type DeleteType =
   | "budgetLines"
   | "forms"
   | "trainings"
-  |"trainee"
+  | "trainee"
   | "surveys"
-  | "surveyTrainee"
+  | "surveyTrainee";
 
 const DeleteModal = ({
   isOpenModal,
@@ -76,12 +77,14 @@ const DeleteModal = ({
   id,
   windowId,
   type,
+  deleteRoute,
 }: {
   isOpenModal: boolean;
   closeModal: () => void;
   id: string;
   windowId?: string;
   type: DeleteType;
+  deleteRoute?: string;
 }) => {
   const dispatch = useDispatch();
   const [deleteId, setDeleteId] = useState(id);
@@ -94,7 +97,7 @@ const DeleteModal = ({
   const onDelete = () => {
     setLoading(true);
     authorizedApi
-      .delete(`${routeMappings[type]}/${deleteId}`)
+      .delete(deleteRoute ? deleteRoute : `${routeMappings[type]}/${deleteId}`)
       .then(() => {
         notifications.show({
           message: `${capitalize(type.slice(0, -1))} is deleted successfully`,

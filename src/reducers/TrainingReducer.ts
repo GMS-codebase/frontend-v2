@@ -173,7 +173,13 @@ export const TrainingReducer = (state = initialState, action: any) => {
       return {
         ...state,
         decisionLoading: false,
-        // currentTraining: action.payload,
+        currentTraining: {
+          ...state.currentTraining,
+          traineeRequests: [
+            ...state.currentTraining.traineeRequests,
+            action.payload,
+          ],
+        },
       };
 
     case ADD_TRAINEE_REQUEST_FAILURE:
@@ -187,7 +193,13 @@ export const TrainingReducer = (state = initialState, action: any) => {
       return {
         ...state,
         decisionLoading: false,
-        // currentTraining: action.payload,
+        currentTraining: {
+          ...state.currentTraining,
+          traineeRequests: [
+            ...state.currentTraining.traineeRequests,
+            action.payload,
+          ],
+        },
       };
 
     case REMOVE_TRAINEE_REQUEST_FAILURE:
@@ -201,7 +213,13 @@ export const TrainingReducer = (state = initialState, action: any) => {
       return {
         ...state,
         decisionLoading: false,
-        // currentTraining: action.payload,
+        currentTraining: {
+          ...state.currentTraining,
+          traineeRequests: [
+            ...state.currentTraining.traineeRequests,
+            action.payload.request,
+          ],
+        },
       };
 
     case EDIT_TRAINEE_REQUEST_FAILURE:
@@ -214,7 +232,21 @@ export const TrainingReducer = (state = initialState, action: any) => {
       return {
         ...state,
         decisionLoading: false,
-        // currentTraining: action.payload,
+        currentTraining: {
+          ...state.currentTraining,
+          traineeRequests: state.currentTraining.traineeRequests.map(
+            (req: any) =>
+              req.uuid === action.payload.uuid
+                ? {
+                    ...req,
+                    status: action.payload.status,
+                    answered: action.payload.answered,
+                    lastUpdatedAt: action.payload.lastUpdatedAt,
+                    response: action.payload.response || req.response,
+                  }
+                : req
+          ),
+        },
       };
 
     case REQUEST_RESPONSE_FAILURE:
@@ -249,9 +281,7 @@ export const TrainingReducer = (state = initialState, action: any) => {
         addTraineesLoading: false,
         currentTraining: {
           ...state.currentTraining,
-          trainees: [
-            ...action?.payload,
-          ],
+          trainees: [...action?.payload],
         },
       };
 
@@ -269,7 +299,7 @@ export const TrainingReducer = (state = initialState, action: any) => {
         currentTraining: {
           ...state.currentTraining,
           trainees: state.currentTraining?.trainees.filter(
-            (trainee: any) => trainee.uuid !== action.payload.removedId
+            (trainee: any) => trainee.uuid !== action.payload.id
           ),
         },
       };
