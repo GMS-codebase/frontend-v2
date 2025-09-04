@@ -1335,6 +1335,7 @@ export const requestAddTrainee =
         type: ADD_TRAINEE_REQUEST_SUCCESS,
         payload: res.data.data.data,
       });
+      console.log(res.data.data.data);
       notifications.show({
         message: "Trainee Request sent successfully!",
         color: "green",
@@ -1421,7 +1422,7 @@ export const makeTraineeActionRequestDecision =
 
       dispatch({
         type: REQUEST_RESPONSE_SUCCESS,
-        payload: res.data.data,
+        payload: res.data.data.data,
       });
 
       notifications.show({
