@@ -1,11 +1,13 @@
 "use client";
 
 import { DataTable } from "@/components/core/data-table";
+import DeleteTraineeModal from "@/components/Modals/DeleteTranee";
+import AddEditTrainingTrainee from "@/components/Modals/trainee/AddEditTrainingTrainee";
 import Button from "@/components/ui/Button";
 import { ITraining, ITrainingTrainee } from "@/types/trainings";
 import { Menu } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { ColumnDef } from "@tanstack/react-table";
-import Link from "next/link";
 import { useState } from "react";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { VscEdit, VscEye, VscTrash } from "react-icons/vsc";
@@ -30,7 +32,13 @@ const Trainees = ({
 }: props) => {
   const trainees: ITrainingTrainee[] = training?.trainees;
 
+  const traineesToAdd = training?.traineesToAdd ?? 0;
+  const canAddTrainees = traineesToAdd > 0;
+
+  const [selectedTrainee, setSelectedTrainee] =
+    useState<ITrainingTrainee | null>();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isOpenAddEditTrainee, setIsOpenAddEditTrainee] = useState(false);
 
   const handleToggle = (id: string) => {
     setSelectedIds((prev) => {
@@ -41,6 +49,11 @@ const Trainees = ({
       return newIds;
     });
   };
+
+  const [
+    isOpenDeleteTrainee,
+    { open: openDeleteTrainee, close: closeDeleteTrainee },
+  ] = useDisclosure(false);
 
   const traineesColumns: ColumnDef<ITrainingTrainee>[] = [
     {
@@ -163,46 +176,77 @@ const Trainees = ({
               </Menu.Label>
               <Menu.Divider />
               <Menu.Item className="bg-[#F0F0F0]">
-                <Link
-                  href={`#`}
-                  className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                >
+                <span className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
                   <VscEye size={21} color="#576074" />
                   View
-                </Link>
+                </span>
               </Menu.Item>
               {currentRole === "APPLICANT" && (
                 <>
-                  <Menu.Item className="bg-[#F0F0F0]">
-                    <Link
-                      href={`#`}
+                  {row.original.canBeEdited ? (
+                    <Menu.Item
+                      className="bg-[#F0F0F0]"
+                      onClick={() => {
+                        setSelectedTrainee(row.original);
+                        setIsOpenAddEditTrainee(true);
+                      }}
+                    >
+                      <span className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
+                        <VscEdit size={21} color="blue" />
+                        Edit Trainee
+                      </span>
+                    </Menu.Item>
+                  ) : (
+                    <Menu.Item
+                      className="bg-[#F0F0F0]"
                       onClick={() => {
                         const newIds = [row.original.uuid];
                         setSelectedIds(newIds);
                         setSelectedTraineeIds(newIds);
                         handleEditTraineeRequest?.();
                       }}
-                      className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                      disabled={row.original.editRequested}
                     >
-                      <VscEdit size={21} color="blue" />
-                      Request Edit
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item className="bg-[#F0F0F0]">
-                    <Link
-                      href={`#`}
+                      <span className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
+                        <VscEdit size={21} color="blue" />
+                        {row.original.editRequested
+                          ? "Pending edit Request"
+                          : "Request Edit"}
+                      </span>
+                    </Menu.Item>
+                  )}
+                  {row.original.canBeRemoved ? (
+                    <Menu.Item
+                      className="bg-[#F0F0F0] text-[#576074]"
+                      onClick={() => {
+                        setSelectedTrainee(row.original);
+                        openDeleteTrainee();
+                      }}
+                    >
+                      <span className="flex items-center gap-3">
+                        <VscTrash size={21} color="red" />
+                        Delete
+                      </span>
+                    </Menu.Item>
+                  ) : (
+                    <Menu.Item
+                      className="bg-[#F0F0F0]"
                       onClick={() => {
                         const newIds = [row.original.uuid];
                         setSelectedIds(newIds);
                         setSelectedTraineeIds(newIds);
                         handleRemoveTraineeRequest?.();
                       }}
-                      className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
+                      disabled={row.original.removalRequested}
                     >
-                      <VscTrash size={21} color="red" />
-                      Request Delete
-                    </Link>
-                  </Menu.Item>
+                      <span className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
+                        <VscTrash size={21} color="red" />
+                        {row.original.removalRequested
+                          ? "Pending Delete Request"
+                          : "Request Delete"}
+                      </span>
+                    </Menu.Item>
+                  )}
                 </>
               )}
             </Menu.Dropdown>
@@ -211,6 +255,7 @@ const Trainees = ({
       ),
     },
   ];
+
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col lg:flex-row gap-5 lg:gap-0 lg:items-center justify-between">
@@ -243,13 +288,26 @@ const Trainees = ({
                 Request Edit Trainee/s
               </Button>
             )}
-            <Button
-              onClick={() => handleAddTraineeRequest?.()}
-              className="!rounded-full bg-primary text-white gap-2 !py-3"
-            >
-              <Pen2 />
-              Request Add Trainee/s
-            </Button>
+            {canAddTrainees ? (
+              <Button
+                onClick={() => {
+                  setSelectedTrainee(undefined);
+                  setIsOpenAddEditTrainee(true);
+                }}
+                className="!rounded-full bg-primary text-white gap-2 !py-3"
+              >
+                <Pen2 />
+                Add Trainee/s
+              </Button>
+            ) : (
+              <Button
+                onClick={() => handleAddTraineeRequest?.()}
+                className="!rounded-full bg-primary text-white gap-2 !py-3"
+              >
+                <Pen2 />
+                Request Add Trainee/s
+              </Button>
+            )}
           </div>
         )}
       </div>
@@ -261,6 +319,23 @@ const Trainees = ({
           noDataMessage={"You do not have any trainees yet"}
         />
       </div>
+
+      <AddEditTrainingTrainee
+        isOpenAddEditTrainee={isOpenAddEditTrainee}
+        closeAddEditTrainee={() => setIsOpenAddEditTrainee(false)}
+        trainingId={training?.uuid}
+        defaultData={selectedTrainee!}
+      />
+
+      <DeleteTraineeModal
+        closeModal={() => {
+          closeDeleteTrainee();
+          setSelectedTrainee(null);
+        }}
+        trainingId={training.uuid}
+        id={selectedTrainee?.uuid as any}
+        isOpenModal={isOpenDeleteTrainee}
+      />
     </div>
   );
 };

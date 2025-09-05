@@ -54,6 +54,11 @@ const sdfRoutes: Route[] = [
     icon: <Icons.SolarPaperclipRounded2Bold />,
   },
   {
+    label: "Survey Trainees",
+    path: "/sdf/s-trainees",
+    icon: <Icons.SolarUsersGroupTwoRoundedBold />,
+  },
+  {
     label: "Profile",
     path: "/sdf/profile",
     icon: <Icons.SolarUserCircleBold />,
