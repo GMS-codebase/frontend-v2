@@ -11,7 +11,7 @@ import {
   requestEditTrainee,
   requestRemoveTrainee,
 } from "@/services";
-import { IResponse, ITraining } from "@/types/trainings";
+import { IRequest, IResponse, ITraining } from "@/types/trainings";
 import { useSelector } from "react-redux";
 import { notifications } from "@mantine/notifications";
 import {
@@ -21,21 +21,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/another-select";
-import CertificationConfirmModal from "@/components/Modals/training/CertificationConfirmModal";
+import ConfirmationModal from "@/components/Modals/training/CertificationConfirmModal";
+import RequestCard from "./request-card";
 
-
-interface ResponseSectionProps {
+interface RequestsResponseSectionProps {
   training: ITraining;
   selectedRequest: string;
   setSelectedRequest: (value: string) => void;
   currentRole?: string;
   trainingResponse: IResponse[];
   selectedTraineeIds: string[];
-  traineeNames?: string[]; 
+  traineeNames?: string[];
+  trainingRequests: IRequest[];
 }
 
-const ResponseSection: FC<ResponseSectionProps> = ({
+const RequestResponseSection: FC<RequestsResponseSectionProps> = ({
   training,
+  trainingRequests,
   selectedRequest,
   setSelectedRequest,
   currentRole,
@@ -170,17 +172,31 @@ const ResponseSection: FC<ResponseSectionProps> = ({
       <h2 className="text-xl md:text-2xl font-bold text-primaryText">
         Responses
       </h2>
-
       <div className="space-y-4 bg-[#F6F6F6] px-5 py-3 md:px-10 md:py-9 rounded-[21px]">
-        {trainingResponse ? (
-          trainingResponse.map((response, idx) => (
-            <ResponseCard key={idx} response={response} />
-          ))
-        ) : (
-          <h2 className="text-gray-500 text-sm my-5 text-center">
-            No responses yet
-          </h2>
-        )}
+        <div>
+          {trainingResponse &&
+            trainingResponse.map((response, idx) => (
+              <ResponseCard key={idx} response={response} />
+            ))}
+        </div>
+        <div className="space-y-4">
+          {trainingRequests?.length > 0 &&
+            trainingRequests?.map((request, idx) => (
+              <RequestCard
+                key={idx}
+                request={request}
+                currentRole={currentRole!}
+              />
+            ))}
+        </div>
+        {!trainingResponse ||
+          (!trainingRequests && (
+            <div>
+              <h2 className="text-gray-500 text-sm my-5 text-center">
+                No Pending Request or Responses yet
+              </h2>
+            </div>
+          ))}
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 w-full mt-4">
           {/* Select */}
           <div className="w-full lg:w-auto">
@@ -288,7 +304,7 @@ const ResponseSection: FC<ResponseSectionProps> = ({
       </div>
 
       {/* Confirmation Modal */}
-      <CertificationConfirmModal
+      <ConfirmationModal
         isOpen={isConfirmModalOpen}
         onClose={() => {
           setIsConfirmModalOpen(false);
@@ -310,4 +326,4 @@ const ResponseSection: FC<ResponseSectionProps> = ({
   );
 };
 
-export default ResponseSection;
+export default RequestResponseSection;
