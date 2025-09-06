@@ -12,12 +12,28 @@ import { IPaginatedQuery } from "@/types/base.type";
 import ViewTraineeModal from "@/components/Modals/trainee/ViewTraineeModal";
 import { useDisclosure } from "@mantine/hooks";
 import rwandaLocations from "@/utils/location";
+import { useSelector } from "react-redux";
+import { SolarAddFolderBold } from "@/components/core/icons";
+import ImportTraineesModal from "@/components/Modals/trainee/ImportTraineesModal";
+import DeleteModal from "@/components/Modals/DeleteModal";
+import AddEditSurveyTrainee from "@/components/Modals/trainee/AddEditSurveyTrainee";
 
 const Page = () => {
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
     const [selectedTrainee, setSelectedTrainee] = useState<any>(null);
     const [isOpenView, { open: openView, close: closeView }] = useDisclosure(false);
+    const auth = useSelector((state: any) => state.auth);
+    const [
+        isOpenCreateEdit,
+        { open: openCreateEditModal, close: closeCreateEditModal },
+    ] = useDisclosure(false);
+    const [
+        isOpenImport,
+        { open: openImportModal, close: closeImportModal },
+    ] = useDisclosure(false);
+    const [isOpenDelete, { open: openDeleteModal, close: closeDeleteModal }] =
+        useDisclosure(false);
 
     // Data states
     const [trainees, setTrainees] = useState<any[]>([]);
@@ -331,8 +347,30 @@ const Page = () => {
 
     return (
         <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
+            <div className="flex items-center justify-end p-4">
+            <div className="flex gap-2">
+                    <button
+                        onClick={openImportModal}
+                        className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+                    >
+                        <span className="text-2xl">
+                            <SolarAddFolderBold />
+                        </span>
+                        <h1 className="text-base font-medium text-white">Import Trainees</h1>
+                    </button>
+                    <button
+                        onClick={openCreateEditModal}
+                        className="bg-primary text-white py-3 px-7 rounded-full flex flex-row items-center gap-3"
+                    >
+                        <span className="text-2xl">
+                            <SolarAddFolderBold />
+                        </span>
+                        <h1 className="text-base font-medium text-white">New Survey Trainee</h1>
+                    </button>
+                </div>
+            </div>
             {/* Header with Search */}
-            <div className="w-full flex justify-between items-center p-4 gap-4">
+            <div className="w-full flex flex-col md:flex-row justify-between items-center p-4 gap-4">
                 <div className="relative w-full md:w-[20rem]">
                     <span className="absolute top-4 left-4">
                         <CiSearch size={25} color="" />
@@ -345,7 +383,7 @@ const Page = () => {
                         placeholder="Search trainees..."
                     />
                 </div>
-                <div className="w-full">
+                <div className="flex-grow">
                     <div className="flex items-center w-full">
                         <button
                             onClick={() => handleScroll("left")}
@@ -407,8 +445,6 @@ const Page = () => {
                 </div>
             </div>
 
-            {/* Filters with Horizontal Scroll */}
-
 
             {/* Data Table */}
             <div className="w-full h-full">
@@ -435,6 +471,29 @@ const Page = () => {
                 isOpen={isOpenView}
                 onClose={closeView}
                 trainee={selectedTrainee}
+            />
+            <ImportTraineesModal
+                isOpen={isOpenImport}
+                onClose={closeImportModal}
+                applicantId={auth?.userProfile?.uuid}
+            />
+            <DeleteModal
+                isOpenModal={isOpenDelete}
+                closeModal={() => {
+                    closeDeleteModal();
+                    setSelectedTrainee(null);
+                }}
+                type="surveyTrainee"
+                id={selectedTrainee?.uuid}
+            />
+            <AddEditSurveyTrainee
+                isOpenAddEditSurveyTrainee={isOpenCreateEdit}
+                closeAddEditSurveyTrainee={() => {
+                    closeCreateEditModal();
+                    setSelectedTrainee(null);
+                }}
+                defaultData={selectedTrainee}
+                applicantId={auth?.userProfile?.uuid}
             />
         </div>
     );
