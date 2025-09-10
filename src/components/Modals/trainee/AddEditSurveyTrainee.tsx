@@ -50,6 +50,37 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    // Utility function to add numbered prefixes to duplicate values
+    const addNumberedPrefixes = (items: { value: string; label: string }[]): { value: string; label: string }[] => {
+        const valueCount = new Map<string, number>();
+        const processedItems: { value: string; label: string }[] = [];
+
+        items.forEach(item => {
+            const originalValue = item.value;
+            const count = valueCount.get(originalValue) || 0;
+            valueCount.set(originalValue, count + 1);
+
+            if (count === 0) {
+                // First occurrence, keep original
+                processedItems.push(item);
+            } else {
+                // Duplicate, add numbered prefix
+                processedItems.push({
+                    value: originalValue,
+                    label: `(${count + 1})- ${item.label}`
+                });
+            }
+        });
+
+        return processedItems;
+    };
+
+    // Utility function to remove numbered prefixes from values
+    const removeNumberedPrefixes = (value: string): string => {
+        // Remove pattern like "(2)- " from the beginning of the value
+        return value.replace(/^\(\d+\)- /, '');
+    };
+
     // Get location options using rwandaLocations utility
     const ProvincesOptions = rwandaLocations.getProvinces();
     const DistrictOptions = formData.province ? rwandaLocations.getDistricts(formData.province) : [];
@@ -131,23 +162,22 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
 
     // Get all unique windows from applications
     console.log(applicationsInfo);
-    const MultiWindowData = applicationsInfo?.filter(window => 
+    const MultiWindowData = addNumberedPrefixes(
+        applicationsInfo?.filter(window => 
             window?.status === WINDOW_STATUS.ACTIVE &&
             window?.subWindows.some(sub => sub.status === SUBWINDOW_STATUS.ACTIVE)
         )
         .map(window => ({
                 value: window.uuid,
                 label: window.title,
-        }))
-        .filter((window, index, self) => 
-            index === self.findIndex(w => w.value === window.value)
-        );
+        })) || []
+    );
 
     // Get subwindows for selected window
     const getSubWindowsData = () => {
         if (!formData.windowId) return [];
         
-        return applicationsInfo?.filter(window => window.uuid === formData.windowId)
+        const subWindows = applicationsInfo?.filter(window => window.uuid === formData.windowId)
             .flatMap(window => 
                 window.subWindows
                     .filter(sub => sub.status === SUBWINDOW_STATUS.ACTIVE)
@@ -156,13 +186,15 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
                         label: subWindow.title,
                     }))
             ) || [];
+        
+        return addNumberedPrefixes(subWindows);
     };
 
     // Get sectors for selected subwindow
     const getSectorData = () => {
         if (!formData.subWindowId) return [];
         
-        const sectorMap = new Map();
+        const sectors: { value: string; label: string }[] = [];
         
         applicationsInfo?.forEach(window => {
             window.subWindows.forEach(subWindow => {
@@ -173,8 +205,8 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
                                 trade => trade.trade.status === TRADE_STATUS.ACTIVE
                             );
                             
-                            if (hasActiveTrades && !sectorMap.has(sector.uuid)) {
-                                sectorMap.set(sector.uuid, {
+                            if (hasActiveTrades) {
+                                sectors.push({
                                     value: sector.uuid,
                                     label: sector.name,
                                 });
@@ -185,7 +217,7 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
             });
         });
         
-        return Array.from(sectorMap.values());
+        return addNumberedPrefixes(sectors);
     };
 
     // Get trades for selected sector
@@ -211,7 +243,7 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
             });
         });
         
-        return trades;
+        return addNumberedPrefixes(trades);
     };
 
     // Reset dependent fields when parent selection changes
@@ -352,8 +384,17 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
         setLoading(true);
 
         // Prepare request data with applicantId if provided
-        const requestData = {
+        // Remove numbered prefixes from form data before submitting
+        const cleanedFormData = {
             ...formData,
+            windowId: removeNumberedPrefixes(formData.windowId),
+            subWindowId: removeNumberedPrefixes(formData.subWindowId),
+            sectorId: removeNumberedPrefixes(formData.sectorId),
+            tradeId: removeNumberedPrefixes(formData.tradeId),
+        };
+
+        const requestData = {
+            ...cleanedFormData,
             ...(applicantId && { applicantId }),
         };
 
