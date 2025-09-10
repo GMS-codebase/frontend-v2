@@ -50,35 +50,16 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    // Utility function to add numbered prefixes to duplicate values
-    const addNumberedPrefixes = (items: { value: string; label: string }[]): { value: string; label: string }[] => {
-        const valueCount = new Map<string, number>();
-        const processedItems: { value: string; label: string }[] = [];
-
-        items.forEach(item => {
-            const originalValue = item.value;
-            const count = valueCount.get(originalValue) || 0;
-            valueCount.set(originalValue, count + 1);
-
-            if (count === 0) {
-                // First occurrence, keep original
-                processedItems.push(item);
-            } else {
-                // Duplicate, add numbered prefix
-                processedItems.push({
-                    value: originalValue,
-                    label: `(${count + 1})- ${item.label}`
-                });
+    // Utility function to remove duplicate values, keeping only the first occurrence
+    const removeDuplicates = (items: { value: string; label: string }[]): { value: string; label: string }[] => {
+        const seen = new Set<string>();
+        return items.filter(item => {
+            if (seen.has(item.value)) {
+                return false; // Skip duplicate
             }
+            seen.add(item.value);
+            return true; // Keep first occurrence
         });
-
-        return processedItems;
-    };
-
-    // Utility function to remove numbered prefixes from values
-    const removeNumberedPrefixes = (value: string): string => {
-        // Remove pattern like "(2)- " from the beginning of the value
-        return value.replace(/^\(\d+\)- /, '');
     };
 
     // Get location options using rwandaLocations utility
@@ -162,7 +143,7 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
 
     // Get all unique windows from applications
     console.log(applicationsInfo);
-    const MultiWindowData = addNumberedPrefixes(
+    const MultiWindowData = removeDuplicates(
         applicationsInfo?.filter(window => 
             window?.status === WINDOW_STATUS.ACTIVE &&
             window?.subWindows.some(sub => sub.status === SUBWINDOW_STATUS.ACTIVE)
@@ -187,7 +168,7 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
                     }))
             ) || [];
         
-        return addNumberedPrefixes(subWindows);
+        return removeDuplicates(subWindows);
     };
 
     // Get sectors for selected subwindow
@@ -217,7 +198,7 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
             });
         });
         
-        return addNumberedPrefixes(sectors);
+        return removeDuplicates(sectors);
     };
 
     // Get trades for selected sector
@@ -243,7 +224,7 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
             });
         });
         
-        return addNumberedPrefixes(trades);
+        return removeDuplicates(trades);
     };
 
     // Reset dependent fields when parent selection changes
@@ -384,17 +365,8 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
         setLoading(true);
 
         // Prepare request data with applicantId if provided
-        // Remove numbered prefixes from form data before submitting
-        const cleanedFormData = {
-            ...formData,
-            windowId: removeNumberedPrefixes(formData.windowId),
-            subWindowId: removeNumberedPrefixes(formData.subWindowId),
-            sectorId: removeNumberedPrefixes(formData.sectorId),
-            tradeId: removeNumberedPrefixes(formData.tradeId),
-        };
-
         const requestData = {
-            ...cleanedFormData,
+            ...formData,
             ...(applicantId && { applicantId }),
         };
 
