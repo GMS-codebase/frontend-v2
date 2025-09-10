@@ -10,6 +10,14 @@ import { getSurveyTrainee } from "@/services";
 import { getApplicantApplicationsInfo, ApplicantApplicationInfo } from "@/services/api/survey";
 import * as XLSX from 'xlsx';
 import rwandaLocations from "@/utils/location";
+import { 
+  validateTrainees, 
+  ValidationError, 
+  ValidationResult, 
+  TraineeData, 
+  formatPhoneNumber, 
+  normalizeGender 
+} from "@/utils/validation/traineeValidation";
 
 interface Props {
   isOpen: boolean;
@@ -17,18 +25,8 @@ interface Props {
   applicantId?: string;
 }
 
-interface ImportedTrainee {
-  firstName: string;
-  lastName: string;
-  nationalId: string;
-  phoneNumber: string;
-  dob: string;
-  gender: string;
-  province: string;
-  district: string;
-  sector: string;
-  cell: string;
-  village: string;
+interface ImportedTrainee extends TraineeData {
+  // Using TraineeData interface from validation utils
 }
 
 const ImportTraineesModal: React.FC<Props> = ({
@@ -44,12 +42,44 @@ const ImportTraineesModal: React.FC<Props> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [importedData, setImportedData] = useState<ImportedTrainee[]>([]);
   const [showPreview, setShowPreview] = useState(false);
+  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
   const [selectedSelections, setSelectedSelections] = useState({
     windowId: "",
     subWindowId: "",
     sectorId: "",
     tradeId: "",
   });
+
+  // Utility function to add numbered prefixes to duplicate values
+  const addNumberedPrefixes = (items: { value: string; label: string }[]): { value: string; label: string }[] => {
+    const valueCount = new Map<string, number>();
+    const processedItems: { value: string; label: string }[] = [];
+
+    items.forEach(item => {
+      const originalValue = item.value;
+      const count = valueCount.get(originalValue) || 0;
+      valueCount.set(originalValue, count + 1);
+
+      if (count === 0) {
+        // First occurrence, keep original
+        processedItems.push(item);
+      } else {
+        // Duplicate, add numbered prefix
+        processedItems.push({
+          value: originalValue,
+          label: `(${count + 1})- ${item.label}`
+        });
+      }
+    });
+
+    return processedItems;
+  };
+
+  // Utility function to remove numbered prefixes from values
+  const removeNumberedPrefixes = (value: string): string => {
+    // Remove pattern like "(2)- " from the beginning of the value
+    return value.replace(/^\(\d+\)- /, '');
+  };
 
   // Fetch applicant applications info on component mount
   React.useEffect(() => {
@@ -75,23 +105,22 @@ const ImportTraineesModal: React.FC<Props> = ({
   }, [isOpen, applicantId]);
 
   // Get all unique windows from applications
-  const MultiWindowData = applicationsInfo?.filter(window => 
-    window?.status === WINDOW_STATUS.ACTIVE &&
-    window?.subWindows.some(sub => sub.status === SUBWINDOW_STATUS.ACTIVE)
-  )
-  .map(window => ({
-    value: window.uuid,
-    label: window.title,
-  }))
-  .filter((window, index, self) => 
-    index === self.findIndex(w => w.value === window.value)
+  const MultiWindowData = addNumberedPrefixes(
+    applicationsInfo?.filter(window => 
+      window?.status === WINDOW_STATUS.ACTIVE &&
+      window?.subWindows.some(sub => sub.status === SUBWINDOW_STATUS.ACTIVE)
+    )
+    .map(window => ({
+      value: window.uuid,
+      label: window.title,
+    })) || []
   );
 
   // Get subwindows for selected window
   const getSubWindowsData = () => {
     if (!selectedSelections.windowId) return [];
     
-    return applicationsInfo?.filter(window => window.uuid === selectedSelections.windowId)
+    const subWindows = applicationsInfo?.filter(window => window.uuid === selectedSelections.windowId)
       .flatMap(window => 
         window.subWindows
           .filter(sub => sub.status === SUBWINDOW_STATUS.ACTIVE)
@@ -100,13 +129,15 @@ const ImportTraineesModal: React.FC<Props> = ({
             label: subWindow.title,
           }))
       ) || [];
+    
+    return addNumberedPrefixes(subWindows);
   };
 
   // Get sectors for selected subwindow
   const getSectorData = () => {
     if (!selectedSelections.windowId || !selectedSelections.subWindowId) return [];
     
-    return applicationsInfo?.filter(window => window.uuid === selectedSelections.windowId)
+    const sectors = applicationsInfo?.filter(window => window.uuid === selectedSelections.windowId)
       .flatMap(window => 
         window.subWindows
           .filter(sub => sub.uuid === selectedSelections.subWindowId && sub.status === SUBWINDOW_STATUS.ACTIVE)
@@ -119,13 +150,15 @@ const ImportTraineesModal: React.FC<Props> = ({
               }))
           )
       ) || [];
+    
+    return addNumberedPrefixes(sectors);
   };
 
   // Get trades for selected sector
   const getTradesData = () => {
     if (!selectedSelections.windowId || !selectedSelections.subWindowId || !selectedSelections.sectorId) return [];
     
-    return applicationsInfo?.filter(window => window.uuid === selectedSelections.windowId)
+    const trades = applicationsInfo?.filter(window => window.uuid === selectedSelections.windowId)
       .flatMap(window => 
         window.subWindows
           .filter(sub => sub.uuid === selectedSelections.subWindowId && sub.status === SUBWINDOW_STATUS.ACTIVE)
@@ -142,6 +175,8 @@ const ImportTraineesModal: React.FC<Props> = ({
               )
           )
       ) || [];
+    
+    return addNumberedPrefixes(trades);
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -188,28 +223,54 @@ const ImportTraineesModal: React.FC<Props> = ({
           const row = jsonData[i] as any[];
           if (row.length >= expectedHeaders.length) {
             const trainee: ImportedTrainee = {
-              firstName: row[headers.indexOf('firstName')] || '',
-              lastName: row[headers.indexOf('lastName')] || '',
-              nationalId: row[headers.indexOf('nationalId')] || '',
-              phoneNumber: row[headers.indexOf('phoneNumber')] || '',
-              dob: row[headers.indexOf('dob')] || '',
-              gender: row[headers.indexOf('gender')] || '',
-              province: row[headers.indexOf('province')] || '',
-              district: row[headers.indexOf('district')] || '',
-              sector: row[headers.indexOf('sector')] || '',
-              cell: row[headers.indexOf('cell')] || '',
-              village: row[headers.indexOf('village')] || '',
+              firstName: (row[headers.indexOf('firstName')] || '').toString().trim(),
+              lastName: (row[headers.indexOf('lastName')] || '').toString().trim(),
+              nationalId: (row[headers.indexOf('nationalId')] || '').toString().trim(),
+              phoneNumber: formatPhoneNumber((row[headers.indexOf('phoneNumber')] || '').toString()),
+              dob: (row[headers.indexOf('dob')] || '').toString().trim(),
+              gender: normalizeGender((row[headers.indexOf('gender')] || '').toString()),
+              province: (row[headers.indexOf('province')] || '').toString().trim(),
+              district: (row[headers.indexOf('district')] || '').toString().trim(),
+              sector: (row[headers.indexOf('sector')] || '').toString().trim(),
+              cell: (row[headers.indexOf('cell')] || '').toString().trim(),
+              village: (row[headers.indexOf('village')] || '').toString().trim(),
             };
             
-            // Only add if required fields are present
-            if (trainee.firstName && trainee.lastName && trainee.nationalId) {
-              trainees.push(trainee);
-            }
+            // Add all trainees for validation, even if some fields are empty
+            trainees.push(trainee);
           }
         }
         
-        setImportedData(trainees);
+        // Validate all trainees
+        const validation = validateTrainees(trainees);
+        setValidationResult(validation);
+        
+        // Only show valid trainees in preview
+        const validTrainees = trainees.filter((_, index) => {
+          const traineeValidation = validation.errors.filter(error => error.row === index + 2);
+          return traineeValidation.length === 0;
+        });
+        
+        setImportedData(validTrainees);
         setShowPreview(true);
+        
+        // Show validation summary
+        if (validation.errors.length > 0) {
+          notifications.show({
+            message: `Found ${validation.errors.length} validation errors. Please review the data before importing.`,
+            color: "orange",
+          });
+        } else if (validation.warnings.length > 0) {
+          notifications.show({
+            message: `Found ${validation.warnings.length} warnings. Please review before importing.`,
+            color: "yellow",
+          });
+        } else {
+          notifications.show({
+            message: `Successfully parsed ${trainees.length} trainees. All data is valid.`,
+            color: "green",
+          });
+        }
       } catch (error) {
         console.error("Error parsing Excel file:", error);
         notifications.show({
@@ -239,15 +300,25 @@ const ImportTraineesModal: React.FC<Props> = ({
       return;
     }
 
+    // Check for validation errors
+    if (validationResult && validationResult.errors.length > 0) {
+      notifications.show({
+        message: `Cannot import trainees with ${validationResult.errors.length} validation errors. Please fix the errors first.`,
+        color: "red",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       // Create FormData for multipart/form-data
+      // Remove numbered prefixes from form data before submitting
       const formData = new FormData();
       formData.append('file', selectedFile);
-      formData.append('windowId', selectedSelections.windowId);
-      formData.append('subwindowId', selectedSelections.subWindowId);
-      formData.append('tradeId', selectedSelections.tradeId);
-      formData.append('sectorId', selectedSelections.sectorId);
+      formData.append('windowId', removeNumberedPrefixes(selectedSelections.windowId));
+      formData.append('subwindowId', removeNumberedPrefixes(selectedSelections.subWindowId));
+      formData.append('tradeId', removeNumberedPrefixes(selectedSelections.tradeId));
+      formData.append('sectorId', removeNumberedPrefixes(selectedSelections.sectorId));
       if (applicantId) formData.append('applicantId', applicantId);
 
       // Import trainees using the new API endpoint
@@ -292,11 +363,24 @@ const ImportTraineesModal: React.FC<Props> = ({
   };
 
   const handleDownloadTemplate = () => {
-    // Create template data with the new column structure
+    // Create template data with the new column structure and validation hints
     const templateData = [
       ['firstName', 'lastName', 'nationalId', 'phoneNumber', 'dob', 'gender', 'province', 'district', 'sector', 'cell', 'village'],
       ['John', 'Doe', '1234567890123456', '+250123456789', '1990-01-01', 'MALE', 'Kigali', 'Gasabo', 'Bumbogo', 'Bumbogo', 'Bumbogo I'],
       ['Jane', 'Smith', '9876543210987654', '+250987654321', '1992-05-15', 'FEMALE', 'Kigali', 'Kicukiro', 'Gatenga', 'Gatenga', 'Gatenga I'],
+      ['', '', '', '', '', '', '', '', '', '', ''],
+      ['VALIDATION RULES:', '', '', '', '', '', '', '', '', '', ''],
+      ['firstName: Required, 2-50 chars, letters only', '', '', '', '', '', '', '', '', '', ''],
+      ['lastName: Required, 2-50 chars, letters only', '', '', '', '', '', '', '', '', '', ''],
+      ['nationalId: Required, exactly 16 digits', '', '', '', '', '', '', '', '', '', ''],
+      ['phoneNumber: Required, Rwandan format (+250123456789)', '', '', '', '', '', '', '', '', '', ''],
+      ['dob: Required, YYYY-MM-DD format, age 16-100', '', '', '', '', '', '', '', '', '', ''],
+      ['gender: Required, MALE/FEMALE/M/F', '', '', '', '', '', '', '', '', '', ''],
+      ['province: Required, must be valid Rwanda province', '', '', '', '', '', '', '', '', '', ''],
+      ['district: Required, must be valid for selected province', '', '', '', '', '', '', '', '', '', ''],
+      ['sector: Required, must be valid for selected district', '', '', '', '', '', '', '', '', '', ''],
+      ['cell: Required, must be valid for selected sector', '', '', '', '', '', '', '', '', '', ''],
+      ['village: Required, must be valid for selected cell', '', '', '', '', '', '', '', '', '', ''],
     ];
 
     // Create workbook and worksheet
@@ -314,6 +398,7 @@ const ImportTraineesModal: React.FC<Props> = ({
     setSelectedFile(null);
     setImportedData([]);
     setShowPreview(false);
+    setValidationResult(null);
     setSelectedSelections({
       windowId: "",
       subWindowId: "",
@@ -475,7 +560,7 @@ const ImportTraineesModal: React.FC<Props> = ({
               <Divider />
               <div className="flex justify-between items-center">
                 <p className="text-lg font-bold">
-                  Preview ({importedData.length} trainees)
+                  Preview ({importedData.length} valid trainees)
                 </p>
                 <Button
                   variant="subtle"
@@ -532,6 +617,77 @@ const ImportTraineesModal: React.FC<Props> = ({
             </div>
           )}
 
+          {/* Validation Errors Display */}
+          {validationResult && (validationResult.errors.length > 0 || validationResult.warnings.length > 0) && (
+            <div className="space-y-4">
+              <Divider />
+              <div className="flex justify-between items-center">
+                <p className="text-lg font-bold text-red-600">
+                  Validation Issues
+                </p>
+                <Button
+                  variant="subtle"
+                  onClick={() => setShowPreview(false)}
+                  size="sm"
+                >
+                  Hide Details
+                </Button>
+              </div>
+              
+              {/* Errors */}
+              {validationResult.errors.length > 0 && (
+                <div className="space-y-2">
+                  <p className="font-semibold text-red-600">
+                    Errors ({validationResult.errors.length})
+                  </p>
+                  <div className="max-h-40 overflow-y-auto border border-red-200 rounded-lg bg-red-50">
+                    {validationResult.errors.slice(0, 20).map((error, index) => (
+                      <div key={index} className="px-3 py-2 border-b border-red-200 last:border-b-0">
+                        <div className="text-sm">
+                          <span className="font-medium text-red-800">
+                            Row {error.row || 'N/A'}, {error.field}:
+                          </span>
+                          <span className="text-red-700 ml-2">{error.message}</span>
+                        </div>
+                      </div>
+                    ))}
+                    {validationResult.errors.length > 20 && (
+                      <div className="px-3 py-2 text-center text-red-600 text-sm">
+                        ... and {validationResult.errors.length - 20} more errors
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+              
+              {/* Warnings */}
+              {validationResult.warnings.length > 0 && (
+                <div className="space-y-2">
+                  <p className="font-semibold text-yellow-600">
+                    Warnings ({validationResult.warnings.length})
+                  </p>
+                  <div className="max-h-40 overflow-y-auto border border-yellow-200 rounded-lg bg-yellow-50">
+                    {validationResult.warnings.slice(0, 10).map((warning, index) => (
+                      <div key={index} className="px-3 py-2 border-b border-yellow-200 last:border-b-0">
+                        <div className="text-sm">
+                          <span className="font-medium text-yellow-800">
+                            {warning.field}:
+                          </span>
+                          <span className="text-yellow-700 ml-2">{warning.message}</span>
+                        </div>
+                      </div>
+                    ))}
+                    {validationResult.warnings.length > 10 && (
+                      <div className="px-3 py-2 text-center text-yellow-600 text-sm">
+                        ... and {validationResult.warnings.length - 10} more warnings
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Action Buttons */}
           <div className="flex justify-end gap-3 pt-4">
             <Button
@@ -545,10 +701,18 @@ const ImportTraineesModal: React.FC<Props> = ({
               onClick={handleImport}
               disabled={loading || !selectedFile || !showPreview || 
                        !selectedSelections.windowId || !selectedSelections.subWindowId || 
-                       !selectedSelections.sectorId || !selectedSelections.tradeId}
-              className="bg-[#005DE9] hover:bg-[#005DE9]"
+                       !selectedSelections.sectorId || !selectedSelections.tradeId ||
+                       (validationResult?.errors && validationResult.errors.length > 0)}
+              className={`${
+                validationResult?.errors && validationResult.errors.length > 0 
+                  ? "bg-red-500 hover:bg-red-600" 
+                  : "bg-[#005DE9] hover:bg-[#005DE9]"
+              }`}
             >
-              {loading ? "Importing..." : `Import ${importedData.length} Trainees`}
+              {loading ? "Importing..." : 
+               validationResult?.errors && validationResult.errors.length > 0 
+                 ? `Cannot Import (${validationResult?.errors?.length || 0} errors)` 
+                 : `Import ${importedData.length} Trainees`}
             </Button>
           </div>
         </div>
