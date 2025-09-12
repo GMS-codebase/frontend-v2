@@ -1,45 +1,81 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/core/data-table";
-import { HiDotsHorizontal } from "react-icons/hi";
-import { CiSearch } from "react-icons/ci";
-import { Menu, Select } from "@mantine/core";
-import { useRef, useState, useMemo, useEffect } from "react";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { useSelector } from "react-redux";
-import Link from "next/link";
-import { VscEye } from "react-icons/vsc";
+import EmployeeApplicationsPage from "@/components/pages/applications/employees";
 import {
-  getApplicationsPaginated,
-  getApplicationStatus,
   getApplicationStatus2,
   getEmployeeApplicationsPaginated,
-  shortenString,
 } from "@/services";
-import { UnknownAction } from "redux";
-import { useDispatch } from "react-redux";
+import { IPaginatedQuery } from "@/types/base.type";
 import { filterByStep } from "@/utils/funcs";
-import EmployeeApplicationsPage from "@/components/pages/applications/employees";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { UnknownAction } from "redux";
 const Page = () => {
-  const {
-    applications: rawApplications,
-    loading,
-    page,
-  } = useSelector((state: any) => state.applications);
-  const [limit, setLimit] = useState(10);
   const dispatch = useDispatch();
+
+  const {
+    paginatedApplications,
+    paginationLoading,
+    total: totalApplications,
+    page: currentPageFromRedux,
+  } = useSelector((state: any) => state.applications);
+
+  // Local state for pagination
+  const [paginateOpts, setLocalPaginateOpts] = useState<
+    IPaginatedQuery & { totalPages: number }
+  >({
+    page: (currentPageFromRedux ?? 1) - 1,
+    limit: 10,
+    totalPages: 1,
+  });
+
+  useEffect(() => {
+    setLocalPaginateOpts((prev) => ({
+      ...prev,
+      totalPages: Math.ceil((totalApplications ?? 0) / (prev?.limit ?? 10)),
+    }));
+  }, [totalApplications]);
+
+  // Fetch data whenever page or limit changes
   useEffect(() => {
     dispatch(
-      getEmployeeApplicationsPaginated(page, limit) as unknown as UnknownAction,
+      getEmployeeApplicationsPaginated(
+        (paginateOpts.page ?? 0) + 1,
+        paginateOpts.limit
+      ) as unknown as UnknownAction
     );
-  }, [dispatch, page, limit]);
+  }, [dispatch, paginateOpts.page, paginateOpts.limit]);
+
+  const setPaginateOpts: React.Dispatch<
+    React.SetStateAction<IPaginatedQuery & { totalPages: number }>
+  > = (value) => {
+    if (typeof value === "function") {
+      setLocalPaginateOpts((prev) => {
+        const next = value(prev);
+        dispatch(
+          getEmployeeApplicationsPaginated(
+            (next.page ?? 0) + 1,
+            next.limit
+          ) as unknown as UnknownAction
+        );
+        return next;
+      });
+    } else {
+      setLocalPaginateOpts(value);
+      dispatch(
+        getEmployeeApplicationsPaginated(
+          (value.page ?? 0) + 1,
+          value.limit
+        ) as unknown as UnknownAction
+      );
+    }
+  };
+
   const { stages } = useSelector((state: any) => state.empStages);
-  console.log(stages);
 
   const applications = useMemo(
     () =>
-      rawApplications
+      paginatedApplications
         .map((app: any) => ({
           ...app,
           sector: app.sectors?.[0] || null,
@@ -47,11 +83,11 @@ const Page = () => {
         }))
         .filter((app: any) => {
           const matchingStage = stages.find(
-            (stage: any) => stage.sector == app.sector.name,
+            (stage: any) => stage.sector == app.sector.name
           );
           return matchingStage;
         }),
-    [rawApplications, stages],
+    [paginatedApplications, stages]
   );
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -78,8 +114,8 @@ const Page = () => {
               searchTerm.toLowerCase() ||
                 app.applicant?.businesses?.[0]?.businessName
                   .toLowerCase()
-                  .includes(searchTerm.toLowerCase()),
-            ),
+                  .includes(searchTerm.toLowerCase())
+            )
       )
       .filter((app: any) => {
         const { stage, window, call, subWindow, sector, trade, step } =
@@ -103,11 +139,17 @@ const Page = () => {
         currentStage: getApplicationStatus2(app),
       }))}
       type="employee"
-      loading={loading}
+      loading={paginationLoading}
       selectedFilters={selectedFilters}
       setSelectedFilters={setSelectedFilters}
       searchTerm={searchTerm}
       setSearchTerm={setSearchTerm}
+      totalApplications={totalApplications}
+      paginationProps={{
+        isPaginated: true,
+        paginateOpts,
+        setPaginateOpts,
+      }}
     />
   );
 };

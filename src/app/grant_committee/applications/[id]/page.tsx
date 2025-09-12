@@ -1,39 +1,27 @@
 "use client";
-import React, { useState } from "react";
-import IndicativeBudget from "@/components/ApplicantDetails/IndicativeBudget";
-import {
-  SolarFileBold,
-  SolarFolder2Bold,
-  SolarEyeLinear,
-  SolarPen2Bold,
-} from "@/components/core/icons";
-import { useParams } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { Comments } from "@/types";
-import FundingQuestions from "@/components/Application/FundingQuestions";
-import { authorizedApi } from "@/utils/api";
-import { notifications } from "@mantine/notifications";
-import MakeEvaluationDecision from "@/components/Modals/MakeDecision";
-import EditEvalModal from "@/components/Modals/EditEvalModal";
-import EvaluationDetails from "@/components/Modals/EvaluationDetails";
-import { useDisclosure } from "@mantine/hooks";
-import BudgetQuestions from "@/components/Application/BudgetQuestions";
-import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
-import DueDetails from "@/components/Modals/MakeFirstDueDiligencyDecision";
-import DueDiligenceModal from "@/components/Modals/DueDiigence";
-import { getApplications } from "@/services";
-import NullifyModal from "@/components/Modals/Nullify";
 import DueDiligencyDetails from "@/components/Modals/DueDiligencyDetails";
+import EvaluationDetails from "@/components/Modals/EvaluationDetails";
 import GrantCommitteeDetails from "@/components/Modals/GrantCommitteeDetails";
+import MakeGrantCommitteeDecision from "@/components/Modals/MakeGrantCommitteeDecision";
+import NullifyModal from "@/components/Modals/Nullify";
+import {
+  SolarPen2Bold
+} from "@/components/core/icons";
 import Form from "@/components/forms/Form";
+import { getApplicationsPaginated } from "@/services";
 import { ApplicationStage } from "@/types/application";
-import { UnknownAction } from "redux";
+import { authorizedApi } from "@/utils/api";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { useParams } from "next/navigation";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const Page = () => {
   const { id } = useParams<{ id: string }>();
   const applications = useSelector((state: any) => state.applications);
   const forms = useSelector((state: any) => state.forms);
-  const application = applications?.applications?.filter(
+  const application = applications?.paginatedApplications?.filter(
     (application: any) => application.uuid === id,
   )[0];
   const [
@@ -70,7 +58,7 @@ const Page = () => {
   const refetch = async () => {
     setDecisionsLoading(true);
     try {
-      await getApplications(dispatch);
+      await getApplicationsPaginated(dispatch);
     } finally {
       setDecisionsLoading(false);
     }
@@ -104,7 +92,7 @@ const Page = () => {
     setNullifyLoading(null);
   };
 
-  if (applications.loading) {
+  if (applications.paginationLoading) {
     return (
       <div className="h-full w-full flex items-center justify-center text-sm">
         Loading ...
