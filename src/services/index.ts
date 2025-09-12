@@ -172,6 +172,9 @@ import {
   FETCH_TRAINING_BY_ID_FAILURE,
   FETCH_TRAINING_BY_ID_REQUEST,
   FETCH_TRAINING_BY_ID_SUCCESS,
+  GET_CERTIFIED_TRAINEES_FAILURE,
+  GET_CERTIFIED_TRAINEES_REQUEST,
+  GET_CERTIFIED_TRAINEES_SUCCESS,
   MAKE_DECISION_FAILURE,
   MAKE_DECISION_REQUEST,
   MAKE_DECISION_SUCCESS,
@@ -613,25 +616,31 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_STAGES_ERROR, payload: err?.response?.data?.error });
     });
 };
-export const getApplicationsForContractSigning = async (
-  dispatch: Dispatch<UnknownAction>
-) => {
-  dispatch({ type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING });
-  authorizedApi
-    .get("/negotiation-contract/applications/sdf/ready-contract-signing")
-    .then((res) => {
-      dispatch({
-        type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
-        payload: res.data.data.data,
+export const getApplicationsForContractSigning =
+  (page?: any, limit?: any) => async (dispatch: Dispatch) => {
+    dispatch({ type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING });
+    authorizedApi
+      .get(
+        `/negotiation-contract/applications/sdf/ready-contract-signing?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      )
+      .then((res) => {
+        dispatch({
+          type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
+          payload: {
+            applications: res?.data?.data?.data?.data,
+            total: res?.data?.data?.data.total,
+            page: res?.data?.data?.data?.page,
+            totalPages: res?.data?.data?.data?.totalPages,
+          },
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_APPLICATIONS_ERROR,
+          payload: err?.response?.data?.error,
+        });
       });
-    })
-    .catch((err) => {
-      dispatch({
-        type: GET_APPLICATIONS_ERROR,
-        payload: err?.response?.data?.error,
-      });
-    });
-};
+  };
 export const getApplications = async (dispatch: Dispatch) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
 
@@ -706,9 +715,9 @@ export const getEmployeeApplicationsPaginated =
       dispatch({
         type: GET_PAGINATED_APPLICATIONS_SUCCESS,
         payload: {
-          applications: response?.data?.data?.data.data,
-          total: response?.data?.data?.data.total,
-          page: response?.data?.data?.data?.page,
+          applications: response?.data?.data?.data?.items,
+          total: response?.data?.data?.data?.meta?.totalItems,
+          page: response?.data?.data?.data?.meta?.currentPage,
         },
       });
     } catch (error: any) {
@@ -1491,16 +1500,14 @@ export const addTrainees =
     } catch (err: any) {
       dispatch({ type: ADD_TRAINEES_FAILURE, payload: err.message });
       notifications.show({
-        message:err?.response?.data?.message || "Failed to add trainees!",
+        message: err?.response?.data?.message || "Failed to add trainees!",
         color: "red",
       });
     }
   };
 
-
-  export const removeTrainee =
-  (trainingId: string, traineeId: string) =>
-  async (dispatch: any) => {
+export const removeTrainee =
+  (trainingId: string, traineeId: string) => async (dispatch: any) => {
     try {
       dispatch({ type: REMOVE_TRAINEE_REQUEST });
 
@@ -1525,6 +1532,32 @@ export const addTrainees =
         color: "red",
       });
     }
+  };
+
+export const getCertifiedTrainees =
+  (page?: any, limit?: any) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: GET_CERTIFIED_TRAINEES_REQUEST });
+    authorizedApi
+      .get(
+        `/training/certified-trainees?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      )
+      .then((res) => {
+        dispatch({
+          type: GET_CERTIFIED_TRAINEES_SUCCESS,
+          payload: {
+            applications: res?.data?.data?.data.trainees ?? [],
+            total: res?.data?.data?.data.total ?? 0,
+            page: res?.data?.data?.data?.page ?? 1,
+            totalPages: res?.data?.data?.data?.totalPages ?? 1,
+          },
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_CERTIFIED_TRAINEES_FAILURE,
+          payload: err?.response?.data?.error,
+        });
+      });
   };
 
 // Export the new survey API function

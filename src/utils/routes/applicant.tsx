@@ -1,6 +1,7 @@
 "use client";
 import * as Icons from "@/components/core/icons";
 import { Route } from "@/types";
+import { FaCertificate } from "react-icons/fa";
 import { PeopleNearby } from "solar-icon-set";
 
 const applicantRoutes: Route[] = [
@@ -29,10 +30,15 @@ const applicantRoutes: Route[] = [
     path: "/applicant/trainees",
     icon: <Icons.SolarUsersGroupRoundedBold />,
   },
-    {
+  {
     label: "Trainings",
     path: "/applicant/trainings",
     icon: <Icons.SolarFolderWithFilesBold />,
+  },
+  {
+    label: "Certifications",
+    path: "/applicant/certifications",
+    icon: <Icons.SolarFileBold />,
   },
   {
     label: "Contacts",

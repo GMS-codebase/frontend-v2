@@ -74,7 +74,7 @@ const Navbar = () => {
                 ? "TRAINEE"
                 : active.startsWith("/survey_trainee")
                   ? "SURVEY_TRAINEE"
-                : null;
+                  : null;
 
     setCurrentRole(role);
   }, [active]);
@@ -207,12 +207,12 @@ const Navbar = () => {
             getAppeals(dispatch, "sdf"),
             getApplicationsForContractSigning(dispatch),
             getProfile(dispatch),
-            getForms(dispatch)
+            getForms(dispatch),
           ]);
         } else if (currentRole === "GRANT_COMMITTEE") {
-          await Promise.all([getApplications(dispatch), getProfile(dispatch)]);
-        }else if (currentRole === "SURVEY_TRAINEE") {
-          await Promise.all([ getProfile(dispatch)]);
+          await Promise.all([getProfile(dispatch)]);
+        } else if (currentRole === "SURVEY_TRAINEE") {
+          await Promise.all([getProfile(dispatch)]);
         } else if (currentRole === "APPLICANT") {
           await Promise.all([
             getApplicantProfile(dispatch),
@@ -245,7 +245,6 @@ const Navbar = () => {
 
   const { profile } = useSelector((state: any) => state.profile);
   const { applicantProfile } = useSelector((state: any) => state.profile);
-
 
   // Get display name based on user type
   const getDisplayName = () => {

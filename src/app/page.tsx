@@ -25,9 +25,9 @@ import TraineeLoginModal from "@/components/Modals/auth/TraineeLogin";
 
 function Page() {
   const dispatch = useDispatch();
-  useEffect(() => {
-    getCalls(dispatch);
-  }, []);
+  // useEffect(() => {
+  //   getCalls(dispatch);
+  // }, []);
   const { calls, loading: loadingCalls } = useSelector(
     (state: any) => state.calls
   );
