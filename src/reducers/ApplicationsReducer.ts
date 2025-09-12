@@ -41,7 +41,7 @@ type Action = {
 
 export default function ApplicationsReducer(
   state = initialState,
-  action: Action,
+  action: Action
 ) {
   switch (action.type) {
     case GET_APPLICATIONS_LOADING:
@@ -90,7 +90,10 @@ export default function ApplicationsReducer(
       return {
         ...state,
         applicationsReadyForContractSigningLoading: false,
-        applicationsForContractSigning: action.payload,
+        applicationsForContractSigning: action.payload.applications,
+        total: action.payload.total,
+        page: action.payload.page,
+        totalPages: action.payload.totalPages,
       };
     case GET_MY_APPLICATIONS_READY_FOR_MINUTES_NEGOTIATION_SUCCESS:
       return {
@@ -115,7 +118,7 @@ export default function ApplicationsReducer(
         ...state,
         isError: true,
         loading: false,
-        myApplicationsLoading:false,
+        myApplicationsLoading: false,
         error: action.payload,
       };
 
@@ -134,7 +137,7 @@ export default function ApplicationsReducer(
         applications: state.applications.map((application: Application) =>
           application.uuid === action.payload.id
             ? { ...application, ...action.payload.data }
-            : application,
+            : application
         ),
         error: null,
         isError: false,
@@ -145,7 +148,7 @@ export default function ApplicationsReducer(
       return {
         ...state,
         applications: state.applications.filter(
-          (application: Application) => application.uuid !== action.payload.id,
+          (application: Application) => application.uuid !== action.payload.id
         ),
         error: null,
         isError: false,

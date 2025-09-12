@@ -1,6 +1,7 @@
 "use client";
 import * as Icons from "@/components/core/icons";
 import { Route } from "@/types";
+import { FaCertificate } from "react-icons/fa";
 
 const sdfRoutes: Route[] = [
   {
@@ -42,6 +43,11 @@ const sdfRoutes: Route[] = [
     label: "Trainings",
     path: "/sdf/trainings",
     icon: <Icons.SolarFolderWithFilesBold />,
+  },
+  {
+    label: "Certifications",
+    path: "/sdf/certifications",
+    icon: <Icons.SolarFileBold />,
   },
   {
     label: "M&E and OSHE Reports",
