@@ -187,7 +187,6 @@ const Page = () => {
     trainings?.filter((training: Training) =>
       training?.title?.toLowerCase().includes(searchQuery.toLowerCase())
     ) ?? [];
-  console.log("Filtered Trainings:", filteredTrainings);
 
   const applicationId = applications?.myApplications?.find(
     (app: any) => app.currentStage === "CONTRACT_SIGNING"
