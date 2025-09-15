@@ -33,6 +33,7 @@ import {
   REMOVE_TRAINEE_REQUEST_REQUEST,
   REMOVE_TRAINEE_REQUEST_SUCCESS,
   REMOVE_TRAINEE_SUCCESS,
+  REMOVE_TRAINING_SUCCESS,
   REQUEST_RESPONSE_FAILURE,
   REQUEST_RESPONSE_REQUEST,
   REQUEST_RESPONSE_SUCCESS,
@@ -79,7 +80,7 @@ export const TrainingReducer = (state = initialState, action: any) => {
         ),
         loading: false,
       };
-    case "DELETE_TRAINING_SUCCESS":
+    case REMOVE_TRAINING_SUCCESS:
       return {
         ...state,
         trainings: state.trainings.filter(

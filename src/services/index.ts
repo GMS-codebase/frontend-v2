@@ -1543,7 +1543,7 @@ export const getCertifiedTrainees =
         dispatch({
           type: GET_CERTIFIED_TRAINEES_SUCCESS,
           payload: {
-            applications: res?.data?.data?.data.trainees ?? [],
+            trainees: res?.data?.data?.data ?? [],
             total: res?.data?.data?.data.total ?? 0,
             page: res?.data?.data?.data?.page ?? 1,
             totalPages: res?.data?.data?.data?.totalPages ?? 1,
