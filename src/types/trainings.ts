@@ -91,6 +91,7 @@ export interface ITrainingTrainee {
   certificationRequested: boolean;
   certificationStatus: "PENDING" | "APPROVED" | "REJECTED" | string;
   editRequested: boolean;
+  certificatePath?:string;
   removalRequested: boolean;
   canBeEdited: boolean;
   canBeRemoved: boolean;

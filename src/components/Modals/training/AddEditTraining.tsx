@@ -127,12 +127,15 @@ const AddEditTraining = ({
         title: defaultData.title,
         startDate: defaultData.startDate.toString(),
         endDate: defaultData.endDate.toString(),
-        competencies: defaultData.competencies || [],
+        competencies:
+          JSON.parse(defaultData.competencies.join(",") as string) || [],
         applicationId: defaultData.applicationId || applicationId || "",
       });
       setTrainingManual(defaultData.trainingManual || null);
       setTraineesFile(defaultData.traineesFile || null);
-      setCompetencies(defaultData.competencies || []);
+      setCompetencies(
+        JSON.parse(defaultData.competencies.join(",") as string) || []
+      );
       setTrainees(defaultData.trainees || []);
     }
   }, [defaultData, applicationId]);
