@@ -1,7 +1,7 @@
 "use client";
 
 import { DataTable } from "@/components/core/data-table";
-import { getCertifiedTrainees } from "@/services";
+import { getCertifiedTrainees, handleDownloadFile } from "@/services";
 import { IPaginatedQuery } from "@/types/base.type";
 import { ITrainingTrainee } from "@/types/trainings";
 import { Menu, Select } from "@mantine/core";
@@ -129,24 +129,6 @@ const CertifiedTraineesContainer = () => {
       ),
     },
     {
-      accessorKey: "institutionName",
-      header: "Institution Name",
-      cell: ({ row }) => (
-        <div className="w-full truncate max-w-[180px]">
-          {row.original?.institutionName}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "graduateStatus",
-      header: "Graduate Status",
-      cell: ({ row }) => (
-        <div className="w-full truncate max-w-[180px] text-center">
-          {row.original?.graduateStatus}
-        </div>
-      ),
-    },
-    {
       accessorKey: "gender",
       header: "Gender",
       cell: ({ row }) => <div className="w-full">{row.original?.gender}</div>,
@@ -173,13 +155,18 @@ const CertifiedTraineesContainer = () => {
                 <h1 className="text-lg">Actions</h1>
               </Menu.Label>
               <Menu.Divider />
-              <Menu.Item className="bg-[#F0F0F0]">
+              {/* <Menu.Item className="bg-[#F0F0F0]">
                 <span className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
                   <VscEye size={21} color="#576074" />
                   Preview
                 </span>
-              </Menu.Item>
-              <Menu.Item className="bg-[#F0F0F0]">
+              </Menu.Item> */}
+              <Menu.Item
+                className="bg-[#F0F0F0]"
+                onClick={() =>
+                  handleDownloadFile(row?.original?.certificatePath, "training")
+                }
+              >
                 <span className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
                   <Download size={21} color="#576074" />
                   Download
@@ -193,7 +180,7 @@ const CertifiedTraineesContainer = () => {
   ];
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex flex-col md:flex-row md:justify-between items-center p-4 gap-4">
+      <div className="w-full flex flex-col md:flex-row md:justify-end items-center p-4 gap-4">
         <div className="relative lg:w-[25rem] w-full mt-4 lg:mt-0">
           <span className="absolute top-4 left-2">
             <BiSearch size={25} />
@@ -207,7 +194,7 @@ const CertifiedTraineesContainer = () => {
           />
         </div>
 
-        <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+        {/* <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
           <FilterDropDown
             placeholderText="Filter By status"
             data={["ACCEPTED", "REJECTED", "UNDER REVIEW"]}
@@ -226,7 +213,7 @@ const CertifiedTraineesContainer = () => {
             placeholderText="Filter By Sector"
             data={["Manufacturing", "Constrution"]}
           />
-        </div>
+        </div> */}
       </div>
 
       <div className="w-full h-full">
