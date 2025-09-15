@@ -1,6 +1,5 @@
 "use client";
 
-import { PDFViewerContainer } from "@/components/PDFViewer/pdf-viewer-container";
 import Button from "@/components/ui/Button";
 import { getTrainingById, requestTrainingReview } from "@/services";
 import { Loader2 } from "lucide-react";
@@ -12,6 +11,7 @@ import CompetenciesSection from "./_partials/competence-section";
 import DetailsSection from "./_partials/details-section";
 import RequestResponseSection from "./_partials/response-section";
 import Trainees from "./_partials/trainees";
+import TrainingManualCard from "./_partials/training-manual-card";
 
 type props = {
   trainingId: string;
@@ -108,8 +108,10 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
             </Button>
           ) : null}
         </div>
-        <div className="py-10 flex flex-col gap-10">
-          <PDFViewerContainer pdfUrl={training?.trainingManual as string} />
+        <div className=" py-5 flex flex-col gap-10">
+          <div className="grid md:grid-cols-2">
+            <TrainingManualCard filePath={training?.trainingManual as string} />
+          </div>
           <CompetenciesSection
             competencies={
               training?.competencies
@@ -127,7 +129,7 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
             setSelectedTraineeIds={setSelectedTraineeIds}
           />
           <CertificationGrid currentRole={currentRole} training={training} />
-          
+
           <div ref={responseRef}>
             <RequestResponseSection
               training={training}
