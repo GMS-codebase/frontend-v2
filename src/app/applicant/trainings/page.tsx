@@ -10,33 +10,99 @@ import { useState, useEffect } from "react";
 import { Menu } from "@mantine/core";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
-import Link from "next/link";
 import { VscEye } from "react-icons/vsc";
 import DeleteModal from "@/components/Modals/DeleteModal";
+import Link from "next/link";
 import { Training } from "@/types";
 import AddEditTraining from "@/components/Modals/training/AddEditTraining";
-import { getTrainings, requestTrainingReview } from "@/services";
+import {
+  getMyApplications,
+  getTrainings,
+  requestTrainingReview,
+} from "@/services";
+import { IPaginatedQuery } from "@/types/base.type";
+import { UnknownAction } from "redux";
+import { useDebounce } from "use-debounce";
 
 const Page = () => {
   const dispatch = useDispatch();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch] = useDebounce(searchQuery, 500);
+
   const [
     isOpenAddEditTraining,
     { open: openAddEditTraining, close: closeAddEditTraining },
   ] = useDisclosure(false);
+
   const [
     isOpenDeleteTraining,
     { open: openDeleteTraining, close: closeDeleteTraining },
   ] = useDisclosure(false);
+
   const [selectedTraining, setSelectedTraining] = useState<Training | null>(
     null
   );
-  const [searchQuery, setSearchQuery] = useState("");
-  const { trainings, loading } = useSelector((state: any) => state.trainings);
+
   const applications = useSelector((state: any) => state.applications);
 
+  const {
+    trainings,
+    loading,
+    total: totalTrainings,
+    page: currentPageFromRedux,
+  } = useSelector((state: any) => state.trainings);
+
+  // Local state for pagination
+  const [paginateOpts, setLocalPaginateOpts] = useState<
+    IPaginatedQuery & { totalPages: number }
+  >({
+    page: (currentPageFromRedux ?? 1) - 1,
+    limit: 10,
+    totalPages: 1,
+  });
+
   useEffect(() => {
-    getTrainings(dispatch);
-  }, [dispatch]);
+    setLocalPaginateOpts((prev) => ({
+      ...prev,
+      totalPages: Math.ceil((totalTrainings ?? 0) / (prev?.limit ?? 10)),
+    }));
+  }, [totalTrainings]);
+
+  // Fetch data whenever page or limit changes
+  useEffect(() => {
+    dispatch(
+      getTrainings(
+        (paginateOpts.page ?? 0) + 1,
+        paginateOpts.limit,
+        debouncedSearch
+      ) as unknown as UnknownAction
+    );
+  }, [dispatch, paginateOpts.page, paginateOpts.limit, debouncedSearch]);
+
+  const setPaginateOpts: React.Dispatch<
+    React.SetStateAction<IPaginatedQuery & { totalPages: number }>
+  > = (value) => {
+    if (typeof value === "function") {
+      setLocalPaginateOpts((prev) => {
+        const next = value(prev);
+        dispatch(
+          getTrainings(
+            (next.page ?? 0) + 1,
+            next.limit
+          ) as unknown as UnknownAction
+        );
+        return next;
+      });
+    } else {
+      setLocalPaginateOpts(value);
+      dispatch(
+        getTrainings(
+          (value.page ?? 0) + 1,
+          value.limit
+        ) as unknown as UnknownAction
+      );
+    }
+  };
 
   const columns: ColumnDef<any>[] = [
     {
@@ -185,11 +251,6 @@ const Page = () => {
     },
   ];
 
-  const filteredTrainings =
-    trainings?.filter((training: Training) =>
-      training?.title?.toLowerCase().includes(searchQuery.toLowerCase())
-    ) ?? [];
-
   const applicationId = applications?.myApplications?.find(
     (app: any) => app.currentStage === "CONTRACT_SIGNING"
   )?.uuid;
@@ -224,13 +285,19 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable
           columns={columns}
-          data={filteredTrainings || []}
+          data={trainings ?? []}
           loading={loading}
           noDataMessage={
             searchQuery
               ? `No trainings matching "${searchQuery}"`
               : "You do not have any trainings yet"
           }
+          totalApplications={totalTrainings}
+          paginationProps={{
+            isPaginated: true,
+            paginateOpts,
+            setPaginateOpts,
+          }}
         />
       </div>
 

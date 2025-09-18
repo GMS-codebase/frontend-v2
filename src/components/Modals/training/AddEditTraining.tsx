@@ -86,8 +86,6 @@ const AddEditTraining = ({
   const [competencies, setCompetencies] = useState<string[]>([]);
   const [competenceInput, setCompetenceInput] = useState("");
   const dispatch = useDispatch();
-  // const myApplications = useSelector((state: any) => state.applications);
-  // console.log(myApplications.myApplications);
 
   const {
     myApplications,

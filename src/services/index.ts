@@ -1173,20 +1173,32 @@ export const getApplicationStatus2 = (application: any) => {
   }
 };
 
-export const getTrainings = async (dispatch: any) => {
-  try {
-    dispatch({ type: "FETCH_TRAININGS_REQUEST" });
-    const res = await authorizedApi.get("/training/by-applicant");
-    dispatch({
-      type: "SET_TRAININGS",
-      payload: res.data.data.data,
-    });
-    console.log("Trainings fetched successfully:", res.data.data.data);
-  } catch (err) {
-    console.error("Failed to fetch trainings:", err);
-    dispatch({ type: "SET_TRAININGS", payload: [] });
-  }
-};
+export const getTrainings =
+  (page?: any, limit?: any, search?: string) => async (dispatch: any) => {
+    try {
+      dispatch({ type: "FETCH_TRAININGS_REQUEST" });
+      const params = new URLSearchParams();
+
+      params.append("page", page === 0 ? "1" : page.toString());
+      params.append("limit", limit.toString());
+      if (search) params.append("search", search);
+
+      const res = await authorizedApi.get(
+        `/training/by-applicant?${params.toString()}`
+      );
+      dispatch({
+        type: "SET_TRAININGS",
+        payload: {
+          trainings: res.data.data.data,
+          total: res.data.data.data.total ?? 0,
+          page: res.data.data.data.page ?? 1,
+        },
+      });
+    } catch (err) {
+      console.error("Failed to fetch trainings:", err);
+      dispatch({ type: "SET_TRAININGS", payload: [] });
+    }
+  };
 
 export const getSDFTrainings =
   (page?: any, limit?: any) => async (dispatch: any) => {
@@ -1535,12 +1547,18 @@ export const removeTrainee =
   };
 
 export const getCertifiedTrainees =
-  (page?: any, limit?: any) => async (dispatch: Dispatch<UnknownAction>) => {
+  (page?: any, limit?: any, search?: string) =>
+  async (dispatch: Dispatch<UnknownAction>) => {
     dispatch({ type: GET_CERTIFIED_TRAINEES_REQUEST });
+
+    const params = new URLSearchParams();
+
+    params.append("page", page === 0 ? "1" : page.toString());
+    params.append("limit", limit.toString());
+    if (search) params.append("search", search);
+
     authorizedApi
-      .get(
-        `/training/certified-trainees?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
-      )
+      .get(`/training/certified-trainees?${params.toString()}`)
       .then((res) => {
         dispatch({
           type: GET_CERTIFIED_TRAINEES_SUCCESS,
