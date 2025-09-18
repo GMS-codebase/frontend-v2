@@ -77,6 +77,12 @@ const CertifiedTraineesContainer = () => {
     }
   };
 
+  const filteredCertifiedTrainees = certifiedTrainees.filter((trainee: ITrainingTrainee) =>
+   trainee.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+   trainee.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+   trainee.nationalId.toLowerCase().includes(searchQuery.toLowerCase())
+)??[];
+
   const FilterDropDown = ({
     placeholderText,
     data,
@@ -219,7 +225,7 @@ const CertifiedTraineesContainer = () => {
       <div className="w-full h-full">
         <DataTable
           columns={traineesColumns}
-          data={certifiedTrainees}
+          data={filteredCertifiedTrainees}
           loading={loadingCertifiedTrainees}
           noDataMessage={
             searchQuery
