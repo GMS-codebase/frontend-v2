@@ -63,7 +63,13 @@ const initialState = {
 export const TrainingReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case "SET_TRAININGS":
-      return { ...state, trainings: action.payload, loading: false };
+      return {
+        ...state,
+        trainings: action.payload.trainings,
+        loading: false,
+        total: action.payload.total,
+        page: action.payload.page,
+      };
     case "FETCH_TRAININGS_REQUEST":
       return { ...state, loading: true };
     case ADD_TRAINING_SUCCESS:

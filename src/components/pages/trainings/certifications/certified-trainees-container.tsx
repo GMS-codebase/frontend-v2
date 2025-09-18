@@ -14,10 +14,12 @@ import { VscEye } from "react-icons/vsc";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { UnknownAction } from "redux";
+import { useDebounce } from "use-debounce";
 
 const CertifiedTraineesContainer = () => {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch] = useDebounce(searchQuery, 500);
 
   const {
     certifiedTrainees,
@@ -47,10 +49,11 @@ const CertifiedTraineesContainer = () => {
     dispatch(
       getCertifiedTrainees(
         (paginateOpts.page ?? 0) + 1,
-        paginateOpts.limit
+        paginateOpts.limit,
+        debouncedSearch
       ) as unknown as UnknownAction
     );
-  }, [dispatch, paginateOpts.page, paginateOpts.limit]);
+  }, [dispatch, paginateOpts.page, paginateOpts.limit, debouncedSearch]);
 
   const setPaginateOpts: React.Dispatch<
     React.SetStateAction<IPaginatedQuery & { totalPages: number }>
@@ -76,12 +79,6 @@ const CertifiedTraineesContainer = () => {
       );
     }
   };
-
-  const filteredCertifiedTrainees = certifiedTrainees.filter((trainee: ITrainingTrainee) =>
-   trainee.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-   trainee.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-   trainee.nationalId.toLowerCase().includes(searchQuery.toLowerCase())
-)??[];
 
   const FilterDropDown = ({
     placeholderText,
@@ -225,7 +222,7 @@ const CertifiedTraineesContainer = () => {
       <div className="w-full h-full">
         <DataTable
           columns={traineesColumns}
-          data={filteredCertifiedTrainees}
+          data={certifiedTrainees ?? []}
           loading={loadingCertifiedTrainees}
           noDataMessage={
             searchQuery
