@@ -29,6 +29,11 @@ const adminRoutes: Route[] = [
     icon: <Icons.SolarSuitcaseBold />,
   },
   {
+    label: "Competences",
+    path: "/admin/competences",
+    icon: <Icons.SolarFolder2Bold />,
+  },
+  {
     label: "Budget Lines",
     path: "/admin/budgetlines",
     icon: <Icons.SolarSuitcaseBold />,

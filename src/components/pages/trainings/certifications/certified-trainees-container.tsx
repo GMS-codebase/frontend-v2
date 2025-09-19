@@ -181,6 +181,12 @@ const CertifiedTraineesContainer = () => {
       ),
     },
   ];
+  const filteredCertifiedTrainees = debouncedSearch
+      ?certifiedTrainees.filter((trainee:any) =>
+          [trainee.firstName, trainee.lastName, trainee.nationalId].some((field) =>
+            field?.toLowerCase().includes(debouncedSearch.toLowerCase())
+          )
+        ):certifiedTrainees;
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full flex flex-col md:flex-row md:justify-end items-center p-4 gap-4">
@@ -222,7 +228,7 @@ const CertifiedTraineesContainer = () => {
       <div className="w-full h-full">
         <DataTable
           columns={traineesColumns}
-          data={certifiedTrainees ?? []}
+          data={filteredCertifiedTrainees ?? []}
           loading={loadingCertifiedTrainees}
           noDataMessage={
             searchQuery
