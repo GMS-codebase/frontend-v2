@@ -17,8 +17,6 @@ import {
 } from "@tanstack/react-table";
 import clsx from "clsx";
 import * as React from "react";
-import PaginationForm from "./PaginateForm";
-import TableSkeleton from "./TableSkeleton";
 
 interface Props {
   data: any;
@@ -61,7 +59,7 @@ export function DataTable({
 }: Props) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
+    []
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -76,7 +74,7 @@ export function DataTable({
       pageIndex,
       pageSize,
     }),
-    [pageIndex, pageSize],
+    [pageIndex, pageSize]
   );
 
   const newColumns: ColumnDef<any>[] = [...columns];
@@ -151,7 +149,7 @@ export function DataTable({
                         className={clsx(
                           "p-2 font-medium py-5 whitespace-nowrap text-base md:text-xl text-primary ",
                           i === 0 && "pl-4",
-                          i === headerGroup.headers.length - 1 && "pr-4",
+                          i === headerGroup.headers.length - 1 && "pr-4"
                         )}
                         key={header.id}
                       >
@@ -159,7 +157,7 @@ export function DataTable({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext(),
+                              header.getContext()
                             )}
                       </td>
                     ))}
@@ -195,7 +193,7 @@ export function DataTable({
                         className={clsx(
                           "p-2 font-medium py-5 whitespace-nowrap text-base md:text-xl text-primary ",
                           i === 0 && "pl-4",
-                          i === headerGroup.headers.length - 1 && "pr-4",
+                          i === headerGroup.headers.length - 1 && "pr-4"
                         )}
                         key={header.id}
                       >
@@ -203,7 +201,7 @@ export function DataTable({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext(),
+                              header.getContext()
                             )}
                       </td>
                     ))}
@@ -228,13 +226,13 @@ export function DataTable({
                               ? "bg-mainPurple font-semibold"
                               : "",
                             i === 0 && " pl-4",
-                            i === row.getVisibleCells().length - 1 && " pr-4",
+                            i === row.getVisibleCells().length - 1 && " pr-4"
                           )}
                           key={cell.id}
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext(),
+                            cell.getContext()
                           )}
                         </td>
                       ))}
@@ -254,41 +252,69 @@ export function DataTable({
             </table>
           </div>
           <div className="flex w-full justify-between items-start flex-row-reverse px-10 mt-4">
-            <Pagination
-              total={
-                isPaginated
-                  ? (paginationProps?.paginateOpts?.totalPages ?? 1)
-                  : table?.getPageCount()
-              }
-              onNextPage={() => {
-                if (isPaginated) {
-                  paginationProps?.setPaginateOpts({
-                    ...paginationProps?.paginateOpts,
-                    page: (paginationProps?.paginateOpts?.page ?? 0) + 1,
-                  });
-                  return;
+            <div className="flex items-center gap-4">
+              <Select
+                data={[
+                  { value: "10", label: "Show 10" },
+                  { value: "20", label: "Show 20" },
+                  { value: "30", label: "Show 30" },
+                ]}
+                value={String(
+                  isPaginated
+                    ? (paginationProps?.paginateOpts?.limit ?? limit ?? 10)
+                    : table.getState().pagination.pageSize
+                )}
+                onChange={(value) => {
+                  const newLimit = Number(value);
+                  if (isPaginated) {
+                    paginationProps?.setPaginateOpts({
+                      ...paginationProps?.paginateOpts,
+                      limit: newLimit,
+                      page: 0,
+                    });
+                  } else {
+                    table.setPageSize(newLimit);
+                  }
+                }}
+                className="w-[110px] border"
+                size="xs"
+              />
+              <Pagination
+                total={
+                  isPaginated
+                    ? (paginationProps?.paginateOpts?.totalPages ?? 1)
+                    : table?.getPageCount()
                 }
-                table?.nextPage();
-              }}
-              value={
-                isPaginated
-                  ? (paginationProps?.paginateOpts?.page ?? 0) + 1
-                  : table?.getState().pagination.pageIndex + 1
-              }
-              onPreviousPage={() => {
-                if (isPaginated) {
-                  paginationProps?.setPaginateOpts({
-                    ...paginationProps?.paginateOpts,
-                    page: (paginationProps?.paginateOpts?.page ?? 0) - 1,
-                  });
-                  return;
+                onNextPage={() => {
+                  if (isPaginated) {
+                    paginationProps?.setPaginateOpts({
+                      ...paginationProps?.paginateOpts,
+                      page: (paginationProps?.paginateOpts?.page ?? 0) + 1,
+                    });
+                    return;
+                  }
+                  table?.nextPage();
+                }}
+                value={
+                  isPaginated
+                    ? (paginationProps?.paginateOpts?.page ?? 0) + 1
+                    : table?.getState().pagination.pageIndex + 1
                 }
-                table?.previousPage();
-              }}
-              onChange={(page) => {
-                onPaginate(page - 1);
-              }}
-            />
+                onPreviousPage={() => {
+                  if (isPaginated) {
+                    paginationProps?.setPaginateOpts({
+                      ...paginationProps?.paginateOpts,
+                      page: (paginationProps?.paginateOpts?.page ?? 0) - 1,
+                    });
+                    return;
+                  }
+                  table?.previousPage();
+                }}
+                onChange={(page) => {
+                  onPaginate(page - 1);
+                }}
+              />
+            </div>
             <div className="flex md:flex-row flex-col text-sm items-center gap-2 justify-center">
               <h1 className="text-lg font-medium text-[#B5B7C0]">
                 Showing data 1 to{" "}
