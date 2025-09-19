@@ -255,6 +255,12 @@ const Page = () => {
     (app: any) => app.currentStage === "CONTRACT_SIGNING"
   )?.uuid;
 
+  const filteredTrainings = debouncedSearch
+    ? trainings.filter((training: Training) =>
+        training.title.toLowerCase().includes(debouncedSearch.toLowerCase())
+      )
+    : trainings;
+
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
       <div className="w-full lg:flex justify-between items-center p-4">
@@ -285,7 +291,7 @@ const Page = () => {
       <div className="w-full h-full">
         <DataTable
           columns={columns}
-          data={trainings ?? []}
+          data={filteredTrainings ?? []}
           loading={loading}
           noDataMessage={
             searchQuery
