@@ -167,6 +167,7 @@ const AddEditCall = ({
   const prevStep = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
 
+
   const handleChange = (e: any) => {
     const { name, value, files } = e.target;
     setFormData((prevData) => ({

@@ -13,7 +13,7 @@ import {
   ADD_TRAINING_SUCCESS,
   UPDATE_TRAINING_SUCCESS,
 } from "@/actions/TrainingActions";
-import { getMyApplications, getTrainings } from "@/services";
+import { getMyApplications, getTrainings, getCompetences } from "@/services";
 import { UnknownAction } from "redux";
 import { IPaginatedQuery } from "@/types/base.type";
 
@@ -41,7 +41,6 @@ const AddEditTraining = ({
     null
   );
   const [traineesFile, setTraineesFile] = useState<File | string | null>(null);
-
   const [formData, setFormData] = useState<Partial<Training>>({
     title: "",
     startDate: "",
@@ -49,7 +48,6 @@ const AddEditTraining = ({
     competencies: [],
     applicationId: applicationId || "",
   });
-
   const [traineeData, setTraineeData] = useState({
     firstName: "",
     lastName: "",
@@ -65,7 +63,6 @@ const AddEditTraining = ({
     institutionName: "",
     maritalStatus: "",
   });
-
   const [trainees, setTrainees] = useState<
     {
       firstName: string;
@@ -83,10 +80,19 @@ const AddEditTraining = ({
       maritalStatus: string;
     }[]
   >([]);
-  const [competencies, setCompetencies] = useState<string[]>([]);
-  const [competenceInput, setCompetenceInput] = useState("");
-  const dispatch = useDispatch();
 
+  // Redux state for competencies
+  const {
+    competences,
+    loading: competencesLoading,
+    error: competencesError,
+  } = useSelector((state: any) => ({
+    competences: state.competences.competences || [],
+    loading: state.competences.loading,
+    error: state.competences.error,
+  }));
+
+  const dispatch = useDispatch();
   const {
     myApplications,
     myApplicationsLoading,
@@ -102,15 +108,11 @@ const AddEditTraining = ({
     totalPages: 1,
   });
 
+  // Fetch competencies and applications on mount
   useEffect(() => {
-    setLocalPaginateOpts((prev) => ({
-      ...prev,
-      totalPages: Math.ceil((totalApplications ?? 0) / (prev?.limit ?? 10)),
-    }));
-  }, [totalApplications]);
-
-  // Fetch data whenever page or limit changes
-  useEffect(() => {
+    dispatch(
+      getCompetences(1, 100) as unknown as UnknownAction // Fetch all competencies
+    );
     dispatch(
       getMyApplications(
         (paginateOpts.page ?? 0) + 1,
@@ -119,6 +121,15 @@ const AddEditTraining = ({
     );
   }, [dispatch, paginateOpts.page, paginateOpts.limit]);
 
+  // Update totalPages for applications
+  useEffect(() => {
+    setLocalPaginateOpts((prev) => ({
+      ...prev,
+      totalPages: Math.ceil((totalApplications ?? 0) / (prev?.limit ?? 10)),
+    }));
+  }, [totalApplications]);
+
+  // Set default form data when editing
   useEffect(() => {
     if (defaultData) {
       setFormData({
@@ -131,9 +142,6 @@ const AddEditTraining = ({
       });
       setTrainingManual(defaultData.trainingManual || null);
       setTraineesFile(defaultData.traineesFile || null);
-      setCompetencies(
-        JSON.parse(defaultData.competencies.join(",") as string) || []
-      );
       setTrainees(defaultData.trainees || []);
     }
   }, [defaultData, applicationId]);
@@ -157,10 +165,6 @@ const AddEditTraining = ({
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleCompetenceChange = (e: any) => {
-    setCompetenceInput(e.target.value);
   };
 
   useEffect(() => {
@@ -209,12 +213,10 @@ const AddEditTraining = ({
         ? "Marital status is required"
         : "",
     };
-
     if (Object.values(newErrors).some((error) => error)) {
       setErrors(newErrors);
       return;
     }
-
     setTrainees((prev) => [...prev, { ...traineeData }]);
     setTraineeData({
       firstName: "",
@@ -238,29 +240,9 @@ const AddEditTraining = ({
     setTrainees((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleAddCompetence = () => {
-    if (competenceInput.trim()) {
-      setCompetencies((prev) => [...prev, competenceInput.trim()]);
-      setFormData((prev) => ({
-        ...prev,
-        competencies: [...(prev.competencies || []), competenceInput.trim()],
-      }));
-      setCompetenceInput("");
-    }
-  };
-
-  const handleRemoveCompetence = (index: number) => {
-    setCompetencies((prev) => prev.filter((_, i) => i !== index));
-    setFormData((prev) => ({
-      ...prev,
-      competencies: prev.competencies?.filter((_, i) => i !== index) || [],
-    }));
-  };
-
   const handleSubmit = async () => {
     setLoading(true);
     setErrors({});
-
     const newErrors: any = {};
     if (!formData.title) newErrors.title = "Title is required";
     if (!formData.startDate) newErrors.startDate = "Start date is required";
@@ -271,7 +253,6 @@ const AddEditTraining = ({
       newErrors.applicationId = "Application ID is required";
     if (!trainees.length && !traineesFile)
       newErrors.trainees = "Trainees or trainees file is required";
-
     if (Object.keys(newErrors).length) {
       setErrors(newErrors);
       setLoading(false);
@@ -281,14 +262,12 @@ const AddEditTraining = ({
       });
       return;
     }
-
     const submitData = new FormData();
     submitData.append("title", formData.title as string);
     submitData.append("startDate", formData.startDate as string);
     submitData.append("endDate", formData.endDate as string);
     submitData.append("competencies", JSON.stringify(formData.competencies));
     submitData.append("applicationId", formData.applicationId as string);
-
     if (trainees.length) {
       trainees.forEach((trainee, index) => {
         submitData.append(`trainees[${index}][firstName]`, trainee.firstName);
@@ -327,23 +306,18 @@ const AddEditTraining = ({
         );
       });
     }
-
     if (traineesFile) {
       submitData.append("traineesFile", traineesFile);
     }
-
     if (trainingManual) {
       submitData.append("trainingManual", trainingManual);
     }
-
     for (const [key, value] of submitData.entries()) {
       console.log(`FormData ${key}:`, value);
     }
-
     const apiUrl = defaultData
       ? `/training/${defaultData.uuid}`
       : "/training/create";
-
     try {
       const res = await (defaultData
         ? authorizedApi.put(apiUrl, submitData, {
@@ -356,19 +330,16 @@ const AddEditTraining = ({
               "Content-Type": "multipart/form-data",
             },
           }));
-
       dispatch({
         type: defaultData ? UPDATE_TRAINING_SUCCESS : ADD_TRAINING_SUCCESS,
         payload: res.data.data.data,
       });
-
       notifications.show({
         message: defaultData
           ? "Training updated successfully!"
           : "Training created successfully!",
         color: "blue",
       });
-
       // Reset form
       setFormData({
         title: "",
@@ -380,9 +351,7 @@ const AddEditTraining = ({
       setTrainingManual(null);
       setTraineesFile(null);
       setTrainees([]);
-      setCompetencies([]);
       setActive(0);
-
       getTrainings(dispatch);
       closeAddEditTraining();
     } catch (err: any) {
@@ -637,42 +606,30 @@ const AddEditTraining = ({
                 </div>
                 <div>
                   <label className="text-sm font-medium">Competencies</label>
-                  <div className="flex gap-2 mt-1">
-                    <input
-                      type="text"
-                      value={competenceInput}
-                      onChange={handleCompetenceChange}
-                      className={`w-full px-3 py-2 bg-[#000F230A] rounded-xl text-sm ${errors.competencies ? "border-red-500" : ""}`}
-                      placeholder="Type a competence"
-                    />
-                    <button
-                      onClick={handleAddCompetence}
-                      className="px-3 py-2 bg-blue-600 text-white rounded-xl text-sm"
-                    >
-                      Add
-                    </button>
-                  </div>
-                  {errors.competencies && (
+                  <MultiSelect
+                    data={competences.map((comp: any) => ({
+                      value: comp.name,
+                      label: comp.name,
+                    }))}
+                    value={formData.competencies || []}
+                    onChange={(values) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        competencies: values,
+                      }))
+                    }
+                    placeholder="Select competencies"
+                    className="mt-1"
+                    error={errors.competencies}
+                    searchable
+                    disabled={competencesLoading}
+                    // nothingFound="No competencies found"
+                  />
+                  {competencesError && (
                     <p className="text-red-500 text-xs mt-1">
-                      {errors.competencies}
+                      Failed to load competencies
                     </p>
                   )}
-                  <div className="flex gap-2 mt-2 flex-wrap">
-                    {competencies.map((competence, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center bg-white px-3 py-1 rounded-xl shadow-sm text-sm"
-                      >
-                        <span className="mr-2">{competence}</span>
-                        <button
-                          onClick={() => handleRemoveCompetence(index)}
-                          className="text-gray-400 hover:text-red-500"
-                        >
-                          <IoMdClose size={16} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
                 </div>
                 <div className="flex justify-between gap-4 mt-4">
                   <button
