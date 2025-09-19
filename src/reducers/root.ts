@@ -20,6 +20,7 @@ import announcementsReducer from "./AnnouncementsReducer";
 import FormsReducer from "./FormsReducers";
 import AppealsReducer from "./AppealsReducer";
 import { TrainingReducer } from "./TrainingReducer";
+import CompetenceReducer from "./CompetenceReducer";
 const rootReducer = combineReducers({
   contacts: ContactsReducer,
   trainings: TrainingReducer,
@@ -42,6 +43,7 @@ const rootReducer = combineReducers({
   announcement: announcementsReducer,
   forms: FormsReducer,
   appeals: AppealsReducer,
+  competences:CompetenceReducer,
 });
 
 export default rootReducer;

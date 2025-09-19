@@ -191,6 +191,8 @@ import {
   REQUEST_REVIEW_REQUEST,
   REQUEST_REVIEW_SUCCESS,
 } from "@/actions/TrainingActions";
+import { GET_COMPETENCE_LOADING, GET_COMPETENCE_SUCCESS, GET_COMPETENCE_ERROR, ADD_COMPETENCE_SUCCESS, ADD_COMPETENCE_ERROR, ADD_COMPETENCE_LOADING, DELETE_COMPETENCE_ERROR, DELETE_COMPETENCE_LOADING, DELETE_COMPETENCE_SUCCESS, UPDATE_COMPETENCE_ERROR, UPDATE_COMPETENCE_LOADING, UPDATE_COMPETENCE_SUCCESS, GET_COMPETENCE_BY_ID_SUCCESS, GET_COMPETENCE_BY_ID_ERROR, GET_COMPETENCE_BY_ID_LOADING } from "@/actions/CompetenceAction";
+import { ICompetence } from "@/types/competences";
 
 export const exportAppealsReport = async (
   dispatch: Dispatch<UnknownAction>,
@@ -1580,3 +1582,111 @@ export const getCertifiedTrainees =
 
 // Export the new survey API function
 export { getApplicantApplicationsInfo } from "./api/survey";
+
+
+// competences api
+export const getCompetences =
+  (page?: any, limit?: any) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: GET_COMPETENCE_LOADING });
+    authorizedApi
+      .get(
+        `/competency/?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      )
+      .then((res) => {
+        dispatch({ type: GET_COMPETENCE_SUCCESS, payload: res.data });
+        console.log("FETCHED DATA",res.data)
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_COMPETENCE_ERROR,
+          payload: err?.response?.data?.error,
+        });
+        console.log(err)  
+      });
+  };
+
+export const createCompetence =
+  (data: ICompetence) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: ADD_COMPETENCE_LOADING });
+    try {
+      console.log("Creating competence with:", data); // Debug
+      const res = await authorizedApi.post(`/competency`, data);
+      dispatch({ type: ADD_COMPETENCE_SUCCESS, payload: res.data });
+      notifications.show({
+        message: "Competence created successfully!",
+        color: "green",
+      });
+    } catch (err: any) {
+      console.error(
+        "Create competence error:",
+        err.response?.data || err.message
+      ); // Debug
+      dispatch({
+        type: ADD_COMPETENCE_ERROR,
+        payload: err?.response?.data?.error || "Failed to create competence!",
+      });
+    }
+  };
+
+export const updateCompetence =
+  (id: string, data: ICompetence) =>
+  async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: UPDATE_COMPETENCE_LOADING });
+    try {
+      console.log("Updating competence with id:", id, "data:", data); // Debug
+      const res = await authorizedApi.put(`/competency/${id}/edit`, data);
+      dispatch({ type: UPDATE_COMPETENCE_SUCCESS, payload: res.data });
+      notifications.show({
+        message: "Competence updated successfully!",
+        color: "green",
+      });
+    } catch (err: any) {
+      console.error(
+        "Update competence error:",
+        err.response?.data || err.message
+      ); // Debug
+      dispatch({
+        type: UPDATE_COMPETENCE_ERROR,
+        payload: err?.response?.data?.error || "Failed to update competence!",
+      });
+    }
+  };
+
+  export const deleteCompetence = (id: string) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: DELETE_COMPETENCE_LOADING });
+    authorizedApi
+      .delete(`/competency/${id}/delete`)
+      .then((res) => {
+        dispatch({ type: DELETE_COMPETENCE_SUCCESS, payload: res.data });
+        notifications.show({
+          message: "Competence deleted successfully!",
+          color: "green",
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: DELETE_COMPETENCE_ERROR,
+          payload: err?.response?.data?.error,
+        });
+        notifications.show({
+          message: err?.response?.data?.error || "Failed to delete competence!",
+          color: "red",
+        });
+      });
+  };
+
+export const getCompetenceById = (id: string) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: GET_COMPETENCE_BY_ID_LOADING });
+    authorizedApi
+      .get(`/competency/${id}`)
+      .then((res) => {
+        dispatch({ type: GET_COMPETENCE_BY_ID_SUCCESS, payload: res.data.data });
+        console.log("FETCHED COMPETENCE BY ID",res.data)
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_COMPETENCE_BY_ID_ERROR,
+          payload: err?.response?.data?.error,
+        });
+      });
+  }
