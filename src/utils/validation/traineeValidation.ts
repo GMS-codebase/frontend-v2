@@ -71,9 +71,9 @@ export const validateNationalId = (nationalId: string): string | null => {
     return "National ID must be exactly 16 digits";
   }
   
-  // Validate the check digit (Rwandan National ID validation)
+  // Validate the Rwandan National ID format
   if (!validateRwandanNationalId(cleanId)) {
-    return "Invalid National ID format";
+    return "Invalid National ID format. Must be 16 digits starting with '1', followed by 4-digit year (1900-2024), gender (8 for male, 7 for female), and 8 remaining digits";
   }
   
   return null;
@@ -106,11 +106,19 @@ export const validateDateOfBirth = (dob: string): string | null => {
   }
   
   const today = new Date();
-  const age = today.getFullYear() - date.getFullYear();
+  
+  // Check if the date is in the future
+  if (date > today) {
+    return "Invalid date of birth - cannot be in the future";
+  }
+  
+  // Calculate age more accurately
+  let age = today.getFullYear() - date.getFullYear();
   const monthDiff = today.getMonth() - date.getMonth();
   
+  // Adjust age if birthday hasn't occurred this year
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate())) {
-    return "Invalid date of birth - cannot be in the future";
+    age--;
   }
   
   if (age < 16) {
@@ -230,29 +238,46 @@ export const validateVillage = (province: string, district: string, sector: stri
   return null;
 };
 
-// Rwandan National ID validation (check digit algorithm)
+// Rwandan National ID validation (format: 1{year}{gender}{8 remaining digits})
 const validateRwandanNationalId = (nationalId: string): boolean => {
   if (nationalId.length !== 16) return false;
   
-  // Extract the check digit (last digit)
-  const checkDigit = parseInt(nationalId[15]);
-  const baseNumber = nationalId.substring(0, 15);
+  // Check if all characters are digits
+  if (!/^\d{16}$/.test(nationalId)) return false;
   
-  // Calculate the check digit
-  let sum = 0;
-  for (let i = 0; i < 15; i++) {
-    let digit = parseInt(baseNumber[i]);
-    if (i % 2 === 0) {
-      digit *= 2;
-      if (digit > 9) {
-        digit = Math.floor(digit / 10) + (digit % 10);
-      }
-    }
-    sum += digit;
+  // Check if it starts with "1"
+  if (nationalId[0] !== '1') return false;
+  
+  // Extract year (positions 1-4, full 4-digit year)
+  const year = parseInt(nationalId.substring(1, 5));
+  const currentYear = new Date().getFullYear();
+  
+  // Year should be from 1900 to current year
+  if (year < 1900 || year > currentYear) {
+    return false;
   }
   
-  const calculatedCheckDigit = (10 - (sum % 10)) % 10;
-  return calculatedCheckDigit === checkDigit;
+  // Extract gender digit (position 5)
+  const genderDigit = parseInt(nationalId[5]);
+  
+  // Gender digit should be 8 for male or 7 for female
+  if (genderDigit !== 8 && genderDigit !== 7) {
+    return false;
+  }
+  
+  // Remaining 8 digits (positions 6-13) should be valid
+  const remainingDigits = nationalId.substring(6, 14);
+  if (!/^\d{8}$/.test(remainingDigits)) {
+    return false;
+  }
+  
+  // Extract check digit (last 2 digits, positions 14-15)
+  const checkDigit = nationalId.substring(14, 16);
+  if (!/^\d{2}$/.test(checkDigit)) {
+    return false;
+  }
+  
+  return true;
 };
 
 // Main validation function for a single trainee
