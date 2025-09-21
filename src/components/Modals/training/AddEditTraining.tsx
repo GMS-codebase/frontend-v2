@@ -608,7 +608,7 @@ const AddEditTraining = ({
                   <label className="text-sm font-medium">Competencies</label>
                   <MultiSelect
                     data={competences.map((comp: any) => ({
-                      value: comp.name,
+                      value: comp.uuid,
                       label: comp.name,
                     }))}
                     value={formData.competencies || []}
