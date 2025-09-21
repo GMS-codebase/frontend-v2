@@ -191,7 +191,23 @@ import {
   REQUEST_REVIEW_REQUEST,
   REQUEST_REVIEW_SUCCESS,
 } from "@/actions/TrainingActions";
-import { GET_COMPETENCE_LOADING, GET_COMPETENCE_SUCCESS, GET_COMPETENCE_ERROR, ADD_COMPETENCE_SUCCESS, ADD_COMPETENCE_ERROR, ADD_COMPETENCE_LOADING, DELETE_COMPETENCE_ERROR, DELETE_COMPETENCE_LOADING, DELETE_COMPETENCE_SUCCESS, UPDATE_COMPETENCE_ERROR, UPDATE_COMPETENCE_LOADING, UPDATE_COMPETENCE_SUCCESS, GET_COMPETENCE_BY_ID_SUCCESS, GET_COMPETENCE_BY_ID_ERROR, GET_COMPETENCE_BY_ID_LOADING } from "@/actions/CompetenceAction";
+import {
+  GET_COMPETENCE_LOADING,
+  GET_COMPETENCE_SUCCESS,
+  GET_COMPETENCE_ERROR,
+  ADD_COMPETENCE_SUCCESS,
+  ADD_COMPETENCE_ERROR,
+  ADD_COMPETENCE_LOADING,
+  DELETE_COMPETENCE_ERROR,
+  DELETE_COMPETENCE_LOADING,
+  DELETE_COMPETENCE_SUCCESS,
+  UPDATE_COMPETENCE_ERROR,
+  UPDATE_COMPETENCE_LOADING,
+  UPDATE_COMPETENCE_SUCCESS,
+  GET_COMPETENCE_BY_ID_SUCCESS,
+  GET_COMPETENCE_BY_ID_ERROR,
+  GET_COMPETENCE_BY_ID_LOADING,
+} from "@/actions/CompetenceAction";
 import { ICompetence } from "@/types/competences";
 
 export const exportAppealsReport = async (
@@ -1197,7 +1213,6 @@ export const getTrainings =
         },
       });
     } catch (err) {
-      console.error("Failed to fetch trainings:", err);
       dispatch({ type: "SET_TRAININGS", payload: [] });
     }
   };
@@ -1211,7 +1226,11 @@ export const getSDFTrainings =
       );
       dispatch({
         type: "SET_TRAININGS",
-        payload: res.data.data.data,
+        payload: {
+          trainings: res.data.data.data,
+          total: res.data.data.data.total ?? 0,
+          page: res.data.data.data.page ?? 1,
+        },
       });
     } catch (err) {
       dispatch({ type: "SET_TRAININGS", payload: [] });
@@ -1565,10 +1584,10 @@ export const getCertifiedTrainees =
         dispatch({
           type: GET_CERTIFIED_TRAINEES_SUCCESS,
           payload: {
-            trainees: res?.data?.data?.data ?? [],
-            total: res?.data?.data?.data.total ?? 0,
-            page: res?.data?.data?.data?.page ?? 1,
-            totalPages: res?.data?.data?.data?.totalPages ?? 1,
+            trainees: res?.data?.data?.data,
+            total: res?.data?.data?.totalItems,
+            page: res?.data?.data?.currentPage,
+            totalPages: res?.data?.data?.totalPages,
           },
         });
       })
@@ -1583,7 +1602,6 @@ export const getCertifiedTrainees =
 // Export the new survey API function
 export { getApplicantApplicationsInfo } from "./api/survey";
 
-
 // competences api
 export const getCompetences =
   (page?: any, limit?: any) => async (dispatch: Dispatch<UnknownAction>) => {
@@ -1594,14 +1612,14 @@ export const getCompetences =
       )
       .then((res) => {
         dispatch({ type: GET_COMPETENCE_SUCCESS, payload: res.data });
-        console.log("FETCHED DATA",res.data)
+        console.log("FETCHED DATA", res.data);
       })
       .catch((err) => {
         dispatch({
           type: GET_COMPETENCE_ERROR,
           payload: err?.response?.data?.error,
         });
-        console.log(err)  
+        console.log(err);
       });
   };
 
@@ -1652,7 +1670,8 @@ export const updateCompetence =
     }
   };
 
-  export const deleteCompetence = (id: string) => async (dispatch: Dispatch<UnknownAction>) => {
+export const deleteCompetence =
+  (id: string) => async (dispatch: Dispatch<UnknownAction>) => {
     dispatch({ type: DELETE_COMPETENCE_LOADING });
     authorizedApi
       .delete(`/competency/${id}/delete`)
@@ -1675,13 +1694,17 @@ export const updateCompetence =
       });
   };
 
-export const getCompetenceById = (id: string) => async (dispatch: Dispatch<UnknownAction>) => {
+export const getCompetenceById =
+  (id: string) => async (dispatch: Dispatch<UnknownAction>) => {
     dispatch({ type: GET_COMPETENCE_BY_ID_LOADING });
     authorizedApi
       .get(`/competency/${id}`)
       .then((res) => {
-        dispatch({ type: GET_COMPETENCE_BY_ID_SUCCESS, payload: res.data.data });
-        console.log("FETCHED COMPETENCE BY ID",res.data)
+        dispatch({
+          type: GET_COMPETENCE_BY_ID_SUCCESS,
+          payload: res.data.data,
+        });
+        console.log("FETCHED COMPETENCE BY ID", res.data);
       })
       .catch((err) => {
         dispatch({
@@ -1689,4 +1712,4 @@ export const getCompetenceById = (id: string) => async (dispatch: Dispatch<Unkno
           payload: err?.response?.data?.error,
         });
       });
-  }
+  };
