@@ -16,8 +16,16 @@ import {
   ValidationResult, 
   TraineeData, 
   formatPhoneNumber, 
-  normalizeGender 
+  normalizeGender,
+  convertExcelSerialToDateString,
+  isExcelSerialNumber
 } from "@/utils/validation/traineeValidation";
+
+// Helper function to capitalize first character
+const capitalizeFirstChar = (str: string): string => {
+  if (!str || str.length === 0) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
 
 interface Props {
   isOpen: boolean;
@@ -203,18 +211,24 @@ const ImportTraineesModal: React.FC<Props> = ({
         for (let i = 1; i < jsonData.length; i++) {
           const row = jsonData[i] as any[];
           if (row.length >= expectedHeaders.length) {
+            // Handle date of birth - convert Excel serial numbers to date strings
+            let dobValue = (row[headers.indexOf('dob')] || '').toString().trim();
+            if (isExcelSerialNumber(dobValue)) {
+              dobValue = convertExcelSerialToDateString(parseInt(dobValue));
+            }
+            
             const trainee: ImportedTrainee = {
               firstName: (row[headers.indexOf('firstName')] || '').toString().trim(),
               lastName: (row[headers.indexOf('lastName')] || '').toString().trim(),
               nationalId: (row[headers.indexOf('nationalId')] || '').toString().trim(),
               phoneNumber: formatPhoneNumber((row[headers.indexOf('phoneNumber')] || '').toString()),
-              dob: (row[headers.indexOf('dob')] || '').toString().trim(),
+              dob: dobValue,
               gender: normalizeGender((row[headers.indexOf('gender')] || '').toString()),
-              province: (row[headers.indexOf('province')] || '').toString().trim(),
-              district: (row[headers.indexOf('district')] || '').toString().trim(),
-              sector: (row[headers.indexOf('sector')] || '').toString().trim(),
-              cell: (row[headers.indexOf('cell')] || '').toString().trim(),
-              village: (row[headers.indexOf('village')] || '').toString().trim(),
+              province: capitalizeFirstChar((row[headers.indexOf('province')] || '').toString().trim()),
+              district: capitalizeFirstChar((row[headers.indexOf('district')] || '').toString().trim()),
+              sector: capitalizeFirstChar((row[headers.indexOf('sector')] || '').toString().trim()),
+              cell: capitalizeFirstChar((row[headers.indexOf('cell')] || '').toString().trim()),
+              village: capitalizeFirstChar((row[headers.indexOf('village')] || '').toString().trim()),
             };
             
             // Add all trainees for validation, even if some fields are empty
