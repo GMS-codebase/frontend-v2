@@ -1,21 +1,17 @@
 import DisplayListItem from "./display-list";
 
-const competencies = [
-  { id: 1, name: "Masonry" },
-  { id: 2, name: "Hardworking" },
-  { id: 3, name: "Time management" },
-  { id: 4, name: "Courage" },
-  { id: 5, name: "Masonry" },
-  { id: 6, name: "Hardworking" },
-  { id: 7, name: "Time management" },
-  { id: 8, name: "Courage" },
-];
-
-type props = {
-  competencies: string[];
+type Competency = {
+  uuid?: string; 
+  name: string;
+  code?: string; 
+  id?: number; 
 };
 
-const CompetenciesSection = ({ competencies }: props) => {
+type Props = {
+  competencies: Competency[];
+};
+
+const CompetenciesSection = ({ competencies }: Props) => {
   return (
     <div className="space-y-4">
       <h2 className="text-xl md:text-2xl font-bold text-primaryText">
@@ -24,9 +20,9 @@ const CompetenciesSection = ({ competencies }: props) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {competencies.map((competency, idx) => (
           <DisplayListItem
-            key={idx}
+            key={competency.uuid || idx} 
             title={`Competency ${idx + 1}`}
-            desc={competency}
+            desc={`${competency.name}`} 
           />
         ))}
       </div>

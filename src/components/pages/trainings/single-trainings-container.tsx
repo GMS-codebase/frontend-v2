@@ -112,13 +112,7 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
           <div className="grid md:grid-cols-2">
             <TrainingManualCard filePath={training?.trainingManual as string} />
           </div>
-          <CompetenciesSection
-            competencies={
-              training?.competencies
-                ? JSON.parse(training?.competencies.join(",") as string)
-                : []
-            }
-          />
+          <CompetenciesSection competencies={training?.competencies || []} />
           <DetailsSection training={training} />
           <Trainees
             training={training}
@@ -129,7 +123,6 @@ const SingleTrainingContainer: FC<props> = ({ trainingId }) => {
             setSelectedTraineeIds={setSelectedTraineeIds}
           />
           <CertificationGrid currentRole={currentRole} training={training} />
-
           <div ref={responseRef}>
             <RequestResponseSection
               training={training}

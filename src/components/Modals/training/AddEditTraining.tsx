@@ -266,7 +266,9 @@ const AddEditTraining = ({
     submitData.append("title", formData.title as string);
     submitData.append("startDate", formData.startDate as string);
     submitData.append("endDate", formData.endDate as string);
-    submitData.append("competencies", JSON.stringify(formData.competencies));
+   formData.competencies?.forEach((competencyId, index) => {
+     submitData.append(`competencies[${index}]`, competencyId);
+   });
     submitData.append("applicationId", formData.applicationId as string);
     if (trainees.length) {
       trainees.forEach((trainee, index) => {
@@ -623,7 +625,6 @@ const AddEditTraining = ({
                     error={errors.competencies}
                     searchable
                     disabled={competencesLoading}
-                    // nothingFound="No competencies found"
                   />
                   {competencesError && (
                     <p className="text-red-500 text-xs mt-1">
