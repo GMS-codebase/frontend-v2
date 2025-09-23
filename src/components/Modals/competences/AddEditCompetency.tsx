@@ -19,6 +19,7 @@ type Competency = {
   name: string;
   code: string;
   tradeId: string;
+  trades?:any[];
 };
 
 interface AddEditCompetencyProps {
@@ -101,12 +102,10 @@ const AddEditCompetency = ({
 
 
   useEffect(() => {
-    if (defaultData) {
-      setFormData({
+    if (defaultData) {      setFormData({
         name: defaultData.name || "",
         code: defaultData.code || "",
-        tradeId: defaultData.tradeId || "",
-      });
+        tradeId: defaultData?.trades?.[0]?.uuid || ""});
     }
   }, [defaultData]);
 
@@ -235,6 +234,7 @@ const AddEditCompetency = ({
               onChange={(value) =>
                 setFormData({ ...formData, tradeId: value || "" })
               }
+              disabled={tradesLoading || defaultData}
               data={
                 trades.length
                   ? trades.map((trade: any) => ({
@@ -245,7 +245,6 @@ const AddEditCompetency = ({
               }
               required
               error={errors.tradeId}
-              disabled={tradesLoading}
               className={`block w-full pl-8 px-3 py-2 bg-[#000F230A] rounded-xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm ${errors.tradeId ? "border-red-500" : ""}`}
             />
           </div>
