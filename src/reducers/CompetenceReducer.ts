@@ -60,8 +60,8 @@ export default function CompetenceReducer(state = initialState, action: Competen
       return {
         ...state,
         competences: state.competences.map((competence: any) =>
-          competence.uuid === action.payload.uuid
-            ? { ...competence, ...action.payload.data.data }
+          competence.uuid === action.payload?.data?.data?.uuid 
+            ? { ...competence, ...action.payload?.data?.data } 
             : competence
         ),
         error: null,
@@ -78,7 +78,7 @@ export default function CompetenceReducer(state = initialState, action: Competen
         isError: false,
         loading: false,
       };
-        case GET_COMPETENCE_BY_ID_LOADING:
+    case GET_COMPETENCE_BY_ID_LOADING:
       return {
         ...state,
         loading: true,
@@ -88,7 +88,7 @@ export default function CompetenceReducer(state = initialState, action: Competen
       return {
         ...state,
         loading: false,
-        competence: action.payload?.data || null, 
+        competence: action.payload?.data || null,
       };
     case GET_COMPETENCE_BY_ID_ERROR:
       return {
