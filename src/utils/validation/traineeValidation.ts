@@ -185,7 +185,12 @@ export const validateProvince = (province: string): string | null => {
   const validProvinces = rwandaLocations.getProvinces();
   const cleanProvince = province.trim();
   
-  if (!validProvinces.includes(cleanProvince)) {
+  // Case-insensitive matching
+  const matchedProvince = validProvinces.find(p => 
+    p.toLowerCase() === cleanProvince.toLowerCase()
+  );
+  
+  if (!matchedProvince) {
     return `Invalid province. Must be one of: ${validProvinces.join(', ')}`;
   }
   
@@ -204,7 +209,12 @@ export const validateDistrict = (province: string, district: string): string | n
   const validDistricts = rwandaLocations.getDistricts(province);
   const cleanDistrict = district.trim();
   
-  if (!validDistricts.includes(cleanDistrict)) {
+  // Case-insensitive matching
+  const matchedDistrict = validDistricts.find(d => 
+    d.toLowerCase() === cleanDistrict.toLowerCase()
+  );
+  
+  if (!matchedDistrict) {
     return `Invalid district for ${province}. Must be one of: ${validDistricts.join(', ')}`;
   }
   
@@ -223,7 +233,12 @@ export const validateSector = (province: string, district: string, sector: strin
   const validSectors = rwandaLocations.getSectors(province, district);
   const cleanSector = sector.trim();
   
-  if (!validSectors.includes(cleanSector)) {
+  // Case-insensitive matching
+  const matchedSector = validSectors.find(s => 
+    s.toLowerCase() === cleanSector.toLowerCase()
+  );
+  
+  if (!matchedSector) {
     return `Invalid sector for ${district}, ${province}. Must be one of: ${validSectors.join(', ')}`;
   }
   
@@ -242,7 +257,12 @@ export const validateCell = (province: string, district: string, sector: string,
   const validCells = rwandaLocations.getCells(province, district, sector);
   const cleanCell = cell.trim();
   
-  if (!validCells.includes(cleanCell)) {
+  // Case-insensitive matching
+  const matchedCell = validCells.find(c => 
+    c.toLowerCase() === cleanCell.toLowerCase()
+  );
+  
+  if (!matchedCell) {
     return `Invalid cell for ${sector}, ${district}, ${province}. Must be one of: ${validCells.join(', ')}`;
   }
   
@@ -260,12 +280,13 @@ export const validateVillage = (province: string, district: string, sector: stri
   
   const validVillages = rwandaLocations.getVillages(province, district, sector, cell);
   const cleanVillage = village.trim();
-
-
   
-  if (!validVillages.includes(cleanVillage)) {
-    console.log(cleanVillage)
-    console.log(validVillages)
+  // Case-insensitive matching
+  const matchedVillage = validVillages.find((v: string) => 
+    v.toLowerCase() === cleanVillage.toLowerCase()
+  );
+  
+  if (!matchedVillage) {
     return `Invalid village for ${cell}, ${sector}, ${district}, ${province}. Must be one of: ${validVillages.join(', ')}`;
   }
   
@@ -417,6 +438,35 @@ export const validateTrainees = (trainees: TraineeData[]): ValidationResult => {
     errors: allErrors,
     warnings: allWarnings
   };
+};
+
+// Convert Excel serial number to date string
+export const convertExcelSerialToDateString = (serialNumber: number): string => {
+  // Excel serial number 1 = January 1, 1900
+  // Excel treats 1900 as a leap year (bug), so we need to adjust
+  const excelEpochOffset = 25569; // Days between 1900-01-01 and 1970-01-01
+  const millisecondsPerDay = 86400000;
+  
+  // Convert Excel serial number to JavaScript date
+  const date = new Date((serialNumber - excelEpochOffset) * millisecondsPerDay);
+  
+  // Format as YYYY-MM-DD
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  
+  return `${year}-${month}-${day}`;
+};
+
+// Check if a string is an Excel serial number
+export const isExcelSerialNumber = (value: string): boolean => {
+  return /^\d+$/.test(value.trim()) && parseInt(value) >= 1 && parseInt(value) <= 2958465;
+};
+
+// Helper function to capitalize first character
+const capitalizeFirstChar = (str: string): string => {
+  if (!str || str.length === 0) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
 
 // Format phone number to standard format
