@@ -63,6 +63,7 @@ export const validateNationalId = (nationalId: string): string | null => {
   if (!nationalId || nationalId.trim().length === 0) {
     return "National ID is required";
   }
+
   
   const cleanId = nationalId.trim().replace(/\s/g, '');
   
@@ -99,13 +100,42 @@ export const validateDateOfBirth = (dob: string): string | null => {
     return "Date of birth is required";
   }
   
-  const date = new Date(dob);
+  let date: Date;
+  const cleanDob = dob.trim();
+  
+  // Check if it's an Excel serial number (numeric string)
+  if (/^\d+$/.test(cleanDob)) {
+    const serialNumber = parseInt(cleanDob);
+    
+    // Excel serial number validation (1 = Jan 1, 1900)
+    // Valid range: 1 to approximately 2958465 (year 9999)
+    if (serialNumber < 1 || serialNumber > 2958465) {
+      return "Invalid date format. Use YYYY-MM-DD format";
+    }
+    
+    // Convert Excel serial number to JavaScript date
+    // Excel serial number 1 = January 1, 1900
+    // Excel treats 1900 as a leap year (bug), so we need to adjust
+    // The correct formula: (serialNumber - 25569) * 86400000
+    // 25569 is the number of days between Excel epoch (1900-01-01) and Unix epoch (1970-01-01)
+    // 86400000 is milliseconds per day
+    const excelEpochOffset = 25569; // Days between 1900-01-01 and 1970-01-01
+    const millisecondsPerDay = 86400000;
+    
+    // Convert Excel serial number to JavaScript date
+    date = new Date((serialNumber - excelEpochOffset) * millisecondsPerDay);
+  } else {
+    // Try to parse as regular date string
+    date = new Date(cleanDob);
+  }
   
   if (isNaN(date.getTime())) {
     return "Invalid date format. Use YYYY-MM-DD format";
   }
+
   
-  const today = new Date();
+  const today = new Date(); 
+
   
   // Check if the date is in the future
   if (date > today) {
@@ -125,7 +155,7 @@ export const validateDateOfBirth = (dob: string): string | null => {
     return "Trainee must be at least 16 years old";
   }
   
-  if (age > 100) {
+  if (age > 100) {  
     return "Invalid date of birth - age seems unrealistic";
   }
   
@@ -230,8 +260,12 @@ export const validateVillage = (province: string, district: string, sector: stri
   
   const validVillages = rwandaLocations.getVillages(province, district, sector, cell);
   const cleanVillage = village.trim();
+
+
   
   if (!validVillages.includes(cleanVillage)) {
+    console.log(cleanVillage)
+    console.log(validVillages)
     return `Invalid village for ${cell}, ${sector}, ${district}, ${province}. Must be one of: ${validVillages.join(', ')}`;
   }
   
