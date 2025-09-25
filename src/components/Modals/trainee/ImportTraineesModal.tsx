@@ -217,13 +217,24 @@ const ImportTraineesModal: React.FC<Props> = ({
               dobValue = convertExcelSerialToDateString(parseInt(dobValue));
             }
             
+            // Process gender field for preview - normalize and convert to uppercase
+            const genderValue = (row[headers.indexOf('gender')] || '').toString().trim().toUpperCase();
+            let normalizedGender = genderValue;
+            if (genderValue === 'F') {
+              normalizedGender = 'FEMALE';
+            } else if (genderValue === 'M') {
+              normalizedGender = 'MALE';
+            } else if (genderValue === 'FEMALE' || genderValue === 'MALE') {
+              normalizedGender = genderValue;
+            }
+
             const trainee: ImportedTrainee = {
               firstName: (row[headers.indexOf('firstName')] || '').toString().trim(),
               lastName: (row[headers.indexOf('lastName')] || '').toString().trim(),
               nationalId: (row[headers.indexOf('nationalId')] || '').toString().trim(),
               phoneNumber: formatPhoneNumber((row[headers.indexOf('phoneNumber')] || '').toString()),
               dob: dobValue,
-              gender: normalizeGender((row[headers.indexOf('gender')] || '').toString()),
+              gender: normalizedGender,
               province: capitalizeFirstChar((row[headers.indexOf('province')] || '').toString().trim()),
               district: capitalizeFirstChar((row[headers.indexOf('district')] || '').toString().trim()),
               sector: capitalizeFirstChar((row[headers.indexOf('sector')] || '').toString().trim()),
@@ -277,6 +288,96 @@ const ImportTraineesModal: React.FC<Props> = ({
     reader.readAsArrayBuffer(file);
   };
 
+  // Process Excel file to convert serial numbers to date strings
+  const processExcelFileForImport = async (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = new Uint8Array(e.target?.result as ArrayBuffer);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+          if (jsonData.length < 2) {
+            reject(new Error("File must contain at least a header row and one data row."));
+            return;
+          }
+
+          const headers = jsonData[0] as string[];
+          const expectedHeaders = ['firstName', 'lastName', 'nationalId', 'phoneNumber', 'dob', 'gender', 'province', 'district', 'sector', 'cell', 'village'];
+          
+          // Check if headers match expected format
+          const missingHeaders = expectedHeaders.filter(header => !headers.includes(header));
+          if (missingHeaders.length > 0) {
+            reject(new Error(`Missing required columns: ${missingHeaders.join(', ')}`));
+            return;
+          }
+
+          // Process each row to convert Excel serial numbers to date strings
+          const processedData = jsonData.map((row: any, index: number) => {
+            if (index === 0) return row; // Keep header row as is
+            
+            const processedRow = [...(row as any[])];
+            const dobIndex = headers.indexOf('dob');
+            
+            if (dobIndex !== -1 && (row as any[])[dobIndex]) {
+              const dobValue = (row as any[])[dobIndex].toString().trim();
+              if (isExcelSerialNumber(dobValue)) {
+                processedRow[dobIndex] = convertExcelSerialToDateString(parseInt(dobValue));
+              }
+            }
+            
+            // Process gender field - normalize and convert to uppercase
+            const genderIndex = headers.indexOf('gender');
+            if (genderIndex !== -1 && (row as any[])[genderIndex]) {
+              const genderValue = (row as any[])[genderIndex].toString().trim().toUpperCase();
+              if (genderValue === 'F') {
+                processedRow[genderIndex] = 'FEMALE';
+              } else if (genderValue === 'M') {
+                processedRow[genderIndex] = 'MALE';
+              } else if (genderValue === 'FEMALE' || genderValue === 'MALE') {
+                processedRow[genderIndex] = genderValue;
+              } else {
+                // Keep original value if it doesn't match expected patterns
+                processedRow[genderIndex] = genderValue;
+              }
+            }
+            
+            // Also process location fields to capitalize first character
+            const locationFields = ['province', 'district', 'sector', 'cell', 'village'];
+            locationFields.forEach(field => {
+              const fieldIndex = headers.indexOf(field);
+              if (fieldIndex !== -1 && (row as any[])[fieldIndex]) {
+                processedRow[fieldIndex] = capitalizeFirstChar((row as any[])[fieldIndex].toString().trim());
+              }
+            });
+            
+            return processedRow;
+          });
+
+          // Create new workbook with processed data
+          const newWorkbook = XLSX.utils.book_new();
+          const newWorksheet = XLSX.utils.aoa_to_sheet(processedData);
+          XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, 'Processed Data');
+
+          // Convert workbook to blob
+          const processedDataArray = XLSX.write(newWorkbook, { bookType: 'xlsx', type: 'array' });
+          const processedBlob = new Blob([processedDataArray], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          
+          // Create new file with processed data
+          const processedFile = new File([processedBlob], file.name, { type: file.type });
+          resolve(processedFile);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      reader.onerror = () => reject(new Error("Failed to read file"));
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
   const handleImport = async () => {
     if (!selectedFile || importedData.length === 0) {
       notifications.show({
@@ -306,9 +407,14 @@ const ImportTraineesModal: React.FC<Props> = ({
 
     setLoading(true);
     try {
+      // Process the file to convert Excel serial numbers to date strings
+      const processedFile = await processExcelFileForImport(selectedFile);
+
+      console.log("processedFile", processedFile);
+      
       // Create FormData for multipart/form-data
       const formData = new FormData();
-      formData.append('file', selectedFile);
+      formData.append('file', processedFile);
       formData.append('windowId', selectedSelections.windowId);
       formData.append('subwindowId', selectedSelections.subWindowId);
       formData.append('tradeId', selectedSelections.tradeId);
