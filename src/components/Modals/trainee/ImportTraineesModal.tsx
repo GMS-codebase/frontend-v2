@@ -3,11 +3,10 @@ import React, { useState, useRef } from "react";
 import { Modal, Select, Button, Text, Group, Stack, Divider } from "@mantine/core";
 import { IoMdClose } from "react-icons/io";
 import { notifications } from "@mantine/notifications";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { SECTOR_STATUS, SUBWINDOW_STATUS, TRADE_STATUS, WINDOW_STATUS } from "@/utils/enums";
-import { getSurveyTrainee } from "@/services";
-import { getApplicantApplicationsInfo, ApplicantApplicationInfo } from "@/services/api/survey";
+import { getSurveyTrainee, getWindows, getSectors } from "@/services";
 import * as XLSX from 'xlsx';
 import rwandaLocations from "@/utils/location";
 import { 
@@ -45,8 +44,7 @@ const ImportTraineesModal: React.FC<Props> = ({
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
-  const [applicationsInfo, setApplicationsInfo] = useState<ApplicantApplicationInfo | null>(null);
-  const [applicationsLoading, setApplicationsLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [importedData, setImportedData] = useState<ImportedTrainee[]>([]);
   const [showPreview, setShowPreview] = useState(false);
@@ -57,6 +55,11 @@ const ImportTraineesModal: React.FC<Props> = ({
     sectorId: "",
     tradeId: "",
   });
+  const [currentUserId, setCurrentUserId] = useState<string>("");
+
+  // Redux selectors
+  const windows = useSelector((state: any) => state.windows?.windows || []);
+  const sectors = useSelector((state: any) => state.sectors?.sectors || []);
 
   // Utility function to remove duplicate values, keeping only the first occurrence
   const removeDuplicates = (items: { value: string; label: string }[]): { value: string; label: string }[] => {
@@ -70,36 +73,58 @@ const ImportTraineesModal: React.FC<Props> = ({
     });
   };
 
-  // Fetch applicant applications info on component mount
+  // Fetch data and user info on component mount
   React.useEffect(() => {
-    const fetchApplicationsInfo = async () => {
+    const fetchData = async () => {
       try {
-        setApplicationsLoading(true);
-        const data = await getApplicantApplicationsInfo(applicantId);
-        setApplicationsInfo(data);
+        setDataLoading(true);
+        
+        // Fetch windows and sectors
+        await Promise.all([
+          getWindows(dispatch),
+          getSectors(dispatch)
+        ]);
+
+        // Fetch current user info if applicantId is not provided
+        if (!applicantId) {
+          try {
+            const response = await authorizedApi.get("/auth/me");
+            const userData = response.data.data.data;
+            console.log("---userdata",userData)
+            if (userData?.uuid) {
+              setCurrentUserId(userData.uuid);
+            }
+          } catch (error) {
+            console.error("Failed to fetch user data:", error);
+            notifications.show({
+              message: "Failed to fetch user information",
+              color: "red",
+            });
+          }
+        }
       } catch (error) {
-        console.error("Failed to fetch applications info:", error);
+        console.error("Failed to fetch data:", error);
         notifications.show({
-          message: "Failed to fetch applications information",
+          message: "Failed to fetch required data",
           color: "red",
         });
       } finally {
-        setApplicationsLoading(false);
+        setDataLoading(false);
       }
     };
 
     if (isOpen) {
-      fetchApplicationsInfo();
+      fetchData();
     }
-  }, [isOpen, applicantId]);
+  }, [isOpen, applicantId, dispatch]);
 
-  // Get all unique windows from applications
+  // Get all unique windows from Redux state
   const MultiWindowData = removeDuplicates(
-    applicationsInfo?.filter(window => 
+    windows?.filter((window: any) => 
       window?.status === WINDOW_STATUS.ACTIVE &&
-      window?.subWindows.some(sub => sub.status === SUBWINDOW_STATUS.ACTIVE)
+      window?.subWindows?.some((sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE)
     )
-    .map(window => ({
+    .map((window: any) => ({
       value: window.uuid,
       label: window.title,
     })) || []
@@ -109,11 +134,11 @@ const ImportTraineesModal: React.FC<Props> = ({
   const getSubWindowsData = () => {
     if (!selectedSelections.windowId) return [];
     
-    const subWindows = applicationsInfo?.filter(window => window.uuid === selectedSelections.windowId)
-      .flatMap(window => 
+    const subWindows = windows?.filter((window: any) => window.uuid === selectedSelections.windowId)
+      .flatMap((window: any) => 
         window.subWindows
-          .filter(sub => sub.status === SUBWINDOW_STATUS.ACTIVE)
-          .map(subWindow => ({
+          ?.filter((sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE)
+          .map((subWindow: any) => ({
             value: subWindow.uuid,
             label: subWindow.title,
           }))
@@ -126,46 +151,44 @@ const ImportTraineesModal: React.FC<Props> = ({
   const getSectorData = () => {
     if (!selectedSelections.windowId || !selectedSelections.subWindowId) return [];
     
-    const sectors = applicationsInfo?.filter(window => window.uuid === selectedSelections.windowId)
-      .flatMap(window => 
-        window.subWindows
-          .filter(sub => sub.uuid === selectedSelections.subWindowId && sub.status === SUBWINDOW_STATUS.ACTIVE)
-          .flatMap(subWindow => 
-            subWindow.sectors
-              .filter(sector => sector.status === SECTOR_STATUS.ACTIVE)
-              .map(sector => ({
-                value: sector.uuid,
-                label: sector.name,
-              }))
-          )
-      ) || [];
-    
-    return removeDuplicates(sectors);
+    const sectorMap = new Map();
+    windows?.forEach((window: any) =>
+      window.subWindows
+        ?.filter((subWindow: any) => subWindow.uuid === selectedSelections.subWindowId)
+        .forEach((subWindow: any) =>
+          subWindow.sectors?.forEach((sector: any) => {
+            const matching = sectors.find(
+              (s: any) =>
+                s.uuid === sector.uuid &&
+                s.trades?.some(
+                  (trad: any) => trad.trade.status === TRADE_STATUS.ACTIVE
+                ) &&
+                sector.status === SECTOR_STATUS.ACTIVE
+            );
+            if (matching && !sectorMap.has(matching.uuid)) {
+              sectorMap.set(matching.uuid, {
+                value: matching.uuid,
+                label: matching.name,
+              });
+            }
+          })
+        )
+    );
+    return Array.from(sectorMap.values());
   };
 
   // Get trades for selected sector
   const getTradesData = () => {
     if (!selectedSelections.windowId || !selectedSelections.subWindowId || !selectedSelections.sectorId) return [];
     
-    const trades = applicationsInfo?.filter(window => window.uuid === selectedSelections.windowId)
-      .flatMap(window => 
-        window.subWindows
-          .filter(sub => sub.uuid === selectedSelections.subWindowId && sub.status === SUBWINDOW_STATUS.ACTIVE)
-          .flatMap(subWindow => 
-            subWindow.sectors
-              .filter(sector => sector.uuid === selectedSelections.sectorId && sector.status === SECTOR_STATUS.ACTIVE)
-              .flatMap(sector => 
-                sector.trades
-                  .filter(trade => trade.trade.status === TRADE_STATUS.ACTIVE)
-                  .map(trade => ({
-                    value: trade.uuid,
-                    label: trade.trade.title,
-                  }))
-              )
-          )
-      ) || [];
-    
-    return removeDuplicates(trades);
+    return sectors
+      .filter((sc: any) => sc.uuid === selectedSelections.sectorId)
+      .flatMap((sec: any) => {
+        return sec.trades?.map((trade: any) => ({
+          value: trade.uuid,
+          label: trade.trade.title
+        })) || [];
+      });
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -419,7 +442,10 @@ const ImportTraineesModal: React.FC<Props> = ({
       formData.append('subwindowId', selectedSelections.subWindowId);
       formData.append('tradeId', selectedSelections.tradeId);
       formData.append('sectorId', selectedSelections.sectorId);
-      if (applicantId) formData.append('applicantId', applicantId);
+      
+      // Use applicantId if provided, otherwise use current user ID
+      const userIdToUse = applicantId || currentUserId;
+      if (userIdToUse) formData.append('applicantId', userIdToUse);
 
       // Import trainees using the new API endpoint
       await authorizedApi.post("/survey-trainee/create-by-file", formData, {
@@ -434,7 +460,7 @@ const ImportTraineesModal: React.FC<Props> = ({
       });
 
       // Refresh the trainees list
-      getSurveyTrainee(dispatch, applicantId);
+      getSurveyTrainee(dispatch, userIdToUse);
       
       // Reset form
       setSelectedFile(null);
@@ -530,22 +556,9 @@ const ImportTraineesModal: React.FC<Props> = ({
           Import Survey Trainees
         </h1>
 
-        {applicationsLoading ? (
+        {dataLoading ? (
           <div className="w-full flex justify-center items-center py-8">
-            <p className="text-gray-600">Loading applications...</p>
-          </div>
-        ) : !applicationsInfo || applicationsInfo.length === 0 ? (
-          <div className="w-full flex flex-col items-center justify-center py-8 text-center">
-            <div className="text-6xl mb-4">📋</div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">
-              {applicantId ? "You are not on contract signing so you can not add trainee surveys" : "This applicant is not on contract signing so can not add trainees"}
-            </h2>
-            <p className="text-gray-600">
-              {applicantId 
-                ? "Please complete your contract signing process to import survey trainees."
-                : "This applicant needs to complete the contract signing process before survey trainees can be imported."
-              }
-            </p>
+            <p className="text-gray-600">Loading data...</p>
           </div>
         ) : (
         <div className="space-y-6">
@@ -586,7 +599,7 @@ const ImportTraineesModal: React.FC<Props> = ({
             <div>
               <label className="block mb-2 font-medium">Window</label>
               <Select
-                placeholder={applicationsLoading ? "Loading..." : "Select Window"}
+                placeholder={dataLoading ? "Loading..." : "Select Window"}
                 data={MultiWindowData || []}
                 value={selectedSelections.windowId}
                 onChange={(val) => setSelectedSelections(prev => ({ 
@@ -596,7 +609,7 @@ const ImportTraineesModal: React.FC<Props> = ({
                   sectorId: "",
                   tradeId: ""
                 }))}
-                disabled={applicationsLoading}
+                disabled={dataLoading}
               />
             </div>
             <div>
