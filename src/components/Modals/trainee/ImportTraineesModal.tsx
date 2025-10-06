@@ -90,7 +90,6 @@ const ImportTraineesModal: React.FC<Props> = ({
           try {
             const response = await authorizedApi.get("/auth/me");
             const userData = response.data.data.data;
-            console.log("---userdata",userData)
             if (userData?.uuid) {
               setCurrentUserId(userData.uuid);
             }
