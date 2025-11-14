@@ -207,10 +207,10 @@ const Page = () => {
     },
   ];
 
-  const filteredTrainings =
-    trainings?.filter((training: Training) =>
-      training?.title?.toLowerCase().includes(searchQuery.toLowerCase())
-    ) ?? [];
+const filteredTrainings =
+  trainings?.trainings?.filter((training: Training) =>
+    training?.title?.toLowerCase().includes(searchQuery.toLowerCase())
+  ) ?? [];
 
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
