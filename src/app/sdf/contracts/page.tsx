@@ -92,18 +92,22 @@ const Page = () => {
   const [applicationsForContractSigning, setApplicationsForContractSigning] =
     useState<any[]>([]);
 
-  useEffect(() => {
-    setContractsSignedApplications(
-      applications?.filter((a: any) => a?.application?.uploadedContract)
-    );
-    setApplicationsForContractSigning(
-      applications?.filter(
-        (a: any) =>
-          !a?.application?.uploadedContract &&
-          a?.application?.uploadedSignedMinutes
-      )
-    );
-  }, [applications]);
+ useEffect(() => {
+   const safeApps = Array.isArray(applications) ? applications : [];
+
+   setContractsSignedApplications(
+     safeApps.filter((a) => a?.application?.uploadedContract)
+   );
+
+   setApplicationsForContractSigning(
+     safeApps.filter(
+       (a) =>
+         !a?.application?.uploadedContract &&
+         a?.application?.uploadedSignedMinutes
+     )
+   );
+ }, [applications]);
+
 
   const FilterDropDown = ({
     placeholderText,
