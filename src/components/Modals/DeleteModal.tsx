@@ -21,7 +21,11 @@ import { DELETE_BUDGET_LINE_SUCCESS } from "@/actions/BudgetLinesActions";
 import { DELETE_FORM_SUCCESS } from "@/actions/FormsActions";
 import { DELETE_SURVEY_SUCCESS } from "@/actions/SurveyActions";
 import { DELETE_SURVEY_TRAINEE_SUCCESS } from "@/actions/SurveyTraineeActions";
-import { REMOVE_TRAINEE_SUCCESS } from "@/actions/TrainingActions";
+import {
+  REMOVE_TRAINEE_SUCCESS,
+  REMOVE_TRAINING_SUCCESS,
+} from "@/actions/TrainingActions";
+import { getTrainings } from "@/services";
 
 // Redux action mappings
 const actionMappings = {
@@ -34,10 +38,10 @@ const actionMappings = {
   employees: DELETE_EMPLOYEE_SUCCESS,
   budgetLines: DELETE_BUDGET_LINE_SUCCESS,
   forms: DELETE_FORM_SUCCESS,
-  trainings: DELETE_FORM_SUCCESS,
+  trainings: REMOVE_TRAINING_SUCCESS,
   trainee: REMOVE_TRAINEE_SUCCESS,
-  surveys: DELETE_SURVEY_SUCCESS, // Added surveys action mapping
-  surveyTrainee: DELETE_SURVEY_TRAINEE_SUCCESS, // Added surveys action mapping
+  surveys: DELETE_SURVEY_SUCCESS,
+  surveyTrainee: DELETE_SURVEY_TRAINEE_SUCCESS,
 };
 
 const routeMappings = {
@@ -108,6 +112,9 @@ const DeleteModal = ({
           payload:
             type === "subwindows" ? { windowId, data: { uuid: id } } : { id },
         });
+
+        type === "trainings" && getTrainings(dispatch);
+
         closeModal();
       })
       .catch((err) => {

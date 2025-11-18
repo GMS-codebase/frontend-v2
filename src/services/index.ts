@@ -172,6 +172,9 @@ import {
   FETCH_TRAINING_BY_ID_FAILURE,
   FETCH_TRAINING_BY_ID_REQUEST,
   FETCH_TRAINING_BY_ID_SUCCESS,
+  GET_CERTIFIED_TRAINEES_FAILURE,
+  GET_CERTIFIED_TRAINEES_REQUEST,
+  GET_CERTIFIED_TRAINEES_SUCCESS,
   MAKE_DECISION_FAILURE,
   MAKE_DECISION_REQUEST,
   MAKE_DECISION_SUCCESS,
@@ -188,6 +191,24 @@ import {
   REQUEST_REVIEW_REQUEST,
   REQUEST_REVIEW_SUCCESS,
 } from "@/actions/TrainingActions";
+import {
+  GET_COMPETENCE_LOADING,
+  GET_COMPETENCE_SUCCESS,
+  GET_COMPETENCE_ERROR,
+  ADD_COMPETENCE_SUCCESS,
+  ADD_COMPETENCE_ERROR,
+  ADD_COMPETENCE_LOADING,
+  DELETE_COMPETENCE_ERROR,
+  DELETE_COMPETENCE_LOADING,
+  DELETE_COMPETENCE_SUCCESS,
+  UPDATE_COMPETENCE_ERROR,
+  UPDATE_COMPETENCE_LOADING,
+  UPDATE_COMPETENCE_SUCCESS,
+  GET_COMPETENCE_BY_ID_SUCCESS,
+  GET_COMPETENCE_BY_ID_ERROR,
+  GET_COMPETENCE_BY_ID_LOADING,
+} from "@/actions/CompetenceAction";
+import { ICompetence } from "@/types/competences";
 
 export const exportAppealsReport = async (
   dispatch: Dispatch<UnknownAction>,
@@ -613,25 +634,31 @@ export const getEmpStages = async (dispatch: Dispatch<UnknownAction>) => {
       dispatch({ type: GET_STAGES_ERROR, payload: err?.response?.data?.error });
     });
 };
-export const getApplicationsForContractSigning = async (
-  dispatch: Dispatch<UnknownAction>
-) => {
-  dispatch({ type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING });
-  authorizedApi
-    .get("/negotiation-contract/applications/sdf/ready-contract-signing")
-    .then((res) => {
-      dispatch({
-        type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
-        payload: res.data.data.data,
+export const getApplicationsForContractSigning =
+  (page?: any, limit?: any) => async (dispatch: Dispatch) => {
+    dispatch({ type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_LOADING });
+    authorizedApi
+      .get(
+        `/negotiation-contract/applications/sdf/ready-contract-signing?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      )
+      .then((res) => {
+        dispatch({
+          type: GET_MY_APPLICATIONS_READY_FOR_CONTRACTS_SIGNING_SUCCESS,
+          payload: {
+            applications: res?.data?.data?.data?.data,
+            total: res?.data?.data?.data.total,
+            page: res?.data?.data?.data?.page,
+            totalPages: res?.data?.data?.data?.totalPages,
+          },
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_APPLICATIONS_ERROR,
+          payload: err?.response?.data?.error,
+        });
       });
-    })
-    .catch((err) => {
-      dispatch({
-        type: GET_APPLICATIONS_ERROR,
-        payload: err?.response?.data?.error,
-      });
-    });
-};
+  };
 export const getApplications = async (dispatch: Dispatch) => {
   dispatch({ type: GET_APPLICATIONS_LOADING });
 
@@ -706,9 +733,9 @@ export const getEmployeeApplicationsPaginated =
       dispatch({
         type: GET_PAGINATED_APPLICATIONS_SUCCESS,
         payload: {
-          applications: response?.data?.data?.data.data,
-          total: response?.data?.data?.data.total,
-          page: response?.data?.data?.data?.page,
+          applications: response?.data?.data?.data?.items,
+          total: response?.data?.data?.data?.meta?.totalItems,
+          page: response?.data?.data?.data?.meta?.currentPage,
         },
       });
     } catch (error: any) {
@@ -1164,20 +1191,31 @@ export const getApplicationStatus2 = (application: any) => {
   }
 };
 
-export const getTrainings = async (dispatch: any) => {
-  try {
-    dispatch({ type: "FETCH_TRAININGS_REQUEST" });
-    const res = await authorizedApi.get("/training/by-applicant");
-    dispatch({
-      type: "SET_TRAININGS",
-      payload: res.data.data.data,
-    });
-    console.log("Trainings fetched successfully:", res.data.data.data);
-  } catch (err) {
-    console.error("Failed to fetch trainings:", err);
-    dispatch({ type: "SET_TRAININGS", payload: [] });
-  }
-};
+export const getTrainings =
+  (page?: any, limit?: any, search?: string) => async (dispatch: any) => {
+    try {
+      dispatch({ type: "FETCH_TRAININGS_REQUEST" });
+      const params = new URLSearchParams();
+
+      params.append("page", page === 0 ? "1" : page.toString());
+      params.append("limit", limit.toString());
+      if (search) params.append("search", search);
+
+      const res = await authorizedApi.get(
+        `/training/by-applicant?${params.toString()}`
+      );
+      dispatch({
+        type: "SET_TRAININGS",
+        payload: {
+          trainings: res.data.data.data,
+          total: res.data.data.data.total ?? 0,
+          page: res.data.data.data.page ?? 1,
+        },
+      });
+    } catch (err) {
+      dispatch({ type: "SET_TRAININGS", payload: [] });
+    }
+  };
 
 export const getSDFTrainings =
   (page?: any, limit?: any) => async (dispatch: any) => {
@@ -1188,7 +1226,11 @@ export const getSDFTrainings =
       );
       dispatch({
         type: "SET_TRAININGS",
-        payload: res.data.data.data,
+        payload: {
+          trainings: res.data.data.data,
+          total: res.data.data.data.total ?? 0,
+          page: res.data.data.data.page ?? 1,
+        },
       });
     } catch (err) {
       dispatch({ type: "SET_TRAININGS", payload: [] });
@@ -1491,16 +1533,14 @@ export const addTrainees =
     } catch (err: any) {
       dispatch({ type: ADD_TRAINEES_FAILURE, payload: err.message });
       notifications.show({
-        message:err?.response?.data?.message || "Failed to add trainees!",
+        message: err?.response?.data?.message || "Failed to add trainees!",
         color: "red",
       });
     }
   };
 
-
-  export const removeTrainee =
-  (trainingId: string, traineeId: string) =>
-  async (dispatch: any) => {
+export const removeTrainee =
+  (trainingId: string, traineeId: string) => async (dispatch: any) => {
     try {
       dispatch({ type: REMOVE_TRAINEE_REQUEST });
 
@@ -1527,5 +1567,149 @@ export const addTrainees =
     }
   };
 
+export const getCertifiedTrainees =
+  (page?: any, limit?: any, search?: string) =>
+  async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: GET_CERTIFIED_TRAINEES_REQUEST });
+
+    const params = new URLSearchParams();
+
+    params.append("page", page === 0 ? "1" : page.toString());
+    params.append("limit", limit.toString());
+    if (search) params.append("search", search);
+
+    authorizedApi
+      .get(`/training/certified-trainees?${params.toString()}`)
+      .then((res) => {
+        dispatch({
+          type: GET_CERTIFIED_TRAINEES_SUCCESS,
+          payload: {
+            trainees: res?.data?.data?.data,
+            total: res?.data?.data?.totalItems,
+            page: res?.data?.data?.currentPage,
+            totalPages: res?.data?.data?.totalPages,
+          },
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_CERTIFIED_TRAINEES_FAILURE,
+          payload: err?.response?.data?.error,
+        });
+      });
+  };
+
 // Export the new survey API function
 export { getApplicantApplicationsInfo } from "./api/survey";
+
+// competences api
+export const getCompetences =
+  (page?: any, limit?: any) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: GET_COMPETENCE_LOADING });
+    authorizedApi
+      .get(
+        `/competency/?page=${parseInt(page ?? 1)}&limit=${parseInt(limit ?? 10)}`
+      )
+      .then((res) => {
+        dispatch({ type: GET_COMPETENCE_SUCCESS, payload: res.data });
+        console.log("FETCHED DATA", res.data);
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_COMPETENCE_ERROR,
+          payload: err?.response?.data?.error,
+        });
+        console.log(err);
+      });
+  };
+
+export const createCompetence =
+  (data: ICompetence) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: ADD_COMPETENCE_LOADING });
+    try {
+      console.log("Creating competence with:", data); // Debug
+      const res = await authorizedApi.post(`/competency`, data);
+      dispatch({ type: ADD_COMPETENCE_SUCCESS, payload: res.data });
+      notifications.show({
+        message: "Competence created successfully!",
+        color: "green",
+      });
+    } catch (err: any) {
+      console.error(
+        "Create competence error:",
+        err.response?.data || err.message
+      ); // Debug
+      dispatch({
+        type: ADD_COMPETENCE_ERROR,
+        payload: err?.response?.data?.error || "Failed to create competence!",
+      });
+    }
+  };
+
+export const updateCompetence =
+  (id: string, data: ICompetence) =>
+  async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: UPDATE_COMPETENCE_LOADING });
+    try {
+      console.log("Updating competence with id:", id, "data:", data); // Debug
+      const res = await authorizedApi.put(`/competency/${id}/edit`, data);
+      dispatch({ type: UPDATE_COMPETENCE_SUCCESS, payload: res.data });
+      notifications.show({
+        message: "Competence updated successfully!",
+        color: "green",
+      });
+    } catch (err: any) {
+      console.error(
+        "Update competence error:",
+        err.response?.data || err.message
+      ); // Debug
+      dispatch({
+        type: UPDATE_COMPETENCE_ERROR,
+        payload: err?.response?.data?.error || "Failed to update competence!",
+      });
+    }
+  };
+
+export const deleteCompetence =
+  (id: string) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: DELETE_COMPETENCE_LOADING });
+    authorizedApi
+      .delete(`/competency/${id}/delete`)
+      .then((res) => {
+        dispatch({ type: DELETE_COMPETENCE_SUCCESS, payload: res.data });
+        notifications.show({
+          message: "Competence deleted successfully!",
+          color: "green",
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: DELETE_COMPETENCE_ERROR,
+          payload: err?.response?.data?.error,
+        });
+        notifications.show({
+          message: err?.response?.data?.error || "Failed to delete competence!",
+          color: "red",
+        });
+      });
+  };
+
+export const getCompetenceById =
+  (id: string) => async (dispatch: Dispatch<UnknownAction>) => {
+    dispatch({ type: GET_COMPETENCE_BY_ID_LOADING });
+    authorizedApi
+      .get(`/competency/${id}`)
+      .then((res) => {
+        dispatch({
+          type: GET_COMPETENCE_BY_ID_SUCCESS,
+          payload: res.data.data,
+        });
+        console.log("FETCHED COMPETENCE BY ID", res.data);
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_COMPETENCE_BY_ID_ERROR,
+          payload: err?.response?.data?.error,
+        });
+      });
+  };

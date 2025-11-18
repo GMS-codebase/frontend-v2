@@ -1,27 +1,30 @@
 "use client";
+
 import { DataTable } from "@/components/core/data-table";
-import { getSDFTrainings } from "@/services";
-import { Training } from "@/types";
+import { getCertifiedTrainees, handleDownloadFile } from "@/services";
 import { IPaginatedQuery } from "@/types/base.type";
+import { ITrainingTrainee } from "@/types/trainings";
 import { Menu, Select } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Download } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { BiSearch } from "react-icons/bi";
-import { CiEdit } from "react-icons/ci";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { RiDeleteBinLine } from "react-icons/ri";
 import { VscEye } from "react-icons/vsc";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { UnknownAction } from "redux";
+import { useDebounce } from "use-debounce";
 
-const Page = () => {
+const CertifiedTraineesContainer = () => {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch] = useDebounce(searchQuery, 500);
+
   const {
-    trainings,
-    loading,
-    total: totalTrainings,
+    certifiedTrainees,
+    loadingCertifiedTrainees,
+    total: totalTrainees,
     page: currentPageFromRedux,
   } = useSelector((state: any) => state.trainings);
 
@@ -37,19 +40,20 @@ const Page = () => {
   useEffect(() => {
     setLocalPaginateOpts((prev) => ({
       ...prev,
-      totalPages: Math.ceil((totalTrainings ?? 0) / (prev?.limit ?? 10)),
+      totalPages: Math.ceil((totalTrainees ?? 0) / (prev?.limit ?? 10)),
     }));
-  }, [totalTrainings]);
+  }, [totalTrainees]);
 
   // Fetch data whenever page or limit changes
   useEffect(() => {
     dispatch(
-      getSDFTrainings(
+      getCertifiedTrainees(
         (paginateOpts.page ?? 0) + 1,
-        paginateOpts.limit
+        paginateOpts.limit,
+        debouncedSearch
       ) as unknown as UnknownAction
     );
-  }, [dispatch, paginateOpts.page, paginateOpts.limit]);
+  }, [dispatch, paginateOpts.page, paginateOpts.limit, debouncedSearch]);
 
   const setPaginateOpts: React.Dispatch<
     React.SetStateAction<IPaginatedQuery & { totalPages: number }>
@@ -58,7 +62,7 @@ const Page = () => {
       setLocalPaginateOpts((prev) => {
         const next = value(prev);
         dispatch(
-          getSDFTrainings(
+          getCertifiedTrainees(
             (next.page ?? 0) + 1,
             next.limit
           ) as unknown as UnknownAction
@@ -68,7 +72,7 @@ const Page = () => {
     } else {
       setLocalPaginateOpts(value);
       dispatch(
-        getSDFTrainings(
+        getCertifiedTrainees(
           (value.page ?? 0) + 1,
           value.limit
         ) as unknown as UnknownAction
@@ -91,83 +95,46 @@ const Page = () => {
     />
   );
 
-  const columns: ColumnDef<any>[] = [
+  const traineesColumns: ColumnDef<ITrainingTrainee>[] = [
     {
-      accessorKey: "title",
-      header: "Title",
-      cell: ({ row }) => <div className="w-full">{row.original?.title}</div>,
-    },
-    {
-      accessorKey: "startDate",
-      header: "Start Date",
-      cell: ({ row }) => {
-        const date = row.original?.startDate
-          ? new Date(row.original.startDate).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            })
-          : "-";
-        return <div className="w-full">{date}</div>;
-      },
-    },
-    {
-      accessorKey: "endDate",
-      header: "End Date",
-      cell: ({ row }) => {
-        const date = row.original?.endDate
-          ? new Date(row.original.endDate).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            })
-          : "-";
-        return <div className="w-full">{date}</div>;
-      },
-    },
-    {
-       accessorKey: "response",
-       header: "Response",
-       cell: ({ row }) => {
-         const { status, uuid } = row.original;
- 
-         if (
-           status === "ACCEPTED" ||
-           status === "REJECTED" ||
-           status === "DRAFT"
-         ) {
-           return (
-             <button
-               className="px-3 py-1 bg-primary text-white rounded-full text-sm"
-               onClick={() => {
-                 window.location.href = `/sdf/trainings/${uuid}`;
-               }}
-             >
-               View Training
-             </button>
-           );
-         } else if (status === "REVIEW") {
-           return (
-             <button
-               className="px-3 py-1 bg-primary/20 border border-primary text-primary rounded-full text-sm"
-               onClick={() => {
-                  window.location.href = `/sdf/trainings/${uuid}`
-               }}
-             >
-               Make decision
-             </button>
-           );
-         } else return <div className="text-gray-400">-</div>;
-       },
-     },
-    {
-      accessorKey: "status",
-      header: "Status",
+      accessorKey: "firstName",
+      header: "First name",
       cell: ({ row }) => (
-        <div className="w-full capitalize">
-          {row.original?.status || "draft"}
+        <div className="w-full">{row.original?.firstName}</div>
+      ),
+    },
+    {
+      accessorKey: "lastName",
+      header: "Last name",
+      cell: ({ row }) => <div className="w-full">{row.original?.lastName}</div>,
+    },
+    {
+      accessorKey: "nid",
+      header: "NID",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.nationalId}</div>
+      ),
+    },
+    {
+      accessorKey: "phoneNumber",
+      header: "Phone number",
+      cell: ({ row }) => (
+        <div className="w-full">{row.original?.traineePhoneNumber}</div>
+      ),
+    },
+    {
+      accessorKey: "educationLevel",
+      header: "Education Level",
+      cell: ({ row }) => (
+        <div className="w-full truncate max-w-[180px]">
+          {row.original?.educationLevel}
         </div>
       ),
+    },
+    {
+      accessorKey: "gender",
+      header: "Gender",
+      cell: ({ row }) => <div className="w-full">{row.original?.gender}</div>,
     },
     {
       accessorKey: "actions",
@@ -191,14 +158,22 @@ const Page = () => {
                 <h1 className="text-lg">Actions</h1>
               </Menu.Label>
               <Menu.Divider />
-              <Menu.Item className="bg-[#F0F0F0]">
-                <Link
-                  href={`/sdf/trainings/${row.original.uuid}`}
-                  className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]"
-                >
+              {/* <Menu.Item className="bg-[#F0F0F0]">
+                <span className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
                   <VscEye size={21} color="#576074" />
-                  View
-                </Link>
+                  Preview
+                </span>
+              </Menu.Item> */}
+              <Menu.Item
+                className="bg-[#F0F0F0]"
+                onClick={() =>
+                  handleDownloadFile(row?.original?.certificatePath, "training")
+                }
+              >
+                <span className="w-full h-full py-1 flex text-base items-center gap-3 text-[#576074]">
+                  <Download size={21} color="#576074" />
+                  Download
+                </span>
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>
@@ -206,15 +181,15 @@ const Page = () => {
       ),
     },
   ];
-
-const filteredTrainings =
-  trainings?.trainings?.filter((training: Training) =>
-    training?.title?.toLowerCase().includes(searchQuery.toLowerCase())
-  ) ?? [];
-
+  const filteredCertifiedTrainees = debouncedSearch
+      ?certifiedTrainees.filter((trainee:any) =>
+          [trainee.firstName, trainee.lastName, trainee.nationalId].some((field) =>
+            field?.toLowerCase().includes(debouncedSearch.toLowerCase())
+          )
+        ):certifiedTrainees;
   return (
     <div className="w-full flex flex-col bg-white rounded-2xl mb-20 pb-10">
-      <div className="w-full flex flex-col md:flex-row md:justify-between items-center p-4 gap-4">
+      <div className="w-full flex flex-col md:flex-row md:justify-end items-center p-4 gap-4">
         <div className="relative lg:w-[25rem] w-full mt-4 lg:mt-0">
           <span className="absolute top-4 left-2">
             <BiSearch size={25} />
@@ -222,13 +197,13 @@ const filteredTrainings =
           <input
             name="search"
             className="w-full p-3 py-4 pl-10 text-base text-black placeholder:text-black rounded-full bg-[#005DE908] border-none outline-none"
-            placeholder="Search trainings"
+            placeholder="Search certified trainee"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
-        <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+        {/* <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
           <FilterDropDown
             placeholderText="Filter By status"
             data={["ACCEPTED", "REJECTED", "UNDER REVIEW"]}
@@ -247,20 +222,20 @@ const filteredTrainings =
             placeholderText="Filter By Sector"
             data={["Manufacturing", "Constrution"]}
           />
-        </div>
+        </div> */}
       </div>
 
       <div className="w-full h-full">
         <DataTable
-          columns={columns}
-          data={filteredTrainings}
-          loading={loading}
+          columns={traineesColumns}
+          data={filteredCertifiedTrainees ?? []}
+          loading={loadingCertifiedTrainees}
           noDataMessage={
             searchQuery
-              ? `No trainings matching "${searchQuery}"`
-              : "You do not have any trainings yet"
+              ? `No trainee matching "${searchQuery}"`
+              : "There are no trainee yet"
           }
-          totalApplications={totalTrainings}
+          totalApplications={totalTrainees}
           paginationProps={{
             isPaginated: true,
             paginateOpts,
@@ -272,4 +247,4 @@ const filteredTrainings =
   );
 };
 
-export default Page;
+export default CertifiedTraineesContainer;
