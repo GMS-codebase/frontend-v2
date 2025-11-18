@@ -315,7 +315,7 @@ export const getMyApplicantProfile = async (
 export const getSectorTrades = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_SECTORS_LOADING });
   authorizedApi
-    .get("/Sectors/sector/trades")
+    .get("/Sectors/sector/trades?page=1&limit=100")
     .then((res) => {
       dispatch({
         type: GET_SECTOR_TRADES_SUCCESS,
@@ -332,7 +332,7 @@ export const getSectorTrades = async (dispatch: Dispatch<UnknownAction>) => {
 export const getSectors = async (dispatch: Dispatch<UnknownAction>) => {
   dispatch({ type: GET_SECTORS_LOADING });
   authorizedApi
-    .get("/Sectors")
+    .get("/Sectors?page=1&limit=100")
     .then((res) => {
       dispatch({ type: GET_SECTORS_SUCCESS, payload: res.data.data.data });
     })
