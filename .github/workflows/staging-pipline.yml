@@ -44,7 +44,7 @@ jobs:
       - name: Install dependencies and build the application
         run: |
           cd staging
-          pnpm install --force
+          pnpm install --force --no-frozen-lockfile
           pnpm run build
 
       - name: Mode .next, package.json, node_modules folder to builds folder

@@ -4,11 +4,11 @@ import React, { useEffect, useState } from "react";
 import { Modal, Select } from "@mantine/core";
 import { IoMdClose } from "react-icons/io";
 import { notifications } from "@mantine/notifications";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authorizedApi } from "@/utils/api";
 import { SECTOR_STATUS, SUBWINDOW_STATUS, TRADE_STATUS, WINDOW_STATUS } from "@/utils/enums";
+import { getWindows, getSectors } from "@/services";
 import { getSurveyTrainee } from "@/services";
-import { getApplicantApplicationsInfo, ApplicantApplicationInfo } from "@/services/api/survey";
 import rwandaLocations from "@/utils/location";
 
 interface Props {
@@ -26,8 +26,8 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
 }) => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
-    const [applicationsInfo, setApplicationsInfo] = useState<ApplicantApplicationInfo | null>(null);
-    const [applicationsLoading, setApplicationsLoading] = useState(true);
+    const [dataLoading, setDataLoading] = useState(true);
+    const [currentUserId, setCurrentUserId] = useState<string>("");
 
     const [formData, setFormData] = useState({
         firstname: "",
@@ -50,6 +50,23 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    // Redux selectors
+    const windows = useSelector((state: any) => state.windows?.windows || []);
+    const trades = useSelector((state: any) => state.trades?.trades || []);
+    const sectors = useSelector((state: any) => state.sectors?.sectors || []);
+
+    // Utility function to remove duplicate values, keeping only the first occurrence
+    const removeDuplicates = (items: { value: string; label: string }[]): { value: string; label: string }[] => {
+        const seen = new Set<string>();
+        return items.filter(item => {
+            if (seen.has(item.value)) {
+                return false; // Skip duplicate
+            }
+            seen.add(item.value);
+            return true; // Keep first occurrence
+        });
+    };
+
     // Get location options using rwandaLocations utility
     const ProvincesOptions = rwandaLocations.getProvinces();
     const DistrictOptions = formData.province ? rwandaLocations.getDistricts(formData.province) : [];
@@ -63,28 +80,49 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
         ? rwandaLocations.getVillages(formData.province, formData.district, formData.sectorLocation, formData.cell)
         : [];
 
-    // Fetch applicant applications info on component mount
+    // Fetch data and user info on component mount
     useEffect(() => {
-        const fetchApplicationsInfo = async () => {
+        const fetchData = async () => {
             try {
-                setApplicationsLoading(true);
-                const data = await getApplicantApplicationsInfo(applicantId);
-                setApplicationsInfo(data);
+                setDataLoading(true);
+                
+                // Fetch windows and sectors
+                await Promise.all([
+                    getWindows(dispatch),
+                    getSectors(dispatch)
+                ]);
+
+                // Fetch current user info if applicantId is not provided
+                if (!applicantId) {
+                    try {
+                        const response = await authorizedApi.get("/auth/me");
+                        const userData = response.data.data.data;
+                        if (userData?.uuid) {
+                            setCurrentUserId(userData.uuid);
+                        }
+                    } catch (error) {
+                        console.error("Failed to fetch user data:", error);
+                        notifications.show({
+                            message: "Failed to fetch user information",
+                            color: "red",
+                        });
+                    }
+                }
             } catch (error) {
-                console.error("Failed to fetch applications info:", error);
+                console.error("Failed to fetch data:", error);
                 notifications.show({
-                    message: "Failed to fetch applications information",
+                    message: "Failed to fetch required data",
                     color: "red",
                 });
             } finally {
-                setApplicationsLoading(false);
+                setDataLoading(false);
             }
         };
 
         if (isOpenAddEditSurveyTrainee) {
-            fetchApplicationsInfo();
+            fetchData();
         }
-    }, [isOpenAddEditSurveyTrainee, applicantId]);
+    }, [isOpenAddEditSurveyTrainee, applicantId, dispatch]);
 
     useEffect(() => {
         if (defaultData) {
@@ -129,33 +167,33 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
         }
     }, [defaultData, isOpenAddEditSurveyTrainee]);
 
-    // Get all unique windows from applications
-    console.log(applicationsInfo);
-    const MultiWindowData = applicationsInfo?.filter(window => 
+    // Get all unique windows from Redux state
+    const MultiWindowData = removeDuplicates(
+        windows?.filter((window: any) => 
             window?.status === WINDOW_STATUS.ACTIVE &&
-            window?.subWindows.some(sub => sub.status === SUBWINDOW_STATUS.ACTIVE)
+            window?.subWindows?.some((sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE)
         )
-        .map(window => ({
-                value: window.uuid,
-                label: window.title,
-        }))
-        .filter((window, index, self) => 
-            index === self.findIndex(w => w.value === window.value)
-        );
+        .map((window: any) => ({
+            value: window.uuid,
+            label: window.title,
+        })) || []
+    );
 
     // Get subwindows for selected window
     const getSubWindowsData = () => {
         if (!formData.windowId) return [];
         
-        return applicationsInfo?.filter(window => window.uuid === formData.windowId)
-            .flatMap(window => 
+        const subWindows = windows?.filter((window: any) => window.uuid === formData.windowId)
+            .flatMap((window: any) => 
                 window.subWindows
-                    .filter(sub => sub.status === SUBWINDOW_STATUS.ACTIVE)
-                    .map(subWindow => ({
+                    ?.filter((sub: any) => sub.status === SUBWINDOW_STATUS.ACTIVE)
+                    .map((subWindow: any) => ({
                         value: subWindow.uuid,
                         label: subWindow.title,
                     }))
             ) || [];
+        
+        return removeDuplicates(subWindows);
     };
 
     // Get sectors for selected subwindow
@@ -163,28 +201,28 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
         if (!formData.subWindowId) return [];
         
         const sectorMap = new Map();
-        
-        applicationsInfo?.forEach(window => {
-            window.subWindows.forEach(subWindow => {
-                if (subWindow.uuid === formData.subWindowId) {
-                    subWindow.sectors.forEach(sector => {
-                        if (sector.status === SECTOR_STATUS.ACTIVE) {
-                            const hasActiveTrades = sector.trades.some(
-                                trade => trade.trade.status === TRADE_STATUS.ACTIVE
-                            );
-                            
-                            if (hasActiveTrades && !sectorMap.has(sector.uuid)) {
-                                sectorMap.set(sector.uuid, {
-                                    value: sector.uuid,
-                                    label: sector.name,
-                                });
-                            }
+        windows?.forEach((window: any) =>
+            window.subWindows
+                ?.filter((subWindow: any) => subWindow.uuid === formData.subWindowId)
+                .forEach((subWindow: any) =>
+                    subWindow.sectors?.forEach((sector: any) => {
+                        const matching = sectors.find(
+                            (s: any) =>
+                                s.uuid === sector.uuid &&
+                                s.trades?.some(
+                                    (trad: any) => trad.trade.status === TRADE_STATUS.ACTIVE
+                                ) &&
+                                sector.status === SECTOR_STATUS.ACTIVE
+                        );
+                        if (matching && !sectorMap.has(matching.uuid)) {
+                            sectorMap.set(matching.uuid, {
+                                value: matching.uuid,
+                                label: matching.name,
+                            });
                         }
-                    });
-                }
-            });
-        });
-        
+                    })
+                )
+        );
         return Array.from(sectorMap.values());
     };
 
@@ -192,26 +230,14 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
     const getTradesData = () => {
         if (!formData.sectorId) return [];
         
-        const trades: { value: string; label: string }[] = [];
-        
-        applicationsInfo?.forEach(window => {
-            window.subWindows.forEach(subWindow => {
-                subWindow.sectors.forEach(sector => {
-                    if (sector.uuid === formData.sectorId) {
-                        sector.trades.forEach(trade => {
-                            if (trade.trade.status === TRADE_STATUS.ACTIVE) {
-                                trades.push({
-                                    value: trade.uuid,
-                                    label: trade.trade.title,
-                                });
-                            }
-                        });
-                    }
-                });
+        return sectors
+            .filter((sc: any) => sc.uuid === formData.sectorId)
+            .flatMap((sec: any) => {
+                return sec.trades?.map((trade: any) => ({
+                    value: trade.uuid,
+                    label: trade.trade.title
+                })) || [];
             });
-        });
-        
-        return trades;
     };
 
     // Reset dependent fields when parent selection changes
@@ -352,9 +378,10 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
         setLoading(true);
 
         // Prepare request data with applicantId if provided
+        const userIdToUse = applicantId || currentUserId;
         const requestData = {
             ...formData,
-            ...(applicantId && { applicantId }),
+            ...(userIdToUse && { applicantId: userIdToUse }),
         };
 
         const request = defaultData
@@ -370,7 +397,7 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
                     color: "blue",
                 });
                 // Dispatch to refresh the survey trainees list
-                getSurveyTrainee(dispatch, applicantId);
+                getSurveyTrainee(dispatch, userIdToUse);
                 closeAddEditSurveyTrainee();
             })
             .catch((err) => {
@@ -403,22 +430,9 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
                     {defaultData ? "Update Survey Trainee" : "Create Survey Trainee"}
                 </h1>
 
-                {applicationsLoading ? (
+                {dataLoading ? (
                     <div className="w-full flex justify-center items-center py-8">
-                        <p className="text-gray-600">Loading applications...</p>
-                    </div>
-                ) : !applicationsInfo || applicationsInfo.length === 0 ? (
-                    <div className="w-full flex flex-col items-center justify-center py-8 text-center">
-                        <div className="text-6xl mb-4">📋</div>
-                        <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                            {applicantId ? "You are not on contract signing so you can not add trainee surveys" : "This applicant is not on contract signing so can not add trainees"}
-                        </h2>
-                        <p className="text-gray-600">
-                            {applicantId 
-                                ? "Please complete your contract signing process to add survey trainees."
-                                : "This applicant needs to complete the contract signing process before survey trainees can be added."
-                            }
-                        </p>
+                        <p className="text-gray-600">Loading data...</p>
                     </div>
                 ) : (
                 <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4 mt-6">
@@ -515,11 +529,11 @@ const AddEditSurveyTrainee: React.FC<Props> = ({
                         <div>
                             <label className="block mb-1 font-medium">Window</label>
                             <Select
-                                placeholder={applicationsLoading ? "Loading..." : "Select Window"}
+                                placeholder={dataLoading ? "Loading..." : "Select Window"}
                                 data={MultiWindowData || []}
                                 value={formData.windowId}
                                 onChange={handleWindowChange}
-                                disabled={applicationsLoading}
+                                disabled={dataLoading}
                             />
                             {errors.windowId && <p className="text-red-500 text-sm">{errors.windowId}</p>}
                         </div>
