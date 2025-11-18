@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 5600",
     "build": "next build",
-    "start": "next start -p 5800",
+    "start": "next start -p 5600",
     "lint": "next lint",
     "format": "npx prettier --write ./",
     "prepare": "husky",
@@ -67,6 +67,7 @@
     "solar-icon-set": "^1.0.0",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.3.1",
+    "use-debounce": "^10.0.6",
     "uuid": "^11.1.0",
     "xlsx": "^0.18.5"
   },

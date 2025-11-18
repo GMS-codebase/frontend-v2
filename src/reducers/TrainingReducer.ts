@@ -21,6 +21,9 @@ import {
   FETCH_TRAINING_BY_ID_FAILURE,
   FETCH_TRAINING_BY_ID_REQUEST,
   FETCH_TRAINING_BY_ID_SUCCESS,
+  GET_CERTIFIED_TRAINEES_FAILURE,
+  GET_CERTIFIED_TRAINEES_REQUEST,
+  GET_CERTIFIED_TRAINEES_SUCCESS,
   MAKE_DECISION_FAILURE,
   MAKE_DECISION_REQUEST,
   MAKE_DECISION_SUCCESS,
@@ -30,6 +33,7 @@ import {
   REMOVE_TRAINEE_REQUEST_REQUEST,
   REMOVE_TRAINEE_REQUEST_SUCCESS,
   REMOVE_TRAINEE_SUCCESS,
+  REMOVE_TRAINING_SUCCESS,
   REQUEST_RESPONSE_FAILURE,
   REQUEST_RESPONSE_REQUEST,
   REQUEST_RESPONSE_SUCCESS,
@@ -41,6 +45,8 @@ import {
 
 const initialState = {
   trainings: [],
+  certifiedTrainees: [],
+  loadingCertifiedTrainees: false,
   currentTraining: {} as any,
   loading: false,
   requestReviewLoading: false,
@@ -51,12 +57,19 @@ const initialState = {
   removeTraineeLoading: false,
   total: 0,
   page: 1,
+  totalPages: 1,
 };
 
 export const TrainingReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case "SET_TRAININGS":
-      return { ...state, trainings: action.payload, loading: false };
+      return {
+        ...state,
+        trainings: action.payload.trainings,
+        loading: false,
+        total: action.payload.total,
+        page: action.payload.page,
+      };
     case "FETCH_TRAININGS_REQUEST":
       return { ...state, loading: true };
     case ADD_TRAINING_SUCCESS:
@@ -73,7 +86,7 @@ export const TrainingReducer = (state = initialState, action: any) => {
         ),
         loading: false,
       };
-    case "DELETE_TRAINING_SUCCESS":
+    case REMOVE_TRAINING_SUCCESS:
       return {
         ...state,
         trainings: state.trainings.filter(
@@ -306,6 +319,27 @@ export const TrainingReducer = (state = initialState, action: any) => {
 
     case REMOVE_TRAINEE_FAILURE:
       return { ...state, removeTraineeLoading: false, error: action.payload };
+
+    // -------------------- Get Certified Trainees --------------------
+    case GET_CERTIFIED_TRAINEES_REQUEST:
+      return { ...state, loadingCertifiedTrainees: true, error: null };
+
+    case GET_CERTIFIED_TRAINEES_SUCCESS:
+      return {
+        ...state,
+        loadingCertifiedTrainees: false,
+        certifiedTrainees: action.payload.trainees,
+        total: action.payload.total,
+        page: action.payload.page,
+        totalPages: action.payload.totalPages,
+      };
+
+    case GET_CERTIFIED_TRAINEES_FAILURE:
+      return {
+        ...state,
+        loadingCertifiedTrainees: false,
+        error: action.payload,
+      };
 
     default:
       return state;

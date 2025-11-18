@@ -13,35 +13,101 @@ import { Menu, Select, Tabs } from "@mantine/core";
 import { CiEdit, CiSearch } from "react-icons/ci";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { IPaginatedQuery } from "@/types/base.type";
+import { getApplicationsForContractSigning } from "@/services";
+import { UnknownAction } from "redux";
+import { useDispatch } from "react-redux";
 
 const Page = () => {
-  const [isOpenTrade, { open, close }] = useDisclosure(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const navigate = useRouter();
+
+  const dispatch = useDispatch();
+
+  const {
+    applicationsForContractSigning: applications,
+    applicationsReadyForContractSigningLoading: paginationLoading,
+    total: totalApplications,
+    page: currentPageFromRedux,
+  } = useSelector((state: any) => state.applications);
+
+  // Local state for pagination
+  const [paginateOpts, setLocalPaginateOpts] = useState<
+    IPaginatedQuery & { totalPages: number }
+  >({
+    page: (currentPageFromRedux ?? 1) - 1,
+    limit: 10,
+    totalPages: 1,
+  });
+
+  useEffect(() => {
+    setLocalPaginateOpts((prev) => ({
+      ...prev,
+      totalPages: Math.ceil((totalApplications ?? 0) / (prev?.limit ?? 10)),
+    }));
+  }, [totalApplications]);
+
+  // Fetch data whenever page or limit changes
+  useEffect(() => {
+    dispatch(
+      getApplicationsForContractSigning(
+        (paginateOpts.page ?? 0) + 1,
+        paginateOpts.limit
+      ) as unknown as UnknownAction
+    );
+  }, [dispatch, paginateOpts.page, paginateOpts.limit]);
+
+  const setPaginateOpts: React.Dispatch<
+    React.SetStateAction<IPaginatedQuery & { totalPages: number }>
+  > = (value) => {
+    if (typeof value === "function") {
+      setLocalPaginateOpts((prev) => {
+        const next = value(prev);
+        dispatch(
+          getApplicationsForContractSigning(
+            (next.page ?? 0) + 1,
+            next.limit
+          ) as unknown as UnknownAction
+        );
+        return next;
+      });
+    } else {
+      setLocalPaginateOpts(value);
+      dispatch(
+        getApplicationsForContractSigning(
+          (value.page ?? 0) + 1,
+          value.limit
+        ) as unknown as UnknownAction
+      );
+    }
+  };
+
   const { contracts, loading: loadingContracts } = useSelector(
-    (state: any) => state.contracts,
-  );
-  const { applicationsForContractSigning: applications, loading } = useSelector(
-    (state: any) => state.applications,
+    (state: any) => state.contracts
   );
 
   const [contractsSignedApplications, setContractsSignedApplications] =
     useState<any[]>([]);
+
   const [applicationsForContractSigning, setApplicationsForContractSigning] =
     useState<any[]>([]);
 
-  useEffect(() => {
-    setContractsSignedApplications(
-      applications.filter((a: any) => a?.application?.uploadedContract),
-    );
-    setApplicationsForContractSigning(
-      applications.filter(
-        (a: any) =>
-          !a?.application?.uploadedContract &&
-          a?.application?.uploadedSignedMinutes,
-      ),
-    );
-  }, [applications]);
+ useEffect(() => {
+   const safeApps = Array.isArray(applications) ? applications : [];
+
+   setContractsSignedApplications(
+     safeApps.filter((a) => a?.application?.uploadedContract)
+   );
+
+   setApplicationsForContractSigning(
+     safeApps.filter(
+       (a) =>
+         !a?.application?.uploadedContract &&
+         a?.application?.uploadedSignedMinutes
+     )
+   );
+ }, [applications]);
+
 
   const FilterDropDown = ({
     placeholderText,
@@ -57,41 +123,6 @@ const Page = () => {
       className="w-full px-3 py-2 text-base text-black font-semibold rounded-full bg-[#005DE908] border-none outline-none placeholder:text-black"
     />
   );
-
-  const [loadingDownload, setLoadingDownload] = useState(false);
-  const [contractState, setContractState] = useState<{
-    isOpen: boolean;
-    application: any | null;
-  }>({
-    isOpen: false,
-    application: null,
-  });
-
-  const handleDownloadInstructions = async (file: any) => {
-    setLoadingDownload(true);
-    try {
-      const filename = file.split("\\").pop();
-      const response = await unauthorizedApi.get(
-        `/admin/download/contracts/${filename}`,
-        { responseType: "blob" },
-      );
-      const blob = new Blob([response.data], {
-        type: response.headers["content-type"],
-      });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = file || "downloaded-file.jpg";
-      document.body.appendChild(link);
-      link.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error("Error downloading file:", error);
-    } finally {
-      setLoadingDownload(false);
-    }
-  };
 
   const contractColumns: ColumnDef<any>[] = [
     {
@@ -128,7 +159,7 @@ const Page = () => {
         <div className="w-full">
           {
             contracts.filter(
-              (c: any) => c?.application_ID === row.original?.application?.uuid,
+              (c: any) => c?.application_ID === row.original?.application?.uuid
             )[0]?.contractNumber
           }
         </div>
@@ -158,7 +189,7 @@ const Page = () => {
             <Menu.Item
               onClick={() =>
                 navigate.push(
-                  `/sdf/contracts/${row?.original?.application?.uuid}`,
+                  `/sdf/contracts/${row?.original?.application?.uuid}`
                 )
               }
             >
@@ -221,9 +252,15 @@ const Page = () => {
         <Tabs.Panel value="applications" className="flex flex-col mt-4">
           <DataTable
             columns={contractColumns}
-            data={applicationsForContractSigning}
-            loading={loading}
-            noDataMessage="No Approved Applications"
+            data={applicationsForContractSigning ?? []}
+            loading={paginationLoading}
+            noDataMessage={"No Approved Applications yet"}
+            totalApplications={totalApplications}
+            paginationProps={{
+              isPaginated: true,
+              paginateOpts,
+              setPaginateOpts,
+            }}
           />
         </Tabs.Panel>
 
