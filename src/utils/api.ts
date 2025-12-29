@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import { getCookie } from "cookies-next";
 
-const api = process.env.NEXT_PUBLIC_BACKEND_API;
+const api = "http://197.243.20.222:8082";
 
 function getAccessTokenFromLocalStorage(): string | undefined {
   return getCookie("token") as string | undefined;
