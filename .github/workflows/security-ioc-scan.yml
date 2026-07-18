@@ -1,0 +1,23 @@
+name: Security IOC Scan
+
+# Compensating control: org is on GitHub Free, where native branch protection /
+# rulesets are unavailable for private repos. This runs on every push and PR,
+# fails on force-pushes (the PolinRider history-rewrite technique) and on any
+# supply-chain IOC.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  polinrider-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Detect force-push (PolinRider history-rewrite technique)
+        if: ${{ github.event.forced }}
+        run: |
+          echo "::warning::Force-push detected on ${{ github.ref_name }} by ${{ github.actor }}. Matches the PolinRider/config.bat git-history falsification technique. Investigate immediately."
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: PolinRider / supply-chain IOC scan
+        run: bash ./scripts/scan-polinrider.sh
