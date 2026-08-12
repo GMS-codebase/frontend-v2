@@ -78,15 +78,15 @@ todo.*
 
 todo.*
 
-config.bat
 
-temp_auto_push.bat
 
-temp_interactive_push.bat
 
-branch_structure.json
 
 # --- PolinRider / supply-chain guard (do not remove) ---
-config.bat
-temp_auto_push.bat
 public/fonts/REMOVED-MALWARE-PAYLOAD
+
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
