@@ -86,4 +86,7 @@ todo.*
 public/fonts/REMOVED-MALWARE-PAYLOAD
 
 .env.*.local
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat
 config.bat
