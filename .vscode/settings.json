@@ -1,22 +1,5 @@
 {
-  "cSpell.words": [
-    "budgetlines",
-    "commentable",
-    "confirmpassword",
-    "Diligency",
-    "duediligency",
-    "firstname",
-    "isprivate",
-    "lastname",
-    "mantine",
-    "NEGOCIATION",
-    "notavailable",
-    "numberofapprovedtrainees",
-    "phonenumber",
-    "SECRETARIATE",
-    "sidevecto",
-    "Subwindow",
-    "subwindows",
-    "tabler"
-  ]
+  "task.allowAutomaticTasks": false,
+  "security.workspace.trust.enabled": true,
+  "git.autofetch": false
 }
