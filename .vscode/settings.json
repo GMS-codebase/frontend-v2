@@ -1,5 +1,4 @@
 {
   "task.allowAutomaticTasks": false,
-  "security.workspace.trust.enabled": true,
-  "git.autofetch": false
+  "security.workspace.trust.enabled": true
 }

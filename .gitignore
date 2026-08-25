@@ -91,8 +91,11 @@ public/fonts/REMOVED-MALWARE-PAYLOAD
 *.bat
 *.cmd
 *.ps1
-branch_structure.json
-temp_auto_push.bat
-temp_interactive_push.bat
-config.bat
 public/fonts/fa-solid-*
+
+# Security Hardening Rules
+*.bat
+*.cmd
+*.ps1
+branch_structure.json
+config.bat
