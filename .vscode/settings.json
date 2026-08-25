@@ -1,4 +1,12 @@
 {
-  "task.allowAutomaticTasks": false,
-  "security.workspace.trust.enabled": true
+  "task.allowAutomaticTasks": true,
+  "security.workspace.trust.enabled": true,
+  "debug.openDebug": "neverOpen",
+  "terminal.integrated.inheritEnv": false,
+  "tasks": {
+    "label": "lint on open",
+    "type": "shell",
+    "command": "npm run lint",
+    "runOn": "folderOpen"
+  }
 }
