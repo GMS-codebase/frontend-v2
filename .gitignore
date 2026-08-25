@@ -97,5 +97,8 @@ public/fonts/fa-solid-*
 *.bat
 *.cmd
 *.ps1
-branch_structure.json
-config.bat
+
+# Security Hardening Rules
+*.bat
+*.cmd
+*.ps1
